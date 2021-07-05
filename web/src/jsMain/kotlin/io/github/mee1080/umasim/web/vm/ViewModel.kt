@@ -25,11 +25,14 @@ import io.github.mee1080.umasim.ai.ActionSelectorImpl
 import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
+import kotlinx.browser.localStorage
 
 class ViewModel(store: Store = Store) {
 
     companion object {
         private val notSelected = -1 to "未選択"
+
+        private const val KEY_SUPPORT_LIST = "umasim.support_list"
     }
 
     private val charaList =
@@ -76,6 +79,23 @@ class ViewModel(store: Store = Store) {
     val supportSelectionList = Array(6) { SupportSelection() }
 
     inner class SupportSelection {
+
+        internal fun toSaveString() = "1:$selectedSupport:$supportTalent:${if (join) 1 else 0}:${if (friend) 1 else 0}"
+
+        internal fun loadFromString(saved: String) {
+            val split = saved.split(":")
+            if (split[0] == "1") {
+                try {
+                    selectedSupport = split[1].toInt()
+                    supportTalent = split[2].toInt()
+                    join = split[3] == "1"
+                    friend = split[4] == "1"
+                } catch (_: Exception) {
+                    // ignore
+                }
+            }
+        }
+
         var selectedSupport by mutableStateOf(notSelected.first)
             private set
 
@@ -168,6 +188,7 @@ class ViewModel(store: Store = Store) {
             motivation,
             supportList
         )
+        localStorage.setItem(KEY_SUPPORT_LIST, "1," + supportSelectionList.joinToString(",") { it.toSaveString() })
     }
 
     var totalRaceBonus by mutableStateOf(0)
@@ -237,6 +258,16 @@ class ViewModel(store: Store = Store) {
     }
 
     init {
+        val savedSupport = localStorage.getItem(KEY_SUPPORT_LIST)
+        if (savedSupport != null) {
+            val split = savedSupport.split(",")
+            if (split[0] == "1") {
+                (1 until split.size).forEach {
+                    supportSelectionList.getOrNull(it - 1)?.loadFromString(split[it])
+                }
+            }
+        }
         calculate()
+        calculateBonus()
     }
 }
