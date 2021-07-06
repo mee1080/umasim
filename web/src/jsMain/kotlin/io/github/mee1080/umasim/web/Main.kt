@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.web
 
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.web.components.GroupedSelect
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
@@ -46,8 +47,37 @@ fun main() {
                 Div({ style { display(DisplayStyle.Flex) } }) {
                     model.supportSelectionList.slice((row * 3)..(row * 3 + 2)).forEachIndexed { offset, item ->
                         val index = row * 3 + offset
-                        Div {
-                            GroupedSelect("", model.displaySupportList, item.selectedSupport, item::updateSupport)
+                        Div({
+                            when (item.card?.type) {
+                                StatusType.SPEED -> Color.RGB(69, 196, 255)
+                                StatusType.STAMINA -> Color.RGB(255, 144, 127)
+                                StatusType.POWER -> Color.RGB(255, 185, 21)
+                                StatusType.GUTS -> Color.RGB(255, 144, 186)
+                                StatusType.WISDOM -> Color.RGB(32, 216, 169)
+                                StatusType.FRIEND -> Color.RGB(255, 211, 108)
+                                else -> null
+                            }?.let {
+                                style {
+                                    property("background", "linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it)")
+                                }
+                            }
+                        }) {
+                            GroupedSelect(
+                                "",
+                                model.displaySupportList,
+                                item.selectedSupport,
+                                {
+                                    classes(AppStyle.supportCard)
+                                    console.log("${item.friend} ${item.card?.type} ${model.selectedTrainingType}")
+                                    if (item.friendTraining) {
+                                        console.log("friend")
+                                        classes(AppStyle.friendSupportCard)
+                                    }
+                                },
+                                item::updateSupport
+                            ) {
+                                Div({ classes("after") })
+                            }
                             LabeledRadioGroup(
                                 "talent$index",
                                 "上限解放：",
@@ -77,22 +107,22 @@ fun main() {
         Div {
             Table({ classes(AppStyle.table) }) {
                 Tr {
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スピード") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スタミナ") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("パワー") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("根性") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("賢さ") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スキルPt") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("体力") }
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
+                    Th { Text("体力") }
                 }
                 Tr {
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.speed.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.stamina.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.power.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.guts.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.wisdom.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.skillPt.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.trainingResult.hp.toString()) }
+                    Td { Text(model.trainingResult.speed.toString()) }
+                    Td { Text(model.trainingResult.stamina.toString()) }
+                    Td { Text(model.trainingResult.power.toString()) }
+                    Td { Text(model.trainingResult.guts.toString()) }
+                    Td { Text(model.trainingResult.wisdom.toString()) }
+                    Td { Text(model.trainingResult.skillPt.toString()) }
+                    Td { Text(model.trainingResult.hp.toString()) }
                 }
             }
         }
@@ -115,25 +145,24 @@ fun main() {
         Div {
             Table({ classes(AppStyle.table) }) {
                 Tr {
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スピード") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スタミナ") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("パワー") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("根性") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("賢さ") }
-                    Th({ classes(AppStyle.tableHeader) }) { Text("スキルPt") }
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
                 }
                 Tr {
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.speed.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.stamina.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.power.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.guts.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.wisdom.toString()) }
-                    Td({ classes(AppStyle.tableValue) }) { Text(model.simulationResult.skillPt.toString()) }
+                    Td { Text(model.simulationResult.speed.toString()) }
+                    Td { Text(model.simulationResult.stamina.toString()) }
+                    Td { Text(model.simulationResult.power.toString()) }
+                    Td { Text(model.simulationResult.guts.toString()) }
+                    Td { Text(model.simulationResult.wisdom.toString()) }
+                    Td { Text(model.simulationResult.skillPt.toString()) }
                 }
                 Tr {
-                    Th({ classes(AppStyle.tableHeader) }) { Text("ヒント") }
+                    Th { Text("ヒント") }
                     Td({
-                        classes(AppStyle.tableValue)
                         style { property("text-align", "left") }
                         colspan(5)
                     }) {
@@ -141,14 +170,13 @@ fun main() {
                     }
                 }
                 Tr {
-                    Th({ classes(AppStyle.tableHeader) }) { Text("行動履歴") }
+                    Th { Text("行動履歴") }
                     Td({
-                        classes(AppStyle.tableValue)
                         style { property("text-align", "left") }
                         colspan(5)
                     }) {
                         model.simulationHistory.forEachIndexed { index, item ->
-                            Div { Text("${index+1}: $item") }
+                            Div { Text("${index + 1}: $item") }
                         }
                     }
                 }

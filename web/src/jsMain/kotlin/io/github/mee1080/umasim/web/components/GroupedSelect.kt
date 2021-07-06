@@ -24,6 +24,7 @@ import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLSelectElement
 
 @Composable
@@ -31,9 +32,16 @@ fun GroupedSelect(
     label: String,
     selection: List<Triple<Int, String, String>>,
     selectedValue: Int,
+    attrs: AttrBuilderContext<HTMLDivElement>? = null,
     onSelect: (Int) -> Unit,
+    afterContent: ContentBuilder<HTMLDivElement>? = null
 ) {
-    Div({ style { padding(8.px) } }) {
+    Div({
+        attrs?.invoke(this)
+        style {
+            padding(8.px)
+        }
+    }) {
         Text(label)
         Select({
             prop(
@@ -58,5 +66,6 @@ fun GroupedSelect(
                 }
             }
         }
+        afterContent?.invoke(this)
     }
 }

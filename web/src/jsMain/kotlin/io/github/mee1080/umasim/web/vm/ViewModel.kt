@@ -108,6 +108,10 @@ class ViewModel(store: Store = Store) {
         var friend by mutableStateOf(true)
             private set
 
+        val card get() = supportMap[selectedSupport]?.firstOrNull { it.talent == supportTalent }
+
+        val friendTraining get() = friend && selectedTrainingType == card?.type?.ordinal
+
         fun updateSupport(id: Int) {
             selectedSupport = id
             calculate()
