@@ -39,13 +39,10 @@ object AppStyle : StyleSheet() {
 
     val supportCard by style {
         position(Position.Relative)
-        property("content", "a")
         self + " .after" style {
-            property("content", "a")
             position(Position.Absolute)
             property("z-index", "-1")
             top(0.px)
-            property("contents", "a")
             left(0.px)
             height((100).percent)
             width((100).percent)
