@@ -19,18 +19,47 @@
 package io.github.mee1080.umasim.web.style
 
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.selectors.plus
 
 object AppStyle : StyleSheet() {
     val table by style {
         property("border-collapse", "collapse")
+
+        self + " th" style {
+            border(1.px, LineStyle.Solid, Color("black"))
+            width(80.px)
+        }
+
+        self + " td" style {
+            property("text-align", "right")
+            border(1.px, LineStyle.Solid, Color("black"))
+            width(80.px)
+        }
     }
-    val tableHeader by style {
-        border(1.px, LineStyle.Solid, Color("black"))
-        width(80.px)
+
+    val supportCard by style {
+        position(Position.Relative)
+        property("content", "a")
+        self + " .after" style {
+            property("content", "a")
+            position(Position.Absolute)
+            property("z-index", "-1")
+            top(0.px)
+            property("contents", "a")
+            left(0.px)
+            height((100).percent)
+            width((100).percent)
+            opacity(0.0)
+            borderRadius(50.px)
+            property("background", "linear-gradient(to right, #e0c000, #ea4335)")
+            property("filter", "blur(5px)")
+            property("transition", "all 0.5s")
+        }
     }
-    val tableValue by style {
-        property("text-align", "right")
-        border(1.px, LineStyle.Solid, Color("black"))
-        width(80.px)
+
+    val friendSupportCard by style {
+        self + " .after" style {
+            opacity(0.3)
+        }
     }
 }
