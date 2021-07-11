@@ -70,7 +70,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 @ObsoleteCoroutinesApi
 fun openCui(args: Array<String>) {
 //    dataCheck()
-    singleSimulation()
+//    singleSimulation()
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5), Store.getSupportByName(
 //            *(speed(4, 3)),
@@ -125,15 +125,14 @@ fun openCui(args: Array<String>) {
 //            wisdomFactor = 0.8,
 //        )
 //    )
-//    doShortSimulation(
-//        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.8,
-//            staminaFactor = 0.9,
-//            powerFactor = 0.9,
-//            hpFactor = 0.6,
-//            calcRelationScore = true,
-//        )
-//    )
+    doShortSimulation(
+        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+            speedFactor = 0.8,
+            staminaFactor = 0.9,
+            powerFactor = 0.9,
+            hpFactor = 0.6,
+        )
+    )
 //    doShortSimulation(
 //        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85
