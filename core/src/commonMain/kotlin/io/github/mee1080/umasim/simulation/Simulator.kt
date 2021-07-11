@@ -45,10 +45,20 @@ class Simulator(
     override var turn = 0
 
     override var status = Status(
+        skillPt = 120,
         hp = 100,
         maxHp = 100,
     ) + chara.initialStatus + supportList
-        .map { it.initialStatus }.reduce { acc, status -> acc + status }
+        .map { it.initialStatus }.reduce { acc, status -> acc + status } + supportList.sumOf { it.card.race }.let {
+        Status(
+            speed = 60 * it / 100,
+            stamina = 60 * it / 100,
+            power = 60 * it / 100,
+            guts = 60 * it / 100,
+            wisdom = 60 * it / 100,
+            skillPt = 700 * it / 100
+        )
+    }
 
     override val condition = mutableListOf<String>()
 
