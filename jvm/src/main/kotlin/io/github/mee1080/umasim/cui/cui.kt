@@ -30,6 +30,7 @@ import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
 import kotlin.math.max
+import kotlin.math.roundToInt
 
 const val THREAD_COUNT = 4
 
@@ -86,6 +87,24 @@ fun openCui(args: Array<String>) {
 //        ), testCount = 1000
 //    )
 //    optimizeAI(
+//        Store.getChara("ハルウララ", 5, 5),
+//        Store.getSupportByName(
+//            *(speed(4, 3)),
+//            *(wisdom(4, 2)),
+//            *(friend(4, 1)),
+//        ),
+//        options = generateOptions(
+//            base = ActionSelectorImpl.Option(calcRelationScore = true),
+//            step = 0.1,
+//            speed = 0.5..0.7,
+//            stamina = 1.0..1.2,
+//            power = 0.8..1.0,
+//            wisdom = 0.5..0.7,
+//            hp = 0.6..0.8,
+//        ),
+//        testCount = 1000, turn = 60,
+//    )
+//    optimizeAI(
 //        Store.getChara("ゴールドシップ", 5, 5), Store.getSupportByName(
 //            *(speed(4, 3)),
 //            *(stamina(4, 2)),
@@ -113,26 +132,29 @@ fun openCui(args: Array<String>) {
 //        ), turn = 60, testCount = 500
 //    )
 //    doShortSimulation(StatusType.SPEED)
-//    doShortSimulation(
-//        StatusType.WISDOM, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.6,
-//            wisdomFactor = 0.65,
-//        )
-//    )
+    doShortSimulation(
+        StatusType.WISDOM, 0..4, 4, true, 1000, ActionSelectorImpl.Option(
+            speedFactor = 0.6,
+            staminaFactor = 1.2,
+            powerFactor = 0.9,
+            wisdomFactor = 0.7,
+            hpFactor = 0.6,
+        )
+    )
 //    doShortSimulation(
 //        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85,
 //            wisdomFactor = 0.8,
 //        )
 //    )
-    doShortSimulation(
-        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-            speedFactor = 0.8,
-            staminaFactor = 0.9,
-            powerFactor = 0.9,
-            hpFactor = 0.6,
-        )
-    )
+//    doShortSimulation(
+//        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+//            speedFactor = 0.8,
+//            staminaFactor = 0.9,
+//            powerFactor = 0.9,
+//            hpFactor = 0.6,
+//        )
+//    )
 //    doShortSimulation(
 //        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85
@@ -199,22 +221,23 @@ fun generateOptions(
 ): Array<ActionSelectorImpl.Option> {
     val list = mutableListOf<ActionSelectorImpl.Option>()
     var option = base
+    val conv = { v: Double -> (v * 100).roundToInt() / 100.0 }
     (speed step step).map { sp ->
-        option = option.copy(speedFactor = sp)
+        option = option.copy(speedFactor = conv(sp))
         (stamina step step).map { st ->
-            option = option.copy(staminaFactor = st)
+            option = option.copy(staminaFactor = conv(st))
             (power step step).map { pw ->
-                option = option.copy(powerFactor = pw)
+                option = option.copy(powerFactor = conv(pw))
                 (guts step step).map { gt ->
-                    option = option.copy(gutsFactor = gt)
+                    option = option.copy(gutsFactor = conv(gt))
                     (wisdom step step).map { ws ->
-                        option = option.copy(wisdomFactor = ws)
+                        option = option.copy(wisdomFactor = conv(ws))
                         (skillPt step step).map { sk ->
-                            option = option.copy(skillPtFactor = sk)
+                            option = option.copy(skillPtFactor = conv(sk))
                             (hp step step).map { hp ->
-                                option = option.copy(hpFactor = hp)
+                                option = option.copy(hpFactor = conv(hp))
                                 (motivation step step).map { mt ->
-                                    option = option.copy(motivationFactor = mt)
+                                    option = option.copy(motivationFactor = conv(mt))
                                     list.add(option)
                                 }
                             }
@@ -529,14 +552,14 @@ fun doFailureRateSimulation() {
                 }
                 summary.add(
                     Runner.simulate(
-                    55, simulator, ActionSelectorImpl(
-                        ActionSelectorImpl.Option(hpFactor = hpFactor)
-                    )
-                ) { sim ->
-                    if (sim.turn == eventTurn + 1) {
-                        sim.condition.add("練習上手○")
-                    }
-                })
+                        55, simulator, ActionSelectorImpl(
+                            ActionSelectorImpl.Option(hpFactor = hpFactor)
+                        )
+                    ) { sim ->
+                        if (sim.turn == eventTurn + 1) {
+                            sim.condition.add("練習上手○")
+                        }
+                    })
             }
             println("[迫る熱に押されて]キタサンブラック,$hpFactor,${eventTurn},${Evaluator(summary).toSummaryString()}")
         }
