@@ -129,6 +129,25 @@ fun main() {
         H2 { Text("編成情報") }
         Div { Text("レースボーナス合計：${model.totalRaceBonus}") }
         Div { Text("ファンボーナス合計：${model.totalFanBonus}") }
+        Div { Text("初期ステータスアップ") }
+        Div {
+            Table({ classes(AppStyle.table) }) {
+                Tr {
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                }
+                Tr {
+                    Td { Text(model.initialStatus.speed.toString()) }
+                    Td { Text(model.initialStatus.stamina.toString()) }
+                    Td { Text(model.initialStatus.power.toString()) }
+                    Td { Text(model.initialStatus.guts.toString()) }
+                    Td { Text(model.initialStatus.wisdom.toString()) }
+                }
+            }
+        }
         H2 { Text("シミュレーション") }
         Div {
             LabeledSelect("モード", model.displaySimulationModeList, model.simulationMode, model::updateSimulationMode)

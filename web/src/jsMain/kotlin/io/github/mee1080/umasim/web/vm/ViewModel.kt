@@ -175,8 +175,7 @@ class ViewModel(store: Store = Store) {
     private fun calculate() {
         val supportList = mutableListOf<Support>()
         supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
-            val card = supportMap[selection.selectedSupport]
-                ?.firstOrNull { it.talent == selection.supportTalent }
+            val card = selection.card
             if (card != null) {
                 supportList.add(Support(index, card).apply {
                     checkHintFriend(if (selection.friend) 100 else 0)
@@ -201,19 +200,21 @@ class ViewModel(store: Store = Store) {
     var totalFanBonus by mutableStateOf(0)
         private set
 
+    var initialStatus by mutableStateOf(Status())
+        private set
+
     private fun calculateBonus() {
         var race = 0
         var fan = 0
-        supportSelectionList.forEach { selection ->
-            val card = supportMap[selection.selectedSupport]
-                ?.firstOrNull { it.talent == selection.supportTalent }
-            if (card != null) {
-                race += card.race
-                fan += card.fan
-            }
+        var status = Status()
+        supportSelectionList.mapNotNull { it.card }.forEach { card ->
+            race += card.race
+            fan += card.fan
+            status += card.initialStatus
         }
         totalRaceBonus = race
         totalFanBonus = fan
+        initialStatus = status
     }
 
     private val trainingList = store.trainingList
@@ -252,9 +253,7 @@ class ViewModel(store: Store = Store) {
         private set
 
     fun doSimulation() {
-        val supportList = supportSelectionList.mapNotNull { selection ->
-            supportMap[selection.selectedSupport]?.firstOrNull { it.talent == selection.supportTalent }
-        }
+        val supportList = supportSelectionList.mapNotNull { it.card }
         val simulator = Simulator(chara, supportList, trainingList)
         Runner.simulate(simulationTurn, simulator, simulationModeList[simulationMode].second())
         simulationResult = simulator.status
