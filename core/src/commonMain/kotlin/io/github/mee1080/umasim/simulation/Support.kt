@@ -47,35 +47,12 @@ data class Support(val index: Int, val card: SupportCard) {
         friendTrainingEnabled = relation > 80
     }
 
-    // 2.5+5*(1+ヒント発生率)*(1+固有ヒント発生率)
-    private val hintRate get() = 0.025 + 0.05 * card.hintFrequency
-
     fun checkHint(): Boolean {
-        return card.type != StatusType.FRIEND && Random.nextDouble() < hintRate
+        return card.type != StatusType.FRIEND && Random.nextDouble() < card.hintFrequency
     }
 
     fun selectTraining(): StatusType {
-        if (card.type == StatusType.FRIEND) {
-            return randomSelect(
-                StatusType.SPEED to 1,
-                StatusType.STAMINA to 1,
-                StatusType.POWER to 1,
-                StatusType.GUTS to 1,
-                StatusType.WISDOM to 1,
-                StatusType.NONE to 1,
-            )
-        }
-        val mainRate = card.specialtyRate
-        val otherRate = 10000
-        val noneRate = 5000
-        return randomSelect(
-            StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
-            StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,
-            StatusType.POWER to if (card.type == StatusType.POWER) mainRate else otherRate,
-            StatusType.GUTS to if (card.type == StatusType.GUTS) mainRate else otherRate,
-            StatusType.WISDOM to if (card.type == StatusType.WISDOM) mainRate else otherRate,
-            StatusType.NONE to noneRate,
-        )
+        return randomSelect(*Calculator.calcCardPositionSelection(card))
     }
 
     override fun toString() = "$name hint=$hint friendTrainingEnabled=$friendTrainingEnabled"

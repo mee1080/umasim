@@ -115,5 +115,6 @@ data class SupportCard(
 
     val wisdomFriendRecovery = status.wisdomFriendRecovery + unique.wisdomFriendRecovery
 
-    val hintFrequency = (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0
+    // 2.5+5*(1+ヒント発生率)*(1+固有ヒント発生率)
+    val hintFrequency = 0.025 + 0.05 * (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0
 }

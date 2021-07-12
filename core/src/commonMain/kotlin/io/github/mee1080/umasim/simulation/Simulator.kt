@@ -31,7 +31,9 @@ class Simulator(
 ) : SimulationState {
 
     class Option(
-        val levelUpTurns: IntArray = intArrayOf(28, 29, 30, 31, 46, 47, 48, 49)
+        val levelUpTurns: IntArray = intArrayOf(28, 29, 30, 31, 46, 47, 48, 49),
+        val raceBonusStatus: Int = 60,
+        val raceBonusSkillPt: Int = 700,
     )
 
     val supportList = supportCardList.mapIndexed { index, supportCard -> Support(index, supportCard) }
@@ -51,12 +53,12 @@ class Simulator(
     ) + chara.initialStatus + supportList
         .map { it.initialStatus }.reduce { acc, status -> acc + status } + supportList.sumOf { it.card.race }.let {
         Status(
-            speed = 60 * it / 100,
-            stamina = 60 * it / 100,
-            power = 60 * it / 100,
-            guts = 60 * it / 100,
-            wisdom = 60 * it / 100,
-            skillPt = 700 * it / 100
+            speed = option.raceBonusStatus * it / 100,
+            stamina = option.raceBonusStatus * it / 100,
+            power = option.raceBonusStatus * it / 100,
+            guts = option.raceBonusStatus * it / 100,
+            wisdom = option.raceBonusStatus * it / 100,
+            skillPt = option.raceBonusSkillPt * it / 100
         )
     }
 
