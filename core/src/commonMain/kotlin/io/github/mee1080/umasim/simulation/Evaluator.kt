@@ -178,6 +178,32 @@ class Evaluator(val summaries: List<Summary>) {
                 StatusType.POWER to 1.0,
                 StatusType.SKILL to skillFactor
             ),
+            averageSum(
+                StatusType.SPEED to 1.0,
+                StatusType.STAMINA to 1.0,
+                StatusType.POWER to 1.0,
+                StatusType.GUTS to 1.0,
+                StatusType.WISDOM to 1.0,
+                StatusType.SKILL to skillFactor
+            ),
+            upperSum(
+                0.2,
+                StatusType.SPEED to 1.0,
+                StatusType.STAMINA to 1.0,
+                StatusType.POWER to 1.0,
+                StatusType.GUTS to 1.0,
+                StatusType.WISDOM to 1.0,
+                StatusType.SKILL to skillFactor
+            ),
+            upperSum(
+                0.05,
+                StatusType.SPEED to 1.0,
+                StatusType.STAMINA to 1.0,
+                StatusType.POWER to 1.0,
+                StatusType.GUTS to 1.0,
+                StatusType.WISDOM to 1.0,
+                StatusType.SKILL to skillFactor
+            ),
         ).joinToString(",")
 //        val averageSpeed = average(StatusType.SPEED)
 //        val upperSpeed = upper(StatusType.SPEED, 0.2)
