@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.simulation
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.SupportCard
 import kotlin.math.min
 
 object Calculator {
@@ -75,5 +76,29 @@ object Calculator {
                 baseHp - (baseHp * support.sumOf { it.card.hpCost } / 100.0).toInt()
             }
         }
+    }
+
+    fun calcCardPositionSelection(card: SupportCard): Array<Pair<StatusType, Int>> {
+        if (card.type == StatusType.FRIEND) {
+            return arrayOf(
+                StatusType.SPEED to 1,
+                StatusType.STAMINA to 1,
+                StatusType.POWER to 1,
+                StatusType.GUTS to 1,
+                StatusType.WISDOM to 1,
+                StatusType.NONE to 1,
+            )
+        }
+        val mainRate = card.specialtyRate
+        val otherRate = 10000
+        val noneRate = 5000
+        return arrayOf(
+            StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
+            StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,
+            StatusType.POWER to if (card.type == StatusType.POWER) mainRate else otherRate,
+            StatusType.GUTS to if (card.type == StatusType.GUTS) mainRate else otherRate,
+            StatusType.WISDOM to if (card.type == StatusType.WISDOM) mainRate else otherRate,
+            StatusType.NONE to noneRate,
+        )
     }
 }

@@ -32,6 +32,7 @@ import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import org.w3c.dom.HTMLInputElement
+import kotlin.math.roundToInt
 
 fun main() {
     StoreLoader.load()
@@ -127,9 +128,9 @@ fun main() {
             }
         }
         H2 { Text("編成情報") }
-        Div { Text("レースボーナス合計：${model.totalRaceBonus}") }
-        Div { Text("ファンボーナス合計：${model.totalFanBonus}") }
-        Div { Text("初期ステータスアップ") }
+        H3 { Text("レースボーナス合計：${model.totalRaceBonus}") }
+        H3 { Text("ファンボーナス合計：${model.totalFanBonus}") }
+        H3 { Text("初期ステータスアップ") }
         Div {
             Table({ classes(AppStyle.table) }) {
                 Tr {
@@ -146,6 +147,43 @@ fun main() {
                     Td { Text(model.initialStatus.guts.toString()) }
                     Td { Text(model.initialStatus.wisdom.toString()) }
                 }
+            }
+        }
+        H3 { Text("得意率・絆・ヒント率") }
+        Div {
+            Table({ classes(AppStyle.table) }) {
+                Tr {
+                    Th({
+                        style {
+                            property("border", "none")
+                            property("width", "unset")
+                        }
+                    }) { }
+                    Th { Text("得意練習配置率") }
+                    Th { Text("初期絆") }
+                    Th { Text("必要絆上げ回数") }
+                    Th { Text("ヒント発生率") }
+                }
+                model.supportSelectionList.filter { it.isSelected }.forEach {
+                    Tr {
+                        Td({
+                            style {
+                                property("width", "unset")
+                            }
+                        }) { Text(it.name) }
+                        Td { Text("${(it.specialtyRate * 1000).roundToInt() / 10.0}%") }
+                        Td { Text(it.initialRelation.toString()) }
+                        Td { Text(it.relationUpCount.toString()) }
+                        Td { Text("${(it.hintRate * 1000).roundToInt() / 10.0}%") }
+                    }
+                }
+            }
+            Div { Small { Text("得意練習配置率とヒント発生率は推定値、必要絆上げ回数はイベントとヒント除く") } }
+        }
+        H3 { Text("獲得可能スキルヒント（イベント除く）") }
+        Div {
+            model.availableHint.forEach {
+                Div { Text("${it.key} ： ${it.value.joinToString(", ")}") }
             }
         }
         H2 { Text("シミュレーション") }

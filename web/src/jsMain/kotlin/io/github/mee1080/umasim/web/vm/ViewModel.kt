@@ -51,6 +51,7 @@ class ViewModel(store: Store = Store) {
     fun updateChara(id: Int) {
         selectedChara = id
         calculate()
+        calculateBonus()
     }
 
     private val supportMap = store.supportList.groupBy { it.id }
@@ -110,6 +111,8 @@ class ViewModel(store: Store = Store) {
 
         val card get() = supportMap[selectedSupport]?.firstOrNull { it.talent == supportTalent }
 
+        val name get() = card?.name ?: "未選択"
+
         val friendTraining get() = friend && selectedTrainingType == card?.type?.ordinal
 
         fun updateSupport(id: Int) {
@@ -133,6 +136,27 @@ class ViewModel(store: Store = Store) {
             this.friend = friend
             calculate()
         }
+
+        val isSelected get() = card != null
+
+        val initialRelation get() = card?.initialRelation ?: 0
+
+        val relationUpCount
+            get() = if (card?.type == StatusType.FRIEND) {
+                (60 - initialRelation - 1) / 4 + 1
+            } else {
+                (81 - initialRelation - 1) / 7 + 1
+            }
+
+        val specialtyRate
+            get() = card?.let { card ->
+                calcRate(card.type, *Calculator.calcCardPositionSelection(card))
+            } ?: 0.0
+
+        val hintRate
+            get() = card?.let { card ->
+                if (card.type == StatusType.FRIEND) 0.0 else card.hintFrequency
+            } ?: 0.0
     }
 
     val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
@@ -203,18 +227,29 @@ class ViewModel(store: Store = Store) {
     var initialStatus by mutableStateOf(Status())
         private set
 
+    var availableHint by mutableStateOf(mapOf<String, List<String>>())
+
     private fun calculateBonus() {
         var race = 0
         var fan = 0
         var status = Status()
+        val hintMap = mutableMapOf<String, MutableList<String>>()
+        chara.initialStatus.skillHint.keys.forEach { skill ->
+            hintMap[skill] = mutableListOf("育成キャラ")
+        }
         supportSelectionList.mapNotNull { it.card }.forEach { card ->
             race += card.race
             fan += card.fan
             status += card.initialStatus
+            val skillCount = card.skills.size
+            card.skills.forEach { skill ->
+                hintMap.getOrPut(skill) { mutableListOf() }.add("${card.name} 1/$skillCount")
+            }
         }
         totalRaceBonus = race
         totalFanBonus = fan
         initialStatus = status
+        availableHint = hintMap
     }
 
     private val trainingList = store.trainingList
