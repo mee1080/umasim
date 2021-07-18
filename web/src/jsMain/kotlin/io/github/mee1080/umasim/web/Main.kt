@@ -47,7 +47,7 @@ fun main() {
         Div({ style { property("padding-bottom", "16px") } }) {
             console.log("render")
             TextInput {
-                value(model.supportFilter)
+//                value(model.supportFilter)
                 placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
                 size(60)
                 onInput { model.updateSupportFilter(it.value) }
@@ -58,7 +58,7 @@ fun main() {
                 }
                 onClick { model.applyFilter() }
             }) { Text("フィルタ適用") }
-            Button({ onClick { model.clearFilter() } }) { Text("クリア") }
+//            Button({ onClick { model.clearFilter() } }) { Text("クリア") }
         }
         Div {
             (0..1).forEach { row ->
