@@ -37,6 +37,15 @@ object AppStyle : StyleSheet() {
         }
     }
 
+    val supportCardArea by style {
+        display(DisplayStyle.Flex)
+
+        self + " div" style {
+            flexGrow(1)
+            property("flex-basis", "30%")
+        }
+    }
+
     val supportCard by style {
         position(Position.Relative)
         self + " .after" style {
