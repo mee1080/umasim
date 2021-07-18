@@ -26,12 +26,13 @@ import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.InputType
-import org.jetbrains.compose.web.attributes.colspan
-import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.attributes.*
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.padding
+import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
-import org.w3c.dom.HTMLInputElement
 import kotlin.math.roundToInt
 
 fun main() {
@@ -43,9 +44,25 @@ fun main() {
         H2 { Text("育成キャラ") }
         LabeledSelect("", model.displayCharaList, model.selectedChara, model::updateChara)
         H2 { Text("サポートカード") }
+        Div({ style { property("padding-bottom", "16px") } }) {
+            console.log("render")
+            TextInput {
+                value(model.supportFilter)
+                placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
+                size(60)
+                onInput { model.updateSupportFilter(it.value) }
+            }
+            Button({
+                if (model.supportFilterApplied) {
+                    disabled()
+                }
+                onClick { model.applyFilter() }
+            }) { Text("フィルタ適用") }
+            Button({ onClick { model.clearFilter() } }) { Text("クリア") }
+        }
         Div {
             (0..1).forEach { row ->
-                Div({ style { display(DisplayStyle.Flex) } }) {
+                Div({ classes(AppStyle.supportCardArea) }) {
                     model.supportSelectionList.slice((row * 3)..(row * 3 + 2)).forEachIndexed { offset, item ->
                         val index = row * 3 + offset
                         Div({
@@ -65,13 +82,11 @@ fun main() {
                         }) {
                             GroupedSelect(
                                 "",
-                                model.displaySupportList,
+                                item.supportList,
                                 item.selectedSupport,
                                 {
                                     classes(AppStyle.supportCard)
-                                    console.log("${item.friend} ${item.card?.type} ${model.selectedTrainingType}")
                                     if (item.friendTraining) {
-                                        console.log("friend")
                                         classes(AppStyle.friendSupportCard)
                                     }
                                 },
@@ -191,8 +206,9 @@ fun main() {
             LabeledSelect("モード", model.displaySimulationModeList, model.simulationMode, model::updateSimulationMode)
             Div({ style { padding(8.px) } }) {
                 Text("ターン数")
-                Input(InputType.Number, model.simulationTurn.toString()) {
-                    onChange { model.updateSimulationTurn(it.target<HTMLInputElement>().value.toInt()) }
+                NumberInput {
+                    value(model.simulationTurn.toString())
+                    onInput { model.updateSimulationTurn(it.value?.toInt() ?: 0) }
                 }
             }
             Div({ style { padding(8.px) } }) {

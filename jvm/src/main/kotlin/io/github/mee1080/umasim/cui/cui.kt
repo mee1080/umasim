@@ -40,6 +40,12 @@ fun speed(supportTalent: Int, count: Int) = arrayOf(
     "[はやい！うまい！はやい！]サクラバクシンオー" to supportTalent,
 ).take(count).toTypedArray()
 
+fun speed2(supportTalent: Int, count: Int) = arrayOf(
+    "[迫る熱に押されて]キタサンブラック" to supportTalent,
+    "[花嫁たるもの！！]カワカミプリンセス" to supportTalent,
+    "[夢は掲げるものなのだっ！]トウカイテイオー" to supportTalent,
+).take(count).toTypedArray()
+
 fun stamina(supportTalent: Int, count: Int) = arrayOf(
     "[一粒の安らぎ]スーパークリーク" to supportTalent,
     "[その背中を越えて]サトノダイヤモンド" to supportTalent,
@@ -58,6 +64,14 @@ fun power2(supportTalent: Int, count: Int) = arrayOf(
     "[テッペンに立て！]ヒシアマゾン" to supportTalent,
 ).take(count).toTypedArray()
 
+fun guts(supportTalent: Int, count: Int) = arrayOf(
+    "[うらら～な休日]ハルウララ" to supportTalent,
+    "[飛び出せ、キラメケ]アイネスフウジン" to supportTalent,
+    "[バカと笑え]メジロパーマー" to supportTalent,
+    "[日本一のステージを]スペシャルウィーク" to supportTalent,
+    "[Just keep going.]マチカネタンホイザ" to supportTalent,
+).take(count).toTypedArray()
+
 fun wisdom(supportTalent: Int, count: Int) = arrayOf(
     "[感謝は指先まで込めて]ファインモーション" to supportTalent,
     "[明日は全国的に赤でしょう♪]セイウンスカイ" to supportTalent,
@@ -72,6 +86,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
+    // 短距離スピパワ
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5), Store.getSupportByName(
 //            *(speed(4, 3)),
@@ -86,6 +101,7 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
+    // 短距離スピ賢
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5),
 //        Store.getSupportByName(
@@ -104,6 +120,7 @@ fun openCui(args: Array<String>) {
 //        ),
 //        testCount = 1000, turn = 60,
 //    )
+    // 長距離スピスタ
 //    optimizeAI(
 //        Store.getChara("ゴールドシップ", 5, 5), Store.getSupportByName(
 //            *(speed(4, 3)),
@@ -118,6 +135,7 @@ fun openCui(args: Array<String>) {
 //            hp = 0.4..0.4,
 //        ), testCount = 1000
 //    )
+    // マイルパワ賢
 //    optimizeAI(
 //        Store.getChara("スマートファルコン", 5, 5), Store.getSupportByName(
 //            *(power2(4, 3)),
@@ -131,16 +149,40 @@ fun openCui(args: Array<String>) {
 //            hp = 0.5..0.7,
 //        ), turn = 60, testCount = 500
 //    )
-//    doShortSimulation(StatusType.SPEED)
+    // 短距離根性
+//    optimizeAI(
+//        Store.getChara("ハルウララ", 5, 5), Store.getSupportByName(
+//            *(speed2(4, 2)),
+//            *(guts(4, 4)),
+//        ), options = generateOptions(
+//            base = ActionSelectorImpl.Option(calcRelationScore = true),
+//            step = 0.1,
+//            speed = 1.0..1.2,
+//            stamina = 0.8..0.9,
+//            power = 0.8..1.0,
+//            guts = 0.8..1.0,
+//            hp = 0.6..0.7,
+//        ), testCount = 1000
+//    )
     doShortSimulation(
-        StatusType.WISDOM, 0..4, 4, true, 1000, ActionSelectorImpl.Option(
-            speedFactor = 0.6,
-            staminaFactor = 1.2,
-            powerFactor = 0.9,
-            wisdomFactor = 0.7,
-            hpFactor = 0.6,
+        StatusType.GUTS, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+            speedFactor = 1.2,
+            staminaFactor = 0.8,
+            powerFactor = 0.8,
+            gutsFactor = 0.9,
+            hpFactor = 0.7,
         )
     )
+//    doShortSimulation(StatusType.SPEED)
+//    doShortSimulation(
+//        StatusType.WISDOM, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
+//            speedFactor = 0.6,
+//            staminaFactor = 1.2,
+//            powerFactor = 0.9,
+//            wisdomFactor = 0.7,
+//            hpFactor = 0.6,
+//        )
+//    )
 //    doShortSimulation(
 //        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85,
@@ -266,6 +308,8 @@ fun optimizeAI(
     testCount: Int = 100,
     vararg options: ActionSelectorImpl.Option
 ) {
+    println(chara)
+    support.forEach { println(it.name) }
     runBlocking {
         val context = newFixedThreadPoolContext(THREAD_COUNT, "Simulator")
         options.mapIndexed { index, option ->
@@ -322,6 +366,14 @@ fun doShortSimulation(
             *(speed(supportTalent, 3)),
             *(power(supportTalent, 1)),
             *(friend(supportTalent, 1)),
+        )
+        StatusType.GUTS -> if (needsWisdom) Store.getSupportByName(
+            *(speed2(supportTalent, 2)),
+            *(guts(supportTalent, 2)),
+            *(wisdom(supportTalent, 1)),
+        ) else Store.getSupportByName(
+            *(speed2(supportTalent, 2)),
+            *(guts(supportTalent, 3)),
         )
         StatusType.WISDOM -> if (needsWisdom) Store.getSupportByName(
             *(speed(supportTalent, 3)),

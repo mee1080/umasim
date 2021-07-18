@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "0.5.0-build226"
+    id("org.jetbrains.compose") version "0.5.0-build245"
 }
 
 group = "io.github.mee1080.umasim"

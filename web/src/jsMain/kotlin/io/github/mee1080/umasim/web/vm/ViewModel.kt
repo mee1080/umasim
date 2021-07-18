@@ -60,13 +60,48 @@ class ViewModel(store: Store = Store) {
         listOf(Triple(notSelected.first, notSelected.second, notSelected.second)) + supportMap.entries
             .map { it.key to it.value[0] }
             .sortedBy { it.second.type.ordinal * 10000000 - it.second.rarity * 1000000 + it.first }
-            .map { (id, card) ->
-                Triple(
-                    id,
-                    getRarityText(card) + " " + card.name,
-                    card.type.displayName
-                )
+            .map { (_, card) -> getDisplayItem(card) }
+
+    private fun getDisplayItem(card: SupportCard) = Triple(
+        card.id,
+        getRarityText(card) + " " + card.name,
+        card.type.displayName
+    )
+
+    var supportFilter by mutableStateOf("")
+        private set
+
+    var appliedSupportFilter by mutableStateOf("")
+        private set
+
+    fun updateSupportFilter(value: String) {
+        supportFilter = value
+    }
+
+    val supportFilterApplied get() = supportFilter == appliedSupportFilter
+
+    var filteredSupportList by mutableStateOf(displaySupportList)
+
+    fun applyFilter() {
+        console.log("applyFilter $appliedSupportFilter $supportFilter")
+        if (supportFilterApplied) return
+        appliedSupportFilter = supportFilter
+        filteredSupportList = if (supportFilter.isEmpty()) displaySupportList else {
+            displaySupportList.filter { (id, name, type) ->
+                val card = supportMap[id]?.first()
+                if (card == null) true else {
+                    supportFilter.split("[　%s]".toRegex()).all { filter ->
+                        name.contains(filter) || type.contains(filter) || card.skills.any { it.contains(filter) }
+                    }
+                }
             }
+        }
+    }
+
+    fun clearFilter() {
+        supportFilter = ""
+        applyFilter()
+    }
 
     private fun getRarityText(card: SupportCard) = when (card.rarity) {
         1 -> "R"
@@ -96,6 +131,18 @@ class ViewModel(store: Store = Store) {
                 }
             }
         }
+
+        val supportList: List<Triple<Int, String, String>>
+            get() {
+                return if (appliedSupportFilter.isEmpty()) filteredSupportList else {
+                    val selectedCard = card
+                    if (selectedCard != null && filteredSupportList.firstOrNull { it.first == selectedSupport } == null) {
+                        listOf(getDisplayItem(selectedCard), *filteredSupportList.toTypedArray())
+                    } else {
+                        filteredSupportList
+                    }
+                }
+            }
 
         var selectedSupport by mutableStateOf(notSelected.first)
             private set
