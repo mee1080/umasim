@@ -142,6 +142,45 @@ fun main() {
                 }
             }
         }
+        if (model.trainingImpact.isNotEmpty()) {
+            H3 { Text("サポカ影響度") }
+            Div {
+                Table({ classes(AppStyle.table) }) {
+                    Tr {
+                        Th({
+                            style {
+                                property("border", "none")
+                                property("width", "unset")
+                            }
+                        }) { }
+                        Th { Text("スピード") }
+                        Th { Text("スタミナ") }
+                        Th { Text("パワー") }
+                        Th { Text("根性") }
+                        Th { Text("賢さ") }
+                        Th { Text("スキルPt") }
+                        Th { Text("体力") }
+                    }
+                    model.trainingImpact.forEach { (name, status) ->
+                        Tr {
+                            Td({
+                                style {
+                                    property("width", "unset")
+                                }
+                            }) { Text(name) }
+                            Td { Text(status.speed.toString()) }
+                            Td { Text(status.stamina.toString()) }
+                            Td { Text(status.power.toString()) }
+                            Td { Text(status.guts.toString()) }
+                            Td { Text(status.wisdom.toString()) }
+                            Td { Text(status.skillPt.toString()) }
+                            Td { Text(status.hp.toString()) }
+                        }
+                    }
+                }
+            }
+            Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+        }
         H2 { Text("編成情報") }
         H3 { Text("レースボーナス合計：${model.totalRaceBonus}") }
         H3 { Text("ファンボーナス合計：${model.totalFanBonus}") }
@@ -193,7 +232,7 @@ fun main() {
                     }
                 }
             }
-            Div { Small { Text("得意練習配置率とヒント発生率は推定値、必要絆上げ回数はイベントとヒント除く") } }
+            Div { Text("※得意練習配置率とヒント発生率は推定値、必要絆上げ回数はイベントとヒント除く") }
         }
         H3 { Text("獲得可能スキルヒント（イベント除く）") }
         Div {

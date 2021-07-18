@@ -243,6 +243,8 @@ class ViewModel(store: Store = Store) {
     var trainingResult by mutableStateOf(Status())
         private set
 
+    var trainingImpact by mutableStateOf(emptyList<Pair<String, Status>>())
+
     private fun calculate() {
         val supportList = mutableListOf<Support>()
         supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
@@ -254,7 +256,6 @@ class ViewModel(store: Store = Store) {
             }
         }
         val trainingType = StatusType.values()[selectedTrainingType]
-        trainingInfo[trainingType]
         trainingResult = Calculator.calcTrainingSuccessStatus(
             chara,
             trainingInfo[trainingType]!!,
@@ -262,6 +263,15 @@ class ViewModel(store: Store = Store) {
             motivation,
             supportList
         )
+        trainingImpact = supportList.map { target ->
+            target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
+                chara,
+                trainingInfo[trainingType]!!,
+                trainingLevel,
+                motivation,
+                supportList.filter { it.index != target.index }
+            )
+        }
         localStorage.setItem(KEY_SUPPORT_LIST, "1," + supportSelectionList.joinToString(",") { it.toSaveString() })
     }
 
