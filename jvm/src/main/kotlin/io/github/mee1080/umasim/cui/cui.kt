@@ -75,7 +75,7 @@ fun guts(supportTalent: Int, count: Int) = arrayOf(
 fun wisdom(supportTalent: Int, count: Int) = arrayOf(
     "[感謝は指先まで込めて]ファインモーション" to supportTalent,
     "[明日は全国的に赤でしょう♪]セイウンスカイ" to supportTalent,
-    "[目線は気にせず]メジロドーベル" to supportTalent,
+    "[その心に吹きすさぶ]メジロアルダン" to supportTalent,
 ).take(count).toTypedArray()
 
 fun friend(supportTalent: Int, count: Int) = arrayOf(
@@ -86,6 +86,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
+
     // 短距離スピパワ
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5), Store.getSupportByName(
@@ -101,6 +102,15 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
+//    doShortSimulation(
+//        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+//            speedFactor = 0.8,
+//            staminaFactor = 0.9,
+//            powerFactor = 0.9,
+//            hpFactor = 0.6,
+//        )
+//    )
+
     // 短距離スピ賢
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5),
@@ -135,6 +145,7 @@ fun openCui(args: Array<String>) {
 //            hp = 0.4..0.4,
 //        ), testCount = 1000
 //    )
+
     // マイルパワ賢
 //    optimizeAI(
 //        Store.getChara("スマートファルコン", 5, 5), Store.getSupportByName(
@@ -149,6 +160,8 @@ fun openCui(args: Array<String>) {
 //            hp = 0.5..0.7,
 //        ), turn = 60, testCount = 500
 //    )
+    doPowerWisdomSimulation(StatusType.POWER, 0..4, 4, 100000)
+
     // 短距離根性
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5), Store.getSupportByName(
@@ -164,15 +177,15 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
-    doShortSimulation(
-        StatusType.GUTS, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-            speedFactor = 1.2,
-            staminaFactor = 0.8,
-            powerFactor = 0.8,
-            gutsFactor = 0.9,
-            hpFactor = 0.7,
-        )
-    )
+//    doShortSimulation(
+//        StatusType.GUTS, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+//            speedFactor = 1.2,
+//            staminaFactor = 0.8,
+//            powerFactor = 0.8,
+//            gutsFactor = 0.9,
+//            hpFactor = 0.7,
+//        )
+//    )
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(
 //        StatusType.WISDOM, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
@@ -187,14 +200,6 @@ fun openCui(args: Array<String>) {
 //        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85,
 //            wisdomFactor = 0.8,
-//        )
-//    )
-//    doShortSimulation(
-//        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.8,
-//            staminaFactor = 0.9,
-//            powerFactor = 0.9,
-//            hpFactor = 0.6,
 //        )
 //    )
 //    doShortSimulation(
@@ -213,7 +218,6 @@ fun openCui(args: Array<String>) {
 //            hpFactor = 0.4,
 //        )
 //    )
-//    doPowerWisdomSimulation(StatusType.WISDOM, 0..4, 4, 100000)
 //    doCharmSimulation()
 //    doFailureRateSimulation()
 }
