@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation
 
-import io.github.mee1080.umasim.data.Chara
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.data.*
 import kotlin.math.min
 
 object Calculator {
@@ -100,5 +97,64 @@ object Calculator {
             StatusType.WISDOM to if (card.type == StatusType.WISDOM) mainRate else otherRate,
             StatusType.NONE to noneRate,
         )
+    }
+
+    fun calcExpectedTrainingStatus(
+        chara: Chara,
+        training: TrainingInfo,
+        trainingLevel: Int?,
+        motivation: Int,
+        support: List<Support>,
+    ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
+        var result = ExpectedStatus()
+        val detail = mutableListOf<Pair<Double, Status>>()
+        if (support.isEmpty()) {
+            result = addExpectedStatus(
+                result,
+                detail,
+                1.0,
+                calcTrainingSuccessStatus(chara, training, trainingLevel, motivation, support)
+            )
+        } else {
+            val joinRate = support.map {
+                calcRate(training.type, *calcCardPositionSelection(it.card))
+            }
+            val allJoinRate = if (support.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
+            var patterns = mutableListOf(arrayOf(true), arrayOf(false))
+            repeat(support.size - 1) {
+                val newPattern = mutableListOf<Array<Boolean>>()
+                patterns.forEach {
+                    newPattern.add(arrayOf(*it, true))
+                    newPattern.add(arrayOf(*it, false))
+                }
+                patterns = newPattern
+            }
+            patterns.forEach { pattern ->
+                if (pattern.count { it } < 6) {
+                    var rate = pattern
+                        .mapIndexed { index, join -> if (join) joinRate[index] else 1.0 - joinRate[index] }
+                        .fold(1.0) { acc, d -> acc * d }
+                    rate += rate * allJoinRate
+                    val joinSupport = support.filterIndexed { index, _ -> pattern[index] }
+                    result = addExpectedStatus(
+                        result,
+                        detail,
+                        rate,
+                        calcTrainingSuccessStatus(chara, training, trainingLevel, motivation, joinSupport)
+                    )
+                }
+            }
+        }
+        return result to detail
+    }
+
+    private fun addExpectedStatus(
+        result: ExpectedStatus,
+        detail: MutableList<Pair<Double, Status>>,
+        rate: Double,
+        status: Status
+    ): ExpectedStatus {
+        detail.add(rate to status)
+        return result.add(rate, status)
     }
 }

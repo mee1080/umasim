@@ -236,14 +236,15 @@ class ViewModel(store: Store = Store) {
         calculate()
     }
 
-    private val trainingInfo = store.trainingList
-        .groupBy { it.type }
-        .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
+    private val trainingInfo = store.trainingInfo
 
     var trainingResult by mutableStateOf(Status())
         private set
 
     var trainingImpact by mutableStateOf(emptyList<Pair<String, Status>>())
+        private set
+
+    var expectedResult by mutableStateOf(ExpectedStatus())
 
     private fun calculate() {
         val supportList = mutableListOf<Support>()
@@ -272,6 +273,18 @@ class ViewModel(store: Store = Store) {
                 supportList.filter { it.index != target.index }
             )
         }
+        expectedResult = Calculator.calcExpectedTrainingStatus(
+            chara,
+            trainingInfo[trainingType]!!,
+            trainingLevel,
+            motivation,
+            supportSelectionList
+                .mapIndexedNotNull { index, selection ->
+                    selection.card?.let {
+                        Support(index, it).apply { friendTrainingEnabled = selection.friend }
+                    }
+                }
+        ).first
         localStorage.setItem(KEY_SUPPORT_LIST, "1," + supportSelectionList.joinToString(",") { it.toSaveString() })
     }
 

@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.simulation.TrainingInfo
+
 object Store {
 
     private lateinit var charaSource: String
@@ -58,4 +60,11 @@ object Store {
 
     fun getChara(id: Int, rarity: Int, rank: Int) = charaList
         .first { it.id == id && it.rarity == rarity && it.rank == rank }
+
+    val trainingInfo
+        get() = trainingList
+            .groupBy { it.type }
+            .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
+
+    fun getTraining(type: StatusType) = trainingInfo[type]!!
 }

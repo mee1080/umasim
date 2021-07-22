@@ -86,6 +86,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
+    calcExpected()
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -103,7 +104,7 @@ fun openCui(args: Array<String>) {
 //        ), testCount = 1000
 //    )
 //    doShortSimulation(
-//        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+//        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.8,
 //            staminaFactor = 0.9,
 //            powerFactor = 0.9,
@@ -160,7 +161,7 @@ fun openCui(args: Array<String>) {
 //            hp = 0.5..0.7,
 //        ), turn = 60, testCount = 500
 //    )
-    doPowerWisdomSimulation(StatusType.POWER, 0..4, 4, 100000)
+//    doPowerWisdomSimulation(StatusType.POWER, 0..4, 4, 100000)
 
     // 短距離根性
 //    optimizeAI(
@@ -620,4 +621,22 @@ fun doFailureRateSimulation() {
             println("[迫る熱に押されて]キタサンブラック,$hpFactor,${eventTurn},${Evaluator(summary).toSummaryString()}")
         }
     }
+}
+
+fun calcExpected() {
+    val chara = Store.getChara("ハルウララ", 5, 5)
+    val support = Store.getSupportByName(
+        "[迫る熱に押されて]キタサンブラック" to 4,
+        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
+        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
+        "[『愛してもらうんだぞ』]オグリキャップ" to 4,
+        "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
+        "[ようこそ、トレセン学園へ！]駿川たづな" to 4,
+    ).mapIndexed { index, supportCard -> Support(index, supportCard).apply { friendTrainingEnabled = true } }
+    println(chara)
+    support.forEach { println(it) }
+    val result = Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(StatusType.SPEED), 5, 2, support)
+    println(result.first)
+    result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
+    println(result.second.sumOf { it.first })
 }

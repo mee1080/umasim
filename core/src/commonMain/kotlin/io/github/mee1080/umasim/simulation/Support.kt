@@ -40,7 +40,6 @@ data class Support(val index: Int, val card: SupportCard) {
         private set
 
     var friendTrainingEnabled = false
-        private set
 
     fun checkHintFriend(relation: Int) {
         hint = checkHint()

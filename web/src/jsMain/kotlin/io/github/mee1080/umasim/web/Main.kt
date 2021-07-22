@@ -130,6 +130,7 @@ fun main() {
                     Th { Text("賢さ") }
                     Th { Text("スキルPt") }
                     Th { Text("体力") }
+                    Th { Text("5ステ合計") }
                 }
                 Tr {
                     Td { Text(model.trainingResult.speed.toString()) }
@@ -139,6 +140,7 @@ fun main() {
                     Td { Text(model.trainingResult.wisdom.toString()) }
                     Td { Text(model.trainingResult.skillPt.toString()) }
                     Td { Text(model.trainingResult.hp.toString()) }
+                    Td { Text(model.trainingResult.statusTotal.toString()) }
                 }
             }
         }
@@ -160,6 +162,7 @@ fun main() {
                         Th { Text("賢さ") }
                         Th { Text("スキルPt") }
                         Th { Text("体力") }
+                        Th { Text("5ステ合計") }
                     }
                     model.trainingImpact.forEach { (name, status) ->
                         Tr {
@@ -175,11 +178,38 @@ fun main() {
                             Td { Text(status.wisdom.toString()) }
                             Td { Text(status.skillPt.toString()) }
                             Td { Text(status.hp.toString()) }
+                            Td { Text(status.statusTotal.toString()) }
                         }
                     }
                 }
             }
             Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+        }
+        H3 { Text("期待値（練習配置率を考慮）") }
+        Div {
+            Table({ classes(AppStyle.table) }) {
+                Tr {
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
+                    Th { Text("体力") }
+                    Th { Text("5ステ合計") }
+                }
+                Tr {
+                    Td { Text(((model.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
+                    Td { Text(((model.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+                }
+            }
+            Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
         }
         H2 { Text("編成情報") }
         H3 { Text("レースボーナス合計：${model.totalRaceBonus}") }
