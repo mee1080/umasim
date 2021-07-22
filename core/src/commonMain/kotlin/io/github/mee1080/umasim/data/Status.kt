@@ -35,6 +35,8 @@ data class Status(
     val supportRelation: Map<Int, Int> = emptyMap(),
 ) {
 
+    val statusTotal get() = speed + stamina + power + guts + wisdom
+
     operator fun plus(other: Status) = Status(
         speed + other.speed,
         stamina + other.stamina,
