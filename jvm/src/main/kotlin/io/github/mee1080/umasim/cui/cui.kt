@@ -18,7 +18,7 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.ActionSelectorImpl
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
@@ -95,7 +95,7 @@ fun openCui(args: Array<String>) {
 //            *(power(4, 2)),
 //            *(friend(4, 1)),
 //        ), options = generateOptions(
-//            base = ActionSelectorImpl.Option(),
+//            base = FactorBasedActionSelector.Option(),
 //            step = 0.05,
 //            speed = 0.9..1.0,
 //            stamina = 0.8..1.0,
@@ -104,22 +104,14 @@ fun openCui(args: Array<String>) {
 //        ), testCount = 1000
 //    )
 //    doShortSimulation(
-//        StatusType.SPEED, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.8,
-//            staminaFactor = 0.9,
-//            powerFactor = 0.9,
-//            hpFactor = 0.6,
-//        )
+//        StatusType.SPEED, 0..4, 4, false,
+//        100000, FactorBasedActionSelector.speedPower
 //    )
 //    (1..31 step 10).forEach { charm ->
 //        println("愛嬌ターン $charm")
 //        doShortSimulation(
-//            StatusType.SPEED, 4..4, 4, false, 100000, ActionSelectorImpl.Option(
-//                speedFactor = 0.8,
-//                staminaFactor = 0.9,
-//                powerFactor = 0.9,
-//                hpFactor = 0.6,
-//            )
+//            StatusType.SPEED, 4..4, 4, false,
+//            100000, FactorBasedActionSelector.speedPower
 //        ) {
 //            if (it.turn == charm + 1) {
 //                it.condition.add("愛嬌○")
@@ -146,24 +138,14 @@ fun openCui(args: Array<String>) {
 //        testCount = 1000, turn = 60,
 //    )
 //    doShortSimulation(
-//        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.6,
-//            staminaFactor = 1.2,
-//            powerFactor = 0.9,
-//            wisdomFactor = 0.7,
-//            hpFactor = 0.6,
-//        )
+//        StatusType.SPEED, 0..4, 4, true,
+//        100000, FactorBasedActionSelector.speedWisdom
 //    )
 //    (1..31 step 10).forEach { charm ->
 //        println("愛嬌ターン $charm")
 //        doShortSimulation(
-//            StatusType.SPEED, 4..4, 4, true, 100000, ActionSelectorImpl.Option(
-//                speedFactor = 0.6,
-//                staminaFactor = 1.2,
-//                powerFactor = 0.9,
-//                wisdomFactor = 0.7,
-//                hpFactor = 0.6,
-//            )
+//            StatusType.SPEED, 4..4, 4, true,
+//            100000, FactorBasedActionSelector.speedWisdom
 //        ) {
 //            if (it.turn == charm + 1) {
 //                it.condition.add("愛嬌○")
@@ -185,15 +167,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.8,
 //        ), testCount = 1000
 //    )
-    doLongSimulation(
-        StatusType.STAMINA, 0..4, 4, 100000, option = ActionSelectorImpl.Option(
-            speedFactor = 1.2,
-            staminaFactor = 1.1,
-            powerFactor = 0.5,
-            gutsFactor = 0.6,
-            hpFactor = 0.7,
-        )
-    )
+//    doLongSimulation(
+//        StatusType.STAMINA, 0..4, 4,
+//        100000, option = FactorBasedActionSelector.speedStamina
+//    )
 
     // マイルパワ賢
 //    optimizeAI(
@@ -209,7 +186,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.5..0.7,
 //        ), turn = 60, testCount = 500
 //    )
-//    doPowerWisdomSimulation(StatusType.POWER, 0..4, 4, 100000)
+//    doPowerWisdomSimulation(
+//        StatusType.POWER, 0..4, 4,
+//        100000, FactorBasedActionSelector.powerWisdom
+//    )
 
     // 短距離根性
 //    optimizeAI(
@@ -217,7 +197,7 @@ fun openCui(args: Array<String>) {
 //            *(speed2(4, 2)),
 //            *(guts(4, 4)),
 //        ), options = generateOptions(
-//            base = ActionSelectorImpl.Option(),
+//            base = FactorBasedActionSelector.Option(),
 //            step = 0.1,
 //            speed = 1.0..1.2,
 //            stamina = 0.8..0.9,
@@ -226,18 +206,14 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
-//    doShortSimulation(
-//        StatusType.GUTS, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 1.2,
-//            staminaFactor = 0.8,
-//            powerFactor = 0.8,
-//            gutsFactor = 0.9,
-//            hpFactor = 0.7,
-//        )
-//    )
+    doShortSimulation(
+        StatusType.GUTS, 0..4, 4, false,
+        100, FactorBasedActionSelector.speedGuts
+    )
+
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(
-//        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
+//        StatusType.POWER, 0..4, 4, false, 100000, FactorBasedActionSelector.Option(
 //            speedFactor = 0.85
 //        )
 //    )
@@ -258,8 +234,8 @@ fun singleSimulation() {
     )
     println(chara)
     println(support)
-    val selector = ActionSelectorImpl(
-        ActionSelectorImpl.Option(
+    val selector = FactorBasedActionSelector(
+        FactorBasedActionSelector.Option(
             speedFactor = 0.9,
             staminaFactor = 0.8,
             wisdomFactor = 0.5,
@@ -277,7 +253,7 @@ fun singleSimulation() {
 }
 
 fun generateOptions(
-    base: ActionSelectorImpl.Option = ActionSelectorImpl.Option(),
+    base: FactorBasedActionSelector.Option = FactorBasedActionSelector.Option(),
     step: Double = 0.1,
     speed: ClosedRange<Double> = 1.0..1.0,
     stamina: ClosedRange<Double> = 1.0..1.0,
@@ -287,8 +263,8 @@ fun generateOptions(
     skillPt: ClosedRange<Double> = 0.4..0.4,
     hp: ClosedRange<Double> = 0.5..0.5,
     motivation: ClosedRange<Double> = 15.0..15.0,
-): Array<ActionSelectorImpl.Option> {
-    val list = mutableListOf<ActionSelectorImpl.Option>()
+): Array<FactorBasedActionSelector.Option> {
+    val list = mutableListOf<FactorBasedActionSelector.Option>()
     var option = base
     val conv = { v: Double -> (v * 100).roundToInt() / 100.0 }
     (speed step step).map { sp ->
@@ -333,7 +309,7 @@ fun optimizeAI(
     support: List<SupportCard>,
     turn: Int = 55,
     testCount: Int = 100,
-    vararg options: ActionSelectorImpl.Option
+    vararg options: FactorBasedActionSelector.Option
 ) {
     println(chara)
     support.forEach { println(it.name) }
@@ -350,7 +326,7 @@ fun optimizeAI(
                         Runner.simulate(
                             turn,
                             simulator,
-                            ActionSelectorImpl(option)
+                            FactorBasedActionSelector(option)
                         )
                     )
                 }
@@ -369,7 +345,7 @@ fun doShortSimulation(
     supportTalent: Int = 4,
     needsWisdom: Boolean = false,
     testCount: Int = 100000,
-    option: ActionSelectorImpl.Option = ActionSelectorImpl.Option(),
+    option: FactorBasedActionSelector.Option = FactorBasedActionSelector.Option(),
     turnEvent: ((simulator: Simulator) -> Unit)? = null,
 ) {
     val chara = Store.getChara("ハルウララ", 5, 5)
@@ -428,7 +404,7 @@ fun doShortSimulation(
         target,
         turn,
         testCount,
-        { ActionSelectorImpl(option) },
+        { FactorBasedActionSelector(option) },
         turnEvent,
     )
 }
@@ -439,7 +415,7 @@ fun doLongSimulation(
     talent: IntRange = 4..4,
     supportTalent: Int = 4,
     testCount: Int = 100000,
-    option: ActionSelectorImpl.Option = ActionSelectorImpl.Option(
+    option: FactorBasedActionSelector.Option = FactorBasedActionSelector.Option(
         speedFactor = 1.2,
         staminaFactor = 1.3,
         powerFactor = 0.6,
@@ -467,7 +443,7 @@ fun doLongSimulation(
         talent.contains(it.talent) && it.rarity >= 2 && (it.type == targetStatus)
     }
     doSimulation(chara, defaultSupport, target, 55, testCount, {
-        ActionSelectorImpl(option)
+        FactorBasedActionSelector(option)
     })
 }
 
@@ -477,16 +453,7 @@ fun doPowerWisdomSimulation(
     talent: IntRange = 4..4,
     supportTalent: Int = 4,
     testCount: Int = 100000,
-    option: ActionSelectorImpl.Option = ActionSelectorImpl.Option(
-        speedFactor = 0.9,
-        staminaFactor = 1.1,
-        powerFactor = 1.2,
-        gutsFactor = 0.0,
-        wisdomFactor = 0.6,
-        skillPtFactor = 0.4,
-        hpFactor = 0.7,
-        motivationFactor = 15.0,
-    )
+    option: FactorBasedActionSelector.Option
 ) {
     val chara = Store.getChara("スマートファルコン", 5, 5)
     println(chara)
@@ -507,7 +474,7 @@ fun doPowerWisdomSimulation(
         talent.contains(it.talent) && it.rarity >= 2 && (it.type == targetStatus)
     }
     doSimulation(chara, defaultSupport, target, 60, testCount, {
-        ActionSelectorImpl(option)
+        FactorBasedActionSelector(option)
     })
 }
 
@@ -594,7 +561,7 @@ fun doCharmSimulation() {
                 val simulator = Simulator(chara, listOf(card, *support), Store.trainingList).apply {
                     status = status.copy(motivation = 2)
                 }
-                summary.add(Runner.simulate(55, simulator, ActionSelectorImpl()) { sim ->
+                summary.add(Runner.simulate(55, simulator, FactorBasedActionSelector()) { sim ->
                     if (sim.turn == charmTurn + 1) {
                         sim.condition.add("愛嬌○")
                         restRelation += sim.status.supportRelation.values.sumOf { max(0, 80 - it) }
@@ -632,8 +599,8 @@ fun doFailureRateSimulation() {
                 }
                 summary.add(
                     Runner.simulate(
-                        55, simulator, ActionSelectorImpl(
-                            ActionSelectorImpl.Option(hpFactor = hpFactor)
+                        55, simulator, FactorBasedActionSelector(
+                            FactorBasedActionSelector.Option(hpFactor = hpFactor)
                         )
                     ) { sim ->
                         if (sim.turn == eventTurn + 1) {

@@ -21,7 +21,7 @@ package io.github.mee1080.umasim.web.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.ai.ActionSelectorImpl
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
@@ -325,9 +325,11 @@ class ViewModel(store: Store = Store) {
     private val trainingList = store.trainingList
 
     private val simulationModeList = listOf(
-        "スピパワ" to { ActionSelectorImpl.speedPower() },
-        "スピスタ" to { ActionSelectorImpl.speedStamina() },
-        "パワ賢" to { ActionSelectorImpl.powerWisdom() },
+        "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
+        "スピ賢" to { FactorBasedActionSelector.speedWisdom.generateSelector() },
+        "スピスタ" to { FactorBasedActionSelector.speedStamina.generateSelector() },
+        "パワ賢" to { FactorBasedActionSelector.powerWisdom.generateSelector() },
+        "スピ根性" to { FactorBasedActionSelector.speedGuts.generateSelector() },
         "バクシン(スピード)" to { SimpleActionSelector(StatusType.SPEED) },
         "バクシン(スタミナ)" to { SimpleActionSelector(StatusType.STAMINA) },
         "バクシン(パワー)" to { SimpleActionSelector(StatusType.POWER) },
