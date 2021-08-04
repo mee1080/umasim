@@ -24,43 +24,51 @@ import io.github.mee1080.umasim.simulation.Action
 import io.github.mee1080.umasim.simulation.ActionSelector
 import io.github.mee1080.umasim.simulation.SimulationState
 
-class ActionSelectorImpl(private val option: Option = Option()) :
-    ActionSelector {
+class FactorBasedActionSelector(private val option: Option = Option()) : ActionSelector {
 
     companion object {
         private const val DEBUG = false
 
-        fun speedPower() = ActionSelectorImpl(
-            Option(
-                speedFactor = 0.8,
-                staminaFactor = 0.9,
-                powerFactor = 0.9,
-                hpFactor = 0.6,
-            )
+        val speedPower = Option(
+            speedFactor = 0.8,
+            staminaFactor = 0.9,
+            powerFactor = 0.9,
+            hpFactor = 0.6,
         )
 
-        fun speedStamina() = ActionSelectorImpl(
-            Option(
-                speedFactor = 0.85,
-                staminaFactor = 1.05,
-                powerFactor = 0.6,
-                gutsFactor = 0.4,
-                wisdomFactor = 0.0,
-                hpFactor = 0.6,
-            )
+        val speedWisdom = Option(
+            speedFactor = 0.6,
+            staminaFactor = 1.2,
+            powerFactor = 0.9,
+            wisdomFactor = 0.7,
+            hpFactor = 0.6,
         )
 
-        fun powerWisdom() = ActionSelectorImpl(
-            Option(
-                speedFactor = 0.9,
-                staminaFactor = 1.1,
-                powerFactor = 1.2,
-                gutsFactor = 0.0,
-                wisdomFactor = 0.6,
-                skillPtFactor = 0.4,
-                hpFactor = 0.7,
-                motivationFactor = 15.0,
-            )
+        val speedStamina = Option(
+            speedFactor = 1.2,
+            staminaFactor = 1.1,
+            powerFactor = 0.5,
+            gutsFactor = 0.6,
+            hpFactor = 0.7,
+        )
+
+        val powerWisdom = Option(
+            speedFactor = 0.9,
+            staminaFactor = 1.1,
+            powerFactor = 1.2,
+            gutsFactor = 0.0,
+            wisdomFactor = 0.6,
+            skillPtFactor = 0.4,
+            hpFactor = 0.7,
+            motivationFactor = 15.0,
+        )
+
+        val speedGuts = Option(
+            speedFactor = 1.2,
+            staminaFactor = 0.8,
+            powerFactor = 0.8,
+            gutsFactor = 0.9,
+            hpFactor = 0.7,
         )
     }
 
@@ -73,7 +81,9 @@ class ActionSelectorImpl(private val option: Option = Option()) :
         val skillPtFactor: Double = 0.4,
         val hpFactor: Double = 0.5,
         val motivationFactor: Double = 15.0,
-    )
+    ) {
+        fun generateSelector() = FactorBasedActionSelector(this)
+    }
 
     override fun select(state: SimulationState): Action {
         return state.selection.maxByOrNull { calcScore(state, it) } ?: state.selection.first()
