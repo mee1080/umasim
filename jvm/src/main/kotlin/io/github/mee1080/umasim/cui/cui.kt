@@ -86,7 +86,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
-    calcExpected()
+//    calcExpected()
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -95,7 +95,7 @@ fun openCui(args: Array<String>) {
 //            *(power(4, 2)),
 //            *(friend(4, 1)),
 //        ), options = generateOptions(
-//            base = ActionSelectorImpl.Option(calcRelationScore = true),
+//            base = ActionSelectorImpl.Option(),
 //            step = 0.05,
 //            speed = 0.9..1.0,
 //            stamina = 0.8..1.0,
@@ -111,6 +111,21 @@ fun openCui(args: Array<String>) {
 //            hpFactor = 0.6,
 //        )
 //    )
+//    (1..31 step 10).forEach { charm ->
+//        println("愛嬌ターン $charm")
+//        doShortSimulation(
+//            StatusType.SPEED, 4..4, 4, false, 100000, ActionSelectorImpl.Option(
+//                speedFactor = 0.8,
+//                staminaFactor = 0.9,
+//                powerFactor = 0.9,
+//                hpFactor = 0.6,
+//            )
+//        ) {
+//            if (it.turn == charm + 1) {
+//                it.condition.add("愛嬌○")
+//            }
+//        }
+//    }
 
     // 短距離スピ賢
 //    optimizeAI(
@@ -121,7 +136,6 @@ fun openCui(args: Array<String>) {
 //            *(friend(4, 1)),
 //        ),
 //        options = generateOptions(
-//            base = ActionSelectorImpl.Option(calcRelationScore = true),
 //            step = 0.1,
 //            speed = 0.5..0.7,
 //            stamina = 1.0..1.2,
@@ -131,21 +145,55 @@ fun openCui(args: Array<String>) {
 //        ),
 //        testCount = 1000, turn = 60,
 //    )
+//    doShortSimulation(
+//        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
+//            speedFactor = 0.6,
+//            staminaFactor = 1.2,
+//            powerFactor = 0.9,
+//            wisdomFactor = 0.7,
+//            hpFactor = 0.6,
+//        )
+//    )
+//    (1..31 step 10).forEach { charm ->
+//        println("愛嬌ターン $charm")
+//        doShortSimulation(
+//            StatusType.SPEED, 4..4, 4, true, 100000, ActionSelectorImpl.Option(
+//                speedFactor = 0.6,
+//                staminaFactor = 1.2,
+//                powerFactor = 0.9,
+//                wisdomFactor = 0.7,
+//                hpFactor = 0.6,
+//            )
+//        ) {
+//            if (it.turn == charm + 1) {
+//                it.condition.add("愛嬌○")
+//            }
+//        }
+//    }
+
     // 長距離スピスタ
 //    optimizeAI(
 //        Store.getChara("ゴールドシップ", 5, 5), Store.getSupportByName(
 //            *(speed(4, 3)),
-//            *(stamina(4, 2)),
-//            *(friend(4, 1)),
+//            *(stamina(4, 3)),
 //        ), options = generateOptions(
-//            step = 0.05,
-//            speed = 0.8..0.9,
-//            stamina = 0.95..1.05,
-//            power = 0.55..0.65,
-//            guts = 0.35..0.45,
-//            hp = 0.4..0.4,
+//            step = 0.1,
+//            speed = 1.0..1.2,
+//            stamina = 1.0..1.2,
+//            power = 0.4..0.6,
+//            guts = 0.4..0.6,
+//            hp = 0.6..0.8,
 //        ), testCount = 1000
 //    )
+    doLongSimulation(
+        StatusType.STAMINA, 0..4, 4, 100000, option = ActionSelectorImpl.Option(
+            speedFactor = 1.2,
+            staminaFactor = 1.1,
+            powerFactor = 0.5,
+            gutsFactor = 0.6,
+            hpFactor = 0.7,
+        )
+    )
 
     // マイルパワ賢
 //    optimizeAI(
@@ -169,7 +217,7 @@ fun openCui(args: Array<String>) {
 //            *(speed2(4, 2)),
 //            *(guts(4, 4)),
 //        ), options = generateOptions(
-//            base = ActionSelectorImpl.Option(calcRelationScore = true),
+//            base = ActionSelectorImpl.Option(),
 //            step = 0.1,
 //            speed = 1.0..1.2,
 //            stamina = 0.8..0.9,
@@ -189,34 +237,8 @@ fun openCui(args: Array<String>) {
 //    )
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(
-//        StatusType.WISDOM, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.6,
-//            staminaFactor = 1.2,
-//            powerFactor = 0.9,
-//            wisdomFactor = 0.7,
-//            hpFactor = 0.6,
-//        )
-//    )
-//    doShortSimulation(
-//        StatusType.SPEED, 0..4, 4, true, 100000, ActionSelectorImpl.Option(
-//            speedFactor = 0.85,
-//            wisdomFactor = 0.8,
-//        )
-//    )
-//    doShortSimulation(
 //        StatusType.POWER, 0..4, 4, false, 100000, ActionSelectorImpl.Option(
 //            speedFactor = 0.85
-//        )
-//    )
-//    doLongSimulation(0..4)
-//    doLongSimulation(
-//        StatusType.STAMINA, 0..4, 4, 100000, option = ActionSelectorImpl.Option(
-//            speedFactor = 0.85,
-//            staminaFactor = 1.05,
-//            powerFactor = 0.6,
-//            gutsFactor = 0.4,
-//            wisdomFactor = 0.0,
-//            hpFactor = 0.4,
 //        )
 //    )
 //    doCharmSimulation()
@@ -347,7 +369,8 @@ fun doShortSimulation(
     supportTalent: Int = 4,
     needsWisdom: Boolean = false,
     testCount: Int = 100000,
-    option: ActionSelectorImpl.Option = ActionSelectorImpl.Option()
+    option: ActionSelectorImpl.Option = ActionSelectorImpl.Option(),
+    turnEvent: ((simulator: Simulator) -> Unit)? = null,
 ) {
     val chara = Store.getChara("ハルウララ", 5, 5)
     println(chara)
@@ -405,7 +428,9 @@ fun doShortSimulation(
         target,
         turn,
         testCount,
-        { ActionSelectorImpl(option) })
+        { ActionSelectorImpl(option) },
+        turnEvent,
+    )
 }
 
 @ObsoleteCoroutinesApi
@@ -429,13 +454,11 @@ fun doLongSimulation(
     val defaultSupport = when (targetStatus) {
         StatusType.SPEED -> Store.getSupportByName(
             *(speed(supportTalent, 2)),
-            *(stamina(supportTalent, 2)),
-            *(friend(supportTalent, 1)),
+            *(stamina(supportTalent, 3)),
         )
         else -> Store.getSupportByName(
             *(speed(supportTalent, 3)),
-            *(stamina(supportTalent, 1)),
-            *(friend(supportTalent, 1)),
+            *(stamina(supportTalent, 2)),
         )
     }.toTypedArray()
     defaultSupport.forEach { println(it.name) }

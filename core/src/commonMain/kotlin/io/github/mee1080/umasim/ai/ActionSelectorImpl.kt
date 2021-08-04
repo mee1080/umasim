@@ -73,7 +73,6 @@ class ActionSelectorImpl(private val option: Option = Option()) :
         val skillPtFactor: Double = 0.4,
         val hpFactor: Double = 0.5,
         val motivationFactor: Double = 15.0,
-        val calcRelationScore: Boolean = true,
     )
 
     override fun select(state: SimulationState): Action {
@@ -105,7 +104,7 @@ class ActionSelectorImpl(private val option: Option = Option()) :
     }
 
     private fun calcRelationScore(state: SimulationState, action: Action): Double {
-        if (!option.calcRelationScore || action !is Action.Training) return 0.0
+        if (action !is Action.Training) return 0.0
         val supportRank = mutableMapOf<StatusType, MutableList<Pair<Action.SupportInfo, Int>>>()
         state.supportInfo.forEach {
             supportRank.getOrPut(it.card.type) { mutableListOf() }
