@@ -16,17 +16,11 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim
+package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.cui.openCui
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.gui.openGui
 
 fun main(args: Array<String>) {
     StoreLoader.load()
-    if (args.getOrNull(0) == "gui") {
-        openGui(args)
-    } else {
-        openCui(args)
-    }
+    openCui(args)
 }
