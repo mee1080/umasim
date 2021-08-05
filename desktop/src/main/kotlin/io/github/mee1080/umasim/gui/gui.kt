@@ -18,7 +18,6 @@
  */
 package io.github.mee1080.umasim.gui
 
-import androidx.compose.desktop.Window
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
@@ -31,60 +30,65 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.application
+import androidx.compose.ui.window.rememberWindowState
 import io.github.mee1080.umasim.gui.component.CharaView
 import io.github.mee1080.umasim.gui.component.SupportCardSelector
 import io.github.mee1080.umasim.gui.component.SupportCardView
 
-fun openGui(args: Array<String>) = Window(
-    title = "ウマ娘シミュレータ",
-    size = IntSize(1024, 768),
-) {
-    val scope = rememberCoroutineScope()
-    val model by remember { mutableStateOf(ViewModel(scope)) }
+fun openGui(args: Array<String>) = application {
+    Window(
+        onCloseRequest = ::exitApplication,
+        state = rememberWindowState(width = 1024.dp, height = 768.dp),
+        title = "ウマ娘シミュレータ",
+    ) {
+        val scope = rememberCoroutineScope()
+        val model by remember { mutableStateOf(ViewModel(scope)) }
 
-    MaterialTheme {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Row {
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                ) {
-                    Text("育成ウマ娘", Modifier.padding(8.dp, 8.dp))
-                    CharaView(
-                        model.selectedChara,
-                        Modifier.background(Color(224, 224, 224))
+        MaterialTheme {
+            Box(modifier = Modifier.fillMaxSize()) {
+                Row {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
                     ) {
-                        model.toggleCharaSelect()
-                    }
-                    Text("サポートカード", Modifier.padding(8.dp, 8.dp))
-                    model.selectedSupportList.forEachIndexed { index, card ->
-                        SupportCardView(
-                            card,
+                        Text("育成ウマ娘", Modifier.padding(8.dp, 8.dp))
+                        CharaView(
+                            model.selectedChara,
                             Modifier.background(Color(224, 224, 224))
                         ) {
-                            model.toggleSupportSelect(index)
+                            model.toggleCharaSelect()
+                        }
+                        Text("サポートカード", Modifier.padding(8.dp, 8.dp))
+                        model.selectedSupportList.forEachIndexed { index, card ->
+                            SupportCardView(
+                                card,
+                                Modifier.background(Color(224, 224, 224))
+                            ) {
+                                model.toggleSupportSelect(index)
+                            }
+                        }
+                    }
+                    if (model.supportSelecting) {
+                        SupportCardSelector(
+                            model.supportList,
+                            modifier = Modifier.weight(1f),
+                            initialCard = model.selectingSupport,
+                        ) {
+                            model.selectSupport(it)
                         }
                     }
                 }
-                if (model.supportSelecting) {
-                    SupportCardSelector(
-                        model.supportList,
-                        modifier = Modifier.weight(1f),
-                        initialCard = model.selectingSupport,
+                if (model.canSimulate) {
+                    Button(
+                        { model.startSimulate() },
+                        modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp).fillMaxWidth(),
+                        enabled = !model.simulationRunning,
                     ) {
-                        model.selectSupport(it)
+                        Text("シミュレーション実行")
                     }
-                }
-            }
-            if (model.canSimulate) {
-                Button(
-                    { model.startSimulate() },
-                    modifier = Modifier.align(Alignment.BottomCenter).padding(16.dp).fillMaxWidth(),
-                    enabled = !model.simulationRunning,
-                ) {
-                    Text("シミュレーション実行")
                 }
             }
         }

@@ -27,10 +27,10 @@ import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.*
-import org.jetbrains.compose.web.css.Color
 import org.jetbrains.compose.web.css.Style
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.rgb
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import kotlin.math.roundToInt
@@ -67,12 +67,12 @@ fun main() {
                         val index = row * 3 + offset
                         Div({
                             when (item.card?.type) {
-                                StatusType.SPEED -> Color.RGB(69, 196, 255)
-                                StatusType.STAMINA -> Color.RGB(255, 144, 127)
-                                StatusType.POWER -> Color.RGB(255, 185, 21)
-                                StatusType.GUTS -> Color.RGB(255, 144, 186)
-                                StatusType.WISDOM -> Color.RGB(32, 216, 169)
-                                StatusType.FRIEND -> Color.RGB(255, 211, 108)
+                                StatusType.SPEED -> rgb(69, 196, 255)
+                                StatusType.STAMINA -> rgb(255, 144, 127)
+                                StatusType.POWER -> rgb(255, 185, 21)
+                                StatusType.GUTS -> rgb(255, 144, 186)
+                                StatusType.WISDOM -> rgb(32, 216, 169)
+                                StatusType.FRIEND -> rgb(255, 211, 108)
                                 else -> null
                             }?.let {
                                 style {
