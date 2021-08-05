@@ -24,15 +24,17 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.simulation.*
-import kotlinx.coroutines.ObsoleteCoroutinesApi
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.newFixedThreadPoolContext
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.math.roundToInt
 
 const val THREAD_COUNT = 4
+lateinit var context: ExecutorCoroutineDispatcher
 
 fun speed(supportTalent: Int, count: Int) = arrayOf(
     "[迫る熱に押されて]キタサンブラック" to supportTalent,
@@ -82,8 +84,8 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
     "[ようこそ、トレセン学園へ！]駿川たづな" to supportTalent,
 ).take(count).toTypedArray()
 
-@ObsoleteCoroutinesApi
 fun openCui(args: Array<String>) {
+    context = Executors.newFixedThreadPool(THREAD_COUNT).asCoroutineDispatcher()
 //    dataCheck()
 //    singleSimulation()
 //    calcExpected()
@@ -219,6 +221,7 @@ fun openCui(args: Array<String>) {
 //    )
 //    doCharmSimulation()
 //    doFailureRateSimulation()
+    context.close()
 }
 
 fun singleSimulation() {
@@ -303,7 +306,6 @@ infix fun ClosedRange<Double>.step(step: Double): Iterable<Double> {
     }.asIterable()
 }
 
-@ObsoleteCoroutinesApi
 fun optimizeAI(
     chara: Chara,
     support: List<SupportCard>,
@@ -314,7 +316,6 @@ fun optimizeAI(
     println(chara)
     support.forEach { println(it.name) }
     runBlocking {
-        val context = newFixedThreadPoolContext(THREAD_COUNT, "Simulator")
         options.mapIndexed { index, option ->
             launch(context) {
                 val summary = mutableListOf<Summary>()
@@ -338,7 +339,6 @@ fun optimizeAI(
     }
 }
 
-@ObsoleteCoroutinesApi
 fun doShortSimulation(
     targetStatus: StatusType,
     talent: IntRange = 4..4,
@@ -409,7 +409,6 @@ fun doShortSimulation(
     )
 }
 
-@ObsoleteCoroutinesApi
 fun doLongSimulation(
     targetStatus: StatusType,
     talent: IntRange = 4..4,
@@ -447,7 +446,6 @@ fun doLongSimulation(
     })
 }
 
-@ObsoleteCoroutinesApi
 fun doPowerWisdomSimulation(
     targetStatus: StatusType,
     talent: IntRange = 4..4,
@@ -478,7 +476,6 @@ fun doPowerWisdomSimulation(
     })
 }
 
-@ObsoleteCoroutinesApi
 fun doSimulation(
     chara: Chara,
     defaultSupport: Array<SupportCard>,
@@ -490,7 +487,6 @@ fun doSimulation(
 ) {
     println("start ${LocalDateTime.now()}")
     runBlocking {
-        val context = newFixedThreadPoolContext(THREAD_COUNT, "Simulator")
         target.map { card ->
             launch(context) {
                 val useSupport = listOf(*defaultSupport, card)
