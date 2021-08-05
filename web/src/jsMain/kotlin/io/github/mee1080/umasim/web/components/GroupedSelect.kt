@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.web.components
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.web.target
 import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
@@ -47,7 +46,7 @@ fun GroupedSelect(
             prop(
                 { e: HTMLSelectElement, v -> e.selectedIndex = v },
                 selection.indexOfFirst { it.first == selectedValue })
-            onChange { onSelect(it.target<HTMLSelectElement>().value.toInt()) }
+            onChange { onSelect(it.value!!.toInt()) }
         }) {
             val list = mutableListOf<Pair<String, List<Pair<Int, String>>>>()
             var current = "" to mutableListOf<Pair<Int, String>>()
