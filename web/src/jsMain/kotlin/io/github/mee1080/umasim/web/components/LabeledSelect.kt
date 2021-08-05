@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.web.components
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.web.target
 import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
@@ -42,7 +41,7 @@ fun LabeledSelect(
             prop(
                 { e: HTMLSelectElement, v -> e.selectedIndex = v },
                 selection.indexOfFirst { it.first == selectedValue })
-            onChange { onSelect(it.target<HTMLSelectElement>().value.toInt()) }
+            onChange { onSelect(it.value!!.toInt()) }
         }) {
             selection.forEach { (index, name) ->
                 Option(index.toString(), { if (index == selectedValue) selected() }) { Text(name) }
