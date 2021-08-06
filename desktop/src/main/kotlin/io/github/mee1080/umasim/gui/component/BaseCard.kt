@@ -35,6 +35,7 @@ fun BaseCard(
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
     color: Color? = null,
+    selected: Boolean = false,
     content: @Composable BoxScope.() -> Unit
 ) {
     var hover by remember { mutableStateOf(false) }
@@ -50,7 +51,11 @@ fun BaseCard(
                 onEnter = { hover = true; false },
                 onExit = { hover = false; false },
             ),
-        backgroundColor = if (hover) Color(255, 255, 128) else MaterialTheme.colors.surface,
+        backgroundColor = when {
+            hover -> Color(255, 255, 128)
+            selected -> Color(255, 255, 192)
+            else -> MaterialTheme.colors.surface
+        },
         elevation = if (hover) 6.dp else 4.dp,
     ) {
         Box(

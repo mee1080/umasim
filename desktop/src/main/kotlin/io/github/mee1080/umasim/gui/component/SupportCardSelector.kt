@@ -37,7 +37,8 @@ fun SupportCardSelector(
     supportList: List<SupportCard>,
     modifier: Modifier = Modifier,
     initialCard: SupportCard? = null,
-    onSelect: (SupportCard?) -> Unit = { }
+    onCanceled: () -> Unit = {},
+    onSelect: (SupportCard?) -> Unit = { },
 ) {
     var type by remember { mutableStateOf(initialCard?.type ?: StatusType.NONE) }
     var text by remember { mutableStateOf("") }
@@ -94,7 +95,7 @@ fun SupportCardSelector(
                     .filter { type == StatusType.NONE || type == it.type }
                     .filter { text.isEmpty() || it.name.contains(text) }
                     .forEach {
-                        SupportCardView(it) { onSelect(it) }
+                        SupportCardView(it, selected = it.id == initialCard?.id) { onSelect(it) }
                     }
             }
             VerticalScrollbar(
@@ -103,5 +104,6 @@ fun SupportCardSelector(
             )
         }
         Button({ onSelect(null) }, modifier = Modifier.fillMaxWidth()) { Text("選択解除") }
+        Button({ onCanceled() }, modifier = Modifier.fillMaxWidth()) { Text("キャンセル") }
     }
 }

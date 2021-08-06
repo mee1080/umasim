@@ -76,6 +76,7 @@ fun openGui(args: Array<String>) = application {
                             model.supportList,
                             modifier = Modifier.weight(1f),
                             initialCard = model.selectingSupport,
+                            onCanceled = { model.cancelSupportSelect() }
                         ) {
                             model.selectSupport(it)
                         }
