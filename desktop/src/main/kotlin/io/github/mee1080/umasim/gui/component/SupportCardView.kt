@@ -39,6 +39,7 @@ fun SupportCardView(
     card: SupportCard?,
     modifier: Modifier = Modifier,
     showTalent: Boolean = true,
+    selected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     BoxWithTooltip(
@@ -93,7 +94,7 @@ fun SupportCardView(
             }
         }
     ) {
-        BaseCard(modifier, onClick, getTypeColor(card, 128)) {
+        BaseCard(modifier, onClick, getTypeColor(card, 128), selected) {
             if (card == null) {
                 Text("未選択")
             } else {

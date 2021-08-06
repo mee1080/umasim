@@ -84,6 +84,10 @@ class ViewModel(private val scope: CoroutineScope) {
         selectingSupportIndex = if (supportSelecting) -1 else index
     }
 
+    fun cancelSupportSelect() {
+        selectingSupportIndex = -1
+    }
+
     val selectingSupport get() = selectedSupportList.getOrNull(selectingSupportIndex)
 
     fun selectSupport(card: SupportCard?) {
