@@ -31,7 +31,7 @@ object AppStyle : StyleSheet() {
         }
 
         self + " td" style {
-            property("text-align", "right")
+            textAlign("right")
             border(1.px, LineStyle.Solid, Color("black"))
             width(80.px)
         }
@@ -42,7 +42,7 @@ object AppStyle : StyleSheet() {
 
         self + " div" style {
             flexGrow(1)
-            property("flex-basis", "30%")
+            flexBasis(30.percent)
         }
     }
 
@@ -57,7 +57,7 @@ object AppStyle : StyleSheet() {
             width((100).percent)
             opacity(0.0)
             borderRadius(50.px)
-            property("background", "linear-gradient(to right, #e0c000, #ea4335)")
+            background("linear-gradient(to right, #e0c000, #ea4335)")
             property("filter", "blur(5px)")
             property("transition", "all 0.5s")
         }

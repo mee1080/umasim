@@ -27,10 +27,7 @@ import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.*
-import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.css.padding
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.rgb
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
 import kotlin.math.roundToInt
@@ -44,7 +41,7 @@ fun main() {
         H2 { Text("育成キャラ") }
         LabeledSelect("", model.displayCharaList, model.selectedChara, model::updateChara)
         H2 { Text("サポートカード") }
-        Div({ style { property("padding-bottom", "16px") } }) {
+        Div({ style { paddingBottom(16.px) } }) {
             console.log("render")
             TextInput {
 //                value(model.supportFilter)
@@ -76,7 +73,7 @@ fun main() {
                                 else -> null
                             }?.let {
                                 style {
-                                    property("background", "linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it)")
+                                    background("linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it)")
                                 }
                             }
                         }) {
@@ -305,7 +302,7 @@ fun main() {
                 Tr {
                     Th { Text("ヒント") }
                     Td({
-                        style { property("text-align", "left") }
+                        style { textAlign("left") }
                         colspan(5)
                     }) {
                         Text(model.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
@@ -314,7 +311,7 @@ fun main() {
                 Tr {
                     Th { Text("行動履歴") }
                     Td({
-                        style { property("text-align", "left") }
+                        style { textAlign("left") }
                         colspan(5)
                     }) {
                         model.simulationHistory.forEachIndexed { index, item ->
