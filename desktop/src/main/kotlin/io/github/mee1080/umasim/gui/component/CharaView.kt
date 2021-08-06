@@ -35,6 +35,7 @@ import io.github.mee1080.umasim.data.Chara
 fun CharaView(
     chara: Chara?,
     modifier: Modifier = Modifier,
+    selected: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     val color = remember {
@@ -42,7 +43,7 @@ fun CharaView(
             Color(it.imageColor.toInt(16)).copy(alpha = 0.5f)
         } ?: Color(128, 128, 128, 128)
     }
-    BaseCard(modifier, onClick, color) {
+    BaseCard(modifier, onClick, color, selected) {
         if (chara == null) {
             Text("未選択")
         } else {

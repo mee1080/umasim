@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.github.mee1080.umasim.gui.component.CharaSelector
 import io.github.mee1080.umasim.gui.component.CharaView
 import io.github.mee1080.umasim.gui.component.SupportCardSelector
 import io.github.mee1080.umasim.gui.component.SupportCardView
@@ -57,7 +58,8 @@ fun openGui(args: Array<String>) = application {
                         Text("育成ウマ娘", Modifier.padding(8.dp, 8.dp))
                         CharaView(
                             model.selectedChara,
-                            Modifier.background(Color(224, 224, 224))
+                            Modifier.background(Color(224, 224, 224)),
+                            selected = model.charaSelecting,
                         ) {
                             model.toggleCharaSelect()
                         }
@@ -66,10 +68,21 @@ fun openGui(args: Array<String>) = application {
                             SupportCardView(
                                 card,
                                 Modifier.background(Color(224, 224, 224)),
+                                selected = model.selectingSupportIndex == index,
                                 tooltip = true,
                             ) {
                                 model.toggleSupportSelect(index)
                             }
+                        }
+                    }
+                    if (model.charaSelecting) {
+                        CharaSelector(
+                            model.charaList,
+                            modifier = Modifier.weight(1f),
+                            initialChara = model.selectedChara,
+                            onCanceled = { model.cancelCharaSelect() },
+                        ) {
+                            model.selectChara(it)
                         }
                     }
                     if (model.supportSelecting) {
