@@ -29,25 +29,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.data.Chara
 
 @Composable
-fun SupportCardSelector(
-    supportList: List<SupportCard>,
+fun CharaSelector(
+    charaList: List<Chara>,
     modifier: Modifier = Modifier,
-    initialCard: SupportCard? = null,
+    initialChara: Chara? = null,
     onCanceled: () -> Unit = {},
-    onSelect: (SupportCard?) -> Unit = { },
+    onSelect: (Chara?) -> Unit = { },
 ) {
-    val rememberedInitialCard by remember { mutableStateOf(initialCard?.id) }
-    var type by remember { mutableStateOf(initialCard?.type ?: StatusType.NONE) }
     var text by remember { mutableStateOf("") }
-    var talent by remember { mutableStateOf(initialCard?.talent ?: 0) }
-    if (initialCard != null && rememberedInitialCard != initialCard.id) {
-        type = initialCard.type
-        talent = initialCard.talent
-    }
+    var rarity by remember { mutableStateOf(initialChara?.rarity ?: 5) }
+    var rank by remember { mutableStateOf(initialChara?.rank ?: 5) }
     Column(
         modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -58,49 +52,32 @@ fun SupportCardSelector(
                 .border(2.dp, Color.DarkGray, RoundedCornerShape(4.dp))
                 .padding(4.dp)
         ) {
-            val radioModifier = Modifier.weight(1f)
-            LabeledRadioButton(type == StatusType.NONE, { type = StatusType.NONE }) { Text("全て") }
-            Row {
-                LabeledRadioButton(type == StatusType.SPEED, { type = StatusType.SPEED }, radioModifier) {
-                    Text("スピ")
-                }
-                LabeledRadioButton(type == StatusType.STAMINA, { type = StatusType.STAMINA }, radioModifier) {
-                    Text("スタ")
-                }
-                LabeledRadioButton(type == StatusType.POWER, { type = StatusType.POWER }, radioModifier) {
-                    Text("パワ")
-                }
-            }
-            Row {
-                LabeledRadioButton(type == StatusType.GUTS, { type = StatusType.GUTS }, radioModifier) {
-                    Text("根性")
-                }
-                LabeledRadioButton(type == StatusType.WISDOM, { type = StatusType.WISDOM }, radioModifier) {
-                    Text("賢さ")
-                }
-                LabeledRadioButton(type == StatusType.FRIEND, { type = StatusType.FRIEND }, radioModifier) {
-                    Text("友人")
-                }
-            }
             TextField(text, { text = it }, label = { Text("検索") }, modifier = Modifier.fillMaxWidth())
         }
         Row(
             modifier = Modifier.padding(8.dp, 0.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            (0..4).forEach {
-                LabeledRadioButton(it == talent, { talent = it }) { Text("${it}凸") }
+            (1..5).forEach {
+                LabeledRadioButton(it == rarity, { rarity = it }) { Text("☆${it}") }
+            }
+        }
+        Row(
+            modifier = Modifier.padding(8.dp, 0.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            (1..5).forEach {
+                LabeledRadioButton(it == rank, { rank = it }) { Text("覚醒${it}") }
             }
         }
         Box(modifier = Modifier.weight(1f)) {
             val scrollState = rememberScrollState()
             Column(modifier = Modifier.verticalScroll(scrollState)) {
-                supportList
-                    .filter { it.talent == talent }
-                    .filter { type == StatusType.NONE || type == it.type }
+                charaList
+                    .filter { it.rarity == rarity && it.rank == rank }
                     .filter { text.isEmpty() || it.name.contains(text) }
                     .forEach {
-                        SupportCardView(it, selected = it.id == initialCard?.id) { onSelect(it) }
+                        CharaView(it, selected = it.id == initialChara?.id) { onSelect(it) }
                     }
             }
             VerticalScrollbar(

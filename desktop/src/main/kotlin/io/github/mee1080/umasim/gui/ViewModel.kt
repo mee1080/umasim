@@ -49,11 +49,15 @@ class ViewModel(private val scope: CoroutineScope) {
         private set
 
     fun toggleCharaSelect() {
+        cancelSupportSelect()
         charaSelecting = !charaSelecting
-        selectChara(charaList.random())
     }
 
-    fun selectChara(chara: Chara) {
+    fun cancelCharaSelect() {
+        charaSelecting = false
+    }
+
+    fun selectChara(chara: Chara?) {
         selectedChara = chara
         charaSelecting = false
     }
@@ -81,7 +85,8 @@ class ViewModel(private val scope: CoroutineScope) {
     val supportSelecting get() = selectingSupportIndex >= 0
 
     fun toggleSupportSelect(index: Int) {
-        selectingSupportIndex = if (supportSelecting) -1 else index
+        cancelCharaSelect()
+        selectingSupportIndex = if (selectingSupportIndex == index) -1 else index
     }
 
     fun cancelSupportSelect() {
