@@ -40,11 +40,12 @@ fun SupportCardView(
     modifier: Modifier = Modifier,
     showTalent: Boolean = true,
     selected: Boolean = false,
+    tooltip: Boolean = false,
     onClick: () -> Unit = {}
 ) {
     BoxWithTooltip(
         tooltip = {
-            Surface(
+            if (tooltip) Surface(
                 modifier = Modifier.shadow(4.dp),
                 shape = RoundedCornerShape(4.dp)
             ) {
