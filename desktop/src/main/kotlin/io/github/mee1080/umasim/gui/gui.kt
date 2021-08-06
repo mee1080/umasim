@@ -65,7 +65,8 @@ fun openGui(args: Array<String>) = application {
                         model.selectedSupportList.forEachIndexed { index, card ->
                             SupportCardView(
                                 card,
-                                Modifier.background(Color(224, 224, 224))
+                                Modifier.background(Color(224, 224, 224)),
+                                tooltip = true,
                             ) {
                                 model.toggleSupportSelect(index)
                             }
