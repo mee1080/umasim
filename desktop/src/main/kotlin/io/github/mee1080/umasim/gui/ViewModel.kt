@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.gui.vm.FactorBasedActionSelectorSettingViewModel
 import io.github.mee1080.umasim.simulation.Evaluator
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
@@ -35,6 +36,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class ViewModel(private val scope: CoroutineScope) {
+
+    enum class ViewState {
+        DEFAULT, SIMULATION_SETTING,
+    }
+
+    var viewState by mutableStateOf(ViewState.DEFAULT)
 
     val charaList = Store.charaList.sortedWith { o1, o2 ->
         when {
@@ -107,13 +114,16 @@ class ViewModel(private val scope: CoroutineScope) {
         get() = !charaSelecting && selectedChara != null
                 && !supportSelecting && !selectedSupportList.contains(null)
 
+    val simulationSetting by mutableStateOf(FactorBasedActionSelectorSettingViewModel())
+
     fun startSimulate() {
         if (!canSimulate || simulationRunning) return
         val chara = selectedChara!!
         val support = selectedSupportList.filterNotNull()
+        val option = simulationSetting.option
         simulationRunning = true
         scope.launch(Dispatchers.Default) {
-            val selector = FactorBasedActionSelector()
+            val selector = FactorBasedActionSelector(option)
             val summary = mutableListOf<Summary>()
             repeat(1000) {
                 val simulator = Simulator(chara, support, Store.trainingList)
