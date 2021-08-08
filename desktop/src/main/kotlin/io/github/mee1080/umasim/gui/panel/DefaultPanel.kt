@@ -3,10 +3,7 @@ package io.github.mee1080.umasim.gui.panel
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
-import androidx.compose.material.TextFieldDefaults
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -118,12 +115,21 @@ fun DefaultPanel(model: ViewModel) {
             }
         }
         if (model.canSimulate) {
-            Button(
-                { model.startSimulate() },
-                modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
-                enabled = !model.simulationRunning,
-            ) {
-                Text("シミュレーション実行")
+            if (model.simulationRunning) {
+                Button(
+                    { model.cancelSimulation() },
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
+                ) {
+                    Text("キャンセル")
+                }
+            } else {
+                Button(
+                    { model.startSimulation() },
+                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
+                ) {
+                    Text("シミュレーション実行")
+                }
             }
         }
     }
