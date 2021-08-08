@@ -149,12 +149,12 @@ class ViewModel(private val scope: CoroutineScope) {
             val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
             val totalSummary = (0 until simulationThread).map { thread ->
                 async(simulationContext) {
-                    val selector = FactorBasedActionSelector(option)
                     val summary = mutableListOf<Summary>()
                     val count =
                         simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
                     repeat(count) {
                         val simulator = Simulator(chara, support, Store.trainingList)
+                        val selector = FactorBasedActionSelector(option)
                         summary.add(Runner.simulate(simulationTurn, simulator, selector))
                     }
                     summary
