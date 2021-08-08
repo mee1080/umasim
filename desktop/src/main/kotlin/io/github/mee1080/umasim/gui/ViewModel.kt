@@ -31,9 +31,8 @@ import io.github.mee1080.umasim.simulation.Evaluator
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
 import io.github.mee1080.umasim.simulation.Summary
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
+import java.util.concurrent.Executors
 
 class ViewModel(private val scope: CoroutineScope) {
 
@@ -50,7 +49,7 @@ class ViewModel(private val scope: CoroutineScope) {
         }
     }
 
-    var selectedChara by mutableStateOf<Chara?>(null)
+    var selectedChara by mutableStateOf(charaList.getOrNull(0))
 
     var charaSelecting by mutableStateOf(false)
         private set
@@ -77,13 +76,13 @@ class ViewModel(private val scope: CoroutineScope) {
         }
     }
 
-    val selectedSupportList = mutableStateListOf(
+    val selectedSupportList = mutableStateListOf<SupportCard?>(
         Store.getSupportByName("[迫る熱に押されて]キタサンブラック", 4),
         Store.getSupportByName("[必殺！Wキャロットパンチ！]ビコーペガサス", 4),
         Store.getSupportByName("[『愛してもらうんだぞ』]オグリキャップ", 4),
         Store.getSupportByName("[感謝は指先まで込めて]ファインモーション", 4),
         Store.getSupportByName("[ようこそ、トレセン学園へ！]駿川たづな", 4),
-        null,
+        Store.getSupportByName("[一粒の安らぎ]スーパークリーク", 4),
     )
 
     var selectingSupportIndex by mutableStateOf(-1)
@@ -114,6 +113,27 @@ class ViewModel(private val scope: CoroutineScope) {
         get() = !charaSelecting && selectedChara != null
                 && !supportSelecting && !selectedSupportList.contains(null)
 
+    var simulationTurn by mutableStateOf(60)
+        private set
+
+    fun updateSimulationTurn(value: Int) {
+        if (value != simulationTurn) simulationTurn = value
+    }
+
+    var simulationCount by mutableStateOf(1000)
+        private set
+
+    fun updateSimulationCount(value: Int) {
+        if (value != simulationCount) simulationCount = value
+    }
+
+    var simulationThread by mutableStateOf(4)
+        private set
+
+    fun updateSimulationThread(value: Int) {
+        if (value != simulationThread) simulationThread = value
+    }
+
     val simulationSetting by mutableStateOf(FactorBasedActionSelectorSettingViewModel())
 
     fun startSimulate() {
@@ -121,15 +141,30 @@ class ViewModel(private val scope: CoroutineScope) {
         val chara = selectedChara!!
         val support = selectedSupportList.filterNotNull()
         val option = simulationSetting.option
+        val simulationCount = simulationCount
+        val simulationTurn = simulationTurn
+        val simulationThread = simulationThread
         simulationRunning = true
         scope.launch(Dispatchers.Default) {
-            val selector = FactorBasedActionSelector(option)
-            val summary = mutableListOf<Summary>()
-            repeat(1000) {
-                val simulator = Simulator(chara, support, Store.trainingList)
-                summary.add(Runner.simulate(60, simulator, selector))
+            val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
+            val totalSummary = (0 until simulationThread).map { thread ->
+                async(simulationContext) {
+                    val selector = FactorBasedActionSelector(option)
+                    val summary = mutableListOf<Summary>()
+                    val count =
+                        simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
+                    repeat(count) {
+                        val simulator = Simulator(chara, support, Store.trainingList)
+                        summary.add(Runner.simulate(simulationTurn, simulator, selector))
+                    }
+                    summary
+                }
+            }.fold(mutableListOf<Summary>()) { acc, result ->
+                acc.addAll(result.await())
+                acc
             }
-            println(Evaluator(summary).toSummaryString())
+            println(Evaluator(totalSummary).toSummaryString())
+            simulationContext.close()
             simulationRunning = false
         }
     }
