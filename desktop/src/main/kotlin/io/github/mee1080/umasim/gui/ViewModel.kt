@@ -106,9 +106,6 @@ class ViewModel(private val scope: CoroutineScope) {
         selectingSupportIndex = -1
     }
 
-    var simulationRunning by mutableStateOf(false)
-        private set
-
     val canSimulate
         get() = !charaSelecting && selectedChara != null
                 && !supportSelecting && !selectedSupportList.contains(null)
@@ -136,7 +133,11 @@ class ViewModel(private val scope: CoroutineScope) {
 
     val simulationSetting by mutableStateOf(FactorBasedActionSelectorSettingViewModel())
 
-    fun startSimulate() {
+    private var simulationJob by mutableStateOf<Job?>(null)
+
+    val simulationRunning get() = simulationJob?.isActive == true
+
+    fun startSimulation() {
         if (!canSimulate || simulationRunning) return
         val chara = selectedChara!!
         val support = selectedSupportList.filterNotNull()
@@ -144,28 +145,39 @@ class ViewModel(private val scope: CoroutineScope) {
         val simulationCount = simulationCount
         val simulationTurn = simulationTurn
         val simulationThread = simulationThread
-        simulationRunning = true
-        scope.launch(Dispatchers.Default) {
+        simulationJob = scope.launch(Dispatchers.Default) {
             val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
-            val totalSummary = (0 until simulationThread).map { thread ->
-                async(simulationContext) {
-                    val summary = mutableListOf<Summary>()
-                    val count =
-                        simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
-                    repeat(count) {
-                        val simulator = Simulator(chara, support, Store.trainingList)
-                        val selector = FactorBasedActionSelector(option)
-                        summary.add(Runner.simulate(simulationTurn, simulator, selector))
+            simulationContext.use { context ->
+                try {
+                    val totalSummary = (0 until simulationThread).map { thread ->
+                        async(context) {
+                            val summary = mutableListOf<Summary>()
+                            val count =
+                                simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
+                            repeat(count) {
+                                if (!isActive) throw CancellationException()
+                                val simulator = Simulator(chara, support, Store.trainingList)
+                                val selector = FactorBasedActionSelector(option)
+                                summary.add(Runner.simulate(simulationTurn, simulator, selector))
+                            }
+                            summary
+                        }
+                    }.fold(mutableListOf<Summary>()) { acc, result ->
+                        acc.addAll(result.await())
+                        acc
                     }
-                    summary
+                    if (!isActive) throw CancellationException()
+                    println(Evaluator(totalSummary).toSummaryString())
+                } catch (e: CancellationException) {
+                    // nothing to do
+                } finally {
+                    simulationJob = null
                 }
-            }.fold(mutableListOf<Summary>()) { acc, result ->
-                acc.addAll(result.await())
-                acc
             }
-            println(Evaluator(totalSummary).toSummaryString())
-            simulationContext.close()
-            simulationRunning = false
         }
+    }
+
+    fun cancelSimulation() {
+        simulationJob?.cancel()
     }
 }
