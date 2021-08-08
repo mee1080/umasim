@@ -34,7 +34,7 @@ fun openGui(args: Array<String>) = application {
     Window(
         onCloseRequest = ::exitApplication,
         state = rememberWindowState(width = 1024.dp, height = 768.dp),
-        title = "ウマ娘シミュレータ",
+        title = "ウマ娘育成シミュレータ",
     ) {
         val scope = rememberCoroutineScope()
         val model by remember { mutableStateOf(ViewModel(scope)) }
