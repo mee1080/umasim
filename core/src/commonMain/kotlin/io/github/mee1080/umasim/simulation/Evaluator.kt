@@ -23,6 +23,15 @@ import io.github.mee1080.umasim.data.trainingType
 
 class Evaluator(val summaries: List<Summary>) {
 
+    private val outputStatus = arrayOf(
+        StatusType.SPEED to 1.0,
+        StatusType.STAMINA to 1.0,
+        StatusType.POWER to 1.0,
+        StatusType.GUTS to 1.0,
+        StatusType.WISDOM to 1.0,
+        StatusType.SKILL to 0.4,
+    )
+
     val results = lazy { summaries.map { it.status } }
 
     private val status = mutableMapOf<StatusType, List<Int>>()
@@ -33,8 +42,12 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun average(type: StatusType) = getStatus(type).average()
 
+    fun average() = outputStatus.map { average(it.first) }
+
     fun upper(type: StatusType, rate: Double) = getStatus(type).sortedDescending()
         .slice(0 until (summaries.size * rate).toInt()).average()
+
+    fun upper(rate: Double) = outputStatus.map { upper(it.first, rate) }
 
     private fun getStatusSum(vararg type: StatusType) = results.value.map { result ->
         type.sumOf { result.get(it) }
@@ -51,9 +64,26 @@ class Evaluator(val summaries: List<Summary>) {
         getStatusSum(*typeToFactor).sortedDescending()
             .slice(0 until (summaries.size * rate).toInt()).average()
 
+    fun upperSum(rate: Double) = upperSum(rate, *outputStatus)
+
     fun averageSum(vararg type: StatusType) = getStatusSum(*type).average()
 
     fun averageSum(vararg typeToFactor: Pair<StatusType, Double>) = getStatusSum(*typeToFactor).average()
+
+    fun averageSum() = averageSum(*outputStatus)
+
+    fun averageTrainingCount(type: StatusType) = summaries.map { it.trainingCount[type]!! }.average()
+
+    fun averageFriendTrainingCount(type: StatusType) = summaries.map { it.trainingFriendCount[type]!! }
+        .fold(IntArray(6)) { acc, value -> acc.mapIndexed { index, i -> i + value[index] }.toIntArray() }
+        .map { it / summaries.size.toDouble() }
+
+    fun trainingCount(type: StatusType) =
+        listOf(averageTrainingCount(type), *averageFriendTrainingCount(type).toTypedArray())
+
+    fun averageSleepCount() = summaries.map { it.sleepCount }.average()
+
+    fun averageOutingCount() = summaries.map { it.outingCount }.average()
 
     fun toSummaryString(): String {
         val skillFactor = 0.4
@@ -77,10 +107,8 @@ class Evaluator(val summaries: List<Summary>) {
             upper(StatusType.WISDOM, 0.05),
             upper(StatusType.SKILL, 0.05),
             trainingType.joinToString(",") { type ->
-                val averageTrainingCount = summaries.map { it.trainingCount[type]!! }.average()
-                val friendTrainingCount = summaries.map { it.trainingFriendCount[type]!! }
-                    .fold(IntArray(6)) { acc, value -> acc.mapIndexed { index, i -> i + value[index] }.toIntArray() }
-                    .map { it / summaries.size.toDouble() }
+                val averageTrainingCount = averageTrainingCount(type)
+                val friendTrainingCount = averageFriendTrainingCount(type)
                 "$averageTrainingCount,${friendTrainingCount.joinToString(",")}"
             },
             averageSum(StatusType.SPEED, StatusType.POWER),
