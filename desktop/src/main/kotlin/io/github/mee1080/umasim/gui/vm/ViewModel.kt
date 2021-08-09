@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.gui
+package io.github.mee1080.umasim.gui.vm
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -26,8 +26,6 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
-import io.github.mee1080.umasim.gui.vm.FactorBasedActionSelectorSettingViewModel
-import io.github.mee1080.umasim.gui.vm.ResultWriter
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
 import io.github.mee1080.umasim.simulation.Summary

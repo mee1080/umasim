@@ -27,8 +27,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.github.mee1080.umasim.gui.component.DefaultPanel
 import io.github.mee1080.umasim.gui.component.FactorBasedActionSelectorSetting
-import io.github.mee1080.umasim.gui.panel.DefaultPanel
+import io.github.mee1080.umasim.gui.vm.ViewModel
 
 fun openGui(args: Array<String>) = application {
     Window(
