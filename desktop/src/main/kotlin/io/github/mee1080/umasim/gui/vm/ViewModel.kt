@@ -205,10 +205,10 @@ class ViewModel(private val scope: CoroutineScope) {
     }
 
     private fun save() {
-        SaveData.save(this)
+        SaveDataLoader.save(this)
     }
 
     init {
-        SaveData.load(this)
+        SaveDataLoader.load(this)
     }
 }

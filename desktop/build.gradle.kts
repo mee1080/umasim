@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    kotlin("plugin.serialization")
     id("org.jetbrains.compose") version "1.0.0-alpha1"
 }
 
@@ -18,8 +17,8 @@ repositories {
 dependencies {
     implementation(project(":core"))
     implementation(project(":jvm"))
+    implementation(project(":desktopSupport"))
     implementation(compose.desktop.currentOs)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 }
 
 tasks.withType<KotlinCompile>() {
