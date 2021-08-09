@@ -119,12 +119,18 @@ fun DefaultPanel(model: ViewModel) {
         }
         if (model.canSimulate) {
             if (model.simulationRunning) {
-                Button(
-                    { model.cancelSimulation() },
-                    modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
-                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
-                ) {
-                    Text("キャンセル")
+                Row {
+                    Text(
+                        "シミュレーション実行中... (${model.simulationFinishedCount}/${model.simulationRunningCount})",
+                        modifier = Modifier.weight(1f).padding(8.dp),
+                    )
+                    Button(
+                        { model.cancelSimulation() },
+                        modifier = Modifier.weight(1f).padding(8.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.error),
+                    ) {
+                        Text("キャンセル")
+                    }
                 }
             } else {
                 Button(
