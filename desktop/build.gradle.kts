@@ -4,7 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.compose") version "1.0.0-alpha1"
+    id("org.jetbrains.compose") version "1.0.0-alpha3"
 }
 
 group = "io.github.mee1080.umasim"
@@ -22,12 +22,12 @@ dependencies {
 }
 
 tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "16"
+    kotlinOptions.jvmTarget = "15"
 }
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "io.github.mee1080.umasim.gui.MainKt"
         nativeDistributions {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "umasim"
