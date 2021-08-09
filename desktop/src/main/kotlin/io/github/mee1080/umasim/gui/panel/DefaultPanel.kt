@@ -10,6 +10,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.WindowSize
+import androidx.compose.ui.window.rememberDialogState
 import io.github.mee1080.umasim.gui.ViewModel
 import io.github.mee1080.umasim.gui.component.CharaSelector
 import io.github.mee1080.umasim.gui.component.CharaView
@@ -129,6 +132,29 @@ fun DefaultPanel(model: ViewModel) {
                     modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
                 ) {
                     Text("シミュレーション実行")
+                }
+            }
+        }
+        if (model.simulationResultFile != null) {
+            Dialog(
+                onCloseRequest = { model.simulationResultVisible = false },
+                state = rememberDialogState(size = WindowSize(1024.dp, 768.dp)),
+                visible = model.simulationResultVisible,
+                title = "シミュレーション結果",
+            ) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text("シミュレーション結果", modifier = Modifier.padding(8.dp))
+                    Text("${model.simulationResultFile} に保存済み")
+                    OutlinedTextField(
+                        model.simulationResult,
+                        {},
+                        readOnly = true,
+                        modifier = Modifier.weight(1f).fillMaxWidth()
+                    )
+                    Button(
+                        { model.simulationResultVisible = false },
+                        modifier = Modifier.align(Alignment.CenterHorizontally).padding(16.dp).fillMaxWidth(),
+                    ) { Text("閉じる") }
                 }
             }
         }
