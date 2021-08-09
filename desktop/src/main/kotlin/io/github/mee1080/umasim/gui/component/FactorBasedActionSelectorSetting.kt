@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.gui.component
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -38,22 +35,25 @@ fun FactorBasedActionSelectorSetting(
     onClose: () -> Unit,
 ) {
     Column(modifier = modifier) {
-        Text("プリセット")
+        Text("プリセット", modifier = Modifier.padding(8.dp))
         Row {
             Spinner(
                 "選択",
                 model.presets,
-                { model.updatePreset(it.second) },
-                { it.first },
+                modifier = Modifier.padding(8.dp).align(Alignment.CenterVertically),
+                onSelect = { model.updatePreset(it.second) },
+                colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                candidateToText = { it.first },
             )
             Button(
                 onClick = { model.applyPreset() },
+                modifier = Modifier.padding(8.dp).align(Alignment.CenterVertically),
                 enabled = model.preset != null,
             ) {
                 Text("反映")
             }
         }
-        Text("設定")
+        Text("設定", modifier = Modifier.padding(8.dp))
         SettingSlider("スピード", model.option.speedFactor) {
             model.updateOption(model.option.copy(speedFactor = it))
         }
@@ -87,13 +87,24 @@ fun FactorBasedActionSelectorSetting(
 
 @Composable
 private fun SettingSlider(label: String, value: Double, max: Double = 2.0, onValueChange: (Double) -> Unit) {
-    Row(modifier = Modifier.fillMaxWidth()) {
-        Text(label, Modifier.width(80.dp))
-        Text(((value * 100).roundToInt() / 100.0).toString(), Modifier.width(60.dp))
+    Row(modifier = Modifier.fillMaxWidth().padding(8.dp)) {
+        Text(
+            label,
+            Modifier
+                .padding(8.dp, 0.dp)
+                .width(80.dp)
+                .align(Alignment.CenterVertically)
+        )
+        Text(
+            ((value * 100).roundToInt() / 100.0).toString(),
+            Modifier
+                .width(60.dp)
+                .align(Alignment.CenterVertically)
+        )
         Slider(
             value = value.toFloat(),
             onValueChange = { onValueChange(it.toDouble()) },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(8.dp, 0.dp).align(Alignment.CenterVertically),
             valueRange = 0f..max.toFloat(),
             steps = (max * 100).toInt() / 5 - 1,
             colors = SliderDefaults.colors(

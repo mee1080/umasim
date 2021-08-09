@@ -53,7 +53,7 @@ data class SaveData(
     )
 
     fun applyTo(model: ViewModel) {
-        model.selectChara(SaveDataConverter.stringToChara(chara))
+        model.selectedChara = SaveDataConverter.stringToChara(chara)
         SaveDataConverter.stringToSupportCardList(support).forEachIndexed { index, supportCard ->
             model.selectedSupportList[index] = supportCard
         }
