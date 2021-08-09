@@ -50,7 +50,6 @@ class ViewModel(private val scope: CoroutineScope) {
     }
 
     var selectedChara by mutableStateOf(charaList.getOrNull(0))
-        private set
 
     var charaSelecting by mutableStateOf(false)
         private set

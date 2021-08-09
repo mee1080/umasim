@@ -24,6 +24,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
+import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -82,7 +83,13 @@ fun SupportCardSelector(
                     Text("友人")
                 }
             }
-            TextField(text, { text = it }, label = { Text("検索") }, modifier = Modifier.fillMaxWidth())
+            TextField(
+                text,
+                { text = it },
+                label = { Text("検索") },
+                modifier = Modifier.fillMaxWidth(),
+                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+            )
         }
         Row(
             modifier = Modifier.padding(8.dp, 0.dp),

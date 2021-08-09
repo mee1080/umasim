@@ -18,35 +18,41 @@
  */
 package io.github.mee1080.umasim.gui.component
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
+import androidx.compose.ui.Modifier
 
 @Composable
 fun <T> Spinner(
     initialLabel: String,
     candidates: List<T>,
+    modifier: Modifier = Modifier,
     onSelect: (T) -> Unit = {},
-    candidateToContent: (T) -> String = { it.toString() },
+    colors: ButtonColors = ButtonDefaults.buttonColors(),
+    candidateToText: (T) -> String = { it.toString() },
 ) {
     var expanded by remember { mutableStateOf(false) }
     var label by remember { mutableStateOf(initialLabel) }
-    Button(onClick = { expanded = !expanded }) {
-        Text(label)
-        Icon(Icons.Filled.ArrowDropDown, null)
-    }
-    DropdownMenu(
-        expanded = expanded,
-        onDismissRequest = { expanded = false },
-    ) {
-        candidates.forEach { candidate ->
-            DropdownMenuItem(onClick = {
-                expanded = false
-                label = candidateToContent(candidate)
-                onSelect(candidate)
-            }) {
-                Text(text = candidateToContent(candidate))
+    Box(modifier) {
+        Button(onClick = { expanded = !expanded }, colors = colors) {
+            Text(label)
+            Icon(Icons.Filled.ArrowDropDown, null)
+        }
+        DropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false },
+        ) {
+            candidates.forEach { candidate ->
+                DropdownMenuItem(onClick = {
+                    expanded = false
+                    label = candidateToText(candidate)
+                    onSelect(candidate)
+                }) {
+                    Text(text = candidateToText(candidate))
+                }
             }
         }
     }
