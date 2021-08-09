@@ -28,11 +28,11 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.gui.vm.FactorBasedActionSelectorSettingViewModel
 import io.github.mee1080.umasim.gui.vm.ResultWriter
-import io.github.mee1080.umasim.simulation.Evaluator
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
 import io.github.mee1080.umasim.simulation.Summary
 import kotlinx.coroutines.*
+import java.io.File
 import java.util.concurrent.Executors
 
 class ViewModel(private val scope: CoroutineScope) {
@@ -138,6 +138,12 @@ class ViewModel(private val scope: CoroutineScope) {
 
     val simulationRunning get() = simulationJob?.isActive == true
 
+    var simulationResultFile by mutableStateOf<String?>(null)
+
+    val simulationResult get() = simulationResultFile?.let { File(it).readText(Charsets.UTF_8) } ?: ""
+
+    var simulationResultVisible by mutableStateOf(true)
+
     fun startSimulation() {
         if (!canSimulate || simulationRunning) return
         val chara = selectedChara!!
@@ -168,9 +174,10 @@ class ViewModel(private val scope: CoroutineScope) {
                         acc
                     }
                     if (!isActive) throw CancellationException()
-                    val output =
+                    val file =
                         ResultWriter().output(chara, support, option, simulationCount, simulationTurn, totalSummary)
-                    println(output)
+                    simulationResultFile = file.absolutePath
+                    simulationResultVisible = true
                 } catch (e: CancellationException) {
                     // nothing to do
                 } finally {

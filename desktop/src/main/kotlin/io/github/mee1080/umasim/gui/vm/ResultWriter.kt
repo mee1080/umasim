@@ -66,20 +66,20 @@ class ResultWriter {
                 
                 実行結果:
                 　,スピード,スタミナ,パワー,根性,賢さ,スキルPt,合計
-                平均,${evaluator.average().joinToString(",")},${evaluator.averageSum()}
-                50%上振れ平均,${evaluator.upper(0.5).joinToString(",")},${evaluator.upperSum(0.5)}
-                20%上振れ平均,${evaluator.upper(0.2).joinToString(",")},${evaluator.upperSum(0.2)}
-                5%上振れ平均,${evaluator.upper(0.05).joinToString(",")},${evaluator.upperSum(0.05)}
+                平均, ${evaluator.average().joinToString(", ")}, ${evaluator.averageSum()}
+                50%上振れ平均, ${evaluator.upper(0.5).joinToString(", ")}, ${evaluator.upperSum(0.5)}
+                20%上振れ平均, ${evaluator.upper(0.2).joinToString(", ")}, ${evaluator.upperSum(0.2)}
+                5%上振れ平均, ${evaluator.upper(0.05).joinToString(", ")}, ${evaluator.upperSum(0.05)}
                 
                 行動回数平均:
                 　,合計,友情0,友情1,友情2,友情3,友情4,友情5
-                スピード,${evaluator.trainingCount(StatusType.SPEED).joinToString(",")}
-                スタミナ,${evaluator.trainingCount(StatusType.STAMINA).joinToString(",")}
-                パワー,${evaluator.trainingCount(StatusType.POWER).joinToString(",")}
-                根性,${evaluator.trainingCount(StatusType.GUTS).joinToString(",")}
-                賢さ,${evaluator.trainingCount(StatusType.WISDOM).joinToString(",")}
-                お休み,${evaluator.averageSleepCount()}
-                お出かけ,${evaluator.averageOutingCount()}
+                スピード, ${evaluator.trainingCount(StatusType.SPEED).joinToString(", ")}
+                スタミナ, ${evaluator.trainingCount(StatusType.STAMINA).joinToString(", ")}
+                パワー, ${evaluator.trainingCount(StatusType.POWER).joinToString(", ")}
+                根性, ${evaluator.trainingCount(StatusType.GUTS).joinToString(", ")}
+                賢さ, ${evaluator.trainingCount(StatusType.WISDOM).joinToString(", ")}
+                お休み, ${evaluator.averageSleepCount()}
+                お出かけ, ${evaluator.averageOutingCount()}
             """.trimIndent()
             )
         }
