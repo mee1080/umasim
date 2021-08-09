@@ -34,6 +34,7 @@ import io.github.mee1080.umasim.simulation.Summary
 import kotlinx.coroutines.*
 import java.io.File
 import java.util.concurrent.Executors
+import java.util.concurrent.atomic.AtomicInteger
 
 class ViewModel(private val scope: CoroutineScope) {
 
@@ -138,6 +139,10 @@ class ViewModel(private val scope: CoroutineScope) {
 
     val simulationRunning get() = simulationJob?.isActive == true
 
+    var simulationRunningCount by mutableStateOf(0)
+
+    var simulationFinishedCount by mutableStateOf(0)
+
     var simulationResultFile by mutableStateOf<String?>(null)
 
     val simulationResult get() = simulationResultFile?.let { File(it).readText(Charsets.UTF_8) } ?: ""
@@ -152,10 +157,13 @@ class ViewModel(private val scope: CoroutineScope) {
         val simulationCount = simulationCount
         val simulationTurn = simulationTurn
         val simulationThread = simulationThread
+        simulationRunningCount = simulationCount
+        simulationFinishedCount = 0
         simulationJob = scope.launch(Dispatchers.Default) {
             val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
             simulationContext.use { context ->
                 try {
+                    val finishedCount = AtomicInteger(0)
                     val totalSummary = (0 until simulationThread).map { thread ->
                         async(context) {
                             val summary = mutableListOf<Summary>()
@@ -166,7 +174,11 @@ class ViewModel(private val scope: CoroutineScope) {
                                 val simulator = Simulator(chara, support, Store.trainingList)
                                 val selector = FactorBasedActionSelector(option)
                                 summary.add(Runner.simulate(simulationTurn, simulator, selector))
+                                if (it % 100 == 99) {
+                                    simulationFinishedCount = finishedCount.addAndGet(100)
+                                }
                             }
+                            simulationFinishedCount = finishedCount.addAndGet(count % 100)
                             summary
                         }
                     }.fold(mutableListOf<Summary>()) { acc, result ->
