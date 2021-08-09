@@ -1,5 +1,6 @@
 /data/
 /result/
+/settings.json
 
 .gradle
 .idea

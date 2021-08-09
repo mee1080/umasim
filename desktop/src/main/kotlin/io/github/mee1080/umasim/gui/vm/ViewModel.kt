@@ -50,6 +50,7 @@ class ViewModel(private val scope: CoroutineScope) {
     }
 
     var selectedChara by mutableStateOf(charaList.getOrNull(0))
+        private set
 
     var charaSelecting by mutableStateOf(false)
         private set
@@ -66,6 +67,7 @@ class ViewModel(private val scope: CoroutineScope) {
     fun selectChara(chara: Chara?) {
         selectedChara = chara
         charaSelecting = false
+        save()
     }
 
     val supportList = Store.supportList.sortedWith { o1, o2 ->
@@ -104,6 +106,7 @@ class ViewModel(private val scope: CoroutineScope) {
     fun selectSupport(card: SupportCard?) {
         selectedSupportList[selectingSupportIndex] = card
         selectingSupportIndex = -1
+        save()
     }
 
     val canSimulate
@@ -149,6 +152,7 @@ class ViewModel(private val scope: CoroutineScope) {
 
     fun startSimulation() {
         if (!canSimulate || simulationRunning) return
+        save()
         val chara = selectedChara!!
         val support = selectedSupportList.filterNotNull()
         val option = simulationSetting.option
@@ -199,5 +203,13 @@ class ViewModel(private val scope: CoroutineScope) {
 
     fun cancelSimulation() {
         simulationJob?.cancel()
+    }
+
+    private fun save() {
+        SaveData.save(this)
+    }
+
+    init {
+        SaveData.load(this)
     }
 }

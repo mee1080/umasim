@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation.Action
 import io.github.mee1080.umasim.simulation.ActionSelector
 import io.github.mee1080.umasim.simulation.SimulationState
+import kotlinx.serialization.Serializable
 
 class FactorBasedActionSelector(private val option: Option = Option()) : ActionSelector {
 
@@ -72,6 +73,7 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
         )
     }
 
+    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,
