@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
+import io.github.mee1080.umasim.util.SaveDataConverter
 import kotlinx.browser.localStorage
 
 class ViewModel(store: Store = Store) {
@@ -116,20 +117,13 @@ class ViewModel(store: Store = Store) {
 
     inner class SupportSelection {
 
-        internal fun toSaveString() = "1:$selectedSupport:$supportTalent:${if (join) 1 else 0}:${if (friend) 1 else 0}"
+        internal fun toSaveInfo() = SaveDataConverter.SupportInfo(selectedSupport, supportTalent, join, friend)
 
-        internal fun loadFromString(saved: String) {
-            val split = saved.split(":")
-            if (split[0] == "1") {
-                try {
-                    selectedSupport = split[1].toInt()
-                    supportTalent = split[2].toInt()
-                    join = split[3] == "1"
-                    friend = split[4] == "1"
-                } catch (_: Exception) {
-                    // ignore
-                }
-            }
+        internal fun fromSaveInfo(info: SaveDataConverter.SupportInfo) {
+            selectedSupport = info.id
+            supportTalent = info.talent
+            join = info.join
+            friend = info.friend
         }
 
         val supportList: List<Triple<Int, String, String>>
@@ -285,7 +279,10 @@ class ViewModel(store: Store = Store) {
                     }
                 }
         ).first
-        localStorage.setItem(KEY_SUPPORT_LIST, "1," + supportSelectionList.joinToString(",") { it.toSaveString() })
+        localStorage.setItem(
+            KEY_SUPPORT_LIST,
+            SaveDataConverter.supportListToString(supportSelectionList.map { it.toSaveInfo() })
+        )
     }
 
     var totalRaceBonus by mutableStateOf(0)
@@ -368,15 +365,10 @@ class ViewModel(store: Store = Store) {
     }
 
     init {
-        val savedSupport = localStorage.getItem(KEY_SUPPORT_LIST)
-        if (savedSupport != null) {
-            val split = savedSupport.split(",")
-            if (split[0] == "1") {
-                (1 until split.size).forEach {
-                    supportSelectionList.getOrNull(it - 1)?.loadFromString(split[it])
-                }
+        SaveDataConverter.stringToSupportList(localStorage.getItem(KEY_SUPPORT_LIST))
+            .forEachIndexed { index, supportInfo ->
+                supportSelectionList.getOrNull(index)?.fromSaveInfo(supportInfo)
             }
-        }
         calculate()
         calculateBonus()
     }
