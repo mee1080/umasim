@@ -103,7 +103,7 @@ private fun SettingSlider(label: String, value: Double, max: Double = 2.0, onVal
         )
         Slider(
             value = value.toFloat(),
-            onValueChange = { onValueChange(it.toDouble()) },
+            onValueChange = { onValueChange((it.toDouble() * 100).roundToInt() / 100.0) },
             modifier = Modifier.fillMaxWidth().padding(8.dp, 0.dp).align(Alignment.CenterVertically),
             valueRange = 0f..max.toFloat(),
             steps = (max * 100).toInt() / 5 - 1,
