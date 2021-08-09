@@ -27,6 +27,7 @@ import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.gui.vm.FactorBasedActionSelectorSettingViewModel
+import io.github.mee1080.umasim.gui.vm.ResultWriter
 import io.github.mee1080.umasim.simulation.Evaluator
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
@@ -167,7 +168,9 @@ class ViewModel(private val scope: CoroutineScope) {
                         acc
                     }
                     if (!isActive) throw CancellationException()
-                    println(Evaluator(totalSummary).toSummaryString())
+                    val output =
+                        ResultWriter().output(chara, support, option, simulationCount, simulationTurn, totalSummary)
+                    println(output)
                 } catch (e: CancellationException) {
                     // nothing to do
                 } finally {
