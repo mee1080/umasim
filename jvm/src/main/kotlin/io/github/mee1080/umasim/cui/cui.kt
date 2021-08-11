@@ -105,10 +105,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
-//    doShortSimulation(
-//        StatusType.SPEED, 0..4, 4, false,
-//        100000, FactorBasedActionSelector.speedPower
-//    )
+    doShortSimulation(
+        StatusType.POWER, 0..4, 4, false,
+        100000, FactorBasedActionSelector.speedPower
+    )
 //    (1..31 step 10).forEach { charm ->
 //        println("愛嬌ターン $charm")
 //        doShortSimulation(
@@ -208,10 +208,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
-    doShortSimulation(
-        StatusType.GUTS, 0..4, 4, false,
-        100, FactorBasedActionSelector.speedGuts
-    )
+//    doShortSimulation(
+//        StatusType.GUTS, 0..4, 4, false,
+//        100, FactorBasedActionSelector.speedGuts
+//    )
 
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(
