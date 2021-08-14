@@ -1,10 +1,10 @@
-/data/
 /result/
 /settings.json
 
 .gradle
 .idea
 build
+*.lnk
 
 # Ignore Gradle GUI config
 gradle-app.setting
