@@ -61,6 +61,9 @@ object Store {
     fun getChara(id: Int, rarity: Int, rank: Int) = charaList
         .first { it.id == id && it.rarity == rarity && it.rank == rank }
 
+    fun getCharaOrNull(id: Int, rarity: Int, rank: Int) = charaList
+        .firstOrNull { it.id == id && it.rarity == rarity && it.rank == rank }
+
     val trainingInfo
         get() = trainingList
             .groupBy { it.type }

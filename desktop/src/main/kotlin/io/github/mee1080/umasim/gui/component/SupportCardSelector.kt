@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 
 @Composable
@@ -41,11 +42,13 @@ fun SupportCardSelector(
     onCanceled: () -> Unit = {},
     onSelect: (SupportCard?) -> Unit = { },
 ) {
-    val rememberedInitialCard by remember { mutableStateOf(initialCard?.id) }
+    var rememberedInitialCard by remember { mutableStateOf(initialCard?.id) }
     var type by remember { mutableStateOf(initialCard?.type ?: StatusType.NONE) }
     var text by remember { mutableStateOf("") }
     var talent by remember { mutableStateOf(initialCard?.talent ?: 0) }
     if (initialCard != null && rememberedInitialCard != initialCard.id) {
+        @Suppress("UNUSED_VALUE")
+        rememberedInitialCard = initialCard.id
         type = initialCard.type
         talent = initialCard.talent
     }
@@ -97,6 +100,12 @@ fun SupportCardSelector(
         ) {
             (0..4).forEach {
                 LabeledRadioButton(it == talent, { talent = it }) { Text("${it}凸") }
+            }
+        }
+        rememberedInitialCard?.let {
+            val current = Store.getSupportOrNull(it, talent = talent)
+            if (current != null) {
+                SupportCardView(current, selected = true) { onSelect(current) }
             }
         }
         Box(modifier = Modifier.weight(1f)) {

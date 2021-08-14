@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.data.Chara
+import io.github.mee1080.umasim.data.Store
 
 @Composable
 fun CharaSelector(
@@ -75,6 +76,12 @@ fun CharaSelector(
         ) {
             (1..5).forEach {
                 LabeledRadioButton(it == rank, { rank = it }) { Text("覚醒${it}") }
+            }
+        }
+        if (initialChara != null) {
+            val current = Store.getCharaOrNull(initialChara.id, rarity, rank)
+            if (current != null) {
+                CharaView(current, selected = true) { onSelect(current) }
             }
         }
         Box(modifier = Modifier.weight(1f)) {
