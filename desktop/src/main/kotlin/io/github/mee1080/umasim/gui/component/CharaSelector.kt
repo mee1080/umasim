@@ -87,9 +87,10 @@ fun CharaSelector(
         Box(modifier = Modifier.weight(1f)) {
             val scrollState = rememberScrollState()
             Column(modifier = Modifier.verticalScroll(scrollState)) {
+                val filters = if (text.isEmpty()) null else text.split("[　%s]".toRegex())
                 charaList
                     .filter { it.rarity == rarity && it.rank == rank }
-                    .filter { text.isEmpty() || it.name.contains(text) }
+                    .filter { filters == null || it.matches(filters) }
                     .forEach {
                         CharaView(it, selected = it.id == initialChara?.id) { onSelect(it) }
                     }

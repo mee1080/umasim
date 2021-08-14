@@ -59,4 +59,8 @@ data class Chara(
             "FFFFFF",
         )
     }
+
+    fun matches(filters: Collection<String>) = filters.all { filter ->
+        name.contains(filter) || initialStatus.skillHint.any { it.key.contains(filter) }
+    }
 }

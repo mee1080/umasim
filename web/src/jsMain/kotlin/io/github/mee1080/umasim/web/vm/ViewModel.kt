@@ -84,17 +84,12 @@ class ViewModel(store: Store = Store) {
     var filteredSupportList by mutableStateOf(displaySupportList)
 
     fun applyFilter() {
-        console.log("applyFilter $appliedSupportFilter $supportFilter")
         if (supportFilterApplied) return
         appliedSupportFilter = supportFilter
+        val filters = supportFilter.split("[　%s]".toRegex())
         filteredSupportList = if (supportFilter.isEmpty()) displaySupportList else {
-            displaySupportList.filter { (id, name, type) ->
-                val card = supportMap[id]?.first()
-                if (card == null) true else {
-                    supportFilter.split("[　%s]".toRegex()).all { filter ->
-                        name.contains(filter) || type.contains(filter) || card.skills.any { it.contains(filter) }
-                    }
-                }
+            displaySupportList.filter { (id, _, _) ->
+                supportMap[id]?.first()?.matches(filters) ?: false
             }
         }
     }
