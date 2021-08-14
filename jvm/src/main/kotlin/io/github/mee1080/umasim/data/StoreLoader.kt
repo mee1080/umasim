@@ -18,14 +18,33 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.ktor.client.*
+import io.ktor.client.request.*
+import kotlinx.coroutines.runBlocking
 import java.io.File
 
 object StoreLoader {
+
+    private const val FILE_BASE = "data/"
+    private const val URL_BASE = "https://raw.githubusercontent.com/mee1080/umasim/main/data/"
+
+    private val names = arrayOf("chara.txt", "support_card.txt", "training.txt")
+
     fun load() {
-        Store.load(
-            File("data/chara.txt").readText(),
-            File("data/support_card.txt").readText(),
-            File("data/training.txt").readText(),
-        )
+        val files = names.map { File(FILE_BASE + it) }
+        if (files.all { it.canRead() }) {
+            Store.load(
+                files[0].readText(),
+                files[1].readText(),
+                files[2].readText(),
+            )
+        } else {
+            runBlocking {
+                val data = HttpClient().use { client ->
+                    names.map { client.get<String>(URL_BASE + it) }
+                }
+                Store.load(data[0], data[1], data[2])
+            }
+        }
     }
 }
