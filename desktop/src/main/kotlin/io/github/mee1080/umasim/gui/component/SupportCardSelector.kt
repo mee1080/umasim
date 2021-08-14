@@ -111,10 +111,11 @@ fun SupportCardSelector(
         Box(modifier = Modifier.weight(1f)) {
             val scrollState = rememberScrollState()
             Column(modifier = Modifier.verticalScroll(scrollState)) {
+                val filters = if (text.isEmpty()) null else text.split("[　%s]".toRegex())
                 supportList
                     .filter { it.talent == talent }
                     .filter { type == StatusType.NONE || type == it.type }
-                    .filter { text.isEmpty() || it.name.contains(text) }
+                    .filter { filters == null || it.matches(filters) }
                     .forEach {
                         SupportCardView(it, selected = it.id == initialCard?.id) { onSelect(it) }
                     }
