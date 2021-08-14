@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.data
 
 import io.ktor.client.*
+import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
@@ -27,12 +28,13 @@ object StoreLoader {
 
     private const val FILE_BASE = "data/"
     private const val URL_BASE = "https://raw.githubusercontent.com/mee1080/umasim/main/data/"
+    private const val FORCE_NETWORK = false
 
     private val names = arrayOf("chara.txt", "support_card.txt", "training.txt")
 
     fun load() {
         val files = names.map { File(FILE_BASE + it) }
-        if (files.all { it.canRead() }) {
+        if (!FORCE_NETWORK && files.all { it.canRead() }) {
             Store.load(
                 files[0].readText(),
                 files[1].readText(),
@@ -40,8 +42,11 @@ object StoreLoader {
             )
         } else {
             runBlocking {
-                val data = HttpClient().use { client ->
+                val data = HttpClient(CIO).use { client ->
                     names.map { client.get<String>(URL_BASE + it) }
+                }
+                if (FORCE_NETWORK) {
+                    data.forEach { println(it) }
                 }
                 Store.load(data[0], data[1], data[2])
             }

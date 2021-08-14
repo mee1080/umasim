@@ -11,7 +11,7 @@ dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib"))
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
-    implementation("io.ktor:ktor-client-apache:1.6.2")
+    implementation("io.ktor:ktor-client-cio:1.6.2")
 }
 
 tasks.withType<KotlinCompile>() {
