@@ -35,6 +35,7 @@ class FactorBasedActionSelectorSettingViewModel {
     val presets = listOf(
         "スピ3パワ2友人1" to FactorBasedActionSelector.speedPower,
         "スピ3賢さ2友人1" to FactorBasedActionSelector.speedWisdom,
+        "スピ2賢さ2パワ1友人1" to FactorBasedActionSelector.speedWisdomPower,
         "スピ3スタ3" to FactorBasedActionSelector.speedStamina,
         "スピ2根性4" to FactorBasedActionSelector.speedGuts,
         "パワ3賢さ3" to FactorBasedActionSelector.powerWisdom,

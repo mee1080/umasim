@@ -125,24 +125,26 @@ fun openCui(args: Array<String>) {
 //    optimizeAI(
 //        Store.getChara("ハルウララ", 5, 5),
 //        Store.getSupportByName(
-//            *(speed(4, 3)),
+//            *(speed(4, 2)),
 //            *(wisdom(4, 2)),
 //            *(friend(4, 1)),
+//            "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
 //        ),
 //        options = generateOptions(
 //            step = 0.1,
-//            speed = 0.5..0.7,
-//            stamina = 1.0..1.2,
+//            speed = 0.9..1.1,
+//            stamina = 0.8..1.0,
 //            power = 0.8..1.0,
-//            wisdom = 0.5..0.7,
-//            hp = 0.6..0.8,
+//            guts = 0.8..0.8,
+//            wisdom = 0.6..0.8,
+//            hp = 0.5..0.7,
 //        ),
 //        testCount = 1000, turn = 60,
 //    )
-    doShortSimulation(
-        StatusType.WISDOM, 0..4, 4, true,
-        100000, FactorBasedActionSelector.speedWisdom
-    )
+//    doShortSimulation(
+//        StatusType.WISDOM, 0..4, 4, true,
+//        100000, FactorBasedActionSelector.speedWisdomPower
+//    )
 //    (1..31 step 10).forEach { charm ->
 //        println("愛嬌ターン $charm")
 //        doShortSimulation(
@@ -169,10 +171,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.8,
 //        ), testCount = 1000
 //    )
-//    doLongSimulation(
-//        StatusType.STAMINA, 0..4, 4,
-//        100000, option = FactorBasedActionSelector.speedStamina
-//    )
+    doLongSimulation(
+        StatusType.STAMINA, 0..4, 4,
+        100000, option = FactorBasedActionSelector.speedStamina
+    )
 
     // マイルパワ賢
 //    optimizeAI(
@@ -331,7 +333,8 @@ fun optimizeAI(
                         )
                     )
                 }
-                println("$index,\"$option\",,${Evaluator(summary).toSummaryString()}")
+                val optionStr = "${option.speedFactor},${option.staminaFactor},${option.powerFactor},${option.gutsFactor},${option.wisdomFactor},${option.skillPtFactor},${option.hpFactor},${option.motivationFactor}"
+                println("$index,\"$optionStr\",,${Evaluator(summary).toSummaryString()}")
             }
         }.forEach {
             it.join()
@@ -380,9 +383,10 @@ fun doShortSimulation(
             *(guts(supportTalent, 3)),
         )
         StatusType.WISDOM -> if (needsWisdom) Store.getSupportByName(
-            *(speed(supportTalent, 3)),
+            *(speed(supportTalent, 2)),
             *(wisdom(supportTalent, 1)),
             *(friend(supportTalent, 1)),
+            "[押して忍べど燃ゆるもの]ヤエノムテキ" to supportTalent,
         ) else Store.getSupportByName(
             *(speed(supportTalent, 3)),
             *(power(supportTalent, 2)),

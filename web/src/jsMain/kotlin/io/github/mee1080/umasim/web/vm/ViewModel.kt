@@ -319,6 +319,7 @@ class ViewModel(store: Store = Store) {
     private val simulationModeList = listOf(
         "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
         "スピ賢" to { FactorBasedActionSelector.speedWisdom.generateSelector() },
+        "スピ賢パワ" to { FactorBasedActionSelector.speedWisdomPower.generateSelector() },
         "スピスタ" to { FactorBasedActionSelector.speedStamina.generateSelector() },
         "パワ賢" to { FactorBasedActionSelector.powerWisdom.generateSelector() },
         "スピ根性" to { FactorBasedActionSelector.speedGuts.generateSelector() },
