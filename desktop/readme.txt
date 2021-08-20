@@ -63,6 +63,21 @@ Twitter（@mee10801）に、DMまたはリプライをお願いします。
 
 参考にさせていただいたサイト等
 
+　数字でわかるウマ娘攻略（おがテツさん）
+　https://www.ogatetsu.shop/
+　計算式
+
+　ファミ通.com
+　https://www.famitsu.com/news/202106/01222293.html
+　お休み、お出かけ効果
+
+　育成理論（chokudaiさん）
+　https://twitter.com/chokudai/status/1370022643152293898
+　ヒント率の評価
+
+　ポチさん
+　https://twitter.com/aoneko_uma
+　計算式
 
 
 ■免責事項
