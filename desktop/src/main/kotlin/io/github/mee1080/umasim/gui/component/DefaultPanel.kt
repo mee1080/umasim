@@ -51,7 +51,12 @@ fun DefaultPanel(model: ViewModel) {
                 ) {
                     model.toggleCharaSelect()
                 }
-                Text("サポートカード", Modifier.padding(8.dp, 8.dp))
+                Row(Modifier.padding(8.dp, 8.dp)) {
+                    Text("サポートカード", Modifier.weight(1f).align(Alignment.CenterVertically))
+                    Button({ model.selectPreset() }, Modifier.align(Alignment.CenterVertically)) {
+                        Text("プリセット")
+                    }
+                }
                 model.selectedSupportList.forEachIndexed { index, card ->
                     SupportCardView(
                         card,
@@ -82,6 +87,9 @@ fun DefaultPanel(model: ViewModel) {
                 ) {
                     model.selectSupport(it)
                 }
+            }
+            if (model.presetSelecting) {
+                PresetSelector(model, Modifier.weight(1f))
             }
         }
         Text("シミュレーション設定", Modifier.padding(8.dp, 8.dp))

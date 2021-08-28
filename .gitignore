@@ -1,5 +1,5 @@
 /result/
-/settings.json
+/settings.json*
 
 .gradle
 .idea

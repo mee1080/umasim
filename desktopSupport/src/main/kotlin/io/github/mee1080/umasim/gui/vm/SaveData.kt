@@ -10,6 +10,7 @@ import kotlinx.serialization.json.Json
 data class SaveData(
     val chara: String,
     val support: String,
+    val supportPresets: List<Pair<String, String>> = emptyList(),
     val simulationTurn: Int,
     val simulationCount: Int,
     val simulationThread: Int,

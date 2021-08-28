@@ -42,6 +42,12 @@ class ViewModel(private val scope: CoroutineScope) {
 
     var viewState by mutableStateOf(ViewState.DEFAULT)
 
+    private fun resetPanelState() {
+        cancelCharaSelect()
+        cancelSupportSelect()
+        finishSelectPreset()
+    }
+
     val charaList = Store.charaList.sortedWith { o1, o2 ->
         when {
             o1.charaName != o2.charaName -> o1.charaName.compareTo(o2.charaName)
@@ -55,7 +61,7 @@ class ViewModel(private val scope: CoroutineScope) {
         private set
 
     fun toggleCharaSelect() {
-        cancelSupportSelect()
+        resetPanelState()
         charaSelecting = !charaSelecting
     }
 
@@ -92,7 +98,7 @@ class ViewModel(private val scope: CoroutineScope) {
     val supportSelecting get() = selectingSupportIndex >= 0
 
     fun toggleSupportSelect(index: Int) {
-        cancelCharaSelect()
+        resetPanelState()
         selectingSupportIndex = if (selectingSupportIndex == index) -1 else index
     }
 
@@ -106,6 +112,57 @@ class ViewModel(private val scope: CoroutineScope) {
         selectedSupportList[selectingSupportIndex] = card
         selectingSupportIndex = -1
         save()
+    }
+
+    val supportPresets = mutableStateListOf<Pair<String, List<SupportCard?>>>()
+
+    var changingPreset by mutableStateOf<List<SupportCard?>?>(null)
+
+    val presetSelecting get() = changingPreset != null
+
+    var addPresetFailed by mutableStateOf(false)
+
+    fun selectPreset() {
+        resetPanelState()
+        changingPreset = selectedSupportList.toList()
+    }
+
+    fun applyPreset(preset: List<SupportCard?>) {
+        preset.forEachIndexed { index, card ->
+            selectedSupportList[index] = card
+        }
+    }
+
+    fun resetPreset() {
+        changingPreset?.let { applyPreset(it) }
+    }
+
+    fun addPreset(name: String) {
+        if (name.isEmpty() || supportPresets.any { it.first == name }) {
+            addPresetFailed = true
+        } else {
+            addPresetFailed = false
+            supportPresets.add(name to selectedSupportList.toList())
+            save()
+        }
+    }
+
+    fun deletePreset(name: String) {
+        supportPresets.removeIf { it.first == name }
+        save()
+    }
+
+    fun updatePreset(name: String) {
+        if (supportPresets.any { it.first == name }) {
+            supportPresets.removeIf { it.first == name }
+            supportPresets.add(name to selectedSupportList.toList())
+            save()
+        }
+    }
+
+    fun finishSelectPreset() {
+        changingPreset = null
+        addPresetFailed = false
     }
 
     val canSimulate
