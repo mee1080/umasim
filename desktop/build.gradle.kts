@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "io.github.mee1080.umasim"
-version = "1.0"
+version = "1.0.1"
 
 repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }

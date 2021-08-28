@@ -26,7 +26,7 @@ object SaveDataLoader {
 
     private const val SAVE_FILE = "settings.json"
 
-    private const val DEBUG = true
+    private const val DEBUG = false
 
     fun save(model: ViewModel) {
         try {
