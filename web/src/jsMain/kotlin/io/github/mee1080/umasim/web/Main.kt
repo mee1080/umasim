@@ -20,10 +20,7 @@ package io.github.mee1080.umasim.web
 
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.web.components.GroupedSelect
-import io.github.mee1080.umasim.web.components.LabeledCheckbox
-import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.LabeledSelect
+import io.github.mee1080.umasim.web.components.*
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.*
@@ -107,6 +104,7 @@ fun main() {
             }
         }
         H2 { Text("トレーニング上昇量") }
+        LabeledRadioGroup("scenario", "シナリオ：", model.scenarioList, model.selectedScenario, model::updateScenario)
         LabeledRadioGroup("motivation", "やる気：", model.motivationList, model.motivation, model::updateMotivation)
         LabeledRadioGroup(
             "training",
@@ -140,12 +138,12 @@ fun main() {
                 }
             }
         }
-//        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
-//            model.updateTrainingParamTest(it)
-//        }
-//        model.trainingParamTest?.let {
-//            TrainingParamTest(it)
-//        }
+        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
+            model.updateTrainingParamTest(it)
+        }
+        model.trainingParamTest?.let {
+            TrainingParamTest(it)
+        }
         if (model.trainingImpact.isNotEmpty()) {
             H3 { Text("サポカ影響度") }
             Div {

@@ -195,6 +195,16 @@ class ViewModel(store: Store = Store) {
             } ?: 0.0
     }
 
+    val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
+
+    var selectedScenario by mutableStateOf(Scenario.URA.ordinal)
+        private set
+
+    fun updateScenario(scenarioIndex: Int) {
+        selectedScenario = scenarioIndex
+        calculate()
+    }
+
     val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
 
     var selectedTrainingType by mutableStateOf(StatusType.SPEED.ordinal)
@@ -251,13 +261,15 @@ class ViewModel(store: Store = Store) {
                 })
             }
         }
+        val scenario = Scenario.values().getOrElse(selectedScenario) { Scenario.URA }
         val trainingType = StatusType.values()[selectedTrainingType]
         trainingResult = Calculator.calcTrainingSuccessStatus(
             chara,
             trainingInfo[trainingType]!!,
             trainingLevel,
             motivation,
-            supportList
+            supportList,
+            scenario,
         )
         trainingImpact = supportList.map { target ->
             target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
@@ -265,7 +277,8 @@ class ViewModel(store: Store = Store) {
                 trainingInfo[trainingType]!!,
                 trainingLevel,
                 motivation,
-                supportList.filter { it.index != target.index }
+                supportList.filter { it.index != target.index },
+                scenario,
             )
         }
         expectedResult = Calculator.calcExpectedTrainingStatus(
@@ -278,7 +291,8 @@ class ViewModel(store: Store = Store) {
                     selection.card?.let {
                         Support(index, it).apply { friendTrainingEnabled = selection.friend }
                     }
-                }
+                },
+            scenario,
         ).first
         trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(

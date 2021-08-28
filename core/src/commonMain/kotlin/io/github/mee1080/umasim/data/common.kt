@@ -68,3 +68,8 @@ fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
     val target = values.firstOrNull { it.first == value } ?: return 0.0
     return target.second.toDouble() / values.sumOf { it.second }
 }
+
+enum class Scenario(val displayName: String) {
+    URA("URA"),
+    AOHARU("アオハル(URAの上昇値×0.85と仮定)"),
+}
