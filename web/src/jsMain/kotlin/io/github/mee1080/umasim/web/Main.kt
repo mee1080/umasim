@@ -42,7 +42,6 @@ fun main() {
         LabeledSelect("", model.displayCharaList, model.selectedChara, model::updateChara)
         H2 { Text("サポートカード") }
         Div({ style { paddingBottom(16.px) } }) {
-            console.log("render")
             TextInput {
 //                value(model.supportFilter)
                 placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
@@ -141,6 +140,12 @@ fun main() {
                 }
             }
         }
+//        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
+//            model.updateTrainingParamTest(it)
+//        }
+//        model.trainingParamTest?.let {
+//            TrainingParamTest(it)
+//        }
         if (model.trainingImpact.isNotEmpty()) {
             H3 { Text("サポカ影響度") }
             Div {

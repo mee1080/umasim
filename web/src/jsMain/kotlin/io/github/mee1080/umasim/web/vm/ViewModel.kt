@@ -235,6 +235,12 @@ class ViewModel(store: Store = Store) {
 
     var expectedResult by mutableStateOf(ExpectedStatus())
 
+    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
+
+    fun updateTrainingParamTest(enabled: Boolean) {
+        trainingParamTest = if (enabled) TrainingParamTestModel() else null
+    }
+
     private fun calculate() {
         val supportList = mutableListOf<Support>()
         supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
@@ -274,6 +280,7 @@ class ViewModel(store: Store = Store) {
                     }
                 }
         ).first
+        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(
             KEY_SUPPORT_LIST,
             SaveDataConverter.supportListToString(supportSelectionList.map { it.toSaveInfo() })

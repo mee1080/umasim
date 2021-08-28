@@ -39,6 +39,20 @@ object Calculator {
         hp = calcTrainingHp(training, trainingLevel, support),
     )
 
+    fun calcTrainingSuccessStatus(
+        chara: Chara,
+        type: StatusType,
+        motivation: Int,
+        support: List<Support>,
+        status: Status,
+    ) = calcTrainingSuccessStatus(
+        chara,
+        TrainingInfo(TrainingBase(type, 1, 0, status)),
+        1,
+        motivation,
+        support
+    )
+
     private fun calcTrainingStatus(
         chara: Chara,
         training: TrainingInfo,

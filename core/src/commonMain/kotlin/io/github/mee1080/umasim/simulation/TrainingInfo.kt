@@ -25,6 +25,9 @@ class TrainingInfo(
     val type: StatusType,
     val base: List<TrainingBase>
 ) {
+
+    constructor(base: TrainingBase) : this(base.type, listOf(base))
+
     var level = 1
         private set
 
@@ -38,9 +41,9 @@ class TrainingInfo(
             }
         }
 
-    val current get() = base[level - 1]
+    val current get() = base.getOrElse(level - 1) { base[0] }
 
     val failureRate get() = current.failureRate
 
-    fun getBaseStatus(level: Int? = null) = (level?.let { base[it - 1] } ?: current).status
+    fun getBaseStatus(level: Int? = null) = (level?.let { base.getOrNull(it - 1) } ?: current).status
 }
