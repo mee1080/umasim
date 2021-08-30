@@ -200,9 +200,21 @@ class ViewModel(store: Store = Store) {
     var selectedScenario by mutableStateOf(Scenario.URA.ordinal)
         private set
 
+    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.URA }
+
     fun updateScenario(scenarioIndex: Int) {
         selectedScenario = scenarioIndex
         calculate()
+    }
+
+    var teamJoinCount by mutableStateOf(0)
+        private set
+
+    fun updateTeamJoinCount(delta:Int) {
+        if (delta + teamJoinCount in 0..5) {
+            teamJoinCount += delta
+            calculate()
+        }
     }
 
     val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
@@ -235,7 +247,7 @@ class ViewModel(store: Store = Store) {
         calculate()
     }
 
-    private val trainingInfo = store.trainingInfo
+    private val trainingInfo = Scenario.values().associateWith { store.getTrainingInfo(it) }
 
     var trainingResult by mutableStateOf(Status())
         private set
@@ -261,29 +273,31 @@ class ViewModel(store: Store = Store) {
                 })
             }
         }
-        val scenario = Scenario.values().getOrElse(selectedScenario) { Scenario.URA }
+
         val trainingType = StatusType.values()[selectedTrainingType]
         trainingResult = Calculator.calcTrainingSuccessStatus(
             chara,
-            trainingInfo[trainingType]!!,
+            trainingInfo[scenario]!![trainingType]!!,
             trainingLevel,
             motivation,
             supportList,
             scenario,
+            teamJoinCount,
         )
         trainingImpact = supportList.map { target ->
             target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
                 chara,
-                trainingInfo[trainingType]!!,
+                trainingInfo[scenario]!![trainingType]!!,
                 trainingLevel,
                 motivation,
                 supportList.filter { it.index != target.index },
                 scenario,
+                teamJoinCount,
             )
         }
         expectedResult = Calculator.calcExpectedTrainingStatus(
             chara,
-            trainingInfo[trainingType]!!,
+            trainingInfo[scenario]!![trainingType]!!,
             trainingLevel,
             motivation,
             supportSelectionList
@@ -293,6 +307,7 @@ class ViewModel(store: Store = Store) {
                     }
                 },
             scenario,
+            teamJoinCount,
         ).first
         trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(
@@ -335,7 +350,7 @@ class ViewModel(store: Store = Store) {
         availableHint = hintMap
     }
 
-    private val trainingList = store.trainingList
+    private val trainingList = Scenario.values().associateWith { store.getTrainingList(it) }
 
     private val simulationModeList = listOf(
         "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
@@ -375,7 +390,7 @@ class ViewModel(store: Store = Store) {
 
     fun doSimulation() {
         val supportList = supportSelectionList.mapNotNull { it.card }
-        val simulator = Simulator(chara, supportList, trainingList)
+        val simulator = Simulator(chara, supportList, trainingList[scenario]!!)
         Runner.simulate(simulationTurn, simulator, simulationModeList[simulationMode].second())
         simulationResult = simulator.status
         simulationHistory = simulator.history.map { it.name }

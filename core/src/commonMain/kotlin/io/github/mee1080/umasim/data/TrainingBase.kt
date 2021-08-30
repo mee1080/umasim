@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.data
 
 data class TrainingBase(
+    val scenario: Scenario,
     val type: StatusType,
     val level: Int,
     val failureRate: Int,

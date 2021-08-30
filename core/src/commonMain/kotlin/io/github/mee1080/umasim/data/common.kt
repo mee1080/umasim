@@ -71,5 +71,10 @@ fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
 
 enum class Scenario(val displayName: String) {
     URA("URA"),
-    AOHARU("アオハル(URAの上昇値×0.85と仮定)"),
+    AOHARU("アオハル(作成途中)"),
+}
+
+fun toScenario(value: String) = when (value) {
+    "2" -> Scenario.AOHARU
+    else -> Scenario.URA
 }

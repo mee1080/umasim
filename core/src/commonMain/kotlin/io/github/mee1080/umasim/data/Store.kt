@@ -38,7 +38,9 @@ object Store {
 
     val charaList get() = lazy { CharaLoader.load(charaSource) }.value
     val supportList get() = lazy { SupportCardLoader.load(supportSource) }.value
-    val trainingList get() = lazy { TrainingLoader.load(trainingSource) }.value
+    private val trainingList by lazy { TrainingLoader.load(trainingSource) }
+
+    fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 
     fun getSupport(vararg target: Pair<Int, Int>) = supportList
         .filter { target.contains(it.id to it.talent) }
@@ -64,10 +66,9 @@ object Store {
     fun getCharaOrNull(id: Int, rarity: Int, rank: Int) = charaList
         .firstOrNull { it.id == id && it.rarity == rarity && it.rank == rank }
 
-    val trainingInfo
-        get() = trainingList
-            .groupBy { it.type }
-            .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
+    fun getTrainingInfo(scenario: Scenario) = getTrainingList(scenario)
+        .groupBy { it.type }
+        .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
 
-    fun getTraining(type: StatusType) = trainingInfo[type]!!
+    fun getTraining(scenario: Scenario, type: StatusType) = getTrainingInfo(scenario)[type]!!
 }

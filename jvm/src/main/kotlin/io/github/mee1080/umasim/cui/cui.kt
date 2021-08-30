@@ -19,10 +19,7 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector
-import io.github.mee1080.umasim.data.Chara
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -57,13 +54,19 @@ fun stamina(supportTalent: Int, count: Int) = arrayOf(
 fun power(supportTalent: Int, count: Int) = arrayOf(
     "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
     "[押して忍べど燃ゆるもの]ヤエノムテキ" to supportTalent,
-    "[Head-on fight！]バンブーメモリー" to supportTalent,
+    "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
 ).take(count).toTypedArray()
 
 fun power2(supportTalent: Int, count: Int) = arrayOf(
     "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
     "[鍛えぬくトモ]ミホノブルボン" to supportTalent,
     "[テッペンに立て！]ヒシアマゾン" to supportTalent,
+).take(count).toTypedArray()
+
+fun power3(supportTalent: Int, count: Int) = arrayOf(
+    "[パッションチャンピオーナ！]エルコンドルパサー" to supportTalent,
+    "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
+    "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
 ).take(count).toTypedArray()
 
 fun guts(supportTalent: Int, count: Int) = arrayOf(
@@ -120,6 +123,26 @@ fun openCui(args: Array<String>) {
 //            }
 //        }
 //    }
+    // 中距離スピパワ
+//    optimizeAI(
+//        Store.getChara("[ぶっとび☆さまーナイト]マルゼンスキー", 5, 5), Store.getSupportByName(
+//            *(speed(4, 3)),
+//            *(power3(4, 3)),
+//        ), options = generateOptions(
+//            base = FactorBasedActionSelector.Option(),
+//            step = 0.1,
+//            speed = 0.6..0.8,
+//            stamina = 1.0..1.2,
+//            power = 1.0..1.2,
+//            hp = 0.5..0.7,
+//        ), testCount = 1000
+//    )
+    doShortSimulation(
+        StatusType.POWER, 0..4, 4, false,
+        10, FactorBasedActionSelector.speedPowerMiddle,
+        needFriend = false,
+        chara = Store.getChara("[ぶっとび☆さまーナイト]マルゼンスキー", 5, 5),
+    )
 
     // 短距離スピ賢
 //    optimizeAI(
@@ -171,10 +194,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.8,
 //        ), testCount = 1000
 //    )
-    doLongSimulation(
-        StatusType.STAMINA, 0..4, 4,
-        100000, option = FactorBasedActionSelector.speedStamina
-    )
+//    doLongSimulation(
+//        StatusType.STAMINA, 0..4, 4,
+//        100000, option = FactorBasedActionSelector.speedStamina
+//    )
 
     // マイルパワ賢
 //    optimizeAI(
@@ -246,7 +269,7 @@ fun singleSimulation() {
             wisdomFactor = 0.5,
         )
     )
-    val simulator = Simulator(chara, support, Store.trainingList)
+    val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA))
     println(simulator.status)
     Runner.simulate(60, simulator, selector) {
 //        if (it.turn == 10) it.condition.add("練習上手○")
@@ -322,7 +345,7 @@ fun optimizeAI(
             launch(context) {
                 val summary = mutableListOf<Summary>()
                 repeat(testCount) {
-                    val simulator = Simulator(chara, support, Store.trainingList).apply {
+                    val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA)).apply {
                         status = status.copy(motivation = 2)
                     }
                     summary.add(
@@ -333,7 +356,8 @@ fun optimizeAI(
                         )
                     )
                 }
-                val optionStr = "${option.speedFactor},${option.staminaFactor},${option.powerFactor},${option.gutsFactor},${option.wisdomFactor},${option.skillPtFactor},${option.hpFactor},${option.motivationFactor}"
+                val optionStr =
+                    "${option.speedFactor},${option.staminaFactor},${option.powerFactor},${option.gutsFactor},${option.wisdomFactor},${option.skillPtFactor},${option.hpFactor},${option.motivationFactor}"
                 println("$index,\"$optionStr\",,${Evaluator(summary).toSummaryString()}")
             }
         }.forEach {
@@ -350,11 +374,12 @@ fun doShortSimulation(
     testCount: Int = 100000,
     option: FactorBasedActionSelector.Option = FactorBasedActionSelector.Option(),
     turnEvent: ((simulator: Simulator) -> Unit)? = null,
+    needFriend: Boolean = true,
+    chara: Chara = Store.getChara("ハルウララ", 5, 5),
 ) {
-    val chara = Store.getChara("ハルウララ", 5, 5)
     println(chara)
 
-    val turn = if (needsWisdom) 60 else 55
+    val turn = 60
     val defaultSupport = when (targetStatus) {
         StatusType.SPEED -> if (needsWisdom) Store.getSupportByName(
             *(speed(supportTalent, 2)),
@@ -369,10 +394,13 @@ fun doShortSimulation(
             *(speed(supportTalent, 2)),
             *(wisdom(supportTalent, 2)),
             *(friend(supportTalent, 1)),
-        ) else Store.getSupportByName(
+        ) else if (needFriend) Store.getSupportByName(
             *(speed(supportTalent, 3)),
             *(power(supportTalent, 1)),
             *(friend(supportTalent, 1)),
+        ) else Store.getSupportByName(
+            *(speed(supportTalent, 3)),
+            *(power(supportTalent, 2)),
         )
         StatusType.GUTS -> if (needsWisdom) Store.getSupportByName(
             *(speed2(supportTalent, 2)),
@@ -496,7 +524,7 @@ fun doSimulation(
                 val useSupport = listOf(*defaultSupport, card)
                 val summary = mutableListOf<Summary>()
                 repeat(testCount) {
-                    val simulator = Simulator(chara, useSupport, Store.trainingList).apply {
+                    val simulator = Simulator(chara, useSupport, Store.getTrainingList(Scenario.URA)).apply {
                         status = status.copy(motivation = 2)
                     }
                     summary.add(Runner.simulate(turn, simulator, selector(), turnEvent))
@@ -530,7 +558,8 @@ fun dataCheck() {
             println("${card.name} $specialtyStr $hintStr")
         }
     }
-    Store.trainingList.forEach { println(it) }
+    Store.getTrainingList(Scenario.URA).forEach { println(it) }
+    Store.getTrainingList(Scenario.AOHARU).forEach { println(it) }
 }
 
 fun doCharmSimulation() {
@@ -558,7 +587,7 @@ fun doCharmSimulation() {
             var restRelation = 0
             val testCount = 10000
             repeat(testCount) {
-                val simulator = Simulator(chara, listOf(card, *support), Store.trainingList).apply {
+                val simulator = Simulator(chara, listOf(card, *support), Store.getTrainingList(Scenario.URA)).apply {
                     status = status.copy(motivation = 2)
                 }
                 summary.add(Runner.simulate(55, simulator, FactorBasedActionSelector()) { sim ->
@@ -594,7 +623,7 @@ fun doFailureRateSimulation() {
         Array(11) { it * 5 + 1 }.forEach { eventTurn ->
             val summary = mutableListOf<Summary>()
             repeat(testCount) {
-                val simulator = Simulator(chara, support, Store.trainingList).apply {
+                val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA)).apply {
                     status = status.copy(motivation = 2)
                 }
                 summary.add(
@@ -625,7 +654,8 @@ fun calcExpected() {
     ).mapIndexed { index, supportCard -> Support(index, supportCard).apply { friendTrainingEnabled = true } }
     println(chara)
     support.forEach { println(it) }
-    val result = Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(StatusType.SPEED), 5, 2, support)
+    val result =
+        Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(Scenario.URA, StatusType.SPEED), 5, 2, support)
     println(result.first)
     result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
     println(result.second.sumOf { it.first })

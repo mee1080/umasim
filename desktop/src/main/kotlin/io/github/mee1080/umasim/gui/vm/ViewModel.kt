@@ -24,6 +24,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.data.Chara
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.simulation.Runner
@@ -206,6 +207,8 @@ class ViewModel(private val scope: CoroutineScope) {
 
     var simulationResultVisible by mutableStateOf(true)
 
+    var scenario by mutableStateOf(Scenario.URA)
+
     fun startSimulation() {
         if (!canSimulate || simulationRunning) return
         save()
@@ -229,7 +232,7 @@ class ViewModel(private val scope: CoroutineScope) {
                                 simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
                             repeat(count) {
                                 if (!isActive) throw CancellationException()
-                                val simulator = Simulator(chara, support, Store.trainingList)
+                                val simulator = Simulator(chara, support, Store.getTrainingList(scenario))
                                 val selector = FactorBasedActionSelector(option)
                                 summary.add(Runner.simulate(simulationTurn, simulator, selector))
                                 if (it % 100 == 99) {

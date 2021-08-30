@@ -29,6 +29,7 @@ object TrainingLoader {
                 var i = 0
                 list.add(
                     TrainingBase(
+                        toScenario(data[i++]),
                         toSupportType(data[i++]),
                         data[i++].toInt(),
                         data[i++].toInt(),

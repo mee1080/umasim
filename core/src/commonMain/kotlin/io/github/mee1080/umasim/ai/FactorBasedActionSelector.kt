@@ -37,6 +37,13 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
             hpFactor = 0.6,
         )
 
+        val speedPowerMiddle = Option(
+            speedFactor = 0.8,
+            staminaFactor = 1.0,
+            powerFactor = 1.2,
+            hpFactor = 0.7,
+        )
+
         val speedWisdom = Option(
             speedFactor = 0.6,
             staminaFactor = 1.2,

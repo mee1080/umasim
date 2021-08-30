@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.web
 
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.web.components.*
@@ -35,6 +36,8 @@ fun main() {
 
     renderComposable(rootElementId = "root") {
         Style(AppStyle)
+        H2 { Text("育成シナリオ") }
+        LabeledRadioGroup("scenario", "シナリオ：", model.scenarioList, model.selectedScenario, model::updateScenario)
         H2 { Text("育成キャラ") }
         LabeledSelect("", model.displayCharaList, model.selectedChara, model::updateChara)
         H2 { Text("サポートカード") }
@@ -103,8 +106,15 @@ fun main() {
                 }
             }
         }
+        if (model.scenario == Scenario.AOHARU) {
+            H3 { Text("サポカ外参加人数") }
+            Div {
+                Button({ onClick { model.updateTeamJoinCount(-1) } }) { Text("-") }
+                Span({ style { padding(8.px) } }) { Text(model.teamJoinCount.toString()) }
+                Button({ onClick { model.updateTeamJoinCount(1) } }) { Text("+") }
+            }
+        }
         H2 { Text("トレーニング上昇量") }
-        LabeledRadioGroup("scenario", "シナリオ：", model.scenarioList, model.selectedScenario, model::updateScenario)
         LabeledRadioGroup("motivation", "やる気：", model.motivationList, model.motivation, model::updateMotivation)
         LabeledRadioGroup(
             "training",
