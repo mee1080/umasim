@@ -30,7 +30,7 @@ object StoreLoader {
     private const val URL_BASE = "https://raw.githubusercontent.com/mee1080/umasim/main/data/"
     private const val FORCE_NETWORK = false
 
-    private val names = arrayOf("chara.txt", "support_card.txt", "training2.txt")
+    private val names = arrayOf("chara.txt", "support_card.txt", "team_member.txt")
 
     fun load() {
         val files = names.map { File(FILE_BASE + it) }

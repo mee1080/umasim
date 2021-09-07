@@ -18,20 +18,20 @@
  */
 package io.github.mee1080.umasim.data
 
-object TrainingLoader {
+object TeamMemberLoader {
 
     @Suppress("UNUSED_CHANGED_VALUE")
-    fun load(text: String): List<TrainingBase> {
-        val list = mutableListOf<TrainingBase>()
+    fun load(text: String): List<TeamMember> {
+        val list = mutableListOf<TeamMember>()
         text.split("\n").forEach {
             val data = it.trim().split("\t")
             if (data.size >= 2) {
                 var i = 0
                 list.add(
-                    TrainingBase(
-                        toScenario(data[i++]),
-                        toSupportType(data[i++]),
+                    TeamMember(
                         data[i++].toInt(),
+                        data[i++],
+                        toSupportType(data[i++]),
                         data[i++].toInt(),
                         Status(
                             data[i++].toInt(),
@@ -39,9 +39,14 @@ object TrainingLoader {
                             data[i++].toInt(),
                             data[i++].toInt(),
                             data[i++].toInt(),
+                        ),
+                        Status(
                             data[i++].toInt(),
-                            data[i].toInt(),
-                        )
+                            data[i++].toInt(),
+                            data[i++].toInt(),
+                            data[i++].toInt(),
+                            data[i++].toInt(),
+                        ),
                     )
                 )
             }

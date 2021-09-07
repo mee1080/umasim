@@ -74,7 +74,9 @@ enum class Scenario(val displayName: String) {
     AOHARU("アオハル(作成途中)"),
 }
 
-fun toScenario(value: String) = when (value) {
-    "2" -> Scenario.AOHARU
+fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
+
+fun toScenario(value: Int) = when (value) {
+    2 -> Scenario.AOHARU
     else -> Scenario.URA
 }

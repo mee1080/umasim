@@ -24,21 +24,22 @@ object Store {
 
     private lateinit var charaSource: String
     private lateinit var supportSource: String
-    private lateinit var trainingSource: String
+    private lateinit var teamMemberSource: String
 
     fun load(
         charaSource: String,
         supportSource: String,
-        trainingSource: String,
+        teamMemberSource: String,
     ) {
         Store.charaSource = charaSource
         Store.supportSource = supportSource
-        Store.trainingSource = trainingSource
+        Store.teamMemberSource = teamMemberSource
     }
 
-    val charaList get() = lazy { CharaLoader.load(charaSource) }.value
-    val supportList get() = lazy { SupportCardLoader.load(supportSource) }.value
-    private val trainingList by lazy { TrainingLoader.load(trainingSource) }
+    val charaList by lazy { CharaLoader.load(charaSource) }
+    val supportList by lazy { SupportCardLoader.load(supportSource) }
+    private val trainingList = trainingData
+    val scenarioLink = scenarioLinkData
 
     fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 
@@ -71,4 +72,35 @@ object Store {
         .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
 
     fun getTraining(scenario: Scenario, type: StatusType) = getTrainingInfo(scenario)[type]!!
+
+    fun isScenarioLink(scenario: Scenario, charaName: String) = scenarioLink[scenario]?.contains(charaName) ?: false
+
+    object Aoharu {
+        private val training = aoharuTrainingData
+            .groupBy { it.type }
+            .mapValues { entry -> entry.value.groupBy { it.count } }
+
+        fun getTraining(type: StatusType, count: Int) = training[type]!![count]!!
+
+        fun getBurn(type: StatusType, isLink: Boolean) =
+            training[type]!![if (isLink) AoharuTraining.COUNT_BURN_LINK else AoharuTraining.COUNT_BURN]!!
+
+        private val trainingTeam = aoharuTrainingTeamData
+            .groupBy { it.type }
+            .mapValues { entry -> entry.value.groupBy { it.level } }
+
+        fun getTrainingTeam(type: StatusType, level: Int) = trainingTeam[type]!![level]!!
+
+        private val burnTeam = aoharuBurnTeamData
+            .groupBy { it.type }
+
+        fun getBurnTeam(type: StatusType) = burnTeam[type]!!
+
+        private val teamMemberList by lazy { TeamMemberLoader.load(teamMemberSource) }
+
+        fun getTeamMember(supportCardId: Int) = teamMemberList.first { it.supportCardId == supportCardId }
+
+        fun getShuffledGuest() = teamMemberList.filter { it.rarity == 1 }.shuffled()
+    }
+
 }

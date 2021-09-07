@@ -23,7 +23,7 @@ object StoreLoader {
         Store.load(
             Source.chara,
             Source.supportCard,
-            Source.training
+            Source.teamMember,
         )
     }
 }
