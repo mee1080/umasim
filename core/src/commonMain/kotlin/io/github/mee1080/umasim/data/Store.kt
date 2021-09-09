@@ -92,15 +92,18 @@ object Store {
         fun getTrainingTeam(type: StatusType, level: Int) = trainingTeam[type]!![level]!!
 
         private val burnTeam = aoharuBurnTeamData
-            .groupBy { it.type }
+            .associateBy { it.type }
 
         fun getBurnTeam(type: StatusType) = burnTeam[type]!!
 
         private val teamMemberList by lazy { TeamMemberLoader.load(teamMemberSource) }
 
-        fun getTeamMember(supportCardId: Int) = teamMemberList.first { it.supportCardId == supportCardId }
+        fun getTeamMember(supportCardId: Int) = teamMemberList.firstOrNull { it.supportCardId == supportCardId }
 
         fun getShuffledGuest() = teamMemberList.filter { it.rarity == 1 }.shuffled()
+
+        val teamStatusRank = aoharuTeamStatusRank
+            .associateBy { it.rank }
     }
 
 }

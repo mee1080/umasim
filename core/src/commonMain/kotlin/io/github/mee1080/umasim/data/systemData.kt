@@ -127,6 +127,17 @@ internal val aoharuBurnTeamData = listOf(
     AoharuBurnTeam(toSupportType("賢さ"), Status(110, 80, 80, 80, 150)),
 )
 
+internal val aoharuTeamStatusRank = listOf(
+    AoharuTeamStatusRank("S", 610, 400, 450, 50),
+    AoharuTeamStatusRank("A", 510, 350, 400, 50),
+    AoharuTeamStatusRank("B", 420, 350, 400, 50),
+    AoharuTeamStatusRank("C", 340, 300, 350, 0),
+    AoharuTeamStatusRank("D", 260, 250, 300, 0),
+    AoharuTeamStatusRank("E", 200, 150, 200, 0),
+    AoharuTeamStatusRank("F", 150, 50, 100, 0),
+    AoharuTeamStatusRank("G", 0, 0, 0, 0),
+)
+
 internal val scenarioLinkData = mapOf(
     Scenario.URA to emptySet(),
     Scenario.AOHARU to setOf("タイキシャトル", "マチカネフクキタル", "ライスシャワー", "ハルウララ")

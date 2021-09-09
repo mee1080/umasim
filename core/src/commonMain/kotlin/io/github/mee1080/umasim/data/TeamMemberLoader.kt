@@ -21,14 +21,14 @@ package io.github.mee1080.umasim.data
 object TeamMemberLoader {
 
     @Suppress("UNUSED_CHANGED_VALUE")
-    fun load(text: String): List<TeamMember> {
-        val list = mutableListOf<TeamMember>()
+    fun load(text: String): List<TeamMemberData> {
+        val list = mutableListOf<TeamMemberData>()
         text.split("\n").forEach {
             val data = it.trim().split("\t")
             if (data.size >= 2) {
                 var i = 0
                 list.add(
-                    TeamMember(
+                    TeamMemberData(
                         data[i++].toInt(),
                         data[i++],
                         toSupportType(data[i++]),

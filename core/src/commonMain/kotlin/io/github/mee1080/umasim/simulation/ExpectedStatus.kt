@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.simulation
 
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
 
 data class ExpectedStatus(
     val speed: Double = 0.0,
@@ -27,4 +28,16 @@ data class ExpectedStatus(
         motivation + status.motivation * rate,
         maxHp + status.maxHp * rate,
     )
+
+    fun get(statusType: StatusType): Double {
+        return when (statusType) {
+            StatusType.SPEED -> speed
+            StatusType.STAMINA -> stamina
+            StatusType.POWER -> power
+            StatusType.GUTS -> guts
+            StatusType.WISDOM -> wisdom
+            StatusType.SKILL -> skillPt
+            else -> 0.0
+        }
+    }
 }
