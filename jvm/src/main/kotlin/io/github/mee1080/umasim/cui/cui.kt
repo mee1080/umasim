@@ -30,6 +30,7 @@ import java.util.concurrent.Executors
 import kotlin.math.max
 import kotlin.math.roundToInt
 
+val scenario = Scenario.URA
 const val THREAD_COUNT = 4
 lateinit var context: ExecutorCoroutineDispatcher
 
@@ -269,7 +270,7 @@ fun singleSimulation() {
             wisdomFactor = 0.5,
         )
     )
-    val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA))
+    val simulator = Simulator(chara, support, Store.getTrainingList(scenario))
     println(simulator.status)
     Runner.simulate(60, simulator, selector) {
 //        if (it.turn == 10) it.condition.add("練習上手○")
@@ -345,7 +346,7 @@ fun optimizeAI(
             launch(context) {
                 val summary = mutableListOf<Summary>()
                 repeat(testCount) {
-                    val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA)).apply {
+                    val simulator = Simulator(chara, support, Store.getTrainingList(scenario)).apply {
                         status = status.copy(motivation = 2)
                     }
                     summary.add(
@@ -524,7 +525,7 @@ fun doSimulation(
                 val useSupport = listOf(*defaultSupport, card)
                 val summary = mutableListOf<Summary>()
                 repeat(testCount) {
-                    val simulator = Simulator(chara, useSupport, Store.getTrainingList(Scenario.URA)).apply {
+                    val simulator = Simulator(chara, useSupport, Store.getTrainingList(scenario)).apply {
                         status = status.copy(motivation = 2)
                     }
                     summary.add(Runner.simulate(turn, simulator, selector(), turnEvent))
@@ -587,7 +588,7 @@ fun doCharmSimulation() {
             var restRelation = 0
             val testCount = 10000
             repeat(testCount) {
-                val simulator = Simulator(chara, listOf(card, *support), Store.getTrainingList(Scenario.URA)).apply {
+                val simulator = Simulator(chara, listOf(card, *support), Store.getTrainingList(scenario)).apply {
                     status = status.copy(motivation = 2)
                 }
                 summary.add(Runner.simulate(55, simulator, FactorBasedActionSelector()) { sim ->
@@ -623,7 +624,7 @@ fun doFailureRateSimulation() {
         Array(11) { it * 5 + 1 }.forEach { eventTurn ->
             val summary = mutableListOf<Summary>()
             repeat(testCount) {
-                val simulator = Simulator(chara, support, Store.getTrainingList(Scenario.URA)).apply {
+                val simulator = Simulator(chara, support, Store.getTrainingList(scenario)).apply {
                     status = status.copy(motivation = 2)
                 }
                 summary.add(
@@ -655,7 +656,7 @@ fun calcExpected() {
     println(chara)
     support.forEach { println(it) }
     val result =
-        Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(Scenario.URA, StatusType.SPEED), 5, 2, support)
+        Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(scenario, StatusType.SPEED), 5, 2, support)
     println(result.first)
     result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
     println(result.second.sumOf { it.first })

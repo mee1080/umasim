@@ -18,8 +18,11 @@
  */
 package io.github.mee1080.umasim.simulation
 
+import io.github.mee1080.umasim.data.AoharuTeamStatusRank
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.TrainingBase
+import kotlin.math.min
 
 class TrainingInfo(
     val type: StatusType,
@@ -31,9 +34,11 @@ class TrainingInfo(
     var level = 1
         private set
 
+    val autoLevelUp = base[0].scenario == Scenario.URA
+
     var count = 0
         set(value) {
-            field = if (level < 5 && value >= 4) {
+            field = if (autoLevelUp && level < 5 && value >= 4) {
                 level++
                 0
             } else {
@@ -46,4 +51,8 @@ class TrainingInfo(
     val failureRate get() = current.failureRate
 
     fun getBaseStatus(level: Int? = null) = (level?.let { base.getOrNull(it - 1) } ?: current).status
+
+    fun applyTeamRank(rank: AoharuTeamStatusRank) {
+        level = min(level, rank.trainingLevel)
+    }
 }

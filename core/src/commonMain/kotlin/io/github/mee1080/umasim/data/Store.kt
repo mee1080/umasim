@@ -100,6 +100,8 @@ object Store {
 
         fun getTeamMember(supportCardId: Int) = teamMemberList.firstOrNull { it.supportCardId == supportCardId }
 
+        fun getGuest(name: String) = teamMemberList.firstOrNull { it.rarity == 1 && it.chara == name }
+
         fun getShuffledGuest() = teamMemberList.filter { it.rarity == 1 }.shuffled()
 
         val teamStatusRank = aoharuTeamStatusRank

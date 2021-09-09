@@ -18,17 +18,17 @@ class Team(
         val rank = charaStatus?.let { statusRank(it) }
         Store.Aoharu.getShuffledGuest().forEach { guest ->
             if (!memberList.any { it.data.chara == guest.chara }) {
-                addGuest(guest, rank)
+                addGuestInternal(guest, rank)
                 if (memberCount >= total) return@forEach
             }
         }
     }
 
-    fun addGuest(guest: TeamMemberData, charaStatus: Status?) {
-        addGuest(guest, charaStatus?.let { statusRank(it) })
+    fun addGuest(guest: TeamMemberData, charaStatus: Status? = null) {
+        addGuestInternal(guest, charaStatus?.let { statusRank(it) })
     }
 
-    fun addGuest(guest: TeamMemberData, rank: Map<StatusType, AoharuTeamStatusRank>?) {
+    private fun addGuestInternal(guest: TeamMemberData, rank: Map<StatusType, AoharuTeamStatusRank>?) {
         val member = TeamMember(guest, true)
         if (rank != null) {
             member.addStatus(calcStatusBonus(rank))

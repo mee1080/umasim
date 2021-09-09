@@ -128,14 +128,14 @@ internal val aoharuBurnTeamData = listOf(
 )
 
 internal val aoharuTeamStatusRank = listOf(
-    AoharuTeamStatusRank("S", 610, 400, 450, 50),
-    AoharuTeamStatusRank("A", 510, 350, 400, 50),
-    AoharuTeamStatusRank("B", 420, 350, 400, 50),
-    AoharuTeamStatusRank("C", 340, 300, 350, 0),
-    AoharuTeamStatusRank("D", 260, 250, 300, 0),
-    AoharuTeamStatusRank("E", 200, 150, 200, 0),
-    AoharuTeamStatusRank("F", 150, 50, 100, 0),
-    AoharuTeamStatusRank("G", 0, 0, 0, 0),
+    AoharuTeamStatusRank(0, "S", 610, 400, 450, 50, 5),
+    AoharuTeamStatusRank(1, "A", 510, 350, 400, 50, 4),
+    AoharuTeamStatusRank(2, "B", 420, 350, 400, 50, 3),
+    AoharuTeamStatusRank(3, "C", 340, 300, 350, 0, 3),
+    AoharuTeamStatusRank(4, "D", 260, 250, 300, 0, 2),
+    AoharuTeamStatusRank(5, "E", 200, 150, 200, 0, 2),
+    AoharuTeamStatusRank(6, "F", 150, 50, 100, 0, 1),
+    AoharuTeamStatusRank(7, "G", 0, 0, 0, 0, 1),
 )
 
 internal val scenarioLinkData = mapOf(

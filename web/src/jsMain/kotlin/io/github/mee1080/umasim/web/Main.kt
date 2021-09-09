@@ -25,9 +25,13 @@ import io.github.mee1080.umasim.web.components.GroupedSelect
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.LabeledSelect
+import io.github.mee1080.umasim.web.page.AoharuSimulation
+import io.github.mee1080.umasim.web.page.UraSimulation
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.*
+import org.jetbrains.compose.web.attributes.disabled
+import org.jetbrains.compose.web.attributes.placeholder
+import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -164,8 +168,8 @@ fun main() {
                         Th({
                             style {
                                 property("border", "none")
-                                property("width", "unset")
                             }
+                            unsetWidth()
                         }) { }
                         Th { Text("スピード") }
                         Th { Text("スタミナ") }
@@ -179,9 +183,7 @@ fun main() {
                     model.trainingImpact.forEach { (name, status) ->
                         Tr {
                             Td({
-                                style {
-                                    property("width", "unset")
-                                }
+                                unsetWidth()
                             }) { Text(name) }
                             Td { Text(status.speed.toString()) }
                             Td { Text(status.stamina.toString()) }
@@ -252,8 +254,8 @@ fun main() {
                     Th({
                         style {
                             property("border", "none")
-                            property("width", "unset")
                         }
+                        unsetWidth()
                     }) { }
                     Th { Text("得意練習配置率") }
                     Th { Text("初期絆") }
@@ -263,9 +265,7 @@ fun main() {
                 model.supportSelectionList.filter { it.isSelected }.forEach {
                     Tr {
                         Td({
-                            style {
-                                property("width", "unset")
-                            }
+                            unsetWidth()
                         }) { Text(it.name) }
                         Td { Text("${(it.specialtyRate * 1000).roundToInt() / 10.0}%") }
                         Td { Text(it.initialRelation.toString()) }
@@ -282,59 +282,9 @@ fun main() {
                 Div { Text("${it.key} ： ${it.value.joinToString(", ")}") }
             }
         }
-        H2 { Text("シミュレーション") }
-        Div {
-            LabeledSelect("モード", model.displaySimulationModeList, model.simulationMode, model::updateSimulationMode)
-            Div({ style { padding(8.px) } }) {
-                Text("ターン数")
-                NumberInput {
-                    value(model.simulationTurn.toString())
-                    onInput { model.updateSimulationTurn(it.value?.toInt() ?: 0) }
-                }
-            }
-            Div({ style { padding(8.px) } }) {
-                Button({ onClickOrTouch { model.doSimulation() } }) { Text("シミュレーション実行（β版）") }
-            }
-        }
-        Div {
-            Table({ classes(AppStyle.table) }) {
-                Tr {
-                    Th { Text("スピード") }
-                    Th { Text("スタミナ") }
-                    Th { Text("パワー") }
-                    Th { Text("根性") }
-                    Th { Text("賢さ") }
-                    Th { Text("スキルPt") }
-                }
-                Tr {
-                    Td { Text(model.simulationResult.speed.toString()) }
-                    Td { Text(model.simulationResult.stamina.toString()) }
-                    Td { Text(model.simulationResult.power.toString()) }
-                    Td { Text(model.simulationResult.guts.toString()) }
-                    Td { Text(model.simulationResult.wisdom.toString()) }
-                    Td { Text(model.simulationResult.skillPt.toString()) }
-                }
-                Tr {
-                    Th { Text("ヒント") }
-                    Td({
-                        style { textAlign("left") }
-                        colspan(5)
-                    }) {
-                        Text(model.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
-                    }
-                }
-                Tr {
-                    Th { Text("行動履歴") }
-                    Td({
-                        style { textAlign("left") }
-                        colspan(5)
-                    }) {
-                        model.simulationHistory.forEachIndexed { index, item ->
-                            Div { Text("${index + 1}: $item") }
-                        }
-                    }
-                }
-            }
+        when (model.scenario) {
+            Scenario.URA -> UraSimulation(model)
+            Scenario.AOHARU -> AoharuSimulation(model.aoharuSimulationViewModel)
         }
     }
 }

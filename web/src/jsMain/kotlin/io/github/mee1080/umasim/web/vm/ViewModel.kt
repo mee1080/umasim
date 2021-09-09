@@ -33,8 +33,12 @@ class ViewModel(store: Store = Store) {
     companion object {
         private val notSelected = -1 to "未選択"
 
+        private const val KEY_CHARA = "umasim.chara"
+
         private const val KEY_SUPPORT_LIST = "umasim.support_list"
     }
+
+    val aoharuSimulationViewModel = AoharuSimulationViewModel(this)
 
     private val charaList =
         listOf(Chara.empty()) + store.charaList.filter { it.rank == 5 && it.rarity == 5 }.sortedBy { it.charaName }
@@ -53,6 +57,7 @@ class ViewModel(store: Store = Store) {
         selectedChara = id
         calculate()
         calculateBonus()
+        localStorage.setItem(KEY_CHARA, id.toString())
     }
 
     private val supportMap = store.supportList.groupBy { it.id }
@@ -197,10 +202,10 @@ class ViewModel(store: Store = Store) {
 
     val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
 
-    var selectedScenario by mutableStateOf(Scenario.URA.ordinal)
+    var selectedScenario by mutableStateOf(Scenario.AOHARU.ordinal)
         private set
 
-    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.URA }
+    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.AOHARU }
 
     fun updateScenario(scenarioIndex: Int) {
         selectedScenario = scenarioIndex
@@ -210,7 +215,7 @@ class ViewModel(store: Store = Store) {
     var teamJoinCount by mutableStateOf(0)
         private set
 
-    fun updateTeamJoinCount(delta:Int) {
+    fun updateTeamJoinCount(delta: Int) {
         if (delta + teamJoinCount in 0..5) {
             teamJoinCount += delta
             calculate()
@@ -350,7 +355,7 @@ class ViewModel(store: Store = Store) {
         availableHint = hintMap
     }
 
-    private val trainingList = Scenario.values().associateWith { store.getTrainingList(it) }
+    val trainingList = Scenario.values().associateWith { store.getTrainingList(it) }
 
     private val simulationModeList = listOf(
         "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
@@ -397,6 +402,12 @@ class ViewModel(store: Store = Store) {
     }
 
     init {
+        localStorage.getItem(KEY_CHARA)?.let {
+            val id = it.toIntOrNull() ?: return@let
+            if (charaMap.containsKey(id)) {
+                selectedChara = id
+            }
+        }
         SaveDataConverter.stringToSupportList(localStorage.getItem(KEY_SUPPORT_LIST))
             .forEachIndexed { index, supportInfo ->
                 supportSelectionList.getOrNull(index)?.fromSaveInfo(supportInfo)
