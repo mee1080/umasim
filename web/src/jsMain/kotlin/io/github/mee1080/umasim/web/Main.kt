@@ -21,7 +21,10 @@ package io.github.mee1080.umasim.web
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.web.components.*
+import io.github.mee1080.umasim.web.components.GroupedSelect
+import io.github.mee1080.umasim.web.components.LabeledCheckbox
+import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.*
@@ -52,9 +55,8 @@ fun main() {
                 if (model.supportFilterApplied) {
                     disabled()
                 }
-                onClick { model.applyFilter() }
+                onClickOrTouch { model.applyFilter() }
             }) { Text("フィルタ適用") }
-//            Button({ onClick { model.clearFilter() } }) { Text("クリア") }
         }
         Div {
             (0..1).forEach { row ->
@@ -109,9 +111,9 @@ fun main() {
         if (model.scenario == Scenario.AOHARU) {
             H3 { Text("サポカ外参加人数") }
             Div {
-                Button({ onClick { model.updateTeamJoinCount(-1) } }) { Text("-") }
+                Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
                 Span({ style { padding(8.px) } }) { Text(model.teamJoinCount.toString()) }
-                Button({ onClick { model.updateTeamJoinCount(1) } }) { Text("+") }
+                Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
             }
         }
         H2 { Text("トレーニング上昇量") }
@@ -148,12 +150,12 @@ fun main() {
                 }
             }
         }
-        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
-            model.updateTrainingParamTest(it)
-        }
-        model.trainingParamTest?.let {
-            TrainingParamTest(it)
-        }
+//        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
+//            model.updateTrainingParamTest(it)
+//        }
+//        model.trainingParamTest?.let {
+//            TrainingParamTest(it)
+//        }
         if (model.trainingImpact.isNotEmpty()) {
             H3 { Text("サポカ影響度") }
             Div {
@@ -291,7 +293,7 @@ fun main() {
                 }
             }
             Div({ style { padding(8.px) } }) {
-                Button({ onClick { model.doSimulation() } }) { Text("シミュレーション実行（β版）") }
+                Button({ onClickOrTouch { model.doSimulation() } }) { Text("シミュレーション実行（β版）") }
             }
         }
         Div {
