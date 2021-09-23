@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.simulation
+package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
@@ -26,14 +26,13 @@ sealed class Action(
     val status: Status,
     vararg resultCandidate: Pair<Status, Int>
 ) {
-    var result: Status? = null
 
     val resultCandidate = resultCandidate
         .map { (status + it.first).adjustRange() - status to it.second }
         .toTypedArray()
 
     override fun toString(): String {
-        return "$name $status $result ${infoToString()}"
+        return "$name $status ${infoToString()}"
     }
 
     protected open fun infoToString() = ""
@@ -44,15 +43,14 @@ sealed class Action(
         val failureRate: Int,
         val level: Int,
         val levelUpTurn: Boolean,
-        support: List<Support>,
-        vararg resultCandidate: Pair<Status, Int>
+        val member: List<SimulationState.MemberState>,
+        vararg resultCandidate: Pair<Status, Int>,
     ) : Action(
         "トレーニング(${type.displayName}Lv$level${if (levelUpTurn) "(+)" else ""})",
         currentStatus,
         *resultCandidate
     ) {
-        val support = support.map { SupportInfo(it, type) }
-        override fun infoToString() = "$support"
+        override fun infoToString() = member.joinToString("/") { it.name }
     }
 
     class Sleep(
@@ -62,29 +60,9 @@ sealed class Action(
 
     class Outing(
         currentStatus: Status,
-        support: Support?,
-        vararg resultCandidate: Pair<Status, Int>
+        val support: SimulationState.MemberState?,
+        vararg resultCandidate: Pair<Status, Int>,
     ) : Action("お出かけ" + (support?.let { "(${it.card.name})" } ?: ""), currentStatus, *resultCandidate) {
-        val support = support?.let { SupportInfo(support) }
         override fun infoToString() = support.toString()
-    }
-
-    class SupportInfo(
-        support: Support,
-        type: StatusType = StatusType.NONE
-    ) {
-        val index = support.index
-        val card = support.card
-        val hint = support.hint
-        val friendTrainingEnabled = support.friendTrainingEnabled
-        val friendTraining = support.isFriendTraining(type)
-
-        override fun toString() = "${card.name} hint=$hint friendEnabled=$friendTrainingEnabled friend=$friendTraining"
-
-        override fun hashCode() = index.hashCode()
-
-        override fun equals(other: Any?): Boolean {
-            return other is SupportInfo && index == other.index
-        }
     }
 }

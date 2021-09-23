@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector
+import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
@@ -138,12 +139,12 @@ fun openCui(args: Array<String>) {
 //            hp = 0.5..0.7,
 //        ), testCount = 1000
 //    )
-    doShortSimulation(
-        StatusType.POWER, 0..4, 4, false,
-        10, FactorBasedActionSelector.speedPowerMiddle,
-        needFriend = false,
-        chara = Store.getChara("[ぶっとび☆さまーナイト]マルゼンスキー", 5, 5),
-    )
+//    doShortSimulation(
+//        StatusType.POWER, 0..4, 4, false,
+//        10, FactorBasedActionSelector.speedPowerMiddle,
+//        needFriend = false,
+//        chara = Store.getChara("[ぶっとび☆さまーナイト]マルゼンスキー", 5, 5),
+//    )
 
     // 短距離スピ賢
 //    optimizeAI(
@@ -247,6 +248,7 @@ fun openCui(args: Array<String>) {
 //    )
 //    doCharmSimulation()
 //    doFailureRateSimulation()
+    checkNewSimulator()
     context.close()
 }
 
@@ -660,4 +662,58 @@ fun calcExpected() {
     println(result.first)
     result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
     println(result.second.sumOf { it.first })
+}
+
+fun checkNewSimulator() {
+    val chara = Store.getChara("ハルウララ", 5, 5)
+    val support = Store.getSupportByName(
+        "[迫る熱に押されて]キタサンブラック" to 4,
+        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
+        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
+        "[『愛してもらうんだぞ』]オグリキャップ" to 4,
+        "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
+        "[ようこそ、トレセン学園へ！]駿川たづな" to 4,
+    )
+
+    val turn = 60
+    val testCount = 100000
+    val selector = { SimpleActionSelector(StatusType.SPEED) }
+
+    runBlocking {
+        launch(context) {
+            val summary = mutableListOf<Summary>()
+            repeat(testCount) {
+                val simulator = Simulator(chara, support, Store.getTrainingList(scenario)).apply {
+                    status = status.copy(motivation = 2)
+                }
+                summary.add(Runner.simulate(turn, simulator, selector()))
+//                simulator.history.forEach { println(it) }
+//                simulator.history.forEach {
+//                    if (it is Action.Training) {
+//                        println(it.support.joinToString("/") { "${it.card.name}=${it.friendTraining}" })
+//                    }
+//                }
+            }
+            println("old,${Evaluator(summary).toSummaryString()}")
+        }.join()
+        launch(context) {
+            val summary = mutableListOf<io.github.mee1080.umasim.simulation2.Summary>()
+            repeat(testCount) {
+                val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.URA, chara, support).apply {
+                    state = state.copy(
+                        status = state.status.copy(motivation = 2)
+                    )
+                }
+                summary.add(io.github.mee1080.umasim.simulation2.Runner.simulate(turn, simulator, selector()))
+//                simulator.history.forEach { println(it.first) }
+//                simulator.history.forEach {
+//                    val action = it.first
+//                    if (action is io.github.mee1080.umasim.simulation2.Action.Training) {
+//                        println(action.member.joinToString("/") { "${it.name}=${it.isFriendTraining(action.type)} ${it.supportState?.relation}" })
+//                    }
+//                }
+            }
+            println("new,${io.github.mee1080.umasim.simulation2.Evaluator(summary).toSummaryString()}")
+        }.join()
+    }
 }

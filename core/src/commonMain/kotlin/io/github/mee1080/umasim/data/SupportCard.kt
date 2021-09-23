@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.data
 
+import kotlin.random.Random
+
 data class SupportCard(
     val id: Int,
     val name: String,
@@ -117,6 +119,10 @@ data class SupportCard(
 
     // 2.5+5*(1+ヒント発生率)*(1+固有ヒント発生率)
     val hintFrequency = 0.025 + 0.05 * (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0
+
+    fun checkHint(): Boolean {
+        return type != StatusType.FRIEND && Random.nextDouble() < hintFrequency
+    }
 
     fun matches(filters: Collection<String>) = filters.all { filter ->
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }

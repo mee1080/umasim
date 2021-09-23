@@ -16,28 +16,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.simulation
+package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
-interface SimulationState {
+interface ActionSelector {
+    fun select(state: SimulationState, selection: List<Action>): Action
 
-    val supportInfo: List<Action.SupportInfo>
+    fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Action.Outing } ?: selectSleep(selection)
 
-    val turn: Int
+    fun selectSleep(selection: List<Action>) = selection.first { it is Action.Sleep }
 
-    val status: Status
-
-    val condition: List<String>
-
-    val selection: List<Action>
-
-    fun selectOuting() = selection.firstOrNull { it is Action.Outing } ?: selectSleep()
-
-    fun selectSleep() = selection.first { it is Action.Sleep }
-
-    fun selectTraining(type: StatusType) =
+    fun selectTraining(selection: List<Action>, type: StatusType) =
         selection.first { it is Action.Training && it.type == type } as Action.Training
 
 }

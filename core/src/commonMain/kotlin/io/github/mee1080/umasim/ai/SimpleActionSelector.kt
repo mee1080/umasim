@@ -23,12 +23,25 @@ import io.github.mee1080.umasim.simulation.Action
 import io.github.mee1080.umasim.simulation.ActionSelector
 import io.github.mee1080.umasim.simulation.SimulationState
 
-class SimpleActionSelector(private val targetStatus: StatusType) : ActionSelector {
+class SimpleActionSelector(private val targetStatus: StatusType) : ActionSelector,
+    io.github.mee1080.umasim.simulation2.ActionSelector {
     override fun select(state: SimulationState): Action {
         val training = state.selectTraining(targetStatus)
         return when {
             state.status.motivation <= 1 -> state.selectOuting()
             training.failureRate >= 10 -> state.selectSleep()
+            else -> training
+        }
+    }
+
+    override fun select(
+        state: io.github.mee1080.umasim.simulation2.SimulationState,
+        selection: List<io.github.mee1080.umasim.simulation2.Action>
+    ): io.github.mee1080.umasim.simulation2.Action {
+        val training = selectTraining(selection, targetStatus)
+        return when {
+            state.status.motivation <= 1 -> selectOuting(selection)
+            training.failureRate >= 10 -> selectSleep(selection)
             else -> training
         }
     }
