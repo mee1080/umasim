@@ -64,6 +64,11 @@ fun <T> randomSelect(vararg values: Pair<T, Int>): T {
     return values[index].first
 }
 
+fun <T> randomSelect(values: List<Pair<T, Int>>): T {
+    val index = randomSelect(*(values.map { it.second }.toIntArray()))
+    return values[index].first
+}
+
 fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
     val target = values.firstOrNull { it.first == value } ?: return 0.0
     return target.second.toDouble() / values.sumOf { it.second }

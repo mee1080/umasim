@@ -21,48 +21,45 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
-sealed class Action(
-    val name: String,
-    val status: Status,
-    vararg resultCandidate: Pair<Status, Int>
-) {
+sealed interface Action {
+    val name: String
+    val resultCandidate: List<Pair<Status, Int>>
+    fun infoToString() = ""
+    fun toShortString() = "$name ${infoToString()}"
+    fun updateCandidate(resultCandidate: List<Pair<Status, Int>>): Action
+}
 
-    val resultCandidate = resultCandidate
-        .map { (status + it.first).adjustRange() - status to it.second }
-        .toTypedArray()
+data class Outing(
+    val support: MemberState?,
+    override val resultCandidate: List<Pair<Status, Int>>,
+) : Action {
+    override val name = "お出かけ" + (support?.let { "(${it.card.name})" } ?: "")
+    override fun infoToString() = support.toString()
+    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
+        resultCandidate = resultCandidate
+    )
+}
 
-    override fun toString(): String {
-        return "$name $status ${infoToString()}"
-    }
+data class Sleep(
+    override val resultCandidate: List<Pair<Status, Int>>,
+) : Action {
+    override val name = "お休み"
+    override fun toString() = "Sleep"
+    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
+        resultCandidate = resultCandidate
+    )
+}
 
-    protected open fun infoToString() = ""
-
-    class Training(
-        currentStatus: Status,
-        val type: StatusType,
-        val failureRate: Int,
-        val level: Int,
-        val levelUpTurn: Boolean,
-        val member: List<MemberState>,
-        vararg resultCandidate: Pair<Status, Int>,
-    ) : Action(
-        "トレーニング(${type.displayName}Lv$level${if (levelUpTurn) "(+)" else ""})",
-        currentStatus,
-        *resultCandidate
-    ) {
-        override fun infoToString() = member.joinToString("/") { it.name }
-    }
-
-    class Sleep(
-        currentStatus: Status,
-        vararg resultCandidate: Pair<Status, Int>
-    ) : Action("お休み", currentStatus, *resultCandidate)
-
-    class Outing(
-        currentStatus: Status,
-        val support: MemberState?,
-        vararg resultCandidate: Pair<Status, Int>,
-    ) : Action("お出かけ" + (support?.let { "(${it.card.name})" } ?: ""), currentStatus, *resultCandidate) {
-        override fun infoToString() = support.toString()
-    }
+data class Training(
+    val type: StatusType,
+    val failureRate: Int,
+    val level: Int,
+    val member: List<MemberState>,
+    override val resultCandidate: List<Pair<Status, Int>>,
+) : Action {
+    override val name = "トレーニング(${type.displayName}Lv$level)"
+    override fun infoToString() = member.joinToString("/") { it.name }
+    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
+        resultCandidate = resultCandidate
+    )
 }

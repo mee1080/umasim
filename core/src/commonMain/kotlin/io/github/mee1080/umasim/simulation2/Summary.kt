@@ -59,7 +59,7 @@ class Summary(
     init {
         actionList.map { it.first }.forEach { action ->
             when (action) {
-                is Action.Training -> {
+                is Training -> {
                     trainingCount[action.type] = trainingCount[action.type]!! + 1
                     trainingSupportCount[action.type]!![action.member.size]++
                     trainingFriendCount[action.type]!![action.member.count { it.isFriendTraining(action.type) }]++
@@ -71,10 +71,10 @@ class Summary(
                         if (it.hint) summary.hintCount++
                     }
                 }
-                is Action.Outing -> {
+                is Outing -> {
                     outingCount++
                 }
-                is Action.Sleep -> {
+                is Sleep -> {
                     sleepCount++
                 }
             }

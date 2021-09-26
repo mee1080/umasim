@@ -13,6 +13,13 @@ data class SimulationState(
     val condition: List<String>,
 ) {
     val charm get() = condition.contains("愛嬌○")
+    val conditionFailureRate
+        get() = arrayOf(
+            "練習ベタ" to 2,
+            "練習上手○" to -2,
+            "小さなほころび" to 5,
+            "大輪の輝き" to -2,
+        ).sumOf { if (condition.contains(it.first)) it.second else 0 }
     val isLevelUpTurn get() = levelUpTurns.contains(turn)
 }
 

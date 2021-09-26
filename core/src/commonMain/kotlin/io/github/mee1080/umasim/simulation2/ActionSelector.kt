@@ -23,11 +23,11 @@ import io.github.mee1080.umasim.data.StatusType
 interface ActionSelector {
     fun select(state: SimulationState, selection: List<Action>): Action
 
-    fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Action.Outing } ?: selectSleep(selection)
+    fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
 
-    fun selectSleep(selection: List<Action>) = selection.first { it is Action.Sleep }
+    fun selectSleep(selection: List<Action>) = selection.first { it is Sleep } as Sleep
 
     fun selectTraining(selection: List<Action>, type: StatusType) =
-        selection.first { it is Action.Training && it.type == type } as Action.Training
+        selection.first { it is Training && it.type == type } as Training
 
 }

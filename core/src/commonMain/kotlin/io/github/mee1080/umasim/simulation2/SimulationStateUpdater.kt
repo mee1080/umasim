@@ -44,7 +44,7 @@ private fun MemberState.onTurnChange(): MemberState {
 fun SimulationState.applyAction(action: Action, result: Status): SimulationState {
     // ステータス更新
     val newStatus = status + result
-    return if (action is Action.Training) {
+    return if (action is Training) {
         val newTraining = training.map {
             if (action.type == it.type) {
                 it.applyAction(action, scenario == Scenario.URA)
@@ -71,7 +71,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
     }
 }
 
-private fun MemberState.applyAction(action: Action.Training, charm: Boolean, chara: Chara): MemberState {
+private fun MemberState.applyAction(action: Training, charm: Boolean, chara: Chara): MemberState {
     // 絆上昇量を反映
     val supportState = supportState?.copy(
         relation = min(100, supportState.relation + getTrainingRelation(charm))
@@ -87,7 +87,7 @@ private fun MemberState.applyAction(action: Action.Training, charm: Boolean, cha
     )
 }
 
-private fun AoharuMemberState.applyAction(action: Action.Training, chara: Chara): AoharuMemberState {
+private fun AoharuMemberState.applyAction(action: Training, chara: Chara): AoharuMemberState {
     if (!aoharuIcon) return this
     var status = status
     var maxStatus = maxStatus
@@ -109,7 +109,7 @@ private fun AoharuMemberState.applyAction(action: Action.Training, chara: Chara)
     )
 }
 
-private fun TrainingState.applyAction(action: Action.Training, autoLevelUp: Boolean): TrainingState {
+private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): TrainingState {
     val count = count + 1
     return if (autoLevelUp && level < 5 && count >= 4) {
         copy(level = level + 1, count = 0)
