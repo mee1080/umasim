@@ -680,6 +680,7 @@ fun checkNewSimulator() {
     val selector = { SimpleActionSelector(StatusType.SPEED) }
 
     runBlocking {
+        println(LocalDateTime.now())
         launch(context) {
             val summary = mutableListOf<Summary>()
             repeat(testCount) {
@@ -696,6 +697,7 @@ fun checkNewSimulator() {
             }
             println("old,${Evaluator(summary).toSummaryString()}")
         }.join()
+        println(LocalDateTime.now())
         launch(context) {
             val summary = mutableListOf<io.github.mee1080.umasim.simulation2.Summary>()
             repeat(testCount) {
@@ -715,5 +717,6 @@ fun checkNewSimulator() {
             }
             println("new,${io.github.mee1080.umasim.simulation2.Evaluator(summary).toSummaryString()}")
         }.join()
+        println(LocalDateTime.now())
     }
 }

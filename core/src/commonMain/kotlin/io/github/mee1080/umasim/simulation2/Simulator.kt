@@ -40,20 +40,21 @@ class Simulator(
         scenario = scenario,
         chara = chara,
         member = supportCardList.mapIndexed { index, card ->
-            SimulationState.MemberState(
+            MemberState(
                 index = index,
                 card = card,
                 position = StatusType.NONE,
-                supportState = SimulationState.SupportState(
+                supportState = SupportState(
                     relation = card.initialRelation,
                     hintIcon = false,
                 ),
                 scenarioState = when (scenario) {
-                    Scenario.URA -> SimulationState.UraMemberState
+                    Scenario.URA -> UraMemberState
                     Scenario.AOHARU -> Store.Aoharu.getTeamMember(card.id)!!.let { member ->
-                        SimulationState.AoharuMemberState(
+                        AoharuMemberState(
                             member = member,
                             status = member.initialStatus,
+                            maxStatus = member.maxStatus,
                             aoharuTrainingCount = 0,
                             aoharuIcon = false,
                         )
@@ -64,7 +65,7 @@ class Simulator(
         training = Store.getTrainingList(scenario)
             .groupBy { it.type }
             .map { entry ->
-                SimulationState.TrainingState(
+                TrainingState(
                     type = entry.key,
                     base = entry.value.sortedBy { it.level },
                     level = 1,
@@ -72,6 +73,7 @@ class Simulator(
                     levelOverride = null,
                 )
             },
+        levelUpTurns = option.levelUpTurns.asList(),
         turn = 0,
         status = Status(
             skillPt = 120,
@@ -99,10 +101,6 @@ class Simulator(
 
     var selection = listOf<Action>()
 
-    private val isLevelUpTurn get() = option.levelUpTurns.contains(state.turn)
-
-    private val overrideTrainingLevel get() = if (isLevelUpTurn) 5 else null
-
     fun getTrainingSelection(type: StatusType) =
         selection.first { it is Action.Training && it.type == type } as Action.Training
 
@@ -111,32 +109,14 @@ class Simulator(
     }
 
     private fun nextTurn() {
-        var newMember: List<SimulationState.MemberState>
-        var supportPosition: Map<StatusType, List<SimulationState.MemberState>>
-        do {
-            newMember = state.member.map {
-                it.copy(
-                    position = randomSelect(*Calculator.calcCardPositionSelection(it.card)),
-                    supportState = it.supportState?.copy(
-                        hintIcon = it.card.checkHint()
-                    )
-                )
-            }
-            supportPosition = newMember.groupBy { it.position }
-//            println("${state.turn} ${trainingType.joinToString("/") { "$it:${supportPosition[it]?.size ?: 0}"}}")
-        } while (supportPosition.any { it.value.size > 5 })
-        state = state.copy(
-            turn = state.turn + 1,
-            status = state.status.adjustRange(),
-            member = newMember,
-            training = state.training.map { it.copy(levelOverride = overrideTrainingLevel) }
-        )
+        state = state.onTurnChange()
+        val supportPosition = state.member.groupBy { it.position }
 
         selection = mutableListOf(
             *(state.training.map {
                 calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
             }).toTypedArray(),
-            *(if (isLevelUpTurn) arrayOf(
+            *(if (state.isLevelUpTurn) arrayOf(
                 Action.Sleep(
                     state.status,
                     Status(hp = 40, motivation = 1) to 1
@@ -177,39 +157,13 @@ class Simulator(
     fun doAction(action: Action) {
         val result = randomSelect(*action.resultCandidate)
         history.add(Triple(action, result, state))
-        val newStatus = state.status + result
-        state = if (action is Action.Training) {
-            val newTraining = state.training.map {
-                if (it.type == action.type) {
-                    val count = it.count + 1
-                    if (state.scenario == Scenario.URA && it.level < 5 && count >= 4) {
-                        it.copy(level = it.level + 1, count = 0)
-                    } else {
-                        it.copy(count = count)
-                    }
-                } else it
-            }
-            val newMember = state.member.mapIndexed { index, member ->
-                val relation = result.supportRelation[index]
-                val supportState = member.supportState
-                if (relation != null && supportState != null) {
-                    member.copy(supportState = supportState.copy(relation = supportState.relation + relation))
-                } else member
-            }
-            state.copy(
-                member = newMember,
-                training = newTraining,
-                status = newStatus,
-            )
-        } else {
-            state.copy(status = newStatus)
-        }
+        state = state.applyAction(action, result)
         nextTurn()
     }
 
     private fun calcTrainingResult(
-        training: SimulationState.TrainingState,
-        support: List<SimulationState.MemberState>
+        training: TrainingState,
+        support: List<MemberState>
     ): Action {
         val failureRate = calcTrainingFailureRate(training.current, support)
         val successStatus =
@@ -246,15 +200,15 @@ class Simulator(
             state.status,
             training.type,
             failureRate,
-            overrideTrainingLevel ?: training.level,
-            isLevelUpTurn,
+            training.currentLevel,
+            state.isLevelUpTurn,
             support,
             *successCandidate,
             *failureCandidate,
         )
     }
 
-    private fun calcTrainingHint(support: List<SimulationState.MemberState>): List<Status> {
+    private fun calcTrainingHint(support: List<MemberState>): List<Status> {
         val hintSupportList = support.filter { it.hint }
         if (hintSupportList.isEmpty()) return listOf(Status())
         val hintSupport = hintSupportList.random()
@@ -263,7 +217,7 @@ class Simulator(
         return listOf(*hintList, hintSupport.card.hintStatus)
     }
 
-    private fun calcTrainingFailureRate(training: TrainingBase, support: List<SimulationState.MemberState>): Int {
+    private fun calcTrainingFailureRate(training: TrainingBase, support: List<MemberState>): Int {
         val base = (state.status.hp - state.status.maxHp) * (state.status.hp * 10 - training.failureRate) / 400.0
         val supported = base * support.map { it.card.failureRate }.fold(1.0) { acc, d -> acc * d }
         val supportedInRange = max(0, min(99, ceil(supported).toInt()))
@@ -276,7 +230,7 @@ class Simulator(
         return max(0, min(100, conditioned))
     }
 
-    private fun calcTrainingRelation(charm: Boolean, support: List<SimulationState.MemberState>): Map<Int, Int> {
+    private fun calcTrainingRelation(charm: Boolean, support: List<MemberState>): Map<Int, Int> {
         return support.associate {
             it.index to if (it.card.type == StatusType.FRIEND) {
                 if (charm) 6 else 4

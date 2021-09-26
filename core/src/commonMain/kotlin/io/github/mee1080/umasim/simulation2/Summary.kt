@@ -25,7 +25,7 @@ import io.github.mee1080.umasim.data.trainingType
 class Summary(
     val status: Status,
     actionList: List<Triple<Action, Status, SimulationState>>,
-    supportList: List<SimulationState.MemberState>,
+    supportList: List<MemberState>,
 ) {
 
     val trainingCount = trainingType.associateWith { 0 }.toMutableMap()

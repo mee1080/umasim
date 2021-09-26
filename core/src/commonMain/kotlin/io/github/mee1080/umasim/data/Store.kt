@@ -78,7 +78,7 @@ object Store {
     object Aoharu {
         private val training = aoharuTrainingData
             .groupBy { it.type }
-            .mapValues { entry -> entry.value.groupBy { it.count } }
+            .mapValues { entry -> entry.value.associateBy { it.count } }
 
         fun getTraining(type: StatusType, count: Int) = training[type]!![count]!!
 
@@ -87,7 +87,7 @@ object Store {
 
         private val trainingTeam = aoharuTrainingTeamData
             .groupBy { it.type }
-            .mapValues { entry -> entry.value.groupBy { it.level } }
+            .mapValues { entry -> entry.value.associateBy { it.level } }
 
         fun getTrainingTeam(type: StatusType, level: Int) = trainingTeam[type]!![level]!!
 

@@ -116,6 +116,14 @@ data class Status(
         motivation = max(-2, min(2, motivation)),
     )
 
+    fun adjustRange(max: Status) = copy(
+        speed = max(1, min(max.speed, speed)),
+        stamina = max(1, min(max.stamina, stamina)),
+        power = max(1, min(max.power, power)),
+        guts = max(1, min(max.guts, guts)),
+        wisdom = max(1, min(max.wisdom, wisdom)),
+    )
+
     fun get(statusType: StatusType): Int {
         return when (statusType) {
             StatusType.SPEED -> speed

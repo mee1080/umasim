@@ -124,6 +124,8 @@ data class SupportCard(
         return type != StatusType.FRIEND && Random.nextDouble() < hintFrequency
     }
 
+    val trainingRelation = if (type == StatusType.FRIEND) 4 else 7
+
     fun matches(filters: Collection<String>) = filters.all { filter ->
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }
     }

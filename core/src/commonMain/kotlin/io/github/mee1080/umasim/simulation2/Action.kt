@@ -43,7 +43,7 @@ sealed class Action(
         val failureRate: Int,
         val level: Int,
         val levelUpTurn: Boolean,
-        val member: List<SimulationState.MemberState>,
+        val member: List<MemberState>,
         vararg resultCandidate: Pair<Status, Int>,
     ) : Action(
         "トレーニング(${type.displayName}Lv$level${if (levelUpTurn) "(+)" else ""})",
@@ -60,7 +60,7 @@ sealed class Action(
 
     class Outing(
         currentStatus: Status,
-        val support: SimulationState.MemberState?,
+        val support: MemberState?,
         vararg resultCandidate: Pair<Status, Int>,
     ) : Action("お出かけ" + (support?.let { "(${it.card.name})" } ?: ""), currentStatus, *resultCandidate) {
         override fun infoToString() = support.toString()

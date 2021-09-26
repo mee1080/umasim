@@ -28,7 +28,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        member: List<SimulationState.MemberState>,
+        member: List<MemberState>,
         scenario: Scenario = Scenario.URA,
     ) = Status(
         speed = calcTrainingStatus(
@@ -86,7 +86,7 @@ object Calculator {
         chara: Chara,
         type: StatusType,
         motivation: Int,
-        member: List<SimulationState.MemberState>,
+        member: List<MemberState>,
         status: Status,
     ) = calcTrainingSuccessStatus(
         chara,
@@ -95,15 +95,11 @@ object Calculator {
         member,
     )
 
-    private fun getFriendBonus(support: SimulationState.MemberState, type: StatusType) {
-
-    }
-
     private fun calcTrainingStatus(
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        member: List<SimulationState.MemberState>,
+        member: List<MemberState>,
         type: StatusType,
         scenario: Scenario = Scenario.URA,
     ): Int {
@@ -122,7 +118,7 @@ object Calculator {
         return min(100, (base * charaBonus * friend * motivationBonus * trainingBonus * count).toInt())
     }
 
-    private fun calcTrainingHp(training: TrainingBase, support: List<SimulationState.MemberState>): Int {
+    private fun calcTrainingHp(training: TrainingBase, support: List<MemberState>): Int {
         val baseHp = training.status.hp
         return when {
             baseHp == 0 -> 0
@@ -164,7 +160,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        member: List<SimulationState.MemberState>,
+        member: List<MemberState>,
         scenario: Scenario = Scenario.URA,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
         var result = ExpectedStatus()
