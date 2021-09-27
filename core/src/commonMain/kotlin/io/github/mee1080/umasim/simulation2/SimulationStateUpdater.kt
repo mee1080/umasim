@@ -20,6 +20,8 @@ fun SimulationState.onTurnChange(): SimulationState {
     )
 }
 
+fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status))
+
 private fun MemberState.onTurnChange(): MemberState {
     // 各トレーニングに配置
     val position = randomSelect(*Calculator.calcCardPositionSelection(card))

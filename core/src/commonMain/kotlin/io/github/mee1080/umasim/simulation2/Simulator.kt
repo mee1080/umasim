@@ -33,7 +33,7 @@ class Simulator(
         val raceBonusSkillPt: Int = 700,
     )
 
-    var state = SimulationState(
+    private val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
         member = supportCardList.mapIndexed { index, card ->
@@ -78,39 +78,42 @@ class Simulator(
             motivation = 0,
             maxHp = 100,
             skillHint = emptyMap(),
-        ) + chara.initialStatus + supportCardList.map { it.initialStatus }
-            .reduce { acc, status -> acc + status } + supportCardList.sumOf { it.race }.let {
-            Status(
-                speed = option.raceBonusStatus * it / 100,
-                stamina = option.raceBonusStatus * it / 100,
-                power = option.raceBonusStatus * it / 100,
-                guts = option.raceBonusStatus * it / 100,
-                wisdom = option.raceBonusStatus * it / 100,
-                skillPt = option.raceBonusSkillPt * it / 100
-            )
-        },
+        ) + chara.initialStatus + supportCardList
+            .map { it.initialStatus }
+            .reduce { acc, status -> acc + status },
         condition = emptyList(),
     )
 
-    val history = mutableListOf<Triple<Action, Status, SimulationState>>()
-
-    val summary get() = Summary(state.status, history, state.member)
-
-    var selection = listOf<Action>()
-
-    init {
-        nextTurn()
+    private val raceBonus = supportCardList.sumOf { it.race }.let {
+        Status(
+            speed = option.raceBonusStatus * it / 100,
+            stamina = option.raceBonusStatus * it / 100,
+            power = option.raceBonusStatus * it / 100,
+            guts = option.raceBonusStatus * it / 100,
+            wisdom = option.raceBonusStatus * it / 100,
+            skillPt = option.raceBonusSkillPt * it / 100
+        )
     }
 
-    private fun nextTurn() {
-        state = state.onTurnChange()
-        selection = state.predict()
-    }
-
-    fun doAction(action: Action) {
-        val result = randomSelect(action.resultCandidate)
-        history.add(Triple(action, result, state))
-        state = state.applyAction(action, result)
-        nextTurn()
+    fun simulate(
+        turn: Int,
+        selector: ActionSelector,
+        events: SimulationEvents = SimulationEvents()
+    ): Summary {
+        var state = initialState
+        val history = mutableListOf<Triple<Action, Status, SimulationState>>()
+        state = events.beforeSimulation(state)
+        state = state.copy(status = events.initialStatus(state.status))
+        repeat(turn) {
+            state = state.onTurnChange()
+            state = events.beforeAction(state)
+            val action = selector.select(state, state.predict())
+            val result = randomSelect(action.resultCandidate)
+            history.add(Triple(action, result, state))
+            state = state.applyAction(action, result)
+            state = events.afterAction(state)
+        }
+        state = state.updateStatus { it + raceBonus }
+        return Summary(state.status, history, state.member)
     }
 }

@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
+import io.github.mee1080.umasim.simulation2.SimulationEvents
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import kotlinx.coroutines.launch
@@ -676,7 +677,7 @@ fun checkNewSimulator() {
     )
 
     val turn = 60
-    val testCount = 100000
+    val testCount = 10000
     val selector = { SimpleActionSelector(StatusType.SPEED) }
 
     runBlocking {
@@ -700,13 +701,11 @@ fun checkNewSimulator() {
         println(LocalDateTime.now())
         launch(context) {
             val summary = mutableListOf<io.github.mee1080.umasim.simulation2.Summary>()
+            val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.URA, chara, support)
             repeat(testCount) {
-                val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.URA, chara, support).apply {
-                    state = state.copy(
-                        status = state.status.copy(motivation = 2)
-                    )
-                }
-                summary.add(io.github.mee1080.umasim.simulation2.Runner.simulate(turn, simulator, selector()))
+                summary.add(simulator.simulate(turn, selector(), SimulationEvents(
+                    initialStatus = { it.copy(motivation = 2) }
+                )))
 //                simulator.history.forEach { println(it.first) }
 //                simulator.history.forEach {
 //                    val action = it.first
