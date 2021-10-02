@@ -92,7 +92,7 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 
 fun openCui(args: Array<String>) {
     context = Executors.newFixedThreadPool(THREAD_COUNT).asCoroutineDispatcher()
-//    dataCheck()
+    dataCheck()
 //    singleSimulation()
 //    calcExpected()
 
@@ -142,7 +142,7 @@ fun openCui(args: Array<String>) {
 //    )
 //    doShortSimulation(
 //        StatusType.POWER, 0..4, 4, false,
-//        10, FactorBasedActionSelector.speedPowerMiddle,
+//        100000, FactorBasedActionSelector.speedPowerMiddle,
 //        needFriend = false,
 //        chara = Store.getChara("[ぶっとび☆さまーナイト]マルゼンスキー", 5, 5),
 //    )
@@ -184,23 +184,23 @@ fun openCui(args: Array<String>) {
 //    }
 
     // 長距離スピスタ
-    optimizeAI(
-        Store.getChara("ゴールドシップ", 5, 5), Store.getSupportByName(
-            *(speed(4, 3)),
-            *(stamina(4, 3)),
-        ), options = generateOptions(
-            step = 0.1,
-            speed = 1.0..1.2,
-            stamina = 1.0..1.2,
-            power = 0.4..0.6,
-            guts = 0.4..0.6,
-            hp = 0.6..0.8,
-        ), testCount = 1000
-    )
-    doLongSimulation(
-        StatusType.SPEED, 0..4, 4,
-        100000, option = FactorBasedActionSelector.speedStamina
-    )
+//    optimizeAI(
+//        Store.getChara("ゴールドシップ", 5, 5), Store.getSupportByName(
+//            *(speed(4, 3)),
+//            *(stamina(4, 3)),
+//        ), options = generateOptions(
+//            step = 0.1,
+//            speed = 1.0..1.2,
+//            stamina = 1.0..1.2,
+//            power = 0.4..0.6,
+//            guts = 0.4..0.6,
+//            hp = 0.6..0.8,
+//        ), testCount = 1000
+//    )
+//    doLongSimulation(
+//        StatusType.SPEED, 0..4, 4,
+//        100000, option = FactorBasedActionSelector.speedStamina
+//    )
 
     // マイルパワ賢
 //    optimizeAI(
@@ -477,7 +477,7 @@ fun doLongSimulation(
     val target = Store.supportList.filter {
         talent.contains(it.talent) && it.rarity >= 2 && (it.type == targetStatus)
     }
-    doSimulation(chara, defaultSupport, target, 55, testCount, {
+    doSimulation(chara, defaultSupport, target, 60, testCount, {
         FactorBasedActionSelector(option)
     })
 }
@@ -564,6 +564,9 @@ fun dataCheck() {
     }
     Store.getTrainingList(Scenario.URA).forEach { println(it) }
     Store.getTrainingList(Scenario.AOHARU).forEach { println(it) }
+    Store.charaList.forEach {
+        println("${it.name} ${Store.getGoalRaceList(it.charaId).joinToString(",")}")
+    }
 }
 
 fun doCharmSimulation() {

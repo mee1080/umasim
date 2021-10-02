@@ -18,13 +18,23 @@
  */
 package io.github.mee1080.umasim.data
 
-object StoreLoader {
-    fun load() {
-        Store.load(
-            Source.chara,
-            Source.supportCard,
-            Source.teamMember,
-            Source.goalRace,
-        )
+object GoalRaceLoader {
+
+    @Suppress("UNUSED_CHANGED_VALUE")
+    fun load(text: String): List<GoalRace> {
+        val list = mutableListOf<GoalRace>()
+        text.split("\n").forEach {
+            val data = it.trim().split("\t")
+            if (data.size >= 2) {
+                var i = 0
+                list.add(
+                    GoalRace(
+                        data[i++].toInt(),
+                        data[i++].split(",").map { value -> value.toInt() },
+                    )
+                )
+            }
+        }
+        return list
     }
 }
