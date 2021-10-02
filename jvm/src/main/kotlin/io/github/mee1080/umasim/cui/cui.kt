@@ -736,7 +736,11 @@ fun testAoharuSimulation() {
         "[その心に吹きすさぶ]メジロアルダン" to 4,
     )
     // TODO 友人サポカ対応
-    val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.AOHARU, chara, support)
+    val simulator = io.github.mee1080.umasim.simulation2.Simulator(
+        Scenario.AOHARU, chara, support, io.github.mee1080.umasim.simulation2.Simulator.Option(
+            checkGoalRace = true,
+        )
+    )
     val summary = simulator.simulate(78, SimpleActionSelector(StatusType.SPEED))
     summary.history.forEachIndexed { index, (action, _, state) ->
         println("${turnToString(state.turn)}: ${action.toShortString()}")
@@ -747,5 +751,6 @@ fun testAoharuSimulation() {
             val aoharuState = it.scenarioState as AoharuMemberState
             println("${it.name}: ${aoharuState.status.toShortString()}/${aoharuState.maxStatus.toShortString()} ${aoharuState.aoharuTrainingCount}")
         }
+        println()
     }
 }

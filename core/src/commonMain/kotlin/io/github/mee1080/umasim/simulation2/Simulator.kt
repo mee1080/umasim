@@ -28,14 +28,16 @@ class Simulator(
 ) {
 
     class Option(
-        val levelUpTurns: IntArray = intArrayOf(28, 29, 30, 31, 46, 47, 48, 49),
+        val levelUpTurns: IntArray? = null,
         val raceBonusStatus: Int = 60,
         val raceBonusSkillPt: Int = 700,
+        val checkGoalRace: Boolean = false,
     )
 
     private val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
+        goalRaceTurns = Store.getGoalRaceList(chara.charaId),
         member = supportCardList.mapIndexed { index, card ->
             MemberState(
                 index = index,
@@ -70,7 +72,11 @@ class Simulator(
                     levelOverride = null,
                 )
             },
-        levelUpTurns = option.levelUpTurns.asList(),
+        levelUpTurns = option.levelUpTurns?.asList() ?: if (option.checkGoalRace) {
+            listOf(37, 38, 39, 40, 61, 62, 63, 64)
+        } else {
+            listOf(28, 29, 30, 31, 46, 47, 48, 49)
+        },
         turn = 0,
         status = Status(
             skillPt = 120,
@@ -113,7 +119,11 @@ class Simulator(
         repeat(turn) {
             state = state.onTurnChange()
             state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
-            val action = selector.select(state, state.predict())
+            val action = if (option.checkGoalRace && state.goalRaceTurns.contains(state.turn)) {
+                Race(true)
+            } else {
+                selector.select(state, state.predict())
+            }
             val result = randomSelect(action.resultCandidate)
             history.add(Triple(action, result, state))
             state = state.applyAction(action, result)

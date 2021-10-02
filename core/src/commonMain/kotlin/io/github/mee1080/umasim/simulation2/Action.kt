@@ -73,3 +73,13 @@ data class Training(
         resultCandidate = resultCandidate
     )
 }
+
+data class Race(
+    val goal: Boolean,
+    override val resultCandidate: List<Pair<Status, Int>> = listOf(Status() to 1),
+) : Action {
+    override val name = if (goal) "目標レース" else "レース"
+    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
+        resultCandidate = resultCandidate
+    )
+}
