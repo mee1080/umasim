@@ -80,7 +80,7 @@ object Calculator {
             scenario,
         ),
         hp = calcTrainingHp(training, member),
-    )
+    ) + calcScenarioStatus(training, member, scenario)
 
     fun calcTrainingSuccessStatus(
         chara: Chara,
@@ -219,5 +219,37 @@ object Calculator {
     ): ExpectedStatus {
         detail.add(rate to status)
         return result.add(rate, status)
+    }
+
+    private fun calcScenarioStatus(
+        training: TrainingBase,
+        member: List<MemberState>,
+        scenario: Scenario,
+    ) = when (scenario) {
+        Scenario.URA -> Status()
+        Scenario.AOHARU -> calcAoharuStatus(training, member)
+    }
+
+    private fun calcAoharuStatus(
+        training: TrainingBase,
+        member: List<MemberState>,
+    ): Status {
+        val states = member.map { it.scenarioState as AoharuMemberState }
+        val aoharuMember = states.filter { it.aoharuIcon && !it.aoharuBurn }
+        val aoharuCount = aoharuMember.size
+        val linkCount = aoharuMember.count { Store.isScenarioLink(Scenario.AOHARU, it.member.chara) }
+        val aoharuTraining = Store.Aoharu.getTraining(training.type, aoharuCount)?.status?.let {
+            it.copy(
+                speed = if (it.speed == 0) 0 else it.speed + linkCount,
+                stamina = if (it.stamina == 0) 0 else it.stamina + linkCount,
+                power = if (it.power == 0) 0 else it.power + linkCount,
+                guts = if (it.guts == 0) 0 else it.guts + linkCount,
+                wisdom = if (it.wisdom == 0) 0 else it.wisdom + linkCount,
+            )
+        } ?: Status()
+        val burn = states.filter { it.aoharuBurn }
+            .map { Store.Aoharu.getBurn(training.type, Store.isScenarioLink(Scenario.AOHARU, it.member.chara)) }
+            .map { it.status }
+        return burn.fold(aoharuTraining) { acc, status -> acc + status }.also { println(it) }
     }
 }

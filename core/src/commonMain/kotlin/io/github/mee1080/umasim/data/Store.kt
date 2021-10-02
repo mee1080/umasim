@@ -88,7 +88,7 @@ object Store {
             .groupBy { it.type }
             .mapValues { entry -> entry.value.associateBy { it.count } }
 
-        fun getTraining(type: StatusType, count: Int) = training[type]!![count]!!
+        fun getTraining(type: StatusType, count: Int) = training[type]!![count]
 
         fun getBurn(type: StatusType, isLink: Boolean) =
             training[type]!![if (isLink) AoharuTraining.COUNT_BURN_LINK else AoharuTraining.COUNT_BURN]!!

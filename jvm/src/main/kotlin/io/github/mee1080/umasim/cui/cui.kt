@@ -742,7 +742,7 @@ fun testAoharuSimulation() {
         )
     )
     val summary = simulator.simulate(78, SimpleActionSelector(StatusType.SPEED))
-    summary.history.forEachIndexed { index, (action, _, state) ->
+    summary.history.forEachIndexed { index, (action, result, state) ->
         println("${turnToString(state.turn)}: ${action.toShortString()}")
         println(state.status)
         println(state.teamStatusRank.map { "${it.key}:${it.value.rank}" }.joinToString(" "))
@@ -751,6 +751,7 @@ fun testAoharuSimulation() {
             val aoharuState = it.scenarioState as AoharuMemberState
             println("${it.name}: ${aoharuState.status.toShortString()}/${aoharuState.maxStatus.toShortString()} ${aoharuState.aoharuTrainingCount}")
         }
+        println(result)
         println()
     }
 }
