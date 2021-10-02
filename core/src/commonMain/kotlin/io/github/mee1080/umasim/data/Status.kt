@@ -152,4 +152,6 @@ data class Status(
             skillPt = skillPt + (map[StatusType.SKILL] ?: 0),
         )
     }
+
+    fun toShortString() = "$speed,$stamina,$power,$guts,$wisdom"
 }

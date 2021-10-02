@@ -77,6 +77,8 @@ object Store {
 
     fun getTraining(scenario: Scenario, type: StatusType) = getTrainingInfo(scenario)[type]!!
 
+    fun getScenarioLink(scenario: Scenario) = scenarioLink[scenario] ?: emptySet()
+
     fun isScenarioLink(scenario: Scenario, charaName: String) = scenarioLink[scenario]?.contains(charaName) ?: false
 
     fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }

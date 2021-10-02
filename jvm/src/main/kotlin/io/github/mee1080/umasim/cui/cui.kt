@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation.*
+import io.github.mee1080.umasim.simulation2.AoharuMemberState
 import io.github.mee1080.umasim.simulation2.SimulationEvents
 import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -92,9 +93,11 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 
 fun openCui(args: Array<String>) {
     context = Executors.newFixedThreadPool(THREAD_COUNT).asCoroutineDispatcher()
-    dataCheck()
+//    dataCheck()
 //    singleSimulation()
 //    calcExpected()
+//    checkNewSimulator()
+    testAoharuSimulation()
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -249,7 +252,6 @@ fun openCui(args: Array<String>) {
 //    )
 //    doCharmSimulation()
 //    doFailureRateSimulation()
-//    checkNewSimulator()
     context.close()
 }
 
@@ -720,5 +722,30 @@ fun checkNewSimulator() {
             println("new,${io.github.mee1080.umasim.simulation2.Evaluator(summary).toSummaryString()}")
         }.join()
         println(LocalDateTime.now())
+    }
+}
+
+fun testAoharuSimulation() {
+    val chara = Store.getChara("ハルウララ", 5, 5)
+    val support = Store.getSupportByName(
+        "[迫る熱に押されて]キタサンブラック" to 4,
+        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
+        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
+        "[感謝は指先まで込めて]ファインモーション" to 4,
+        "[明日は全国的に赤でしょう♪]セイウンスカイ" to 4,
+        "[その心に吹きすさぶ]メジロアルダン" to 4,
+    )
+    // TODO 友人サポカ対応
+    val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.AOHARU, chara, support)
+    val summary = simulator.simulate(78, SimpleActionSelector(StatusType.SPEED))
+    summary.history.forEachIndexed { index, (action, _, state) ->
+        println("${turnToString(state.turn)}: ${action.toShortString()}")
+        println(state.status)
+        println(state.teamStatusRank.map { "${it.key}:${it.value.rank}" }.joinToString(" "))
+        println(state.training.joinToString(" ") { "${it.type}:${it.level}" })
+        state.member.forEach {
+            val aoharuState = it.scenarioState as AoharuMemberState
+            println("${it.name}: ${aoharuState.status.toShortString()}/${aoharuState.maxStatus.toShortString()} ${aoharuState.aoharuTrainingCount}")
+        }
     }
 }

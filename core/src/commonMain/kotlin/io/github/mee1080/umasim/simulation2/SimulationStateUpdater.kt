@@ -27,7 +27,7 @@ fun SimulationState.onTurnChange(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
     do {
-        newMember = member.map { it.onTurnChange() }
+        newMember = member.map { it.onTurnChange(turn) }
     } while (newMember.groupBy { it.position }.any { it.value.size > 5 })
     val levelOverride = if (levelUpTurns.contains(turn)) 5 else null
     return copy(
@@ -40,13 +40,13 @@ fun SimulationState.onTurnChange(): SimulationState {
 
 fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status))
 
-private fun MemberState.onTurnChange(): MemberState {
+private fun MemberState.onTurnChange(turn: Int): MemberState {
     // 各トレーニングに配置
     val position = randomSelect(*Calculator.calcCardPositionSelection(card))
     val scenarioState = when (scenarioState) {
         is AoharuMemberState -> scenarioState.copy(
             // アオハルアイコン表示
-            aoharuIcon = Random.nextDouble() < 0.4
+            aoharuIcon = turn >= 3 && Random.nextDouble() < 0.4
         )
         else -> scenarioState
     }

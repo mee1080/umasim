@@ -85,3 +85,17 @@ fun toScenario(value: Int) = when (value) {
     2 -> Scenario.AOHARU
     else -> Scenario.URA
 }
+
+fun turnToString(turn: Int) = buildString {
+    append(
+        when {
+            turn <= 24 -> "ジュニア"
+            turn <= 48 -> "クラシック"
+            turn <= 72 -> "シニア"
+            else -> "ファイナルズ"
+        }
+    )
+    append((turn - 1) % 24 / 2 + 1)
+    append("月")
+    append(if (turn % 2 == 1) "前半" else "後半")
+}

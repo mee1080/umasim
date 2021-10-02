@@ -102,16 +102,23 @@ class Simulator(
     ): Summary {
         var state = initialState
         val history = mutableListOf<Triple<Action, Status, SimulationState>>()
+        val scenarioEvents = when (state.scenario) {
+            Scenario.URA -> ScenarioEvents()
+            Scenario.AOHARU -> AoharuScenarioEvents.asScenarioEvents()
+        }
+        state = scenarioEvents.beforeSimulation(state)
+        state = state.copy(status = scenarioEvents.initialStatus(state.status))
         state = events.beforeSimulation(state)
         state = state.copy(status = events.initialStatus(state.status))
         repeat(turn) {
             state = state.onTurnChange()
-            state = events.beforeAction(state)
+            state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
             val action = selector.select(state, state.predict())
             val result = randomSelect(action.resultCandidate)
             history.add(Triple(action, result, state))
             state = state.applyAction(action, result)
-            state = events.afterAction(state)
+            state = scenarioEvents.afterAction(state) ?: events.afterAction(state)
+            state = scenarioEvents.onTurnEnd(state)
         }
         state = state.updateStatus { it + raceBonus }
         return Summary(state.status, history, state.member)

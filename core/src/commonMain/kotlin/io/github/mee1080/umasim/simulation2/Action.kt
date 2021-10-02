@@ -33,8 +33,8 @@ data class Outing(
     val support: MemberState?,
     override val resultCandidate: List<Pair<Status, Int>>,
 ) : Action {
-    override val name = "お出かけ" + (support?.let { "(${it.card.name})" } ?: "")
-    override fun infoToString() = support.toString()
+    override val name = "お出かけ"
+    override fun infoToString() = support?.let { "(${it.card.name})" } ?: ""
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
         resultCandidate = resultCandidate
     )
@@ -58,7 +58,17 @@ data class Training(
     override val resultCandidate: List<Pair<Status, Int>>,
 ) : Action {
     override val name = "トレーニング(${type.displayName}Lv$level)"
-    override fun infoToString() = member.joinToString("/") { it.name }
+    override fun infoToString() = member.joinToString("/") {
+        buildString {
+            append(it.name)
+            if (it.isFriendTraining(type)) append("(友情)")
+            if (it.hint) append("(ヒント)")
+            (it.scenarioState as? AoharuMemberState)?.let { aoharu ->
+                if (aoharu.aoharuBurn) append("(アオハル魂爆発)") else if (aoharu.aoharuIcon) append("(アオハル特訓)")
+            }
+        }
+    }
+
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
         resultCandidate = resultCandidate
     )

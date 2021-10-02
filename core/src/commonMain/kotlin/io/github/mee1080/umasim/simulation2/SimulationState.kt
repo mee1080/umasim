@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.simulation.ExpectedStatus
 
 data class SimulationState(
     val scenario: Scenario,
@@ -31,6 +32,7 @@ data class SimulationState(
     val condition: List<String>,
 ) {
     val charm get() = condition.contains("愛嬌○")
+
     val conditionFailureRate
         get() = arrayOf(
             "練習ベタ" to 2,
@@ -38,7 +40,32 @@ data class SimulationState(
             "小さなほころび" to 5,
             "大輪の輝き" to -2,
         ).sumOf { if (condition.contains(it.first)) it.second else 0 }
+
     val isLevelUpTurn get() = levelUpTurns.contains(turn)
+
+    val teamAverageStatus
+        get() = member
+            .mapNotNull { it.scenarioState as? AoharuMemberState }
+            .fold(status to 1) { acc, aoharuMemberState -> acc.first + aoharuMemberState.status to acc.second + 1 }
+            .let {
+                ExpectedStatus(
+                    it.first.speed.toDouble() / it.second,
+                    it.first.stamina.toDouble() / it.second,
+                    it.first.power.toDouble() / it.second,
+                    it.first.guts.toDouble() / it.second,
+                    it.first.wisdom.toDouble() / it.second,
+                )
+            }
+
+    val teamStatusRank: Map<StatusType, AoharuTeamStatusRank>
+        get() {
+            val average = teamAverageStatus
+            return trainingType.associateWith { type ->
+                Store.Aoharu.teamStatusRank.values.first {
+                    average.get(type) >= it.threshold
+                }
+            }
+        }
 }
 
 data class MemberState(
@@ -49,6 +76,7 @@ data class MemberState(
     val scenarioState: ScenarioMemberState,
 ) {
     val name get() = card.name
+    val charaName get() = card.chara
     val guest get() = supportState == null
     val friendTrainingEnabled get() = (supportState?.relation ?: 0) > 80
     fun isFriendTraining(type: StatusType) = friendTrainingEnabled && type == card.type
