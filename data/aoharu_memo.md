@@ -53,6 +53,8 @@ https://twitter.com/mee10801/status/1433632630017122304
 |F|2|10|
 |G|1|10|
 
+* ファースト勝利＆URA優勝: スキルPt50×レスボ
+
 https://twitter.com/mee10801/status/1441979541434429443
 
 ### ゲストのパラメータ
