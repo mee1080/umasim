@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.data.trainingType
 
 class Summary(
     val status: Status,
-    val history: List<Triple<Action, Status, SimulationState>>,
+    history: List<Triple<Action, Status, SimulationState>>,
     supportList: List<MemberState>,
 ) {
 

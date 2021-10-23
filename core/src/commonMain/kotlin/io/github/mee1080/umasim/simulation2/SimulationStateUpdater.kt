@@ -84,7 +84,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
         copy(
             member = newMember,
             training = newTraining,
-            status = newStatus,
+            status = newStatus + selectTrainingHint(action.member),
         )
     } else {
         copy(status = newStatus)
@@ -135,5 +135,17 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
         copy(level = level + 1, count = 0)
     } else {
         copy(count = count)
+    }
+}
+
+private fun SimulationState.selectTrainingHint(support: List<MemberState>): Status {
+    val hintSupportList = support.filter { it.hint }
+    if (hintSupportList.isEmpty()) return Status()
+    val hintSupport = hintSupportList.random()
+    val hintSkill = (hintSupport.card.skills.filter { status.skillHint[it] != 5 } + "").random()
+    return if (hintSkill.isEmpty()) {
+        hintSupport.card.hintStatus
+    } else {
+        Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
     }
 }

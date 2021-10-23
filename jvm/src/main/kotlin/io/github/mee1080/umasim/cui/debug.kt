@@ -125,7 +125,7 @@ fun checkNewSimulator() {
     )
 
     val turn = 60
-    val testCount = 1000
+    val testCount = 10000
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
 
     runBlocking {
@@ -144,6 +144,7 @@ fun checkNewSimulator() {
 //                        println(it.support.joinToString("/") { "${it.card.name}=${it.friendTraining}" })
 //                    }
 //                }
+//                if ((it + 1) % (testCount / 100) == 0) println("$it/$testCount")
             }
             println("old,${Evaluator(summary).toSummaryString()}")
         }.join()
@@ -163,6 +164,7 @@ fun checkNewSimulator() {
 //                        println(action.member.joinToString("/") { "${it.name}=${it.isFriendTraining(action.type)} ${it.supportState?.relation}" })
 //                    }
 //                }
+//                if ((it + 1) % (testCount / 100) == 0) println("$it/$testCount")
             }
             println("new,${Evaluator(summary).toSummaryString()}")
         }.join()
@@ -182,8 +184,9 @@ fun testAoharuSimulation() {
             checkGoalRace = true,
         )
     )
-    val summary = simulator.simulate(78, FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom))
-    summary.history.forEachIndexed { index, (action, result, state) ->
+    val result =
+        simulator.simulateWithHistory(78, FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom))
+    result.second.forEachIndexed { index, (action, result, state) ->
         println("${turnToString(state.turn)}: ${action.toShortString()}")
         println(state.status)
         println(state.teamStatusRank.map { "${it.key}:${it.value.rank}" }.joinToString(" "))

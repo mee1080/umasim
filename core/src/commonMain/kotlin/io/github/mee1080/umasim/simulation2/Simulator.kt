@@ -105,7 +105,13 @@ class Simulator(
         turn: Int,
         selector: ActionSelector,
         events: SimulationEvents = SimulationEvents()
-    ): Summary {
+    ) = simulateWithHistory(turn, selector, events).first
+
+    fun simulateWithHistory(
+        turn: Int,
+        selector: ActionSelector,
+        events: SimulationEvents = SimulationEvents()
+    ): Pair<Summary, List<Triple<Action, Status, SimulationState>>> {
         var state = initialState
         val history = mutableListOf<Triple<Action, Status, SimulationState>>()
         val scenarioEvents = when (state.scenario) {
@@ -131,6 +137,6 @@ class Simulator(
             state = scenarioEvents.onTurnEnd(state)
         }
         state = state.updateStatus { it + raceBonus }
-        return Summary(state.status, history, state.member)
+        return Summary(state.status, history, state.member) to history
     }
 }

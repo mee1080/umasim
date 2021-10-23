@@ -66,26 +66,25 @@ private fun SimulationState.calcTrainingResult(
     support: List<MemberState>,
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
-    val successStatus = Calculator.calcTrainingSuccessStatus(chara, training.current, status.motivation, support, scenario)
-    val successCandidate = calcTrainingHint(support)
-        .map { successStatus + it to 100 - failureRate }
-    val failureRateValue = failureRate * successCandidate.size
+    val successStatus =
+        Calculator.calcTrainingSuccessStatus(chara, training.current, status.motivation, support, scenario)
+    val successCandidate = listOf(successStatus to 100 - failureRate)
     val failureCandidate = when {
         failureRate == 0 -> {
             emptyList()
         }
         training.type == StatusType.WISDOM -> {
-            listOf(Status(hp = successStatus.hp) to failureRateValue)
+            listOf(Status(hp = successStatus.hp) to failureRate)
         }
         failureRate >= 30 -> {
             val target = trainingType.copyOf().apply { shuffle() }
                 .slice(0..1).map { it to -10 }.toTypedArray()
             listOf(
-                Status(hp = 10, motivation = -2).add(training.type to -10, *target) to failureRateValue
+                Status(hp = 10, motivation = -2).add(training.type to -10, *target) to failureRate
             )
         }
         else -> {
-            listOf(Status(motivation = -1).add(training.type to -5) to failureRateValue)
+            listOf(Status(motivation = -1).add(training.type to -5) to failureRate)
         }
     }
     return Training(
@@ -95,15 +94,6 @@ private fun SimulationState.calcTrainingResult(
         support,
         successCandidate + failureCandidate
     )
-}
-
-private fun SimulationState.calcTrainingHint(support: List<MemberState>): List<Status> {
-    val hintSupportList = support.filter { it.hint }
-    if (hintSupportList.isEmpty()) return listOf(Status())
-    val hintSupport = hintSupportList.random()
-    val hintList = hintSupport.card.skills.filter { status.skillHint[it] != 5 }
-        .map { Status(skillHint = mapOf(it to 1 + hintSupport.card.hintLevel)) }.toTypedArray()
-    return listOf(*hintList, hintSupport.card.hintStatus)
 }
 
 private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, support: List<MemberState>): Int {

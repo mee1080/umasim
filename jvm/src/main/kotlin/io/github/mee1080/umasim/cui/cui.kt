@@ -39,7 +39,7 @@ fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
 //    calcExpected()
-//    checkNewSimulator()
+    checkNewSimulator()
 //    testAoharuSimulation()
 //    compareAoharuSimulation()
 
@@ -144,10 +144,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.8,
 //        ), testCount = 1000
 //    )
-    doLongSimulation(
-        StatusType.STAMINA, 0..4, 4,
-        100000, option = FactorBasedActionSelector.speedStamina
-    )
+//    doLongSimulation(
+//        StatusType.STAMINA, 0..4, 4,
+//        100000, option = FactorBasedActionSelector.speedStamina
+//    )
 
     // マイルパワ賢
 //    optimizeAI(
