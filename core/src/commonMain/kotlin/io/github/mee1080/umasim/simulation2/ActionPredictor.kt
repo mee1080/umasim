@@ -67,7 +67,6 @@ private fun SimulationState.calcTrainingResult(
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
     val successStatus = Calculator.calcTrainingSuccessStatus(chara, training.current, status.motivation, support, scenario)
-    println("predict $successStatus")
     val successCandidate = calcTrainingHint(support)
         .map { successStatus + it to 100 - failureRate }
     val failureRateValue = failureRate * successCandidate.size

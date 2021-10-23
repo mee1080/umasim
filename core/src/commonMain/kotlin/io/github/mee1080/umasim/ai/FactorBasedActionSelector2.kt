@@ -18,14 +18,13 @@
  */
 package io.github.mee1080.umasim.ai
 
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.simulation.Action
-import io.github.mee1080.umasim.simulation.ActionSelector
-import io.github.mee1080.umasim.simulation.SimulationState
+import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
-class FactorBasedActionSelector(private val option: Option = Option()) : ActionSelector {
+class FactorBasedActionSelector2(private val option: Option = Option()) : ActionSelector {
 
     companion object {
         private const val DEBUG = false
@@ -103,12 +102,20 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
         val skillPtFactor: Double = 0.4,
         val hpFactor: Double = 0.5,
         val motivationFactor: Double = 15.0,
+        val aoharuFactor: (Int) -> Double = {
+            when {
+                it <= 24 -> 15.0
+                it <= 36 -> 10.0
+                it <= 48 -> 5.0
+                else -> 0.0
+            }
+        }
     ) {
-        fun generateSelector() = FactorBasedActionSelector(this)
+        fun generateSelector() = FactorBasedActionSelector2(this)
     }
 
-    override fun select(state: SimulationState): Action {
-        return state.selection.maxByOrNull { calcScore(state, it) } ?: state.selection.first()
+    override fun select(state: SimulationState, selection: List<Action>): Action {
+        return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
@@ -117,7 +124,7 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             calcScore(state, it.first) * it.second / total
-        } + calcRelationScore(state, action)
+        } + calcRelationScore(state, action) + calcAoharuScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
@@ -136,9 +143,9 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
     }
 
     private fun calcRelationScore(state: SimulationState, action: Action): Double {
-        if (action !is Action.Training) return 0.0
-        val supportRank = mutableMapOf<StatusType, MutableList<Pair<Action.SupportInfo, Int>>>()
-        state.supportInfo.forEach {
+        if (action !is Training) return 0.0
+        val supportRank = mutableMapOf<StatusType, MutableList<Pair<MemberState, Int>>>()
+        state.support.forEach {
             supportRank.getOrPut(it.card.type) { mutableListOf() }
                 .add(it to (state.status.supportRelation[it.index] ?: 0))
         }
@@ -159,5 +166,17 @@ class FactorBasedActionSelector(private val option: Option = Option()) : ActionS
         }
         if (DEBUG) println("  relation $score")
         return score
+    }
+
+    private fun calcAoharuScore(state: SimulationState, action: Action): Double {
+        if (state.scenario != Scenario.AOHARU || action !is Training) return 0.0
+        return action.member.mapNotNull { it.scenarioState as? AoharuMemberState }
+            .sumOf {
+                when {
+                    it.aoharuBurn -> 2.0
+                    it.aoharuIcon -> 1.0
+                    else -> 0.0
+                }
+            } * option.aoharuFactor(state.turn)
     }
 }

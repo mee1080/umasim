@@ -32,6 +32,8 @@ data class SimulationState(
     val status: Status,
     val condition: List<String>,
 ) {
+    val support get() = member.filter { !it.guest }
+
     val charm get() = condition.contains("愛嬌○")
 
     val conditionFailureRate

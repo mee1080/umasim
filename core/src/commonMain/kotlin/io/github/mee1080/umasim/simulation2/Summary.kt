@@ -47,14 +47,16 @@ class Summary(
     var trainingHintCount = 0
 
     data class SupportSummary(
-        var name: String,
-        var relation: Int,
+        val state: MemberState,
+        val relation: Int,
         var trainingCount: Int = 0,
         var friendCount: Int = 0,
         var hintCount: Int = 0,
-    )
+    ) {
+        val name get() = state.name
+    }
 
-    val support = supportList.map { SupportSummary(it.name, status.getSupportRelation(it.index)) }.toTypedArray()
+    val support = supportList.map { SupportSummary(it, status.getSupportRelation(it.index)) }.toTypedArray()
 
     init {
         history.map { it.first }.forEach { action ->
@@ -63,7 +65,7 @@ class Summary(
                     trainingCount[action.type] = trainingCount[action.type]!! + 1
                     trainingSupportCount[action.type]!![action.member.size]++
                     trainingFriendCount[action.type]!![action.member.count { it.isFriendTraining(action.type) }]++
-                    trainingHintCount += if (action.member.count { it.hint } > 0) 1 else 0
+                    trainingHintCount += if (action.member.any { it.hint }) 1 else 0
                     action.member.forEach {
                         val summary = support[it.index]
                         summary.trainingCount++
@@ -76,6 +78,8 @@ class Summary(
                 }
                 is Sleep -> {
                     sleepCount++
+                }
+                is Race -> {
                 }
             }
         }

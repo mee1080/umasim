@@ -250,6 +250,6 @@ object Calculator {
         val burn = states.filter { it.aoharuBurn }
             .map { Store.Aoharu.getBurn(training.type, Store.isScenarioLink(Scenario.AOHARU, it.member.chara)) }
             .map { it.status }
-        return burn.fold(aoharuTraining) { acc, status -> acc + status }.also { println(it) }
+        return burn.fold(aoharuTraining) { acc, status -> acc + status }
     }
 }

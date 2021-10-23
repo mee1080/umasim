@@ -19,8 +19,16 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.data.StoreLoader
+import kotlinx.coroutines.ExecutorCoroutineDispatcher
+import kotlinx.coroutines.asCoroutineDispatcher
+import java.util.concurrent.Executors
+
+const val THREAD_COUNT = 4
+lateinit var context: ExecutorCoroutineDispatcher
 
 fun main(args: Array<String>) {
+    context = Executors.newFixedThreadPool(THREAD_COUNT).asCoroutineDispatcher()
     StoreLoader.load()
     openCui(args)
+    context.close()
 }
