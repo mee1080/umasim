@@ -39,8 +39,8 @@ fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
 //    calcExpected()
-    checkNewSimulator()
-//    testAoharuSimulation()
+//    checkNewSimulator()
+    testAoharuSimulation()
 //    compareAoharuSimulation()
 
     // 短距離スピパワ

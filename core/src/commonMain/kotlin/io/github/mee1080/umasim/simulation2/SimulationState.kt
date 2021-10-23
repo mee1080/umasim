@@ -46,6 +46,8 @@ data class SimulationState(
 
     val isLevelUpTurn get() = levelUpTurns.contains(turn)
 
+    val teamMember get() = member.filter { it.scenarioState is AoharuMemberState }
+
     val teamAverageStatus
         get() = member
             .mapNotNull { it.scenarioState as? AoharuMemberState }
@@ -115,6 +117,8 @@ data class AoharuMemberState(
     val aoharuBurn get() = aoharuIcon && aoharuTrainingCount == 4
     override val hintBlocked get() = aoharuIcon
 }
+
+object AoharuNotMemberState : ScenarioMemberState
 
 data class TrainingState(
     val type: StatusType,

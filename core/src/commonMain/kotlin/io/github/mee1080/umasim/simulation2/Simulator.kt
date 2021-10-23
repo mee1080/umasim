@@ -49,7 +49,7 @@ class Simulator(
                 ),
                 scenarioState = when (scenario) {
                     Scenario.URA -> UraMemberState
-                    Scenario.AOHARU -> Store.Aoharu.getTeamMember(card.id)!!.let { member ->
+                    Scenario.AOHARU -> Store.Aoharu.getTeamMember(card.id)?.let { member ->
                         AoharuMemberState(
                             member = member,
                             status = member.initialStatus,
@@ -57,7 +57,7 @@ class Simulator(
                             aoharuTrainingCount = 0,
                             aoharuIcon = false,
                         )
-                    }
+                    } ?: AoharuNotMemberState
                 }
             )
         },

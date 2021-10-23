@@ -16,20 +16,20 @@ object AoharuScenarioEvents {
                 .addLinkMember()
                 .updateTrainingLevel()
             18 -> state
-                .addMember(9 - state.member.size)
+                .addMember(9 - state.teamMember.size)
                 .updateTrainingLevel()
             24 -> state
                 .updateTrainingLevel()
                 .applyRace("E")
-                .addMember((3..min(4, 13 - state.member.size)).random())
+                .addMember((3..min(4, 13 - state.teamMember.size)).random())
             36 -> state
                 .updateTrainingLevel()
                 .applyRace("D")
-                .addMember((max(2, 15 - state.member.size)..min(4, 16 - state.member.size)).random())
+                .addMember((max(2, 15 - state.teamMember.size)..min(4, 16 - state.teamMember.size)).random())
             48 -> state
                 .updateTrainingLevel()
                 .applyRace("B")
-                .addMember(19 - state.member.size)
+                .addMember(19 - state.teamMember.size)
             60 -> state
                 .updateTrainingLevel()
                 .applyRace("A")
@@ -66,7 +66,7 @@ object AoharuScenarioEvents {
         // TODO 育成キャラ能力上昇
         // 勝ち前提
         return copy(
-            member = member.map {
+            member = teamMember.map {
                 it.addStatus(Status(50, 50, 50, 50, 50))
             }
         )

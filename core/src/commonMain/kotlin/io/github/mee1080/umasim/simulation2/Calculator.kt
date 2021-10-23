@@ -234,7 +234,7 @@ object Calculator {
         training: TrainingBase,
         member: List<MemberState>,
     ): Status {
-        val states = member.map { it.scenarioState as AoharuMemberState }
+        val states = member.mapNotNull { it.scenarioState as? AoharuMemberState }
         val aoharuMember = states.filter { it.aoharuIcon && !it.aoharuBurn }
         val aoharuCount = aoharuMember.size
         val linkCount = aoharuMember.count { Store.isScenarioLink(Scenario.AOHARU, it.member.chara) }
