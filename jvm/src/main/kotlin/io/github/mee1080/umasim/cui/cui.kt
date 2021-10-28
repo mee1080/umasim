@@ -42,7 +42,7 @@ fun openCui(args: Array<String>) {
 //    checkNewSimulator()
 //    testAoharuSimulation()
 //    compareAoharuSimulation()
-    compareExpectedBasedAI()
+//    compareExpectedBasedAI()
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -115,10 +115,10 @@ fun openCui(args: Array<String>) {
 //        ),
 //        testCount = 1000, turn = 60,
 //    )
-//    doShortSimulation(
-//        StatusType.WISDOM, 0..4, 4, true,
-//        100000, FactorBasedActionSelector.speedWisdomPower
-//    )
+    doShortSimulation(
+        StatusType.WISDOM, 0..4, 4, true,
+        100000, FactorBasedActionSelector.speedWisdomPower
+    )
 //    (1..31 step 10).forEach { charm ->
 //        println("愛嬌ターン $charm")
 //        doShortSimulation(
