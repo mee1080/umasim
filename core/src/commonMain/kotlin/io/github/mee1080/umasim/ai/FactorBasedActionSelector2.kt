@@ -109,7 +109,8 @@ class FactorBasedActionSelector2(private val option: Option = Option()) : Action
                 it <= 48 -> 5.0
                 else -> 0.0
             }
-        }
+        },
+        val expectedStatusFactor: Double = 0.0,
     ) {
         fun generateSelector() = FactorBasedActionSelector2(this)
     }
@@ -121,9 +122,10 @@ class FactorBasedActionSelector2(private val option: Option = Option()) : Action
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
         val total = action.resultCandidate.sumOf { it.second }.toDouble()
+        val expected = calcExpectedScore(state, action)
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            calcScore(state, it.first) * it.second / total
+            (calcScore(state, it.first) - expected) * it.second / total
         } + calcRelationScore(state, action) + calcAoharuScore(state, action)
         if (DEBUG) println("total $score")
         return score
@@ -140,6 +142,30 @@ class FactorBasedActionSelector2(private val option: Option = Option()) : Action
                 status.motivation * option.motivationFactor
         if (DEBUG) println("  $score $status")
         return score
+    }
+
+    private fun calcExpectedScore(state: SimulationState, action: Action): Double {
+        if (option.expectedStatusFactor <= 0.0) return 0.0
+        return option.expectedStatusFactor * when (action) {
+            is Training -> {
+                val expectedStatus = Calculator.calcExpectedTrainingStatus(
+                    state.chara,
+                    state.getTraining(action.type).current,
+                    state.status.motivation,
+                    state.member,
+                    state.scenario,
+                ).first
+                expectedStatus.speed * option.speedFactor +
+                        expectedStatus.stamina * option.staminaFactor +
+                        expectedStatus.power * option.powerFactor +
+                        expectedStatus.guts * option.gutsFactor +
+                        expectedStatus.wisdom * option.wisdomFactor +
+                        expectedStatus.skillPt * option.skillPtFactor +
+                        expectedStatus.hp * option.hpFactor +
+                        expectedStatus.motivation * option.motivationFactor
+            }
+            else -> 0.0
+        }
     }
 
     private fun calcRelationScore(state: SimulationState, action: Action): Double {

@@ -71,6 +71,8 @@ data class SimulationState(
                 }
             }
         }
+
+    fun getTraining(type: StatusType) = training.first { it.type == type }
 }
 
 data class MemberState(
