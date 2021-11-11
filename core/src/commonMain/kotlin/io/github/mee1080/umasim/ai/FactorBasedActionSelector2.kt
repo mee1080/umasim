@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
-class FactorBasedActionSelector2(private val option: Option = Option()) : ActionSelector {
+class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector {
 
     companion object {
         private const val DEBUG = false
@@ -204,5 +204,9 @@ class FactorBasedActionSelector2(private val option: Option = Option()) : Action
                     else -> 0.0
                 }
             } * option.aoharuFactor(state.turn)
+    }
+
+    override fun toString(): String {
+        return "FactorBasedActionSelector2 $option"
     }
 }

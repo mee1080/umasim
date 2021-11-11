@@ -18,20 +18,8 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.data.turnToString
-import io.github.mee1080.umasim.simulation.*
-import io.github.mee1080.umasim.simulation2.AoharuMemberState
-import io.github.mee1080.umasim.simulation2.SimulationEvents
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 val scenario = Scenario.URA
 
@@ -43,6 +31,16 @@ fun openCui(args: Array<String>) {
 //    testAoharuSimulation()
 //    compareAoharuSimulation()
 //    compareExpectedBasedAI()
+
+    optimizeAI(
+        Scenario.URA,
+        Store.getChara("ハルウララ", 5, 5),
+        Store.getSupportByName(
+            *(speed(4, 3)),
+            *(power(4, 2)),
+            *(friend(4, 1)),
+        )
+    )
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -184,10 +182,10 @@ fun openCui(args: Array<String>) {
 //            hp = 0.6..0.7,
 //        ), testCount = 1000
 //    )
-    doShortSimulation(
-        StatusType.GUTS, 0..4, 4, false,
-        100000, FactorBasedActionSelector.speedGuts
-    )
+//    doShortSimulation(
+//        StatusType.GUTS, 0..4, 4, false,
+//        100000, FactorBasedActionSelector.speedGuts
+//    )
 
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(

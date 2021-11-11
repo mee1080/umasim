@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
+import io.github.mee1080.umasim.ai.NextStateBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.turnToString
@@ -22,8 +23,17 @@ fun testAoharuSimulation() {
             checkGoalRace = true,
         )
     )
-    val result =
-        simulator.simulateWithHistory(78, FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom))
+//    val selector = FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom)
+    val selector = NextStateBasedActionSelector(
+        NextStateBasedActionSelector.Option(
+            speedFactor = 0.8,
+            staminaFactor = 1.0,
+            powerFactor = 0.8,
+            wisdomFactor = 1.2,
+            hpFactor = 0.7,
+        )
+    )
+    val result = simulator.simulateWithHistory(78, selector)
     result.second.forEachIndexed { index, (action, result, state) ->
         println("${turnToString(state.turn)}: ${action.toShortString()}")
         println(state.status)
@@ -36,6 +46,7 @@ fun testAoharuSimulation() {
         println(result)
         println()
     }
+    println(result.first)
 }
 
 fun compareAoharuSimulation() {
@@ -83,6 +94,47 @@ fun compareAoharuSimulation() {
 }
 
 fun compareExpectedBasedAI() {
+    val chara = Store.getChara("ハルウララ", 5, 5)
+    val support = Store.getSupportByName(
+        *(speed(4, 3)),
+        *(power(4, 2)),
+        *(wisdom(4, 1)),
+    )
+
+    val turn = 78
+    val testCount = 100
+//    val selector = { SimpleActionSelector(StatusType.SPEED) }
+    val option = Simulator.Option(
+        checkGoalRace = true,
+    )
+
+    runBlocking {
+        listOf(0.0, 0.2, 0.4, 0.6, 0.8).forEach { factor ->
+            println(LocalDateTime.now())
+            launch(context) {
+                val summary = mutableListOf<Summary>()
+                val simulator = Simulator(Scenario.URA, chara, support, option)
+                val selector = {
+                    FactorBasedActionSelector2(
+                        FactorBasedActionSelector2.speedWisdom.copy(
+                            expectedStatusFactor = factor
+                        )
+                    )
+                }
+                repeat(testCount) {
+                    summary.add(simulator.simulate(turn, selector(), SimulationEvents(
+                        initialStatus = { it.copy(motivation = 2) }
+                    )))
+                }
+                println("$factor,${Evaluator(summary).toSummaryString()}")
+//            summary.last().support.forEach { println("${it.name} ${it.state.supportState} ${it.state.scenarioState}") }
+            }.join()
+        }
+        println(LocalDateTime.now())
+    }
+}
+
+fun compareNextStateBasedAI() {
     val chara = Store.getChara("ハルウララ", 5, 5)
     val support = Store.getSupportByName(
         *(speed(4, 3)),
