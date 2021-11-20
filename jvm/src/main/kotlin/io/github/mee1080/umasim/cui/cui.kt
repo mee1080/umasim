@@ -18,7 +18,9 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 
 val scenario = Scenario.URA
@@ -32,15 +34,15 @@ fun openCui(args: Array<String>) {
 //    compareAoharuSimulation()
 //    compareExpectedBasedAI()
 
-    optimizeAI(
-        Scenario.URA,
-        Store.getChara("ハルウララ", 5, 5),
-        Store.getSupportByName(
-            *(speed(4, 3)),
-            *(power(4, 2)),
-            *(friend(4, 1)),
-        )
-    )
+//    optimizeAI(
+//        Scenario.URA,
+//        Store.getChara("ハルウララ", 5, 5),
+//        Store.getSupportByName(
+//            *(speed(4, 3)),
+//            *(power(4, 2)),
+//            *(friend(4, 1)),
+//        )
+//    )
 
     // 短距離スピパワ
 //    optimizeAI(
@@ -185,6 +187,43 @@ fun openCui(args: Array<String>) {
 //    doShortSimulation(
 //        StatusType.GUTS, 0..4, 4, false,
 //        100000, FactorBasedActionSelector.speedGuts
+//    )
+
+    // スピパワ賢
+//    optimizeAI(
+//        Scenario.URA,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed(4, 2)),
+//            *(power3(4, 3)),
+//            *(wisdom(4, 1)),
+//        )
+//    )
+    doSimulation2(
+        Scenario.URA,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(speed3(4, 1)),
+            *(power3(4, 3)),
+            *(wisdom(4, 1)),
+        ).toTypedArray(),
+        StatusType.SPEED,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.speed2Power3Wisdom1,
+    )
+//    doSimulation2(
+//        Scenario.URA,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed(4, 2)),
+//            *(power3(4, 2)),
+//            *(wisdom(4, 1)),
+//        ).toTypedArray(),
+//        StatusType.POWER,
+//        0..4,
+//        100000,
+//        FactorBasedActionSelector2.speed2Power3Wisdom1,
 //    )
 
 //    doShortSimulation(StatusType.SPEED)

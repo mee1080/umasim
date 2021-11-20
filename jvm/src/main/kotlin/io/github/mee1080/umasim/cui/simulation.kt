@@ -175,6 +175,27 @@ fun doPowerWisdomSimulation(
 fun doSimulation(
     chara: Chara,
     defaultSupport: Array<SupportCard>,
+    targetStatus: StatusType,
+    talent: IntRange = 4..4,
+    turn: Int,
+    testCount: Int,
+    option: FactorBasedActionSelector.Option,
+) {
+    doSimulation(
+        chara,
+        defaultSupport,
+        Store.supportList.filter {
+            talent.contains(it.talent) && it.rarity >= 2 && (it.type == targetStatus)
+        },
+        turn,
+        testCount,
+        { FactorBasedActionSelector(option) },
+    )
+}
+
+fun doSimulation(
+    chara: Chara,
+    defaultSupport: Array<SupportCard>,
     target: List<SupportCard>,
     turn: Int,
     testCount: Int,

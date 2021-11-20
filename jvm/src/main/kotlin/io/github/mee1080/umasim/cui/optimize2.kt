@@ -80,7 +80,7 @@ fun optimizeAI(
     support.forEach { println(it.name) }
     val option = Simulator.Option(checkGoalRace = true)
     val selectors = generateOptions2().map { it.generateSelector() }
-    val result = Optimizer(scenario, chara, support, option, 78, selectors) { it.upperSum(0.2) }.optimize()
+    val result = Optimizer(scenario, chara, support, option, 78, selectors) { it.upperSum(0.2, 1100) }.optimize()
     result.forEachIndexed { index, target ->
         println("$index,\"${target.first.option}\",,${Evaluator(target.second).toSummaryString()}")
     }

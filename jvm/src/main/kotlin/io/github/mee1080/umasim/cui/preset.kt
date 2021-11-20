@@ -30,6 +30,12 @@ fun speed2(supportTalent: Int, count: Int) = arrayOf(
     "[夢は掲げるものなのだっ！]トウカイテイオー" to supportTalent,
 ).take(count).toTypedArray()
 
+fun speed3(supportTalent: Int, count: Int) = arrayOf(
+    "[必殺！Wキャロットパンチ！]ビコーペガサス" to supportTalent,
+    "[はやい！うまい！はやい！]サクラバクシンオー" to supportTalent,
+    "[ターボエンジン全開宣言！]ツインターボ" to supportTalent,
+).take(count).toTypedArray()
+
 fun stamina(supportTalent: Int, count: Int) = arrayOf(
     "[一粒の安らぎ]スーパークリーク" to supportTalent,
     "[その背中を越えて]サトノダイヤモンド" to supportTalent,
@@ -64,6 +70,7 @@ fun guts(supportTalent: Int, count: Int) = arrayOf(
 
 fun wisdom(supportTalent: Int, count: Int) = arrayOf(
     "[感謝は指先まで込めて]ファインモーション" to supportTalent,
+    "[願いまでは拭わない]ナイスネイチャ" to supportTalent,
     "[明日は全国的に赤でしょう♪]セイウンスカイ" to supportTalent,
     "[その心に吹きすさぶ]メジロアルダン" to supportTalent,
 ).take(count).toTypedArray()
