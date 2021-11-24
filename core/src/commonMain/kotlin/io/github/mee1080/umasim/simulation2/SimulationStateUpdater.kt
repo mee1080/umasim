@@ -84,7 +84,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
         copy(
             member = newMember,
             training = newTraining,
-            status = newStatus + selectTrainingHint(action.member),
+            status = newStatus + selectTrainingHint(action.member) + selectAoharuTrainingHint(action.member),
         )
     } else {
         copy(status = newStatus)
@@ -142,10 +142,26 @@ private fun SimulationState.selectTrainingHint(support: List<MemberState>): Stat
     val hintSupportList = support.filter { it.hint }
     if (hintSupportList.isEmpty()) return Status()
     val hintSupport = hintSupportList.random()
-    val hintSkill = (hintSupport.card.skills.filter { status.skillHint[it] != 5 } + "").random()
+    val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
     return if (hintSkill.isEmpty()) {
         hintSupport.card.hintStatus
     } else {
         Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
     }
+}
+
+private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>): Status {
+    if (scenario != Scenario.AOHARU) return Status()
+    val aoharuList = support.filter { it.scenarioState is AoharuMemberState && it.scenarioState.aoharuIcon }
+    if (aoharuList.isEmpty()) return Status()
+    // TODO アオハル爆発スキル
+    // val burnList = aoharuList.filter { it.aoharuBurn }
+    if (Random.nextInt(100) >= 15) return Status()
+    val skillList = aoharuList
+        .filter { it.scenarioState is AoharuMemberState && !it.scenarioState.aoharuBurn }
+        .flatMap { member -> member.card.skills.map { member to it } }
+        .filter { !status.skillHint.containsKey(it.second) }
+    if (skillList.isEmpty()) return Status()
+    val target = skillList.random()
+    return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
 }
