@@ -58,11 +58,20 @@ class Evaluator(val summaries: List<Summary>) {
             typeToFactor.sumOf { kotlin.math.min(result.get(it.first), limit) * it.second }
         }
 
+    private fun getStatusSum(typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
+        results.value.map { result ->
+            typeToFactorLimit.entries.sumOf { kotlin.math.min(result.get(it.key), it.value.second) * it.value.first }
+        }
+
     fun upperSum(rate: Double, vararg type: StatusType) = getStatusSum(*type).sortedDescending()
         .slice(0 until (summaries.size * rate).toInt()).average()
 
     fun upperSum(rate: Double, vararg typeToFactor: Pair<StatusType, Double>, limit: Int = Int.MAX_VALUE) =
         getStatusSum(*typeToFactor, limit = limit).sortedDescending()
+            .slice(0 until (summaries.size * rate).toInt()).average()
+
+    fun upperSum(rate: Double, typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
+        getStatusSum(typeToFactorLimit).sortedDescending()
             .slice(0 until (summaries.size * rate).toInt()).average()
 
     fun upperSum(rate: Double, limit: Int = Int.MAX_VALUE) = upperSum(rate, *outputStatus, limit = limit)

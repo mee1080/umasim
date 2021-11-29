@@ -31,7 +31,7 @@ class Optimizer<T : ActionSelector>(
         targets = filterByScore(100, 128, targets).toMutableList()
         targets = filterByScore(1000, 32, targets).toMutableList()
         targets = filterByScore(10000, 12, targets).toMutableList()
-        return sortByScore(100000, targets).map { it.first }
+        return sortByScore(50000, targets).map { it.first }
     }
 
     private fun filterByScore(

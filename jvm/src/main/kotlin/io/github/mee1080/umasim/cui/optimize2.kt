@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.cui
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.optimize.Optimizer
 import io.github.mee1080.umasim.simulation2.Evaluator
@@ -31,13 +32,13 @@ import kotlin.math.roundToInt
 fun generateOptions2(
     base: FactorBasedActionSelector2.Option = FactorBasedActionSelector2.Option(),
     speed: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0, 1.2),
-    stamina: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0),
-    power: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0),
-    guts: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0),
-    wisdom: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0),
-    skillPt: DoubleArray = doubleArrayOf(0.2, 0.4, 0.6),
+    stamina: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0, 1.2),
+    power: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0, 1.2),
+    guts: DoubleArray = doubleArrayOf(0.2, 0.4),
+    wisdom: DoubleArray = doubleArrayOf(0.6, 0.8, 1.0, 1.2),
+    skillPt: DoubleArray = doubleArrayOf(0.2, 0.4),
     hp: DoubleArray = doubleArrayOf(0.4, 0.6, 0.8),
-    motivation: DoubleArray = doubleArrayOf(15.0, 20.0, 25.0),
+    motivation: DoubleArray = doubleArrayOf(25.0),
 ): Array<FactorBasedActionSelector2.Option> {
     val list = mutableListOf<FactorBasedActionSelector2.Option>()
     var option = base
@@ -70,17 +71,29 @@ fun generateOptions2(
     return list.toTypedArray()
 }
 
+private val defaultEvaluateSetting = mapOf(
+    StatusType.SPEED to (1.0 to 1100),
+    StatusType.STAMINA to (1.0 to 1100),
+    StatusType.POWER to (1.0 to 1100),
+    StatusType.GUTS to (1.0 to 600),
+    StatusType.WISDOM to (0.8 to 1100),
+    StatusType.SKILL to (0.4 to Int.MAX_VALUE),
+)
+
 fun optimizeAI(
     scenario: Scenario,
     chara: Chara,
     support: List<SupportCard>,
+    evaluateSetting: Map<StatusType, Pair<Double, Int>> = defaultEvaluateSetting,
 ) {
     println("optimize")
     println(chara)
     support.forEach { println(it.name) }
     val option = Simulator.Option(checkGoalRace = true)
     val selectors = generateOptions2().map { it.generateSelector() }
-    val result = Optimizer(scenario, chara, support, option, 78, selectors) { it.upperSum(0.2, 1100) }.optimize()
+    val result = Optimizer(scenario, chara, support, option, 78, selectors) {
+        it.upperSum(0.2, evaluateSetting)
+    }.optimize()
     result.forEachIndexed { index, target ->
         println("$index,\"${target.first.option}\",,${Evaluator(target.second).toSummaryString()}")
     }

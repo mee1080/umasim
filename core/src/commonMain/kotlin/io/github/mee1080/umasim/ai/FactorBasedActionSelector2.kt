@@ -100,7 +100,16 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
 
         val aoharuSpeedWisdom = speedWisdom.let { it.copy(hpFactor = it.hpFactor * 0.9) }
 
-        val aoharuPowerWisdom = powerWisdom.let { it.copy(hpFactor = it.hpFactor * 0.9) }
+        val aoharuPowerWisdom = Option(
+            speedFactor = 1.2,
+            staminaFactor = 1.2,
+            powerFactor = 1.2,
+            gutsFactor = 0.4,
+            wisdomFactor = 1.0,
+            skillPtFactor = 0.2,
+            hpFactor = 0.8,
+            motivationFactor = 25.0,
+        )
     }
 
     @Serializable
