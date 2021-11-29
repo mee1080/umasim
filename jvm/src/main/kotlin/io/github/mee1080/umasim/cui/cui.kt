@@ -33,7 +33,7 @@ fun openCui(args: Array<String>) {
 //    testAoharuSimulation()
 //    compareAoharuSimulation()
 //    compareExpectedBasedAI()
-    deBuffSimulation(100000)
+//    deBuffSimulation(100000)
 
 //    optimizeAI(
 //        Scenario.URA,
@@ -200,19 +200,19 @@ fun openCui(args: Array<String>) {
 //            *(wisdom(4, 1)),
 //        )
 //    )
-//    doSimulation2(
-//        Scenario.URA,
-//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-//        Store.getSupportByName(
-//            *(speed3(4, 1)),
-//            *(power3(4, 3)),
-//            *(wisdom(4, 1)),
-//        ).toTypedArray(),
-//        StatusType.SPEED,
-//        0..4,
-//        100000,
-//        FactorBasedActionSelector2.speed2Power3Wisdom1,
-//    )
+    doSimulation2(
+        Scenario.URA,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(speed3(4, 1)),
+            *(power3(4, 3)),
+            *(wisdom(4, 1)),
+        ).toTypedArray(),
+        StatusType.SPEED,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.speed2Power3Wisdom1,
+    )
 //    doSimulation2(
 //        Scenario.URA,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
