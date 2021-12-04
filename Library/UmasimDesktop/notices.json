@@ -1,0 +1,44 @@
+{
+    "title": "Using Libraries",
+    "description": "Umasim is using these libraries.",
+    "notices": [
+        {
+            "name": "Jetpack Compose desktop implementation",
+            "author": "The Android Open Source Project",
+            "url": "https://github.com/JetBrains/compose-jb",
+            "description": null,
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.compose.desktop:desktop-jvm-windows-x64"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache Software License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Kotlin Stdlib Jdk8",
+            "author": "JetBrains - Kotlin Team",
+            "url": "https://kotlinlang.org/",
+            "description": "Kotlin Standard Library JDK 8 extension",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

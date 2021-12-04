@@ -1,0 +1,82 @@
+{
+    "title": "Using Libraries",
+    "description": "Umasim is using these libraries.",
+    "notices": [
+        {
+            "name": "Kotlin Stdlib Common",
+            "author": "JetBrains - Kotlin Team",
+            "url": "https://kotlinlang.org/",
+            "description": "Kotlin Common Standard Library",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlin:kotlin-stdlib-common"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Kotlin Stdlib Jdk8",
+            "author": "JetBrains - Kotlin Team",
+            "url": "https://kotlinlang.org/",
+            "description": "Kotlin Standard Library JDK 8 extension",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "Kotlin Stdlib Js",
+            "author": "JetBrains - Kotlin Team",
+            "url": "https://kotlinlang.org/",
+            "description": "Kotlin Standard Library for JS",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlin:kotlin-stdlib-js"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "kotlinx-serialization-json",
+            "author": "JetBrains - JetBrains Team",
+            "url": "https://github.com/Kotlin/kotlinx.serialization",
+            "description": "Kotlin multiplatform serialization runtime library",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlinx:kotlinx-serialization-json"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache Software License, Version 2.0",
+                            "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

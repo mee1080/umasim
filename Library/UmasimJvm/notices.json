@@ -1,0 +1,63 @@
+{
+    "title": "Using Libraries",
+    "description": "Umasim is using these libraries.",
+    "notices": [
+        {
+            "name": "Kotlin Stdlib",
+            "author": "JetBrains - Kotlin Team",
+            "url": "https://kotlinlang.org/",
+            "description": "Kotlin Standard Library for JVM",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlin:kotlin-stdlib"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache License, Version 2.0",
+                            "url": "http://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "kotlinx-coroutines-core",
+            "author": "JetBrains - JetBrains Team",
+            "url": "https://github.com/Kotlin/kotlinx.coroutines",
+            "description": "Coroutines support libraries for Kotlin",
+            "resources": [
+                {
+                    "artifacts": [
+                        "org.jetbrains.kotlinx:kotlinx-coroutines-core"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache Software License, Version 2.0",
+                            "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "name": "ktor-client-cio",
+            "author": "JetBrains - JetBrains Team",
+            "url": "https://github.com/ktorio/ktor",
+            "description": "Ktor is a framework for quickly creating web applications in Kotlin with minimal effort.",
+            "resources": [
+                {
+                    "artifacts": [
+                        "io.ktor:ktor-client-cio"
+                    ],
+                    "licenses": [
+                        {
+                            "name": "The Apache Software License, Version 2.0",
+                            "url": "https://www.apache.org/licenses/LICENSE-2.0.txt"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

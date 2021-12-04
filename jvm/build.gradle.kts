@@ -2,6 +2,8 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     kotlin("jvm")
+    id("librarian")
+    id("librarian-preset")
 }
 
 group = "io.github.mee1080.umasim"
@@ -16,4 +18,28 @@ dependencies {
 
 tasks.withType<KotlinCompile>() {
     kotlinOptions.jvmTarget = "15"
+}
+
+librarian {
+    failOnGeneratePageWhenFoundPlaceholder = false
+    ignoreArtifacts = mutableListOf(
+        "io.github.mee1080.umasim:core",
+        "io.github.mee1080.umasim:jvm",
+        "io.github.mee1080.umasim:desktopSupport",
+    )
+    pages {
+        create("UmasimJvm") {
+            title = "Using Libraries"
+            description = "Umasim is using these libraries."
+            configurations {
+                contain {
+                    value = mutableListOf(
+                        "default",
+                        "implementationDependenciesMetadata",
+                        "runtimeClasspath",
+                    )
+                }
+            }
+        }
+    }
 }

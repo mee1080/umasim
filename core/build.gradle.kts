@@ -1,6 +1,8 @@
 plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
+    id("librarian")
+    id("librarian-preset")
 }
 
 group = "io.github.mee1080.umasim"
@@ -30,6 +32,29 @@ kotlin {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
+            }
+        }
+    }
+}
+
+librarian {
+    failOnGeneratePageWhenFoundPlaceholder = false
+    pages {
+        create("UmasimCore") {
+            title = "Using Libraries"
+            description = "Umasim is using these libraries."
+            configurations {
+                contain {
+                    value = mutableListOf(
+                        "commonMainImplementationDependenciesMetadata",
+                        "desktopDefault",
+                        "desktopMainApiDependenciesMetadata",
+                        "desktopRuntimeClasspath",
+                        "webDefault",
+                        "webMainApiDependenciesMetadata",
+                        "webRuntimeClasspath",
+                    )
+                }
             }
         }
     }

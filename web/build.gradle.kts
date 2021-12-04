@@ -1,6 +1,8 @@
 plugins {
     kotlin("multiplatform")
     id("org.jetbrains.compose") version "1.0.0-alpha1"
+    id("librarian")
+    id("librarian-preset")
 }
 
 group = "io.github.mee1080.umasim"
@@ -21,6 +23,29 @@ kotlin {
                 implementation(project(":core"))
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+            }
+        }
+    }
+}
+
+librarian {
+    failOnGeneratePageWhenFoundPlaceholder = false
+    ignoreArtifacts = mutableListOf(
+        "io.github.mee1080.umasim:core",
+    )
+    pages {
+        create("UmasimWeb") {
+            title = "Using Libraries"
+            description = "Umasim is using these libraries."
+            configurations {
+                contain {
+                    value = mutableListOf(
+                        "commonMainApiDependenciesMetadata",
+                        "jsDefault",
+                        "jsMainImplementationDependenciesMetadata",
+                        "jsRuntimeClasspath",
+                    )
+                }
             }
         }
     }
