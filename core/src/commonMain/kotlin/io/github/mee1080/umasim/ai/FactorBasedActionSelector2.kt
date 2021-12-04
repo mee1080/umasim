@@ -110,6 +110,17 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
             hpFactor = 0.8,
             motivationFactor = 25.0,
         )
+
+        val aoharuSpeed2Power3Wisdom1 = Option(
+            speedFactor = 1.0,
+            staminaFactor = 0.6,
+            powerFactor = 1.0,
+            gutsFactor = 0.4,
+            wisdomFactor = 0.8,
+            skillPtFactor = 0.4,
+            hpFactor = 0.8,
+            motivationFactor = 25.0,
+        )
     }
 
     @Serializable

@@ -160,18 +160,18 @@ fun openCui(args: Array<String>) {
 //            *(wisdom2(4, 3)),
 //        )
 //    )
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(power3(4, 3)),
-            *(wisdom2(4, 2)),
-        ).toTypedArray(),
-        StatusType.WISDOM,
-        0..4,
-        100000,
-        FactorBasedActionSelector2.aoharuPowerWisdom,
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(power3(4, 3)),
+//            *(wisdom2(4, 2)),
+//        ).toTypedArray(),
+//        StatusType.WISDOM,
+//        0..4,
+//        100000,
+//        FactorBasedActionSelector2.aoharuPowerWisdom,
+//    )
 //    optimizeAI(
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5), Store.getSupportByName(
 //            *(power2(4, 3)),
@@ -212,7 +212,7 @@ fun openCui(args: Array<String>) {
 
     // スピパワ賢
 //    optimizeAI(
-//        Scenario.URA,
+//        Scenario.AOHARU,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
 //        Store.getSupportByName(
 //            *(speed(4, 2)),
@@ -233,6 +233,19 @@ fun openCui(args: Array<String>) {
 //        100000,
 //        FactorBasedActionSelector2.speed2Power3Wisdom1,
 //    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(speed(4, 1)),
+            *(power3(4, 3)),
+            *(wisdom(4, 1)),
+        ).toTypedArray(),
+        StatusType.SPEED,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.aoharuSpeed2Power3Wisdom1,
+    )
 //    doSimulation2(
 //        Scenario.URA,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),

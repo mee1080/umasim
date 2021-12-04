@@ -76,7 +76,7 @@ private val defaultEvaluateSetting = mapOf(
     StatusType.STAMINA to (1.0 to 1100),
     StatusType.POWER to (1.0 to 1100),
     StatusType.GUTS to (1.0 to 600),
-    StatusType.WISDOM to (0.8 to 1100),
+    StatusType.WISDOM to (0.8 to 1000),
     StatusType.SKILL to (0.4 to Int.MAX_VALUE),
 )
 
