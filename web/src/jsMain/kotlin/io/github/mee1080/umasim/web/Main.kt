@@ -29,9 +29,7 @@ import io.github.mee1080.umasim.web.page.AoharuSimulation
 import io.github.mee1080.umasim.web.page.UraSimulation
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.disabled
-import org.jetbrains.compose.web.attributes.placeholder
-import org.jetbrains.compose.web.attributes.size
+import org.jetbrains.compose.web.attributes.*
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.jetbrains.compose.web.renderComposable
@@ -286,5 +284,13 @@ fun main() {
             Scenario.URA -> UraSimulation(model)
             Scenario.AOHARU -> AoharuSimulation(model.aoharuSimulationViewModel)
         }
+        Hr { style { marginTop(16.px) } }
+        A(
+            href = "https://github.com/mee1080/umasim/blob/main/Library/web.md",
+            attrs = {
+                target(ATarget.Blank)
+                attr("rel", "noreferrer noopener")
+            }
+        ) { Text("使用ライブラリ") }
     }
 }
