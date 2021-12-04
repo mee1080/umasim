@@ -19,9 +19,7 @@
 package io.github.mee1080.umasim.web.components
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.web.attributes.checked
 import org.jetbrains.compose.web.attributes.name
-import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.RadioInput
 import org.jetbrains.compose.web.dom.Text
@@ -33,7 +31,7 @@ fun LabeledRadio(name: String, value: String, label: String, checked: Boolean, o
             value(value)
             name(name)
             onInput { if (it.value) onChecked() }
-            if (checked) checked()
+            checked(checked)
         }
         Text(label)
     }

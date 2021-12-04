@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.web.style
 
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.css.selectors.plus
 
 object AppStyle : StyleSheet() {
     val table by style {

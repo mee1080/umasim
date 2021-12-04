@@ -19,9 +19,7 @@
 package io.github.mee1080.umasim.web.components
 
 import androidx.compose.runtime.Composable
-import org.jetbrains.compose.web.attributes.checked
 import org.jetbrains.compose.web.attributes.name
-import org.jetbrains.compose.web.attributes.value
 import org.jetbrains.compose.web.dom.CheckboxInput
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.Text
@@ -33,7 +31,7 @@ fun LabeledCheckbox(name: String, label: String, checked: Boolean, onCheckedChan
             value("1")
             name(name)
             onInput { onCheckedChanged(it.value) }
-            if (checked) checked()
+            checked(checked)
         }
         Text(label)
     }

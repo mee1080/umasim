@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "1.0.0-alpha1"
+    id("org.jetbrains.compose") version "1.0.0"
     id("librarian")
     id("librarian-preset")
 }
@@ -25,6 +25,12 @@ kotlin {
                 implementation(compose.runtime)
             }
         }
+    }
+}
+
+afterEvaluate {
+    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        versions.webpackCli.version = "4.9.0"
     }
 }
 
