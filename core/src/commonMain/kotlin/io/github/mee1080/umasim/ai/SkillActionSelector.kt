@@ -3,7 +3,7 @@ package io.github.mee1080.umasim.ai
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 
-class DeBuffActionSelector : ActionSelector {
+class SkillActionSelector(targetSkills: Array<String>) : ActionSelector {
 
     companion object {
         val deBuffSkills = arrayOf(
@@ -35,8 +35,10 @@ class DeBuffActionSelector : ActionSelector {
             "まなざし",
         )
 
-        val deBuffSkillSet = deBuffSkills.toSet()
+        val jigatame = arrayOf("地固め")
     }
+
+    private val targetSkillSet = targetSkills.toSet()
 
     override fun select(state: SimulationState, selection: List<Action>): Action {
         val byRate = selection
@@ -57,14 +59,15 @@ class DeBuffActionSelector : ActionSelector {
         val currentSkills = state.status.skillHint
         val hintRates = action.member.filter { it.hint }.map { member ->
             val skills = member.card.skills.filter { !currentSkills.containsKey(it) }
-            skills.count { deBuffSkillSet.contains(it) }.toDouble() / (skills.size + 1)
+            skills.count { targetSkillSet.contains(it) }.toDouble() / (skills.size + 1)
         }
         val hintRate = if (hintRates.isEmpty()) 0.0 else hintRates.average()
         val aoharuSkills = action.member
             .filter { it.scenarioState is AoharuMemberState && !it.scenarioState.aoharuBurn && it.scenarioState.aoharuIcon }
             .flatMap { it.card.skills }
             .filter { !currentSkills.containsKey(it) }
-        val aoharuRate = aoharuSkills.count { deBuffSkillSet.contains(it) }.toDouble() / aoharuSkills.size * 0.15
-        return (hintRate + aoharuRate) * (100 - action.failureRate) / 100.0
+        val aoharuRate = if (aoharuSkills.isEmpty()) 0.0 else aoharuSkills.count { targetSkillSet.contains(it) }
+            .toDouble() / aoharuSkills.size * 0.15
+        return (hintRate + aoharuRate) * (100.0 - action.failureRate) / 100.0
     }
 }
