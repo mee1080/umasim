@@ -18,7 +18,10 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 
 val scenario = Scenario.URA
 
@@ -30,7 +33,7 @@ fun openCui(args: Array<String>) {
 //    testAoharuSimulation()
 //    compareAoharuSimulation()
 //    compareExpectedBasedAI()
-    deBuffSimulation(100000)
+//    deBuffSimulation(100000)
 //    jigatameSimulation(100000)
 
 //    optimizeAI(
@@ -269,6 +272,29 @@ fun openCui(args: Array<String>) {
 //        100000,
 //        FactorBasedActionSelector2.speed2Power3Wisdom1,
 //    )
+
+    // スピ2スタ1賢3
+//    optimizeAI(
+//        Scenario.AOHARU,
+//        Store.getChara("[レッドストライフ]ゴールドシップ", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 2)),
+//            *(stamina(4, 1)),
+//            *(wisdom(4, 3)),
+//        )
+//    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[レッドストライフ]ゴールドシップ", 5, 5),
+        Store.getSupportByName(
+            *(speed(4, 2)),
+            *(wisdom(4, 3)),
+        ).toTypedArray(),
+        StatusType.STAMINA,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.aoharuSpeed2Stamina1Wisdom3,
+    )
 
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(

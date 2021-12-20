@@ -36,6 +36,12 @@ fun speed3(supportTalent: Int, count: Int) = arrayOf(
     "[ターボエンジン全開宣言！]ツインターボ" to supportTalent,
 ).take(count).toTypedArray()
 
+fun speed4(supportTalent: Int, count: Int) = arrayOf(
+    "[迫る熱に押されて]キタサンブラック" to supportTalent,
+    "[フォーメーション：PARTY]マヤノトップガン" to supportTalent,
+    "[夢は掲げるものなのだっ！]トウカイテイオー" to supportTalent,
+).take(count).toTypedArray()
+
 fun stamina(supportTalent: Int, count: Int) = arrayOf(
     "[一粒の安らぎ]スーパークリーク" to supportTalent,
     "[その背中を越えて]サトノダイヤモンド" to supportTalent,
