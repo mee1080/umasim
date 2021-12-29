@@ -253,7 +253,7 @@ class ViewModel {
     }
 
     init {
-        updateState(calculate = false, calculateBonus = false) { state ->
+        updateState { state ->
             val selectedChara = localStorage.getItem(KEY_CHARA)?.let {
                 if (WebConstants.charaMap.containsKey(it.toIntOrNull() ?: -1)) it.toInt() else 0
             } ?: state.selectedChara
