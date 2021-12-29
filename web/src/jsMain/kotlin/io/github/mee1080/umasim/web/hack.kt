@@ -20,14 +20,38 @@ package io.github.mee1080.umasim.web
 
 import androidx.compose.web.events.SyntheticEvent
 import org.jetbrains.compose.web.attributes.EventsListenerBuilder
+import org.w3c.dom.Element
 import org.w3c.dom.events.EventTarget
+import org.w3c.dom.get
+
+private val touchInfo = mutableMapOf<Int, Pair<Int, Int>>()
+
+private fun distance(x1: Int, y1: Int, x2: Int, y2: Int) = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
 
 fun EventsListenerBuilder.onClickOrTouch(listener: (SyntheticEvent<EventTarget>) -> Unit) {
     onClick {
         listener(it)
     }
+    onTouchStart {
+        if ((it.target as? Element)?.hasAttribute("disabled") == true) return@onTouchStart
+        val touches = it.changedTouches
+        for (i in 0 until touches.length) {
+            val touch = touches[i] ?: continue
+            touchInfo[touch.identifier] = touch.pageX to touch.pageY
+        }
+    }
     onTouchEnd {
         it.preventDefault()
-        listener(it)
+        if ((it.target as? Element)?.hasAttribute("disabled") == true) return@onTouchEnd
+        val touches = it.changedTouches
+        var clicked = false
+        for (i in 0 until touches.length) {
+            val touch = touches[i] ?: continue
+            val start = touchInfo.remove(touch.identifier) ?: continue
+            clicked = clicked || distance(start.first, start.second, touch.pageX, touch.pageY) < 100
+        }
+        if (clicked) {
+            listener(it)
+        }
     }
 }
