@@ -18,69 +18,45 @@
  */
 package io.github.mee1080.umasim.web.vm
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
-import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation.ExpectedStatus
+import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation.Runner
 import io.github.mee1080.umasim.simulation.Simulator
 import io.github.mee1080.umasim.simulation.Team
+import io.github.mee1080.umasim.web.state.AoharuSimulationState
+import io.github.mee1080.umasim.web.state.HistoryItem
+import io.github.mee1080.umasim.web.state.WebConstants
 
-class AoharuSimulationViewModel(private val root: ViewModel) {
+class AoharuSimulationViewModel(val root: ViewModel) {
 
-    var history by mutableStateOf(emptyList<HistoryItem>())
-        private set
-
-    private val specialTurnList = listOf(
-        17 to "ジュニア9月後半加入",
-        23 to "ジュニア12月後半レース＆加入",
-        33 to "クラシック6月後半レース＆加入",
-        43 to "クラシック12月後半レース＆加入",
-        53 to "シニア6月後半レース",
-        63 to "シニア12月後半レース",
-    )
-
-    data class HistoryItem(
-        val action: String,
-        val charaStatus: Status,
-        val teamTotalStatus: Status,
-        val teamAverageStatus: ExpectedStatus,
-        val teamStatusRank: Map<StatusType, AoharuTeamStatusRank>,
-    ) {
-        constructor(action: String, charaStatus: Status, team: Team) : this(
-            action,
-            charaStatus,
-            team.totalStatus(charaStatus),
-            team.averageStatus(charaStatus),
-            team.statusRank(charaStatus),
-        )
-
-        val next = trainingType.associateWith { type ->
-            val nextRank = teamStatusRank[type]!!.next
-            if (nextRank == null) 0.0 else nextRank.threshold - teamAverageStatus.get(type)
-        }
+    private fun updateAoharuState(update: (AoharuSimulationState) -> AoharuSimulationState) {
+        root.state = root.state.copy(aoharuSimulationState = update(root.state.aoharuSimulationState))
     }
 
-    private val simulationModeList = listOf(
-        "スピ賢" to { FactorBasedActionSelector.aoharuSpeedWisdom.generateSelector() },
-        "パワ賢" to { FactorBasedActionSelector.aoharuPowerWisdom.generateSelector() },
+    private fun toHistoryItem(action: String, charaStatus: Status, team: Team) = HistoryItem(
+        action,
+        charaStatus,
+        team.totalStatus(charaStatus),
+        team.averageStatus(charaStatus),
+        team.statusRank(charaStatus),
     )
 
-    val displaySimulationModeList = simulationModeList.mapIndexed { index, pair -> index to pair.first }
-
-    var simulationMode by mutableStateOf(0)
-        private set
-
     fun updateSimulationMode(mode: Int) {
-        simulationMode = mode
+        updateAoharuState { it.copy(simulationMode = mode) }
     }
 
     fun doSimulation() {
-        val supportList = root.supportSelectionList.mapNotNull { it.card }
-        val simulator = Simulator(root.chara, supportList, root.trainingList[Scenario.AOHARU]!!)
-        Runner.simulate(65, simulator, simulationModeList[simulationMode].second()) { target ->
+        val state = root.state
+        val aoharuState = state.aoharuSimulationState
+        val supportList = state.supportSelectionList.mapNotNull { it.card }
+        val simulator = Simulator(state.chara, supportList, WebConstants.trainingList[Scenario.AOHARU]!!)
+        Runner.simulate(
+            aoharuState.simulationTurn,
+            simulator,
+            WebConstants.simulationModeList[Scenario.AOHARU]!![aoharuState.simulationMode].second()
+        ) { target ->
             if (target.turn > 0) {
                 target.status += Status(2, 2, 2, 2, 2)
             }
@@ -99,13 +75,13 @@ class AoharuSimulationViewModel(private val root: ViewModel) {
         Store.scenarioLink[Scenario.AOHARU]!!.forEach {
             team.addGuest(Store.Aoharu.getGuest(it)!!)
         }
-        newHistory.add(HistoryItem("初期", simulator.history[0].status, team))
-        specialTurnList.forEachIndexed { index, (turn, name) ->
+        newHistory.add(toHistoryItem("初期", simulator.history[0].status, team))
+        WebConstants.specialTurnList[Scenario.AOHARU]!!.forEachIndexed { index, (turn, name) ->
             val action = simulator.history[turn]
             if (index >= 1) {
                 team.addRaceBonus(50)
             }
-            val item = HistoryItem(name, action.status, team)
+            val item = toHistoryItem(name, action.status, team)
             when (index) {
                 0 -> team.addGuest(9 - team.memberCount, item.charaStatus)
                 1 -> team.addGuest(13 - team.memberCount, item.charaStatus)
@@ -122,6 +98,6 @@ class AoharuSimulationViewModel(private val root: ViewModel) {
 //                )
 //            )
 //        }
-        history = newHistory
+        updateAoharuState { it.copy(simulationHistory = newHistory) }
     }
 }

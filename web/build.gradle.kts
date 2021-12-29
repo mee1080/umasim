@@ -21,6 +21,7 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(project(":core"))
+                implementation(project(":webSupport"))
                 implementation(compose.web.core)
                 implementation(compose.runtime)
             }
@@ -38,6 +39,7 @@ librarian {
     failOnGeneratePageWhenFoundPlaceholder = false
     ignoreArtifacts = mutableListOf(
         "io.github.mee1080.umasim:core",
+        "io.github.mee1080.umasim:webSupport",
     )
     pages {
         create("UmasimWeb") {

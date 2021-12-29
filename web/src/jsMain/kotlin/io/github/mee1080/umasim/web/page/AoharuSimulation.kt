@@ -19,12 +19,14 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.components.StatusHeaders
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.round
+import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.AoharuSimulationViewModel
@@ -36,20 +38,26 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun AoharuSimulation(model: AoharuSimulationViewModel) {
+    val state = model.root.state.aoharuSimulationState
     H2 { Text("アオハルシミュレーション") }
     Div {
-        LabeledSelect("モード", model.displaySimulationModeList, model.simulationMode, model::updateSimulationMode)
+        LabeledSelect(
+            "モード",
+            WebConstants.displaySimulationModeList[Scenario.AOHARU]!!,
+            state.simulationMode,
+            model::updateSimulationMode
+        )
         Div({ style { padding(8.px) } }) {
             Button({ onClickOrTouch { model.doSimulation() } }) { Text("シミュレーション実行（β版）") }
         }
-        if (model.history.isNotEmpty()) {
+        if (state.simulationHistory.isNotEmpty()) {
             Table({ classes(AppStyle.table) }) {
                 Tr {
                     Th({ unsetWidth() }) { Text("ターン") }
                     Th({ unsetWidth() }) { Text("項目") }
                     StatusHeaders()
                 }
-                model.history.forEach {
+                state.simulationHistory.forEach {
                     Tr {
                         Td({
                             unsetWidth()

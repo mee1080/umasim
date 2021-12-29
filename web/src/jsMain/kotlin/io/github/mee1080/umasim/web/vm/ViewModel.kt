@@ -21,256 +21,133 @@ package io.github.mee1080.umasim.web.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
-import io.github.mee1080.umasim.ai.SimpleActionSelector
-import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation.*
+import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.simulation.Calculator
+import io.github.mee1080.umasim.simulation.Runner
+import io.github.mee1080.umasim.simulation.Simulator
+import io.github.mee1080.umasim.simulation.Support
 import io.github.mee1080.umasim.util.SaveDataConverter
+import io.github.mee1080.umasim.web.state.State
+import io.github.mee1080.umasim.web.state.SupportSelection
+import io.github.mee1080.umasim.web.state.WebConstants
 import kotlinx.browser.localStorage
 
-class ViewModel(store: Store = Store) {
+class ViewModel {
 
     companion object {
-        private val notSelected = -1 to "未選択"
-
         private const val KEY_CHARA = "umasim.chara"
 
         private const val KEY_SUPPORT_LIST = "umasim.support_list"
     }
 
+    var state by mutableStateOf(State())
+
+    private fun updateState(calculate: Boolean = true, calculateBonus: Boolean = true, update: (State) -> State) {
+        var newState = update(state)
+        if (calculate) newState = calculate(newState)
+        if (calculateBonus) newState = calculateBonus(newState)
+        state = newState
+    }
+
+    private fun updateSupportSelection(
+        position: Int,
+        calculateBonus: Boolean = true,
+        update: (SupportSelection) -> SupportSelection
+    ) {
+        updateState(true, calculateBonus) {
+            val newList = it.supportSelectionList.toMutableList()
+            newList[position] = update(newList[position])
+            it.copy(supportSelectionList = newList)
+        }
+    }
+
     val aoharuSimulationViewModel = AoharuSimulationViewModel(this)
 
-    private val charaList =
-        listOf(Chara.empty()) + store.charaList.filter { it.rank == 5 && it.rarity == 5 }.sortedBy { it.charaName }
-
-    private val charaMap = charaList.associateBy { it.id }
-
-    val displayCharaList =
-        charaList.map { it.id to "${it.name} (${it.speedBonus},${it.staminaBonus},${it.powerBonus},${it.gutsBonus},${it.wisdomBonus})" }
-
-    var selectedChara by mutableStateOf(displayCharaList[0].first)
-        private set
-
-    val chara get() = charaMap[selectedChara]!!
-
     fun updateChara(id: Int) {
-        selectedChara = id
-        calculate()
-        calculateBonus()
+        updateState { it.copy(selectedChara = id) }
         localStorage.setItem(KEY_CHARA, id.toString())
     }
 
-    private val supportMap = store.supportList.groupBy { it.id }
-
-    val displaySupportList =
-        listOf(Triple(notSelected.first, notSelected.second, notSelected.second)) + supportMap.entries
-            .map { it.key to it.value[0] }
-            .sortedBy { it.second.type.ordinal * 10000000 - it.second.rarity * 1000000 + it.first }
-            .map { (_, card) -> getDisplayItem(card) }
-
-    private fun getDisplayItem(card: SupportCard) = Triple(
-        card.id,
-        getRarityText(card) + " " + card.name,
-        card.type.displayName
-    )
-
-    var supportFilter by mutableStateOf("")
-        private set
-
-    var appliedSupportFilter by mutableStateOf("")
-        private set
-
     fun updateSupportFilter(value: String) {
-        supportFilter = value
+        updateState(calculate = false, calculateBonus = false) { it.copy(supportFilter = value) }
     }
 
-    val supportFilterApplied get() = supportFilter == appliedSupportFilter
-
-    var filteredSupportList by mutableStateOf(displaySupportList)
-
     fun applyFilter() {
-        if (supportFilterApplied) return
-        appliedSupportFilter = supportFilter
-        val filters = supportFilter.split("[　%s]".toRegex())
-        filteredSupportList = if (supportFilter.isEmpty()) displaySupportList else {
-            displaySupportList.filter { (id, _, _) ->
-                supportMap[id]?.first()?.matches(filters) ?: false
+        if (state.supportFilterApplied) return
+        val appliedSupportFilter = state.supportFilter
+        val filters = appliedSupportFilter.split("[　%s]".toRegex())
+        val filteredSupportList = if (appliedSupportFilter.isEmpty()) WebConstants.displaySupportList else {
+            WebConstants.displaySupportList.filter { (id, _, _) ->
+                WebConstants.supportMap[id]?.first()?.matches(filters) ?: false
             }
+        }
+        updateState(calculate = false, calculateBonus = false) {
+            it.copy(
+                appliedSupportFilter = appliedSupportFilter,
+                filteredSupportList = filteredSupportList,
+            )
         }
     }
 
     fun clearFilter() {
-        supportFilter = ""
-        applyFilter()
+        updateState(calculate = false, calculateBonus = false) {
+            it.copy(
+                supportFilter = "",
+                appliedSupportFilter = "",
+                filteredSupportList = WebConstants.displaySupportList,
+            )
+        }
     }
 
-    private fun getRarityText(card: SupportCard) = when (card.rarity) {
-        1 -> "R"
-        2 -> "SR"
-        3 -> "SSR"
-        else -> "?"
+    fun updateSupport(position: Int, id: Int) {
+        updateSupportSelection(position) { it.copy(selectedSupport = id) }
     }
 
-    val supportTalentList = listOf(0, 1, 2, 3, 4).map { it to it.toString() }
-
-    val supportSelectionList = Array(6) { SupportSelection() }
-
-    inner class SupportSelection {
-
-        internal fun toSaveInfo() = SaveDataConverter.SupportInfo(selectedSupport, supportTalent, join, friend)
-
-        internal fun fromSaveInfo(info: SaveDataConverter.SupportInfo) {
-            selectedSupport = info.id
-            supportTalent = info.talent
-            join = info.join
-            friend = info.friend
-        }
-
-        val supportList: List<Triple<Int, String, String>>
-            get() {
-                return if (appliedSupportFilter.isEmpty()) filteredSupportList else {
-                    val selectedCard = card
-                    if (selectedCard != null && filteredSupportList.firstOrNull { it.first == selectedSupport } == null) {
-                        listOf(getDisplayItem(selectedCard), *filteredSupportList.toTypedArray())
-                    } else {
-                        filteredSupportList
-                    }
-                }
-            }
-
-        var selectedSupport by mutableStateOf(notSelected.first)
-            private set
-
-        var supportTalent by mutableStateOf(4)
-            private set
-
-        var join by mutableStateOf(true)
-            private set
-
-        var friend by mutableStateOf(true)
-            private set
-
-        val card get() = supportMap[selectedSupport]?.firstOrNull { it.talent == supportTalent }
-
-        val name get() = card?.name ?: "未選択"
-
-        val friendTraining get() = friend && selectedTrainingType == card?.type?.ordinal
-
-        fun updateSupport(id: Int) {
-            selectedSupport = id
-            calculate()
-            calculateBonus()
-        }
-
-        fun updateSupportTalent(talent: Int) {
-            supportTalent = talent
-            calculate()
-            calculateBonus()
-        }
-
-        fun updateJoin(join: Boolean) {
-            this.join = join
-            calculate()
-        }
-
-        fun updateFriend(friend: Boolean) {
-            this.friend = friend
-            calculate()
-        }
-
-        val isSelected get() = card != null
-
-        val initialRelation get() = card?.initialRelation ?: 0
-
-        val relationUpCount
-            get() = if (card?.type == StatusType.FRIEND) {
-                (60 - initialRelation - 1) / 4 + 1
-            } else {
-                (81 - initialRelation - 1) / 7 + 1
-            }
-
-        val specialtyRate
-            get() = card?.let { card ->
-                calcRate(card.type, *Calculator.calcCardPositionSelection(card))
-            } ?: 0.0
-
-        val hintRate
-            get() = card?.let { card ->
-                if (card.type == StatusType.FRIEND) 0.0 else card.hintFrequency
-            } ?: 0.0
+    fun updateSupportTalent(position: Int, talent: Int) {
+        updateSupportSelection(position) { it.copy(supportTalent = talent) }
     }
 
-    val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
+    fun updateJoin(position: Int, join: Boolean) {
+        updateSupportSelection(position, false) { it.copy(join = join) }
+    }
 
-    var selectedScenario by mutableStateOf(Scenario.AOHARU.ordinal)
-        private set
-
-    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.AOHARU }
+    fun updateFriend(position: Int, friend: Boolean) {
+        updateSupportSelection(position, false) { it.copy(friend = friend) }
+    }
 
     fun updateScenario(scenarioIndex: Int) {
-        selectedScenario = scenarioIndex
-        calculate()
+        updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex) }
     }
 
-    var teamJoinCount by mutableStateOf(0)
-        private set
-
     fun updateTeamJoinCount(delta: Int) {
-        if (delta + teamJoinCount in 0..5) {
-            teamJoinCount += delta
-            calculate()
+        if (delta + state.teamJoinCount in 0..5) {
+            updateState(calculateBonus = false) { it.copy(teamJoinCount = it.teamJoinCount + delta) }
         }
     }
 
-    val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
-
-    var selectedTrainingType by mutableStateOf(StatusType.SPEED.ordinal)
-        private set
-
     fun updateTrainingType(trainingType: Int) {
-        selectedTrainingType = trainingType
-        calculate()
+        updateState(calculateBonus = false) { it.copy(selectedTrainingType = trainingType) }
     }
-
-    val trainingLevelList = listOf(1, 2, 3, 4, 5).map { it to it.toString() }
-
-    var trainingLevel by mutableStateOf(1)
-        private set
 
     fun updateTrainingLevel(trainingLevel: Int) {
-        this.trainingLevel = trainingLevel
-        calculate()
+        updateState(calculateBonus = false) { it.copy(trainingLevel = trainingLevel) }
     }
-
-    val motivationList = listOf(2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
-
-    var motivation by mutableStateOf(2)
-        private set
 
     fun updateMotivation(motivation: Int) {
-        this.motivation = motivation
-        calculate()
+        updateState(calculateBonus = false) { it.copy(motivation = motivation) }
     }
 
-    private val trainingInfo = Scenario.values().associateWith { store.getTrainingInfo(it) }
+//    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
+//
+//    fun updateTrainingParamTest(enabled: Boolean) {
+//        trainingParamTest = if (enabled) TrainingParamTestModel() else null
+//    }
 
-    var trainingResult by mutableStateOf(Status())
-        private set
-
-    var trainingImpact by mutableStateOf(emptyList<Pair<String, Status>>())
-        private set
-
-    var expectedResult by mutableStateOf(ExpectedStatus())
-
-    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
-
-    fun updateTrainingParamTest(enabled: Boolean) {
-        trainingParamTest = if (enabled) TrainingParamTestModel() else null
-    }
-
-    private fun calculate() {
+    private fun calculate(state: State): State {
         val supportList = mutableListOf<Support>()
-        supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
+        state.supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
             val card = selection.card
             if (card != null) {
                 supportList.add(Support(index, card).apply {
@@ -279,68 +156,62 @@ class ViewModel(store: Store = Store) {
             }
         }
 
-        val trainingType = StatusType.values()[selectedTrainingType]
-        trainingResult = Calculator.calcTrainingSuccessStatus(
-            chara,
-            trainingInfo[scenario]!![trainingType]!!,
-            trainingLevel,
-            motivation,
+        val trainingType = StatusType.values()[state.selectedTrainingType]
+        val trainingResult = Calculator.calcTrainingSuccessStatus(
+            state.chara,
+            WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
+            state.trainingLevel,
+            state.motivation,
             supportList,
-            scenario,
-            teamJoinCount,
+            state.scenario,
+            state.teamJoinCount,
         )
-        trainingImpact = supportList.map { target ->
+        val trainingImpact = supportList.map { target ->
             target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
-                chara,
-                trainingInfo[scenario]!![trainingType]!!,
-                trainingLevel,
-                motivation,
+                state.chara,
+                WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
+                state.trainingLevel,
+                state.motivation,
                 supportList.filter { it.index != target.index },
-                scenario,
-                teamJoinCount,
+                state.scenario,
+                state.teamJoinCount,
             )
         }
-        expectedResult = Calculator.calcExpectedTrainingStatus(
-            chara,
-            trainingInfo[scenario]!![trainingType]!!,
-            trainingLevel,
-            motivation,
-            supportSelectionList
+        val expectedResult = Calculator.calcExpectedTrainingStatus(
+            state.chara,
+            WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
+            state.trainingLevel,
+            state.motivation,
+            state.supportSelectionList
                 .mapIndexedNotNull { index, selection ->
                     selection.card?.let {
                         Support(index, it).apply { friendTrainingEnabled = selection.friend }
                     }
                 },
-            scenario,
-            teamJoinCount,
+            state.scenario,
+            state.teamJoinCount,
         ).first
-        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
+//        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(
             KEY_SUPPORT_LIST,
-            SaveDataConverter.supportListToString(supportSelectionList.map { it.toSaveInfo() })
+            SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
+        )
+        return state.copy(
+            trainingResult = trainingResult,
+            trainingImpact = trainingImpact,
+            expectedResult = expectedResult,
         )
     }
 
-    var totalRaceBonus by mutableStateOf(0)
-        private set
-
-    var totalFanBonus by mutableStateOf(0)
-        private set
-
-    var initialStatus by mutableStateOf(Status())
-        private set
-
-    var availableHint by mutableStateOf(mapOf<String, List<String>>())
-
-    private fun calculateBonus() {
+    private fun calculateBonus(state: State): State {
         var race = 0
         var fan = 0
         var status = Status()
         val hintMap = mutableMapOf<String, MutableList<String>>()
-        chara.initialStatus.skillHint.keys.forEach { skill ->
+        state.chara.initialStatus.skillHint.keys.forEach { skill ->
             hintMap[skill] = mutableListOf("育成キャラ")
         }
-        supportSelectionList.mapNotNull { it.card }.forEach { card ->
+        state.supportSelectionList.mapNotNull { it.card }.forEach { card ->
             race += card.race
             fan += card.fan
             status += card.initialStatus
@@ -349,70 +220,54 @@ class ViewModel(store: Store = Store) {
                 hintMap.getOrPut(skill) { mutableListOf() }.add("${card.name} 1/$skillCount")
             }
         }
-        totalRaceBonus = race
-        totalFanBonus = fan
-        initialStatus = status
-        availableHint = hintMap
+        return state.copy(
+            totalRaceBonus = race,
+            totalFanBonus = fan,
+            initialStatus = status,
+            availableHint = hintMap,
+        )
     }
-
-    val trainingList = Scenario.values().associateWith { store.getTrainingList(it) }
-
-    private val simulationModeList = listOf(
-        "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
-        "スピ賢" to { FactorBasedActionSelector.speedWisdom.generateSelector() },
-        "スピ賢パワ" to { FactorBasedActionSelector.speedWisdomPower.generateSelector() },
-        "スピスタ" to { FactorBasedActionSelector.speedStamina.generateSelector() },
-        "パワ賢" to { FactorBasedActionSelector.powerWisdom.generateSelector() },
-        "スピ根性" to { FactorBasedActionSelector.speedGuts.generateSelector() },
-        "バクシン(スピード)" to { SimpleActionSelector(StatusType.SPEED) },
-        "バクシン(スタミナ)" to { SimpleActionSelector(StatusType.STAMINA) },
-        "バクシン(パワー)" to { SimpleActionSelector(StatusType.POWER) },
-        "バクシン(根性)" to { SimpleActionSelector(StatusType.GUTS) },
-        "バクシン(賢さ)" to { SimpleActionSelector(StatusType.WISDOM) },
-    )
-
-    val displaySimulationModeList = simulationModeList.mapIndexed { index, pair -> index to pair.first }
-
-    var simulationMode by mutableStateOf(0)
-        private set
 
     fun updateSimulationMode(mode: Int) {
-        simulationMode = mode
+        updateState(calculate = false, calculateBonus = false) { it.copy(simulationMode = mode) }
     }
-
-    var simulationTurn by mutableStateOf(55)
-        private set
 
     fun updateSimulationTurn(turn: Int) {
-        simulationTurn = turn
+        updateState(calculate = false, calculateBonus = false) { it.copy(simulationTurn = turn) }
     }
 
-    var simulationResult by mutableStateOf(Status())
-        private set
-
-    var simulationHistory by mutableStateOf(emptyList<String>())
-        private set
-
-    fun doSimulation() {
-        val supportList = supportSelectionList.mapNotNull { it.card }
-        val simulator = Simulator(chara, supportList, trainingList[scenario]!!)
-        Runner.simulate(simulationTurn, simulator, simulationModeList[simulationMode].second())
-        simulationResult = simulator.status
-        simulationHistory = simulator.history.map { it.name }
+    fun doUraSimulation() {
+        val supportList = state.supportSelectionList.mapNotNull { it.card }
+        val simulator = Simulator(state.chara, supportList, WebConstants.trainingList[state.scenario]!!)
+        Runner.simulate(
+            state.simulationTurn,
+            simulator,
+            WebConstants.simulationModeList[Scenario.URA]!![state.simulationMode].second()
+        )
+        updateState(calculate = false, calculateBonus = false) {
+            it.copy(
+                simulationResult = simulator.status,
+                simulationHistory = simulator.history.map { it.name },
+            )
+        }
     }
 
     init {
-        localStorage.getItem(KEY_CHARA)?.let {
-            val id = it.toIntOrNull() ?: return@let
-            if (charaMap.containsKey(id)) {
-                selectedChara = id
-            }
+        updateState(calculate = false, calculateBonus = false) { state ->
+            val selectedChara = localStorage.getItem(KEY_CHARA)?.let {
+                if (WebConstants.charaMap.containsKey(it.toIntOrNull() ?: -1)) it.toInt() else 0
+            } ?: state.selectedChara
+            val newList = state.supportSelectionList.toMutableList()
+            SaveDataConverter.stringToSupportList(localStorage.getItem(KEY_SUPPORT_LIST))
+                .forEachIndexed { index, supportInfo ->
+                    if (newList.indices.contains(index)) {
+                        newList[index] = SupportSelection.fromSaveInfo(supportInfo)
+                    }
+                }
+            state.copy(
+                selectedChara = selectedChara,
+                supportSelectionList = newList,
+            )
         }
-        SaveDataConverter.stringToSupportList(localStorage.getItem(KEY_SUPPORT_LIST))
-            .forEachIndexed { index, supportInfo ->
-                supportSelectionList.getOrNull(index)?.fromSaveInfo(supportInfo)
-            }
-        calculate()
-        calculateBonus()
     }
 }
