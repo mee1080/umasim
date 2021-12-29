@@ -273,6 +273,32 @@ fun openCui(args: Array<String>) {
 //        FactorBasedActionSelector2.speed2Power3Wisdom1,
 //    )
 
+    // スピ2賢2ライス代理
+//    optimizeAI(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 2)),
+//            *(power4(4, 1)),
+//            *(wisdom(4, 2)),
+//            *(friend2(4, 1)),
+//        )
+//    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(speed4(4, 1)),
+            *(power4(4, 1)),
+            *(wisdom(4, 2)),
+            *(friend2(4, 1)),
+        ).toTypedArray(),
+        StatusType.SPEED,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
+    )
+
     // スピ2スタ1賢3
 //    optimizeAI(
 //        Scenario.AOHARU,
@@ -283,18 +309,18 @@ fun openCui(args: Array<String>) {
 //            *(wisdom(4, 3)),
 //        )
 //    )
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[レッドストライフ]ゴールドシップ", 5, 5),
-        Store.getSupportByName(
-            *(speed(4, 2)),
-            *(wisdom(4, 3)),
-        ).toTypedArray(),
-        StatusType.STAMINA,
-        0..4,
-        100000,
-        FactorBasedActionSelector2.aoharuSpeed2Stamina1Wisdom3,
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[レッドストライフ]ゴールドシップ", 5, 5),
+//        Store.getSupportByName(
+//            *(speed(4, 2)),
+//            *(wisdom(4, 3)),
+//        ).toTypedArray(),
+//        StatusType.STAMINA,
+//        0..4,
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Stamina1Wisdom3,
+//    )
 
 //    doShortSimulation(StatusType.SPEED)
 //    doShortSimulation(

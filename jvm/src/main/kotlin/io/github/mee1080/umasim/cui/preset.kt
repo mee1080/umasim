@@ -66,6 +66,10 @@ fun power3(supportTalent: Int, count: Int) = arrayOf(
     "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
 ).take(count).toTypedArray()
 
+fun power4(supportTalent: Int, count: Int) = arrayOf(
+    "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
+).take(count).toTypedArray()
+
 fun guts(supportTalent: Int, count: Int) = arrayOf(
     "[うらら～な休日]ハルウララ" to supportTalent,
     "[飛び出せ、キラメケ]アイネスフウジン" to supportTalent,
@@ -89,4 +93,8 @@ fun wisdom2(supportTalent: Int, count: Int) = arrayOf(
 
 fun friend(supportTalent: Int, count: Int) = arrayOf(
     "[ようこそ、トレセン学園へ！]駿川たづな" to supportTalent,
+).take(count).toTypedArray()
+
+fun friend2(supportTalent: Int, count: Int) = arrayOf(
+    "[徹底管理主義]樫本理子" to supportTalent,
 ).take(count).toTypedArray()
