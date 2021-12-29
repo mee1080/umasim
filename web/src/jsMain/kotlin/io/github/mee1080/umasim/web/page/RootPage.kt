@@ -26,8 +26,7 @@ fun RootPage(model: ViewModel, state: State) {
     LabeledSelect("", WebConstants.displayCharaList, state.selectedChara, model::updateChara)
     H2 { Text("サポートカード") }
     Div({ style { paddingBottom(16.px) } }) {
-        TextInput {
-//                value(model.supportFilter)
+        TextInput(state.supportFilter) {
             placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
             size(60)
             onInput { model.updateSupportFilter(it.value) }
