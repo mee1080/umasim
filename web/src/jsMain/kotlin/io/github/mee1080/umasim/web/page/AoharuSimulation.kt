@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.components.StatusHeaders
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.round
+import io.github.mee1080.umasim.web.state.AoharuSimulationState
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
@@ -37,8 +38,7 @@ import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.*
 
 @Composable
-fun AoharuSimulation(model: AoharuSimulationViewModel) {
-    val state = model.root.state.aoharuSimulationState
+fun AoharuSimulation(model: AoharuSimulationViewModel, state: AoharuSimulationState) {
     H2 { Text("アオハルシミュレーション") }
     Div {
         LabeledSelect(

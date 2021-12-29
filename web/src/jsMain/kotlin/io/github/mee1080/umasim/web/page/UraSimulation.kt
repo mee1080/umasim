@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.onClickOrTouch
+import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -32,8 +33,7 @@ import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.*
 
 @Composable
-fun UraSimulation(model: ViewModel) {
-    val state = model.state
+fun UraSimulation(model: ViewModel, state: State) {
     H2 { Text("シミュレーション") }
     Div {
         LabeledSelect(
