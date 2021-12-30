@@ -18,6 +18,9 @@ fun doSimulation2(
     talent: IntRange = 4..4,
     testCount: Int,
     option: FactorBasedActionSelector2.Option,
+    vararg output: suspend (card: SupportCard, summaries: List<Summary>) -> Unit = arrayOf({ card, summaries ->
+        stdoutOutput(card, summaries)
+    })
 ) {
     doSimulation2(
         scenario,
@@ -28,7 +31,9 @@ fun doSimulation2(
         },
         78,
         testCount,
-    ) { FactorBasedActionSelector2(option) }
+        { FactorBasedActionSelector2(option) },
+        *output
+    )
 }
 
 
@@ -40,6 +45,9 @@ fun doSimulation2(
     turn: Int,
     testCount: Int,
     selector: () -> ActionSelector,
+    vararg output: suspend (card: SupportCard, summaries: List<Summary>) -> Unit = arrayOf({ card, summaries ->
+        stdoutOutput(card, summaries)
+    })
 ) {
     println(chara.name)
     defaultSupport.forEach { println(it.name) }
@@ -53,11 +61,15 @@ fun doSimulation2(
                 repeat(testCount) {
                     summary.add(Simulator(scenario, chara, useSupport, option).simulate(turn, selector()))
                 }
-                println("${card.id},${card.name},${card.talent},${Evaluator(summary).toSummaryString()}")
+                output.forEach { it(card, summary) }
             }
         }.forEach {
             it.join()
         }
     }
     println("finished ${LocalDateTime.now()}")
+}
+
+val stdoutOutput = { card: SupportCard, summaries: List<Summary> ->
+    println("${card.id},${card.name},${card.talent},${Evaluator(summaries).toSummaryString()}")
 }

@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.db.SimulationResultRepository
 
 val scenario = Scenario.URA
 
@@ -284,6 +285,7 @@ fun openCui(args: Array<String>) {
 //            *(friend2(4, 1)),
 //        )
 //    )
+    val repository = SimulationResultRepository("result/umasimout.db")
     doSimulation2(
         Scenario.AOHARU,
         Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
@@ -295,8 +297,10 @@ fun openCui(args: Array<String>) {
         ).toTypedArray(),
         StatusType.SPEED,
         0..4,
-        100000,
+        100,
         FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
+        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
     )
 
     // スピ2スタ1賢3
