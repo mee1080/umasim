@@ -36,7 +36,7 @@ class SimulationTarget(val text: String) : Entity {
 class SimulationResult(val targetId: Long, val summary: Summary) : Entity {
 
     companion object {
-        val name = "SimulationResult"
+        val name = "simulationResult"
 
         val createTableSql = """
             CREATE TABLE $name (
