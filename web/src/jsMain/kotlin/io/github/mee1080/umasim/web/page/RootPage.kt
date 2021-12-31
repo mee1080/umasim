@@ -30,6 +30,7 @@ fun RootPage(model: ViewModel, state: State) {
     SupportSelect(model, state)
     TrainingInfo(model, state)
     SupportInfo(model, state)
+    SupportCardInfo(model, state)
     when (state.scenario) {
         Scenario.URA -> UraSimulation(model, state)
         Scenario.AOHARU -> AoharuSimulation(model.aoharuSimulationViewModel, state.aoharuSimulationState)

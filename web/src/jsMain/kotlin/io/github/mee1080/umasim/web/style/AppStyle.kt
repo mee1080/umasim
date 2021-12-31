@@ -67,4 +67,17 @@ object AppStyle : StyleSheet() {
             opacity(0.3)
         }
     }
+
+    val supportCardTable by style {
+        property("border-collapse", "collapse")
+        "th" style {
+            border(1.px, LineStyle.Solid, Color("black"))
+            property("writing-mode", "vertical-rl")
+            textAlign("right")
+        }
+        "td" style {
+            textAlign("right")
+            border(1.px, LineStyle.Solid, Color("black"))
+        }
+    }
 }
