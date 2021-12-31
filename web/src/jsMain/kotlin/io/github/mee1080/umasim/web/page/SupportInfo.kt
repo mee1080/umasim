@@ -28,7 +28,6 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SupportInfo(model: ViewModel, state: State) {
-    H2 { Text("編成情報") }
     H3 { Text("レースボーナス合計：${state.totalRaceBonus}") }
     H3 { Text("ファンボーナス合計：${state.totalFanBonus}") }
     H3 { Text("初期ステータスアップ") }

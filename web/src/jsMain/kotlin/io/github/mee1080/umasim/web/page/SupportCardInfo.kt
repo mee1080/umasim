@@ -29,7 +29,6 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun SupportCardInfo(model: ViewModel, state: State) {
-    H2 { Text("サポート情報") }
     Table({ classes(AppStyle.supportCardTable) }) {
         Tr {
             Th({ style { property("border", "none") } }) { }

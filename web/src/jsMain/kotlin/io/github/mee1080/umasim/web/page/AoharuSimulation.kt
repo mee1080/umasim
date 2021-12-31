@@ -39,7 +39,6 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun AoharuSimulation(model: AoharuSimulationViewModel, state: AoharuSimulationState) {
-    H2 { Text("アオハルシミュレーション") }
     Div {
         LabeledSelect(
             "モード",

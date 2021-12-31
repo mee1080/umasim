@@ -30,7 +30,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TrainingInfo(model: ViewModel, state: State) {
-    H2 { Text("トレーニング上昇量") }
+
     LabeledRadioGroup("motivation", "やる気：", WebConstants.motivationList, state.motivation, model::updateMotivation)
     LabeledRadioGroup(
         "training",

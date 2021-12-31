@@ -34,7 +34,6 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun UraSimulation(model: ViewModel, state: State) {
-    H2 { Text("シミュレーション") }
     Div {
         LabeledSelect(
             "モード",
