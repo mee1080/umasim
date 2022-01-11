@@ -18,11 +18,9 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.db.SimulationResultRepository
 
 val scenario = Scenario.URA
 
@@ -285,23 +283,23 @@ fun openCui(args: Array<String>) {
 //            *(friend2(4, 1)),
 //        )
 //    )
-    val repository = SimulationResultRepository("result/umasimout.db")
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(speed4(4, 1)),
-            *(power4(4, 1)),
-            *(wisdom(4, 2)),
-            *(friend2(4, 1)),
-        ).toTypedArray(),
-        StatusType.SPEED,
-        0..4,
-        100,
-        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
-        { card, summaries -> stdoutOutput.invoke(card, summaries) },
-        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
-    )
+//    val repository = SimulationResultRepository("result/umasimout.db")
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 1)),
+//            *(power4(4, 1)),
+//            *(wisdom(4, 2)),
+//            *(friend2(4, 1)),
+//        ).toTypedArray(),
+//        StatusType.SPEED,
+//        0..4,
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
+//        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
+//    )
 
     // スピ2スタ1賢3
 //    optimizeAI(
@@ -334,4 +332,30 @@ fun openCui(args: Array<String>) {
 //    )
 //    doCharmSimulation()
 //    doFailureRateSimulation()
+    optimizeAI(
+        Scenario.AOHARU,
+        Store.getChara("[初うらら♪さくさくら]ハルウララ", 4, 5),
+        Store.getSupportByName(
+            "[願いまでは拭わない]ナイスネイチャ" to 4,
+            "[夕焼けはあこがれの色]スペシャルウィーク" to 4,
+            "[見習い魔女と長い夜]スイープトウショウ" to 4,
+            "[波立つキモチ]ナリタタイシン" to 4,
+            "[スノウクリスタル・デイ]マーベラスサンデー" to 4,
+//            "[幽霊さんとハロウィンの魔法]ミホノブルボン" to 4,
+//            "[運の行方]マチカネフクキタル" to 3,
+            "[ようこそ、トレセン学園へ！]駿川たづな" to 1,
+        ),
+        mapOf(
+            StatusType.SPEED to (1.0 to 1100),
+            StatusType.STAMINA to (1.0 to 400),
+            StatusType.POWER to (1.2 to 1100),
+            StatusType.GUTS to (1.0 to 300),
+            StatusType.WISDOM to (0.8 to 800),
+            StatusType.SKILL to (0.3 to 600),
+        ),
+        generateOptions2(
+            speed = doubleArrayOf(1.2, 1.4, 1.6),
+            power = doubleArrayOf(1.2, 1.4, 1.6),
+        )
+    )
 }

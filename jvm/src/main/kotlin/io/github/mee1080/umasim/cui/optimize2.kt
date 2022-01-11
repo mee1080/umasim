@@ -85,12 +85,13 @@ fun optimizeAI(
     chara: Chara,
     support: List<SupportCard>,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = defaultEvaluateSetting,
+    options: Array<FactorBasedActionSelector2.Option> = generateOptions2(),
 ) {
     println("optimize")
     println(chara)
     support.forEach { println(it.name) }
     val option = Simulator.Option(checkGoalRace = true)
-    val selectors = generateOptions2().map { it.generateSelector() }
+    val selectors = options.map { it.generateSelector() }
     val result = Optimizer(scenario, chara, support, option, 78, selectors) {
         it.upperSum(0.2, evaluateSetting)
     }.optimize()
