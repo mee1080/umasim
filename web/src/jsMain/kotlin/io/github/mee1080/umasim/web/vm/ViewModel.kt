@@ -185,7 +185,7 @@ class ViewModel {
             state.supportSelectionList
                 .mapIndexedNotNull { index, selection ->
                     selection.card?.let {
-                        Support(index, it).apply { friendTrainingEnabled = selection.friend }
+                        Support(index, it).apply { checkHintFriend(selection.relation) }
                     }
                 },
             state.scenario,
