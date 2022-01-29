@@ -108,7 +108,7 @@ data class SupportCard(
     } + specialUnique.sumOf { it.getBaseBonus(type, relation) }
 
     fun trainingFactor(trainingType: StatusType, relation: Int) =
-        status.training + unique.training + specialUnique.sumOf { it.trainingFactor(trainingType, relation) }
+        status.training + unique.training + specialUnique.sumOf { it.trainingFactor(type, trainingType, relation) }
 
     val hpCost = status.hpCost + unique.hpCost
 

@@ -31,8 +31,8 @@ data class SupportCardSpecialUnique(
         } else 0
     }
 
-    fun trainingFactor(trainingType: StatusType, relation: Int): Int {
-        return if (type == 102 && relation >= value0 && trainingType != StatusType.GUTS) {
+    fun trainingFactor(cardType:StatusType, trainingType: StatusType, relation: Int): Int {
+        return if (type == 102 && relation >= value0 && trainingType != cardType) {
             value1
         } else 0
     }
