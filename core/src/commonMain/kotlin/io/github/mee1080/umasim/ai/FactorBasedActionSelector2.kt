@@ -230,7 +230,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         }
         supportRank.values.forEach { list -> list.sortByDescending { it.second } }
         val score = action.support.sumOf { support ->
-            if (support.friendTrainingEnabled) return@sumOf 0.0
+            if (support.relation >= support.card.requiredRelation) return@sumOf 0.0
             val list = supportRank[support.card.type]!!
             val rank = list.indexOfFirst { it.first == support }
             when (list.size) {

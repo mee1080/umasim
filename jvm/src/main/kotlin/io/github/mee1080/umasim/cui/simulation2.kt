@@ -36,6 +36,28 @@ fun doSimulation2(
     )
 }
 
+fun doSimulation2(
+    scenario: Scenario,
+    chara: Chara,
+    defaultSupport: Array<SupportCard>,
+    target: List<SupportCard>,
+    testCount: Int,
+    option: FactorBasedActionSelector2.Option,
+    vararg output: suspend (card: SupportCard, summaries: List<Summary>) -> Unit = arrayOf({ card, summaries ->
+        stdoutOutput(card, summaries)
+    })
+) {
+    doSimulation2(
+        scenario,
+        chara,
+        defaultSupport,
+        target,
+        78,
+        testCount,
+        { FactorBasedActionSelector2(option) },
+        *output
+    )
+}
 
 fun doSimulation2(
     scenario: Scenario,

@@ -38,6 +38,7 @@ fun speed3(supportTalent: Int, count: Int) = arrayOf(
 
 fun speed4(supportTalent: Int, count: Int) = arrayOf(
     "[迫る熱に押されて]キタサンブラック" to supportTalent,
+    "[袖振り合えば福となる♪]マチカネフクキタル" to supportTalent,
     "[フォーメーション：PARTY]マヤノトップガン" to supportTalent,
     "[夢は掲げるものなのだっ！]トウカイテイオー" to supportTalent,
 ).take(count).toTypedArray()

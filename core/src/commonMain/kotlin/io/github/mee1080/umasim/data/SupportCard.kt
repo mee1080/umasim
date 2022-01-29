@@ -85,15 +85,15 @@ data class SupportCard(
             )
     }
 
-    val initialRelation get() = status.initialRelation + unique.initialRelation
+    val initialRelation = status.initialRelation + unique.initialRelation
 
-    val race get() = status.race + unique.race
+    val race = status.race + unique.race
 
-    val fan get() = status.fan + unique.fan
+    val fan = status.fan + unique.fan
 
     val initialStatus = status.initialStatus + unique.initialStatus
 
-    val friendFactor get() = (100 + status.friend) * (100 + unique.friend) / 10000.0
+    val friendFactor = (100 + status.friend) * (100 + unique.friend) / 10000.0
 
     val motivationFactor = status.motivation + unique.motivation
 
@@ -132,4 +132,6 @@ data class SupportCard(
     fun matches(filters: Collection<String>) = filters.all { filter ->
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }
     }
+
+    val requiredRelation = (specialUnique.map { it.value0 } + 80).maxOrNull() ?: 80
 }
