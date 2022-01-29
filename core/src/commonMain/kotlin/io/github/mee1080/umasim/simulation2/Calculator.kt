@@ -106,13 +106,13 @@ object Calculator {
         val baseStatus = training.status.get(type)
         if (baseStatus == 0) return 0
         val support = member.filter { !it.guest }
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type) }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
         val charaBonus = chara.getBonus(type) / 100.0
         val friend = support
             .map { it.getFriendBonus(training.type) }
             .fold(1.0) { acc, d -> acc * d }
         val motivationBonus = 1 + motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor } / 100.0)
-        val trainingBonus = 1 + support.sumOf { it.card.trainingFactor } / 100.0
+        val trainingBonus = 1 + support.sumOf { it.card.trainingFactor(training.type, it.relation) } / 100.0
         val count = 1 + member.size * 0.05
 //        println("$type $base * $charaBonus * $friend * motivationBonus * $trainingBonus * $count")
         return min(100, (base * charaBonus * friend * motivationBonus * trainingBonus * count).toInt())

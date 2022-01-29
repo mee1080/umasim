@@ -91,7 +91,8 @@ object SupportCardLoader {
                             data[i++].toInt(),
                         ),
                         data.getOrNull(i++)?.split(", ") ?: emptyList(),
-                        readHintStatus(data.getOrNull(i)),
+                        readHintStatus(data.getOrNull(i++)),
+                        readSpecialUnique(data.getOrNull(i++))
                     )
                 )
             }
@@ -113,4 +114,25 @@ object SupportCardLoader {
             }
         }?.reduce { acc, status -> acc + status }
         ?: Status()
+
+    private fun readSpecialUnique(value: String?): List<SupportCardSpecialUnique> {
+        if (value.isNullOrBlank()) return emptyList()
+        val data = value.split(",")
+        val result = mutableListOf<SupportCardSpecialUnique>()
+        listOf(0, 6).forEach {
+            if (data[it].toInt() > 0) {
+                result.add(
+                    SupportCardSpecialUnique(
+                        data[it].toInt(),
+                        data[it + 1].toInt(),
+                        data[it + 2].toInt(),
+                        data[it + 3].toInt(),
+                        data[it + 4].toInt(),
+                        data[it + 5].toInt(),
+                    )
+                )
+            }
+        }
+        return result
+    }
 }

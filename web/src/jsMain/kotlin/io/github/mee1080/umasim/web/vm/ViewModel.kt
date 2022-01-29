@@ -113,8 +113,8 @@ class ViewModel {
         updateSupportSelection(position, false) { it.copy(join = join) }
     }
 
-    fun updateFriend(position: Int, friend: Boolean) {
-        updateSupportSelection(position, false) { it.copy(friend = friend) }
+    fun updateRelation(position: Int, relation: Int) {
+        updateSupportSelection(position, false) { it.copy(relation = relation) }
     }
 
     fun updateScenario(scenarioIndex: Int) {
@@ -151,7 +151,7 @@ class ViewModel {
             val card = selection.card
             if (card != null) {
                 supportList.add(Support(index, card).apply {
-                    checkHintFriend(if (selection.friend) 100 else 0)
+                    checkHintFriend(selection.relation)
                 })
             }
         }

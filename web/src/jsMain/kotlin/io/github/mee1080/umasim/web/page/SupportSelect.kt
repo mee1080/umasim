@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.GroupedSelect
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
+import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
@@ -93,7 +94,17 @@ fun SupportSelect(model: ViewModel, state: State) {
                         ) { model.updateSupportTalent(index, it) }
                         Div {
                             LabeledCheckbox("join$index", "練習参加", item.join) { model.updateJoin(index, it) }
-                            LabeledCheckbox("friend$index", "友情", item.friend) { model.updateFriend(index, it) }
+                        }
+                        Div {
+                            Text("絆")
+                            item.relationSelection.forEach {
+                                LabeledRadio(
+                                    "relation$index",
+                                    "$it",
+                                    "$it",
+                                    item.relation == it
+                                ) { model.updateRelation(index, it) }
+                            }
                         }
                     }
                 }

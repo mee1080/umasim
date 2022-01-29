@@ -76,18 +76,18 @@ data class SupportSelection(
     val selectedSupport: Int = WebConstants.notSelected.first,
     val supportTalent: Int = 4,
     val join: Boolean = true,
-    val friend: Boolean = true,
+    val relation: Int = 0,
 ) {
     companion object {
         fun fromSaveInfo(info: SaveDataConverter.SupportInfo) = SupportSelection(
             selectedSupport = info.id,
             supportTalent = info.talent,
             join = info.join,
-            friend = info.friend,
+            relation = info.relation,
         )
     }
 
-    fun toSaveInfo() = SaveDataConverter.SupportInfo(selectedSupport, supportTalent, join, friend)
+    fun toSaveInfo() = SaveDataConverter.SupportInfo(selectedSupport, supportTalent, join, relation)
 
     val card get() = WebConstants.supportMap[selectedSupport]?.firstOrNull { it.talent == supportTalent }
 
@@ -97,11 +97,16 @@ data class SupportSelection(
 
     val initialRelation get() = card?.initialRelation ?: 0
 
+    val relationSelection =
+        (listOf(0, 80) + (card?.specialUnique?.map { it.value0 } ?: emptyList())).sorted().distinct()
+
+    val friend get() = relation >= 80
+
     val relationUpCount
         get() = if (card?.type == StatusType.FRIEND) {
             (60 - initialRelation - 1) / 4 + 1
         } else {
-            (81 - initialRelation - 1) / 7 + 1
+            (80 - initialRelation - 1) / 7 + 1
         }
 
     val specialtyRate

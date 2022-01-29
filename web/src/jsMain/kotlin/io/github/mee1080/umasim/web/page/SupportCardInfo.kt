@@ -20,18 +20,23 @@ package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.SupportCard
-import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.state.State
-import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
+import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun SupportCardInfo(model: ViewModel, state: State) {
     Table({ classes(AppStyle.supportCardTable) }) {
         Tr {
-            Th({ style { property("border", "none") } }) { }
+            Th({
+                style {
+                    property("border", "none")
+                    unsetWidth()
+                }
+            }) { }
             Th { Text("友情ボーナス") }
             Th { Text("やる気効果アップ") }
             Th { Text("スピードボーナス") }
@@ -63,10 +68,11 @@ fun SupportCardInfo(model: ViewModel, state: State) {
 //            Th { Text("ミニゲーム効果アップ") }
             Th { Text("スキルPtボーナス") }
             Th { Text("賢さ友情回復量アップ") }
+            Th { Text("特殊固有") }
         }
         state.supportSelectionList.mapNotNull { it.card }.forEach { card ->
             Tr {
-                Td { Text(card.name) }
+                Td({ style { unsetWidth() } }) { Text(card.name) }
                 StatusRow(card) { it.friend }
                 StatusRow(card) { it.motivation }
                 StatusRow(card) { it.speedBonus }
@@ -93,6 +99,7 @@ fun SupportCardInfo(model: ViewModel, state: State) {
                 StatusRow(card) { it.hpCost }
                 StatusRow(card) { it.skillPtBonus }
                 StatusRow(card) { it.wisdomFriendRecovery }
+                Td({ style { textAlign("unset") } }) { Text(card.specialUnique.joinToString(" / ") { it.description }) }
             }
         }
     }

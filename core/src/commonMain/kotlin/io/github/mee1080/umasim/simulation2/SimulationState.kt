@@ -85,7 +85,8 @@ data class MemberState(
     val name get() = card.name
     val charaName get() = card.chara
     val guest get() = supportState == null
-    val friendTrainingEnabled get() = (supportState?.relation ?: 0) > 80
+    val relation get() = supportState?.relation ?: 0
+    val friendTrainingEnabled get() = relation >= 80
     fun isFriendTraining(type: StatusType) = friendTrainingEnabled && type == card.type
     fun getFriendBonus(type: StatusType) = if (isFriendTraining(type)) card.friendFactor else 1.0
     val wisdomFriendRecovery get() = if (isFriendTraining(StatusType.WISDOM)) card.wisdomFriendRecovery else 0

@@ -121,13 +121,13 @@ object Calculator {
     ): Int {
         val baseStatus = training.getBaseStatus(trainingLevel).get(type)
         if (baseStatus == 0) return 0
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type) }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
         val charaBonus = chara.getBonus(type) / 100.0
         val friend = support
             .map { it.getFriendBonus(training.type) }
             .fold(1.0) { acc, d -> acc * d }
         val motivationBonus = 1 + motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor } / 100.0)
-        val trainingBonus = 1 + support.sumOf { it.card.trainingFactor } / 100.0
+        val trainingBonus = 1 + support.sumOf { it.card.trainingFactor(training.type, it.relation) } / 100.0
         val count = 1 + support.size * 0.05 + if (scenario == Scenario.AOHARU) {
             teamJoinCount * 0.05
         } else 0.0

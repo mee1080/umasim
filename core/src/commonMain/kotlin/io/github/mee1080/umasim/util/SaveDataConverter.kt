@@ -10,7 +10,7 @@ object SaveDataConverter {
 
     private const val SUPPORT_DATA_VERSION = 1
 
-    private const val SUPPORT_INFO_VERSION = 1
+    private const val SUPPORT_INFO_VERSION = 2
 
     fun charaToString(chara: Chara?): String {
         return chara?.let { "$CHARA_DATA_VERSION,${it.id},${it.rarity},${it.rank}" } ?: ""
@@ -34,12 +34,12 @@ object SaveDataConverter {
         val id: Int,
         val talent: Int,
         val join: Boolean = false,
-        val friend: Boolean = false,
+        val relation: Int = 0,
     )
 
     fun supportListToString(list: List<SupportInfo?>): String {
         return "$SUPPORT_DATA_VERSION," + list.filterNotNull().joinToString(",") {
-            "$SUPPORT_INFO_VERSION:${it.id}:${it.talent}:${if (it.join) 1 else 0}:${if (it.friend) 1 else 0}"
+            "$SUPPORT_INFO_VERSION:${it.id}:${it.talent}:${if (it.join) 1 else 0}:${it.relation}"
         }
     }
 
@@ -53,18 +53,23 @@ object SaveDataConverter {
         if (infoList[0].toIntOrNull() == SUPPORT_DATA_VERSION) {
             return (1 until infoList.size).mapNotNull {
                 val info = infoList[it].split(":")
-                if (info[0].toIntOrNull() == SUPPORT_INFO_VERSION) {
-                    try {
-                        SupportInfo(
+                try {
+                    when (info[0].toIntOrNull()) {
+                        1 -> SupportInfo(
                             info[1].toInt(),
                             info[2].toInt(),
                             info[3] == "1",
-                            info[4] == "1",
+                            if (info[4] == "1") 80 else 0,
                         )
-                    } catch (_: Exception) {
-                        null
+                        2 -> SupportInfo(
+                            info[1].toInt(),
+                            info[2].toInt(),
+                            info[3] == "1",
+                            info[4].toInt(),
+                        )
+                        else -> null
                     }
-                } else {
+                } catch (_: Exception) {
                     null
                 }
             }

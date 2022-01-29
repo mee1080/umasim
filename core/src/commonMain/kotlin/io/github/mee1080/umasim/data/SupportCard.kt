@@ -34,6 +34,8 @@ data class SupportCard(
 
     val skills: List<String>,
     val hintStatus: Status,
+
+    val specialUnique: List<SupportCardSpecialUnique>,
 ) {
 
     data class SupportStatus(
@@ -95,7 +97,7 @@ data class SupportCard(
 
     val motivationFactor = status.motivation + unique.motivation
 
-    fun getBaseBonus(type: StatusType) = when (type) {
+    fun getBaseBonus(type: StatusType, relation: Int) = when (type) {
         StatusType.SPEED -> status.speedBonus + unique.speedBonus
         StatusType.STAMINA -> status.staminaBonus + unique.staminaBonus
         StatusType.POWER -> status.powerBonus + unique.powerBonus
@@ -103,9 +105,10 @@ data class SupportCard(
         StatusType.WISDOM -> status.wisdomBonus + unique.wisdomBonus
         StatusType.SKILL -> status.skillPtBonus + unique.skillPtBonus
         else -> 0
-    }
+    } + specialUnique.sumOf { it.getBaseBonus(type, relation) }
 
-    val trainingFactor = status.training + unique.training
+    fun trainingFactor(trainingType: StatusType, relation: Int) =
+        status.training + unique.training + specialUnique.sumOf { it.trainingFactor(trainingType, relation) }
 
     val hpCost = status.hpCost + unique.hpCost
 

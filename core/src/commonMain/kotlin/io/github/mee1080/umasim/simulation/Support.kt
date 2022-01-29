@@ -39,11 +39,14 @@ data class Support(val index: Int, val card: SupportCard) {
     var hint = false
         private set
 
+    var relation = 0
+
     var friendTrainingEnabled = false
 
     fun checkHintFriend(relation: Int) {
+        this.relation = relation
         hint = checkHint()
-        friendTrainingEnabled = relation > 80
+        friendTrainingEnabled = relation >= 80
     }
 
     fun checkHint(): Boolean {
