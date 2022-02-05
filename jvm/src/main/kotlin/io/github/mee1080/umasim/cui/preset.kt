@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.cui
 
 fun speed(supportTalent: Int, count: Int) = arrayOf(
     "[迫る熱に押されて]キタサンブラック" to supportTalent,
+    "[袖振り合えば福となる♪]マチカネフクキタル" to supportTalent,
     "[必殺！Wキャロットパンチ！]ビコーペガサス" to supportTalent,
     "[はやい！うまい！はやい！]サクラバクシンオー" to supportTalent,
 ).take(count).toTypedArray()
@@ -51,6 +52,7 @@ fun stamina(supportTalent: Int, count: Int) = arrayOf(
 
 fun power(supportTalent: Int, count: Int) = arrayOf(
     "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
+    "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
     "[押して忍べど燃ゆるもの]ヤエノムテキ" to supportTalent,
     "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
 ).take(count).toTypedArray()

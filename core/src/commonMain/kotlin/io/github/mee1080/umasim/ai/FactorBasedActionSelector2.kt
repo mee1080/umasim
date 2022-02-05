@@ -135,10 +135,10 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
 
         val aoharuSpeed2Power1Wisdom2Friend1 = Option(
             speedFactor = 1.2,
-            staminaFactor = 1.0,
-            powerFactor = 1.2,
-            gutsFactor = 0.2,
-            wisdomFactor = 1.0,
+            staminaFactor = 1.2,
+            powerFactor = 1.4,
+            gutsFactor = 0.4,
+            wisdomFactor = 0.6,
             skillPtFactor = 0.2,
             hpFactor = 0.8,
             motivationFactor = 25.0,

@@ -71,7 +71,7 @@ fun generateOptions2(
     return list.toTypedArray()
 }
 
-private val defaultEvaluateSetting = mapOf(
+val defaultEvaluateSetting = mapOf(
     StatusType.SPEED to (1.0 to 1100),
     StatusType.STAMINA to (1.0 to 1100),
     StatusType.POWER to (1.0 to 1100),
