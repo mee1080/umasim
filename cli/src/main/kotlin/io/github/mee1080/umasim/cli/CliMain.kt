@@ -34,11 +34,33 @@ class CliMain : CliktCommand() {
     private val skillPt by option().double().default(0.4)
     private val hp by option().double().default(0.5)
     private val motivation by option().double().default(15.0)
+    private val relation by option().triple().multiple()
+    private val relationDefault by option().double().default(0.0)
+    private val aoharu by option().pair().multiple()
+    private val aoharuDefault by option().double().default(0.0)
 
     override fun run() {
         StoreLoader.load()
         val charaData = Store.getChara(chara.first, chara.second.toInt(), chara.third.toInt())
         val supportList = support.map { Store.getSupportByName(it.first, it.second.toInt()) }
+        val relationFactor = if (relation.isEmpty()) {
+            FactorBasedActionSelector2.Option().relationFactor
+        } else {
+            val relationFactors = relation
+                .map { Triple(StatusType.valueOf(it.first), it.second.toInt(), it.third.toDouble()) };
+            { type: StatusType, rank: Int, _: Int ->
+                relationFactors.firstOrNull { type == it.first && rank == it.second }?.third ?: relationDefault
+            }
+        }
+        val aoharuFactor = if (aoharu.isEmpty()) {
+            FactorBasedActionSelector2.Option().aoharuFactor
+        } else {
+            val aoharuFactors = aoharu
+                .map { it.first.toInt() to it.second.toDouble() };
+            { turn ->
+                aoharuFactors.firstOrNull { turn <= it.first }?.second ?: aoharuDefault
+            }
+        }
         val option = FactorBasedActionSelector2.Option(
             speedFactor = speed,
             staminaFactor = stamina,
@@ -48,6 +70,8 @@ class CliMain : CliktCommand() {
             skillPtFactor = skillPt,
             hpFactor = hp,
             motivationFactor = motivation,
+            relationFactor = relationFactor,
+            aoharuFactor = aoharuFactor,
         )
         val evaluateSetting = mapOf(
             StatusType.SPEED to (1.0 to 1100),

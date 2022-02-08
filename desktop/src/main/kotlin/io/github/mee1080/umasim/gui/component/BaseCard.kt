@@ -18,8 +18,12 @@
  */
 package io.github.mee1080.umasim.gui.component
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
@@ -30,6 +34,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerMoveFilter
 import androidx.compose.ui.unit.dp
 
+inline fun <T : Any> Modifier.ifNotNull(
+    value: T?,
+    builder: Modifier.(T) -> Modifier
+) = value?.let { builder(it) } ?: this
+
+inline fun Modifier.ifTrue(
+    value: Boolean,
+    builder: Modifier.() -> Modifier
+) = if (value) builder() else this
+
 @Composable
 fun BaseCard(
     modifier: Modifier = Modifier,
@@ -39,18 +53,20 @@ fun BaseCard(
     content: @Composable BoxScope.() -> Unit
 ) {
     var hover by remember { mutableStateOf(false) }
+    val hasBorder = true
     Card(
-        modifier = modifier
-            .fillMaxWidth()
+        modifier = Modifier
+            .ifNotNull(onClick) { clickable(onClick = it) }
+            .ifTrue(hasBorder) { border(1.dp, Color.Black) }
             .height(64.dp)
-            .padding(8.dp)
-            .clickable {
-                onClick()
-            }
-            .pointerMoveFilter(
-                onEnter = { hover = true; false },
-                onExit = { hover = false; false },
-            ),
+            .padding(8.dp),
+//            .clickable {
+//                onClick()
+//            }
+//            .pointerMoveFilter(
+//                onEnter = { hover = true; false },
+//                onExit = { hover = false; false },
+//            ),
         backgroundColor = when {
             hover -> Color(255, 255, 128)
             selected -> Color(255, 255, 192)

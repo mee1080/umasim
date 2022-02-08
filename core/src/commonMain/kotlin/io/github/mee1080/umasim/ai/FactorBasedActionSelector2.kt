@@ -143,6 +143,44 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
             hpFactor = 0.8,
             motivationFactor = 25.0,
         )
+
+        val aoharuSpeed2Power1Wisdom2Friend1Optuna = Option(
+            speedFactor = 1.385,
+            staminaFactor = 1.909,
+            powerFactor = 1.606,
+            gutsFactor = 0.395,
+            wisdomFactor = 0.569,
+            skillPtFactor = 0.494,
+            hpFactor = 0.981,
+            motivationFactor = 25.0,
+        )
+
+        val aoharuSpeed2Power1Wisdom2Friend1Optuna2 = Option(
+            speedFactor = 1.305,
+            staminaFactor = 1.660,
+            powerFactor = 1.534,
+            gutsFactor = 0.614,
+            wisdomFactor = 0.715,
+            skillPtFactor = 0.152,
+            hpFactor = 0.938,
+            motivationFactor = 25.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> if (rank == 0) 12.748 else 7.986
+                    StatusType.POWER -> 11.139
+                    StatusType.WISDOM -> if (rank == 0) 3.614 else 6.560
+                    else -> 0.0
+                }
+            },
+            aoharuFactor = { turn ->
+                when {
+                    turn <= 24 -> 9.068
+                    turn <= 36 -> 12.353
+                    turn <= 48 -> 0.001
+                    else -> 4.544
+                }
+            },
+        )
     }
 
     @Serializable
@@ -155,6 +193,17 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         val skillPtFactor: Double = 0.4,
         val hpFactor: Double = 0.5,
         val motivationFactor: Double = 15.0,
+        val relationFactor: (type: StatusType, rank: Int, count: Int) -> Double = { _: StatusType, rank: Int, count: Int ->
+            when (count) {
+                1 -> 3.0
+                2 -> if (rank == 0) 5.5 else 7.0
+                else -> when (rank) {
+                    0 -> 7.0
+                    1 -> 9.0
+                    else -> 12.0
+                }
+            }
+        },
         val aoharuFactor: (Int) -> Double = {
             when {
                 it <= 24 -> 15.0
@@ -233,15 +282,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
             if (support.relation >= support.card.requiredRelation) return@sumOf 0.0
             val list = supportRank[support.card.type]!!
             val rank = list.indexOfFirst { it.first == support }
-            when (list.size) {
-                1 -> 3.0
-                2 -> if (rank == 0) 5.5 else 7.0
-                else -> when (rank) {
-                    0 -> 7.0
-                    1 -> 9.0
-                    else -> 12.0
-                }
-            }
+            option.relationFactor(support.card.type, rank, list.size)
         }
         if (DEBUG) println("  relation $score")
         return score
