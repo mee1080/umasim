@@ -98,7 +98,7 @@ data class SupportSelection(
     val initialRelation get() = card?.initialRelation ?: 0
 
     val relationSelection =
-        (listOf(0, 80) + (card?.specialUnique?.map { it.value0 } ?: emptyList())).sorted().distinct()
+        (listOf(0, 80) + (card?.specialUnique?.mapNotNull { it.targetRelation } ?: emptyList())).sorted().distinct()
 
     val friend get() = relation >= 80
 

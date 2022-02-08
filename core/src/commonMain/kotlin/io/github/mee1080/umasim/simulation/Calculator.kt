@@ -31,6 +31,7 @@ object Calculator {
         support: List<Support>,
         scenario: Scenario = Scenario.URA,
         teamJoinCount: Int = 0,
+        supportTypeCount: Int,
     ) = Status(
         speed = calcTrainingStatus(
             chara,
@@ -40,7 +41,8 @@ object Calculator {
             support,
             StatusType.SPEED,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         stamina = calcTrainingStatus(
             chara,
@@ -50,7 +52,8 @@ object Calculator {
             support,
             StatusType.STAMINA,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         power = calcTrainingStatus(
             chara,
@@ -60,7 +63,8 @@ object Calculator {
             support,
             StatusType.POWER,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         guts = calcTrainingStatus(
             chara,
@@ -70,7 +74,8 @@ object Calculator {
             support,
             StatusType.GUTS,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         wisdom = calcTrainingStatus(
             chara,
@@ -80,7 +85,8 @@ object Calculator {
             support,
             StatusType.WISDOM,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         skillPt = calcTrainingStatus(
             chara,
@@ -90,7 +96,8 @@ object Calculator {
             support,
             StatusType.SKILL,
             scenario,
-            teamJoinCount
+            teamJoinCount,
+            supportTypeCount,
         ),
         hp = calcTrainingHp(training, trainingLevel, support),
     )
@@ -101,12 +108,14 @@ object Calculator {
         motivation: Int,
         support: List<Support>,
         status: Status,
+        supportTypeCount: Int,
     ) = calcTrainingSuccessStatus(
         chara,
         TrainingInfo(TrainingBase(Scenario.URA, type, 1, 0, status)),
         1,
         motivation,
-        support
+        support,
+        supportTypeCount = supportTypeCount,
     )
 
     private fun calcTrainingStatus(
@@ -118,6 +127,7 @@ object Calculator {
         type: StatusType,
         scenario: Scenario = Scenario.URA,
         teamJoinCount: Int = 0,
+        supportTypeCount: Int,
     ): Int {
         val baseStatus = training.getBaseStatus(trainingLevel).get(type)
         if (baseStatus == 0) return 0
@@ -127,7 +137,8 @@ object Calculator {
             .map { it.getFriendBonus(training.type) }
             .fold(1.0) { acc, d -> acc * d }
         val motivationBonus = 1 + motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor } / 100.0)
-        val trainingBonus = 1 + support.sumOf { it.card.trainingFactor(training.type, it.relation) } / 100.0
+        val trainingBonus =
+            1 + support.sumOf { it.card.trainingFactor(training.type, it.relation, supportTypeCount) } / 100.0
         val count = 1 + support.size * 0.05 + if (scenario == Scenario.AOHARU) {
             teamJoinCount * 0.05
         } else 0.0
@@ -181,6 +192,7 @@ object Calculator {
         support: List<Support>,
         scenario: Scenario = Scenario.URA,
         teamJoinCount: Int = 0,
+        supportTypeCount: Int,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
         var result = ExpectedStatus()
         val detail = mutableListOf<Pair<Double, Status>>()
@@ -189,7 +201,16 @@ object Calculator {
                 result,
                 detail,
                 1.0,
-                calcTrainingSuccessStatus(chara, training, trainingLevel, motivation, support, scenario, teamJoinCount)
+                calcTrainingSuccessStatus(
+                    chara,
+                    training,
+                    trainingLevel,
+                    motivation,
+                    support,
+                    scenario,
+                    teamJoinCount,
+                    supportTypeCount
+                )
             )
         } else {
             val joinRate = support.map {
@@ -223,7 +244,8 @@ object Calculator {
                             motivation,
                             joinSupport,
                             scenario,
-                            teamJoinCount
+                            teamJoinCount,
+                            supportTypeCount,
                         )
                     )
                 }

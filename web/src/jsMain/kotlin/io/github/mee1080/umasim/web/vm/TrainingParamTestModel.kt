@@ -39,7 +39,8 @@ class TrainingParamTestModel {
                 guts = guts,
                 wisdom = wisdom,
                 skillPt = skillPt,
-            )
+            ),
+            supportTypeCount = 1,
         )
     }
 }

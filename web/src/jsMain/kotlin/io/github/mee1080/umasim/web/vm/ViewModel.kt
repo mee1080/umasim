@@ -157,6 +157,8 @@ class ViewModel {
         }
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
+        val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
+        console.log(supportTypeCount)
         val trainingResult = Calculator.calcTrainingSuccessStatus(
             state.chara,
             WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
@@ -165,6 +167,7 @@ class ViewModel {
             supportList,
             state.scenario,
             state.teamJoinCount,
+            supportTypeCount,
         )
         val trainingImpact = supportList.map { target ->
             target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
@@ -175,6 +178,7 @@ class ViewModel {
                 supportList.filter { it.index != target.index },
                 state.scenario,
                 state.teamJoinCount,
+                supportTypeCount,
             )
         }
         val expectedResult = Calculator.calcExpectedTrainingStatus(
@@ -190,6 +194,7 @@ class ViewModel {
                 },
             state.scenario,
             state.teamJoinCount,
+            supportTypeCount,
         ).first
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(

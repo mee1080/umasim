@@ -73,6 +73,8 @@ data class SimulationState(
         }
 
     fun getTraining(type: StatusType) = training.first { it.type == type }
+
+    val supportTypeCount get() = member.filter { !it.guest }.map { it.card.type }.distinct().count()
 }
 
 data class MemberState(
