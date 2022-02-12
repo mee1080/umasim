@@ -88,6 +88,7 @@ class Simulator(
             .map { it.initialStatus }
             .reduce { acc, status -> acc + status },
         condition = emptyList(),
+        supportTypeCount = supportCardList.map { it.type }.distinct().count(),
     )
 
     private val raceBonus = supportCardList.sumOf { it.race }.let {

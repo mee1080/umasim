@@ -79,7 +79,7 @@ internal val aoharuTrainingData = listOf(
     AoharuTraining(toSupportType("根性"), 2, Status(0, 0, 0, 2, 0, 0, -1)),
     AoharuTraining(toSupportType("根性"), 3, Status(1, 0, 1, 2, 0, 1, -2)),
     AoharuTraining(toSupportType("根性"), 4, Status(2, 0, 1, 4, 0, 2, -3)),
-    AoharuTraining(toSupportType("根性"), 5, Status(2, 0, 2, 4, 0, 3, -4)),
+    AoharuTraining(toSupportType("根性"), 5, Status(2, 0, 2, 6, 0, 3, -4)),
     AoharuTraining(toSupportType("根性"), 6, Status(3, 0, 3, 15, 0, 0, -5)),
     AoharuTraining(toSupportType("根性"), 7, Status(5, 0, 5, 20, 0, 0, -5)),
     AoharuTraining(toSupportType("賢さ"), 1, Status(0, 0, 0, 0, 0, 0, 0)),

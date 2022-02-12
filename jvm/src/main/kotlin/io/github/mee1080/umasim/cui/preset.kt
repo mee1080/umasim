@@ -65,8 +65,8 @@ fun power2(supportTalent: Int, count: Int) = arrayOf(
 
 fun power3(supportTalent: Int, count: Int) = arrayOf(
     "[パッションチャンピオーナ！]エルコンドルパサー" to supportTalent,
-    "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
     "[幸せは曲がり角の向こう]ライスシャワー" to supportTalent,
+    "[『愛してもらうんだぞ』]オグリキャップ" to supportTalent,
 ).take(count).toTypedArray()
 
 fun power4(supportTalent: Int, count: Int) = arrayOf(

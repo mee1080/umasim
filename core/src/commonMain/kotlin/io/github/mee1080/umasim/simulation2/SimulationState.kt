@@ -31,6 +31,7 @@ data class SimulationState(
     val turn: Int,
     val status: Status,
     val condition: List<String>,
+    val supportTypeCount: Int,
 ) {
     val support get() = member.filter { !it.guest }
 
@@ -73,8 +74,6 @@ data class SimulationState(
         }
 
     fun getTraining(type: StatusType) = training.first { it.type == type }
-
-    val supportTypeCount get() = member.filter { !it.guest }.map { it.card.type }.distinct().count()
 }
 
 data class MemberState(

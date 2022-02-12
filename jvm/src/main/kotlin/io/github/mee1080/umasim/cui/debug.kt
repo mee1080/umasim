@@ -20,20 +20,16 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.ai.SimpleActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.simulation.*
-import io.github.mee1080.umasim.simulation2.AoharuMemberState
 import io.github.mee1080.umasim.simulation2.Evaluator
 import io.github.mee1080.umasim.simulation2.SimulationEvents
 import io.github.mee1080.umasim.simulation2.Summary
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 
 fun singleSimulation() {
@@ -44,7 +40,7 @@ fun singleSimulation() {
         "[はやい！うまい！はやい！]サクラバクシンオー",
         "[ようこそ、トレセン学園へ！]駿川たづな",
         "[『愛してもらうんだぞ』]オグリキャップ",
-        "[押して忍べど燃ゆるもの]ヤエノムテキ",
+        "[一粒の安らぎ]スーパークリーク",
 //        "[感謝は指先まで込めて]ファインモーション",
     )
     println(chara)
@@ -94,24 +90,24 @@ fun dataCheck() {
     }
 }
 
-fun calcExpected() {
-    val chara = Store.getChara("ハルウララ", 5, 5)
-    val support = Store.getSupportByName(
-        "[迫る熱に押されて]キタサンブラック" to 4,
-        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
-        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
-        "[『愛してもらうんだぞ』]オグリキャップ" to 4,
-        "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
-        "[ようこそ、トレセン学園へ！]駿川たづな" to 4,
-    ).mapIndexed { index, supportCard -> Support(index, supportCard).apply { friendTrainingEnabled = true } }
-    println(chara)
-    support.forEach { println(it) }
-    val result =
-        Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(scenario, StatusType.SPEED), 5, 2, support)
-    println(result.first)
-    result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
-    println(result.second.sumOf { it.first })
-}
+//fun calcExpected() {
+//    val chara = Store.getChara("ハルウララ", 5, 5)
+//    val support = Store.getSupportByName(
+//        "[迫る熱に押されて]キタサンブラック" to 4,
+//        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
+//        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
+//        "[『愛してもらうんだぞ』]オグリキャップ" to 4,
+//        "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
+//        "[ようこそ、トレセン学園へ！]駿川たづな" to 4,
+//    ).mapIndexed { index, supportCard -> Support(index, supportCard).apply { friendTrainingEnabled = true } }
+//    println(chara)
+//    support.forEach { println(it) }
+//    val result =
+//        Calculator.calcExpectedTrainingStatus(chara, Store.getTraining(scenario, StatusType.SPEED), 5, 2, support)
+//    println(result.first)
+//    result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
+//    println(result.second.sumOf { it.first })
+//}
 
 fun checkNewSimulator() {
     val chara = Store.getChara("ハルウララ", 5, 5)

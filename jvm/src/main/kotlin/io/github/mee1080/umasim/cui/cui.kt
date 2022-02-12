@@ -18,7 +18,6 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
@@ -174,18 +173,18 @@ fun openCui(args: Array<String>) {
 //        100000,
 //        FactorBasedActionSelector2.aoharuPowerWisdom,
 //    )
-//    doSimulation2(
-//        Scenario.AOHARU,
-//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-//        Store.getSupportByName(
-//            *(power3(4, 2)),
-//            *(wisdom2(4, 3)),
-//        ).toTypedArray(),
-//        StatusType.POWER,
-//        0..4,
-//        100000,
-//        FactorBasedActionSelector2.aoharuPowerWisdom,
-//    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(power3(4, 2)),
+            *(wisdom2(4, 3)),
+        ).toTypedArray(),
+        StatusType.POWER,
+        0..4,
+        100000,
+        FactorBasedActionSelector2.aoharuPowerWisdom,
+    )
 //    optimizeAI(
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5), Store.getSupportByName(
 //            *(power2(4, 3)),
@@ -294,23 +293,23 @@ fun openCui(args: Array<String>) {
 //        )
 //    )
 //    val repository = SimulationResultRepository("result/umasimout.db")
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(speed4(4, 1)),
-            *(power4(4, 1)),
-            *(wisdom(4, 2)),
-            *(friend2(4, 1)),
-        ).toTypedArray(),
-//        StatusType.SPEED, 0..4,
-//        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
-        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
-        100000,
-        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
-        { card, summaries -> stdoutOutput.invoke(card, summaries) },
-//        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 1)),
+//            *(power4(4, 1)),
+//            *(wisdom(4, 2)),
+//            *(friend2(4, 1)),
+//        ).toTypedArray(),
+////        StatusType.SPEED, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+//        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
+//        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
+//    )
 //    optimizeAI(
 //        Scenario.AOHARU,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
@@ -383,5 +382,22 @@ fun openCui(args: Array<String>) {
 //            speed = doubleArrayOf(1.2, 1.4, 1.6),
 //            power = doubleArrayOf(1.2, 1.4, 1.6),
 //        )
+//    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 2)),
+//            *(stamina(4, 1)),
+//            *(wisdom(4, 1)),
+//            *(friend2(4, 1)),
+//        ).toTypedArray(),
+//        StatusType.POWER, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+////        Store.getSupportByName("[そこに“いる”幸せ]アグネスデジタル" to 4),
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Stamina1Power1Wisdom1Friend1Optuna,
+//        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
 //    )
 }

@@ -181,6 +181,32 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                 }
             },
         )
+
+        val aoharuSpeed2Stamina1Power1Wisdom1Friend1Optuna = Option(
+            gutsFactor = 0.8721424770847755,
+            hpFactor = 1.190741489079833,
+            powerFactor = 1.9397883814901953,
+            skillPtFactor = 0.7175793855213755,
+            speedFactor = 1.8405613002176744,
+            staminaFactor = 1.919950102050362,
+            wisdomFactor = 1.2035104585726557,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> if (rank == 0) 8.50318815446151 else 8.387078026660346
+                    StatusType.POWER -> 8.44405062038027
+                    StatusType.WISDOM -> if (rank == 0) 4.480003059916107 else 4.730957810641986
+                    else -> 0.0
+                }
+            },
+            aoharuFactor = { turn ->
+                when {
+                    turn <= 24 -> 15.375249098470697
+                    turn <= 36 -> 17.531913102005795
+                    turn <= 48 -> 0.021897123503436644
+                    else -> 1.8353582784678524
+                }
+            },
+        )
     }
 
     @Serializable
