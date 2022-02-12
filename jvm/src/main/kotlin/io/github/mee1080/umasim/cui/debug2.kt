@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.simulation2.*
@@ -18,7 +19,7 @@ fun testAoharuSimulation() {
         *(friend(4, 1)),
     )
     val simulator = Simulator(
-        Scenario.AOHARU, chara, support, Simulator.Option()
+        Scenario.AOHARU, chara, support, factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2)
     )
     val selector = FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom)
 //    val selector = NextStateBasedActionSelector(
@@ -61,13 +62,12 @@ fun compareAoharuSimulation() {
     val testCount = 1000
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
     val selector = { FactorBasedActionSelector2(FactorBasedActionSelector2.speedWisdom) }
-    val option = Simulator.Option()
 
     runBlocking {
         println(LocalDateTime.now())
         launch(context) {
             val summary = mutableListOf<Summary>()
-            val simulator = Simulator(Scenario.URA, chara, support, option)
+            val simulator = Simulator(Scenario.URA, chara, support)
             repeat(testCount) {
                 summary.add(simulator.simulate(turn, selector(), SimulationEvents(
                     initialStatus = { it.copy(motivation = 2) }
@@ -79,7 +79,7 @@ fun compareAoharuSimulation() {
         println(LocalDateTime.now())
         launch(context) {
             val summary = mutableListOf<Summary>()
-            val simulator = Simulator(Scenario.AOHARU, chara, support, option)
+            val simulator = Simulator(Scenario.AOHARU, chara, support)
             repeat(testCount) {
                 summary.add(simulator.simulate(turn, selector(), SimulationEvents(
                     initialStatus = { it.copy(motivation = 2) }
@@ -110,7 +110,7 @@ fun compareExpectedBasedAI() {
             println(LocalDateTime.now())
             launch(context) {
                 val summary = mutableListOf<Summary>()
-                val simulator = Simulator(Scenario.URA, chara, support, option)
+                val simulator = Simulator(Scenario.URA, chara, support)
                 val selector = {
                     FactorBasedActionSelector2(
                         FactorBasedActionSelector2.speedWisdom.copy(
@@ -149,7 +149,7 @@ fun compareNextStateBasedAI() {
             println(LocalDateTime.now())
             launch(context) {
                 val summary = mutableListOf<Summary>()
-                val simulator = Simulator(Scenario.URA, chara, support, option)
+                val simulator = Simulator(Scenario.URA, chara, support)
                 val selector = {
                     FactorBasedActionSelector2(
                         FactorBasedActionSelector2.speedWisdom.copy(

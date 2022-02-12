@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 
 val scenario = Scenario.URA
@@ -304,6 +305,7 @@ fun openCui(args: Array<String>) {
 //        StatusType.SPEED, 0..4,
 //        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
         Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
+        factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
         100000,
         FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
         { card, summaries -> stdoutOutput.invoke(card, summaries) },

@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.data.StatusType
+
 fun speed(supportTalent: Int, count: Int) = arrayOf(
     "[迫る熱に押されて]キタサンブラック" to supportTalent,
     "[袖振り合えば福となる♪]マチカネフクキタル" to supportTalent,
@@ -101,3 +103,5 @@ fun friend(supportTalent: Int, count: Int) = arrayOf(
 fun friend2(supportTalent: Int, count: Int) = arrayOf(
     "[徹底管理主義]樫本理子" to supportTalent,
 ).take(count).toTypedArray()
+
+fun factor(type: StatusType, count: Int = 1) = List(count) { type to 3 }

@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.simulation.ExpectedStatus
 data class SimulationState(
     val scenario: Scenario,
     val chara: Chara,
+    val factor: List<Pair<StatusType, Int>>,
     val goalRace: List<GoalRaceEntry>,
     val member: List<MemberState>,
     val training: List<TrainingState>,

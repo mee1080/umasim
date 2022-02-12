@@ -69,7 +69,7 @@ class Optimizer<T : ActionSelector>(
                 launch(context) {
                     val summary = mutableListOf<Summary>()
                     repeat(testCount) {
-                        summary.add(Simulator(scenario, chara, support, option).simulate(turn, target))
+                        summary.add(Simulator(scenario, chara, support, option = option).simulate(turn, target))
                     }
                     result.add(target to summary)
                     if (DEBUG) println("$testCount: ${index + 1}/${selectors.size}")

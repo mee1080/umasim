@@ -24,6 +24,7 @@ class Simulator(
     scenario: Scenario,
     chara: Chara,
     supportCardList: List<SupportCard>,
+    factorList: List<Pair<StatusType, Int>> = emptyList(),
     val option: Option = Option()
 ) {
 
@@ -36,6 +37,7 @@ class Simulator(
     private val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
+        factor = factorList,
         goalRace = Store.getGoalRaceList(chara.charaId),
         member = supportCardList.mapIndexed { index, card ->
             MemberState(
@@ -117,6 +119,7 @@ class Simulator(
             Scenario.URA -> UraScenarioEvents()
             Scenario.AOHARU -> AoharuScenarioEvents()
         }
+        state = commonScenarioEvents.beforeSimulation(state)
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))
         state = events.beforeSimulation(state)

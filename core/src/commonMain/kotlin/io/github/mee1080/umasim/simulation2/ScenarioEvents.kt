@@ -36,6 +36,9 @@ class CommonScenarioEvents {
             // ジュニア新年
             25 -> state
                 .updateStatus { it.updateNewYear(20, 20) }
+            // クラシック継承
+            31 -> state
+                .updateFactor()
             // クラシック夏合宿
             40 -> state
                 .updateStatus { it + Status(guts = 10) }
@@ -45,8 +48,9 @@ class CommonScenarioEvents {
             // 福引2等
             50 -> state
                 .updateStatus { it + Status(5, 5, 5, 5, 5, hp = 20, motivation = 1) }
-            // ファン感謝祭
+            // シニア継承、ファン感謝祭
             55 -> state
+                .updateFactor()
                 .updateStatus { it + Status(motivation = 1) }
             else -> state
         }
@@ -58,6 +62,21 @@ class CommonScenarioEvents {
         } else {
             copy(hp = hp + plusHp)
         }
+    }
+
+    private fun SimulationState.updateFactor() = updateStatus { status ->
+        status.add(*factor.map {
+            it.first to when (it.second) {
+                3 -> 21
+                2 -> 12
+                1 -> 5
+                else -> 0
+            }
+        }.toTypedArray())
+    }
+
+    fun beforeSimulation(state: SimulationState): SimulationState {
+        return state.updateFactor()
     }
 
     fun afterSimulation(state: SimulationState): SimulationState {

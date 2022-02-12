@@ -13,6 +13,7 @@ fun doSimulation2(
     defaultSupport: Array<SupportCard>,
     targetStatus: StatusType,
     talent: IntRange = 4..4,
+    factor: List<Pair<StatusType, Int>>,
     testCount: Int,
     option: FactorBasedActionSelector2.Option,
     vararg output: suspend (card: SupportCard, summaries: List<Summary>) -> Unit = arrayOf({ card, summaries ->
@@ -26,6 +27,7 @@ fun doSimulation2(
         Store.supportList.filter {
             talent.contains(it.talent) && it.rarity >= 2 && (it.type == targetStatus)
         },
+        factor,
         78,
         testCount,
         { FactorBasedActionSelector2(option) },
@@ -38,6 +40,7 @@ fun doSimulation2(
     chara: Chara,
     defaultSupport: Array<SupportCard>,
     target: List<SupportCard>,
+    factor: List<Pair<StatusType, Int>>,
     testCount: Int,
     option: FactorBasedActionSelector2.Option,
     vararg output: suspend (card: SupportCard, summaries: List<Summary>) -> Unit = arrayOf({ card, summaries ->
@@ -49,6 +52,7 @@ fun doSimulation2(
         chara,
         defaultSupport,
         target,
+        factor,
         78,
         testCount,
         { FactorBasedActionSelector2(option) },
@@ -61,6 +65,7 @@ fun doSimulation2(
     chara: Chara,
     defaultSupport: Array<SupportCard>,
     target: List<SupportCard>,
+    factor: List<Pair<StatusType, Int>>,
     turn: Int,
     testCount: Int,
     selector: () -> ActionSelector,
@@ -70,16 +75,16 @@ fun doSimulation2(
 ) {
     println(chara.name)
     defaultSupport.forEach { println(it.name) }
+    println(factor.joinToString(",") { "${it.first} ${it.second}" })
     println("start ${LocalDateTime.now()}")
     runBlocking {
         target.map { card ->
             launch(context) {
                 val useSupport = listOf(*defaultSupport, card)
                 val summary = mutableListOf<Summary>()
-                val option = Simulator.Option()
                 repeat(testCount) {
                     summary.add(
-                        Simulator(scenario, chara, useSupport, option).simulate(
+                        Simulator(scenario, chara, useSupport, factor).simulate(
                             turn,
                             selector(),
                             ApproximateSimulationEvents(),
