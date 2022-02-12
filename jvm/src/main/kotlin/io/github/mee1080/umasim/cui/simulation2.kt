@@ -2,10 +2,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.ActionSelector
-import io.github.mee1080.umasim.simulation2.Evaluator
-import io.github.mee1080.umasim.simulation2.Simulator
-import io.github.mee1080.umasim.simulation2.Summary
+import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
@@ -81,7 +78,13 @@ fun doSimulation2(
                 val summary = mutableListOf<Summary>()
                 val option = Simulator.Option()
                 repeat(testCount) {
-                    summary.add(Simulator(scenario, chara, useSupport, option).simulate(turn, selector()))
+                    summary.add(
+                        Simulator(scenario, chara, useSupport, option).simulate(
+                            turn,
+                            selector(),
+                            ApproximateSimulationEvents(),
+                        )
+                    )
                 }
                 output.forEach { it(card, summary) }
             }

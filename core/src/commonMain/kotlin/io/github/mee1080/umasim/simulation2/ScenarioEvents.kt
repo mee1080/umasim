@@ -20,10 +20,48 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 
-class ScenarioEvents(
-    val beforeSimulation: ((state: SimulationState) -> SimulationState) = { it },
-    val initialStatus: ((status: Status) -> Status) = { it },
-    val beforeAction: ((state: SimulationState) -> SimulationState?) = { null },
-    val afterAction: ((state: SimulationState) -> SimulationState?) = { null },
-    val onTurnEnd: ((state: SimulationState) -> SimulationState) = { it },
-)
+interface ScenarioEvents {
+    fun beforeSimulation(state: SimulationState): SimulationState = state
+    fun initialStatus(status: Status): Status = status
+    fun beforeAction(state: SimulationState): SimulationState? = null
+    fun afterAction(state: SimulationState): SimulationState? = null
+    fun onTurnEnd(state: SimulationState): SimulationState = state
+    fun afterSimulation(state: SimulationState): SimulationState = state
+}
+
+class CommonScenarioEvents {
+
+    fun beforeAction(state: SimulationState): SimulationState {
+        return when (state.turn) {
+            // ジュニア新年
+            25 -> state
+                .updateStatus { it.updateNewYear(20, 20) }
+            // クラシック夏合宿
+            40 -> state
+                .updateStatus { it + Status(guts = 10) }
+            // クラシック新年
+            49 -> state
+                .updateStatus { it.updateNewYear(30, 35) }
+            // 福引2等
+            50 -> state
+                .updateStatus { it + Status(5, 5, 5, 5, 5, hp = 20, motivation = 1) }
+            // ファン感謝祭
+            55 -> state
+                .updateStatus { it + Status(motivation = 1) }
+            else -> state
+        }
+    }
+
+    private fun Status.updateNewYear(plusHp: Int, plusSkillPt: Int): Status {
+        return if (hp + plusHp > maxHp) {
+            copy(skillPt = skillPt + plusSkillPt)
+        } else {
+            copy(hp = hp + plusHp)
+        }
+    }
+
+    fun afterSimulation(state: SimulationState): SimulationState {
+        // 記者絆4
+        return state.updateStatus { it + Status(3, 3, 3, 3, 3, 10) }
+    }
+}

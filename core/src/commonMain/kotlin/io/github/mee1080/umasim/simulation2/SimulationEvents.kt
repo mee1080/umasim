@@ -20,9 +20,36 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 
-class SimulationEvents(
-    val beforeSimulation: ((state: SimulationState) -> SimulationState) = { it },
-    val initialStatus: ((status: Status) -> Status) = { it },
-    val beforeAction: ((state: SimulationState) -> SimulationState) = { it },
-    val afterAction: ((state: SimulationState) -> SimulationState) = { it }
-)
+open class SimulationEvents(
+    val initialStatus: (status: Status) -> Status = { it }
+) {
+    open fun beforeSimulation(state: SimulationState): SimulationState = state
+    open fun beforeAction(state: SimulationState): SimulationState = state
+    open fun afterAction(state: SimulationState): SimulationState = state
+}
+
+class ApproximateSimulationEvents(
+    initialStatus: (status: Status) -> Status = { it }
+) : SimulationEvents(initialStatus) {
+    override fun beforeAction(state: SimulationState): SimulationState {
+        val turn = state.turn
+        return when {
+            turn <= 24 -> {
+                if (turn % 3 == 0) {
+                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else state
+            }
+            turn <= 48 -> {
+                if (turn % 6 == 0) {
+                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else state
+            }
+            turn <= 72 -> {
+                if (turn % 12 == 0) {
+                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else state
+            }
+            else -> state
+        }
+    }
+}

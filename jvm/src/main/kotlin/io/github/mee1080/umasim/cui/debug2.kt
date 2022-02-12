@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.ai.NextStateBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.turnToString
@@ -21,17 +20,21 @@ fun testAoharuSimulation() {
     val simulator = Simulator(
         Scenario.AOHARU, chara, support, Simulator.Option()
     )
-//    val selector = FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom)
-    val selector = NextStateBasedActionSelector(
-        NextStateBasedActionSelector.Option(
-            speedFactor = 0.8,
-            staminaFactor = 1.0,
-            powerFactor = 0.8,
-            wisdomFactor = 1.2,
-            hpFactor = 0.7,
-        )
+    val selector = FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom)
+//    val selector = NextStateBasedActionSelector(
+//        NextStateBasedActionSelector.Option(
+//            speedFactor = 0.8,
+//            staminaFactor = 1.0,
+//            powerFactor = 0.8,
+//            wisdomFactor = 1.2,
+//            hpFactor = 0.7,
+//        )
+//    )
+    val result = simulator.simulateWithHistory(
+        78,
+        selector,
+        ApproximateSimulationEvents()
     )
-    val result = simulator.simulateWithHistory(78, selector)
     result.second.forEachIndexed { index, (action, result, state) ->
         println("${turnToString(state.turn)}: ${action.toShortString()}")
         println(state.status)

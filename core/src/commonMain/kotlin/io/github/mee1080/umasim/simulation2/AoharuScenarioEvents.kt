@@ -4,18 +4,15 @@ import io.github.mee1080.umasim.data.*
 import kotlin.math.max
 import kotlin.math.min
 
-object AoharuScenarioEvents {
+class AoharuScenarioEvents : ScenarioEvents {
 
-    fun asScenarioEvents() = ScenarioEvents(
-        onTurnEnd = { onTurnEnd(it) }
-    )
-
-    private fun onTurnEnd(state: SimulationState): SimulationState {
+    override fun onTurnEnd(state: SimulationState): SimulationState {
         return when (state.turn) {
             3 -> state
                 .addLinkMember()
                 .updateTrainingLevel()
             18 -> state
+                .updateStatus { it.copy(motivation = it.motivation + 1) }
                 .addMember(9 - state.teamMember.size)
                 .updateTrainingLevel()
             24 -> state
@@ -33,9 +30,15 @@ object AoharuScenarioEvents {
             60 -> state
                 .updateTrainingLevel()
                 .applyRace("A")
+            70 -> state
+                // TODO アオハルヒント、爆発10で+20
+                .updateStatus { it.copy(skillPt = it.skillPt + 15) }
+                .updateTrainingLevel()
             72 -> state
                 .updateTrainingLevel()
                 .applyRace("S")
+            78 -> state
+                .updateStatus { it + state.raceStatus(0, 0, 50) }
             else -> state
                 .updateTrainingLevel()
         }
@@ -63,9 +66,18 @@ object AoharuScenarioEvents {
     }
 
     private fun SimulationState.applyRace(opponentRank: String): SimulationState {
-        // TODO 育成キャラ能力上昇
         // 勝ち前提
         return copy(
+            status = status + when (opponentRank) {
+                "S" -> raceStatus(5, 7, 50)
+                "A" -> raceStatus(5, 5, 25)
+                "B" -> raceStatus(5, 4, 20)
+                "C" -> raceStatus(5, 4, 15)
+                "D" -> raceStatus(5, 3, 15)
+                "E" -> raceStatus(5, 3, 10)
+                "F" -> raceStatus(5, 2, 10)
+                else -> raceStatus(5, 1, 10)
+            },
             member = teamMember.map {
                 it.addStatus(Status(50, 50, 50, 50, 50))
             }

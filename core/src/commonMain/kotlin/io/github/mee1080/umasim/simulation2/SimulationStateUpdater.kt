@@ -38,7 +38,7 @@ fun SimulationState.onTurnChange(): SimulationState {
     )
 }
 
-fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status))
+fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status).adjustRange())
 
 private fun MemberState.onTurnChange(turn: Int): MemberState {
     // 各トレーニングに配置
