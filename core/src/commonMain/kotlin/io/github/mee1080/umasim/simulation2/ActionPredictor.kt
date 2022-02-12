@@ -18,15 +18,16 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.TrainingBase
-import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.*
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
 
-fun SimulationState.predict(): List<Action> {
+fun SimulationState.predict(turn: Int): List<Action> {
+    return goalRace.find { it.turn == turn }?.let { predictRace(it) } ?: predictNormal()
+}
+
+fun SimulationState.predictNormal(): List<Action> {
     val supportPosition = member.groupBy { it.position }
     return mutableListOf(
         *(training.map {
@@ -113,3 +114,27 @@ private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, supp
 fun SimulationState.adjustRange(action: Action) = action.updateCandidate(
     action.resultCandidate.map { (status + it.first).adjustRange() - status to it.second }
 )
+
+fun SimulationState.predictRace(race: GoalRaceEntry): List<Race> {
+    val status = when (race.grade) {
+        RaceGrade.DEBUT -> raceStatus(3, 3, 30)
+        RaceGrade.OPEN -> raceStatus(3, 3, 30)
+        RaceGrade.G3 -> raceStatus(4, 3, 30)
+        RaceGrade.G2 -> raceStatus(4, 3, 30)
+        RaceGrade.G1 -> raceStatus(5, 3, 30)
+        RaceGrade.FINALS -> when (race.turn) {
+            74 -> raceStatus(5, 10, 40)
+            76 -> raceStatus(5, 10, 60)
+            78 -> raceStatus(5, 10, 80)
+            else -> Status()
+        }
+        RaceGrade.UNKNOWN -> Status()
+    }
+    return listOf(Race(true, race.name, race.grade, listOf(status to 1)))
+}
+
+fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {
+    val bonusValue = value * (100 + totalRaceBonus) / 100
+    val targets = randomTrainingType(count).map { it to bonusValue }.toTypedArray()
+    return Status(skillPt = skillPt * (100 + totalRaceBonus) / 100).add(*targets)
+}

@@ -80,7 +80,7 @@ data class Race(
     val goal: Boolean,
     val raceName: String,
     val grade: RaceGrade,
-    override val resultCandidate: List<Pair<Status, Int>> = listOf(Status() to 1),
+    override val resultCandidate: List<Pair<Status, Int>>,
 ) : Action {
     override val name = raceName + if (goal) "(目標)" else ""
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(

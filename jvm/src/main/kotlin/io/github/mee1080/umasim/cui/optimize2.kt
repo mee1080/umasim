@@ -90,7 +90,7 @@ fun optimizeAI(
     println("optimize")
     println(chara)
     support.forEach { println(it.name) }
-    val option = Simulator.Option(checkGoalRace = true)
+    val option = Simulator.Option()
     val selectors = options.map { it.generateSelector() }
     val result = Optimizer(scenario, chara, support, option, 78, selectors) {
         it.upperSum(0.2, evaluateSetting)

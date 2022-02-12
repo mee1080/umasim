@@ -79,7 +79,7 @@ fun doSimulation2(
             launch(context) {
                 val useSupport = listOf(*defaultSupport, card)
                 val summary = mutableListOf<Summary>()
-                val option = Simulator.Option(checkGoalRace = true)
+                val option = Simulator.Option()
                 repeat(testCount) {
                     summary.add(Simulator(scenario, chara, useSupport, option).simulate(turn, selector()))
                 }

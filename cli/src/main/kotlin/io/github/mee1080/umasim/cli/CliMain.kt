@@ -91,7 +91,7 @@ class CliMain : CliktCommand() {
                     Scenario.valueOf(scenario),
                     charaData,
                     supportList,
-                    Simulator.Option(checkGoalRace = true),
+                    Simulator.Option(),
                 ).simulate(turn, option.generateSelector())
             )
         }

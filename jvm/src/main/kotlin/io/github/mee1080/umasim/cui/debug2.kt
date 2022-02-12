@@ -19,9 +19,7 @@ fun testAoharuSimulation() {
         *(friend(4, 1)),
     )
     val simulator = Simulator(
-        Scenario.AOHARU, chara, support, Simulator.Option(
-            checkGoalRace = true,
-        )
+        Scenario.AOHARU, chara, support, Simulator.Option()
     )
 //    val selector = FactorBasedActionSelector2(FactorBasedActionSelector2.aoharuSpeedWisdom)
     val selector = NextStateBasedActionSelector(
@@ -60,9 +58,7 @@ fun compareAoharuSimulation() {
     val testCount = 1000
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
     val selector = { FactorBasedActionSelector2(FactorBasedActionSelector2.speedWisdom) }
-    val option = Simulator.Option(
-        checkGoalRace = true,
-    )
+    val option = Simulator.Option()
 
     runBlocking {
         println(LocalDateTime.now())
@@ -104,9 +100,7 @@ fun compareExpectedBasedAI() {
     val turn = 78
     val testCount = 100
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
-    val option = Simulator.Option(
-        checkGoalRace = true,
-    )
+    val option = Simulator.Option()
 
     runBlocking {
         listOf(0.0, 0.2, 0.4, 0.6, 0.8).forEach { factor ->
@@ -145,9 +139,7 @@ fun compareNextStateBasedAI() {
     val turn = 78
     val testCount = 100
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
-    val option = Simulator.Option(
-        checkGoalRace = true,
-    )
+    val option = Simulator.Option()
 
     runBlocking {
         listOf(0.0, 0.2, 0.4, 0.6, 0.8).forEach { factor ->

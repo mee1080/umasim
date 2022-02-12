@@ -32,6 +32,7 @@ data class SimulationState(
     val status: Status,
     val condition: List<String>,
     val supportTypeCount: Int,
+    val totalRaceBonus: Int,
 ) {
     val support get() = member.filter { !it.guest }
 

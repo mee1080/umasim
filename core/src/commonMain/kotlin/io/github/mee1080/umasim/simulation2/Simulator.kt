@@ -29,9 +29,8 @@ class Simulator(
 
     class Option(
         val levelUpTurns: IntArray? = null,
-        val raceBonusStatus: Int = 60,
-        val raceBonusSkillPt: Int = 700,
-        val checkGoalRace: Boolean = false,
+        val raceBonusStatus: Int = 8,
+        val raceBonusSkillPt: Int = 180,
     )
 
     private val initialState = SimulationState(
@@ -72,11 +71,7 @@ class Simulator(
                     levelOverride = null,
                 )
             },
-        levelUpTurns = option.levelUpTurns?.asList() ?: if (option.checkGoalRace) {
-            listOf(37, 38, 39, 40, 61, 62, 63, 64)
-        } else {
-            listOf(28, 29, 30, 31, 46, 47, 48, 49)
-        },
+        levelUpTurns = option.levelUpTurns?.asList() ?: listOf(37, 38, 39, 40, 61, 62, 63, 64),
         turn = 0,
         status = Status(
             skillPt = 120,
@@ -89,9 +84,10 @@ class Simulator(
             .reduce { acc, status -> acc + status },
         condition = emptyList(),
         supportTypeCount = supportCardList.map { it.type }.distinct().count(),
+        totalRaceBonus = supportCardList.sumOf { it.race },
     )
 
-    private val raceBonus = supportCardList.sumOf { it.race }.let {
+    private val raceBonus = initialState.totalRaceBonus.let {
         Status(
             speed = option.raceBonusStatus * it / 100,
             stamina = option.raceBonusStatus * it / 100,
@@ -126,13 +122,7 @@ class Simulator(
         repeat(turn) {
             state = state.onTurnChange()
             state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
-            val action = if (option.checkGoalRace) {
-                state.goalRace.find { it.turn == state.turn }?.let { race ->
-                    Race(true, race.name, race.grade)
-                } ?: selector.select(state, state.predict())
-            } else {
-                selector.select(state, state.predict())
-            }
+            val action = selector.select(state, state.predict(state.turn))
             val result = randomSelect(action.resultCandidate)
             history.add(Triple(action, result, state))
             state = state.applyAction(action, result)
