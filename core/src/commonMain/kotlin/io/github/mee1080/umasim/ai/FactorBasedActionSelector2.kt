@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
+@Suppress("unused")
 class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector {
 
     companion object {
@@ -172,12 +173,45 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                     else -> 0.0
                 }
             },
-            aoharuFactor = { turn ->
+            aoharuFactor = { turn, _, _ ->
                 when {
                     turn <= 24 -> 9.068
                     turn <= 36 -> 12.353
                     turn <= 48 -> 0.001
                     else -> 4.544
+                }
+            },
+        )
+
+        val aoharuSpeed2Power1Wisdom2Friend1Optuna3 = Option(
+            speedFactor = 1.1008224827809614,
+            staminaFactor = 1.2401307836111561,
+            powerFactor = 1.460344961127203,
+            gutsFactor = 0.4938925605556113,
+            wisdomFactor = 0.3727392759658323,
+            skillPtFactor = 0.8422039524664462,
+            hpFactor = 0.9860660753314441,
+            motivationFactor = 25.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> if (rank == 0) 16.222886230045777 else 1.586706618142665
+                    StatusType.POWER -> 4.609934735798087
+                    StatusType.WISDOM -> if (rank == 0) 14.910845068242013 else 7.334876620138475
+                    else -> 0.0
+                }
+            },
+            aoharuFactor = { turn, level, _ ->
+                when {
+                    level < 4 -> {
+                        when {
+                            turn <= 24 -> 10.901683848286718
+                            turn <= 36 -> 12.317501510709448
+                            turn <= 48 -> 13.68851304287568
+                            else -> 9.434084503148606
+                        }
+                    }
+                    level == 4 -> 7.895556162884356
+                    else -> 0.0
                 }
             },
         )
@@ -198,7 +232,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                     else -> 0.0
                 }
             },
-            aoharuFactor = { turn ->
+            aoharuFactor = { turn, _, _ ->
                 when {
                     turn <= 24 -> 15.375249098470697
                     turn <= 36 -> 17.531913102005795
@@ -230,17 +264,33 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                 }
             }
         },
-        val aoharuFactor: (Int) -> Double = {
+        val aoharuFactor: (turn: Int, level: Int, type: StatusType) -> Double = { turn, level, _ ->
             when {
-                it <= 24 -> 15.0
-                it <= 36 -> 10.0
-                it <= 48 -> 5.0
-                else -> 0.0
+                level < 4 -> {
+                    when {
+                        turn <= 24 -> 15.0
+                        turn <= 36 -> 10.0
+                        turn <= 48 -> 5.0
+                        else -> 0.0
+                    }
+                }
+                level == 4 -> 10.0
+                else -> when {
+                    turn <= 24 -> 3.0
+                    turn <= 36 -> 2.0
+                    turn <= 48 -> 1.0
+                    else -> 0.0
+                }
             }
         },
+        val aoharuBurnFactor: (turn: Int, type: StatusType) -> Double = { _, _ -> 10.0 },
         val expectedStatusFactor: Double = 0.0,
     ) {
         fun generateSelector() = FactorBasedActionSelector2(this)
+
+        fun aoharuSettingToString(): String {
+            return (1..78).joinToString("\n") { "$it ${aoharuFactor(it, 0, StatusType.SPEED)}" }
+        }
     }
 
     override fun select(state: SimulationState, selection: List<Action>): Action {
@@ -320,11 +370,10 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         return action.member.mapNotNull { it.scenarioState as? AoharuMemberState }
             .sumOf {
                 when {
-                    it.aoharuBurn -> 2.0
-                    it.aoharuIcon -> 1.0
+                    it.aoharuIcon -> option.aoharuFactor(state.turn, it.aoharuTrainingCount, action.type)
                     else -> 0.0
                 }
-            } * option.aoharuFactor(state.turn)
+            }
     }
 
     override fun toString(): String {

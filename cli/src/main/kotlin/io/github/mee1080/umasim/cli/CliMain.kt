@@ -5,10 +5,12 @@ import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
+import io.github.mee1080.umasim.cui.factor
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
+import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Evaluator
 import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.simulation2.Summary
@@ -19,6 +21,8 @@ class CliMain : CliktCommand() {
     private val chara by option(help = "育成ウマ娘 レアリティ ランク").triple().required()
 
     private val support by option(help = "サポートカード 凸数").pair().multiple()
+
+    private val factor by option(help = "因子").pair().multiple()
 
     private val scenario by option(help = "シナリオ").default("AOHARU")
 
@@ -38,6 +42,7 @@ class CliMain : CliktCommand() {
     private val relationDefault by option().double().default(0.0)
     private val aoharu by option().pair().multiple()
     private val aoharuDefault by option().double().default(0.0)
+    private val aoharuBurn by option().double()
 
     override fun run() {
         StoreLoader.load()
@@ -57,8 +62,12 @@ class CliMain : CliktCommand() {
         } else {
             val aoharuFactors = aoharu
                 .map { it.first.toInt() to it.second.toDouble() };
-            { turn ->
-                aoharuFactors.firstOrNull { turn <= it.first }?.second ?: aoharuDefault
+            { turn, level, _ ->
+                when {
+                    level < 4 -> aoharuFactors.firstOrNull { turn <= it.first }?.second ?: aoharuDefault
+                    level == 4 -> aoharuBurn ?: 10.0
+                    else -> 0.0
+                }
             }
         }
         val option = FactorBasedActionSelector2.Option(
@@ -74,11 +83,11 @@ class CliMain : CliktCommand() {
             aoharuFactor = aoharuFactor,
         )
         val evaluateSetting = mapOf(
-            StatusType.SPEED to (1.0 to 1100),
-            StatusType.STAMINA to (1.4 to 600),
-            StatusType.POWER to (1.0 to 1100),
+            StatusType.SPEED to (1.0 to 1200),
+            StatusType.STAMINA to (1.2 to 1000),
+            StatusType.POWER to (1.0 to 1200),
             StatusType.GUTS to (0.8 to 600),
-            StatusType.WISDOM to (1.0 to 600),
+            StatusType.WISDOM to (0.8 to 1000),
             StatusType.SKILL to (0.4 to Int.MAX_VALUE),
         )
 //        println(charaData)
@@ -91,11 +100,11 @@ class CliMain : CliktCommand() {
                     Scenario.valueOf(scenario),
                     charaData,
                     supportList,
-                    Simulator.Option(),
-                ).simulate(turn, option.generateSelector())
+                    factor.flatMap { factor(StatusType.valueOf(it.first), it.second.toInt()) },
+                ).simulate(turn, option.generateSelector(), ApproximateSimulationEvents())
             )
         }
-//                    summaries.map { it.status }.forEach { println(it) }
+//        summaries.map { it.status }.forEach { println(it) }
         println((Evaluator(summaries).upperSum(0.2, evaluateSetting) * 1000).roundToInt() / 1000.0)
     }
 }

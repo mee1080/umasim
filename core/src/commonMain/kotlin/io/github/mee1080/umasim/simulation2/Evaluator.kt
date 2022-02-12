@@ -247,11 +247,11 @@ class Evaluator(val summaries: List<Summary>) {
             upperSum(
                 0.2,
                 mapOf(
-                    StatusType.SPEED to (1.0 to 1100),
-                    StatusType.STAMINA to (1.4 to 600),
-                    StatusType.POWER to (1.0 to 1100),
+                    StatusType.SPEED to (1.0 to 1200),
+                    StatusType.STAMINA to (1.2 to 1000),
+                    StatusType.POWER to (1.0 to 1200),
                     StatusType.GUTS to (0.8 to 600),
-                    StatusType.WISDOM to (1.0 to 600),
+                    StatusType.WISDOM to (0.8 to 1000),
                     StatusType.SKILL to (0.4 to Int.MAX_VALUE),
                 )
             )

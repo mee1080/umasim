@@ -49,6 +49,7 @@ fun testAoharuSimulation() {
         println()
     }
     println(result.first)
+    println(FactorBasedActionSelector2.aoharuSpeedWisdom.aoharuSettingToString())
 }
 
 fun compareAoharuSimulation() {

@@ -307,7 +307,7 @@ fun openCui(args: Array<String>) {
         Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
         factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
         100000,
-        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1,
+        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3,
         { card, summaries -> stdoutOutput.invoke(card, summaries) },
 //        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
     )
