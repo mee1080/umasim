@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
@@ -77,9 +78,11 @@ data class Training(
 
 data class Race(
     val goal: Boolean,
+    val raceName: String,
+    val grade: RaceGrade,
     override val resultCandidate: List<Pair<Status, Int>> = listOf(Status() to 1),
 ) : Action {
-    override val name = if (goal) "目標レース" else "レース"
+    override val name = raceName + if (goal) "(目標)" else ""
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
         resultCandidate = resultCandidate
     )

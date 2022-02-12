@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
 
 val scenario = Scenario.URA
 
@@ -30,7 +27,7 @@ fun openCui(args: Array<String>) {
 //    singleSimulation()
 //    calcExpected()
 //    checkNewSimulator()
-//    testAoharuSimulation()
+    testAoharuSimulation()
 //    compareAoharuSimulation()
 //    compareExpectedBasedAI()
 //    deBuffSimulation(100000)
@@ -173,18 +170,18 @@ fun openCui(args: Array<String>) {
 //        100000,
 //        FactorBasedActionSelector2.aoharuPowerWisdom,
 //    )
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(power3(4, 2)),
-            *(wisdom2(4, 3)),
-        ).toTypedArray(),
-        StatusType.POWER,
-        0..4,
-        100000,
-        FactorBasedActionSelector2.aoharuPowerWisdom,
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(power3(4, 2)),
+//            *(wisdom2(4, 3)),
+//        ).toTypedArray(),
+//        StatusType.POWER,
+//        0..4,
+//        100000,
+//        FactorBasedActionSelector2.aoharuPowerWisdom,
+//    )
 //    optimizeAI(
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5), Store.getSupportByName(
 //            *(power2(4, 3)),

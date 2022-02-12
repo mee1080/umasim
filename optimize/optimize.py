@@ -18,14 +18,18 @@ def objective(trial):
     aoharuClassic1 = trial.suggest_uniform('aoharuClassic1', 0.0, 30.0)
     aoharuClassic2 = trial.suggest_uniform('aoharuClassic2', 0.0, 30.0)
     aoharuSenior = trial.suggest_uniform('aoharuSenior', 0.0, 30.0)
-    cmd = f'java -jar ../cli/build/libs/cli.jar --count 50000 --chara "[超特急！フルカラー特殊PP]アグネスデジタル" 5 5 --support "[迫る熱に押されて]キタサンブラック" 4 --support "[袖振り合えば福となる♪]マチカネフクキタル" 4 --support "[感謝は指先まで込めて]ファインモーション" 4 --support "[願いまでは拭わない]ナイスネイチャ" 4 --support "[幸せは曲がり角の向こう]ライスシャワー" 4 --support "[徹底管理主義]樫本理子" 4 --speed {speed} --stamina {stamina} --power {power} --guts {guts} --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25 --relation SPEED 0 {relationSpeed1} --relation SPEED 1 {relationSpeed2} --relation POWER 0 {relationPower} --relation WISDOM 0 {relationWisdom1} --relation WISDOM 1 {relationWisdom2} --aoharu 24 {aoharuJunior} --aoharu 36 {aoharuClassic1} --aoharu 48 {aoharuClassic2} --aoharu-default {aoharuSenior}'
+
+#    cmd = f'java -jar ../cli/build/libs/cli.jar --count 50000 --chara "[超特急！フルカラー特殊PP]アグネスデジタル" 5 5 --support "[迫る熱に押されて]キタサンブラック" 4 --support "[袖振り合えば福となる♪]マチカネフクキタル" 4 --support "[感謝は指先まで込めて]ファインモーション" 4 --support "[願いまでは拭わない]ナイスネイチャ" 4 --support "[幸せは曲がり角の向こう]ライスシャワー" 4 --support "[徹底管理主義]樫本理子" 4 --speed {speed} --stamina {stamina} --power {power} --guts {guts} --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25 --relation SPEED 0 {relationSpeed1} --relation SPEED 1 {relationSpeed2} --relation POWER 0 {relationPower} --relation WISDOM 0 {relationWisdom1} --relation WISDOM 1 {relationWisdom2} --aoharu 24 {aoharuJunior} --aoharu 36 {aoharuClassic1} --aoharu 48 {aoharuClassic2} --aoharu-default {aoharuSenior}'
+
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 50000 --chara "[超特急！フルカラー特殊PP]アグネスデジタル" 5 5 --support "[迫る熱に押されて]キタサンブラック" 4 --support "[袖振り合えば福となる♪]マチカネフクキタル" 4 --support "[感謝は指先まで込めて]ファインモーション" 4 --support "[一粒の安らぎ]スーパークリーク" 4 --support "[そこに“いる”幸せ]アグネスデジタル" 4 --support "[徹底管理主義]樫本理子" 4 --speed {speed} --stamina {stamina} --power {power} --guts {guts} --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25 --relation SPEED 0 {relationSpeed1} --relation SPEED 1 {relationSpeed2} --relation POWER 0 {relationPower} --relation WISDOM 0 {relationWisdom1} --relation WISDOM 1 {relationWisdom2} --aoharu 24 {aoharuJunior} --aoharu 36 {aoharuClassic1} --aoharu 48 {aoharuClassic2} --aoharu-default {aoharuSenior}'
+
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
-    print(float(score))
+    print(score.decode('cp932'))
     return float(score)
 
 study = optuna.create_study(
-    study_name='test10',
+    study_name='test12',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'

@@ -30,11 +30,36 @@ object GoalRaceLoader {
                 list.add(
                     GoalRace(
                         data[i++].toInt(),
-                        data[i++].split(",").map { value -> value.toInt() },
+                        data[i++].split(",").map { value -> toEntry(value) },
                     )
                 )
             }
         }
         return list
+    }
+
+    private fun toEntry(value: String): GoalRaceEntry {
+        val data = value.split(":")
+        if (data.size == 1) {
+            val turn = value.toInt()
+            return GoalRaceEntry(
+                turn,
+                when (turn) {
+                    74 -> "URAファイナルズ予選"
+                    76 -> "URAファイナルズ準決勝"
+                    78 -> "URAファイナルズ決勝"
+                    else -> "不明"
+                },
+                0,
+                RaceGrade.FINALS,
+            )
+        } else {
+            return GoalRaceEntry(
+                data[0].toInt(),
+                data[1],
+                data[2].toInt(),
+                toRaceGrade(data[3].toInt()),
+            )
+        }
     }
 }

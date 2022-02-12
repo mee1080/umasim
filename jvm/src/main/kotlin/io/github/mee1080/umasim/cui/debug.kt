@@ -85,8 +85,8 @@ fun dataCheck() {
     }
     Store.getTrainingList(Scenario.URA).forEach { println(it) }
     Store.getTrainingList(Scenario.AOHARU).forEach { println(it) }
-    Store.charaList.forEach {
-        println("${it.name} ${Store.getGoalRaceList(it.charaId).joinToString(",")}")
+    Store.charaList.distinctBy { it.charaId }.forEach {
+        println("${it.charaName} ${Store.getGoalRaceList(it.charaId).joinToString(",")}")
     }
 }
 

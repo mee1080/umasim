@@ -99,3 +99,17 @@ fun turnToString(turn: Int) = buildString {
     append("月")
     append(if (turn % 2 == 1) "前半" else "後半")
 }
+
+enum class RaceGrade {
+    DEBUT, OPEN, G3, G2, G1, FINALS, UNKNOWN,
+}
+
+fun toRaceGrade(value: Int) = when {
+    value < 100 -> RaceGrade.UNKNOWN
+    value < 200 -> RaceGrade.G1
+    value < 300 -> RaceGrade.G2
+    value < 400 -> RaceGrade.G3
+    value < 900 -> RaceGrade.OPEN
+    value < 1000 -> RaceGrade.DEBUT
+    else -> RaceGrade.UNKNOWN
+}

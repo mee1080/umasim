@@ -37,7 +37,7 @@ class Simulator(
     private val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
-        goalRaceTurns = Store.getGoalRaceList(chara.charaId),
+        goalRace = Store.getGoalRaceList(chara.charaId),
         member = supportCardList.mapIndexed { index, card ->
             MemberState(
                 index = index,
@@ -126,8 +126,10 @@ class Simulator(
         repeat(turn) {
             state = state.onTurnChange()
             state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
-            val action = if (option.checkGoalRace && state.goalRaceTurns.contains(state.turn)) {
-                Race(true)
+            val action = if (option.checkGoalRace) {
+                state.goalRace.find { it.turn == state.turn }?.let { race ->
+                    Race(true, race.name, race.grade)
+                } ?: selector.select(state, state.predict())
             } else {
                 selector.select(state, state.predict())
             }
