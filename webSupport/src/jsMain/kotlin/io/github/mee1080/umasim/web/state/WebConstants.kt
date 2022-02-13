@@ -18,8 +18,7 @@
  */
 package io.github.mee1080.umasim.web.state
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
-import io.github.mee1080.umasim.ai.SimpleActionSelector
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
 
 object WebConstants {
@@ -71,20 +70,17 @@ object WebConstants {
 
     val simulationModeList = mapOf(
         Scenario.URA to listOf(
-            "スピパワ" to { FactorBasedActionSelector.speedPower.generateSelector() },
-            "スピ賢" to { FactorBasedActionSelector.speedWisdom.generateSelector() },
-            "スピ賢パワ" to { FactorBasedActionSelector.speedWisdomPower.generateSelector() },
-            "スピスタ" to { FactorBasedActionSelector.speedStamina.generateSelector() },
-            "パワ賢" to { FactorBasedActionSelector.powerWisdom.generateSelector() },
-            "スピ根性" to { FactorBasedActionSelector.speedGuts.generateSelector() },
-            "バクシン(スピード)" to { SimpleActionSelector(StatusType.SPEED) },
-            "バクシン(スタミナ)" to { SimpleActionSelector(StatusType.STAMINA) },
-            "バクシン(パワー)" to { SimpleActionSelector(StatusType.POWER) },
-            "バクシン(根性)" to { SimpleActionSelector(StatusType.GUTS) },
-            "バクシン(賢さ)" to { SimpleActionSelector(StatusType.WISDOM) },
+            "スピ3パワ3" to { FactorBasedActionSelector2.speedPower.generateSelector() },
+            "スピ3パワ3中距離" to { FactorBasedActionSelector2.speedPowerMiddle.generateSelector() },
+            "スピ3賢3" to { FactorBasedActionSelector2.speedWisdom.generateSelector() },
+            "スピ3スタ3" to { FactorBasedActionSelector2.speedStamina.generateSelector() },
+            "パワ3賢3" to { FactorBasedActionSelector2.aoharuPowerWisdom.generateSelector() },
+            "スピ2パワ3賢1" to { FactorBasedActionSelector2.speed2Power3Wisdom1.generateSelector() },
         ), Scenario.AOHARU to listOf(
-            "スピ賢" to { FactorBasedActionSelector.aoharuSpeedWisdom.generateSelector() },
-            "パワ賢" to { FactorBasedActionSelector.aoharuPowerWisdom.generateSelector() },
+            "スピ2パワ3賢1" to { FactorBasedActionSelector2.aoharuSpeed2Power3Wisdom1.generateSelector() },
+            "スピ2賢2代理ライス" to { FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3.generateSelector() },
+            "スピ2スタ1賢3" to { FactorBasedActionSelector2.aoharuSpeed2Stamina1Wisdom3.generateSelector() },
+            "スピ1スタ1賢1代理デジタル" to { FactorBasedActionSelector2.aoharuSpeed2Stamina1Power1Wisdom1Friend1Optuna.generateSelector() },
         )
     )
 

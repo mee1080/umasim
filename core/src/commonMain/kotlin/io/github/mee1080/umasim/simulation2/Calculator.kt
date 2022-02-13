@@ -28,6 +28,26 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
+        support: List<Pair<SupportCard, Int>>,
+        teamJoinCount: Int,
+        scenario: Scenario,
+        supportTypeCount: Int,
+    ) = calcTrainingSuccessStatus(
+        chara,
+        training,
+        motivation,
+        support.toMemberState(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+            teamJoinCount,
+            scenario
+        ) else emptyList(),
+        scenario,
+        supportTypeCount,
+    )
+
+    fun calcTrainingSuccessStatus(
+        chara: Chara,
+        training: TrainingBase,
+        motivation: Int,
         member: List<MemberState>,
         scenario: Scenario = Scenario.URA,
         supportTypeCount: Int,
@@ -165,6 +185,26 @@ object Calculator {
             StatusType.NONE to noneRate,
         )
     }
+
+    fun calcExpectedTrainingStatus(
+        chara: Chara,
+        training: TrainingBase,
+        motivation: Int,
+        support: List<Pair<SupportCard, Int>>,
+        teamJoinCount: Int,
+        scenario: Scenario,
+        supportTypeCount: Int,
+    ) = calcExpectedTrainingStatus(
+        chara,
+        training,
+        motivation,
+        support.toMemberState(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+            teamJoinCount,
+            scenario
+        ) else emptyList(),
+        scenario,
+        supportTypeCount,
+    )
 
     fun calcExpectedTrainingStatus(
         chara: Chara,

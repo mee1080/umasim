@@ -39,29 +39,7 @@ class Simulator(
         chara = chara,
         factor = factorList,
         goalRace = Store.getGoalRaceList(chara.charaId),
-        member = supportCardList.mapIndexed { index, card ->
-            MemberState(
-                index = index,
-                card = card,
-                position = StatusType.NONE,
-                supportState = SupportState(
-                    relation = card.initialRelation,
-                    hintIcon = false,
-                ),
-                scenarioState = when (scenario) {
-                    Scenario.URA -> UraMemberState
-                    Scenario.AOHARU -> Store.Aoharu.getTeamMember(card.id)?.let { member ->
-                        AoharuMemberState(
-                            member = member,
-                            status = member.initialStatus,
-                            maxStatus = member.maxStatus,
-                            aoharuTrainingCount = 0,
-                            aoharuIcon = false,
-                        )
-                    } ?: AoharuNotMemberState
-                }
-            )
-        },
+        member = supportCardList.toMemberState(scenario),
         training = Store.getTrainingList(scenario)
             .groupBy { it.type }
             .map { entry ->

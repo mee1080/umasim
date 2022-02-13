@@ -18,13 +18,7 @@
  */
 package io.github.mee1080.umasim.web.vm
 
-import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation.Runner
-import io.github.mee1080.umasim.simulation.Simulator
-import io.github.mee1080.umasim.simulation.Team
+import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.web.state.AoharuSimulationState
 import io.github.mee1080.umasim.web.state.HistoryItem
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -35,13 +29,13 @@ class AoharuSimulationViewModel(val root: ViewModel) {
         root.state = root.state.copy(aoharuSimulationState = update(root.state.aoharuSimulationState))
     }
 
-    private fun toHistoryItem(action: String, charaStatus: Status, team: Team) = HistoryItem(
-        action,
-        charaStatus,
-        team.totalStatus(charaStatus),
-        team.averageStatus(charaStatus),
-        team.statusRank(charaStatus),
-    )
+//    private fun toHistoryItem(action: String, charaStatus: Status, team: Team) = HistoryItem(
+//        action,
+//        charaStatus,
+//        team.totalStatus(charaStatus),
+//        team.averageStatus(charaStatus),
+//        team.statusRank(charaStatus),
+//    )
 
     fun updateSimulationMode(mode: Int) {
         updateAoharuState { it.copy(simulationMode = mode) }
@@ -51,53 +45,17 @@ class AoharuSimulationViewModel(val root: ViewModel) {
         val state = root.state
         val aoharuState = state.aoharuSimulationState
         val supportList = state.supportSelectionList.mapNotNull { it.card }
-        val simulator = Simulator(state.chara, supportList, WebConstants.trainingList[Scenario.AOHARU]!!)
-        Runner.simulate(
-            aoharuState.simulationTurn,
-            simulator,
-            WebConstants.simulationModeList[Scenario.AOHARU]!![aoharuState.simulationMode].second()
-        ) { target ->
-            if (target.turn > 0) {
-                target.status += Status(2, 2, 2, 2, 2)
-            }
-            when (target.turn) {
-                18 -> target.trainingInfo.values.forEach { it.applyTeamRank(Store.Aoharu.teamStatusRank["E"]!!) }
-                28 -> target.trainingInfo.values.forEach { it.applyTeamRank(Store.Aoharu.teamStatusRank["C"]!!) }
-                42 -> target.trainingInfo.values.forEach { it.applyTeamRank(Store.Aoharu.teamStatusRank["A"]!!) }
-                54 -> target.trainingInfo.values.forEach { it.applyTeamRank(Store.Aoharu.teamStatusRank["S"]!!) }
-            }
-        }
-        val linkCount = supportList.count {
-            it.type == StatusType.FRIEND || Store.isScenarioLink(Scenario.AOHARU, it.chara)
-        }
+        val selector = WebConstants.simulationModeList[state.scenario]!![state.simulationMode].second()
+        val (summary, history) = io.github.mee1080.umasim.simulation2.Simulator(
+            state.scenario,
+            state.chara,
+            supportList,
+        ).simulateWithHistory(
+            state.simulationTurn,
+            selector,
+            ApproximateSimulationEvents(),
+        )
         val newHistory = mutableListOf<HistoryItem>()
-        val team = Team(supportList)
-        Store.scenarioLink[Scenario.AOHARU]!!.forEach {
-            team.addGuest(Store.Aoharu.getGuest(it)!!)
-        }
-        newHistory.add(toHistoryItem("初期", simulator.history[0].status, team))
-        WebConstants.specialTurnList[Scenario.AOHARU]!!.forEachIndexed { index, (turn, name) ->
-            val action = simulator.history[turn]
-            if (index >= 1) {
-                team.addRaceBonus(50)
-            }
-            val item = toHistoryItem(name, action.status, team)
-            when (index) {
-                0 -> team.addGuest(9 - team.memberCount, item.charaStatus)
-                1 -> team.addGuest(13 - team.memberCount, item.charaStatus)
-                2 -> team.addGuest(15 - team.memberCount, item.charaStatus)
-                3 -> team.addGuest(19 - team.memberCount, item.charaStatus)
-            }
-            newHistory.add(item)
-        }
-//        for (i in 0..simulator.history.size) {
-//            newHistory.add(
-//                HistoryItem(
-//                    if (i == 0) "初期" else simulator.history[i - 1].name,
-//                    if (i == simulator.history.size) simulator.status else simulator.history[i].status,
-//                )
-//            )
-//        }
         updateAoharuState { it.copy(simulationHistory = newHistory) }
     }
 }

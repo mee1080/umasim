@@ -19,12 +19,12 @@ fun HideBlock(
     header: @Composable () -> Unit,
     content: @Composable () -> Unit
 ) {
-    console.log("HideBlock $open")
     Div({
         style {
             display(DisplayStyle.Flex)
             alignItems(AlignItems.Center)
         }
+        onClickOrTouch { onChange(!open) }
     }) {
         Button({ onClickOrTouch { onChange(!open) } }) { Text(if (open) "-" else "+") }
         header()
@@ -35,9 +35,7 @@ fun HideBlock(
 @Composable
 fun HideBlock(header: @Composable () -> Unit, content: @Composable () -> Unit) {
     val open = remember { mutableStateOf(false) }
-    console.log("HideBlockWrapper $open")
     HideBlock(open.value, {
-        console.log("onChange $it")
         open.value = it
     }, header, content)
 }

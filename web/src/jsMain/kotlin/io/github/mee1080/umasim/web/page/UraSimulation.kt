@@ -19,14 +19,14 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.motivationToString
 import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
+import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.colspan
 import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.textAlign
@@ -37,7 +37,7 @@ fun UraSimulation(model: ViewModel, state: State) {
     Div {
         LabeledSelect(
             "モード",
-            WebConstants.displaySimulationModeList[Scenario.URA]!!,
+            WebConstants.displaySimulationModeList[state.scenario]!!,
             state.simulationMode,
             model::updateSimulationMode
         )
@@ -53,6 +53,7 @@ fun UraSimulation(model: ViewModel, state: State) {
         }
     }
     Div {
+        H3 { Text("ステータス") }
         Table({ classes(AppStyle.table) }) {
             Tr {
                 Th { Text("スピード") }
@@ -70,24 +71,42 @@ fun UraSimulation(model: ViewModel, state: State) {
                 Td { Text(state.simulationResult.wisdom.toString()) }
                 Td { Text(state.simulationResult.skillPt.toString()) }
             }
+        }
+        H3 { Text("ヒント") }
+        Div {
+            Text(state.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
+        }
+        H3 { Text("履歴") }
+        Table({ classes(AppStyle.table) }) {
             Tr {
-                Th { Text("ヒント") }
-                Td({
-                    style { textAlign("left") }
-                    colspan(5)
-                }) {
-                    Text(state.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
-                }
+                Th { Text("ターン") }
+                Th { Text("スピード") }
+                Th { Text("スタミナ") }
+                Th { Text("パワー") }
+                Th { Text("根性") }
+                Th { Text("賢さ") }
+                Th { Text("スキルPt") }
+                Th { Text("体力") }
+                Th { Text("やる気") }
+                Th({ style { unsetWidth() } }) { Text("行動") }
             }
-            Tr {
-                Th { Text("行動履歴") }
-                Td({
-                    style { textAlign("left") }
-                    colspan(5)
-                }) {
-                    state.simulationHistory.forEachIndexed { index, item ->
-                        Div { Text("${index + 1}: $item") }
-                    }
+            state.simulationHistory.forEachIndexed { index, (action, status) ->
+                Tr {
+                    Td { Text("${index + 1}") }
+                    Td { Text(status.speed.toString()) }
+                    Td { Text(status.stamina.toString()) }
+                    Td { Text(status.power.toString()) }
+                    Td { Text(status.guts.toString()) }
+                    Td { Text(status.wisdom.toString()) }
+                    Td { Text(status.skillPt.toString()) }
+                    Td { Text(status.hp.toString()) }
+                    Td { Text(motivationToString(status.motivation)) }
+                    Td({
+                        style {
+                            unsetWidth()
+                            textAlign("left")
+                        }
+                    }) { Text(action) }
                 }
             }
         }

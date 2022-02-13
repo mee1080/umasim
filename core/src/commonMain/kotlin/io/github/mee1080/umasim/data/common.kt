@@ -115,3 +115,12 @@ fun toRaceGrade(value: Int) = when {
     value < 1000 -> RaceGrade.DEBUT
     else -> RaceGrade.UNKNOWN
 }
+
+fun motivationToString(motivation: Int) = when (motivation) {
+    2 -> "絶好調"
+    1 -> "好調"
+    0 -> "普通"
+    -1 -> "不調"
+    -2 -> "絶不調"
+    else -> "不明"
+}

@@ -21,13 +21,11 @@ package io.github.mee1080.umasim.web.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.simulation.Calculator
-import io.github.mee1080.umasim.simulation.Runner
-import io.github.mee1080.umasim.simulation.Simulator
-import io.github.mee1080.umasim.simulation.Support
+import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
+import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.SupportSelection
@@ -146,54 +144,40 @@ class ViewModel {
 //    }
 
     private fun calculate(state: State): State {
-        val supportList = mutableListOf<Support>()
-        state.supportSelectionList.filter { it.join }.forEachIndexed { index, selection ->
-            val card = selection.card
-            if (card != null) {
-                supportList.add(Support(index, card).apply {
-                    checkHintFriend(selection.relation)
-                })
-            }
-        }
+        val joinSupportList =
+            state.supportSelectionList.filter { it.join && it.card != null }.map { it.card!! to it.relation }
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
-        console.log(supportTypeCount)
         val trainingResult = Calculator.calcTrainingSuccessStatus(
             state.chara,
-            WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
-            state.trainingLevel,
+            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
             state.motivation,
-            supportList,
-            state.scenario,
+            joinSupportList,
             state.teamJoinCount,
+            state.scenario,
             supportTypeCount,
         )
-        val trainingImpact = supportList.map { target ->
-            target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
+
+        val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
+            target.first.name to trainingResult - Calculator.calcTrainingSuccessStatus(
                 state.chara,
-                WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
-                state.trainingLevel,
+                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
                 state.motivation,
-                supportList.filter { it.index != target.index },
-                state.scenario,
+                joinSupportList.filterIndexed { index, _ -> index != targetIndex },
                 state.teamJoinCount,
+                state.scenario,
                 supportTypeCount,
             )
         }
+
         val expectedResult = Calculator.calcExpectedTrainingStatus(
             state.chara,
-            WebConstants.trainingInfo[state.scenario]!![trainingType]!!,
-            state.trainingLevel,
+            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
             state.motivation,
-            state.supportSelectionList
-                .mapIndexedNotNull { index, selection ->
-                    selection.card?.let {
-                        Support(index, it).apply { checkHintFriend(selection.relation) }
-                    }
-                },
-            state.scenario,
+            state.supportSelectionList.filter { it.card != null }.map { it.card!! to it.relation },
             state.teamJoinCount,
+            state.scenario,
             supportTypeCount,
         ).first
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
@@ -243,16 +227,20 @@ class ViewModel {
 
     fun doUraSimulation() {
         val supportList = state.supportSelectionList.mapNotNull { it.card }
-        val simulator = Simulator(state.chara, supportList, WebConstants.trainingList[state.scenario]!!)
-        Runner.simulate(
+        val selector = WebConstants.simulationModeList[state.scenario]!![state.simulationMode].second()
+        val (summary, history) = Simulator(
+            state.scenario,
+            state.chara,
+            supportList,
+        ).simulateWithHistory(
             state.simulationTurn,
-            simulator,
-            WebConstants.simulationModeList[Scenario.URA]!![state.simulationMode].second()
+            selector,
+            ApproximateSimulationEvents(),
         )
         updateState(calculate = false, calculateBonus = false) {
             it.copy(
-                simulationResult = simulator.status,
-                simulationHistory = simulator.history.map { it.name },
+                simulationResult = summary.status,
+                simulationHistory = history.map { it.first.name to it.third.status },
             )
         }
     }
