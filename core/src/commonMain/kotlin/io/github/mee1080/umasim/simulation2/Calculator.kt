@@ -36,7 +36,7 @@ object Calculator {
         chara,
         training,
         motivation,
-        support.toMemberState(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+        support.toMemberStateWithRelation(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
             teamJoinCount,
             scenario
         ) else emptyList(),
@@ -198,7 +198,7 @@ object Calculator {
         chara,
         training,
         motivation,
-        support.toMemberState(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+        support.toMemberStateWithRelation(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
             teamJoinCount,
             scenario
         ) else emptyList(),

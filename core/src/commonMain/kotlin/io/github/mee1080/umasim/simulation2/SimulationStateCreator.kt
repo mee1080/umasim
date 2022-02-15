@@ -27,7 +27,7 @@ fun SupportCard.toMemberState(scenario: Scenario, index: Int, relation: Int? = n
 fun List<SupportCard>.toMemberState(scenario: Scenario) =
     mapIndexed { index, target -> target.toMemberState(scenario, index) }
 
-fun List<Pair<SupportCard, Int>>.toMemberState(scenario: Scenario) =
+fun List<Pair<SupportCard, Int>>.toMemberStateWithRelation(scenario: Scenario) =
     mapIndexed { index, target -> target.first.toMemberState(scenario, index, target.second) }
 
 fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
