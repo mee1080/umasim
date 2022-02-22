@@ -97,7 +97,7 @@ object SupportCardLoader {
                 )
             }
         }
-        return list
+        return list.filter { it.type != StatusType.NONE }
     }
 
     private fun readHintStatus(value: String?) = value
