@@ -92,6 +92,19 @@ fun doSimulation2(
                     )
                 }
                 output.forEach { it(card, summary) }
+//                Evaluator(summary).getStatusSum(
+//                    mapOf(
+//                        StatusType.SPEED to (1.2 to 1200),
+//                        StatusType.STAMINA to (1.2 to 600),
+//                        StatusType.POWER to (1.0 to 1150),
+//                        StatusType.GUTS to (0.8 to 600),
+//                        StatusType.WISDOM to (0.9 to 1000),
+//                        StatusType.SKILL to (0.4 to Int.MAX_VALUE),
+//                    )
+//                ).map { it.roundToInt() }.fold(mutableMapOf<Int, Int>()) { map, value ->
+//                    map[value] = map.getOrPut(value) { 0 } + 1
+//                    map
+//                }.toSortedMap().forEach { (value, count) -> println("$value\t$count") }
             }
         }.forEach {
             it.join()

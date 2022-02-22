@@ -58,7 +58,7 @@ class Evaluator(val summaries: List<Summary>) {
             typeToFactor.sumOf { kotlin.math.min(result.get(it.first), limit) * it.second }
         }
 
-    private fun getStatusSum(typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
+    fun getStatusSum(typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
         results.value.map { result ->
             typeToFactorLimit.entries.sumOf { kotlin.math.min(result.get(it.key), it.value.second) * it.value.first }
         }

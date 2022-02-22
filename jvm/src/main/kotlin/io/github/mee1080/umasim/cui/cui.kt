@@ -170,6 +170,7 @@ fun openCui(args: Array<String>) {
 //        ).toTypedArray(),
 //        StatusType.WISDOM,
 //        0..4,
+//        factor(StatusType.SPEED, 6),
 //        100000,
 //        FactorBasedActionSelector2.aoharuPowerWisdom,
 //    )
@@ -293,24 +294,24 @@ fun openCui(args: Array<String>) {
 //        )
 //    )
 //    val repository = SimulationResultRepository("result/umasimout.db")
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(speed4(4, 2)),
-            *(power4(4, 1)),
-            *(wisdom(4, 1)),
-            *(friend2(4, 1)),
-        ).toTypedArray(),
-        StatusType.WISDOM, 0..4,
-//        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
-//        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
-        factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
-        100000,
-        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3,
-        { card, summaries -> stdoutOutput.invoke(card, summaries) },
-//        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 2)),
+//            *(power4(4, 1)),
+//            *(wisdom(4, 1)),
+//            *(friend2(4, 1)),
+//        ).toTypedArray(),
+//        StatusType.WISDOM, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+////        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
+//        factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3,
+//        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
+//    )
 //    optimizeAI(
 //        Scenario.AOHARU,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
@@ -401,4 +402,57 @@ fun openCui(args: Array<String>) {
 //        { card, summaries -> stdoutOutput.invoke(card, summaries) },
 ////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
 //    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[初うらら♪さくさくら]ハルウララ", 4, 5),
+        Store.getSupportByName(
+            "[In my way]トーセンジョーダン" to 4,
+            "[見習い魔女と長い夜]スイープトウショウ" to 4,
+            "[夕焼けはあこがれの色]スペシャルウィーク" to 4,
+            "[スノウクリスタル・デイ]マーベラスサンデー" to 4,
+            "[幽霊さんとハロウィンの魔法]ミホノブルボン" to 4,
+        ).toTypedArray(),
+//        StatusType.WISDOM, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+        Store.getSupportByName("[夜に暁、空に瑞星]アドマイヤベガ" to 4),
+        factor(StatusType.SPEED, 2) + factor(
+            StatusType.POWER,
+            2
+        ) + (StatusType.STAMINA to 2) + (StatusType.STAMINA to 2),
+        100000,
+        FactorBasedActionSelector2.Option(
+            aoharuBurnFactor = { _, _ -> 23.02896997810754 },
+            aoharuFactor = { turn, _, _ ->
+                when {
+                    turn <= 24 -> 13.803821031469564
+                    turn <= 36 -> 9.47897204420649
+                    turn <= 48 -> 3.0530377402346125
+                    else -> 6.65415366956225
+                }
+            },
+            gutsFactor = 1.0004962851970132,
+            hpFactor = 1.2881367347726032,
+            powerFactor = 1.8518683878878885,
+            relationFactor = { type, rank, _ ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        0 -> 12.723879320370237
+                        1 -> 9.255694388301702
+                        else -> 13.132327846147893
+                    }
+                    StatusType.POWER -> when (rank) {
+                        0 -> 15.700659310451204
+                        else -> 11.36641199670376
+                    }
+                    else -> 6.41945391831409
+                }
+            },
+            skillPtFactor = 0.5423309544596215,
+            speedFactor = 1.886962976375078,
+            staminaFactor = 1.8822823475400616,
+            wisdomFactor = 1.458470048254414
+        ),
+        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+//        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
+    )
 }

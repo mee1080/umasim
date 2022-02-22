@@ -92,8 +92,8 @@ fun wisdom(supportTalent: Int, count: Int) = arrayOf(
 
 fun wisdom2(supportTalent: Int, count: Int) = arrayOf(
     "[明日は全国的に赤でしょう♪]セイウンスカイ" to supportTalent,
-    "[幽霊さんとハロウィンの魔法]ミホノブルボン" to supportTalent,
     "[いじっぱりのマルクト]ナリタタイシン" to supportTalent,
+    "[幽霊さんとハロウィンの魔法]ミホノブルボン" to supportTalent,
 ).take(count).toTypedArray()
 
 fun friend(supportTalent: Int, count: Int) = arrayOf(

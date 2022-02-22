@@ -43,7 +43,7 @@ fun toSupportType(value: String) = when (value) {
     "賢さ", "W" -> StatusType.WISDOM
     "友人" -> StatusType.FRIEND
     "スキルPt" -> StatusType.SKILL
-    else -> throw IllegalArgumentException()
+    else -> StatusType.NONE
 }
 
 fun randomSelect(vararg values: Int): Int {

@@ -5,7 +5,6 @@ import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.cui.factor
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
@@ -83,11 +82,11 @@ class CliMain : CliktCommand() {
             aoharuFactor = aoharuFactor,
         )
         val evaluateSetting = mapOf(
-            StatusType.SPEED to (1.0 to 1200),
-            StatusType.STAMINA to (1.2 to 1000),
-            StatusType.POWER to (1.0 to 1200),
+            StatusType.SPEED to (1.2 to 1200),
+            StatusType.STAMINA to (1.2 to 600),
+            StatusType.POWER to (1.0 to 1150),
             StatusType.GUTS to (0.8 to 600),
-            StatusType.WISDOM to (0.8 to 1000),
+            StatusType.WISDOM to (0.9 to 1000),
             StatusType.SKILL to (0.4 to Int.MAX_VALUE),
         )
 //        println(charaData)
@@ -100,7 +99,7 @@ class CliMain : CliktCommand() {
                     Scenario.valueOf(scenario),
                     charaData,
                     supportList,
-                    factor.flatMap { factor(StatusType.valueOf(it.first), it.second.toInt()) },
+                    factor.map { StatusType.valueOf(it.first) to it.second.toInt() },
                 ).simulate(turn, option.generateSelector(), ApproximateSimulationEvents())
             )
         }
