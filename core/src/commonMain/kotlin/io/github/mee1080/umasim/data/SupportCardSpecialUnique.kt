@@ -1,5 +1,7 @@
 package io.github.mee1080.umasim.data
 
+import kotlin.math.min
+
 data class SupportCardSpecialUnique(
     val type: Int,
     val value0: Int,
@@ -13,6 +15,7 @@ data class SupportCardSpecialUnique(
             101 -> "絆${value0}以上で${supportEffectName[value1]}$value2"
             102 -> "絆${value0}以上で非得意トレーニング効果$value1"
             103 -> "サポカタイプ数${value0}以上でトレーニング効果$value1"
+            104 -> "ファン数10000ごとにトレーニング効果1（最大20）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -37,11 +40,19 @@ data class SupportCardSpecialUnique(
         } else 0
     }
 
-    fun trainingFactor(cardType: StatusType, trainingType: StatusType, relation: Int, supportTypeCount: Int): Int {
+    fun trainingFactor(
+        cardType: StatusType,
+        trainingType: StatusType,
+        relation: Int,
+        supportTypeCount: Int,
+        fanCount: Int,
+    ): Int {
         return if (type == 102 && relation >= value0 && trainingType != cardType) {
             value1
         } else if (type == 103 && supportTypeCount >= value0) {
             value1
+        } else if (type == 104) {
+            min(20, fanCount / 10000)
         } else 0
     }
 }

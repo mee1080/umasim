@@ -156,6 +156,7 @@ class Simulator(
                 status.motivation,
                 support,
                 supportTypeCount = 1,
+                fanCount = 0,
             ) + Status(supportRelation = calcTrainingRelation(condition.contains("愛嬌○"), support))
         val successCandidate = calcTrainingHint(support)
             .map { successStatus + it to 100 - failureRate }.toTypedArray()

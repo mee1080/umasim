@@ -26,17 +26,20 @@ object Store {
     private lateinit var supportSource: String
     private lateinit var teamMemberSource: String
     private lateinit var goalRaceSource: String
+    private lateinit var raceSource: String
 
     fun load(
         charaSource: String,
         supportSource: String,
         teamMemberSource: String,
         goalRaceSource: String,
+        raceSource: String,
     ) {
         Store.charaSource = charaSource
         Store.supportSource = supportSource
         Store.teamMemberSource = teamMemberSource
         Store.goalRaceSource = goalRaceSource
+        Store.raceSource = raceSource
     }
 
     val charaList by lazy { CharaLoader.load(charaSource) }
@@ -44,6 +47,7 @@ object Store {
     private val trainingList = trainingData
     val scenarioLink = scenarioLinkData
     private val goalRaceMap by lazy { GoalRaceLoader.load(goalRaceSource).associate { it.charaId to it.turns } }
+    val raceMap by lazy { RaceLoader.load(raceSource) }
 
     fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 

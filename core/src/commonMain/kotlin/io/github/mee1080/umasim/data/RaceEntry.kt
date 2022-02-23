@@ -18,14 +18,12 @@
  */
 package io.github.mee1080.umasim.data
 
-object StoreLoader {
-    fun load() {
-        Store.load(
-            Source.chara,
-            Source.supportCard,
-            Source.teamMember,
-            Source.goalRace,
-            Source.race,
-        )
-    }
-}
+data class RaceEntry(
+    val turn: Int,
+    val name: String,
+    val needFan: Int,
+    val getFan: Int,
+    val grade: RaceGrade,
+    val distance: RaceDistance,
+    val ground: RaceGround,
+)

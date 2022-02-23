@@ -25,7 +25,7 @@ data class SimulationState(
     val scenario: Scenario,
     val chara: Chara,
     val factor: List<Pair<StatusType, Int>>,
-    val goalRace: List<GoalRaceEntry>,
+    val goalRace: List<RaceEntry>,
     val member: List<MemberState>,
     val training: List<TrainingState>,
     val levelUpTurns: Collection<Int>,
@@ -34,6 +34,7 @@ data class SimulationState(
     val condition: List<String>,
     val supportTypeCount: Int,
     val totalRaceBonus: Int,
+    val totalFanBonus: Int,
 ) {
     val support get() = member.filter { !it.guest }
 

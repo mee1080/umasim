@@ -78,7 +78,7 @@ fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
 
 enum class Scenario(val displayName: String) {
     URA("URA"),
-    AOHARU("アオハル(作成途中)"),
+    AOHARU("アオハル"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -103,7 +103,7 @@ fun turnToString(turn: Int) = buildString {
 }
 
 enum class RaceGrade {
-    DEBUT, OPEN, G3, G2, G1, FINALS, UNKNOWN,
+    DEBUT, PRE_OPEN, OPEN, G3, G2, G1, FINALS, UNKNOWN,
 }
 
 fun toRaceGrade(value: Int) = when {
@@ -111,9 +111,32 @@ fun toRaceGrade(value: Int) = when {
     value < 200 -> RaceGrade.G1
     value < 300 -> RaceGrade.G2
     value < 400 -> RaceGrade.G3
-    value < 900 -> RaceGrade.OPEN
+    value < 700 -> RaceGrade.OPEN
+    value < 900 -> RaceGrade.PRE_OPEN
     value < 1000 -> RaceGrade.DEBUT
     else -> RaceGrade.UNKNOWN
+}
+
+enum class RaceDistance {
+    SHORT, MILE, MIDDLE, LONG, UNKNOWN,
+}
+
+fun toRaceDistance(value: Int) = when {
+    value <= 1400 -> RaceDistance.SHORT
+    value <= 1800 -> RaceDistance.MILE
+    value <= 2400 -> RaceDistance.MIDDLE
+    else -> RaceDistance.LONG
+}
+
+enum class RaceGround {
+    TURF, DIRT, UNKNOWN,
+}
+
+fun toRaceGround(value: String) = when (value) {
+    "芝" -> RaceGround.TURF
+    "ダート" -> RaceGround.DIRT
+    else -> RaceGround.UNKNOWN
+
 }
 
 fun motivationToString(motivation: Int) = when (motivation) {

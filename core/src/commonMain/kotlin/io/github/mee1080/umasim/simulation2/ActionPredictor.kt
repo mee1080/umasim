@@ -24,7 +24,7 @@ import kotlin.math.max
 import kotlin.math.min
 
 fun SimulationState.predict(turn: Int): List<Action> {
-    return goalRace.find { it.turn == turn }?.let { predictRace(it) } ?: predictNormal()
+    return goalRace.find { it.turn == turn }?.let { listOf(predictRace(it)) } ?: predictNormal()
 }
 
 fun SimulationState.predictNormal(): List<Action> {
@@ -58,7 +58,9 @@ fun SimulationState.predictNormal(): List<Action> {
                     Status(hp = 10, motivation = 1) to 8,
                 )
             )
-        ))
+        )),
+        // TODO 出走可否判定、レース後イベント
+//        *(Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: arrayOf())
     ).map { adjustRange(it) }
 }
 
@@ -75,6 +77,7 @@ private fun SimulationState.calcTrainingResult(
             support,
             scenario,
             supportTypeCount,
+            status.fanCount,
         )
     val successCandidate = listOf(successStatus to 100 - failureRate)
     val failureCandidate = when {
@@ -115,9 +118,10 @@ fun SimulationState.adjustRange(action: Action) = action.updateCandidate(
     action.resultCandidate.map { (status + it.first).adjustRange() - status to it.second }
 )
 
-fun SimulationState.predictRace(race: GoalRaceEntry): List<Race> {
+fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
     val status = when (race.grade) {
         RaceGrade.DEBUT -> raceStatus(3, 3, 30)
+        RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
         RaceGrade.OPEN -> raceStatus(3, 3, 30)
         RaceGrade.G3 -> raceStatus(4, 3, 30)
         RaceGrade.G2 -> raceStatus(4, 3, 30)
@@ -129,8 +133,11 @@ fun SimulationState.predictRace(race: GoalRaceEntry): List<Race> {
             else -> Status()
         }
         RaceGrade.UNKNOWN -> Status()
-    }
-    return listOf(Race(true, race.name, race.grade, listOf(status to 1)))
+    } + Status(
+        hp = if (goal) 0 else -15,
+        fanCount = (race.getFan * 0.0105 * (100 + totalFanBonus)).toInt(),
+    )
+    return Race(goal, race.name, race.grade, listOf(status to 1))
 }
 
 fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {

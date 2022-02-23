@@ -59,12 +59,14 @@ class Simulator(
             motivation = 0,
             maxHp = 100,
             skillHint = emptyMap(),
+            fanCount = 1,
         ) + chara.initialStatus + supportCardList
             .map { it.initialStatus }
             .reduce { acc, status -> acc + status },
         condition = emptyList(),
         supportTypeCount = supportCardList.map { it.type }.distinct().count(),
         totalRaceBonus = supportCardList.sumOf { it.race },
+        totalFanBonus = supportCardList.sumOf { it.fan },
     )
 
     private val raceBonus = initialState.totalRaceBonus.let {

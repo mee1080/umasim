@@ -20,12 +20,5 @@ package io.github.mee1080.umasim.data
 
 data class GoalRace(
     val charaId: Int,
-    val turns: List<GoalRaceEntry>,
-)
-
-data class GoalRaceEntry(
-    val turn:Int,
-    val name:String,
-    val fan:Int,
-    val grade:RaceGrade,
+    val turns: List<RaceEntry>,
 )

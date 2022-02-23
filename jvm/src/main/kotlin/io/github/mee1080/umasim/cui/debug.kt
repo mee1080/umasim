@@ -18,18 +18,10 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation.*
-import io.github.mee1080.umasim.simulation2.Evaluator
-import io.github.mee1080.umasim.simulation2.SimulationEvents
-import io.github.mee1080.umasim.simulation2.Summary
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import java.time.LocalDateTime
+import io.github.mee1080.umasim.simulation2.Simulator
 
 
 fun singleSimulation() {
@@ -45,48 +37,28 @@ fun singleSimulation() {
     )
     println(chara)
     println(support)
-    val selector = FactorBasedActionSelector(
-        FactorBasedActionSelector.Option(
+    val selector = FactorBasedActionSelector2(
+        FactorBasedActionSelector2.Option(
             speedFactor = 0.9,
             staminaFactor = 0.8,
             wisdomFactor = 0.5,
         )
     )
-    val simulator = Simulator(chara, support, Store.getTrainingList(scenario))
-    println(simulator.status)
-    Runner.simulate(60, simulator, selector) {
-//        if (it.turn == 10) it.condition.add("練習上手○")
-    }
-    simulator.history.forEachIndexed { index, action -> println("${index + 1}: $action") }
-    println(simulator.status)
-    val summary = simulator.summary
-    println(summary)
+    val result = Simulator(Scenario.URA, chara, support).simulateWithHistory(78, selector)
+    result.second.forEachIndexed { index, action -> println("${index + 1}: ${action.first}") }
+    println(result.first)
+    println(result.first.status)
 }
 
 fun dataCheck() {
-    val total = 10000
-    Store.supportList.filter { it.rarity >= 2 && it.talent == 4 }.forEach { card ->
-        if (card.type != StatusType.FRIEND) {
-            val support = Support(0, card)
-            val specialtyCount = (0 until total)
-                .map { support.selectTraining() }
-                .count { it == card.type }
-            val specialtyRate = specialtyCount.toDouble() / total
-            val specialtyStr = "${card.status.specialtyRate}/${card.unique.specialtyRate} $specialtyRate"
-
-            val hintCount = (0 until total)
-                .map { support.checkHint() }
-                .count { it }
-            val hintRate = hintCount.toDouble() / total
-            val hintStr = "${card.status.hintFrequency}/${card.unique.hintFrequency} $hintRate"
-
-            println("${card.name} $specialtyStr $hintStr")
-        }
-    }
     Store.getTrainingList(Scenario.URA).forEach { println(it) }
     Store.getTrainingList(Scenario.AOHARU).forEach { println(it) }
     Store.charaList.distinctBy { it.charaId }.forEach {
         println("${it.charaName} ${Store.getGoalRaceList(it.charaId).joinToString(",")}")
+    }
+    Store.raceMap.forEachIndexed { turn, list ->
+        println("$turn:")
+        list.forEach { println("  $it") }
     }
 }
 
@@ -108,62 +80,3 @@ fun dataCheck() {
 //    result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
 //    println(result.second.sumOf { it.first })
 //}
-
-fun checkNewSimulator() {
-    val chara = Store.getChara("ハルウララ", 5, 5)
-    val support = Store.getSupportByName(
-        "[迫る熱に押されて]キタサンブラック" to 4,
-        "[必殺！Wキャロットパンチ！]ビコーペガサス" to 4,
-        "[はやい！うまい！はやい！]サクラバクシンオー" to 4,
-        "[『愛してもらうんだぞ』]オグリキャップ" to 4,
-        "[押して忍べど燃ゆるもの]ヤエノムテキ" to 4,
-        "[ようこそ、トレセン学園へ！]駿川たづな" to 4,
-    )
-
-    val turn = 60
-    val testCount = 10000
-//    val selector = { SimpleActionSelector(StatusType.SPEED) }
-
-    runBlocking {
-        println(LocalDateTime.now())
-        val selector = { FactorBasedActionSelector(FactorBasedActionSelector.speedPower) }
-        launch(context) {
-            val summary = mutableListOf<io.github.mee1080.umasim.simulation.Summary>()
-            repeat(testCount) {
-                val simulator = Simulator(chara, support, Store.getTrainingList(scenario)).apply {
-                    status = status.copy(motivation = 2)
-                }
-                summary.add(Runner.simulate(turn, simulator, selector()))
-//                simulator.history.forEach { println(it) }
-//                simulator.history.forEach {
-//                    if (it is Action.Training) {
-//                        println(it.support.joinToString("/") { "${it.card.name}=${it.friendTraining}" })
-//                    }
-//                }
-//                if ((it + 1) % (testCount / 100) == 0) println("$it/$testCount")
-            }
-            println("old,${Evaluator(summary).toSummaryString()}")
-        }.join()
-        println(LocalDateTime.now())
-        val selector2 = { FactorBasedActionSelector2(FactorBasedActionSelector2.speedPower) }
-        launch(context) {
-            val summary = mutableListOf<Summary>()
-            val simulator = io.github.mee1080.umasim.simulation2.Simulator(Scenario.URA, chara, support)
-            repeat(testCount) {
-                summary.add(simulator.simulate(turn, selector2(), SimulationEvents(
-                    initialStatus = { it.copy(motivation = 2) }
-                )))
-//                simulator.history.forEach { println(it.first) }
-//                simulator.history.forEach {
-//                    val action = it.first
-//                    if (action is io.github.mee1080.umasim.simulation2.Action.Training) {
-//                        println(action.member.joinToString("/") { "${it.name}=${it.isFriendTraining(action.type)} ${it.supportState?.relation}" })
-//                    }
-//                }
-//                if ((it + 1) % (testCount / 100) == 0) println("$it/$testCount")
-            }
-            println("new,${Evaluator(summary).toSummaryString()}")
-        }.join()
-        println(LocalDateTime.now())
-    }
-}

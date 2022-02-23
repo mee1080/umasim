@@ -30,7 +30,7 @@ object StoreLoader {
     private const val URL_BASE = "https://raw.githubusercontent.com/mee1080/umasim/main/data/"
     private const val FORCE_NETWORK = false
 
-    private val names = arrayOf("chara.txt", "support_card.txt", "team_member.txt", "goal_race.txt")
+    private val names = arrayOf("chara.txt", "support_card.txt", "team_member.txt", "goal_race.txt", "race.txt")
 
     fun load() {
         val files = names.map { File(FILE_BASE + it) }
@@ -40,6 +40,7 @@ object StoreLoader {
                 files[1].readText(),
                 files[2].readText(),
                 files[3].readText(),
+                files[4].readText(),
             )
         } else {
             runBlocking {
@@ -49,7 +50,7 @@ object StoreLoader {
                 if (FORCE_NETWORK) {
                     data.forEach { println(it) }
                 }
-                Store.load(data[0], data[1], data[2], data[3])
+                Store.load(data[0], data[1], data[2], data[3], data[4])
             }
         }
     }
