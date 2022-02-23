@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
@@ -40,6 +41,13 @@ fun TrainingInfo(model: ViewModel, state: State) {
         model::updateTrainingType
     )
     LabeledRadioGroup("level", "レベル：", WebConstants.trainingLevelList, state.trainingLevel, model::updateTrainingLevel)
+    Div {
+        Text("ファン数：")
+        TextInput(state.fanCount.toString()) {
+            size(10)
+            onInput { model.updateFanCount(it.value.toIntOrNull() ?: 0) }
+        }
+    }
     Div {
         Table({ classes(AppStyle.table) }) {
             Tr {

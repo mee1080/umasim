@@ -137,6 +137,10 @@ class ViewModel {
         updateState(calculateBonus = false) { it.copy(motivation = motivation) }
     }
 
+    fun updateFanCount(fanCount: Int) {
+        updateState(calculateBonus = false) { it.copy(fanCount = fanCount) }
+    }
+
 //    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
 //
 //    fun updateTrainingParamTest(enabled: Boolean) {
@@ -149,6 +153,8 @@ class ViewModel {
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
+        // TODO
+        val fanCount = 1
         val trainingResult = Calculator.calcTrainingSuccessStatus(
             state.chara,
             WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
@@ -157,6 +163,7 @@ class ViewModel {
             state.teamJoinCount,
             state.scenario,
             supportTypeCount,
+            fanCount,
         )
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
@@ -168,6 +175,7 @@ class ViewModel {
                 state.teamJoinCount,
                 state.scenario,
                 supportTypeCount,
+                fanCount,
             )
         }
 
@@ -179,6 +187,7 @@ class ViewModel {
             state.teamJoinCount,
             state.scenario,
             supportTypeCount,
+            fanCount,
         ).first
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(

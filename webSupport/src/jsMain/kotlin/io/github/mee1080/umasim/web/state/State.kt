@@ -34,6 +34,7 @@ data class State(
     val selectedTrainingType: Int = StatusType.SPEED.ordinal,
     val trainingLevel: Int = 1,
     val motivation: Int = 2,
+    val fanCount: Int = 1,
     val trainingResult: Status = Status(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),

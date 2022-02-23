@@ -33,8 +33,8 @@ fun HideBlock(
 }
 
 @Composable
-fun HideBlock(header: @Composable () -> Unit, content: @Composable () -> Unit) {
-    val open = remember { mutableStateOf(false) }
+fun HideBlock(header: @Composable () -> Unit, visible: Boolean = false, content: @Composable () -> Unit) {
+    val open = remember { mutableStateOf(visible) }
     HideBlock(open.value, {
         open.value = it
     }, header, content)

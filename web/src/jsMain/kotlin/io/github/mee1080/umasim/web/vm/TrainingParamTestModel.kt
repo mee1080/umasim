@@ -41,6 +41,7 @@ class TrainingParamTestModel {
                 skillPt = skillPt,
             ),
             supportTypeCount = 1,
+            fanCount = 1,
         )
     }
 }
