@@ -88,6 +88,7 @@ fun UraSimulation(model: ViewModel, state: State) {
                 Th { Text("スキルPt") }
                 Th { Text("体力") }
                 Th { Text("やる気") }
+                Th { Text("ファン数") }
                 Th({ style { unsetWidth() } }) { Text("行動") }
             }
             state.simulationHistory.forEachIndexed { index, (action, status) ->
@@ -101,6 +102,7 @@ fun UraSimulation(model: ViewModel, state: State) {
                     Td { Text(status.skillPt.toString()) }
                     Td { Text(status.hp.toString()) }
                     Td { Text(motivationToString(status.motivation)) }
+                    Td { Text(status.fanCount.toString()) }
                     Td({
                         style {
                             unsetWidth()
