@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.*
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 fun SimulationState.predict(turn: Int): List<Action> {
     return goalRace.find { it.turn == turn }?.let { listOf(predictRace(it)) } ?: predictNormal()
@@ -135,7 +136,7 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         RaceGrade.UNKNOWN -> Status()
     } + Status(
         hp = if (goal) 0 else -15,
-        fanCount = (race.getFan * 0.0105 * (100 + totalFanBonus)).toInt(),
+        fanCount = (race.getFan * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt(),
     )
     return Race(goal, race.name, race.grade, listOf(status to 1))
 }
