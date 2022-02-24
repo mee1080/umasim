@@ -113,8 +113,9 @@ fun toRaceGrade(value: Int) = when {
     value < 200 -> RaceGrade.G1
     value < 300 -> RaceGrade.G2
     value < 400 -> RaceGrade.G3
-    value < 700 -> RaceGrade.OPEN
-    value < 900 -> RaceGrade.PRE_OPEN
+    value < 500 -> RaceGrade.OPEN
+    value < 800 -> RaceGrade.PRE_OPEN
+    //value < 900 -> RaceGrade.NOT_WIN
     value < 1000 -> RaceGrade.DEBUT
     else -> RaceGrade.UNKNOWN
 }
