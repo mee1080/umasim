@@ -79,12 +79,14 @@ fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
 enum class Scenario(val displayName: String) {
     URA("URA"),
     AOHARU("アオハル"),
+    CLIMAX("クライマックス(仮)"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
 
 fun toScenario(value: Int) = when (value) {
     2 -> Scenario.AOHARU
+    4 -> Scenario.CLIMAX
     else -> Scenario.URA
 }
 

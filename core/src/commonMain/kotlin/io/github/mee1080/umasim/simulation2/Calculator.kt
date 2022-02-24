@@ -311,6 +311,8 @@ object Calculator {
     ) = when (scenario) {
         Scenario.URA -> Status()
         Scenario.AOHARU -> calcAoharuStatus(training, member)
+        // TODO
+        Scenario.CLIMAX -> Status()
     }
 
     private fun calcAoharuStatus(

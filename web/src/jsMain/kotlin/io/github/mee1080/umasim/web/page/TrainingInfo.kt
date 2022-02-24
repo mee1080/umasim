@@ -43,9 +43,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
     LabeledRadioGroup("level", "レベル：", WebConstants.trainingLevelList, state.trainingLevel, model::updateTrainingLevel)
     Div {
         Text("ファン数：")
-        TextInput(state.fanCount.toString()) {
+        TextInput(state.fanCount) {
             size(10)
-            onInput { model.updateFanCount(it.value.toIntOrNull() ?: 0) }
+            onInput { model.updateFanCount(it.value) }
         }
     }
     Div {

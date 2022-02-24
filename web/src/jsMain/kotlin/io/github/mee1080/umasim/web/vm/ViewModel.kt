@@ -137,7 +137,7 @@ class ViewModel {
         updateState(calculateBonus = false) { it.copy(motivation = motivation) }
     }
 
-    fun updateFanCount(fanCount: Int) {
+    fun updateFanCount(fanCount: String) {
         updateState(calculateBonus = false) { it.copy(fanCount = fanCount) }
     }
 
@@ -153,8 +153,7 @@ class ViewModel {
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
-        // TODO
-        val fanCount = 1
+        val fanCount = state.fanCount.toIntOrNull() ?: 1
         val trainingResult = Calculator.calcTrainingSuccessStatus(
             state.chara,
             WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },

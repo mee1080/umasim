@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.simulation.ExpectedStatus
 import io.github.mee1080.umasim.util.SaveDataConverter
 
 data class State(
-    val selectedScenario: Int = Scenario.AOHARU.ordinal,
+    val selectedScenario: Int = Scenario.CLIMAX.ordinal,
     val selectedChara: Int = WebConstants.displayCharaList[0].first,
     val supportFilter: String = "",
     val appliedSupportFilter: String = "",
@@ -34,7 +34,7 @@ data class State(
     val selectedTrainingType: Int = StatusType.SPEED.ordinal,
     val trainingLevel: Int = 1,
     val motivation: Int = 2,
-    val fanCount: Int = 1,
+    val fanCount: String = "1",
     val trainingResult: Status = Status(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
@@ -49,7 +49,7 @@ data class State(
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),
 ) {
 
-    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.AOHARU }
+    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.CLIMAX }
 
     val chara get() = WebConstants.charaMap[selectedChara]!!
 

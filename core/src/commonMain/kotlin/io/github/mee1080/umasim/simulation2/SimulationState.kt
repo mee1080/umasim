@@ -114,6 +114,11 @@ object UraMemberState : ScenarioMemberState {
     override fun toString() = "URA"
 }
 
+// TODO
+object ClimaxMemberState : ScenarioMemberState {
+    override fun toString() = "Climax"
+}
+
 data class AoharuMemberState(
     val member: TeamMemberData,
     val status: Status,

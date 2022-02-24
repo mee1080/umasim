@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.HideBlock
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -33,12 +34,14 @@ fun RootPage(model: ViewModel, state: State) {
     HideBlock({ H2 { Text("トレーニング上昇量") } }, true) { TrainingInfo(model, state) }
     HideBlock({ H2 { Text("編成情報") } }) { SupportInfo(model, state) }
     HideBlock({ H2 { Text("サポートカード情報") } }) { SupportCardInfo(model, state) }
-    HideBlock({ H2 { Text("シミュレーション") } }) {
-        UraSimulation(model, state)
+    if (state.scenario != Scenario.CLIMAX) {
+        HideBlock({ H2 { Text("シミュレーション") } }) {
+            UraSimulation(model, state)
 //        when (state.scenario) {
 //            Scenario.URA -> UraSimulation(model, state)
 //            Scenario.AOHARU -> AoharuSimulation(model.aoharuSimulationViewModel, state.aoharuSimulationState)
 //        }
+        }
     }
     LicenseInfo()
 }

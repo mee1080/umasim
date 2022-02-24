@@ -98,6 +98,7 @@ class Simulator(
             // TODO
             Scenario.URA -> UraScenarioEvents()
             Scenario.AOHARU -> AoharuScenarioEvents()
+            Scenario.CLIMAX -> ClimaxScenarioEvents()
         }
         state = commonScenarioEvents.beforeSimulation(state)
         state = scenarioEvents.beforeSimulation(state)
