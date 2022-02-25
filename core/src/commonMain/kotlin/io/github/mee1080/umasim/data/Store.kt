@@ -120,4 +120,7 @@ object Store {
             .associateBy { it.rank }
     }
 
+    object Climax {
+        val shopItem = shopItemData
+    }
 }

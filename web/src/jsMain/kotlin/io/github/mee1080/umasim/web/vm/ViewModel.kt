@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.web.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
@@ -141,6 +142,14 @@ class ViewModel {
         updateState(calculateBonus = false) { it.copy(fanCount = fanCount) }
     }
 
+    fun updateShopItemMegaphone(index: Int) {
+        updateState(calculateBonus = false) { it.copy(shopItemMegaphone = index) }
+    }
+
+    fun updateShopItemWeight(index: Int) {
+        updateState(calculateBonus = false) { it.copy(shopItemWeight = index) }
+    }
+
 //    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
 //
 //    fun updateTrainingParamTest(enabled: Boolean) {
@@ -164,6 +173,16 @@ class ViewModel {
             supportTypeCount,
             fanCount,
         )
+
+        val itemList = listOf(
+            WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone),
+            WebConstants.shopItemWeight.getOrNull(state.shopItemWeight),
+        ).filterNotNull()
+        val trainingItemBonus = if (state.scenario != Scenario.CLIMAX) {
+            Status()
+        } else {
+            Calculator.calcItemBonus(trainingType, trainingResult, itemList)
+        }
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
             target.first.name to trainingResult - Calculator.calcTrainingSuccessStatus(
@@ -195,6 +214,7 @@ class ViewModel {
         )
         return state.copy(
             trainingResult = trainingResult,
+            trainingItemBonus = trainingItemBonus,
             trainingImpact = trainingImpact,
             expectedResult = expectedResult,
         )

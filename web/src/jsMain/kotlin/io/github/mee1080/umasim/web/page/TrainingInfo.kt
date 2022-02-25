@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -48,9 +49,28 @@ fun TrainingInfo(model: ViewModel, state: State) {
             onInput { model.updateFanCount(it.value) }
         }
     }
+    if (state.scenario == Scenario.CLIMAX) {
+        LabeledRadioGroup(
+            "shopItemMegaphone",
+            "メガホン：",
+            WebConstants.shopItemMegaphoneNames,
+            state.shopItemMegaphone,
+            model::updateShopItemMegaphone
+        )
+        LabeledRadioGroup(
+            "shopItemWeight",
+            "アンクルウェイト：",
+            WebConstants.shopItemWeightNames,
+            state.shopItemWeight,
+            model::updateShopItemWeight
+        )
+    }
     Div {
         Table({ classes(AppStyle.table) }) {
             Tr {
+                if (state.scenario == Scenario.CLIMAX) {
+                    Th({ style { property("border", "none") } }) { }
+                }
                 Th { Text("スピード") }
                 Th { Text("スタミナ") }
                 Th { Text("パワー") }
@@ -61,6 +81,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Th { Text("5ステ合計") }
             }
             Tr {
+                if (state.scenario == Scenario.CLIMAX) {
+                    Th { Text("基本") }
+                }
                 Td { Text(state.trainingResult.speed.toString()) }
                 Td { Text(state.trainingResult.stamina.toString()) }
                 Td { Text(state.trainingResult.power.toString()) }
@@ -69,6 +92,31 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Td { Text(state.trainingResult.skillPt.toString()) }
                 Td { Text(state.trainingResult.hp.toString()) }
                 Td { Text(state.trainingResult.statusTotal.toString()) }
+            }
+            if (state.scenario == Scenario.CLIMAX) {
+                Tr {
+                    Th { Text("アイテム") }
+                    Td { Text(state.trainingItemBonus.speed.toString()) }
+                    Td { Text(state.trainingItemBonus.stamina.toString()) }
+                    Td { Text(state.trainingItemBonus.power.toString()) }
+                    Td { Text(state.trainingItemBonus.guts.toString()) }
+                    Td { Text(state.trainingItemBonus.wisdom.toString()) }
+                    Td { Text(state.trainingItemBonus.skillPt.toString()) }
+                    Td { Text(state.trainingItemBonus.hp.toString()) }
+                    Td { Text(state.trainingItemBonus.statusTotal.toString()) }
+                }
+                Tr {
+                    Th { Text("合計") }
+                    val totalStatus = state.trainingResult + state.trainingItemBonus
+                    Td { Text(totalStatus.speed.toString()) }
+                    Td { Text(totalStatus.stamina.toString()) }
+                    Td { Text(totalStatus.power.toString()) }
+                    Td { Text(totalStatus.guts.toString()) }
+                    Td { Text(totalStatus.wisdom.toString()) }
+                    Td { Text(totalStatus.skillPt.toString()) }
+                    Td { Text(totalStatus.hp.toString()) }
+                    Td { Text(totalStatus.statusTotal.toString()) }
+                }
             }
         }
     }

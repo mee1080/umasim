@@ -337,4 +337,24 @@ object Calculator {
             .map { it.status }
         return burn.fold(aoharuTraining) { acc, status -> acc + status }
     }
+
+    fun calcItemBonus(trainingType: StatusType, status: Status, item: List<ShopItem>): Status {
+        val statusFactor = item.sumOf {
+            when (it) {
+                is MegaphoneItem -> it.trainingFactor
+                is WeightItem -> if (it.type == trainingType) it.trainingFactor else 0
+                else -> 0
+            }
+        }
+        val hpFactor = item.sumOf { if (it is WeightItem && it.type == trainingType) it.hpFactor else 0 }
+        return Status(
+            speed = (status.speed * statusFactor / 100.0).toInt(),
+            stamina = (status.stamina * statusFactor / 100.0).toInt(),
+            power = (status.power * statusFactor / 100.0).toInt(),
+            guts = (status.guts * statusFactor / 100.0).toInt(),
+            wisdom = (status.wisdom * statusFactor / 100.0).toInt(),
+            skillPt = (status.skillPt * statusFactor / 100.0).toInt(),
+            hp = (status.hp * hpFactor / 100.0).toInt(),
+        )
+    }
 }

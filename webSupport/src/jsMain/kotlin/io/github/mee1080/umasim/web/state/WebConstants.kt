@@ -98,4 +98,11 @@ object WebConstants {
         )
     )
 
+    val shopItemMegaphone = Store.Climax.shopItem.filterIsInstance<MegaphoneItem>()
+
+    val shopItemMegaphoneNames = listOf(-1 to "なし") + shopItemMegaphone.mapIndexed { index, item -> index to item.name }
+
+    val shopItemWeight = Store.Climax.shopItem.filterIsInstance<WeightItem>()
+
+    val shopItemWeightNames = listOf(-1 to "なし") + shopItemWeight.mapIndexed { index, item -> index to item.name }
 }
