@@ -21,20 +21,22 @@ package io.github.mee1080.umasim.web.page
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.web.components.GroupedSelect
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
+import io.github.mee1080.umasim.web.state.displayName
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.placeholder
+import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun SupportSelect(model: ViewModel, state: State) {
@@ -72,18 +74,46 @@ fun SupportSelect(model: ViewModel, state: State) {
                             }
                         }
                     }) {
-                        GroupedSelect(
-                            "",
-                            state.getSupportSelection(index),
-                            item.selectedSupport,
-                            {
-                                classes(AppStyle.supportCard)
-                                if (state.isFriendTraining(index)) {
-                                    classes(AppStyle.friendSupportCard)
+                        Div {
+                            val selection = WebConstants.displayStatusTypeList
+                            val selectedValue = item.statusType
+                            Select({
+                                prop(
+                                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                                    selection.indexOfFirst { it == selectedValue }
+                                )
+                                onChange { model.updateSupportType(index, selection[it.value!!.toInt()]) }
+                            }) {
+                                selection.forEachIndexed { index, statusType ->
+                                    Option(
+                                        index.toString(),
+                                        { if (statusType == selectedValue) selected() }
+                                    ) { Text(statusType.displayName) }
                                 }
-                            },
-                            { model.updateSupport(index, it) },
-                        ) {
+                            }
+                        }
+                        Div({
+                            classes(AppStyle.supportCard)
+                            if (state.isFriendTraining(index)) {
+                                classes(AppStyle.friendSupportCard)
+                            }
+                        }) {
+                            val selection = state.getSupportSelection(index)
+                            val selectedValue = item.selectedSupport
+                            Select({
+                                prop(
+                                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                                    selection.indexOfFirst { it.first == selectedValue }
+                                )
+                                onChange { model.updateSupport(index, it.value!!.toInt()) }
+                            }) {
+                                selection.forEach { (index, card) ->
+                                    Option(
+                                        index.toString(),
+                                        { if (index == selectedValue) selected() }
+                                    ) { Text(card.displayName()) }
+                                }
+                            }
                             Div({ classes("after") })
                         }
                         LabeledRadioGroup(

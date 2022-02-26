@@ -23,7 +23,16 @@ import io.github.mee1080.umasim.data.*
 
 object WebConstants {
 
-    val notSelected = -1 to "未選択"
+    val notSelected = -1 to null as SupportCard?
+
+    val displayStatusTypeList = listOf(
+        StatusType.NONE,
+        StatusType.SPEED,
+        StatusType.STAMINA,
+        StatusType.POWER,
+        StatusType.GUTS,
+        StatusType.WISDOM
+    )
 
     val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
 
@@ -37,17 +46,11 @@ object WebConstants {
 
     val supportMap = Store.supportList.groupBy { it.id }
 
-    val displaySupportList =
-        listOf(Triple(notSelected.first, notSelected.second, notSelected.second)) + supportMap.entries
-            .map { it.key to it.value[0] }
-            .sortedBy { it.second.type.ordinal * 10000000 - it.second.rarity * 1000000 + it.first }
-            .map { (_, card) -> getDisplayItem(card) }
+    val displaySupportList = listOf(notSelected) + supportMap.entries
+        .map { it.key to it.value[0] }
+        .sortedBy { it.second.type.ordinal * 10000000 - it.second.rarity * 1000000 + it.first }
 
-    fun getDisplayItem(card: SupportCard) = Triple(
-        card.id,
-        getRarityText(card) + " " + card.name,
-        card.type.displayName
-    )
+    fun getSupportList(type: StatusType) = displaySupportList.filter { it.second?.type == type }
 
     fun getRarityText(card: SupportCard) = when (card.rarity) {
         1 -> "R"
@@ -105,4 +108,12 @@ object WebConstants {
     val shopItemWeight = Store.Climax.shopItem.filterIsInstance<WeightItem>()
 
     val shopItemWeightNames = listOf(-1 to "なし") + shopItemWeight.mapIndexed { index, item -> index to item.name }
+}
+
+fun SupportCard?.displayName(): String {
+    return if (this == null) {
+        "未選択"
+    } else {
+        WebConstants.getRarityText(this) + " " + name
+    }
 }

@@ -28,7 +28,7 @@ data class State(
     val selectedChara: Int = WebConstants.displayCharaList[0].first,
     val supportFilter: String = "",
     val appliedSupportFilter: String = "",
-    val filteredSupportList: List<Triple<Int, String, String>> = WebConstants.displaySupportList,
+    val filteredSupportList: List<Pair<Int, SupportCard?>> = WebConstants.displaySupportList,
     val supportSelectionList: List<SupportSelection> = Array(6) { SupportSelection() }.asList(),
     val teamJoinCount: Int = 0,
     val selectedTrainingType: Int = StatusType.SPEED.ordinal,
@@ -59,16 +59,16 @@ data class State(
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
 
-    fun getSupportSelection(position: Int): List<Triple<Int, String, String>> {
+    fun getSupportSelection(position: Int): List<Pair<Int, SupportCard?>> {
+        val selection = supportSelectionList.getOrNull(position) ?: return emptyList()
         return if (appliedSupportFilter.isEmpty()) filteredSupportList else {
-            val selection = supportSelectionList.getOrNull(position) ?: return emptyList()
             val selectedCard = selection.card
             if (selectedCard != null && filteredSupportList.firstOrNull { it.first == selection.selectedSupport } == null) {
-                listOf(WebConstants.getDisplayItem(selectedCard), *filteredSupportList.toTypedArray())
+                listOf(selectedCard.id to selectedCard) + filteredSupportList
             } else {
                 filteredSupportList
             }
-        }
+        }.filter { selection.statusType == StatusType.NONE || it.second?.type == selection.statusType }
     }
 
     fun isFriendTraining(position: Int): Boolean {
@@ -95,6 +95,8 @@ data class SupportSelection(
     fun toSaveInfo() = SaveDataConverter.SupportInfo(selectedSupport, supportTalent, join, relation)
 
     val card get() = WebConstants.supportMap[selectedSupport]?.firstOrNull { it.talent == supportTalent }
+
+    val statusType get() = card?.type ?: StatusType.NONE
 
     val name get() = card?.name ?: "未選択"
 

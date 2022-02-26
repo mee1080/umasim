@@ -78,8 +78,8 @@ class ViewModel {
         val appliedSupportFilter = state.supportFilter
         val filters = appliedSupportFilter.split("[　%s]".toRegex())
         val filteredSupportList = if (appliedSupportFilter.isEmpty()) WebConstants.displaySupportList else {
-            WebConstants.displaySupportList.filter { (id, _, _) ->
-                WebConstants.supportMap[id]?.first()?.matches(filters) ?: false
+            WebConstants.displaySupportList.filter { (_, card) ->
+                card?.matches(filters) ?: false
             }
         }
         updateState(calculate = false, calculateBonus = false) {
@@ -97,6 +97,15 @@ class ViewModel {
                 appliedSupportFilter = "",
                 filteredSupportList = WebConstants.displaySupportList,
             )
+        }
+    }
+
+    fun updateSupportType(position: Int, type: StatusType) {
+        updateSupportSelection(position) {
+            if (it.statusType == type) it else {
+                val card = WebConstants.getSupportList(type).firstOrNull()
+                it.copy(selectedSupport = card?.first ?: -1)
+            }
         }
     }
 
