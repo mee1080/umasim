@@ -47,7 +47,7 @@ object WebConstants {
     val supportMap = Store.supportList.groupBy { it.id }
 
     val displaySupportList = listOf(notSelected) + supportMap.entries
-        .map { it.key to it.value[0] }
+        .map { it.key to it.value.first { card -> card.talent == 4 } }
         .sortedBy { it.second.type.ordinal * 10000000 - it.second.rarity * 1000000 + it.first }
 
     fun getSupportList(type: StatusType) = displaySupportList.filter { it.second?.type == type }
@@ -60,6 +60,52 @@ object WebConstants {
     }
 
     val supportTalentList = listOf(0, 1, 2, 3, 4).map { it to it.toString() }
+
+    class SortOrder<T : Comparable<T>>(
+        val label: String,
+        val descending: Boolean = true,
+        val noInfo: Boolean = false,
+        val value: SupportCard.() -> T,
+    ) : Comparator<Pair<Int, SupportCard?>> {
+        fun toInfo(card: SupportCard?) = if (noInfo || card == null) "" else " (${card.value()})"
+        override fun compare(a: Pair<Int, SupportCard?>, b: Pair<Int, SupportCard?>): Int {
+            val cardA = a.second
+            val cardB = b.second
+            return if (cardA == null || cardB == null) {
+                if (cardA != null) 1
+                else if (cardB != null) -1
+                else 0
+            } else if (descending) {
+                cardB.value().compareTo(cardA.value())
+            } else {
+                cardA.value().compareTo(cardB.value())
+            }
+        }
+    }
+
+    val supportSortOrder = listOf(
+        SortOrder("デフォルト", noInfo = true) { type.ordinal * 10000000 - rarity * 1000000 + id },
+        SortOrder("名前", descending = false, noInfo = true) { name },
+        SortOrder("キャラ名", descending = false, noInfo = true) { chara },
+        SortOrder("初期絆") { initialRelation },
+        SortOrder("初期ステ合計") { initialStatus.statusTotal },
+        SortOrder("友情ボナ") { friendFactor },
+        SortOrder("やる気ボナ") { motivationFactor },
+        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0) },
+        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000) },
+        SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0) },
+        SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0) },
+        SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0) },
+        SortOrder("根性ボ") { getBaseBonus(StatusType.GUTS, 0) },
+        SortOrder("賢さボ") { getBaseBonus(StatusType.WISDOM, 0) },
+        SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0) },
+        SortOrder("レスボ") { race },
+        SortOrder("ファンボ") { fan },
+        SortOrder("得意率") { specialtyRate },
+        SortOrder("ヒントLv") { hintLevel },
+        SortOrder("ヒント率") { hintFrequency },
+        SortOrder("賢さ友情回復") { wisdomFriendRecovery },
+    )
 
     val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
 

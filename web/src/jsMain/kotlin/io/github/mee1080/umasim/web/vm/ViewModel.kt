@@ -100,6 +100,10 @@ class ViewModel {
         }
     }
 
+    fun updateSorOrder(value: WebConstants.SortOrder<*>) {
+        updateState(calculate = false, calculateBonus = false) { it.copy(supportSortOrder = value) }
+    }
+
     fun updateSupportType(position: Int, type: StatusType) {
         updateSupportSelection(position) {
             if (it.statusType == type) it else {

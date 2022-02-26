@@ -28,6 +28,7 @@ data class State(
     val selectedChara: Int = WebConstants.displayCharaList[0].first,
     val supportFilter: String = "",
     val appliedSupportFilter: String = "",
+    val supportSortOrder: WebConstants.SortOrder<*> = WebConstants.supportSortOrder.first(),
     val filteredSupportList: List<Pair<Int, SupportCard?>> = WebConstants.displaySupportList,
     val supportSelectionList: List<SupportSelection> = Array(6) { SupportSelection() }.asList(),
     val teamJoinCount: Int = 0,
@@ -69,6 +70,7 @@ data class State(
                 filteredSupportList
             }
         }.filter { selection.statusType == StatusType.NONE || it.second?.type == selection.statusType }
+            .sortedWith(supportSortOrder)
     }
 
     fun isFriendTraining(position: Int): Boolean {

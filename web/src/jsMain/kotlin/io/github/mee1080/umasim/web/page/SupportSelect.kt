@@ -54,6 +54,23 @@ fun SupportSelect(model: ViewModel, state: State) {
             onClickOrTouch { model.applyFilter() }
         }) { Text("フィルタ適用") }
     }
+    Div({ style { paddingBottom(16.px) } }) {
+        Div({ style { padding(8.px) } }) {
+            Text("ソート順: ")
+            val selection = WebConstants.supportSortOrder
+            val selectedValue = state.supportSortOrder
+            Select({
+                prop(
+                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                    selection.indexOfFirst { it == selectedValue })
+                onChange { model.updateSorOrder(selection[it.value!!.toInt()]) }
+            }) {
+                selection.forEachIndexed { index, sortOrder ->
+                    Option(index.toString(), { if (sortOrder == selectedValue) selected() }) { Text(sortOrder.label) }
+                }
+            }
+        }
+    }
     Div {
         (0..1).forEach { row ->
             Div({ classes(AppStyle.supportCardArea) }) {
@@ -111,7 +128,7 @@ fun SupportSelect(model: ViewModel, state: State) {
                                     Option(
                                         index.toString(),
                                         { if (index == selectedValue) selected() }
-                                    ) { Text(card.displayName()) }
+                                    ) { Text(card.displayName() + state.supportSortOrder.toInfo(card)) }
                                 }
                             }
                             Div({ classes("after") })
