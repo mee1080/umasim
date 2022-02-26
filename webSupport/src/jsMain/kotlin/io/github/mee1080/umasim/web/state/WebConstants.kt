@@ -84,7 +84,7 @@ object WebConstants {
     }
 
     val supportSortOrder = listOf(
-        SortOrder("デフォルト", noInfo = true) { type.ordinal * 10000000 - rarity * 1000000 + id },
+        SortOrder("デフォルト", descending = false, noInfo = true) { type.ordinal * 10000000 - rarity * 1000000 + id },
         SortOrder("名前", descending = false, noInfo = true) { name },
         SortOrder("キャラ名", descending = false, noInfo = true) { chara },
         SortOrder("初期絆") { initialRelation },
