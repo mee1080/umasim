@@ -206,7 +206,10 @@ class ViewModel {
             state.scenario,
             supportTypeCount,
             fanCount,
-        ).first
+        )
+        val total = trainingResult.statusTotal
+        val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
+            .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(
             KEY_SUPPORT_LIST,
@@ -216,7 +219,8 @@ class ViewModel {
             trainingResult = trainingResult,
             trainingItemBonus = trainingItemBonus,
             trainingImpact = trainingImpact,
-            expectedResult = expectedResult,
+            expectedResult = expectedResult.first,
+            upperRate = upperRate,
         )
     }
 

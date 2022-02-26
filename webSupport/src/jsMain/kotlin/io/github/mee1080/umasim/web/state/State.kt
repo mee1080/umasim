@@ -41,6 +41,7 @@ data class State(
     val trainingItemBonus: Status = Status(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
+    val upperRate: Double = 0.0,
     val totalRaceBonus: Int = 0,
     val totalFanBonus: Int = 0,
     val initialStatus: Status = Status(),

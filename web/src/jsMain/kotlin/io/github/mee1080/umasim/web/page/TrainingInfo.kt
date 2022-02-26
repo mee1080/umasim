@@ -120,6 +120,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
     }
+    H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
 //        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
 //            model.updateTrainingParamTest(it)
 //        }
