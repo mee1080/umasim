@@ -20,6 +20,8 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.simulation.Calculator
+import kotlin.math.roundToInt
 
 object WebConstants {
 
@@ -85,6 +87,7 @@ object WebConstants {
 
     val supportSortOrder = listOf(
         SortOrder("デフォルト", descending = false, noInfo = true) { type.ordinal * 10000000 - rarity * 1000000 + id },
+        SortOrder("ID（ほぼ新しい順）", noInfo = true) { id },
         SortOrder("名前", descending = false, noInfo = true) { name },
         SortOrder("キャラ名", descending = false, noInfo = true) { chara },
         SortOrder("初期絆") { initialRelation },
@@ -101,7 +104,7 @@ object WebConstants {
         SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0) },
         SortOrder("レスボ") { race },
         SortOrder("ファンボ") { fan },
-        SortOrder("得意率") { specialtyRate },
+        SortOrder("得意率") { (calcRate(type, *Calculator.calcCardPositionSelection(this)) * 1000.0).roundToInt() / 10.0 },
         SortOrder("ヒントLv") { hintLevel },
         SortOrder("ヒント率") { hintFrequency },
         SortOrder("賢さ友情回復") { wisdomFriendRecovery },
