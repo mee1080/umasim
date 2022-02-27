@@ -124,9 +124,9 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         RaceGrade.DEBUT -> raceStatus(3, 3, 30)
         RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
         RaceGrade.OPEN -> raceStatus(3, 3, 30)
-        RaceGrade.G3 -> raceStatus(4, 3, 30)
-        RaceGrade.G2 -> raceStatus(4, 3, 30)
-        RaceGrade.G1 -> raceStatus(5, 3, 30)
+        RaceGrade.G3 -> raceStatus(4, 3, 35)
+        RaceGrade.G2 -> raceStatus(4, 3, 35)
+        RaceGrade.G1 -> raceStatus(5, 3, 45)
         RaceGrade.FINALS -> when (race.turn) {
             74 -> raceStatus(5, 10, 40)
             76 -> raceStatus(5, 10, 60)

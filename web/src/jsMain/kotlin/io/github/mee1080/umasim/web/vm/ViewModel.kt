@@ -21,13 +21,12 @@ package io.github.mee1080.umasim.web.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.util.SaveDataConverter
+import io.github.mee1080.umasim.web.state.RaceSetting
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.SupportSelection
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -62,10 +61,8 @@ class ViewModel {
         }
     }
 
-    val aoharuSimulationViewModel = AoharuSimulationViewModel(this)
-
     fun updateChara(id: Int) {
-        updateState { it.copy(selectedChara = id) }
+        updateState { it.copy(selectedChara = id).createRaceSetting() }
         localStorage.setItem(KEY_CHARA, id.toString())
     }
 
@@ -130,7 +127,7 @@ class ViewModel {
     }
 
     fun updateScenario(scenarioIndex: Int) {
-        updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex) }
+        updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex).createRaceSetting() }
     }
 
     fun updateTeamJoinCount(delta: Int) {
@@ -262,6 +259,75 @@ class ViewModel {
         )
     }
 
+    private fun State.createRaceSetting(): State {
+        val list = mutableListOf<RaceSetting>()
+        if (scenario == Scenario.CLIMAX) {
+            val item = WebConstants.raceItem.keys.associateWith { "0" }
+            list.add(RaceSetting("メイクデビュー", 1, 3, 3, 15, false))
+            list.add(RaceSetting("目標外 OP/Pre-OP", 0, 5, 1, 20, true, item))
+            list.add(RaceSetting("目標外 GII/GIII", 0, 8, 1, 25, true, item))
+            list.add(RaceSetting("目標外 GI", 0, 10, 1, 35, true, item))
+            list.add(RaceSetting("クライマックス", 3, 10, 5, 30, false, item))
+        } else {
+            list.add(RaceSetting("メイクデビュー", 1, 3, 3, 30, false))
+            val goalRace = Store.getGoalRaceList(chara.charaId).groupBy { it.grade }.mapValues { it.value.size }
+            console.log("createRaceSetting $goalRace")
+            console.log("createRaceSetting ${Store.getGoalRaceList(chara.charaId)}")
+            val openCount = goalRace.filterKeys { it == RaceGrade.OPEN || it == RaceGrade.PRE_OPEN }.values.sum()
+            if (openCount > 0) {
+                list.add(RaceSetting("目標 OP/Pre-OP", openCount, 3, 3, 30, false))
+            }
+            list.add(RaceSetting("目標外 OP/Pre-OP", 0, 5, 1, 30, true))
+            val g2g3Count = goalRace.filterKeys { it == RaceGrade.G2 || it == RaceGrade.G3 }.values.sum()
+            if (g2g3Count > 0) {
+                list.add(RaceSetting("目標 GII/GIII", g2g3Count, 3, 4, 35, false))
+            }
+            list.add(RaceSetting("目標外 GII/GIII", 0, 8, 1, 35, true))
+            val g1Count = goalRace.getOrElse(RaceGrade.G1) { 0 }
+            if (g1Count > 0) {
+                list.add(RaceSetting("目標 GI", g1Count, 3, 4, 45, false))
+            }
+            list.add(RaceSetting("目標外 GI", 0, 10, 1, 45, true))
+            if (scenario == Scenario.AOHARU) {
+                list.add(RaceSetting("アオハル杯 第1戦", 1, 3, 5, 10, false))
+                list.add(RaceSetting("アオハル杯 第2戦", 1, 3, 5, 15, false))
+                list.add(RaceSetting("アオハル杯 第3戦", 1, 4, 5, 20, false))
+                list.add(RaceSetting("アオハル杯 第4戦", 1, 5, 5, 25, false))
+                list.add(RaceSetting("アオハル杯 決勝", 1, 7, 5, 50, false))
+            }
+            list.add(RaceSetting("ファイナルズ 予選", 1, 10, 5, 40, false))
+            list.add(RaceSetting("ファイナルズ 準決勝", 1, 10, 5, 60, false))
+            list.add(RaceSetting("ファイナルズ 決勝", 1, 10, 5, 80, false))
+        }
+        return copy(raceSetting = list)
+    }
+
+    fun updateRaceCount(race: RaceSetting, count: String) {
+        updateState(calculate = false, calculateBonus = false) { state ->
+            state.copy(raceSetting = state.raceSetting.map {
+                if (it.label == race.label) {
+                    it.copy(raceCount = count)
+                } else {
+                    it
+                }
+            })
+        }
+    }
+
+    fun updateRaceItemCount(race: RaceSetting, label: String, count: String) {
+        updateState(calculate = false, calculateBonus = false) { state ->
+            state.copy(raceSetting = state.raceSetting.map {
+                if (it.label == race.label) {
+                    val newItem = it.item.toMutableMap()
+                    newItem[label] = count
+                    it.copy(item = newItem)
+                } else {
+                    it
+                }
+            })
+        }
+    }
+
     fun updateSimulationMode(mode: Int) {
         updateState(calculate = false, calculateBonus = false) { it.copy(simulationMode = mode) }
     }
@@ -305,7 +371,7 @@ class ViewModel {
             state.copy(
                 selectedChara = selectedChara,
                 supportSelectionList = newList,
-            )
+            ).createRaceSetting()
         }
     }
 }

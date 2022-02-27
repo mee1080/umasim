@@ -43,6 +43,7 @@ data class State(
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
+    val raceSetting: List<RaceSetting> = emptyList(),
     val totalRaceBonus: Int = 0,
     val totalFanBonus: Int = 0,
     val initialStatus: Status = Status(),
@@ -77,6 +78,27 @@ data class State(
         val selection = supportSelectionList.getOrNull(position) ?: return false
         return selection.friend && selectedTrainingType == selection.card?.type?.ordinal
     }
+
+    fun calcRaceStatus(race: RaceSetting): Pair<Int, Int> {
+        val baseStatus = calcRaceStatus(race.statusValue)
+        val baseSkillPt = calcRaceStatus(race.skillPt)
+        var itemCount = 0
+        var totalStatus = 0
+        var totalSkillPt = 0
+        race.item.forEach { (label, strCount) ->
+            val count = strCount.toIntOrNull() ?: 0
+            itemCount += count
+            val multiplier = WebConstants.raceItem[label]!!
+            totalStatus += count * (baseStatus * multiplier).toInt() * race.statusCount
+            totalSkillPt += count * (baseSkillPt * multiplier).toInt()
+        }
+        val raceCount = race.raceCount.toIntOrNull() ?: 0
+        totalStatus += (raceCount - itemCount) * baseStatus * race.statusCount
+        totalSkillPt += (raceCount - itemCount) * baseSkillPt
+        return totalStatus to totalSkillPt
+    }
+
+    fun calcRaceStatus(value: Int) = (value * (1 + totalRaceBonus / 100.0)).toInt()
 }
 
 data class SupportSelection(
@@ -146,4 +168,26 @@ data class HistoryItem(
         val nextRank = teamStatusRank[type]!!.next
         if (nextRank == null) 0.0 else nextRank.threshold - teamAverageStatus.get(type)
     }
+}
+
+data class RaceSetting(
+    val label: String,
+    val raceCount: String,
+    val statusValue: Int,
+    val statusCount: Int,
+    val skillPt: Int,
+    val editable: Boolean,
+    val item: Map<String, String> = emptyMap(),
+) {
+    constructor(
+        label: String,
+        raceCount: Int,
+        statusValue: Int,
+        statusCount: Int,
+        skillPt: Int,
+        editable: Boolean,
+        item: Map<String, String> = emptyMap(),
+    ) : this(
+        label, raceCount.toString(), statusValue, statusCount, skillPt, editable, item,
+    )
 }

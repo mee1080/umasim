@@ -157,6 +157,11 @@ object WebConstants {
     val shopItemWeight = Store.Climax.shopItem.filterIsInstance<WeightItem>()
 
     val shopItemWeightNames = listOf(-1 to "なし") + shopItemWeight.mapIndexed { index, item -> index to item.name }
+
+    val raceItem = mapOf(
+        "蹄鉄ハンマー・匠" to 1.2,
+        "蹄鉄ハンマー・極" to 1.35,
+    )
 }
 
 fun SupportCard?.displayName(): String {

@@ -32,6 +32,7 @@ fun RootPage(model: ViewModel, state: State) {
     CharaSelect(model, state)
     SupportSelect(model, state)
     HideBlock({ H2 { Text("トレーニング上昇量") } }, true) { TrainingInfo(model, state) }
+    HideBlock({ H2 { Text("レースボーナス計算") } }) { RaceBonus(model, state) }
     HideBlock({ H2 { Text("編成情報") } }) { SupportInfo(model, state) }
     HideBlock({ H2 { Text("サポートカード情報") } }) { SupportCardInfo(model, state) }
     if (state.scenario != Scenario.CLIMAX) {
