@@ -33,7 +33,8 @@ object WebConstants {
         StatusType.STAMINA,
         StatusType.POWER,
         StatusType.GUTS,
-        StatusType.WISDOM
+        StatusType.WISDOM,
+        StatusType.FRIEND,
     )
 
     val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
