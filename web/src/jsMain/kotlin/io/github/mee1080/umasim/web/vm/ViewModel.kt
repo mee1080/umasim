@@ -285,7 +285,7 @@ class ViewModel {
             list.add(RaceSetting("目標外 GII/GIII", 0, 8, 1, 35, true))
             val g1Count = goalRace.getOrElse(RaceGrade.G1) { 0 }
             if (g1Count > 0) {
-                list.add(RaceSetting("目標 GI", g1Count, 3, 4, 45, false))
+                list.add(RaceSetting("目標 GI", g1Count, 3, 5, 45, false))
             }
             list.add(RaceSetting("目標外 GI", 0, 10, 1, 45, true))
             if (scenario == Scenario.AOHARU) {
