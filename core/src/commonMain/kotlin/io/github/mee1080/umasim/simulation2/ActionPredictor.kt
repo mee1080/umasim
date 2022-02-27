@@ -120,20 +120,28 @@ fun SimulationState.adjustRange(action: Action) = action.updateCandidate(
 )
 
 fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
-    val status = when (race.grade) {
-        RaceGrade.DEBUT -> raceStatus(3, 3, 30)
+    val climax = scenario == Scenario.CLIMAX
+    val status = if (goal) when (race.grade) {
+        RaceGrade.DEBUT -> raceStatus(3, 3, if (climax) 15 else 30)
         RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
         RaceGrade.OPEN -> raceStatus(3, 3, 30)
         RaceGrade.G3 -> raceStatus(4, 3, 35)
         RaceGrade.G2 -> raceStatus(4, 3, 35)
         RaceGrade.G1 -> raceStatus(5, 3, 45)
         RaceGrade.FINALS -> when (race.turn) {
-            74 -> raceStatus(5, 10, 40)
-            76 -> raceStatus(5, 10, 60)
-            78 -> raceStatus(5, 10, 80)
+            74 -> raceStatus(5, 10, if (climax) 30 else 40)
+            76 -> raceStatus(5, 10, if (climax) 30 else 60)
+            78 -> raceStatus(5, 10, if (climax) 30 else 80)
             else -> Status()
         }
         RaceGrade.UNKNOWN -> Status()
+    } else when (race.grade) {
+        RaceGrade.PRE_OPEN -> raceStatus(1, 5, if (climax) 20 else 30)
+        RaceGrade.OPEN -> raceStatus(1, 5, if (climax) 20 else 30)
+        RaceGrade.G3 -> raceStatus(1, 8, if (climax) 25 else 35)
+        RaceGrade.G2 -> raceStatus(1, 8, if (climax) 25 else 35)
+        RaceGrade.G1 -> raceStatus(1, 10, if (climax) 35 else 45)
+        else -> Status()
     } + Status(
         hp = if (goal) 0 else -15,
         fanCount = (race.getFan * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt(),
