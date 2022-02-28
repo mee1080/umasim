@@ -31,6 +31,9 @@ import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.SupportSelection
 import io.github.mee1080.umasim.web.state.WebConstants
 import kotlinx.browser.localStorage
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class ViewModel {
 
@@ -38,6 +41,8 @@ class ViewModel {
         private const val KEY_CHARA = "umasim.chara"
 
         private const val KEY_SUPPORT_LIST = "umasim.support_list"
+
+        private const val KEY_SUPPORT_SET = "umasim.support_set"
     }
 
     var state by mutableStateOf(State())
@@ -50,9 +55,7 @@ class ViewModel {
     }
 
     private fun updateSupportSelection(
-        position: Int,
-        calculateBonus: Boolean = true,
-        update: (SupportSelection) -> SupportSelection
+        position: Int, calculateBonus: Boolean = true, update: (SupportSelection) -> SupportSelection
     ) {
         updateState(true, calculateBonus) {
             val newList = it.supportSelectionList.toMutableList()
@@ -222,8 +225,7 @@ class ViewModel {
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
         localStorage.setItem(
-            KEY_SUPPORT_LIST,
-            SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
+            KEY_SUPPORT_LIST, SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
         )
         return state.copy(
             trainingResult = trainingResult,
@@ -356,6 +358,52 @@ class ViewModel {
         }
     }
 
+    fun updateSupportSaveName(name: String) {
+        updateState(calculate = false, calculateBonus = false) {
+            it.copy(supportSaveName = name)
+        }
+    }
+
+    fun updateSupportLoadName(name: String) {
+        updateState(calculate = false, calculateBonus = false) {
+            it.copy(supportLoadName = name)
+        }
+    }
+
+    fun saveSupport() {
+        val name = state.supportSaveName
+        if (name.isEmpty()) return
+        val support = SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
+        localStorage.setItem(
+            KEY_SUPPORT_SET, Json.encodeToString(loadSupportData().apply { put(name, support) })
+        )
+        if (!state.supportLoadList.contains(name)) {
+            updateState(calculate = false, calculateBonus = false) {
+                it.copy(
+                    supportLoadList = it.supportLoadList.toMutableList().apply { add(name) }.sorted(),
+                    supportLoadName = name,
+                )
+            }
+        }
+    }
+
+    fun loadSupport() {
+        val support = loadSupportData()[state.supportLoadName] ?: return
+        val newList = state.supportSelectionList.toMutableList()
+        SaveDataConverter.stringToSupportList(support)
+            .forEachIndexed { index, supportInfo ->
+                if (newList.indices.contains(index)) {
+                    newList[index] = SupportSelection.fromSaveInfo(supportInfo)
+                }
+            }
+        updateState { it.copy(supportSelectionList = newList, supportSaveName = state.supportLoadName) }
+    }
+
+    private fun loadSupportData(): MutableMap<String, String> {
+        val data = localStorage.getItem(KEY_SUPPORT_SET) ?: return mutableMapOf()
+        return Json.decodeFromString(data)
+    }
+
     init {
         updateState { state ->
             val selectedChara = localStorage.getItem(KEY_CHARA)?.let {
@@ -368,9 +416,12 @@ class ViewModel {
                         newList[index] = SupportSelection.fromSaveInfo(supportInfo)
                     }
                 }
+            val supportLoadList = loadSupportData().keys.sorted()
             state.copy(
                 selectedChara = selectedChara,
                 supportSelectionList = newList,
+                supportLoadList = supportLoadList,
+                supportLoadName = supportLoadList.firstOrNull() ?: "",
             ).createRaceSetting()
         }
     }

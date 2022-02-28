@@ -42,6 +42,41 @@ import org.w3c.dom.HTMLSelectElement
 fun SupportSelect(model: ViewModel, state: State) {
     H2 { Text("サポートカード") }
     Div({ style { paddingBottom(16.px) } }) {
+        Div {
+            Text("保存: ")
+            TextInput(state.supportSaveName) {
+                placeholder("保存名")
+                size(40)
+                onInput { model.updateSupportSaveName(it.value) }
+            }
+            Button({
+                if (state.supportSaveName.isEmpty()) disabled()
+                onClick { model.saveSupport() }
+            }) {
+                Text(if (state.supportLoadList.contains(state.supportSaveName)) "上書保存" else "新規保存")
+            }
+        }
+        Div {
+            Text("読込: ")
+            val selection = state.supportLoadList
+            val selectedValue = state.supportLoadName
+            Select({
+                prop(
+                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                    selection.indexOfFirst { it == selectedValue })
+                onChange { model.updateSupportLoadName(selection[it.value!!.toInt()]) }
+            }) {
+                selection.forEachIndexed { index, name ->
+                    Option(index.toString(), { if (name == selectedValue) selected() }) { Text(name) }
+                }
+            }
+            Button({
+                if (state.supportLoadName.isEmpty()) disabled()
+                onClick { model.loadSupport() }
+            }) { Text("読込") }
+        }
+    }
+    Div({ style { paddingBottom(16.px) } }) {
         TextInput(state.supportFilter) {
             placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
             size(60)
@@ -55,19 +90,17 @@ fun SupportSelect(model: ViewModel, state: State) {
         }) { Text("フィルタ適用") }
     }
     Div({ style { paddingBottom(16.px) } }) {
-        Div({ style { padding(8.px) } }) {
-            Text("ソート順: ")
-            val selection = WebConstants.supportSortOrder
-            val selectedValue = state.supportSortOrder
-            Select({
-                prop(
-                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                    selection.indexOfFirst { it == selectedValue })
-                onChange { model.updateSorOrder(selection[it.value!!.toInt()]) }
-            }) {
-                selection.forEachIndexed { index, sortOrder ->
-                    Option(index.toString(), { if (sortOrder == selectedValue) selected() }) { Text(sortOrder.label) }
-                }
+        Text("ソート順: ")
+        val selection = WebConstants.supportSortOrder
+        val selectedValue = state.supportSortOrder
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                selection.indexOfFirst { it == selectedValue })
+            onChange { model.updateSorOrder(selection[it.value!!.toInt()]) }
+        }) {
+            selection.forEachIndexed { index, sortOrder ->
+                Option(index.toString(), { if (sortOrder == selectedValue) selected() }) { Text(sortOrder.label) }
             }
         }
     }

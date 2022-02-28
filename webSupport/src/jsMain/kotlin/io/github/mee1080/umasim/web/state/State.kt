@@ -26,6 +26,9 @@ import io.github.mee1080.umasim.util.SaveDataConverter
 data class State(
     val selectedScenario: Int = Scenario.CLIMAX.ordinal,
     val selectedChara: Int = WebConstants.displayCharaList[0].first,
+    val supportSaveName: String = "",
+    val supportLoadList: List<String> = emptyList(),
+    val supportLoadName: String = "",
     val supportFilter: String = "",
     val appliedSupportFilter: String = "",
     val supportSortOrder: WebConstants.SortOrder<*> = WebConstants.supportSortOrder.first(),
