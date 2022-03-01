@@ -122,5 +122,6 @@ object Store {
 
     object Climax {
         val shopItem = shopItemData
+        fun getShopItem(name: String) = shopItem.first { it.name == name }
     }
 }

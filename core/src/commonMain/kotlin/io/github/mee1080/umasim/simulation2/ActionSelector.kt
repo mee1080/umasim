@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.StatusType
 
 interface ActionSelector {
@@ -30,4 +31,11 @@ interface ActionSelector {
     fun selectTraining(selection: List<Action>, type: StatusType) =
         selection.first { it is Training && it.type == type } as Training
 
+    fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction =
+        SelectedAction(select(state, selection), null)
 }
+
+class SelectedAction(
+    val action: Action?,
+    val useItem: List<ShopItem>?,
+)

@@ -32,6 +32,7 @@ data class Status(
     val motivation: Int = 0,
     val maxHp: Int = 0,
     val skillHint: Map<String, Int> = emptyMap(),
+    @Deprecated("not use")
     val supportRelation: Map<Int, Int> = emptyMap(),
     val fanCount: Int = 0,
 ) {
@@ -139,6 +140,7 @@ data class Status(
         }
     }
 
+    @Deprecated("not use")
     fun getSupportRelation(index: Int) = supportRelation[index] ?: 0
 
     fun add(vararg target: Pair<StatusType, Int>): Status {

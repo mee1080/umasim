@@ -187,10 +187,10 @@ class ViewModel {
             fanCount,
         )
 
-        val itemList = listOf(
+        val itemList = listOfNotNull(
             WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone),
             WebConstants.shopItemWeight.getOrNull(state.shopItemWeight),
-        ).filterNotNull()
+        )
         val trainingItemBonus = if (state.scenario != Scenario.CLIMAX) {
             Status()
         } else {

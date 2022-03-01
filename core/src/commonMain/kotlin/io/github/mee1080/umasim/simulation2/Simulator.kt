@@ -67,6 +67,8 @@ class Simulator(
         supportTypeCount = supportCardList.map { it.type }.distinct().count(),
         totalRaceBonus = supportCardList.sumOf { it.race },
         totalFanBonus = supportCardList.sumOf { it.fan },
+        possessionItem = emptyList(),
+        enableItem = emptyList(),
     )
 
     private val raceBonus = initialState.totalRaceBonus.let {
@@ -90,12 +92,11 @@ class Simulator(
         turn: Int,
         selector: ActionSelector,
         events: SimulationEvents = SimulationEvents()
-    ): Pair<Summary, List<Triple<Action, Status, SimulationState>>> {
+    ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
-        val history = mutableListOf<Triple<Action, Status, SimulationState>>()
+        val history = mutableListOf<SimulationHistoryItem>()
         val commonScenarioEvents = CommonScenarioEvents()
         val scenarioEvents = when (state.scenario) {
-            // TODO
             Scenario.URA -> UraScenarioEvents()
             Scenario.AOHARU -> AoharuScenarioEvents()
             Scenario.CLIMAX -> ClimaxScenarioEvents()
@@ -109,9 +110,20 @@ class Simulator(
             state = state.onTurnChange()
             state = commonScenarioEvents.beforeAction(state)
             state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
-            val action = selector.select(state, state.predict(state.turn))
+            state = state.shuffleMember()
+            var action: Action?
+            val useItem = mutableListOf<ShopItem>()
+            do {
+                val selection = state.predict(state.turn)
+                val selectedAction = selector.selectWithItem(state, selection)
+                selectedAction.useItem?.let {
+                    useItem.addAll(it)
+                    state = state.applyItem(it)
+                }
+                action = selectedAction.action
+            } while (action == null)
             val result = randomSelect(action.resultCandidate)
-            history.add(Triple(action, result, state))
+            history.add(SimulationHistoryItem(action, result, state, useItem))
             state = state.applyAction(action, result)
             state = scenarioEvents.afterAction(state) ?: events.afterAction(state)
             state = scenarioEvents.onTurnEnd(state)

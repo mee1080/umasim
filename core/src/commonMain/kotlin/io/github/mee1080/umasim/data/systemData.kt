@@ -228,7 +228,7 @@ internal val shopItemData = listOf(
     StatusItem("プレーンカップケーキ", 30, Status(motivation = 1)),
     StatusItem("スイートカップケーキ", 55, Status(motivation = 2)),
     UniqueItem("おいしい猫缶", 10),
-    StatusItem("にんじんBBQセット", 40, Status(supportRelation = (0..5).associateWith { 5 })),
+    UniqueItem("にんじんBBQセット", 40),
     AddConditionItem("プリティーミラー", 150, "愛嬌○"),
     AddConditionItem("名物記者の双眼鏡", 150, "注目株"),
     AddConditionItem("効率練習のススメ", 150, "練習上手○"),

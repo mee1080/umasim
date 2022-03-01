@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.data.trainingType
 
 class Summary(
     val status: Status,
-    history: List<Triple<Action, Status, SimulationState>>,
+    history: List<SimulationHistoryItem>,
     supportList: List<MemberState>,
 ) {
 
@@ -48,18 +48,18 @@ class Summary(
 
     data class SupportSummary(
         val state: MemberState,
-        val relation: Int,
         var trainingCount: Int = 0,
         var friendCount: Int = 0,
         var hintCount: Int = 0,
     ) {
+        val relation get() = state.relation
         val name get() = state.name
     }
 
-    val support = supportList.map { SupportSummary(it, status.getSupportRelation(it.index)) }.toTypedArray()
+    val support = supportList.map { SupportSummary(it) }.toTypedArray()
 
     init {
-        history.map { it.first }.forEach { action ->
+        history.map { it.action }.forEach { action ->
             when (action) {
                 is Training -> {
                     trainingCount[action.type] = trainingCount[action.type]!! + 1

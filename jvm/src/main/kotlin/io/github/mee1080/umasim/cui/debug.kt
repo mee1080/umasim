@@ -18,9 +18,12 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.simulation2.SimulationEvents
+import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.simulation2.Simulator
 
 
@@ -45,7 +48,12 @@ fun singleSimulation() {
         )
     )
     val result = Simulator(Scenario.URA, chara, support).simulateWithHistory(78, selector)
-    result.second.forEachIndexed { index, action -> println("${index + 1}: ${action.first}") }
+    result.second.forEachIndexed { index, history ->
+        println("${index + 1}:")
+        println(" ${history.action.toShortString()}")
+        println(" ${history.state.status}")
+        println(" ${history.status}")
+    }
     println(result.first)
     println(result.first.status)
 }
@@ -80,3 +88,51 @@ fun dataCheck() {
 //    result.second.forEach { println("${(it.first * 10000).roundToInt() / 100.0}% : ${it.second}") }
 //    println(result.second.sumOf { it.first })
 //}
+
+
+fun singleClimaxSimulation() {
+    val chara = Store.getChara("ハルウララ", 5, 5)
+    val support = Store.getSupportByName(
+        "[迫る熱に押されて]キタサンブラック",
+        "[必殺！Wキャロットパンチ！]ビコーペガサス",
+        "[はやい！うまい！はやい！]サクラバクシンオー",
+        "[ようこそ、トレセン学園へ！]駿川たづな",
+        "[『愛してもらうんだぞ』]オグリキャップ",
+        "[一粒の安らぎ]スーパークリーク",
+//        "[感謝は指先まで込めて]ファインモーション",
+    )
+    println(chara)
+    println(support)
+    val selector = ClimaxFactorBasedActionSelector(
+        ClimaxFactorBasedActionSelector.Option(
+            speedFactor = 0.9,
+            staminaFactor = 0.8,
+            wisdomFactor = 0.5,
+        )
+    )
+    val result =
+        Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector, object : SimulationEvents() {
+            override fun beforeAction(state: SimulationState): SimulationState {
+                if (state.turn == 13) {
+                    return state.copy(possessionItem = state.possessionItem + List(20) { Store.Climax.getShopItem("にんじんBBQセット") })
+                }
+                if (state.turn > 13) {
+                    return state.copy(
+                        possessionItem = state.possessionItem
+                                + Store.Climax.getShopItem("健康祈願のお守り")
+                                + Store.Climax.getShopItem("ブートキャンプメガホン")
+                                + Store.Climax.getShopItem("スピードアンクルウェイト")
+                    )
+                }
+                return state
+            }
+        })
+    result.second.forEachIndexed { index, history ->
+        println("${index + 1}:")
+        println(" ${history.action.toShortString()}")
+        println(" ${history.state.status}")
+        println(" ${history.status}")
+    }
+    println(result.first)
+    println(result.first.status)
+}

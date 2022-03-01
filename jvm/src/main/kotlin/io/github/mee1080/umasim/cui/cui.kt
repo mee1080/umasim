@@ -18,16 +18,14 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
 
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
 //    dataCheck()
 //    singleSimulation()
+    singleClimaxSimulation()
 //    calcExpected()
 //    checkNewSimulator()
 //    testAoharuSimulation()
@@ -294,24 +292,24 @@ fun openCui(args: Array<String>) {
 //        )
 //    )
 //    val repository = SimulationResultRepository("result/umasimout.db")
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(speed4(4, 2)),
-            *(power4(4, 1)),
-            *(wisdom(4, 1)),
-            *(friend2(4, 1)),
-        ).toTypedArray(),
-        StatusType.WISDOM, 0..4,
-//        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
-//        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
-        factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
-        100000,
-        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3,
-        { card, summaries -> stdoutOutput.invoke(card, summaries) },
-//        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(speed4(4, 2)),
+//            *(power4(4, 1)),
+//            *(wisdom(4, 1)),
+//            *(friend2(4, 1)),
+//        ).toTypedArray(),
+//        StatusType.WISDOM, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+////        Store.getSupportByName("[袖振り合えば福となる♪]マチカネフクキタル" to 4),
+//        factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 2),
+//        100000,
+//        FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3,
+//        { card, summaries -> stdoutOutput.invoke(card, summaries) },
+////        { card, summaries -> repository.save("${card.id},${card.name},${card.talent}", summaries) }
+//    )
 //    optimizeAI(
 //        Scenario.AOHARU,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),

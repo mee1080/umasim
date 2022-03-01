@@ -352,8 +352,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         if (action !is Training) return 0.0
         val supportRank = mutableMapOf<StatusType, MutableList<Pair<MemberState, Int>>>()
         state.support.forEach {
-            supportRank.getOrPut(it.card.type) { mutableListOf() }
-                .add(it to (state.status.supportRelation[it.index] ?: 0))
+            supportRank.getOrPut(it.card.type) { mutableListOf() }.add(it to it.relation)
         }
         supportRank.values.forEach { list -> list.sortByDescending { it.second } }
         val score = action.support.sumOf { support ->

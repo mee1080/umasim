@@ -35,6 +35,8 @@ data class SimulationState(
     val supportTypeCount: Int,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
+    val possessionItem: List<ShopItem>,
+    val enableItem: List<Pair<ShopItem, Int>>,
 ) {
     val support get() = member.filter { !it.guest }
 
@@ -77,6 +79,8 @@ data class SimulationState(
         }
 
     fun getTraining(type: StatusType) = training.first { it.type == type }
+
+    val currentEnableItem by lazy { enableItem.map { it.first } }
 }
 
 data class MemberState(

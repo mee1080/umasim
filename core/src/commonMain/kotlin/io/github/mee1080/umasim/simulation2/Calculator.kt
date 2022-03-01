@@ -346,6 +346,7 @@ object Calculator {
                 else -> 0
             }
         }
+        if (statusFactor == 0) return Status()
         val hpFactor = item.sumOf { if (it is WeightItem && it.type == trainingType) it.hpFactor else 0 }
         return Status(
             speed = (status.speed * statusFactor / 100.0).toInt(),

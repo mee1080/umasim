@@ -24,17 +24,23 @@ import kotlin.random.Random
 
 fun SimulationState.onTurnChange(): SimulationState {
     val turn = turn + 1
+    val levelOverride = if (levelUpTurns.contains(turn)) 5 else null
+    return copy(
+        turn = turn,
+        status = status.adjustRange(),
+        training = training.map { it.copy(levelOverride = levelOverride) },
+        enableItem = enableItem.mapNotNull { if (it.second == 1) null else it.first to it.second - 1 }
+    )
+}
+
+fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
     do {
         newMember = member.map { it.onTurnChange(turn) }
     } while (newMember.groupBy { it.position }.any { it.value.size > 5 })
-    val levelOverride = if (levelUpTurns.contains(turn)) 5 else null
     return copy(
-        turn = turn,
-        status = status.adjustRange(),
         member = newMember,
-        training = training.map { it.copy(levelOverride = levelOverride) }
     )
 }
 
@@ -164,4 +170,45 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     if (skillList.isEmpty()) return Status()
     val target = skillList.random()
     return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
+}
+
+fun SimulationState.applyItem(itemList: List<ShopItem>): SimulationState {
+    return itemList.fold(this) { state, item -> state.applyItem(item) }
+}
+
+fun SimulationState.applyItem(item: ShopItem): SimulationState {
+    return when (item) {
+        is StatusItem -> copy(status = status + item.status)
+        is UniqueItem -> when (item.name) {
+            "おいしい猫缶" -> this
+            "にんじんBBQセット" -> {
+                val relation = if (condition.contains("愛嬌○")) 7 else 5
+                copy(member = member.map { it.addRelation(relation) })
+            }
+            "リセットホイッスル" -> shuffleMember()
+            "健康祈願のお守り" -> copy(enableItem = enableItem + (item to 1))
+            else -> this
+        }
+        is AddConditionItem -> copy(condition = condition + item.condition)
+        is RemoveConditionItem -> copy(condition = condition - item.condition.toSet())
+        is TrainingLevelItem -> copy(training = training.map {
+            if (it.type == item.type) it.copy(level = it.level + 1) else it
+        })
+        is MegaphoneItem -> addEnableItem(item, item.turn)
+        is WeightItem -> addEnableItem(item)
+        is RaceBonusItem -> addEnableItem(item)
+        is FanBonusItem -> addEnableItem(item)
+    }.copy(possessionItem = possessionItem - item)
+}
+
+private inline fun <reified T : ShopItem> SimulationState.addEnableItem(item: T, turn: Int = 1): SimulationState {
+    return copy(enableItem = enableItem.filterNot { it.first is T } + (item to turn))
+}
+
+private fun MemberState.addRelation(relation: Int): MemberState {
+    return copy(
+        supportState = supportState?.copy(
+            relation = min(100, supportState.relation + relation)
+        ),
+    )
 }
