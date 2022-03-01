@@ -73,7 +73,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
     return if (action is Training) {
         val newTraining = training.map {
             if (action.type == it.type) {
-                it.applyAction(action, scenario == Scenario.URA)
+                it.applyAction(action, scenario != Scenario.AOHARU)
             } else it
         }
         val memberIndices = action.member.map { it.index }

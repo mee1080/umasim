@@ -114,7 +114,11 @@ fun singleClimaxSimulation() {
         Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector, object : SimulationEvents() {
             override fun beforeAction(state: SimulationState): SimulationState {
                 if (state.turn == 13) {
-                    return state.copy(possessionItem = state.possessionItem + List(20) { Store.Climax.getShopItem("にんじんBBQセット") })
+                    return state.copy(
+                        possessionItem = state.possessionItem
+                                + List(20) { Store.Climax.getShopItem("にんじんBBQセット") }
+                                + List(2) { Store.Climax.getShopItem("スピードトレーニング嘆願書") }
+                    )
                 }
                 if (state.turn > 13) {
                     return state.copy(
