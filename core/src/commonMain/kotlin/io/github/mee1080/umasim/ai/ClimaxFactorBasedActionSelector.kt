@@ -18,7 +18,9 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
@@ -35,8 +37,8 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,
         val powerFactor: Double = 1.0,
-        val gutsFactor: Double = 0.0,
-        val wisdomFactor: Double = 0.0,
+        val gutsFactor: Double = 0.4,
+        val wisdomFactor: Double = 0.6,
         val skillPtFactor: Double = 0.4,
         val hpFactor: Double = 0.5,
         val motivationFactor: Double = 15.0,
@@ -52,35 +54,77 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
             }
         },
         val expectedStatusFactor: Double = 0.0,
+        val race: Map<Int, String> = mapOf(
+            16 to "新潟ジュニアステークス",
+            17 to "札幌ジュニアステークス",
+            19 to "サウジアラビアロイヤルカップ",
+            22 to "東京スポーツ杯ジュニアステークス",
+            23 to "阪神ジュベナイルフィリーズ",
+            24 to "ホープフルステークス",
+            27 to "共同通信杯",
+            30 to "スプリングステークス",
+            31 to "皐月賞",
+            33 to "NHKマイルカップ",
+            34 to "東京優駿（日本ダービー）",
+            36 to "宝塚記念",
+            41 to "新潟記念",
+            43 to "府中ウマ娘ステークス",
+            44 to "菊花賞",
+            46 to "マイルチャンピオンシップ",
+            48 to "有馬記念",
+            50 to "アメリカJCC",
+            53 to "中山ウマ娘ステークス",
+            54 to "大阪杯",
+            56 to "天皇賞（春）",
+            57 to "ヴィクトリアマイル",
+            59 to "安田記念",
+            65 to "新潟記念",
+            67 to "府中ウマ娘ステークス",
+            68 to "天皇賞（秋）",
+            70 to "ジャパンカップ",
+            72 to "有馬記念",
+        )
     ) {
         fun generateSelector() = ClimaxFactorBasedActionSelector(this)
     }
 
     override fun select(state: SimulationState, selection: List<Action>): Action {
-        return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
+        val race = option.race[state.turn]
+        return if (race == null) {
+            selection
+                .filterNot { it is Race }
+                .maxByOrNull { calcScore(state, it) } ?: selection.first()
+        } else {
+            selection.first { it is Race && it.raceName == race }
+        }
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>, checkCount: Int): SelectedAction {
-        if (checkCount == 0) {
-            val itemList = when (state.turn) {
-                13 -> listOf(
-                    Store.Climax.getShopItem("にんじんBBQセット"),
-                )
-                37, 39, 61, 63 -> {
-                    listOf(Store.Climax.getShopItem("ブートキャンプメガホン")) + selectCampItem(state, selection)
-                }
-                38, 40, 62, 64 -> {
-                    selectCampItem(state, selection)
-                }
-                74, 76, 78 -> listOf(
-                    Store.Climax.getShopItem("蹄鉄ハンマー・極"),
-                )
+    var lastItemCheckedTurn = -1
+
+    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+        if (state.turn >= 13 && lastItemCheckedTurn != state.turn) {
+            val itemList = (when (state.turn) {
+                13 -> listOf("にんじんBBQセット")
+                25, 49 -> listOf("チアメガホン")
+                45, 58, 69 -> listOf("スパルタメガホン") + selectVitalOrAmulet(state)
+                47, 60, 71 -> selectVital(state)
+                37, 39, 61, 63,
+                38, 40, 62, 64 -> selectCampItem(state, selection)
+                74, 76, 78 -> listOf("蹄鉄ハンマー・極")
                 else -> emptyList()
+            } + listOfNotNull(
+                if (state.shopCoin > 150 && state.status.motivation < 2) {
+                    "プレーンカップケーキ"
+                } else null,
+            ))
+            if (!itemList.contains("リセットホイッスル")) {
+                lastItemCheckedTurn = state.turn
             }
             if (itemList.isNotEmpty()) {
+                val list = itemList.map { Store.Climax.getShopItem(it) }
                 return SelectedAction(
-                    buyItem = itemList,
-                    useItem = itemList,
+                    buyItem = list,
+                    useItem = list,
                 )
             }
         }
@@ -90,36 +134,60 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         return SelectedAction(action = select(state, selection))
     }
 
-    private fun selectCampItem(state: SimulationState, selection: List<Action>): List<ShopItem> {
-        val topTraining = selection.filterIsInstance<Training>().maxByOrNull {
-            calcScore(state, it.resultCandidate.first().first)
-        }?.type ?: StatusType.SPEED
-        val weight =
-            Store.Climax.shopItem.filterIsInstance<WeightItem>().firstOrNull { it.type == topTraining }
+    private fun selectVitalOrAmulet(state: SimulationState): List<String> {
+        return listOfNotNull(
+            when {
+                state.status.hp <= 30 -> "健康祈願のお守り"
+                state.status.hp <= 50 -> "バイタル20"
+                else -> null
+            }
+        )
+    }
+
+    private fun selectVital(state: SimulationState): List<String> {
+        return listOfNotNull(
+            when {
+                state.status.hp <= 20 -> "バイタル65"
+                state.status.hp <= 40 -> "バイタル40"
+                state.status.hp <= 50 -> "バイタル20"
+                else -> null
+            }
+        )
+    }
+
+    private fun selectCampItem(state: SimulationState, selection: List<Action>): List<String> {
+        val topTraining = selection.filterIsInstance<Training>().map {
+            it to calcScore(it.resultCandidate.first().first)
+        }.maxByOrNull { it.second } ?: return emptyList()
+        val expected = calcExpectedScore(state, topTraining.first) * 1.6
+        if (topTraining.second - expected < 0.0) return listOf("リセットホイッスル")
+
+        val topTrainingType = topTraining.first.type
+        val megaphone = if (state.enableItem.megaphone == null) "ブートキャンプメガホン" else null
+        val weight = if (topTrainingType == StatusType.WISDOM) null else "${topTrainingType.displayName}アンクルウェイト"
         val vital = when {
             state.status.hp <= 30 -> "健康祈願のお守り"
             state.status.hp <= 50 -> "バイタル20"
             else -> null
         }
-        return listOfNotNull(
-            weight,
-            vital?.let { Store.Climax.getShopItem(it) },
-        )
+        return listOfNotNull(megaphone, weight, vital)
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
         val total = action.resultCandidate.sumOf { it.second }.toDouble()
-        val expected = calcExpectedScore(state, action)
+        val expected = if (option.expectedStatusFactor <= 0.0) 0.0 else {
+            option.expectedStatusFactor * calcExpectedScore(state, action)
+        }
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(state, it.first) - expected) * it.second / total
+            (calcScore(it.first) - expected) * it.second / total
         } + calcRelationScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
 
-    private fun calcScore(state: SimulationState, status: Status): Double {
+    private fun calcScore(status: Status): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
                 status.power * option.powerFactor +
@@ -133,8 +201,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
     }
 
     private fun calcExpectedScore(state: SimulationState, action: Action): Double {
-        if (option.expectedStatusFactor <= 0.0) return 0.0
-        return option.expectedStatusFactor * when (action) {
+        return when (action) {
             is Training -> {
                 val expectedStatus = Calculator.calcExpectedTrainingStatus(
                     state.chara,

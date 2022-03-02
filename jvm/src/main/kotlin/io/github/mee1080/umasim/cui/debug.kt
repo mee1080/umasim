@@ -89,25 +89,18 @@ fun dataCheck() {
 
 
 fun singleClimaxSimulation() {
-    val chara = Store.getChara("ハルウララ", 5, 5)
+    val chara = Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5)
     val support = Store.getSupportByName(
         "[迫る熱に押されて]キタサンブラック",
-        "[必殺！Wキャロットパンチ！]ビコーペガサス",
+        "[袖振り合えば福となる♪]マチカネフクキタル",
         "[はやい！うまい！はやい！]サクラバクシンオー",
-        "[ようこそ、トレセン学園へ！]駿川たづな",
-        "[『愛してもらうんだぞ』]オグリキャップ",
         "[一粒の安らぎ]スーパークリーク",
-//        "[感謝は指先まで込めて]ファインモーション",
+        "[その背中を越えて]サトノダイヤモンド",
+        "[今ぞ盛りのさくら花]サクラチヨノオー",
     )
     println(chara)
     println(support)
-    val selector = ClimaxFactorBasedActionSelector(
-        ClimaxFactorBasedActionSelector.Option(
-            speedFactor = 0.9,
-            staminaFactor = 0.8,
-            wisdomFactor = 0.5,
-        )
-    )
+    val selector = ClimaxFactorBasedActionSelector()
     val result =
         Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector)
     result.second.forEachIndexed { index, history ->

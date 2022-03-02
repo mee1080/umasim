@@ -31,7 +31,7 @@ interface ActionSelector {
     fun selectTraining(selection: List<Action>, type: StatusType) =
         selection.first { it is Training && it.type == type } as Training
 
-    fun selectWithItem(state: SimulationState, selection: List<Action>, checkCount: Int): SelectedAction =
+    fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction =
         SelectedAction(action = select(state, selection))
 }
 

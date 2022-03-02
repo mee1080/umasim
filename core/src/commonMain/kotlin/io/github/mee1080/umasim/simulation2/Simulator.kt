@@ -109,10 +109,9 @@ class Simulator(
             state = state.shuffleMember()
             var action: Action?
             val useItem = mutableListOf<ShopItem>()
-            var checkCount = 0
             do {
                 val selection = state.predict(state.turn)
-                val selectedAction = selector.selectWithItem(state, selection, checkCount++)
+                val selectedAction = selector.selectWithItem(state, selection)
                 selectedAction.buyItem?.let {
                     state = state.buyItem(it)
                 }
