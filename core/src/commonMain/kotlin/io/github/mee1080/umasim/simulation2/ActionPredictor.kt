@@ -61,7 +61,7 @@ fun SimulationState.predictNormal(): List<Action> {
             )
         )),
         // TODO 出走可否判定、レース後イベント
-//        *(Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: arrayOf())
+        *(Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: arrayOf())
     ).map { adjustRange(it) }
 }
 
@@ -80,11 +80,11 @@ private fun SimulationState.calcTrainingResult(
             supportTypeCount,
             status.fanCount,
         )
-    if (scenario == Scenario.CLIMAX) {
+    if (itemAvailable) {
         successStatus += Calculator.calcItemBonus(
             training.type,
             successStatus,
-            currentEnableItem
+            enableItem.list,
         )
     }
     val successCandidate = listOf(successStatus to 100 - failureRate)
@@ -116,7 +116,7 @@ private fun SimulationState.calcTrainingResult(
 }
 
 private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, support: List<MemberState>): Int {
-    if (enableItem.any { it.first.name == "健康祈願のお守り" }) return 0
+    if (itemAvailable && enableItem.unique?.name == "健康祈願のお守り") return 0
     val base = (status.hp - status.maxHp) * (status.hp * 10 - training.failureRate) / 400.0
     val supported = base * support.map { it.card.failureRate }.fold(1.0) { acc, d -> acc * d }
     val supportedInRange = max(0, min(99, ceil(supported).toInt()))
@@ -154,20 +154,21 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         hp = if (goal) 0 else if (climax) -20 else -15,
         fanCount = (race.getFan * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt(),
     )
-    status = currentEnableItem.fold(status) { acc, item ->
-        when (item) {
-            is RaceBonusItem -> acc.copy(
-                speed = (acc.speed * (1 + item.raceFactor / 100.0)).toInt(),
-                stamina = (acc.speed * (1 + item.raceFactor / 100.0)).toInt(),
-                power = (acc.speed * (1 + item.raceFactor / 100.0)).toInt(),
-                guts = (acc.speed * (1 + item.raceFactor / 100.0)).toInt(),
-                wisdom = (acc.speed * (1 + item.raceFactor / 100.0)).toInt(),
+    if (itemAvailable) {
+        status = enableItem.raceBonus?.let {
+            status.copy(
+                speed = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
+                stamina = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
+                power = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
+                guts = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
+                wisdom = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
             )
-            is FanBonusItem -> acc.copy(
-                fanCount = (acc.fanCount * (1 + item.fanFactor / 100.0)).toInt(),
+        } ?: status
+        status = enableItem.fanBonus?.let {
+            status.copy(
+                fanCount = (status.fanCount * (1 + it.fanFactor / 100.0)).toInt(),
             )
-            else -> acc
-        }
+        } ?: status
     }
     return Race(goal, race.name, race.grade, listOf(status to 1))
 }

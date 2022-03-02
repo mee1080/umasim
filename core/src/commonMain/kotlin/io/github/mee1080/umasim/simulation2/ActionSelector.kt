@@ -31,11 +31,12 @@ interface ActionSelector {
     fun selectTraining(selection: List<Action>, type: StatusType) =
         selection.first { it is Training && it.type == type } as Training
 
-    fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction =
-        SelectedAction(select(state, selection), null)
+    fun selectWithItem(state: SimulationState, selection: List<Action>, checkCount: Int): SelectedAction =
+        SelectedAction(action = select(state, selection))
 }
 
 class SelectedAction(
-    val action: Action?,
-    val useItem: List<ShopItem>?,
+    val action: Action? = null,
+    val buyItem: List<ShopItem>? = null,
+    val useItem: List<ShopItem>? = null,
 )

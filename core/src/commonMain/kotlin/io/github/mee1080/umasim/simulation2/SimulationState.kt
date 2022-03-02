@@ -29,15 +29,18 @@ data class SimulationState(
     val member: List<MemberState>,
     val training: List<TrainingState>,
     val levelUpTurns: Collection<Int>,
-    val turn: Int,
+    val turn: Int = 0,
     val status: Status,
-    val condition: List<String>,
+    val condition: List<String> = emptyList(),
     val supportTypeCount: Int,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
-    val possessionItem: List<ShopItem>,
-    val enableItem: List<Pair<ShopItem, Int>>,
+    val shopCoin: Int = 0,
+    val possessionItem: List<ShopItem> = emptyList(),
+    val enableItem: EnableItem = EnableItem(),
 ) {
+    val itemAvailable get() = scenario == Scenario.CLIMAX
+
     val support get() = member.filter { !it.guest }
 
     val charm get() = condition.contains("愛嬌○")
@@ -55,8 +58,7 @@ data class SimulationState(
     val teamMember get() = member.filter { it.scenarioState is AoharuMemberState }
 
     val teamAverageStatus
-        get() = member
-            .mapNotNull { it.scenarioState as? AoharuMemberState }
+        get() = member.mapNotNull { it.scenarioState as? AoharuMemberState }
             .fold(status to 1) { acc, aoharuMemberState -> acc.first + aoharuMemberState.status to acc.second + 1 }
             .let {
                 ExpectedStatus(
@@ -79,8 +81,6 @@ data class SimulationState(
         }
 
     fun getTraining(type: StatusType) = training.first { it.type == type }
-
-    val currentEnableItem by lazy { enableItem.map { it.first } }
 }
 
 data class MemberState(
@@ -137,12 +137,21 @@ data class AoharuMemberState(
 object AoharuNotMemberState : ScenarioMemberState
 
 data class TrainingState(
-    val type: StatusType,
-    val base: List<TrainingBase>,
-    val level: Int,
-    val count: Int,
-    val levelOverride: Int?
+    val type: StatusType, val base: List<TrainingBase>, val level: Int, val count: Int, val levelOverride: Int?
 ) {
     val currentLevel get() = levelOverride ?: level
     val current get() = base[currentLevel - 1]
+}
+
+data class EnableItem(
+    val megaphone: MegaphoneItem? = null,
+    val megaphoneTurn: Int = 0,
+    val weight: WeightItem? = null,
+    val raceBonus: RaceBonusItem? = null,
+    val fanBonus: FanBonusItem? = null,
+    val unique: UniqueItem? = null,
+) {
+    val list by lazy {
+        listOfNotNull(megaphone, weight, raceBonus, fanBonus, unique)
+    }
 }

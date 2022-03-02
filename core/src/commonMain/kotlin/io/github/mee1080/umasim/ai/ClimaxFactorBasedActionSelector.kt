@@ -18,8 +18,7 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
@@ -61,11 +60,51 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
-        if (state.possessionItem.isNotEmpty()) {
-            return SelectedAction(null, state.possessionItem)
+    override fun selectWithItem(state: SimulationState, selection: List<Action>, checkCount: Int): SelectedAction {
+        if (checkCount == 0) {
+            val itemList = when (state.turn) {
+                13 -> listOf(
+                    Store.Climax.getShopItem("にんじんBBQセット"),
+                )
+                37, 39, 61, 63 -> {
+                    listOf(Store.Climax.getShopItem("ブートキャンプメガホン")) + selectCampItem(state, selection)
+                }
+                38, 40, 62, 64 -> {
+                    selectCampItem(state, selection)
+                }
+                74, 76, 78 -> listOf(
+                    Store.Climax.getShopItem("蹄鉄ハンマー・極"),
+                )
+                else -> emptyList()
+            }
+            if (itemList.isNotEmpty()) {
+                return SelectedAction(
+                    buyItem = itemList,
+                    useItem = itemList,
+                )
+            }
         }
-        return SelectedAction(select(state, selection), null)
+        if (state.possessionItem.isNotEmpty()) {
+            return SelectedAction(useItem = state.possessionItem)
+        }
+        return SelectedAction(action = select(state, selection))
+    }
+
+    private fun selectCampItem(state: SimulationState, selection: List<Action>): List<ShopItem> {
+        val topTraining = selection.filterIsInstance<Training>().maxByOrNull {
+            calcScore(state, it.resultCandidate.first().first)
+        }?.type ?: StatusType.SPEED
+        val weight =
+            Store.Climax.shopItem.filterIsInstance<WeightItem>().firstOrNull { it.type == topTraining }
+        val vital = when {
+            state.status.hp <= 30 -> "健康祈願のお守り"
+            state.status.hp <= 50 -> "バイタル20"
+            else -> null
+        }
+        return listOfNotNull(
+            weight,
+            vital?.let { Store.Climax.getShopItem(it) },
+        )
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {

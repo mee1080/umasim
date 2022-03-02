@@ -52,7 +52,6 @@ class Simulator(
                 )
             },
         levelUpTurns = option.levelUpTurns?.asList() ?: listOf(37, 38, 39, 40, 61, 62, 63, 64),
-        turn = 0,
         status = Status(
             skillPt = 120,
             hp = 100,
@@ -63,12 +62,9 @@ class Simulator(
         ) + chara.initialStatus + supportCardList
             .map { it.initialStatus }
             .reduce { acc, status -> acc + status },
-        condition = emptyList(),
         supportTypeCount = supportCardList.map { it.type }.distinct().count(),
         totalRaceBonus = supportCardList.sumOf { it.race },
         totalFanBonus = supportCardList.sumOf { it.fan },
-        possessionItem = emptyList(),
-        enableItem = emptyList(),
     )
 
     private val raceBonus = initialState.totalRaceBonus.let {
@@ -113,9 +109,13 @@ class Simulator(
             state = state.shuffleMember()
             var action: Action?
             val useItem = mutableListOf<ShopItem>()
+            var checkCount = 0
             do {
                 val selection = state.predict(state.turn)
-                val selectedAction = selector.selectWithItem(state, selection)
+                val selectedAction = selector.selectWithItem(state, selection, checkCount++)
+                selectedAction.buyItem?.let {
+                    state = state.buyItem(it)
+                }
                 selectedAction.useItem?.let {
                     useItem.addAll(it)
                     state = state.applyItem(it)

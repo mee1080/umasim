@@ -122,6 +122,9 @@ object Store {
 
     object Climax {
         val shopItem = shopItemData
-        fun getShopItem(name: String) = shopItem.first { it.name == name }
+
+        private val shopItemMap = shopItem.associateBy { it.name }
+
+        fun getShopItem(name: String) = shopItemMap[name]!!
     }
 }

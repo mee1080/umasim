@@ -29,7 +29,7 @@ fun SimulationState.onTurnChange(): SimulationState {
         turn = turn,
         status = status.adjustRange(),
         training = training.map { it.copy(levelOverride = levelOverride) },
-        enableItem = enableItem.mapNotNull { if (it.second == 1) null else it.first to it.second - 1 }
+        enableItem = enableItem.onTurnChange(),
     )
 }
 
@@ -67,6 +67,15 @@ private fun MemberState.onTurnChange(turn: Int): MemberState {
     )
 }
 
+fun EnableItem.onTurnChange(): EnableItem {
+    return if (megaphoneTurn > 1) {
+        EnableItem(
+            megaphone = megaphone,
+            megaphoneTurn = megaphoneTurn - 1,
+        )
+    } else EnableItem()
+}
+
 fun SimulationState.applyAction(action: Action, result: Status): SimulationState {
     // ステータス更新
     val newStatus = status + result
@@ -91,6 +100,11 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
             member = newMember,
             training = newTraining,
             status = newStatus + selectTrainingHint(action.member) + selectAoharuTrainingHint(action.member),
+        )
+    } else if (action is Race && itemAvailable && action.grade != RaceGrade.FINALS) {
+        copy(
+            status = newStatus,
+            shopCoin = shopCoin + 100,
         )
     } else {
         copy(status = newStatus)
@@ -172,6 +186,17 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
 }
 
+fun SimulationState.buyItem(itemList: List<ShopItem>): SimulationState {
+    return itemList.fold(this) { state, item -> state.buyItem(item) }
+}
+
+fun SimulationState.buyItem(item: ShopItem): SimulationState {
+    return copy(
+        possessionItem = possessionItem + item,
+        shopCoin = shopCoin - item.coin,
+    )
+}
+
 fun SimulationState.applyItem(itemList: List<ShopItem>): SimulationState {
     return itemList.fold(this) { state, item -> state.applyItem(item) }
 }
@@ -186,23 +211,19 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
                 copy(member = member.map { it.addRelation(relation) })
             }
             "リセットホイッスル" -> shuffleMember()
-            "健康祈願のお守り" -> copy(enableItem = enableItem + (item to 1))
+            "健康祈願のお守り" -> copy(enableItem = enableItem.copy(unique = item))
             else -> this
         }
         is AddConditionItem -> copy(condition = condition + item.condition)
         is RemoveConditionItem -> copy(condition = condition - item.condition.toSet())
         is TrainingLevelItem -> copy(training = training.map {
-            if (it.type == item.type) it.copy(level = it.level + 1) else it
+            if (it.type == item.type) it.copy(level = min(5, it.level + 1)) else it
         })
-        is MegaphoneItem -> addEnableItem(item, item.turn)
-        is WeightItem -> addEnableItem(item)
-        is RaceBonusItem -> addEnableItem(item)
-        is FanBonusItem -> addEnableItem(item)
+        is MegaphoneItem -> copy(enableItem = enableItem.copy(megaphone = item, megaphoneTurn = item.turn))
+        is WeightItem -> copy(enableItem = enableItem.copy(weight = item))
+        is RaceBonusItem -> copy(enableItem = enableItem.copy(raceBonus = item))
+        is FanBonusItem -> copy(enableItem = enableItem.copy(fanBonus = item))
     }.copy(possessionItem = possessionItem - item)
-}
-
-private inline fun <reified T : ShopItem> SimulationState.addEnableItem(item: T, turn: Int = 1): SimulationState {
-    return copy(enableItem = enableItem.filterNot { it.first is T } + (item to turn))
 }
 
 private fun MemberState.addRelation(relation: Int): MemberState {

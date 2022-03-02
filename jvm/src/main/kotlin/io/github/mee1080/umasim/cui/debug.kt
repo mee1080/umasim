@@ -22,8 +22,6 @@ import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation2.SimulationEvents
-import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.simulation2.Simulator
 
 
@@ -111,30 +109,13 @@ fun singleClimaxSimulation() {
         )
     )
     val result =
-        Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector, object : SimulationEvents() {
-            override fun beforeAction(state: SimulationState): SimulationState {
-                if (state.turn == 13) {
-                    return state.copy(
-                        possessionItem = state.possessionItem
-                                + List(20) { Store.Climax.getShopItem("にんじんBBQセット") }
-                                + List(2) { Store.Climax.getShopItem("スピードトレーニング嘆願書") }
-                    )
-                }
-                if (state.turn > 13) {
-                    return state.copy(
-                        possessionItem = state.possessionItem
-                                + Store.Climax.getShopItem("健康祈願のお守り")
-                                + Store.Climax.getShopItem("ブートキャンプメガホン")
-                                + Store.Climax.getShopItem("スピードアンクルウェイト")
-                    )
-                }
-                return state
-            }
-        })
+        Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector)
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
-        println(" ${history.action.toShortString()}")
         println(" ${history.state.status}")
+        println(" coin:${history.state.shopCoin} ${history.state.member.joinToString { "${it.charaName}=${it.relation}" }}")
+        println(" ${history.useItem.joinToString { it.name }}")
+        println(" ${history.action.toShortString()}")
         println(" ${history.status}")
     }
     println(result.first)
