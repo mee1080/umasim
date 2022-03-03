@@ -145,5 +145,7 @@ data class SupportCard(
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }
     }
 
-    val requiredRelation = (specialUnique.map { it.value0 } + 80).maxOrNull() ?: 80
+    val targetRelation get() = (listOf(0, 80) + specialUnique.mapNotNull { it.targetRelation }).sorted().distinct()
+
+    val requiredRelation = targetRelation.maxOrNull() ?: 80
 }

@@ -227,6 +227,20 @@ object Calculator {
         fanCount,
     )
 
+    data class ExpectedStatusKey(
+        val charaId: Int,
+        val trainingType: StatusType,
+        val trainingLevel: Int,
+        val motivation: Int,
+        val member: List<Triple<Int, Int, Int>>,
+        val scenario: Scenario,
+        val supportTypeCount: Int,
+        val fanCountLevel: Int,
+    )
+
+    private val expectedStatusCache =
+        mutableMapOf<ExpectedStatusKey, Pair<ExpectedStatus, List<Pair<Double, Status>>>>()
+
     fun calcExpectedTrainingStatus(
         chara: Chara,
         training: TrainingBase,
@@ -236,11 +250,26 @@ object Calculator {
         supportTypeCount: Int,
         fanCount: Int,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
-        var result = ExpectedStatus()
+        val key = ExpectedStatusKey(
+            chara.id, training.type, training.level, motivation,
+            member.map {
+                Triple(
+                    it.card.id,
+                    it.card.talent,
+                    it.card.targetRelation.last { target -> target <= it.relation }
+                )
+            },
+            scenario, supportTypeCount, fanCount / 10000,
+        )
+        val cached = expectedStatusCache[key]
+        if (cached != null) {
+            return cached
+        }
+        var status = ExpectedStatus()
         val detail = mutableListOf<Pair<Double, Status>>()
         if (member.isEmpty()) {
-            result = addExpectedStatus(
-                result,
+            status = addExpectedStatus(
+                status,
                 detail,
                 1.0,
                 calcTrainingSuccessStatus(
@@ -274,8 +303,8 @@ object Calculator {
                         .fold(1.0) { acc, d -> acc * d }
                     rate += rate * allJoinRate
                     val joinSupport = member.filterIndexed { index, _ -> pattern[index] }
-                    result = addExpectedStatus(
-                        result,
+                    status = addExpectedStatus(
+                        status,
                         detail,
                         rate,
                         calcTrainingSuccessStatus(
@@ -291,7 +320,9 @@ object Calculator {
                 }
             }
         }
-        return result to detail
+        val result = status to detail
+        expectedStatusCache[key] = result
+        return result
     }
 
     private fun addExpectedStatus(
