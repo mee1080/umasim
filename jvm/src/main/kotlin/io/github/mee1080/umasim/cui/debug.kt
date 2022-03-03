@@ -113,4 +113,5 @@ fun singleClimaxSimulation() {
     }
     println(result.first)
     println(result.first.status)
+    println(result.second.flatMap { it.useItem }.groupBy { it.name }.mapValues { it.value.count() })
 }

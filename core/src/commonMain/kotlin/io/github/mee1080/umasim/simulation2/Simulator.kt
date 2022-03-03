@@ -102,6 +102,7 @@ class Simulator(
         state = state.copy(status = scenarioEvents.initialStatus(state.status))
         state = events.beforeSimulation(state)
         state = state.copy(status = events.initialStatus(state.status))
+        selector.init(state)
         repeat(turn) {
             state = state.onTurnChange()
             state = commonScenarioEvents.beforeAction(state)

@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.ai
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
@@ -88,6 +89,18 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         fun generateSelector() = ClimaxFactorBasedActionSelector(this)
     }
 
+    private var lastItemCheckedTurn = -1
+
+    private var whistleCount = 5
+
+    private var amuletCount = 5
+
+    override fun init(state: SimulationState) {
+        lastItemCheckedTurn = -1
+        whistleCount = 5
+        amuletCount = 5
+    }
+
     override fun select(state: SimulationState, selection: List<Action>): Action {
         val race = option.race[state.turn]
         return if (race == null) {
@@ -98,8 +111,6 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
             selection.first { it is Race && it.raceName == race }
         }
     }
-
-    var lastItemCheckedTurn = -1
 
     override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
         if (state.turn >= 13 && lastItemCheckedTurn != state.turn) {
@@ -121,6 +132,8 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 lastItemCheckedTurn = state.turn
             }
             if (itemList.isNotEmpty()) {
+                amuletCount -= itemList.count { it == "健康祈願のお守り" }
+                whistleCount -= itemList.count { it == "リセットホイッスル" }
                 val list = itemList.map { Store.Climax.getShopItem(it) }
                 return SelectedAction(
                     buyItem = list,
@@ -135,6 +148,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
     }
 
     private fun selectVitalOrAmulet(state: SimulationState): List<String> {
+        if (amuletCount <= 0) return selectVital(state)
         return listOfNotNull(
             when {
                 state.status.hp <= 30 -> "健康祈願のお守り"
@@ -157,27 +171,25 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
 
     private fun selectCampItem(state: SimulationState, selection: List<Action>): List<String> {
         val topTraining = selection.filterIsInstance<Training>().map {
-            it to calcScore(it.resultCandidate.first().first)
+            it to calcScore(it.baseStatus)
         }.maxByOrNull { it.second } ?: return emptyList()
-        val expected = calcExpectedScore(state, topTraining.first) * 1.6
-        if (topTraining.second - expected < 0.0) return listOf("リセットホイッスル")
+        if (whistleCount > 0) {
+            val expected = (trainingType.maxOfOrNull { calcExpectedScore(state, it) } ?: 0.0)
+            if (topTraining.second - expected < 0.0) return listOf("リセットホイッスル")
+        }
 
         val topTrainingType = topTraining.first.type
         val megaphone = if (state.enableItem.megaphone == null) "ブートキャンプメガホン" else null
         val weight = if (topTrainingType == StatusType.WISDOM) null else "${topTrainingType.displayName}アンクルウェイト"
-        val vital = when {
-            state.status.hp <= 30 -> "健康祈願のお守り"
-            state.status.hp <= 50 -> "バイタル20"
-            else -> null
-        }
-        return listOfNotNull(megaphone, weight, vital)
+        val vital = selectVitalOrAmulet(state)
+        return listOfNotNull(megaphone, weight) + vital
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
         val total = action.resultCandidate.sumOf { it.second }.toDouble()
-        val expected = if (option.expectedStatusFactor <= 0.0) 0.0 else {
-            option.expectedStatusFactor * calcExpectedScore(state, action)
+        val expected = if (action !is Training || option.expectedStatusFactor <= 0.0) 0.0 else {
+            option.expectedStatusFactor * calcExpectedScore(state, action.type)
         }
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
@@ -200,29 +212,24 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         return score
     }
 
-    private fun calcExpectedScore(state: SimulationState, action: Action): Double {
-        return when (action) {
-            is Training -> {
-                val expectedStatus = Calculator.calcExpectedTrainingStatus(
-                    state.chara,
-                    state.getTraining(action.type).current,
-                    state.status.motivation,
-                    state.member,
-                    state.scenario,
-                    state.supportTypeCount,
-                    state.status.fanCount,
-                ).first
-                expectedStatus.speed * option.speedFactor +
-                        expectedStatus.stamina * option.staminaFactor +
-                        expectedStatus.power * option.powerFactor +
-                        expectedStatus.guts * option.gutsFactor +
-                        expectedStatus.wisdom * option.wisdomFactor +
-                        expectedStatus.skillPt * option.skillPtFactor +
-                        expectedStatus.hp * option.hpFactor +
-                        expectedStatus.motivation * option.motivationFactor
-            }
-            else -> 0.0
-        }
+    private fun calcExpectedScore(state: SimulationState, type: StatusType): Double {
+        val expectedStatus = Calculator.calcExpectedTrainingStatus(
+            state.chara,
+            state.getTraining(type).current,
+            state.status.motivation,
+            state.member,
+            state.scenario,
+            state.supportTypeCount,
+            state.status.fanCount,
+        ).first
+        return expectedStatus.speed * option.speedFactor +
+                expectedStatus.stamina * option.staminaFactor +
+                expectedStatus.power * option.powerFactor +
+                expectedStatus.guts * option.gutsFactor +
+                expectedStatus.wisdom * option.wisdomFactor +
+                expectedStatus.skillPt * option.skillPtFactor +
+                expectedStatus.hp * option.hpFactor +
+                expectedStatus.motivation * option.motivationFactor
     }
 
     private fun calcRelationScore(state: SimulationState, action: Action): Double {

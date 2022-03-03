@@ -70,23 +70,22 @@ private fun SimulationState.calcTrainingResult(
     support: List<MemberState>,
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
-    var successStatus =
-        Calculator.calcTrainingSuccessStatus(
-            chara,
-            training.current,
-            status.motivation,
-            support,
-            scenario,
-            supportTypeCount,
-            status.fanCount,
-        )
-    if (itemAvailable) {
-        successStatus += Calculator.calcItemBonus(
+    val baseStatus = Calculator.calcTrainingSuccessStatus(
+        chara,
+        training.current,
+        status.motivation,
+        support,
+        scenario,
+        supportTypeCount,
+        status.fanCount,
+    )
+    val successStatus = if (itemAvailable) {
+        baseStatus + Calculator.calcItemBonus(
             training.type,
-            successStatus,
+            baseStatus,
             enableItem.list,
         )
-    }
+    } else baseStatus
     val successCandidate = listOf(successStatus to 100 - failureRate)
     val failureCandidate = when {
         failureRate == 0 -> {
@@ -111,7 +110,8 @@ private fun SimulationState.calcTrainingResult(
         failureRate,
         training.currentLevel,
         support,
-        successCandidate + failureCandidate
+        successCandidate + failureCandidate,
+        baseStatus,
     )
 }
 

@@ -57,6 +57,7 @@ data class Training(
     val level: Int,
     val member: List<MemberState>,
     override val resultCandidate: List<Pair<Status, Int>>,
+    val baseStatus: Status,
 ) : Action {
     val support get() = member.filter { !it.guest }
     override val name = "トレーニング(${type.displayName}Lv$level)"

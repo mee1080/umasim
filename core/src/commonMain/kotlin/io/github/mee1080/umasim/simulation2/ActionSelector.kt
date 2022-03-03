@@ -22,6 +22,9 @@ import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.StatusType
 
 interface ActionSelector {
+
+    fun init(state: SimulationState) {}
+
     fun select(state: SimulationState, selection: List<Action>): Action
 
     fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
