@@ -121,12 +121,32 @@ fun TrainingInfo(model: ViewModel, state: State) {
         }
     }
     H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
-//        LabeledCheckbox("trainingParamTest", "トレーニング設定調査", model.trainingParamTest != null) {
-//            model.updateTrainingParamTest(it)
-//        }
-//        model.trainingParamTest?.let {
-//            TrainingParamTest(it)
-//        }
+    H3 { Text("期待値（練習配置率を考慮）") }
+    Div {
+        Table({ classes(AppStyle.table) }) {
+            Tr {
+                Th { Text("スピード") }
+                Th { Text("スタミナ") }
+                Th { Text("パワー") }
+                Th { Text("根性") }
+                Th { Text("賢さ") }
+                Th { Text("スキルPt") }
+                Th { Text("体力") }
+                Th { Text("5ステ合計") }
+            }
+            Tr {
+                Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
+                Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+            }
+        }
+        Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
+    }
     if (state.trainingImpact.isNotEmpty()) {
         H3 { Text("サポカ影響度") }
         Div {
@@ -165,31 +185,5 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
         Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
-    }
-    H3 { Text("期待値（練習配置率を考慮）") }
-    Div {
-        Table({ classes(AppStyle.table) }) {
-            Tr {
-                Th { Text("スピード") }
-                Th { Text("スタミナ") }
-                Th { Text("パワー") }
-                Th { Text("根性") }
-                Th { Text("賢さ") }
-                Th { Text("スキルPt") }
-                Th { Text("体力") }
-                Th { Text("5ステ合計") }
-            }
-            Tr {
-                Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
-            }
-        }
-        Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
     }
 }
