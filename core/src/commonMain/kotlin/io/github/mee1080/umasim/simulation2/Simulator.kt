@@ -91,13 +91,11 @@ class Simulator(
     ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
         val history = mutableListOf<SimulationHistoryItem>()
-        val commonScenarioEvents = CommonScenarioEvents()
         val scenarioEvents = when (state.scenario) {
             Scenario.URA -> UraScenarioEvents()
             Scenario.AOHARU -> AoharuScenarioEvents()
             Scenario.CLIMAX -> ClimaxScenarioEvents()
         }
-        state = commonScenarioEvents.beforeSimulation(state)
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))
         state = events.beforeSimulation(state)
@@ -105,7 +103,6 @@ class Simulator(
         selector.init(state)
         repeat(turn) {
             state = state.onTurnChange()
-            state = commonScenarioEvents.beforeAction(state)
             state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
             state = state.shuffleMember()
             var action: Action?
@@ -128,7 +125,6 @@ class Simulator(
             state = scenarioEvents.afterAction(state) ?: events.afterAction(state)
             state = scenarioEvents.onTurnEnd(state)
         }
-        state = commonScenarioEvents.afterSimulation(state)
         state = scenarioEvents.afterSimulation(state)
         state = state.updateStatus { it + raceBonus }
         return Summary(state.status, history, state.member) to history

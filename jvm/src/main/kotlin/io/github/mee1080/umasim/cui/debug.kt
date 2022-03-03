@@ -21,7 +21,9 @@ package io.github.mee1080.umasim.cui
 import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
 
 
@@ -101,8 +103,16 @@ fun singleClimaxSimulation() {
     println(chara)
     println(support)
     val selector = ClimaxFactorBasedActionSelector()
-    val result =
-        Simulator(Scenario.CLIMAX, chara, support).simulateWithHistory(78, selector)
+    val result = Simulator(
+        Scenario.CLIMAX,
+        chara,
+        support,
+        factor(StatusType.WISDOM, 3) + factor(StatusType.POWER, 3)
+    ).simulateWithHistory(
+        78,
+        selector,
+        ApproximateSimulationEvents(),
+    )
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.state.status}")

@@ -4,42 +4,43 @@ import io.github.mee1080.umasim.data.*
 import kotlin.math.max
 import kotlin.math.min
 
-class AoharuScenarioEvents : ScenarioEvents {
+class AoharuScenarioEvents : CommonScenarioEvents() {
 
     override fun onTurnEnd(state: SimulationState): SimulationState {
-        return when (state.turn) {
-            3 -> state
+        val newState = super.onTurnEnd(state)
+        return when (newState.turn) {
+            3 -> newState
                 .addLinkMember()
                 .updateTrainingLevel()
-            18 -> state
+            18 -> newState
                 .updateStatus { it.copy(motivation = it.motivation + 1) }
-                .addMember(9 - state.teamMember.size)
+                .addMember(9 - newState.teamMember.size)
                 .updateTrainingLevel()
-            24 -> state
+            24 -> newState
                 .updateTrainingLevel()
                 .applyRace("E")
-                .addMember((3..min(4, 13 - state.teamMember.size)).random())
-            36 -> state
+                .addMember((3..min(4, 13 - newState.teamMember.size)).random())
+            36 -> newState
                 .updateTrainingLevel()
                 .applyRace("D")
-                .addMember((max(2, 15 - state.teamMember.size)..min(4, 16 - state.teamMember.size)).random())
-            48 -> state
+                .addMember((max(2, 15 - newState.teamMember.size)..min(4, 16 - newState.teamMember.size)).random())
+            48 -> newState
                 .updateTrainingLevel()
                 .applyRace("B")
-                .addMember(19 - state.teamMember.size)
-            60 -> state
+                .addMember(19 - newState.teamMember.size)
+            60 -> newState
                 .updateTrainingLevel()
                 .applyRace("A")
-            70 -> state
+            70 -> newState
                 // TODO アオハルヒント、爆発10で+20
                 .updateStatus { it.copy(skillPt = it.skillPt + 15) }
                 .updateTrainingLevel()
-            72 -> state
+            72 -> newState
                 .updateTrainingLevel()
                 .applyRace("S")
-            78 -> state
-                .updateStatus { it + state.raceStatus(0, 0, 50) }
-            else -> state
+            78 -> newState
+                .updateStatus { it + newState.raceStatus(0, 0, 50) }
+            else -> newState
                 .updateTrainingLevel()
         }
     }

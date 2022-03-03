@@ -2,7 +2,6 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 
-// TODO
 class ClimaxScenarioEvents : ScenarioEvents {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
@@ -14,6 +13,21 @@ class ClimaxScenarioEvents : ScenarioEvents {
                 RaceEntry(78, "クライマックス第3戦", 0, 30000, RaceGrade.FINALS, RaceDistance.UNKNOWN, RaceGround.UNKNOWN),
             )
         )
+    }
+
+    override fun beforeAction(state: SimulationState): SimulationState? {
+        return when (state.turn) {
+            // クラシック継承
+            31 -> state
+                .updateFactor()
+            // クラシック夏合宿
+            40 -> state
+                .updateStatus { it + Status(guts = 10) }
+            // シニア継承
+            55 -> state
+                .updateFactor()
+            else -> null
+        }
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {

@@ -29,9 +29,9 @@ interface ScenarioEvents {
     fun afterSimulation(state: SimulationState): SimulationState = state
 }
 
-class CommonScenarioEvents {
+abstract class CommonScenarioEvents : ScenarioEvents {
 
-    fun beforeAction(state: SimulationState): SimulationState {
+    override fun beforeAction(state: SimulationState): SimulationState? {
         return when (state.turn) {
             // ジュニア新年
             25 -> state
@@ -52,35 +52,35 @@ class CommonScenarioEvents {
             55 -> state
                 .updateFactor()
                 .updateStatus { it + Status(motivation = 1) }
-            else -> state
+            else -> null
         }
     }
 
-    private fun Status.updateNewYear(plusHp: Int, plusSkillPt: Int): Status {
-        return if (hp + plusHp > maxHp) {
-            copy(skillPt = skillPt + plusSkillPt)
-        } else {
-            copy(hp = hp + plusHp)
-        }
-    }
-
-    private fun SimulationState.updateFactor() = updateStatus { status ->
-        status.add(*factor.map {
-            it.first to when (it.second) {
-                3 -> 21
-                2 -> 12
-                1 -> 5
-                else -> 0
-            }
-        }.toTypedArray())
-    }
-
-    fun beforeSimulation(state: SimulationState): SimulationState {
+    override fun beforeSimulation(state: SimulationState): SimulationState {
         return state.updateFactor()
     }
 
-    fun afterSimulation(state: SimulationState): SimulationState {
+    override fun afterSimulation(state: SimulationState): SimulationState {
         // 記者絆4
         return state.updateStatus { it + Status(3, 3, 3, 3, 3, 10) }
     }
+}
+
+internal fun Status.updateNewYear(plusHp: Int, plusSkillPt: Int): Status {
+    return if (hp + plusHp > maxHp) {
+        copy(skillPt = skillPt + plusSkillPt)
+    } else {
+        copy(hp = hp + plusHp)
+    }
+}
+
+internal fun SimulationState.updateFactor() = updateStatus { status ->
+    status.add(*factor.map {
+        it.first to when (it.second) {
+            3 -> 21
+            2 -> 12
+            1 -> 5
+            else -> 0
+        }
+    }.toTypedArray())
 }
