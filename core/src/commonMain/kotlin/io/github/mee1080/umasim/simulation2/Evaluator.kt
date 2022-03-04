@@ -130,9 +130,9 @@ class Evaluator(val summaries: List<Summary>) {
             averageSum(StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
             upperSum(0.2, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
             upperSum(0.05, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
-            averageSum(StatusType.SPEED, StatusType.POWER, StatusType.STAMINA, StatusType.GUTS),
-            upperSum(0.2, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA, StatusType.GUTS),
-            upperSum(0.05, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA, StatusType.GUTS),
+            averageSum(StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
+            upperSum(0.2, StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
+            upperSum(0.05, StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
             averageSum(StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
             upperSum(0.2, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
             upperSum(0.05, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
@@ -244,17 +244,6 @@ class Evaluator(val summaries: List<Summary>) {
             ),
             averageSleepCount(),
             averageOutingCount(),
-            upperSum(
-                0.2,
-                mapOf(
-                    StatusType.SPEED to (1.0 to 1200),
-                    StatusType.STAMINA to (1.2 to 1000),
-                    StatusType.POWER to (1.0 to 1200),
-                    StatusType.GUTS to (0.8 to 600),
-                    StatusType.WISDOM to (0.8 to 1000),
-                    StatusType.SKILL to (0.4 to Int.MAX_VALUE),
-                )
-            )
         ).joinToString(",")
 //        val averageSpeed = average(StatusType.SPEED)
 //        val upperSpeed = upper(StatusType.SPEED, 0.2)

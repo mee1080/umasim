@@ -38,6 +38,10 @@ interface ActionSelector {
         SelectedAction(action = select(state, selection))
 }
 
+interface ActionSelectorGenerator {
+    fun generateSelector(): ActionSelector
+}
+
 class SelectedAction(
     val action: Action? = null,
     val buyItem: List<ShopItem>? = null,

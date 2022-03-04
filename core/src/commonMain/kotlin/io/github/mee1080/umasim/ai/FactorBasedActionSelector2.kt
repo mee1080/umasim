@@ -285,8 +285,8 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         },
         val aoharuBurnFactor: (turn: Int, type: StatusType) -> Double = { _, _ -> 10.0 },
         val expectedStatusFactor: Double = 0.0,
-    ) {
-        fun generateSelector() = FactorBasedActionSelector2(this)
+    ) : ActionSelectorGenerator {
+        override fun generateSelector() = FactorBasedActionSelector2(this)
 
         fun aoharuSettingToString(): String {
             return (1..78).joinToString("\n") { "$it ${aoharuFactor(it, 0, StatusType.SPEED)}" }

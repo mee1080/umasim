@@ -93,16 +93,16 @@ fun dataCheck() {
 fun singleClimaxSimulation() {
     val chara = Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5)
     val support = Store.getSupportByName(
-        "[迫る熱に押されて]キタサンブラック",
-        "[袖振り合えば福となる♪]マチカネフクキタル",
-        "[はやい！うまい！はやい！]サクラバクシンオー",
-        "[一粒の安らぎ]スーパークリーク",
-        "[その背中を越えて]サトノダイヤモンド",
-        "[今ぞ盛りのさくら花]サクラチヨノオー",
+        "[一等星を目指して]アドマイヤベガ",
+        "[飛び出せ、キラメケ]アイネスフウジン",
+        "[うらら～な休日]ハルウララ",
+        "[バカと笑え]メジロパーマー",
+        "[感謝は指先まで込めて]ファインモーション",
+        "[願いまでは拭わない]ナイスネイチャ",
     )
     println(chara)
     println(support)
-    val selector = ClimaxFactorBasedActionSelector()
+    val selector = ClimaxFactorBasedActionSelector.guts4Wisdom2.generateSelector()
     val result = Simulator(
         Scenario.CLIMAX,
         chara,

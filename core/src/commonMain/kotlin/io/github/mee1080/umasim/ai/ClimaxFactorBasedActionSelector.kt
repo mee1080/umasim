@@ -31,6 +31,29 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
     companion object {
         private const val DEBUG = false
 
+        val guts4Wisdom2 = Option().copy(
+            speedFactor = 1.7,
+            staminaFactor = 1.7,
+            powerFactor = 1.7,
+            gutsFactor = 0.3,
+            wisdomFactor = 1.0,
+            hpFactor = 0.6,
+            motivationFactor = 25.0,
+            relationFactor = { type, rank, _ ->
+                when (type) {
+                    StatusType.GUTS -> when (rank) {
+                        1 -> 2.0
+                        2 -> 2.6
+                        3 -> 7.6
+                        else -> 7.8
+                    }
+                    else -> when (rank) {
+                        1 -> 9.4
+                        else -> 8.7
+                    }
+                }
+            }
+        )
     }
 
     @Serializable
@@ -85,8 +108,8 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
             70 to "ジャパンカップ",
             72 to "有馬記念",
         )
-    ) {
-        fun generateSelector() = ClimaxFactorBasedActionSelector(this)
+    ) : ActionSelectorGenerator {
+        override fun generateSelector() = ClimaxFactorBasedActionSelector(this)
     }
 
     private var lastItemCheckedTurn = -1
@@ -170,7 +193,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
     }
 
     private fun selectCampItem(state: SimulationState, selection: List<Action>): List<String> {
-        val topTraining = selection.filterIsInstance<Training>().map {
+        val topTraining = selection.filterIsInstance<Training>().filter { it.type != StatusType.WISDOM }.map {
             it to calcScore(it.baseStatus)
         }.maxByOrNull { it.second } ?: return emptyList()
         if (whistleCount > 0) {
