@@ -37,7 +37,7 @@ data class Status(
     val fanCount: Int = 0,
 ) {
 
-    val statusTotal get() = speed + stamina + power + guts + wisdom
+    val statusTotal by lazy { speed + stamina + power + guts + wisdom }
 
     operator fun plus(other: Status) = Status(
         speed + other.speed,

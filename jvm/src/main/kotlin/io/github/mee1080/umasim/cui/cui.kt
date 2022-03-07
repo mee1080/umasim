@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
+import io.github.mee1080.umasim.util.BinarySearcher
 
 val scenario = Scenario.URA
 
@@ -37,6 +38,7 @@ fun openCui(args: Array<String>) {
 //    compareExpectedBasedAI()
 //    deBuffSimulation(100000)
 //    jigatameSimulation(100000)
+//    println(BinarySearcher.run(0.0, 1.0, 0.01, 0.3317) { it })
 
 //    optimizeAI(
 //        Scenario.URA,
@@ -459,22 +461,42 @@ fun openCui(args: Array<String>) {
 //    )
 
     // クライマックス根性4賢さ2
+//    doSimulation2(
+//        Scenario.CLIMAX,
+//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+//        Store.getSupportByName(
+//            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
+//            "[うらら～な休日]ハルウララ" to 4,
+//            "[バカと笑え]メジロパーマー" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//            "[願いまでは拭わない]ナイスネイチャ" to 4,
+//        ).toTypedArray(),
+////        StatusType.GUTS, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+//        Store.getSupportByName("[一等星を目指して]アドマイヤベガ" to 4),
+//        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+//        100000,
+//        ClimaxFactorBasedActionSelector.guts4Wisdom2,
+//        Runner.mileEvaluateSetting,
+//    )
+
+    // クライマックススピ3賢さ2代理
     doSimulation2(
         Scenario.CLIMAX,
         Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
         Store.getSupportByName(
-            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
-            "[うらら～な休日]ハルウララ" to 4,
-            "[バカと笑え]メジロパーマー" to 4,
+            "[迫る熱に押されて]キタサンブラック" to 4,
+            "[袖振り合えば福となる♪]マチカネフクキタル" to 4,
             "[感謝は指先まで込めて]ファインモーション" to 4,
             "[願いまでは拭わない]ナイスネイチャ" to 4,
+            "[徹底管理主義]樫本理子" to 4,
         ).toTypedArray(),
-        StatusType.GUTS, 0..4,
+        StatusType.SPEED, 0..4,
 //        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
-//        Store.getSupportByName("[夜に暁、空に瑞星]アドマイヤベガ" to 4),
-        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+//        Store.getSupportByName("[桃色のバックショット]ナリタトップロード" to 4),
+        factor(StatusType.POWER, 5) + factor(StatusType.STAMINA, 1),
         100000,
-        ClimaxFactorBasedActionSelector.guts4Wisdom2,
+        ClimaxFactorBasedActionSelector.speed3Wisdom2Friend1,
         Runner.mileEvaluateSetting,
     )
 }

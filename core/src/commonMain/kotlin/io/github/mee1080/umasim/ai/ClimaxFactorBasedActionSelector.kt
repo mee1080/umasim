@@ -31,6 +31,29 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
     companion object {
         private const val DEBUG = false
 
+        val speed3Wisdom2Friend1 = Option().copy(
+            speedFactor = 1.0,
+            staminaFactor = 1.5,
+            powerFactor = 1.8,
+            gutsFactor = 1.3,
+            wisdomFactor = 1.5,
+            hpFactor = 0.75,
+            motivationFactor = 25.0,
+            relationFactor = { type, rank, _ ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        1 -> 9.0
+                        2 -> 10.9
+                        else -> 14.7
+                    }
+                    else -> when (rank) {
+                        1 -> 11.6
+                        else -> 12.5
+                    }
+                }
+            }
+        )
+
         val guts4Wisdom2 = Option().copy(
             speedFactor = 1.7,
             staminaFactor = 1.7,

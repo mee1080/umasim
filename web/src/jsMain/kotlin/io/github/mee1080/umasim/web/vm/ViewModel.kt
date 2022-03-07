@@ -224,6 +224,31 @@ class ViewModel {
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 //        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
+//
+//        val raceBonus = 100 + state.supportSelectionList.sumOf { it.card?.race ?: 0 }
+//        val raceScore: (Double) -> Double = {
+//            10 * raceBonus / 100 + 35 * raceBonus / 100 * 0.4 + 100 * it
+//        }
+//        val coinRate = WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone)?.let { megaPhone ->
+//            // 倍率×現在トレ上昇値－MAX（現在トレ上昇値,レース上昇値）＋（ターン数－１）×（倍率×トレ期待値－MAX（トレ上昇値,レース上昇値）の期待値）－価格
+//            val expectedRateTotal = expectedResult.second.sumOf { it.first }
+//            BinarySearcher.run(0.0, 2.0, 0.01, 0.0) { rate ->
+//                megaPhone.trainingFactor / 100.0 * trainingResult.statusTotal -
+//                        max(
+//                            trainingResult.statusTotal.toDouble(),
+//                            raceScore(rate)
+//                        ) + (megaPhone.turn - 1) * (
+//                        megaPhone.trainingFactor / 100.0 * expectedResult.first.statusTotal -
+//                                expectedResult.second.sumOf {
+//                                    it.first / expectedRateTotal * max(
+//                                        it.second.statusTotal.toDouble(),
+//                                        raceScore(rate)
+//                                    )
+//                                }
+//                        )
+//            }
+//        } ?: 0.0
+
         localStorage.setItem(
             KEY_SUPPORT_LIST, SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
         )
@@ -233,6 +258,7 @@ class ViewModel {
             trainingImpact = trainingImpact,
             expectedResult = expectedResult.first,
             upperRate = upperRate,
+//            coinRate = coinRate,
         )
     }
 

@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
+import kotlin.math.roundToInt
 
 fun doSimulation2(
     scenario: Scenario,
@@ -81,6 +82,15 @@ fun doSimulation2(
                     selector = selector,
                 )
                 println("${card.id},${card.name},${card.talent},${evaluator.toSummaryString()},$score")
+                // ヒストグラム
+//                evaluator.getStatusSum(evaluateSetting)
+//                    .map { it.roundToInt() }
+//                    .fold(mutableMapOf<Int, Int>()) { map, value ->
+//                        map[value] = map.getOrPut(value) { 0 } + 1
+//                        map
+//                    }.toSortedMap().forEach { (value, count) ->
+//                        println("$value\t$count")
+//                    }
             }
         }.forEach {
             it.join()
