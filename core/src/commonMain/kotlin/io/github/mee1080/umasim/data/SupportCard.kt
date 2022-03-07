@@ -95,7 +95,8 @@ data class SupportCard(
 
     val friendFactor = (100 + status.friend) * (100 + unique.friend) / 10000.0
 
-    val motivationFactor = status.motivation + unique.motivation
+    fun motivationFactor(relation: Int) =
+        status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation) }
 
     fun getBaseBonus(type: StatusType, relation: Int) = when (type) {
         StatusType.SPEED -> status.speedBonus + unique.speedBonus

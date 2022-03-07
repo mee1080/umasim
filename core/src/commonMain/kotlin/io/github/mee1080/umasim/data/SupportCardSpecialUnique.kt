@@ -26,6 +26,12 @@ data class SupportCardSpecialUnique(
         else -> null
     }
 
+    fun getMotivation(relation: Int): Int {
+        return if (type == 101 && relation >= value0 && value1 == 2) {
+            value2
+        } else 0
+    }
+
     fun getBaseBonus(statusType: StatusType, relation: Int): Int {
         return if (type == 101 && relation >= value0) {
             val targetType = when (value1) {
@@ -34,6 +40,7 @@ data class SupportCardSpecialUnique(
                 5 -> StatusType.POWER
                 6 -> StatusType.GUTS
                 7 -> StatusType.WISDOM
+                30 -> StatusType.SKILL
                 else -> null
             }
             if (statusType == targetType) value2 else 0
@@ -47,7 +54,9 @@ data class SupportCardSpecialUnique(
         supportTypeCount: Int,
         fanCount: Int,
     ): Int {
-        return if (type == 102 && relation >= value0 && trainingType != cardType) {
+        return if (type == 101 && relation >= value0 && value1 == 8) {
+            value2
+        } else if (type == 102 && relation >= value0 && trainingType != cardType) {
             value1
         } else if (type == 103 && supportTypeCount >= value0) {
             value1

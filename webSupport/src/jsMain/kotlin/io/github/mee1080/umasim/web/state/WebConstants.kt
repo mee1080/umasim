@@ -94,7 +94,7 @@ object WebConstants {
         SortOrder("初期絆") { initialRelation },
         SortOrder("初期ステ合計") { initialStatus.statusTotal },
         SortOrder("友情ボナ") { friendFactor },
-        SortOrder("やる気ボナ") { motivationFactor },
+        SortOrder("やる気ボナ") { motivationFactor(0) },
         SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0) },
         SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000) },
         SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0) },
