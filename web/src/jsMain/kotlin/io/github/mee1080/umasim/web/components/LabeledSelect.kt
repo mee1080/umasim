@@ -49,3 +49,25 @@ fun LabeledSelect(
         }
     }
 }
+
+@Composable
+fun LabeledSelect(
+    label: String,
+    selection: List<String>,
+    selectedValue: String,
+    onSelect: (String) -> Unit,
+) {
+    Div {
+        Text(label)
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                selection.indexOfFirst { it == selectedValue })
+            onChange { onSelect(it.value!!) }
+        }) {
+            selection.forEach { name ->
+                Option(name, { if (name == selectedValue) selected() }) { Text(name) }
+            }
+        }
+    }
+}

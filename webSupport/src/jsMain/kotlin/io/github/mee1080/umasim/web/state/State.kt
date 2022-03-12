@@ -19,11 +19,19 @@
 package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.simulation.Calculator
 import io.github.mee1080.umasim.simulation.ExpectedStatus
 import io.github.mee1080.umasim.util.SaveDataConverter
 
+enum class Page {
+    Top, Rotation,
+}
+
 data class State(
+    val page: Page = Page.Top,
+    val rotationState: RotationState? = null,
+
     val selectedScenario: Int = Scenario.CLIMAX.ordinal,
     val selectedChara: Int = WebConstants.displayCharaList[0].first,
     val supportSaveName: String = "",
@@ -46,7 +54,7 @@ data class State(
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
-    val coinRate: Double = 0.0,
+//    val coinRate: Double = 0.0,
     val raceSetting: List<RaceSetting> = emptyList(),
     val totalRaceBonus: Int = 0,
     val totalFanBonus: Int = 0,
@@ -193,4 +201,16 @@ data class RaceSetting(
     ) : this(
         label, raceCount.toString(), statusValue, statusCount, skillPt, editable, item,
     )
+}
+
+data class RotationState(
+    val calcState: RaceRotationCalculator.State,
+    val raceSelection: List<List<RaceEntry>>,
+    val achievementList: List<RaceAchievement>,
+    val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
+    val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
+) {
+    val rotation = calcState.rotation
+    val selectedRace = rotation.selectedRaceName
+    val raceCount = selectedRace.count { !it.isNullOrEmpty() }
 }

@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.RaceEntry
+import io.github.mee1080.umasim.data.RaceGrade
+import io.github.mee1080.umasim.data.RaceGround
+import io.github.mee1080.umasim.data.Status
 
 class ClimaxScenarioEvents : ScenarioEvents {
 
@@ -8,9 +11,9 @@ class ClimaxScenarioEvents : ScenarioEvents {
         return state.copy(
             goalRace = listOf(
                 state.goalRace.first(),
-                RaceEntry(74, "クライマックス第1戦", 0, 7000, RaceGrade.FINALS, RaceDistance.UNKNOWN, RaceGround.UNKNOWN),
-                RaceEntry(76, "クライマックス第2戦", 0, 10000, RaceGrade.FINALS, RaceDistance.UNKNOWN, RaceGround.UNKNOWN),
-                RaceEntry(78, "クライマックス第3戦", 0, 30000, RaceGrade.FINALS, RaceDistance.UNKNOWN, RaceGround.UNKNOWN),
+                RaceEntry(74, "クライマックス第1戦", 0, 7000, RaceGrade.FINALS, 1200, RaceGround.UNKNOWN, ""),
+                RaceEntry(76, "クライマックス第2戦", 0, 10000, RaceGrade.FINALS, 1200, RaceGround.UNKNOWN, ""),
+                RaceEntry(78, "クライマックス第3戦", 0, 30000, RaceGrade.FINALS, 1200, RaceGround.UNKNOWN, ""),
             )
         )
     }

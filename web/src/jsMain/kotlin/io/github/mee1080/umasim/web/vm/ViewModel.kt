@@ -26,10 +26,7 @@ import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.util.SaveDataConverter
-import io.github.mee1080.umasim.web.state.RaceSetting
-import io.github.mee1080.umasim.web.state.State
-import io.github.mee1080.umasim.web.state.SupportSelection
-import io.github.mee1080.umasim.web.state.WebConstants
+import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -46,6 +43,12 @@ class ViewModel {
     }
 
     var state by mutableStateOf(State())
+
+    val rotationViewModel = RotationViewModel(this)
+
+    fun navigate(page: Page) {
+        state = state.copy(page = page)
+    }
 
     private fun updateState(calculate: Boolean = true, calculateBonus: Boolean = true, update: (State) -> State) {
         var newState = update(state)
@@ -223,12 +226,15 @@ class ViewModel {
         val total = trainingResult.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
-//        trainingParamTest?.calculate(chara, trainingType, motivation, supportList)
 //
 //        val raceBonus = 100 + state.supportSelectionList.sumOf { it.card?.race ?: 0 }
 //        val raceScore: (Double) -> Double = {
 //            10 * raceBonus / 100 + 35 * raceBonus / 100 * 0.4 + 100 * it
 //        }
+//        val coinRate =
+//            (trainingResult.statusTotal + trainingResult.skillPt * 0.4 - 8 * raceBonus / 100 - 25 * raceBonus / 100 * 0.4) / 100.0
+//
+//
 //        val coinRate = WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone)?.let { megaPhone ->
 //            // 倍率×現在トレ上昇値－MAX（現在トレ上昇値,レース上昇値）＋（ターン数－１）×（倍率×トレ期待値－MAX（トレ上昇値,レース上昇値）の期待値）－価格
 //            val expectedRateTotal = expectedResult.second.sumOf { it.first }
@@ -379,7 +385,7 @@ class ViewModel {
         updateState(calculate = false, calculateBonus = false) {
             it.copy(
                 simulationResult = summary.status,
-                simulationHistory = history.map { it.first.name to it.third.status },
+                simulationHistory = history.map { it.action.name to it.state.status },
             )
         }
     }

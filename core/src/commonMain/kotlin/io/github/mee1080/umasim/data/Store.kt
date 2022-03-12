@@ -47,7 +47,12 @@ object Store {
     private val trainingList = trainingData
     val scenarioLink = scenarioLinkData
     private val goalRaceMap by lazy { GoalRaceLoader.load(goalRaceSource).associate { it.charaId to it.turns } }
-    val raceMap by lazy { RaceLoader.load(raceSource) }
+    val raceList by lazy { RaceLoader.load(raceSource) }
+    val raceMap by lazy {
+        val grouped = raceList.groupBy { it.turn }
+        List(73) { grouped[it]?.sortedByDescending { entry -> entry.getFan } ?: emptyList() }
+    }
+
 
     fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 
@@ -86,6 +91,12 @@ object Store {
     fun isScenarioLink(scenario: Scenario, charaName: String) = scenarioLink[scenario]?.contains(charaName) ?: false
 
     fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }
+
+    fun getRace(name: String) = raceList.first { it.name == name }
+
+    fun getRace(turn: Int, name: String) = raceMap[turn].first { it.name == name }
+
+    fun getSeniorRace(name: String) = raceList.first { it.turn >= 49 && it.name == name }
 
     object Aoharu {
         private val training = aoharuTrainingData
@@ -126,5 +137,7 @@ object Store {
         private val shopItemMap = shopItem.associateBy { it.name }
 
         fun getShopItem(name: String) = shopItemMap[name]!!
+
+        val raceAchievement = raceAchievementData
     }
 }

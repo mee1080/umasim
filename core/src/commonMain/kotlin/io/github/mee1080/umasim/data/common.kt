@@ -120,8 +120,8 @@ fun toRaceGrade(value: Int) = when {
     else -> RaceGrade.UNKNOWN
 }
 
-enum class RaceDistance {
-    SHORT, MILE, MIDDLE, LONG, UNKNOWN,
+enum class RaceDistance(val displayName: String) {
+    SHORT("短距離"), MILE("マイル"), MIDDLE("中距離"), LONG("長距離"), UNKNOWN("不明"),
 }
 
 fun toRaceDistance(value: Int) = when {
@@ -131,15 +131,14 @@ fun toRaceDistance(value: Int) = when {
     else -> RaceDistance.LONG
 }
 
-enum class RaceGround {
-    TURF, DIRT, UNKNOWN,
+enum class RaceGround(val displayName: String) {
+    TURF("芝"), DIRT("ダート"), UNKNOWN("不明"),
 }
 
 fun toRaceGround(value: String) = when (value) {
     "芝" -> RaceGround.TURF
     "ダート" -> RaceGround.DIRT
     else -> RaceGround.UNKNOWN
-
 }
 
 fun motivationToString(motivation: Int) = when (motivation) {

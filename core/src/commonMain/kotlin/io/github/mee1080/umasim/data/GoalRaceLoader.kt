@@ -58,8 +58,9 @@ object GoalRaceLoader {
                     else -> 0
                 },
                 RaceGrade.FINALS,
-                RaceDistance.UNKNOWN,
+                1200,
                 RaceGround.UNKNOWN,
+                "",
             )
         } else {
             return RaceEntry(
@@ -68,8 +69,9 @@ object GoalRaceLoader {
                 data[2].toInt(),
                 data[3].toInt(),
                 toRaceGrade(data[4].toInt()),
-                toRaceDistance(data[5].toInt()),
+                data[5].toInt(),
                 toRaceGround(data[6]),
+                "",
             )
         }
     }

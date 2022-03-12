@@ -20,7 +20,7 @@ package io.github.mee1080.umasim.data
 
 object RaceLoader {
 
-    fun load(text: String): List<List<RaceEntry>> {
+    fun load(text: String): List<RaceEntry> {
         val list = mutableListOf<RaceEntry>()
         text.split("\n").forEach {
             val data = it.trim().split("\t")
@@ -28,8 +28,7 @@ object RaceLoader {
                 list.addAll(toEntry(data))
             }
         }
-        val grouped = list.groupBy { it.turn }
-        return List(73) { grouped[it]?.sortedByDescending { entry -> entry.getFan } ?: emptyList() }
+        return list.sortedBy { it.turn * 100000 + it.getFan }
     }
 
     private fun toEntry(data: List<String>): List<RaceEntry> {
@@ -41,8 +40,9 @@ object RaceLoader {
                 data[6].toInt(),
                 data[7].toInt(),
                 toRaceGrade(data[8].toInt()),
-                toRaceDistance(data[9].toInt()),
+                data[9].toInt(),
                 toRaceGround(data[10]),
+                data[11],
             )
         }
     }

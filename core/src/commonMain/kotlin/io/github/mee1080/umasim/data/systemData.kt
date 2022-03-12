@@ -258,3 +258,168 @@ internal val shopItemData = listOf(
     RaceBonusItem("蹄鉄ハンマー・極", 40, 35),
     FanBonusItem("三色ペンライト", 15, 50),
 )
+
+internal val raceAchievementData = listOf(
+    RaceAchievement(
+        "レジェンドウマ娘", "末脚",
+        AnotherAchievementCondition("カリスマウマ娘", "ヒロインウマ娘"),
+        AnotherAchievementCondition("春の覇者"),
+        AnotherAchievementCondition("秋の覇者"),
+    ),
+    RaceAchievement(
+        "神速マイラー", "マイル直線○",
+        AnotherAchievementCondition("高速マイラー"),
+        RaceNameCondition("桜花賞", "ヴィクトリアマイル"),
+        RaceNameCondition(1, "朝日杯フューチュリティステークス", "阪神ジュベナイルフィリーズ"),
+    ),
+    RaceAchievement(
+        "高速マイラー", 15,
+        RaceNameCondition("NHKマイルカップ", "安田記念", "マイルチャンピオンシップ"),
+    ),
+    RaceAchievement(
+        "ベストウマ娘", 15,
+        AnotherAchievementCondition("カリスマウマ娘"),
+        RaceNameCondition(2, "大阪杯", "天皇賞（春）", "宝塚記念", "天皇賞（秋）", "ジャパンカップ", "有馬記念"),
+    ),
+    RaceAchievement(
+        "ワンダフルウマ娘", 15,
+        AnotherAchievementCondition("カリスマウマ娘"),
+        RaceCondition(2) { turn <= 48 && (name == "ジャパンカップ" || name == "有馬記念") },
+    ),
+    RaceAchievement(
+        "カリスマウマ娘", 10,
+        RaceNameCondition("皐月賞", "東京優駿（日本ダービー）", "菊花賞"),
+    ),
+    RaceAchievement(
+        "ダートGⅠ覇者", "レコメンド",
+        RaceCondition(9) { (grade == RaceGrade.G1 || grade == RaceGrade.FINALS) && ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "ダートGⅠ帝王", 15,
+        RaceCondition(5) { (grade == RaceGrade.G1 || grade == RaceGrade.FINALS) && ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "ダートGⅠ怪物", 10,
+        RaceCondition(4) { (grade == RaceGrade.G1 || grade == RaceGrade.FINALS) && ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "ダートGⅠ強者", 10,
+        RaceCondition(3) { (grade == RaceGrade.G1 || grade == RaceGrade.FINALS) && ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "クイーンウマ娘", 15,
+        AnotherAchievementCondition("プリンセスウマ娘"),
+        RaceNameCondition("ヴィクトリアマイル", "阪神ジュベナイルフィリーズ"),
+        RaceCondition { turn >= 49 && name == "エリザベス女王杯" },
+    ),
+    RaceAchievement(
+        "プリンセスウマ娘", 10,
+        AnotherAchievementCondition("ヒロインウマ娘"),
+        RaceCondition { turn <= 48 && name == "エリザベス女王杯" },
+    ),
+    RaceAchievement(
+        "ヒロインウマ娘", 10,
+        RaceNameCondition("桜花賞", "オークス", "秋華賞"),
+    ),
+    RaceAchievement(
+        "光速スプリンター", 15,
+        AnotherAchievementCondition("凄腕スプリンター"),
+        RaceNameCondition("安田記念", "マイルチャンピオンシップ"),
+    ),
+    RaceAchievement(
+        "凄腕スプリンター", 10,
+        RaceNameCondition("高松宮記念", "スプリンターズステークス"),
+    ),
+    RaceAchievement(
+        "盾の覇者", 10,
+        RaceNameCondition("天皇賞（春）", "天皇賞（秋）"),
+    ),
+    RaceAchievement(
+        "春の覇者", 10,
+        RaceNameCondition("大阪杯", "天皇賞（春）", "宝塚記念"),
+    ),
+    RaceAchievement(
+        "秋の覇者", 10,
+        RaceCondition { name == "天皇賞（秋）" && turn >= 49 },
+        RaceCondition { name == "ジャパンカップ" && turn >= 49 },
+        RaceCondition { name == "有馬記念" && turn >= 49 },
+    ),
+    RaceAchievement(
+        "ダート達人", 10,
+        RaceCondition(15) { ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "ダート玄人", 10,
+        RaceCondition(10) { ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "ダート上手", 5,
+        RaceCondition(5) { ground == RaceGround.DIRT },
+    ),
+    RaceAchievement(
+        "根幹距離の覇者", 10,
+        RaceCondition(10) { basicDistance },
+    ),
+    RaceAchievement(
+        "非根幹距離の覇者", 10,
+        RaceCondition(10) { !basicDistance },
+    ),
+    RaceAchievement(
+        "ダートスプリンター", 10,
+        RaceCondition { turn <= 48 && name == "JBCスプリント" },
+        RaceCondition { turn >= 49 && name == "JBCスプリント" },
+    ),
+    RaceAchievement(
+        "可憐なウマ娘", 10,
+        RaceNameEndCondition(3, "ウマ娘ステークス"),
+    ),
+    RaceAchievement(
+        "ダートの新星", 5,
+        RaceNameCondition("ユニコーンステークス", "ジャパンダートダービー", "レパードステークス"),
+    ),
+    RaceAchievement(
+        "ワールドウマ娘", 5,
+        RaceNameCondition(3, "サウジアラビアロイヤルカップ", "ニュージーランドトロフィー", "ブラジルカップ", "アルゼンチン共和国杯", "アメリカJCC", "ジャパンカップ"),
+    ),
+    RaceAchievement(
+        "ジュニアウマ娘", 5,
+        RaceCondition(3) { name.endsWith("ジュニアステークス") },
+    ),
+    RaceAchievement(
+        "名人ウマ娘", 5,
+        RaceCondition { ground == RaceGround.TURF && distanceType == RaceDistance.SHORT },
+        RaceCondition { ground == RaceGround.TURF && distanceType == RaceDistance.MILE },
+        RaceCondition { ground == RaceGround.TURF && distanceType == RaceDistance.MIDDLE },
+        RaceCondition { ground == RaceGround.TURF && distanceType == RaceDistance.LONG },
+    ),
+    RaceAchievement(
+        "達人ウマ娘", 5,
+        RaceCondition { ground == RaceGround.DIRT && distanceType == RaceDistance.SHORT },
+        RaceCondition { ground == RaceGround.DIRT && distanceType == RaceDistance.MILE },
+        RaceCondition { ground == RaceGround.DIRT && distanceType == RaceDistance.MIDDLE },
+    ),
+    RaceAchievement(
+        "ベテランウマ娘", 5,
+        RaceCondition(10) { grade.ordinal >= RaceGrade.OPEN.ordinal },
+    ),
+    RaceAchievement(
+        "北海道マスター", 5,
+        RaceCondition(3) { courseName == "札幌" || courseName == "函館" },
+    ),
+    RaceAchievement(
+        "東北マスター", 5,
+        RaceCondition(3) { courseName == "福島" || courseName == "新潟" },
+    ),
+    RaceAchievement(
+        "関東マスター", 5,
+        RaceCondition(3) { courseName == "東京" || courseName == "中山" || courseName == "大井" },
+    ),
+    RaceAchievement(
+        "西日本マスター", 5,
+        RaceCondition(3) { courseName == "中京" || courseName == "阪神" || courseName == "京都" },
+    ),
+    RaceAchievement(
+        "小倉マスター", 5,
+        RaceCondition(3) { courseName == "小倉" || courseName == "小倉" },
+    ),
+).reversed()

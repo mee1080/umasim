@@ -24,6 +24,10 @@ data class RaceEntry(
     val needFan: Int,
     val getFan: Int,
     val grade: RaceGrade,
-    val distance: RaceDistance,
+    val distance: Int,
     val ground: RaceGround,
-)
+    val courseName: String,
+) {
+    val distanceType = toRaceDistance(distance)
+    val basicDistance = distance % 400 == 0
+}
