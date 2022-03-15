@@ -4,8 +4,16 @@ import io.github.mee1080.umasim.data.RaceDistance
 import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.web.state.RotationState
+import kotlinx.browser.localStorage
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 class RotationViewModel(private val root: ViewModel) {
+
+    companion object {
+        private const val KEY_OPTION = "umasim.rotation.option"
+    }
 
     lateinit var calculator: RaceRotationCalculator
 
@@ -29,6 +37,18 @@ class RotationViewModel(private val root: ViewModel) {
         }
     }
 
+    fun updateOption(option: RaceRotationCalculator.Option) {
+        calculator.option = option
+        calculator.calculate()
+        localStorage.setItem(KEY_OPTION, Json.encodeToString(option))
+        root.state = root.state.copy(
+            rotationState = rotationState.copy(
+                calcState = calculator.state,
+                option = option,
+            )
+        )
+    }
+
     fun resetRace() {
         init(rotationState.groundSetting, rotationState.distanceSetting)
     }
@@ -44,14 +64,18 @@ class RotationViewModel(private val root: ViewModel) {
             RaceDistance.MIDDLE to RaceRotationCalculator.Rank.A,
             RaceDistance.LONG to RaceRotationCalculator.Rank.A,
         )
-        init(groundSetting, distanceSetting)
+        val option = localStorage.getItem(KEY_OPTION)?.let {
+            Json.decodeFromString<RaceRotationCalculator.Option>(it)
+        } ?: RaceRotationCalculator.Option()
+        init(groundSetting, distanceSetting, option)
     }
 
     private fun init(
         groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
         distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
+        option: RaceRotationCalculator.Option = rotationState.option,
     ) {
-        calculator = RaceRotationCalculator(groundSetting, distanceSetting)
+        calculator = RaceRotationCalculator(groundSetting, distanceSetting, option)
         root.state = root.state.copy(
             rotationState = RotationState(
                 calculator.state,
@@ -59,6 +83,7 @@ class RotationViewModel(private val root: ViewModel) {
                 calculator.achievements,
                 groundSetting,
                 distanceSetting,
+                option,
             )
         )
     }

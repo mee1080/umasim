@@ -1,10 +1,12 @@
 package io.github.mee1080.umasim.rotation
 
 import io.github.mee1080.umasim.data.*
+import kotlinx.serialization.Serializable
 
 class RaceRotationCalculator(
     private val ground: Map<RaceGround, Rank>,
     private val distance: Map<RaceDistance, Rank>,
+    var option: Option = Option(),
 ) {
 
     companion object {
@@ -14,9 +16,8 @@ class RaceRotationCalculator(
 
     enum class Rank(
         val displayName: String,
-        val rate: Int,
     ) {
-        A("A", 100), B("B", 80), C("C", 40), NONE("なし", 0),
+        A("A"), B("B"), C("C"), NONE("なし"),
     }
 
     data class State(
@@ -26,7 +27,40 @@ class RaceRotationCalculator(
         val recommendation: List<Triple<RaceEntry, Int, List<Pair<String, Int?>>>>,
     )
 
+    @Serializable
+    data class Option(
+        val rankA: Int = 100,
+        val rankB: Int = 80,
+        val rankC: Int = 40,
+        val gradeG1: Int = 40,
+        val gradeG2G3: Int = 20,
+        val continue2: Int = 10,
+        val continue3: Int = -30,
+        val continue4: Int = -70,
+    ) {
+        fun rank(rank: Rank?) = when (rank) {
+            Rank.A -> rankA
+            Rank.B -> rankB
+            Rank.C -> rankC
+            else -> 0
+        }
+
+        fun grade(grade: RaceGrade?) = when (grade) {
+            RaceGrade.G1 -> gradeG1
+            RaceGrade.G2, RaceGrade.G3 -> gradeG2G3
+            else -> 0
+        }
+
+        fun continueCount(count: Int) = when (count) {
+            0, -1 -> 0
+            1 -> continue2
+            2 -> continue3
+            else -> continue4
+        }
+    }
+
     var state: State
+        private set
 
     private val ignoreGround = ground.filter { it.value == Rank.NONE }.map { it.key }
 
@@ -68,7 +102,7 @@ class RaceRotationCalculator(
         calculate()
     }
 
-    private fun calculate() {
+    fun calculate() {
         val newAchievement = state.rotation.checkAchievement(achievements)
         val cannotAchieve =
             checkCanAchieve(achievements, raceSelections, state.rotation.selectedRace).map { it.name }.toSet()
@@ -93,10 +127,9 @@ class RaceRotationCalculator(
     ): List<Triple<RaceEntry, Int, List<Pair<String, Int?>>>> {
         return raceSelections.flatMapIndexed { index, raceEntries ->
             if (rotation.getRace(index) == null) {
-                raceEntries.mapNotNull { raceEntry ->
+                raceEntries.map { raceEntry ->
                     val conditionScore =
-                        (ground[raceEntry.ground]?.rate ?: 0) + (distance[raceEntry.distanceType]?.rate ?: 0)
-                    if (conditionScore == 0) return@mapNotNull null
+                        option.rank(ground[raceEntry.ground]) + option.rank(distance[raceEntry.distanceType])
                     val nextRotation = rotation + raceEntry
                     val nextAchievement = nextRotation.checkAchievement(availableAchievement)
                     // TODO 動作速度が大幅に遅くなるため、達成できなくなる称号の判定は除外
@@ -108,12 +141,7 @@ class RaceRotationCalculator(
                     val diffScore = 10 * diff.sumOf { (name, _) ->
                         achievementMap[name]?.status ?: 5
                     }
-                    val gradeScore = when (raceEntry.grade) {
-                        RaceGrade.G3 -> 20
-                        RaceGrade.G2 -> 20
-                        RaceGrade.G1 -> 40
-                        else -> 0
-                    }
+                    val gradeScore = option.grade(raceEntry.grade)
                     var beforeRaceCount = 0
                     var afterRaceCount = 0
                     for (i in 1..3) {
@@ -128,12 +156,7 @@ class RaceRotationCalculator(
                     if (index >= 25 && (index + afterRaceCount) % 24 == 0) {
                         raceCount -= 1
                     }
-                    val continueScore = when (raceCount) {
-                        0, -1 -> 80
-                        1 -> 60
-                        2 -> 40
-                        else -> 0
-                    }
+                    val continueScore = option.continueCount(raceCount)
                     val totalScore = conditionScore + diffScore + gradeScore + continueScore
                     Triple(raceEntry, totalScore, diff)
                 }

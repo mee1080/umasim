@@ -209,6 +209,7 @@ data class RotationState(
     val achievementList: List<RaceAchievement>,
     val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
     val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
+    val option: RaceRotationCalculator.Option,
 ) {
     val rotation = calcState.rotation
     val selectedRace = rotation.selectedRaceName

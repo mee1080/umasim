@@ -5,15 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
+import io.github.mee1080.umasim.web.components.LabeledNumberInput
 import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.RotationState
 import io.github.mee1080.umasim.web.vm.RotationViewModel
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.H3
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun RotationPage(model: RotationViewModel, state: RotationState?) {
@@ -48,6 +46,34 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                     model.updateDistanceSetting(entry.key, it)
                 }
             }
+            H4 { Text("おすすめ基準値") }
+            LabeledNumberInput("適性A", state.option.rankA) {
+                model.updateOption(state.option.copy(rankA = it.toInt()))
+            }
+            LabeledNumberInput("適性B", state.option.rankB) {
+                model.updateOption(state.option.copy(rankB = it.toInt()))
+            }
+            LabeledNumberInput("適性C", state.option.rankC) {
+                model.updateOption(state.option.copy(rankC = it.toInt()))
+            }
+            LabeledNumberInput("GI", state.option.gradeG1) {
+                model.updateOption(state.option.copy(gradeG1 = it.toInt()))
+            }
+            LabeledNumberInput("GII/GIII", state.option.gradeG2G3) {
+                model.updateOption(state.option.copy(gradeG2G3 = it.toInt()))
+            }
+            LabeledNumberInput("連続出走2", state.option.continue2) {
+                model.updateOption(state.option.copy(continue2 = it.toInt()))
+            }
+            LabeledNumberInput("連続出走3", state.option.continue3) {
+                model.updateOption(state.option.copy(continue3 = it.toInt()))
+            }
+            LabeledNumberInput("連続出走4以上", state.option.continue4) {
+                model.updateOption(state.option.copy(continue4 = it.toInt()))
+            }
+            Button({
+                onClickOrTouch { model.updateOption(RaceRotationCalculator.Option()) }
+            }) { Text("デフォルトに戻す") }
         }
         Div {
             H3 { Text("おすすめ(クリックで追加)") }
