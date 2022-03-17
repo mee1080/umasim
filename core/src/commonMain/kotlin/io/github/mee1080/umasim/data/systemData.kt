@@ -284,7 +284,7 @@ internal val raceAchievementData = listOf(
     RaceAchievement(
         "ワンダフルウマ娘", 15,
         AnotherAchievementCondition("カリスマウマ娘"),
-        RaceCondition(2) { turn <= 48 && (name == "ジャパンカップ" || name == "有馬記念") },
+        RaceCondition { turn <= 48 && (name == "ジャパンカップ" || name == "有馬記念") },
     ),
     RaceAchievement(
         "カリスマウマ娘", 10,
