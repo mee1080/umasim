@@ -7,6 +7,7 @@ class RaceRotationCalculator(
     private val ground: Map<RaceGround, Rank>,
     private val distance: Map<RaceDistance, Rank>,
     var option: Option = Option(),
+    selectedRaceName: List<String?> = emptyList(),
 ) {
 
     companion object {
@@ -90,6 +91,9 @@ class RaceRotationCalculator(
             0,
             recommendation,
         )
+        if (selectedRaceName.isNotEmpty()) {
+            setRace(selectedRaceName)
+        }
     }
 
     fun add(turn: Int, name: String) {
@@ -98,6 +102,20 @@ class RaceRotationCalculator(
             state.copy(rotation = state.rotation - turn)
         } else {
             state.copy(rotation = state.rotation + race)
+        }
+        calculate()
+    }
+
+    private fun setRace(selectedRaceName: List<String?>) {
+        selectedRaceName.forEachIndexed { turn, name ->
+            if (turn in 13..72) {
+                val race = raceSelections[turn].firstOrNull { it.name == name }
+                state = if (race == null) {
+                    state.copy(rotation = state.rotation - turn)
+                } else {
+                    state.copy(rotation = state.rotation + race)
+                }
+            }
         }
         calculate()
     }

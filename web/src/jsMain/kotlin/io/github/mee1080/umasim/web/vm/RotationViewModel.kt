@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.data.RaceDistance
 import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.web.state.RotationState
+import io.github.mee1080.umasim.web.state.SavedRotation
 import kotlinx.browser.localStorage
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -13,6 +14,7 @@ class RotationViewModel(private val root: ViewModel) {
 
     companion object {
         private const val KEY_OPTION = "umasim.rotation.option"
+        private const val KEY_ROTATION = "umasim.rotation.rotation"
     }
 
     lateinit var calculator: RaceRotationCalculator
@@ -68,16 +70,31 @@ class RotationViewModel(private val root: ViewModel) {
             Json.decodeFromString<RaceRotationCalculator.Option>(it)
         } ?: RaceRotationCalculator.Option()
         init(groundSetting, distanceSetting, option)
+        val rotationLoadList = loadRotationData().keys.sorted()
+        root.state = root.state.copy(
+            rotationState = rotationState.copy(
+                rotationLoadList = rotationLoadList,
+                rotationLoadName = rotationLoadList.firstOrNull() ?: "",
+            )
+        )
     }
 
     private fun init(
         groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
         distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
         option: RaceRotationCalculator.Option = rotationState.option,
+        rotation: List<String?> = emptyList(),
     ) {
-        calculator = RaceRotationCalculator(groundSetting, distanceSetting, option)
+        calculator = RaceRotationCalculator(groundSetting, distanceSetting, option, rotation)
         root.state = root.state.copy(
-            rotationState = RotationState(
+            rotationState = root.state.rotationState?.copy(
+                calculator.state,
+                calculator.raceSelections,
+                calculator.achievements,
+                groundSetting,
+                distanceSetting,
+                option,
+            ) ?: RotationState(
                 calculator.state,
                 calculator.raceSelections,
                 calculator.achievements,
@@ -97,5 +114,49 @@ class RotationViewModel(private val root: ViewModel) {
                 calculator.achievements,
             )
         )
+    }
+
+    fun updateRotationSaveName(name: String) {
+        root.state = root.state.copy(
+            rotationState = rotationState.copy(rotationSaveName = name)
+        )
+    }
+
+    fun updateRotationLoadName(name: String) {
+        root.state = root.state.copy(
+            rotationState = rotationState.copy(rotationLoadName = name)
+        )
+    }
+
+    fun saveRotation() {
+        val name = rotationState.rotationSaveName
+        val data = loadRotationData().toMutableMap().apply {
+            put(
+                name, SavedRotation(
+                    rotationState.groundSetting,
+                    rotationState.distanceSetting,
+                    rotationState.selectedRace,
+                )
+            )
+        }
+        localStorage.setItem(KEY_ROTATION, Json.encodeToString(data))
+        if (!rotationState.rotationLoadList.contains(name)) {
+            root.state = root.state.copy(
+                rotationState = rotationState.copy(
+                    rotationLoadList = (rotationState.rotationLoadList + name).sorted(),
+                    rotationLoadName = name,
+                )
+            )
+        }
+    }
+
+    fun loadRotation() {
+        val rotation = loadRotationData()[rotationState.rotationLoadName] ?: return
+        init(rotation.groundSetting, rotation.distanceSetting, rotationState.option, rotation.rotation)
+    }
+
+    private fun loadRotationData(): Map<String, SavedRotation> {
+        val data = localStorage.getItem(KEY_ROTATION) ?: return emptyMap()
+        return Json.decodeFromString(data)
     }
 }

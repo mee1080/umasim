@@ -210,6 +210,9 @@ data class RotationState(
     val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
     val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
     val option: RaceRotationCalculator.Option,
+    val rotationSaveName: String = "",
+    val rotationLoadList: List<String> = emptyList(),
+    val rotationLoadName: String = "",
 ) {
     val rotation = calcState.rotation
     val selectedRace = rotation.selectedRaceName

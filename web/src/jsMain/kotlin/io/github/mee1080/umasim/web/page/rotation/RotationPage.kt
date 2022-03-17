@@ -1,3 +1,21 @@
+/*
+ * Copyright 2021 mee1080
+ *
+ * This file is part of umasim.
+ *
+ * umasim is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * umasim is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
+ */
 package io.github.mee1080.umasim.web.page.rotation
 
 import androidx.compose.runtime.Composable
@@ -10,8 +28,13 @@ import io.github.mee1080.umasim.web.components.LabeledSelect
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.RotationState
 import io.github.mee1080.umasim.web.vm.RotationViewModel
+import org.jetbrains.compose.web.attributes.disabled
+import org.jetbrains.compose.web.attributes.placeholder
+import org.jetbrains.compose.web.attributes.selected
+import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun RotationPage(model: RotationViewModel, state: RotationState?) {
@@ -20,6 +43,38 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
             model.init()
         }
         return
+    }
+    Div {
+        Text("適性＆ローテ保存: ")
+        TextInput(state.rotationSaveName) {
+            placeholder("保存名")
+            size(40)
+            onInput { model.updateRotationSaveName(it.value) }
+        }
+        Button({
+            if (state.rotationSaveName.isEmpty()) disabled()
+            onClick { model.saveRotation() }
+        }) {
+            Text(if (state.rotationLoadList.contains(state.rotationSaveName)) "上書保存" else "新規保存")
+        }
+        Div({ style { width(40.px) } }) {}
+        Text("読込: ")
+        val selection = state.rotationLoadList
+        val selectedValue = state.rotationLoadName
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                selection.indexOfFirst { it == selectedValue })
+            onChange { model.updateRotationLoadName(selection[it.value!!.toInt()]) }
+        }) {
+            selection.forEachIndexed { index, name ->
+                Option(index.toString(), { if (name == selectedValue) selected() }) { Text(name) }
+            }
+        }
+        Button({
+            if (state.rotationLoadName.isEmpty()) disabled()
+            onClick { model.loadRotation() }
+        }) { Text("読込") }
     }
     Div({
         style {
