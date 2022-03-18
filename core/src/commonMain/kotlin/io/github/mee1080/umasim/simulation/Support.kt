@@ -50,7 +50,7 @@ data class Support(val index: Int, val card: SupportCard) {
     }
 
     fun checkHint(): Boolean {
-        return card.type != StatusType.FRIEND && Random.nextDouble() < card.hintFrequency
+        return !card.type.outingType && Random.nextDouble() < card.hintFrequency
     }
 
     fun selectTraining(): StatusType {

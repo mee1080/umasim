@@ -137,10 +137,10 @@ data class SupportCard(
     val hintFrequency = 0.025 + 0.05 * (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0
 
     fun checkHint(): Boolean {
-        return type != StatusType.FRIEND && Random.nextDouble() < hintFrequency
+        return !type.outingType && Random.nextDouble() < hintFrequency
     }
 
-    val trainingRelation = if (type == StatusType.FRIEND) 4 else 7
+    val trainingRelation = type.trainingRelation
 
     fun matches(filters: Collection<String>) = filters.all { filter ->
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }

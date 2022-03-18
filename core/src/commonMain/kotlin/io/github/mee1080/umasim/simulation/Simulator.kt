@@ -217,7 +217,7 @@ class Simulator(
 
     private fun calcTrainingRelation(charm: Boolean, support: List<Support>): Map<Int, Int> {
         return support.associate {
-            it.index to if (it.card.type == StatusType.FRIEND) {
+            it.index to if (it.card.type.outingType) {
                 if (charm) 6 else 4
             } else {
                 (if (charm) 9 else 7) + (if (it.hint) {

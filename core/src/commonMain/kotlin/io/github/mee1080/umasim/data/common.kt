@@ -20,15 +20,18 @@ package io.github.mee1080.umasim.data
 
 import kotlin.random.Random
 
-enum class StatusType(val displayName: String) {
+enum class StatusType(val displayName: String, val outingType: Boolean = false) {
     SPEED("スピード"),
     STAMINA("スタミナ"),
     POWER("パワー"),
     GUTS("根性"),
     WISDOM("賢さ"),
-    FRIEND("友人"),
+    FRIEND("友人", outingType = true),
+    GROUP("グループ", outingType = true),
     SKILL("スキルPt"),
-    NONE("未選択"),
+    NONE("未選択");
+
+    val trainingRelation = if (outingType) 4 else 7
 }
 
 val trainingType = arrayOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM)
@@ -42,6 +45,7 @@ fun toSupportType(value: String) = when (value) {
     "根性", "G" -> StatusType.GUTS
     "賢さ", "W" -> StatusType.WISDOM
     "友人" -> StatusType.FRIEND
+    "グループ" -> StatusType.GROUP
     "スキルPt" -> StatusType.SKILL
     else -> StatusType.NONE
 }

@@ -117,6 +117,7 @@ fun SupportSelect(model: ViewModel, state: State) {
                             StatusType.GUTS -> rgb(255, 144, 186)
                             StatusType.WISDOM -> rgb(32, 216, 169)
                             StatusType.FRIEND -> rgb(255, 211, 108)
+                            StatusType.GROUP -> rgb(149, 243, 86)
                             else -> null
                         }?.let {
                             style {
@@ -185,6 +186,9 @@ fun SupportSelect(model: ViewModel, state: State) {
                                     item.relation == it
                                 ) { model.updateRelation(index, it) }
                             }
+                        }
+                        if (item.statusType == StatusType.GROUP) {
+                            LabeledCheckbox("passion$index", "情熱ゾーン", item.passion) { model.updatePassion(index, it) }
                         }
                     }
                 }

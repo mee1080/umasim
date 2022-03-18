@@ -179,7 +179,7 @@ object Calculator {
     }
 
     fun calcCardPositionSelection(card: SupportCard): Array<Pair<StatusType, Int>> {
-        if (card.type == StatusType.FRIEND) {
+        if (card.type.outingType) {
             return arrayOf(
                 StatusType.SPEED to 1,
                 StatusType.STAMINA to 1,

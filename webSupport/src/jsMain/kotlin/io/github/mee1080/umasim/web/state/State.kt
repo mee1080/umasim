@@ -118,6 +118,7 @@ data class SupportSelection(
     val supportTalent: Int = 4,
     val join: Boolean = true,
     val relation: Int = 0,
+    val passion: Boolean = false,
 ) {
     companion object {
         fun fromSaveInfo(info: SaveDataConverter.SupportInfo) = SupportSelection(
@@ -145,7 +146,7 @@ data class SupportSelection(
     val friend get() = relation >= 80
 
     val relationUpCount
-        get() = if (card?.type == StatusType.FRIEND) {
+        get() = if (card?.type?.outingType == true) {
             (60 - initialRelation - 1) / 4 + 1
         } else {
             (80 - initialRelation - 1) / 7 + 1
@@ -158,7 +159,7 @@ data class SupportSelection(
 
     val hintRate
         get() = card?.let { card ->
-            if (card.type == StatusType.FRIEND) 0.0 else card.hintFrequency
+            if (card.type.outingType) 0.0 else card.hintFrequency
         } ?: 0.0
 }
 

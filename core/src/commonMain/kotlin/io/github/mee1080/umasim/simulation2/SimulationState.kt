@@ -95,7 +95,13 @@ data class MemberState(
     val guest get() = supportState == null
     val relation get() = supportState?.relation ?: 0
     val friendTrainingEnabled get() = relation >= 80
-    fun isFriendTraining(type: StatusType) = friendTrainingEnabled && type == card.type
+
+    fun isFriendTraining(type: StatusType) = if (card.type == StatusType.GROUP) {
+        supportState?.passion == true
+    } else {
+        friendTrainingEnabled && type == card.type
+    }
+
     fun getFriendBonus(type: StatusType) = if (isFriendTraining(type)) card.friendFactor else 1.0
     val wisdomFriendRecovery get() = if (isFriendTraining(StatusType.WISDOM)) card.wisdomFriendRecovery else 0
     val hint = supportState?.hintIcon == true
@@ -108,6 +114,7 @@ data class MemberState(
 data class SupportState(
     val relation: Int,
     val hintIcon: Boolean,
+    val passion: Boolean,
 )
 
 sealed interface ScenarioMemberState {

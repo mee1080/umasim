@@ -29,7 +29,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        support: List<Pair<SupportCard, Int>>,
+        support: List<Triple<SupportCard, Int, Boolean>>,
         teamJoinCount: Int,
         scenario: Scenario,
         supportTypeCount: Int,
@@ -184,7 +184,7 @@ object Calculator {
     }
 
     fun calcCardPositionSelection(card: SupportCard): Array<Pair<StatusType, Int>> {
-        if (card.type == StatusType.FRIEND) {
+        if (card.type.outingType) {
             return arrayOf(
                 StatusType.SPEED to 1,
                 StatusType.STAMINA to 1,
@@ -211,7 +211,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        support: List<Pair<SupportCard, Int>>,
+        support: List<Triple<SupportCard, Int, Boolean>>,
         teamJoinCount: Int,
         scenario: Scenario,
         supportTypeCount: Int,

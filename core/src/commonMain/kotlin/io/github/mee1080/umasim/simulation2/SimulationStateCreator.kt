@@ -2,13 +2,19 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 
-fun SupportCard.toMemberState(scenario: Scenario, index: Int, relation: Int? = null) = MemberState(
+fun SupportCard.toMemberState(
+    scenario: Scenario,
+    index: Int,
+    relation: Int? = null,
+    passion: Boolean = false
+) = MemberState(
     index = index,
     card = this,
     position = StatusType.NONE,
     supportState = SupportState(
         relation = relation ?: initialRelation,
         hintIcon = false,
+        passion = passion,
     ),
     scenarioState = when (scenario) {
         Scenario.URA -> UraMemberState
@@ -28,8 +34,8 @@ fun SupportCard.toMemberState(scenario: Scenario, index: Int, relation: Int? = n
 fun List<SupportCard>.toMemberState(scenario: Scenario) =
     mapIndexed { index, target -> target.toMemberState(scenario, index) }
 
-fun List<Pair<SupportCard, Int>>.toMemberStateWithRelation(scenario: Scenario) =
-    mapIndexed { index, target -> target.first.toMemberState(scenario, index, target.second) }
+fun List<Triple<SupportCard, Int, Boolean>>.toMemberStateWithRelation(scenario: Scenario) =
+    mapIndexed { index, target -> target.first.toMemberState(scenario, index, target.second, target.third) }
 
 fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
     index = index,

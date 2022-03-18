@@ -132,6 +132,10 @@ class ViewModel {
         updateSupportSelection(position, false) { it.copy(relation = relation) }
     }
 
+    fun updatePassion(position: Int, passion: Boolean) {
+        updateSupportSelection(position, false) { it.copy(passion = passion) }
+    }
+
     fun updateScenario(scenarioIndex: Int) {
         updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex).createRaceSetting() }
     }
@@ -174,7 +178,8 @@ class ViewModel {
 
     private fun calculate(state: State): State {
         val joinSupportList =
-            state.supportSelectionList.filter { it.join && it.card != null }.map { it.card!! to it.relation }
+            state.supportSelectionList.filter { it.join && it.card != null }
+                .map { Triple(it.card!!, it.relation, it.passion) }
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
@@ -217,7 +222,7 @@ class ViewModel {
             state.chara,
             WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
             state.motivation,
-            state.supportSelectionList.filter { it.card != null }.map { it.card!! to it.relation },
+            state.supportSelectionList.filter { it.card != null }.map { Triple(it.card!!, it.relation, it.passion) },
             state.teamJoinCount,
             state.scenario,
             supportTypeCount,
