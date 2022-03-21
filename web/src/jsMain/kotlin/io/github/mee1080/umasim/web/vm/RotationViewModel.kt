@@ -167,6 +167,7 @@ class RotationViewModel(private val root: ViewModel) {
     fun loadRotation() {
         val rotation = loadRotationData()[rotationState.rotationLoadName] ?: return
         init(rotation.groundSetting, rotation.distanceSetting, rotationState.option, rotation.rotation)
+        updateRotationSaveName(rotationState.rotationLoadName)
     }
 
     private fun loadRotationData(): Map<String, SavedRotation> {
