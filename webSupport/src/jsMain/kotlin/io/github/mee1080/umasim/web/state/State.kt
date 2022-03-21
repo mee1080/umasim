@@ -211,20 +211,17 @@ data class RotationState(
     val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
     val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
     val option: RaceRotationCalculator.Option,
+    val charaSelection: List<Pair<Int, String>>,
     val recommendFilter: RecommendFilter = NoFilter,
     val rotationSaveName: String = "",
     val rotationLoadList: List<String> = emptyList(),
     val rotationLoadName: String = "",
 ) {
+    val selectedChara = calcState.charaId
     val rotation = calcState.rotation
-    val selectedRace = rotation.selectedRace
+    val selectedRace = rotation.list
     val raceCount = selectedRace.count { it != null }
-    val raceType = selectedRace
-        .filterNotNull()
-        .groupBy { it.ground to it.distanceType }
-        .mapValues { it.value.size }
-        .toList()
-        .sortedByDescending { it.second }
+    val raceType = rotation.raceType
     val recommendation = calcState.recommendation.filter { recommendFilter(it) }
 }
 

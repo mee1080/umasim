@@ -8,6 +8,7 @@ class RaceRotationCalculator(
     private val distance: Map<RaceDistance, Rank>,
     var option: Option = Option(),
     selectedRaceName: List<String?> = emptyList(),
+    charaId: Int,
 ) {
 
     companion object {
@@ -26,6 +27,7 @@ class RaceRotationCalculator(
         val currentAchievement: Map<String, Int?>,
         val totalStatus: Int,
         val recommendation: List<Triple<RaceEntry, Int, List<Pair<String, Int?>>>>,
+        val charaId: Int,
     )
 
     @Serializable
@@ -78,7 +80,7 @@ class RaceRotationCalculator(
     init {
         val allAchievements = Store.Climax.raceAchievement
         val rotation = RaceRotation()
-        val cannotAchieve = checkCanAchieve(allAchievements, raceSelections, emptyList()).map { it.name }
+        val cannotAchieve = checkCanAchieve(allAchievements, raceSelections, emptyArray()).map { it.name }
         val currentAchievement = rotation.checkAchievement(allAchievements).mapValues {
             if (cannotAchieve.contains(it.key)) null else it.value
         }
@@ -90,14 +92,26 @@ class RaceRotationCalculator(
             currentAchievement,
             0,
             recommendation,
+            charaId,
         )
+        setChara(charaId)
         if (selectedRaceName.isNotEmpty()) {
             setRace(selectedRaceName)
         }
     }
 
+    fun setChara(charaId: Int) {
+        state = state.copy(charaId = charaId)
+        val debut = Store.getGoalRaceList(charaId).getOrNull(0)
+        add(12, debut)
+    }
+
     fun add(turn: Int, name: String) {
         val race = raceSelections[turn].firstOrNull { it.name == name }
+        add(turn, race)
+    }
+
+    fun add(turn: Int, race: RaceEntry?) {
         state = if (race == null) {
             state.copy(rotation = state.rotation - turn)
         } else {
@@ -123,7 +137,7 @@ class RaceRotationCalculator(
     fun calculate() {
         val newAchievement = state.rotation.checkAchievement(achievements)
         val cannotAchieve =
-            checkCanAchieve(achievements, raceSelections, state.rotation.selectedRace).map { it.name }.toSet()
+            checkCanAchieve(achievements, raceSelections, state.rotation.list).map { it.name }.toSet()
         val currentAchievement = state.currentAchievement.mapValues {
             if (cannotAchieve.contains(it.key)) null else newAchievement[it.key]
         }
@@ -185,7 +199,7 @@ class RaceRotationCalculator(
     private fun checkCanAchieve(
         achievements: List<RaceAchievement>,
         raceSelections: List<List<RaceEntry>>,
-        selectedRace: List<RaceEntry?>
+        selectedRace: Array<RaceEntry?>
     ): List<RaceAchievement> {
         val cannotAchieveSet = mutableSetOf<String>()
         val restRace = raceSelections.mapIndexed { index, list ->

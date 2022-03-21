@@ -97,9 +97,13 @@ fun turnToString(turn: Int) = buildString {
             else -> "ファイナルズ"
         }
     )
-    append((turn - 1) % 24 / 2 + 1)
-    append("月")
-    append(if (turn % 2 == 1) "前半" else "後半")
+    if (turn <= 72) {
+        append((turn - 1) % 24 / 2 + 1)
+        append("月")
+        append(if (turn % 2 == 1) "前半" else "後半")
+    } else {
+        append(turn - 72)
+    }
 }
 
 enum class RaceGrade(val displayName: String) {

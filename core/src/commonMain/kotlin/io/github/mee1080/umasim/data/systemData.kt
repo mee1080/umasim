@@ -358,11 +358,11 @@ internal val raceAchievementData = listOf(
     ),
     RaceAchievement(
         "根幹距離の覇者", 10,
-        RaceCondition(10) { basicDistance },
+        RaceCondition(10) { grade != RaceGrade.FINALS && basicDistance },
     ),
     RaceAchievement(
         "非根幹距離の覇者", 10,
-        RaceCondition(10) { !basicDistance },
+        RaceCondition(10) { grade != RaceGrade.FINALS && !basicDistance },
     ),
     RaceAchievement(
         "ダートスプリンター", 10,

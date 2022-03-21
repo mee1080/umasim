@@ -4,26 +4,44 @@ import io.github.mee1080.umasim.data.*
 import kotlin.math.max
 
 class RaceRotation(
-    private val list: Array<RaceEntry?> = Array(60) { null },
+    val list: Array<RaceEntry?> = Array(79) { null },
 ) {
-    fun getRace(turn: Int) = list.getOrNull(turn - 13)
-
-    val selectedRace by lazy { (0..78).map { getRace(it) } }
-
-    val selectedRaceName by lazy { selectedRace.map { it?.name } }
+    fun getRace(turn: Int) = list.getOrNull(turn)
 
     val raceNames by lazy { list.mapNotNull { it?.name }.toSet() }
 
+    val raceType = list
+        .slice(0..72)
+        .filterNotNull()
+        .groupBy { it.ground to it.distanceType }
+        .mapValues { it.value.size }
+        .toList()
+        .sortedByDescending { it.second * 10000 - it.first.first.ordinal * 100 - it.first.second.ordinal }
+
+    init {
+        val type = raceType.getOrNull(0)?.first ?: (RaceGround.TURF to RaceDistance.SHORT)
+        val distance = when (type.second) {
+            RaceDistance.SHORT -> 1400
+            RaceDistance.MILE -> 1800
+            RaceDistance.MIDDLE -> 2000
+            else -> 2600
+        }
+        list[74] = RaceEntry(74, "クライマックス第1戦", 0, 7000, RaceGrade.FINALS, distance, type.first, "")
+        list[76] = RaceEntry(76, "クライマックス第2戦", 0, 10000, RaceGrade.FINALS, distance, type.first, "")
+        list[78] = RaceEntry(78, "クライマックス第3戦", 0, 30000, RaceGrade.FINALS, distance, type.first, "")
+
+    }
+
     operator fun plus(raceEntry: RaceEntry) =
-        RaceRotation(list = list.copyOf().also { it[raceEntry.turn - 13] = raceEntry })
+        RaceRotation(list = list.copyOf().also { it[raceEntry.turn] = raceEntry })
 
     operator fun plus(raceEntries: Collection<RaceEntry>) = RaceRotation(list = list.copyOf().also {
         raceEntries.forEach { raceEntry ->
-            it[raceEntry.turn - 13] = raceEntry
+            it[raceEntry.turn] = raceEntry
         }
     })
 
-    operator fun minus(turn: Int) = RaceRotation(list = list.copyOf().also { it[turn - 13] = null })
+    operator fun minus(turn: Int) = RaceRotation(list = list.copyOf().also { it[turn] = null })
 
     fun checkAchievement(achievements: List<RaceAchievement>): Map<String, Int> {
         val result = mutableMapOf<String, Int>()
@@ -54,7 +72,7 @@ class RaceRotation(
 
     override fun toString(): String {
         return list.mapIndexedNotNull { index, raceEntry ->
-            raceEntry?.let { "${index + 13}: ${it.name}" }
+            raceEntry?.let { "$index: ${it.name}" }
         }.joinToString()
     }
 }

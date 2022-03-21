@@ -81,6 +81,11 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
     }) {
         Div({ style { width(12.em) } }) {
             H3 { Text("設定") }
+            H4 { Text("育成ウマ娘") }
+            LabeledSelect("", state.charaSelection, state.selectedChara) {
+                model.updateChara(it)
+            }
+            H4 { Text("適性") }
             state.groundSetting.forEach { entry ->
                 LabeledSelect(
                     entry.key.displayName, RaceRotationCalculator.displayRankList, entry.value.displayName
@@ -207,7 +212,7 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                     height(65.vh)
                 }
             }) {
-                for (turn in 13..72) {
+                for (turn in 12..78) {
                     val race = state.selectedRace[turn]
                     Div({
                         style {
@@ -227,42 +232,38 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                             }
                         }) { Text(turnToString(turn)) }
                         Span({
+                            val canChange = turn in 13..72
                             style {
-                                cursor("pointer")
+                                if (canChange) cursor("pointer")
                                 marginRight(8.px)
                                 if (race == null) {
                                     color(Color.gray)
                                 }
                             }
-                            onClickOrTouch {
-                                model.updateRecommendFilter(TurnJustFilter(turn))
-                            }
-                            onContextMenu {
-                                model.selectRace(turn, "")
-                                it.preventDefault()
+                            if (canChange) {
+                                onClickOrTouch {
+                                    model.updateRecommendFilter(TurnJustFilter(turn))
+                                }
+                                onContextMenu {
+                                    model.selectRace(turn, "")
+                                    it.preventDefault()
+                                }
                             }
                         }) {
                             Text(race?.name ?: "（なし）")
                         }
                         if (race != null) {
-                            Span({ style { backgroundColor(race.grade.background()) } }) { Text(race.grade.displayName) }
-                            Span { Text(" ${race.distance}") }
+                            if (race.grade != RaceGrade.DEBUT && race.grade != RaceGrade.FINALS) {
+                                Span({ style { backgroundColor(race.grade.background()) } }) { Text(race.grade.displayName) }
+                            }
+                            if (race.grade == RaceGrade.FINALS) {
+                                Span { Text(" ${race.ground.displayName}${race.distanceType.displayName}") }
+                            } else {
+                                Span { Text(" ${race.ground.displayName}${race.distance}") }
+                            }
                         }
                     }
                 }
-//                state.raceSelection.forEachIndexed { turn, raceEntries ->
-//                    if (raceEntries.isNotEmpty()) {
-//                        Div {
-//                            LabeledSelect(
-//                                turnToString(turn),
-//                                listOf("") + raceEntries.map { it.name },
-//                                state.selectedRace[turn] ?: "",
-//                            ) {
-//                                model.selectRace(turn, it)
-//                            }
-//                        }
-//                    }
-//                }
             }
         }
         Div({ style { width(15.em) } }) {

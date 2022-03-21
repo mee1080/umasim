@@ -68,7 +68,7 @@ class RotationViewModel(private val root: ViewModel) {
         val option = localStorage.getItem(KEY_OPTION)?.let {
             Json.decodeFromString<RaceRotationCalculator.Option>(it)
         } ?: RaceRotationCalculator.Option()
-        init(groundSetting, distanceSetting, option)
+        init(groundSetting, distanceSetting, option, charaId = root.state.chara.charaId)
         val rotationLoadList = loadRotationData().keys.sorted()
         root.state = root.state.copy(
             rotationState = rotationState.copy(
@@ -83,8 +83,9 @@ class RotationViewModel(private val root: ViewModel) {
         distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
         option: RaceRotationCalculator.Option = rotationState.option,
         rotation: List<String?> = emptyList(),
+        charaId: Int = rotationState.calcState.charaId,
     ) {
-        calculator = RaceRotationCalculator(groundSetting, distanceSetting, option, rotation)
+        calculator = RaceRotationCalculator(groundSetting, distanceSetting, option, rotation, charaId)
         root.state = root.state.copy(
             rotationState = root.state.rotationState?.copy(
                 calculator.state,
@@ -100,12 +101,25 @@ class RotationViewModel(private val root: ViewModel) {
                 groundSetting,
                 distanceSetting,
                 option,
+                WebConstants.charaList
+                    .map { it.charaId to it.charaName }
+                    .distinctBy { it.first }
+                    .sortedBy { it.second }
             )
         )
     }
 
     fun selectRace(turn: Int, name: String) {
         calculator.add(turn, name)
+        applyCalculator()
+    }
+
+    fun updateChara(charaId: Int) {
+        calculator.setChara(charaId)
+        applyCalculator()
+    }
+
+    private fun applyCalculator() {
         root.state = root.state.copy(
             rotationState = rotationState.copy(
                 calcState = calculator.state,
