@@ -3,8 +3,7 @@ package io.github.mee1080.umasim.web.vm
 import io.github.mee1080.umasim.data.RaceDistance
 import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
-import io.github.mee1080.umasim.web.state.RotationState
-import io.github.mee1080.umasim.web.state.SavedRotation
+import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -109,9 +108,10 @@ class RotationViewModel(private val root: ViewModel) {
         calculator.add(turn, name)
         root.state = root.state.copy(
             rotationState = rotationState.copy(
-                calculator.state,
-                calculator.raceSelections,
-                calculator.achievements,
+                calcState = calculator.state,
+                raceSelection = calculator.raceSelections,
+                achievementList = calculator.achievements,
+                recommendFilter = if (rotationState.recommendFilter is TurnJustFilter) NoFilter else rotationState.recommendFilter
             )
         )
     }
@@ -135,7 +135,7 @@ class RotationViewModel(private val root: ViewModel) {
                 name, SavedRotation(
                     rotationState.groundSetting,
                     rotationState.distanceSetting,
-                    rotationState.selectedRace,
+                    rotationState.selectedRace.map { it?.name },
                 )
             )
         }
@@ -158,5 +158,9 @@ class RotationViewModel(private val root: ViewModel) {
     private fun loadRotationData(): Map<String, SavedRotation> {
         val data = localStorage.getItem(KEY_ROTATION) ?: return emptyMap()
         return Json.decodeFromString(data)
+    }
+
+    fun updateRecommendFilter(filter: RecommendFilter) {
+        root.state = root.state.copy(rotationState = rotationState.copy(recommendFilter = filter))
     }
 }

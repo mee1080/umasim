@@ -211,11 +211,43 @@ data class RotationState(
     val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
     val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
     val option: RaceRotationCalculator.Option,
+    val recommendFilter: RecommendFilter = NoFilter,
     val rotationSaveName: String = "",
     val rotationLoadList: List<String> = emptyList(),
     val rotationLoadName: String = "",
 ) {
     val rotation = calcState.rotation
-    val selectedRace = rotation.selectedRaceName
-    val raceCount = selectedRace.count { !it.isNullOrEmpty() }
+    val selectedRace = rotation.selectedRace
+    val raceCount = selectedRace.count { it != null }
+    val raceType = selectedRace
+        .filterNotNull()
+        .groupBy { it.ground to it.distanceType }
+        .mapValues { it.value.size }
+        .toList()
+        .sortedByDescending { it.second }
+    val recommendation = calcState.recommendation.filter { recommendFilter(it) }
+}
+
+sealed interface RecommendFilter {
+    operator fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>): Boolean
+}
+
+object NoFilter : RecommendFilter {
+    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = true
+    override fun toString() = "全て"
+}
+
+class TurnJustFilter(val turn: Int) : RecommendFilter {
+    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.first.turn == turn
+    override fun toString() = turnToString(turn)
+}
+
+class TurnAfterFilter(val turn: Int) : RecommendFilter {
+    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.first.turn >= turn
+    override fun toString() = turnToString(turn) + " 以降"
+}
+
+class AchievementFilter(val name: String) : RecommendFilter {
+    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.third.any { it.first == name }
+    override fun toString() = name
 }

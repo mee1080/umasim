@@ -21,15 +21,11 @@ package io.github.mee1080.umasim.data
 import kotlin.random.Random
 
 enum class StatusType(val displayName: String, val outingType: Boolean = false) {
-    SPEED("スピード"),
-    STAMINA("スタミナ"),
-    POWER("パワー"),
-    GUTS("根性"),
-    WISDOM("賢さ"),
-    FRIEND("友人", outingType = true),
-    GROUP("グループ", outingType = true),
-    SKILL("スキルPt"),
-    NONE("未選択");
+    SPEED("スピード"), STAMINA("スタミナ"), POWER("パワー"), GUTS("根性"), WISDOM("賢さ"), FRIEND(
+        "友人",
+        outingType = true
+    ),
+    GROUP("グループ", outingType = true), SKILL("スキルPt"), NONE("未選択");
 
     val trainingRelation = if (outingType) 4 else 7
 }
@@ -81,9 +77,7 @@ fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
 }
 
 enum class Scenario(val displayName: String) {
-    URA("URA"),
-    AOHARU("アオハル"),
-    CLIMAX("クライマックス(仮)"),
+    URA("URA"), AOHARU("アオハル"), CLIMAX("クライマックス(仮)"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -108,8 +102,8 @@ fun turnToString(turn: Int) = buildString {
     append(if (turn % 2 == 1) "前半" else "後半")
 }
 
-enum class RaceGrade {
-    DEBUT, PRE_OPEN, OPEN, G3, G2, G1, FINALS, UNKNOWN,
+enum class RaceGrade(val displayName: String) {
+    DEBUT("メイクデビュー"), PRE_OPEN("Pre-OP"), OPEN("OP"), G3("GIII"), G2("GII"), G1("GI"), FINALS("ファイナルズ"), UNKNOWN("不明"),
 }
 
 fun toRaceGrade(value: Int) = when {
