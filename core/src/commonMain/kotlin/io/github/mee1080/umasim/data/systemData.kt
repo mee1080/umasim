@@ -404,22 +404,22 @@ internal val raceAchievementData = listOf(
     ),
     RaceAchievement(
         "北海道マスター", 5,
-        RaceCondition(3) { courseName == "札幌" || courseName == "函館" },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "札幌" || courseName == "函館") },
     ),
     RaceAchievement(
         "東北マスター", 5,
-        RaceCondition(3) { courseName == "福島" || courseName == "新潟" },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "福島" || courseName == "新潟") },
     ),
     RaceAchievement(
         "関東マスター", 5,
-        RaceCondition(3) { courseName == "東京" || courseName == "中山" || courseName == "大井" },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "東京" || courseName == "中山" || courseName == "大井") },
     ),
     RaceAchievement(
         "西日本マスター", 5,
-        RaceCondition(3) { courseName == "中京" || courseName == "阪神" || courseName == "京都" },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "中京" || courseName == "阪神" || courseName == "京都") },
     ),
     RaceAchievement(
         "小倉マスター", 5,
-        RaceCondition(3) { courseName == "小倉" || courseName == "小倉" },
+        RaceCondition(2) { grade.ordinal >= RaceGrade.G3.ordinal && courseName == "小倉" },
     ),
 ).reversed()
