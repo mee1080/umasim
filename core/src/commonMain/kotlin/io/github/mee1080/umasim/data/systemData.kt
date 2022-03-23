@@ -370,7 +370,7 @@ internal val raceAchievementData = listOf(
         RaceCondition { turn >= 49 && name == "JBCスプリント" },
     ),
     RaceAchievement(
-        "可憐なウマ娘", 10,
+        "可憐なウマ娘", 5,
         RaceNameEndCondition(3, "ウマ娘ステークス"),
     ),
     RaceAchievement(
