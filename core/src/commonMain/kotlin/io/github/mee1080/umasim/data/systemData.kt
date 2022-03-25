@@ -379,7 +379,16 @@ internal val raceAchievementData = listOf(
     ),
     RaceAchievement(
         "ワールドウマ娘", 5,
-        RaceNameCondition(3, "サウジアラビアロイヤルカップ", "ニュージーランドトロフィー", "ブラジルカップ", "アルゼンチン共和国杯", "アメリカJCC", "ジャパンカップ"),
+        RaceNameCondition(
+            3,
+            "サウジアラビアロイヤルカップ",
+            "ニュージーランドトロフィー",
+            "ブラジルカップ",
+            "アルゼンチン共和国杯",
+            "アメリカJCC",
+            "ジャパンカップ",
+            "ジャパンダートダービー"
+        ),
     ),
     RaceAchievement(
         "ジュニアウマ娘", 5,
