@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.simulation.Calculator
 import io.github.mee1080.umasim.simulation.ExpectedStatus
+import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 
 enum class Page {
@@ -119,6 +120,7 @@ data class SupportSelection(
     val join: Boolean = true,
     val relation: Int = 0,
     val passion: Boolean = false,
+    val friendCount: Int = 0,
 ) {
     companion object {
         fun fromSaveInfo(info: SaveDataConverter.SupportInfo) = SupportSelection(
@@ -161,6 +163,10 @@ data class SupportSelection(
         get() = card?.let { card ->
             if (card.type.outingType) 0.0 else card.hintFrequency
         } ?: 0.0
+
+    fun toMemberState(scenario: Scenario, index: Int) = card?.toMemberState(
+        scenario, index, relation, passion, friendCount,
+    )
 }
 
 data class AoharuSimulationState(

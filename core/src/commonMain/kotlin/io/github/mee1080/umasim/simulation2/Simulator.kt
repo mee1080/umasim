@@ -60,7 +60,7 @@ class Simulator(
             skillHint = emptyMap(),
             fanCount = 1,
         ) + chara.initialStatus + supportCardList
-            .map { it.initialStatus }
+            .map { target -> target.initialStatus(supportCardList.map { it.type }) }
             .reduce { acc, status -> acc + status },
         supportTypeCount = supportCardList.map { it.type }.distinct().count(),
         totalRaceBonus = supportCardList.sumOf { it.race },

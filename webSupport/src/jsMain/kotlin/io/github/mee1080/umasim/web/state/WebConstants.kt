@@ -93,8 +93,9 @@ object WebConstants {
         SortOrder("名前", descending = false, noInfo = true) { name },
         SortOrder("キャラ名", descending = false, noInfo = true) { chara },
         SortOrder("初期絆") { initialRelation },
-        SortOrder("初期ステ合計") { initialStatus.statusTotal },
-        SortOrder("友情ボナ") { friendFactor },
+        // TODO 特殊固有対応
+        SortOrder("初期ステ合計") { initialStatus(emptyList()).statusTotal },
+        SortOrder("友情ボナ") { friendFactor(0, 0) },
         SortOrder("やる気ボナ") { motivationFactor(0) },
         SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0) },
         SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000) },

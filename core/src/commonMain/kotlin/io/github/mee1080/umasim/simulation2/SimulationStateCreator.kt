@@ -6,7 +6,8 @@ fun SupportCard.toMemberState(
     scenario: Scenario,
     index: Int,
     relation: Int? = null,
-    passion: Boolean = false
+    passion: Boolean = false,
+    friendCount: Int = 0,
 ) = MemberState(
     index = index,
     card = this,
@@ -15,6 +16,7 @@ fun SupportCard.toMemberState(
         relation = relation ?: initialRelation,
         hintIcon = false,
         passion = passion,
+        friendCount = friendCount,
     ),
     scenarioState = when (scenario) {
         Scenario.URA -> UraMemberState
@@ -33,9 +35,6 @@ fun SupportCard.toMemberState(
 
 fun List<SupportCard>.toMemberState(scenario: Scenario) =
     mapIndexed { index, target -> target.toMemberState(scenario, index) }
-
-fun List<Triple<SupportCard, Int, Boolean>>.toMemberStateWithRelation(scenario: Scenario) =
-    mapIndexed { index, target -> target.first.toMemberState(scenario, index, target.second, target.third) }
 
 fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
     index = index,

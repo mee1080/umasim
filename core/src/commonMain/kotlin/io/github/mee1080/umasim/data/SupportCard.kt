@@ -91,9 +91,18 @@ data class SupportCard(
 
     val fan = status.fan + unique.fan
 
-    val initialStatus = status.initialStatus + unique.initialStatus
+    fun initialStatus(supportType: List<StatusType>) =
+        status.initialStatus + unique.initialStatus + specialUnique.fold(Status()) { total, unique ->
+            total + unique.initialStatus(supportType)
+        }
 
-    val friendFactor = (100 + status.friend) * (100 + unique.friend) / 10000.0
+    fun friendFactor(relation: Int, friendCount: Int) =
+        (100 + status.friend) * (100 + unique.friend) * (100 + specialUnique.sumOf {
+            it.friendFactor(
+                relation,
+                friendCount
+            )
+        }) / 1000000.0
 
     fun motivationFactor(relation: Int) =
         status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation) }

@@ -29,7 +29,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        support: List<Triple<SupportCard, Int, Boolean>>,
+        support: List<MemberState>,
         teamJoinCount: Int,
         scenario: Scenario,
         supportTypeCount: Int,
@@ -38,7 +38,7 @@ object Calculator {
         chara,
         training,
         motivation,
-        support.toMemberStateWithRelation(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+        support + if (scenario == Scenario.AOHARU) createTeamMemberState(
             teamJoinCount,
             scenario
         ) else emptyList(),
@@ -211,7 +211,7 @@ object Calculator {
         chara: Chara,
         training: TrainingBase,
         motivation: Int,
-        support: List<Triple<SupportCard, Int, Boolean>>,
+        support: List<MemberState>,
         teamJoinCount: Int,
         scenario: Scenario,
         supportTypeCount: Int,
@@ -220,7 +220,7 @@ object Calculator {
         chara,
         training,
         motivation,
-        support.toMemberStateWithRelation(scenario) + if (scenario == Scenario.AOHARU) createTeamMemberState(
+        support + if (scenario == Scenario.AOHARU) createTeamMemberState(
             teamJoinCount,
             scenario
         ) else emptyList(),

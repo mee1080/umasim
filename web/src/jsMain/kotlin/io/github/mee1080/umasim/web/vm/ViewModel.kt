@@ -52,8 +52,10 @@ class ViewModel {
 
     private fun updateState(calculate: Boolean = true, calculateBonus: Boolean = true, update: (State) -> State) {
         var newState = update(state)
-        if (calculate) newState = calculate(newState)
-        if (calculateBonus) newState = calculateBonus(newState)
+        if (calculate) {
+            newState = calculate(newState)
+            newState = calculateBonus(newState)
+        }
         state = newState
     }
 
@@ -136,6 +138,10 @@ class ViewModel {
         updateSupportSelection(position, false) { it.copy(passion = passion) }
     }
 
+    fun updateFriendCount(position: Int, friendCount: Int) {
+        updateSupportSelection(position, false) { it.copy(friendCount = friendCount) }
+    }
+
     fun updateScenario(scenarioIndex: Int) {
         updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex).createRaceSetting() }
     }
@@ -179,7 +185,7 @@ class ViewModel {
     private fun calculate(state: State): State {
         val joinSupportList =
             state.supportSelectionList.filter { it.join && it.card != null }
-                .map { Triple(it.card!!, it.relation, it.passion) }
+                .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
@@ -206,7 +212,7 @@ class ViewModel {
         }
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
-            target.first.name to trainingResult - Calculator.calcTrainingSuccessStatus(
+            target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
                 state.chara,
                 WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
                 state.motivation,
@@ -222,7 +228,12 @@ class ViewModel {
             state.chara,
             WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
             state.motivation,
-            state.supportSelectionList.filter { it.card != null }.map { Triple(it.card!!, it.relation, it.passion) },
+            state.supportSelectionList.mapIndexedNotNull { index, support ->
+                support.toMemberState(
+                    state.scenario,
+                    index
+                )
+            },
             state.teamJoinCount,
             state.scenario,
             supportTypeCount,
@@ -284,7 +295,7 @@ class ViewModel {
         state.supportSelectionList.mapNotNull { it.card }.forEach { card ->
             race += card.race
             fan += card.fan
-            status += card.initialStatus
+            status += card.initialStatus(state.supportSelectionList.mapNotNull { it.card?.type })
             val skillCount = card.skills.size
             card.skills.forEach { skill ->
                 hintMap.getOrPut(skill) { mutableListOf() }.add("${card.name} 1/$skillCount")

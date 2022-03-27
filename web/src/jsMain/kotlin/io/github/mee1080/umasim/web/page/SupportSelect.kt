@@ -187,8 +187,25 @@ fun SupportSelect(model: ViewModel, state: State) {
                                 ) { model.updateRelation(index, it) }
                             }
                         }
-                        if (item.statusType == StatusType.GROUP) {
-                            LabeledCheckbox("passion$index", "情熱ゾーン", item.passion) { model.updatePassion(index, it) }
+                        Div {
+                            if (item.statusType == StatusType.GROUP) {
+                                LabeledCheckbox("passion$index", "情熱ゾーン", item.passion) {
+                                    model.updatePassion(index, it)
+                                }
+                            }
+                        }
+                        Div {
+                            if (item.card?.specialUnique?.any { it.needCheckFriendCount } == true) {
+                                Text("友情回数")
+                                (0..5).forEach {
+                                    LabeledRadio(
+                                        "friendCount$index",
+                                        "$it",
+                                        "$it",
+                                        item.friendCount == it
+                                    ) { model.updateFriendCount(index, it) }
+                                }
+                            }
                         }
                     }
                 }
