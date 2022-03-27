@@ -37,6 +37,8 @@ class RaceRotationCalculator(
         val rankC: Int = 40,
         val gradeG1: Int = 40,
         val gradeG2G3: Int = 20,
+        val gradeOpenTurf: Int = -40,
+        val gradeOpenDirt: Int = 0,
         val continue2: Int = 10,
         val continue3: Int = -30,
         val continue4: Int = -70,
@@ -48,10 +50,10 @@ class RaceRotationCalculator(
             else -> 0
         }
 
-        fun grade(grade: RaceGrade?) = when (grade) {
+        fun grade(grade: RaceGrade, ground: RaceGround) = when (grade) {
             RaceGrade.G1 -> gradeG1
             RaceGrade.G2, RaceGrade.G3 -> gradeG2G3
-            else -> 0
+            else -> if (ground == RaceGround.TURF) gradeOpenTurf else gradeOpenDirt
         }
 
         fun continueCount(count: Int) = when (count) {
@@ -173,7 +175,7 @@ class RaceRotationCalculator(
                     val diffScore = 10 * diff.sumOf { (name, _) ->
                         achievementMap[name]?.status ?: 5
                     }
-                    val gradeScore = option.grade(raceEntry.grade)
+                    val gradeScore = option.grade(raceEntry.grade, raceEntry.ground)
                     var beforeRaceCount = 0
                     var afterRaceCount = 0
                     for (i in 1..3) {

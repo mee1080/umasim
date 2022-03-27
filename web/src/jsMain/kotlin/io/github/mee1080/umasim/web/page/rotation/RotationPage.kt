@@ -116,6 +116,12 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
             LabeledNumberInput("GII/GIII", state.option.gradeG2G3) {
                 model.updateOption(state.option.copy(gradeG2G3 = it.toInt()))
             }
+            LabeledNumberInput("芝OP", state.option.gradeOpenTurf) {
+                model.updateOption(state.option.copy(gradeOpenTurf = it.toInt()))
+            }
+            LabeledNumberInput("ダートOP", state.option.gradeOpenDirt) {
+                model.updateOption(state.option.copy(gradeOpenDirt = it.toInt()))
+            }
             LabeledNumberInput("連続出走2", state.option.continue2) {
                 model.updateOption(state.option.copy(continue2 = it.toInt()))
             }
