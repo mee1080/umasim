@@ -170,7 +170,7 @@ class RaceRotationCalculator(
 //                    val nextCannotAchieve =
 //                        checkCanAchieve(availableAchievement, raceSelections, nextRotation.selectedRace)
                     val diff = nextAchievement.mapNotNull { (name, count) ->
-                        if (currentAchievement[name] != count) name to count else null
+                        if ((currentAchievement[name] ?: Int.MAX_VALUE) > count) name to count else null
                     }
                     val diffScore = 10 * diff.sumOf { (name, _) ->
                         achievementMap[name]?.status ?: 5
