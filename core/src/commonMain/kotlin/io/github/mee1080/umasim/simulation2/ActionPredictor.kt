@@ -117,7 +117,7 @@ private fun SimulationState.calcTrainingResult(
 
 private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, support: List<MemberState>): Int {
     if (itemAvailable && enableItem.unique?.name == "健康祈願のお守り") return 0
-    val base = (status.hp - status.maxHp) * (status.hp * 10 - training.failureRate) / 400.0
+    val base = (status.hp - 100) * (status.hp * 10 - training.failureRate) / 400.0
     val supported = base * support.map { it.card.failureRate }.fold(1.0) { acc, d -> acc * d }
     val supportedInRange = max(0, min(99, ceil(supported).toInt()))
     return max(0, min(100, supportedInRange + conditionFailureRate))
