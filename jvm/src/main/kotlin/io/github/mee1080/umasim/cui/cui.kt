@@ -18,8 +18,12 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
@@ -34,9 +38,9 @@ fun openCui(args: Array<String>) {
 //    compareExpectedBasedAI()
 //    deBuffSimulation(100000)
 //    jigatameSimulation(100000)
-    Store.raceMap.forEachIndexed { index, raceEntries ->
-        println("$index: ${raceEntries.joinToString { it.name }}")
-    }
+//    Store.raceMap.forEachIndexed { index, raceEntries ->
+//        println("$index: ${raceEntries.joinToString { it.name }}")
+//    }
 //    Store.Climax.raceAchievement.forEach { println("${it.name}:${it.status}:${it.skill}") }
 //    val rotation = RaceRotation() + listOf(
 //        "皐月賞", "東京優駿（日本ダービー）", "菊花賞",
@@ -510,22 +514,22 @@ fun openCui(args: Array<String>) {
 //    )
 
     // クライマックススピ3賢さ2代理
-//    doSimulation2(
-//        Scenario.CLIMAX,
-//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
-//        Store.getSupportByName(
-//            "[迫る熱に押されて]キタサンブラック" to 4,
-//            "[袖振り合えば福となる♪]マチカネフクキタル" to 4,
-//            "[感謝は指先まで込めて]ファインモーション" to 4,
-//            "[願いまでは拭わない]ナイスネイチャ" to 4,
-//            "[徹底管理主義]樫本理子" to 4,
-//        ).toTypedArray(),
+    doSimulation2(
+        Scenario.CLIMAX,
+        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+        Store.getSupportByName(
+            "[迫る熱に押されて]キタサンブラック" to 4,
+            "[袖振り合えば福となる♪]マチカネフクキタル" to 4,
+            "[感謝は指先まで込めて]ファインモーション" to 4,
+            "[願いまでは拭わない]ナイスネイチャ" to 4,
+            "[徹底管理主義]樫本理子" to 4,
+        ).toTypedArray(),
 //        StatusType.SPEED, 0..4,
-////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
-////        Store.getSupportByName("[桃色のバックショット]ナリタトップロード" to 4),
-//        factor(StatusType.POWER, 5) + factor(StatusType.STAMINA, 1),
-//        100000,
-//        ClimaxFactorBasedActionSelector.speed3Wisdom2Friend1,
-//        Runner.mileEvaluateSetting,
-//    )
+        Store.getSupportByName(*((0..4).map { "[mag!c number]エアシャカール" to it }.toTypedArray())),
+//        Store.getSupportByName("[桃色のバックショット]ナリタトップロード" to 4),
+        factor(StatusType.POWER, 5) + factor(StatusType.STAMINA, 1),
+        100000,
+        ClimaxFactorBasedActionSelector.speed3Wisdom2Friend1,
+        Runner.mileEvaluateSetting,
+    )
 }
