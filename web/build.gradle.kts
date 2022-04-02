@@ -1,6 +1,6 @@
 plugins {
     kotlin("multiplatform")
-    id("org.jetbrains.compose") version "1.0.0"
+    id("org.jetbrains.compose")
     id("librarian")
     id("librarian-preset")
 }
@@ -24,6 +24,15 @@ kotlin {
                 implementation(project(":webSupport"))
                 implementation(compose.web.core)
                 implementation(compose.runtime)
+                implementation(npm("@material/mwc-button", "0.25.3"))
+                implementation(npm("@material/mwc-select", "0.25.3"))
+                implementation(npm("@material/mwc-list", "0.25.3"))
+                implementation(npm("@material/mwc-textfield", "0.25.3"))
+                implementation(npm("@material/mwc-formfield", "0.25.3"))
+                implementation(npm("@material/mwc-radio", "0.25.3"))
+                implementation(npm("@material/mwc-checkbox", "0.25.3"))
+                implementation(npm("@material/mwc-tab", "0.25.3"))
+                implementation(npm("@material/mwc-tab-bar", "0.25.3"))
             }
         }
     }

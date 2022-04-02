@@ -324,7 +324,7 @@ private fun RaceGrade.background() = when (this) {
     else -> Color.lightyellow
 }
 
-private fun StyleBuilder.description() {
+private fun StyleScope.description() {
     fontSize(80.percent)
     color(Color.blue)
 }

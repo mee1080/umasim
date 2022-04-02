@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.web
 
 import androidx.compose.web.events.SyntheticEvent
-import org.jetbrains.compose.web.attributes.EventsListenerBuilder
+import org.jetbrains.compose.web.attributes.EventsListenerScope
 import org.w3c.dom.Element
 import org.w3c.dom.events.EventTarget
 import org.w3c.dom.get
@@ -28,7 +28,7 @@ private val touchInfo = mutableMapOf<Int, Pair<Int, Int>>()
 
 private fun distance(x1: Int, y1: Int, x2: Int, y2: Int) = (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2)
 
-fun EventsListenerBuilder.onClickOrTouch(listener: (SyntheticEvent<EventTarget>) -> Unit) {
+fun EventsListenerScope.onClickOrTouch(listener: (SyntheticEvent<EventTarget>) -> Unit) {
     onClick {
         listener(it)
     }

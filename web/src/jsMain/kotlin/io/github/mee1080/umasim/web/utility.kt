@@ -18,10 +18,10 @@
  */
 package io.github.mee1080.umasim.web
 
-import org.jetbrains.compose.web.attributes.AttrsBuilder
+import org.jetbrains.compose.web.attributes.AttrsScope
 import kotlin.math.roundToInt
 
-fun AttrsBuilder<*>.unsetWidth() {
+fun AttrsScope<*>.unsetWidth() {
     style {
         property("width", "unset")
     }
