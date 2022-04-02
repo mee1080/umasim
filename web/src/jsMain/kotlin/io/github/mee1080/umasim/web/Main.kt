@@ -19,27 +19,30 @@
 package io.github.mee1080.umasim.web
 
 import io.github.mee1080.umasim.data.StoreLoader
+import io.github.mee1080.umasim.web.components.material.MwcTabBar
+import io.github.mee1080.umasim.web.components.material.initLibraries
 import io.github.mee1080.umasim.web.page.RootPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
 import io.github.mee1080.umasim.web.state.Page
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.css.Style
-import org.jetbrains.compose.web.dom.Button
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
     StoreLoader.load()
+    initLibraries()
     val model = ViewModel()
 
     renderComposable(rootElementId = "root") {
         Style(AppStyle)
-        Div {
-            Button({ onClickOrTouch { model.navigate(Page.Top) } }) { Text("育成シミュレータ") }
-            Button({ onClickOrTouch { model.navigate(Page.Rotation) } }) { Text("ローテーションシミュレータ") }
-        }
+        MwcTabBar(
+            Page.values().asList(),
+            model.state.page,
+            { it.displayName },
+            { it.icon },
+            onSelect = { model.navigate(it) },
+        )
         when (model.state.page) {
             Page.Top -> RootPage(model, model.state)
             Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)

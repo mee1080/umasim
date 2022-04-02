@@ -19,15 +19,30 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.web.components.LabeledSelect
+import io.github.mee1080.umasim.web.components.material.MwcSelect
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.css.maxWidth
+import org.jetbrains.compose.web.css.percent
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.H2
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun CharaSelect(model: ViewModel, state: State) {
-    H2 { Text("育成キャラ") }
-    LabeledSelect("", WebConstants.displayCharaList, state.selectedChara, model::updateChara)
+    H2 { Text("育成ウマ娘") }
+    MwcSelect(
+        WebConstants.charaList,
+        state.chara,
+        {
+            style {
+                width(600.px)
+                maxWidth(100.percent)
+            }
+        },
+        onSelect = model::updateChara,
+        itemToValue = { "${it.name} (${it.speedBonus},${it.staminaBonus},${it.powerBonus},${it.gutsBonus},${it.wisdomBonus})" },
+    )
 }

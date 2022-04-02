@@ -3,14 +3,14 @@ package io.github.mee1080.umasim.web.components
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import io.github.mee1080.umasim.web.components.material.MwcButton
+import io.github.mee1080.umasim.web.components.material.icon
 import io.github.mee1080.umasim.web.onClickOrTouch
 import org.jetbrains.compose.web.css.AlignItems
 import org.jetbrains.compose.web.css.DisplayStyle
 import org.jetbrains.compose.web.css.alignItems
 import org.jetbrains.compose.web.css.display
-import org.jetbrains.compose.web.dom.Button
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun HideBlock(
@@ -26,7 +26,10 @@ fun HideBlock(
         }
         onClickOrTouch { onChange(!open) }
     }) {
-        Button({ onClickOrTouch { onChange(!open) } }) { Text(if (open) "-" else "+") }
+        MwcButton({
+            onClickOrTouch { onChange(!open) }
+            icon(if (open) "expand_less" else "expand_circle_down")
+        })
         header()
     }
     if (open) content()

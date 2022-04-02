@@ -38,15 +38,10 @@ object WebConstants {
         StatusType.GROUP,
     )
 
-    val scenarioList = Scenario.values().map { it.ordinal to it.displayName }
+    val scenarioList = Scenario.values().asList()
 
     val charaList =
         listOf(Chara.empty()) + Store.charaList.filter { it.rank == 5 && it.rarity == 5 }.sortedBy { it.charaName }
-
-    val charaMap = charaList.associateBy { it.id }
-
-    val displayCharaList =
-        charaList.map { it.id to "${it.name} (${it.speedBonus},${it.staminaBonus},${it.powerBonus},${it.gutsBonus},${it.wisdomBonus})" }
 
     val supportMap = Store.supportList.groupBy { it.id }
 
@@ -84,6 +79,10 @@ object WebConstants {
             } else {
                 cardA.value().compareTo(cardB.value())
             }
+        }
+
+        override fun equals(other: Any?): Boolean {
+            return label == (other as? SortOrder<*>)?.label
         }
     }
 

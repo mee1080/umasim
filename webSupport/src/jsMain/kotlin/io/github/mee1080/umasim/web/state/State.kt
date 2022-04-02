@@ -25,16 +25,17 @@ import io.github.mee1080.umasim.simulation.ExpectedStatus
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 
-enum class Page {
-    Top, Rotation,
+enum class Page(val displayName: String, val icon: String) {
+    Top("育成シミュレータ", "trending_up"),
+    Rotation("ローテーションシミュレータ", "event_note"),
 }
 
 data class State(
     val page: Page = Page.Top,
     val rotationState: RotationState? = null,
 
-    val selectedScenario: Int = Scenario.CLIMAX.ordinal,
-    val selectedChara: Int = WebConstants.displayCharaList[0].first,
+    val scenario: Scenario = Scenario.CLIMAX,
+    val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),
     val supportLoadName: String = "",
@@ -67,10 +68,6 @@ data class State(
     val simulationHistory: List<Pair<String, Status>> = emptyList(),
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),
 ) {
-
-    val scenario get() = Scenario.values().getOrElse(selectedScenario) { Scenario.CLIMAX }
-
-    val chara get() = WebConstants.charaMap[selectedChara]!!
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
 

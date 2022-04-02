@@ -69,9 +69,9 @@ class ViewModel {
         }
     }
 
-    fun updateChara(id: Int) {
-        updateState { it.copy(selectedChara = id).createRaceSetting() }
-        localStorage.setItem(KEY_CHARA, id.toString())
+    fun updateChara(chara: Chara) {
+        updateState { it.copy(chara = chara).createRaceSetting() }
+        localStorage.setItem(KEY_CHARA, chara.id.toString())
     }
 
     fun updateSupportFilter(value: String) {
@@ -142,8 +142,8 @@ class ViewModel {
         updateSupportSelection(position, false) { it.copy(friendCount = friendCount) }
     }
 
-    fun updateScenario(scenarioIndex: Int) {
-        updateState(calculateBonus = false) { it.copy(selectedScenario = scenarioIndex).createRaceSetting() }
+    fun updateScenario(scenario: Scenario) {
+        updateState(calculateBonus = false) { it.copy(scenario = scenario).createRaceSetting() }
     }
 
     fun updateTeamJoinCount(delta: Int) {
@@ -454,9 +454,9 @@ class ViewModel {
 
     init {
         updateState { state ->
-            val selectedChara = localStorage.getItem(KEY_CHARA)?.let {
-                if (WebConstants.charaMap.containsKey(it.toIntOrNull() ?: -1)) it.toInt() else 0
-            } ?: state.selectedChara
+            val selectedChara = localStorage.getItem(KEY_CHARA)?.let { id ->
+                WebConstants.charaList.firstOrNull { it.id == id.toIntOrNull() }
+            } ?: state.chara
             val newList = state.supportSelectionList.toMutableList()
             SaveDataConverter.stringToSupportList(localStorage.getItem(KEY_SUPPORT_LIST))
                 .forEachIndexed { index, supportInfo ->
@@ -466,7 +466,7 @@ class ViewModel {
                 }
             val supportLoadList = loadSupportData().keys.sorted()
             state.copy(
-                selectedChara = selectedChara,
+                chara = selectedChara,
                 supportSelectionList = newList,
                 supportLoadList = supportLoadList,
                 supportLoadName = supportLoadList.firstOrNull() ?: "",

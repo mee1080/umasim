@@ -24,16 +24,14 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.material.*
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.displayName
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.disabled
-import org.jetbrains.compose.web.attributes.placeholder
 import org.jetbrains.compose.web.attributes.selected
-import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLSelectElement
@@ -42,67 +40,79 @@ import org.w3c.dom.HTMLSelectElement
 fun SupportSelect(model: ViewModel, state: State) {
     H2 { Text("サポートカード") }
     Div({ style { paddingBottom(16.px) } }) {
-        Div {
+        Div({
+            style {
+                display(DisplayStyle.Flex)
+                alignItems(AlignItems.Center)
+            }
+        }) {
             Text("保存: ")
-            TextInput(state.supportSaveName) {
+            MwcTextField(state.supportSaveName) {
                 placeholder("保存名")
                 size(40)
-                onInput { model.updateSupportSaveName(it.value) }
+                outlined()
+                onInput { model.updateSupportSaveName(it) }
             }
-            Button({
+            MwcButton({
                 if (state.supportSaveName.isEmpty()) disabled()
-                onClick { model.saveSupport() }
+                onClickOrTouch { model.saveSupport() }
+                raised()
             }) {
                 Text(if (state.supportLoadList.contains(state.supportSaveName)) "上書保存" else "新規保存")
             }
         }
-        Div {
-            Text("読込: ")
-            val selection = state.supportLoadList
-            val selectedValue = state.supportLoadName
-            Select({
-                prop(
-                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                    selection.indexOfFirst { it == selectedValue })
-                onChange { model.updateSupportLoadName(selection[it.value!!.toInt()]) }
-            }) {
-                selection.forEachIndexed { index, name ->
-                    Option(index.toString(), { if (name == selectedValue) selected() }) { Text(name) }
-                }
+        Div({
+            style {
+                display(DisplayStyle.Flex)
+                alignItems(AlignItems.Center)
             }
-            Button({
+        }) {
+            Text("読込: ")
+            MwcSelect(
+                state.supportLoadList,
+                state.supportLoadName,
+                onSelect = model::updateSupportLoadName,
+            )
+            MwcButton({
                 if (state.supportLoadName.isEmpty()) disabled()
                 onClick { model.loadSupport() }
+                raised()
             }) { Text("読込") }
         }
     }
-    Div({ style { paddingBottom(16.px) } }) {
-        TextInput(state.supportFilter) {
+    Div({
+        style {
+            paddingBottom(16.px)
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        MwcTextField(state.supportFilter) {
             placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
             size(60)
-            onInput { model.updateSupportFilter(it.value) }
+            outlined()
+            onInput { model.updateSupportFilter(it) }
         }
-        Button({
-            if (state.supportFilterApplied) {
-                disabled()
-            }
+        MwcButton({
+            if (state.supportFilterApplied) disabled()
             onClickOrTouch { model.applyFilter() }
+            raised()
         }) { Text("フィルタ適用") }
     }
-    Div({ style { paddingBottom(16.px) } }) {
-        Text("ソート順: ")
-        val selection = WebConstants.supportSortOrder
-        val selectedValue = state.supportSortOrder
-        Select({
-            prop(
-                { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                selection.indexOfFirst { it == selectedValue })
-            onChange { model.updateSorOrder(selection[it.value!!.toInt()]) }
-        }) {
-            selection.forEachIndexed { index, sortOrder ->
-                Option(index.toString(), { if (sortOrder == selectedValue) selected() }) { Text(sortOrder.label) }
-            }
+    Div({
+        style {
+            paddingBottom(16.px)
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
         }
+    }) {
+        Text("ソート順: ")
+        MwcSelect(
+            WebConstants.supportSortOrder,
+            state.supportSortOrder,
+            onSelect = model::updateSorOrder,
+            itemToValue = { it.label },
+        )
     }
     Div {
         (0..1).forEach { row ->

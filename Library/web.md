@@ -4,8 +4,9 @@
 Umasim is using these libraries.
 
 ## Using
-|Name|author|license|
-|:---|:---|:---|
-|[Compose for Web](https://github.com/JetBrains/compose-jb)|The Android Open Source Project|[The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)|
-|[Kotlin Stdlib](https://kotlinlang.org/)|JetBrains - Kotlin Team|[The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)|
-|[kotlinx-serialization-json](https://github.com/Kotlin/kotlinx.serialization)|JetBrains - JetBrains Team|[The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt)|
+| Name                                                                          | author                          | license                                                                                     |
+|:------------------------------------------------------------------------------|:--------------------------------|:--------------------------------------------------------------------------------------------|
+| [Compose for Web](https://github.com/JetBrains/compose-jb)                    | The Android Open Source Project | [The Apache Software License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)  |
+| [Kotlin Stdlib](https://kotlinlang.org/)                                      | JetBrains - Kotlin Team         | [The Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)           |
+| [kotlinx-serialization-json](https://github.com/Kotlin/kotlinx.serialization) | JetBrains - JetBrains Team      | [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) |
+| [Material Web](https://github.com/material-components/material-web)           | Google LLC                      | [The Apache Software License, Version 2.0](https://www.apache.org/licenses/LICENSE-2.0.txt) |
