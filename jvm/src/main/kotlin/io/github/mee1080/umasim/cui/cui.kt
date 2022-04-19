@@ -18,12 +18,10 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
@@ -205,24 +203,24 @@ fun openCui(args: Array<String>) {
 //            *(power3(4, 3)),
 //            *(wisdom2(4, 2)),
 //        ).toTypedArray(),
-//        StatusType.WISDOM,
-//        0..4,
+////        StatusType.WISDOM, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[おてんば魔女、修行中。]スイープトウショウ" to it }.toTypedArray())),
 //        factor(StatusType.SPEED, 6),
 //        100000,
 //        FactorBasedActionSelector2.aoharuPowerWisdom,
 //    )
-//    doSimulation2(
-//        Scenario.AOHARU,
-//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-//        Store.getSupportByName(
-//            *(power3(4, 2)),
-//            *(wisdom2(4, 3)),
-//        ).toTypedArray(),
-//        StatusType.POWER,
-//        0..4,
-//        100000,
-//        FactorBasedActionSelector2.aoharuPowerWisdom,
-//    )
+    doSimulation2(
+        Scenario.AOHARU,
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getSupportByName(
+            *(power3(4, 2)),
+            *(wisdom2(4, 3)),
+        ).toTypedArray(),
+        StatusType.POWER, 0..4,
+        factor(StatusType.SPEED, 6),
+        100000,
+        FactorBasedActionSelector2.aoharuPowerWisdom,
+    )
 //    optimizeAI(
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5), Store.getSupportByName(
 //            *(power2(4, 3)),
@@ -514,22 +512,22 @@ fun openCui(args: Array<String>) {
 //    )
 
     // クライマックススピ3賢さ2代理
-    doSimulation2(
-        Scenario.CLIMAX,
-        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
-        Store.getSupportByName(
-            "[迫る熱に押されて]キタサンブラック" to 4,
-            "[袖振り合えば福となる♪]マチカネフクキタル" to 4,
-            "[感謝は指先まで込めて]ファインモーション" to 4,
-            "[願いまでは拭わない]ナイスネイチャ" to 4,
-            "[徹底管理主義]樫本理子" to 4,
-        ).toTypedArray(),
-//        StatusType.SPEED, 0..4,
-        Store.getSupportByName(*((0..4).map { "[mag!c number]エアシャカール" to it }.toTypedArray())),
-//        Store.getSupportByName("[桃色のバックショット]ナリタトップロード" to 4),
-        factor(StatusType.POWER, 5) + factor(StatusType.STAMINA, 1),
-        100000,
-        ClimaxFactorBasedActionSelector.speed3Wisdom2Friend1,
-        Runner.mileEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.CLIMAX,
+//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[袖振り合えば福となる♪]マチカネフクキタル" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//            "[願いまでは拭わない]ナイスネイチャ" to 4,
+//            "[徹底管理主義]樫本理子" to 4,
+//        ).toTypedArray(),
+////        StatusType.SPEED, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[mag!c number]エアシャカール" to it }.toTypedArray())),
+////        Store.getSupportByName("[桃色のバックショット]ナリタトップロード" to 4),
+//        factor(StatusType.POWER, 5) + factor(StatusType.STAMINA, 1),
+//        100000,
+//        ClimaxFactorBasedActionSelector.speed3Wisdom2Friend1,
+//        Runner.mileEvaluateSetting,
+//    )
 }
