@@ -334,6 +334,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                     state.scenario,
                     state.supportTypeCount,
                     state.status.fanCount,
+                    state.status,
                 ).first
                 expectedStatus.speed * option.speedFactor +
                         expectedStatus.stamina * option.staminaFactor +

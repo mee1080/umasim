@@ -267,6 +267,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
             state.scenario,
             state.supportTypeCount,
             state.status.fanCount,
+            state.status,
         ).first
         return expectedStatus.speed * option.speedFactor +
                 expectedStatus.stamina * option.staminaFactor +

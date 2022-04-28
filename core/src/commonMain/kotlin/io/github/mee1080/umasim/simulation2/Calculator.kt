@@ -34,6 +34,7 @@ object Calculator {
         scenario: Scenario,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ) = calcTrainingSuccessStatus(
         chara,
         training,
@@ -45,6 +46,7 @@ object Calculator {
         scenario,
         supportTypeCount,
         fanCount,
+        currentStatus,
     )
 
     fun calcTrainingSuccessStatus(
@@ -55,6 +57,7 @@ object Calculator {
         scenario: Scenario = Scenario.URA,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ) = Status(
         speed = calcTrainingStatus(
             chara,
@@ -65,6 +68,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         stamina = calcTrainingStatus(
             chara,
@@ -75,6 +79,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         power = calcTrainingStatus(
             chara,
@@ -85,6 +90,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         guts = calcTrainingStatus(
             chara,
@@ -95,6 +101,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         wisdom = calcTrainingStatus(
             chara,
@@ -105,6 +112,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         skillPt = calcTrainingStatus(
             chara,
@@ -115,6 +123,7 @@ object Calculator {
             scenario,
             supportTypeCount,
             fanCount,
+            currentStatus,
         ),
         hp = calcTrainingHp(training, member),
     ) + calcScenarioStatus(training, member, scenario)
@@ -127,6 +136,7 @@ object Calculator {
         status: Status,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ) = calcTrainingSuccessStatus(
         chara,
         TrainingBase(Scenario.URA, type, 1, 0, status),
@@ -134,6 +144,7 @@ object Calculator {
         member,
         supportTypeCount = supportTypeCount,
         fanCount = fanCount,
+        currentStatus = currentStatus,
     )
 
     private fun calcTrainingStatus(
@@ -145,6 +156,7 @@ object Calculator {
         scenario: Scenario = Scenario.URA,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ): Int {
         val baseStatus = training.status.get(type)
         if (baseStatus == 0) return 0
@@ -152,7 +164,7 @@ object Calculator {
         val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
         val charaBonus = chara.getBonus(type) / 100.0
         val friend = support
-            .map { it.getFriendBonus(training.type) }
+            .map { it.getFriendBonus(training.type, currentStatus) }
             .fold(1.0) { acc, d -> acc * d }
         val motivationBonus =
             1 + motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor(it.relation) } / 100.0)
@@ -163,6 +175,7 @@ object Calculator {
                     it.relation,
                     supportTypeCount,
                     fanCount,
+                    currentStatus,
                 )
             } / 100.0
         val count = 1 + member.size * 0.05
@@ -216,6 +229,7 @@ object Calculator {
         scenario: Scenario,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ) = calcExpectedTrainingStatus(
         chara,
         training,
@@ -227,6 +241,7 @@ object Calculator {
         scenario,
         supportTypeCount,
         fanCount,
+        currentStatus,
     )
 
     data class ExpectedStatusKey(
@@ -252,6 +267,7 @@ object Calculator {
         scenario: Scenario = Scenario.URA,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
         val key = ExpectedStatusKey(
             chara.id, training.type, training.level, motivation,
@@ -283,6 +299,7 @@ object Calculator {
                     scenario,
                     supportTypeCount,
                     fanCount,
+                    currentStatus,
                 )
             )
         } else {
@@ -318,6 +335,7 @@ object Calculator {
                             scenario,
                             supportTypeCount,
                             fanCount,
+                            currentStatus,
                         )
                     )
                 }

@@ -96,13 +96,17 @@ data class SupportCard(
             total + unique.initialStatus(supportType)
         }
 
-    fun friendFactor(relation: Int, friendCount: Int) =
-        (100 + status.friend) * (100 + unique.friend) * (100 + specialUnique.sumOf {
-            it.friendFactor(
-                relation,
-                friendCount
-            )
-        }) / 1000000.0
+    fun friendFactor(
+        relation: Int,
+        friendCount: Int,
+        currentStatus: Status,
+    ) = (100 + status.friend) * (100 + unique.friend) * (100 + specialUnique.sumOf {
+        it.friendFactor(
+            relation,
+            friendCount,
+            currentStatus
+        )
+    }) / 1000000.0
 
     fun motivationFactor(relation: Int) =
         status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation) }
@@ -122,6 +126,7 @@ data class SupportCard(
         relation: Int,
         supportTypeCount: Int,
         fanCount: Int,
+        currentStatus: Status,
     ) = status.training + unique.training + specialUnique.sumOf {
         it.trainingFactor(
             type,
@@ -129,6 +134,7 @@ data class SupportCard(
             relation,
             supportTypeCount,
             fanCount,
+            currentStatus,
         )
     }
 

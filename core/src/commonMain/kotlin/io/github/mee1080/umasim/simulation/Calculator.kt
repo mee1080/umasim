@@ -155,6 +155,7 @@ object Calculator {
                     it.relation,
                     supportTypeCount,
                     fanCount,
+                    Status(maxHp = 100, hp = 100),
                 )
             } / 100.0
         val count = 1 + support.size * 0.05 + if (scenario == Scenario.AOHARU) {

@@ -21,12 +21,14 @@ package io.github.mee1080.umasim.web.page
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.material.MwcSlider
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.size
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
@@ -48,6 +50,32 @@ fun TrainingInfo(model: ViewModel, state: State) {
             size(10)
             onInput { model.updateFanCount(it.value) }
         }
+    }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("バンブー特殊固有友情ボーナス：") }
+        MwcSlider(state.hp, 0, 15) {
+            onInput { model.updateHp(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.hp.toString()) }
+    }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("パール特殊固有トレ効果：") }
+        MwcSlider(state.maxHp, 0, 20) {
+            onInput { model.updateMaxHp(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.maxHp.toString()) }
     }
     if (state.scenario == Scenario.CLIMAX) {
         LabeledRadioGroup(

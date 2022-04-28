@@ -30,7 +30,8 @@ data class Support(val index: Int, val card: SupportCard) {
 
     val initialStatus = card.initialStatus(emptyList()) + Status(supportRelation = mapOf(index to card.initialRelation))
 
-    fun getFriendBonus(type: StatusType) = if (isFriendTraining(type)) card.friendFactor(0, 0) else 1.0
+    fun getFriendBonus(type: StatusType) =
+        if (isFriendTraining(type)) card.friendFactor(0, 0, Status(maxHp = 100, hp = 100)) else 1.0
 
     fun isFriendTraining(type: StatusType) = friendTrainingEnabled && type == card.type
 

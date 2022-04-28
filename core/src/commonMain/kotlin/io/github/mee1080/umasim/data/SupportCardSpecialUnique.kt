@@ -57,6 +57,7 @@ data class SupportCardSpecialUnique(
         relation: Int,
         supportTypeCount: Int,
         fanCount: Int,
+        status: Status,
     ): Int {
         return if (type == 101 && relation >= value0 && value1 == 8) {
             value2
@@ -66,17 +67,22 @@ data class SupportCardSpecialUnique(
             value1
         } else if (type == 104) {
             min(value1, fanCount / value0)
+        } else if (type == 108 && value0 == 8) {
+            status.maxHp
         } else 0
     }
 
     fun friendFactor(
         relation: Int,
         friendCount: Int,
+        status: Status,
     ): Int {
         return if (type == 101 && relation > value0 && value1 == 1) {
             value2
         } else if (type == 106) {
             friendCount * 3
+        } else if (type == 107 && value0 == 1) {
+            status.hp
         } else 0
     }
 

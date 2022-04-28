@@ -33,6 +33,7 @@ kotlin {
                 implementation(npm("@material/mwc-checkbox", "0.25.3"))
                 implementation(npm("@material/mwc-tab", "0.25.3"))
                 implementation(npm("@material/mwc-tab-bar", "0.25.3"))
+                implementation(npm("@material/mwc-slider", "0.25.3"))
             }
         }
     }

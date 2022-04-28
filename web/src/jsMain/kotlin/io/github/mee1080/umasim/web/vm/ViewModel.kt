@@ -168,6 +168,14 @@ class ViewModel {
         updateState(calculateBonus = false) { it.copy(fanCount = fanCount) }
     }
 
+    fun updateHp(hp: Int) {
+        updateState(calculateBonus = false) { it.copy(hp = hp) }
+    }
+
+    fun updateMaxHp(maxHp: Int) {
+        updateState(calculateBonus = false) { it.copy(maxHp = maxHp) }
+    }
+
     fun updateShopItemMegaphone(index: Int) {
         updateState(calculateBonus = false) { it.copy(shopItemMegaphone = index) }
     }
@@ -199,6 +207,7 @@ class ViewModel {
             state.scenario,
             supportTypeCount,
             fanCount,
+            Status(maxHp = state.maxHp, hp = state.hp),
         )
 
         val itemList = listOfNotNull(
@@ -221,6 +230,7 @@ class ViewModel {
                 state.scenario,
                 supportTypeCount,
                 fanCount,
+                Status(maxHp = state.maxHp, hp = state.hp),
             )
         }
 
@@ -238,6 +248,7 @@ class ViewModel {
             state.scenario,
             supportTypeCount,
             fanCount,
+            Status(maxHp = state.maxHp, hp = state.hp),
         )
         val total = trainingResult.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }

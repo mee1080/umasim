@@ -78,6 +78,7 @@ private fun SimulationState.calcTrainingResult(
         scenario,
         supportTypeCount,
         status.fanCount,
+        status,
     )
     val successStatus = if (itemAvailable) {
         baseStatus + Calculator.calcItemBonus(

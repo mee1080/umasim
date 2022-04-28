@@ -94,10 +94,10 @@ object WebConstants {
         SortOrder("初期絆") { initialRelation },
         // TODO 特殊固有対応
         SortOrder("初期ステ合計") { initialStatus(emptyList()).statusTotal },
-        SortOrder("友情ボナ") { friendFactor(0, 0) },
+        SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
         SortOrder("やる気ボナ") { motivationFactor(0) },
-        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0) },
-        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000) },
+        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0, Status(maxHp = 100, hp = 100)) },
+        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000, Status(maxHp = 120, hp = 30)) },
         SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0) },
         SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0) },
         SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0) },
