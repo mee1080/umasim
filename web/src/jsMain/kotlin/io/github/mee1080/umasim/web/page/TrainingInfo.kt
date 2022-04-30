@@ -57,8 +57,8 @@ fun TrainingInfo(model: ViewModel, state: State) {
             alignItems(AlignItems.Center)
         }
     }) {
-        Span { Text("バンブー特殊固有友情ボーナス：") }
-        MwcSlider(state.hp, 0, 15) {
+        Span { Text("体力：") }
+        MwcSlider(state.hp, 0, 120) {
             onInput { model.updateHp(it.toInt()) }
             style { width(300.px) }
         }
@@ -70,8 +70,8 @@ fun TrainingInfo(model: ViewModel, state: State) {
             alignItems(AlignItems.Center)
         }
     }) {
-        Span { Text("パール特殊固有トレ効果：") }
-        MwcSlider(state.maxHp, 0, 20) {
+        Span { Text("体力最大値：") }
+        MwcSlider(state.maxHp, 100, 120) {
             onInput { model.updateMaxHp(it.toInt()) }
             style { width(300.px) }
         }

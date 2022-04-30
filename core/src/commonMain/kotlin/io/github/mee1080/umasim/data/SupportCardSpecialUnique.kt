@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.data
 
+import kotlin.math.max
 import kotlin.math.min
 
 data class SupportCardSpecialUnique(
@@ -68,7 +69,7 @@ data class SupportCardSpecialUnique(
         } else if (type == 104) {
             min(value1, fanCount / value0)
         } else if (type == 108 && value0 == 8) {
-            status.maxHp
+            min(value4, ((status.maxHp - value1) * value2 / 100.0 + value3).toInt())
         } else 0
     }
 
@@ -82,7 +83,7 @@ data class SupportCardSpecialUnique(
         } else if (type == 106) {
             friendCount * 3
         } else if (type == 107 && value0 == 1) {
-            status.hp
+            15 - ((max(30, status.hp) - 30) * 15 / 100.0).toInt()
         } else 0
     }
 
