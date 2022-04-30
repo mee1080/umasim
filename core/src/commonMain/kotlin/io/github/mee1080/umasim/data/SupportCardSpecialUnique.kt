@@ -17,8 +17,10 @@ data class SupportCardSpecialUnique(
             102 -> "絆${value0}以上で非得意トレーニング効果$value1"
             103 -> "サポカタイプ数${value0}以上でトレーニング効果$value1"
             104 -> "ファン数${value0}ごとにトレーニング効果1（最大${value1}）"
-            105 -> "サポカタイプに応じて初期ステータスアップ（得意ステ+10 or +2×5）？"
-            106 -> "友情トレーニングのたびに友情ボーナスアップ？"
+            105 -> "編成サポカタイプに応じて初期ステータス上昇（得意ステ+10 or 友人/グループの場合+2×5）"
+            106 -> "${supportEffectName[value1]}が友情トレーニング回数×${value2}（最大${value0}回）"
+            107 -> "現在体力30で${supportEffectName[value0]}15、体力1増えるごとに-0.15（小数点以下切り捨て）"
+            108 -> "体力最大値100で${supportEffectName[value0]}${value3}、体力最大値1増えるごとに+0.$value2（最大${value4}、小数点以下切り捨て）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -80,8 +82,8 @@ data class SupportCardSpecialUnique(
     ): Int {
         return if (type == 101 && relation > value0 && value1 == 1) {
             value2
-        } else if (type == 106) {
-            friendCount * 3
+        } else if (type == 106 && value1 == 1) {
+            min(value0, friendCount) * value2
         } else if (type == 107 && value0 == 1) {
             15 - ((max(30, status.hp) - 30) * 15 / 100.0).toInt()
         } else 0
