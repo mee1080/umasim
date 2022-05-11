@@ -13,7 +13,7 @@ data class SupportCardSpecialUnique(
 ) {
     val description
         get() = when (type) {
-            101 -> "絆${value0}以上で${supportEffectName[value1]}$value2"
+            101 -> "絆${value0}以上で${supportEffectName[value1]}$value2" + if (value3 > 0) "、${supportEffectName[value3]}$value4" else ""
             102 -> "絆${value0}以上で非得意トレーニング効果$value1"
             103 -> "サポカタイプ数${value0}以上でトレーニング効果$value1"
             104 -> "ファン数${value0}ごとにトレーニング効果1（最大${value1}）"
@@ -41,16 +41,18 @@ data class SupportCardSpecialUnique(
 
     fun getBaseBonus(statusType: StatusType, relation: Int): Int {
         return if (type == 101 && relation >= value0) {
-            val targetType = when (value1) {
-                3 -> StatusType.SPEED
-                4 -> StatusType.STAMINA
-                5 -> StatusType.POWER
-                6 -> StatusType.GUTS
-                7 -> StatusType.WISDOM
-                30 -> StatusType.SKILL
-                else -> null
+            listOf(value1 to value2, value3 to value4).sumOf {
+                val targetType = when (it.first) {
+                    3 -> StatusType.SPEED
+                    4 -> StatusType.STAMINA
+                    5 -> StatusType.POWER
+                    6 -> StatusType.GUTS
+                    7 -> StatusType.WISDOM
+                    30 -> StatusType.SKILL
+                    else -> null
+                }
+                if (statusType == targetType) it.second else 0
             }
-            if (statusType == targetType) value2 else 0
         } else 0
     }
 
