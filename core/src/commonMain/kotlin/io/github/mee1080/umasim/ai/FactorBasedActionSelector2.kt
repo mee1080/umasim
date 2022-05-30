@@ -327,14 +327,17 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         return option.expectedStatusFactor * when (action) {
             is Training -> {
                 val expectedStatus = Calculator.calcExpectedTrainingStatus(
-                    state.chara,
-                    state.getTraining(action.type).current,
-                    state.status.motivation,
-                    state.member,
-                    state.scenario,
-                    state.supportTypeCount,
-                    state.status.fanCount,
-                    state.status,
+                    Calculator.CalcInfo(
+                        state.chara,
+                        state.getTraining(action.type).current,
+                        state.status.motivation,
+                        state.member,
+                        state.scenario,
+                        state.supportTypeCount,
+                        state.status.fanCount,
+                        state.status,
+                        state.totalRelation,
+                    ),
                 ).first
                 expectedStatus.speed * option.speedFactor +
                         expectedStatus.stamina * option.staminaFactor +

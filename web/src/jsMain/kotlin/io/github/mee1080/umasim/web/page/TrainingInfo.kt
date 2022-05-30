@@ -77,6 +77,19 @@ fun TrainingInfo(model: ViewModel, state: State) {
         }
         Span { Text(state.maxHp.toString()) }
     }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("絆合計トレ効果：") }
+        MwcSlider(state.totalRelation, 0, 20) {
+            onInput { model.updateTotalRelation(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.maxHp.toString()) }
+    }
     if (state.scenario == Scenario.CLIMAX) {
         LabeledRadioGroup(
             "shopItemMegaphone",

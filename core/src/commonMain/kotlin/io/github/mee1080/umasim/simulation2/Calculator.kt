@@ -25,160 +25,83 @@ import kotlin.native.concurrent.ThreadLocal
 
 object Calculator {
 
+    data class CalcInfo(
+        val chara: Chara,
+        val training: TrainingBase,
+        val motivation: Int,
+        val member: List<MemberState>,
+        val scenario: Scenario,
+        val supportTypeCount: Int,
+        val fanCount: Int,
+        val currentStatus: Status,
+        val totalRelation: Int,
+        val type: StatusType = StatusType.NONE,
+    )
+
     fun calcTrainingSuccessStatus(
-        chara: Chara,
-        training: TrainingBase,
-        motivation: Int,
-        support: List<MemberState>,
+        info: CalcInfo,
         teamJoinCount: Int,
-        scenario: Scenario,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
     ) = calcTrainingSuccessStatus(
-        chara,
-        training,
-        motivation,
-        support + if (scenario == Scenario.AOHARU) createTeamMemberState(
-            teamJoinCount,
-            scenario
-        ) else emptyList(),
-        scenario,
-        supportTypeCount,
-        fanCount,
-        currentStatus,
+        info.copy(
+            member = info.member + if (info.scenario == Scenario.AOHARU) createTeamMemberState(
+                teamJoinCount,
+                info.scenario,
+            ) else emptyList()
+        ),
     )
 
     fun calcTrainingSuccessStatus(
-        chara: Chara,
-        training: TrainingBase,
-        motivation: Int,
-        member: List<MemberState>,
-        scenario: Scenario = Scenario.URA,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
+        info: CalcInfo,
     ) = Status(
-        speed = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.SPEED,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        stamina = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.STAMINA,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        power = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.POWER,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        guts = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.GUTS,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        wisdom = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.WISDOM,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        skillPt = calcTrainingStatus(
-            chara,
-            training,
-            motivation,
-            member,
-            StatusType.SKILL,
-            scenario,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-        ),
-        hp = calcTrainingHp(training, member),
-    ) + calcScenarioStatus(training, member, scenario)
+        speed = calcTrainingStatus(info.copy(type = StatusType.SPEED)),
+        stamina = calcTrainingStatus(info.copy(type = StatusType.STAMINA)),
+        power = calcTrainingStatus(info.copy(type = StatusType.POWER)),
+        guts = calcTrainingStatus(info.copy(type = StatusType.GUTS)),
+        wisdom = calcTrainingStatus(info.copy(type = StatusType.WISDOM)),
+        skillPt = calcTrainingStatus(info.copy(type = StatusType.SKILL)),
+        hp = calcTrainingHp(info.training, info.member),
+    ) + calcScenarioStatus(info.training, info.member, info.scenario)
 
-    fun calcTrainingSuccessStatus(
-        chara: Chara,
-        type: StatusType,
-        motivation: Int,
-        member: List<MemberState>,
-        status: Status,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
-    ) = calcTrainingSuccessStatus(
-        chara,
-        TrainingBase(Scenario.URA, type, 1, 0, status),
-        motivation,
-        member,
-        supportTypeCount = supportTypeCount,
-        fanCount = fanCount,
-        currentStatus = currentStatus,
-    )
+//    fun calcTrainingSuccessStatus(
+//        info: CalcInfo,
+//        type: StatusType,
+//        motivation: Int,
+//        member: List<MemberState>,
+//        status: Status,
+//        supportTypeCount: Int,
+//        fanCount: Int,
+//        currentStatus: Status,
+//        totalRelation: Int,
+//    ) = calcTrainingSuccessStatus(
+//        info.copy(training = TrainingBase(Scenario.URA, info.type, 1, 0, status)),
+//    )
 
     private fun calcTrainingStatus(
-        chara: Chara,
-        training: TrainingBase,
-        motivation: Int,
-        member: List<MemberState>,
-        type: StatusType,
-        scenario: Scenario = Scenario.URA,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
+        info: CalcInfo,
     ): Int {
-        val baseStatus = training.status.get(type)
+        if (info.type == StatusType.NONE) throw IllegalArgumentException()
+        val baseStatus = info.training.status.get(info.type)
         if (baseStatus == 0) return 0
-        val support = member.filter { !it.guest }
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
-        val charaBonus = chara.getBonus(type) / 100.0
+        val support = info.member.filter { !it.guest }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
+        val charaBonus = info.chara.getBonus(info.type) / 100.0
         val friend = support
-            .map { it.getFriendBonus(training.type, currentStatus) }
+            .map { it.getFriendBonus(info.training.type, info.currentStatus) }
             .fold(1.0) { acc, d -> acc * d }
         val motivationBonus =
-            1 + motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor(it.relation) } / 100.0)
+            1 + info.motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor(it.relation) } / 100.0)
         val trainingBonus =
             1 + support.sumOf {
                 it.card.trainingFactor(
-                    training.type,
+                    info.training.type,
                     it.relation,
-                    supportTypeCount,
-                    fanCount,
-                    currentStatus,
+                    info.supportTypeCount,
+                    info.fanCount,
+                    info.currentStatus,
+                    info.totalRelation,
                 )
             } / 100.0
-        val count = 1 + member.size * 0.05
+        val count = 1 + info.member.size * 0.05
 //        println("$type $base * $charaBonus * $friend * motivationBonus * $trainingBonus * $count")
         return min(100, (base * charaBonus * friend * motivationBonus * trainingBonus * count).toInt())
     }
@@ -221,27 +144,15 @@ object Calculator {
     }
 
     fun calcExpectedTrainingStatus(
-        chara: Chara,
-        training: TrainingBase,
-        motivation: Int,
-        support: List<MemberState>,
+        info: CalcInfo,
         teamJoinCount: Int,
-        scenario: Scenario,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
     ) = calcExpectedTrainingStatus(
-        chara,
-        training,
-        motivation,
-        support + if (scenario == Scenario.AOHARU) createTeamMemberState(
-            teamJoinCount,
-            scenario
-        ) else emptyList(),
-        scenario,
-        supportTypeCount,
-        fanCount,
-        currentStatus,
+        info.copy(
+            member = info.member + if (info.scenario == Scenario.AOHARU) createTeamMemberState(
+                teamJoinCount,
+                info.scenario
+            ) else emptyList(),
+        ),
     )
 
     data class ExpectedStatusKey(
@@ -260,25 +171,18 @@ object Calculator {
         mutableMapOf<ExpectedStatusKey, Pair<ExpectedStatus, List<Pair<Double, Status>>>>()
 
     fun calcExpectedTrainingStatus(
-        chara: Chara,
-        training: TrainingBase,
-        motivation: Int,
-        member: List<MemberState>,
-        scenario: Scenario = Scenario.URA,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
+        info: CalcInfo,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
         val key = ExpectedStatusKey(
-            chara.id, training.type, training.level, motivation,
-            member.map {
+            info.chara.id, info.training.type, info.training.level, info.motivation,
+            info.member.map {
                 Triple(
                     it.card.id,
                     it.card.talent,
                     it.card.targetRelation.last { target -> target <= it.relation }
                 )
             },
-            scenario, supportTypeCount, fanCount / 10000,
+            info.scenario, info.supportTypeCount, info.fanCount / 10000,
         )
         val cached = expectedStatusCache[key]
         if (cached != null) {
@@ -286,29 +190,20 @@ object Calculator {
         }
         var status = ExpectedStatus()
         val detail = mutableListOf<Pair<Double, Status>>()
-        if (member.isEmpty()) {
+        if (info.member.isEmpty()) {
             status = addExpectedStatus(
                 status,
                 detail,
                 1.0,
-                calcTrainingSuccessStatus(
-                    chara,
-                    training,
-                    motivation,
-                    member,
-                    scenario,
-                    supportTypeCount,
-                    fanCount,
-                    currentStatus,
-                )
+                calcTrainingSuccessStatus(info)
             )
         } else {
-            val joinRate = member.map {
-                calcRate(training.type, *calcCardPositionSelection(it.card))
+            val joinRate = info.member.map {
+                calcRate(info.training.type, *calcCardPositionSelection(it.card))
             }
-            val allJoinRate = if (member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
+            val allJoinRate = if (info.member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
             var patterns = mutableListOf(arrayOf(true), arrayOf(false))
-            repeat(member.size - 1) {
+            repeat(info.member.size - 1) {
                 val newPattern = mutableListOf<Array<Boolean>>()
                 patterns.forEach {
                     newPattern.add(arrayOf(*it, true))
@@ -322,21 +217,12 @@ object Calculator {
                         .mapIndexed { index, join -> if (join) joinRate[index] else 1.0 - joinRate[index] }
                         .fold(1.0) { acc, d -> acc * d }
                     rate += rate * allJoinRate
-                    val joinSupport = member.filterIndexed { index, _ -> pattern[index] }
+                    val joinSupport = info.member.filterIndexed { index, _ -> pattern[index] }
                     status = addExpectedStatus(
                         status,
                         detail,
                         rate,
-                        calcTrainingSuccessStatus(
-                            chara,
-                            training,
-                            motivation,
-                            joinSupport,
-                            scenario,
-                            supportTypeCount,
-                            fanCount,
-                            currentStatus,
-                        )
+                        calcTrainingSuccessStatus(info.copy(member = joinSupport)),
                     )
                 }
             }

@@ -18,7 +18,8 @@
  */
 package io.github.mee1080.umasim.gui.component
 
-import androidx.compose.foundation.BoxWithTooltip
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.TooltipArea
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.SupportCard
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SupportCardView(
     card: SupportCard?,
@@ -43,7 +45,7 @@ fun SupportCardView(
     tooltip: Boolean = false,
     onClick: () -> Unit = {}
 ) {
-    BoxWithTooltip(
+    TooltipArea(
         tooltip = {
             if (tooltip) Surface(
                 modifier = Modifier.shadow(4.dp),

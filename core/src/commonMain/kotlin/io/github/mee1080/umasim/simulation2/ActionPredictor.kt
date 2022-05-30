@@ -71,14 +71,17 @@ private fun SimulationState.calcTrainingResult(
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
     val baseStatus = Calculator.calcTrainingSuccessStatus(
-        chara,
-        training.current,
-        status.motivation,
-        support,
-        scenario,
-        supportTypeCount,
-        status.fanCount,
-        status,
+        Calculator.CalcInfo(
+            chara,
+            training.current,
+            status.motivation,
+            support,
+            scenario,
+            supportTypeCount,
+            status.fanCount,
+            status,
+            totalRelation,
+        )
     )
     val successStatus = if (itemAvailable) {
         baseStatus + Calculator.calcItemBonus(

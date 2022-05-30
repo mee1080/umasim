@@ -51,6 +51,7 @@ data class State(
     val fanCount: String = "1",
     val hp: Int = 50,
     val maxHp: Int = 100,
+    val totalRelation: Int = 0,
     val shopItemMegaphone: Int = -1,
     val shopItemWeight: Int = -1,
     val trainingResult: Status = Status(),

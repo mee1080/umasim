@@ -260,14 +260,17 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
 
     private fun calcExpectedScore(state: SimulationState, type: StatusType): Double {
         val expectedStatus = Calculator.calcExpectedTrainingStatus(
-            state.chara,
-            state.getTraining(type).current,
-            state.status.motivation,
-            state.member,
-            state.scenario,
-            state.supportTypeCount,
-            state.status.fanCount,
-            state.status,
+            Calculator.CalcInfo(
+                state.chara,
+                state.getTraining(type).current,
+                state.status.motivation,
+                state.member,
+                state.scenario,
+                state.supportTypeCount,
+                state.status.fanCount,
+                state.status,
+                state.totalRelation,
+            ),
         ).first
         return expectedStatus.speed * option.speedFactor +
                 expectedStatus.stamina * option.staminaFactor +

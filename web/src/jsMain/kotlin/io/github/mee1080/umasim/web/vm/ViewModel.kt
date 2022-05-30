@@ -50,7 +50,7 @@ class ViewModel {
         state = state.copy(page = page)
     }
 
-    private fun updateState(calculate: Boolean = true, calculateBonus: Boolean = true, update: (State) -> State) {
+    private fun updateState(calculate: Boolean = true, update: (State) -> State) {
         var newState = update(state)
         if (calculate) {
             newState = calculate(newState)
@@ -60,9 +60,9 @@ class ViewModel {
     }
 
     private fun updateSupportSelection(
-        position: Int, calculateBonus: Boolean = true, update: (SupportSelection) -> SupportSelection
+        position: Int, update: (SupportSelection) -> SupportSelection
     ) {
-        updateState(true, calculateBonus) {
+        updateState(true) {
             val newList = it.supportSelectionList.toMutableList()
             newList[position] = update(newList[position])
             it.copy(supportSelectionList = newList)
@@ -75,7 +75,7 @@ class ViewModel {
     }
 
     fun updateSupportFilter(value: String) {
-        updateState(calculate = false, calculateBonus = false) { it.copy(supportFilter = value) }
+        updateState(calculate = false) { it.copy(supportFilter = value) }
     }
 
     fun applyFilter() {
@@ -87,7 +87,7 @@ class ViewModel {
                 card?.matches(filters) ?: false
             }
         }
-        updateState(calculate = false, calculateBonus = false) {
+        updateState(calculate = false) {
             it.copy(
                 appliedSupportFilter = appliedSupportFilter,
                 filteredSupportList = filteredSupportList,
@@ -96,7 +96,7 @@ class ViewModel {
     }
 
     fun clearFilter() {
-        updateState(calculate = false, calculateBonus = false) {
+        updateState(calculate = false) {
             it.copy(
                 supportFilter = "",
                 appliedSupportFilter = "",
@@ -106,7 +106,7 @@ class ViewModel {
     }
 
     fun updateSorOrder(value: WebConstants.SortOrder<*>) {
-        updateState(calculate = false, calculateBonus = false) { it.copy(supportSortOrder = value) }
+        updateState(calculate = false) { it.copy(supportSortOrder = value) }
     }
 
     fun updateSupportType(position: Int, type: StatusType) {
@@ -127,61 +127,65 @@ class ViewModel {
     }
 
     fun updateJoin(position: Int, join: Boolean) {
-        updateSupportSelection(position, false) { it.copy(join = join) }
+        updateSupportSelection(position) { it.copy(join = join) }
     }
 
     fun updateRelation(position: Int, relation: Int) {
-        updateSupportSelection(position, false) { it.copy(relation = relation) }
+        updateSupportSelection(position) { it.copy(relation = relation) }
     }
 
     fun updatePassion(position: Int, passion: Boolean) {
-        updateSupportSelection(position, false) { it.copy(passion = passion) }
+        updateSupportSelection(position) { it.copy(passion = passion) }
     }
 
     fun updateFriendCount(position: Int, friendCount: Int) {
-        updateSupportSelection(position, false) { it.copy(friendCount = friendCount) }
+        updateSupportSelection(position) { it.copy(friendCount = friendCount) }
     }
 
     fun updateScenario(scenario: Scenario) {
-        updateState(calculateBonus = false) { it.copy(scenario = scenario).createRaceSetting() }
+        updateState { it.copy(scenario = scenario).createRaceSetting() }
     }
 
     fun updateTeamJoinCount(delta: Int) {
         if (delta + state.teamJoinCount in 0..5) {
-            updateState(calculateBonus = false) { it.copy(teamJoinCount = it.teamJoinCount + delta) }
+            updateState { it.copy(teamJoinCount = it.teamJoinCount + delta) }
         }
     }
 
     fun updateTrainingType(trainingType: Int) {
-        updateState(calculateBonus = false) { it.copy(selectedTrainingType = trainingType) }
+        updateState { it.copy(selectedTrainingType = trainingType) }
     }
 
     fun updateTrainingLevel(trainingLevel: Int) {
-        updateState(calculateBonus = false) { it.copy(trainingLevel = trainingLevel) }
+        updateState { it.copy(trainingLevel = trainingLevel) }
     }
 
     fun updateMotivation(motivation: Int) {
-        updateState(calculateBonus = false) { it.copy(motivation = motivation) }
+        updateState { it.copy(motivation = motivation) }
     }
 
     fun updateFanCount(fanCount: String) {
-        updateState(calculateBonus = false) { it.copy(fanCount = fanCount) }
+        updateState { it.copy(fanCount = fanCount) }
     }
 
     fun updateHp(hp: Int) {
-        updateState(calculateBonus = false) { it.copy(hp = hp) }
+        updateState { it.copy(hp = hp) }
     }
 
     fun updateMaxHp(maxHp: Int) {
-        updateState(calculateBonus = false) { it.copy(maxHp = maxHp) }
+        updateState { it.copy(maxHp = maxHp) }
+    }
+
+    fun updateTotalRelation(totalRelation: Int) {
+        updateState { it.copy(totalRelation = totalRelation) }
     }
 
     fun updateShopItemMegaphone(index: Int) {
-        updateState(calculateBonus = false) { it.copy(shopItemMegaphone = index) }
+        updateState { it.copy(shopItemMegaphone = index) }
     }
 
     fun updateShopItemWeight(index: Int) {
-        updateState(calculateBonus = false) { it.copy(shopItemWeight = index) }
+        updateState { it.copy(shopItemWeight = index) }
     }
 
 //    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
@@ -199,15 +203,18 @@ class ViewModel {
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount.toIntOrNull() ?: 1
         val trainingResult = Calculator.calcTrainingSuccessStatus(
-            state.chara,
-            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
-            state.motivation,
-            joinSupportList,
+            Calculator.CalcInfo(
+                state.chara,
+                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+                state.motivation,
+                joinSupportList,
+                state.scenario,
+                supportTypeCount,
+                fanCount,
+                Status(maxHp = state.maxHp, hp = state.hp),
+                state.totalRelation,
+            ),
             state.teamJoinCount,
-            state.scenario,
-            supportTypeCount,
-            fanCount,
-            Status(maxHp = state.maxHp, hp = state.hp),
         )
 
         val itemList = listOfNotNull(
@@ -222,33 +229,39 @@ class ViewModel {
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
             target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
-                state.chara,
-                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
-                state.motivation,
-                joinSupportList.filterIndexed { index, _ -> index != targetIndex },
+                Calculator.CalcInfo(
+                    state.chara,
+                    WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+                    state.motivation,
+                    joinSupportList.filterIndexed { index, _ -> index != targetIndex },
+                    state.scenario,
+                    supportTypeCount,
+                    fanCount,
+                    Status(maxHp = state.maxHp, hp = state.hp),
+                    state.totalRelation,
+                ),
                 state.teamJoinCount,
-                state.scenario,
-                supportTypeCount,
-                fanCount,
-                Status(maxHp = state.maxHp, hp = state.hp),
             )
         }
 
         val expectedResult = Calculator.calcExpectedTrainingStatus(
-            state.chara,
-            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
-            state.motivation,
-            state.supportSelectionList.mapIndexedNotNull { index, support ->
-                support.toMemberState(
-                    state.scenario,
-                    index
-                )
-            },
+            Calculator.CalcInfo(
+                state.chara,
+                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+                state.motivation,
+                state.supportSelectionList.mapIndexedNotNull { index, support ->
+                    support.toMemberState(
+                        state.scenario,
+                        index
+                    )
+                },
+                state.scenario,
+                supportTypeCount,
+                fanCount,
+                Status(maxHp = state.maxHp, hp = state.hp),
+                state.totalRelation,
+            ),
             state.teamJoinCount,
-            state.scenario,
-            supportTypeCount,
-            fanCount,
-            Status(maxHp = state.maxHp, hp = state.hp),
         )
         val total = trainingResult.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
@@ -364,7 +377,7 @@ class ViewModel {
     }
 
     fun updateRaceCount(race: RaceSetting, count: String) {
-        updateState(calculate = false, calculateBonus = false) { state ->
+        updateState(calculate = false) { state ->
             state.copy(raceSetting = state.raceSetting.map {
                 if (it.label == race.label) {
                     it.copy(raceCount = count)
@@ -376,7 +389,7 @@ class ViewModel {
     }
 
     fun updateRaceItemCount(race: RaceSetting, label: String, count: String) {
-        updateState(calculate = false, calculateBonus = false) { state ->
+        updateState(calculate = false) { state ->
             state.copy(raceSetting = state.raceSetting.map {
                 if (it.label == race.label) {
                     val newItem = it.item.toMutableMap()
@@ -390,11 +403,11 @@ class ViewModel {
     }
 
     fun updateSimulationMode(mode: Int) {
-        updateState(calculate = false, calculateBonus = false) { it.copy(simulationMode = mode) }
+        updateState(calculate = false) { it.copy(simulationMode = mode) }
     }
 
     fun updateSimulationTurn(turn: Int) {
-        updateState(calculate = false, calculateBonus = false) { it.copy(simulationTurn = turn) }
+        updateState(calculate = false) { it.copy(simulationTurn = turn) }
     }
 
     fun doUraSimulation() {
@@ -409,7 +422,7 @@ class ViewModel {
             selector,
             ApproximateSimulationEvents(),
         )
-        updateState(calculate = false, calculateBonus = false) {
+        updateState(calculate = false) {
             it.copy(
                 simulationResult = summary.status,
                 simulationHistory = history.map { it.action.name to it.state.status },
@@ -418,13 +431,13 @@ class ViewModel {
     }
 
     fun updateSupportSaveName(name: String) {
-        updateState(calculate = false, calculateBonus = false) {
+        updateState(calculate = false) {
             it.copy(supportSaveName = name)
         }
     }
 
     fun updateSupportLoadName(name: String) {
-        updateState(calculate = false, calculateBonus = false) {
+        updateState(calculate = false) {
             it.copy(supportLoadName = name)
         }
     }
@@ -437,7 +450,7 @@ class ViewModel {
             KEY_SUPPORT_SET, Json.encodeToString(loadSupportData().apply { put(name, support) })
         )
         if (!state.supportLoadList.contains(name)) {
-            updateState(calculate = false, calculateBonus = false) {
+            updateState(calculate = false) {
                 it.copy(
                     supportLoadList = it.supportLoadList.toMutableList().apply { add(name) }.sorted(),
                     supportLoadName = name,
