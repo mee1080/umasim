@@ -157,8 +157,7 @@ data class SupportCard(
         return !type.outingType && Random.nextDouble() < hintFrequency
     }
 
-    // TODO ウララ特殊固有対応
-    val hintStatus = baseHintStatus
+    val hintStatus = if (id == 30098) Status(stamina = 4, power = 12, skillPt = 2) else baseHintStatus
 
     val trainingRelation = type.trainingRelation
 
