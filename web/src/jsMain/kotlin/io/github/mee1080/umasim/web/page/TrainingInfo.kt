@@ -88,7 +88,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             onInput { model.updateTotalRelation(it.toInt()) }
             style { width(300.px) }
         }
-        Span { Text(state.maxHp.toString()) }
+        Span { Text(state.totalRelation.toString()) }
     }
     if (state.scenario == Scenario.CLIMAX) {
         LabeledRadioGroup(
