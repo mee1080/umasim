@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation.ExpectedStatus
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
 

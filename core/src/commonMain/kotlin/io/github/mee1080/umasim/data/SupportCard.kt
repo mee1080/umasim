@@ -33,7 +33,7 @@ data class SupportCard(
     val unique: SupportStatus,
 
     val skills: List<String>,
-    val hintStatus: Status,
+    val baseHintStatus: Status,
 
     val specialUnique: List<SupportCardSpecialUnique>,
 ) {
@@ -156,6 +156,9 @@ data class SupportCard(
     fun checkHint(): Boolean {
         return !type.outingType && Random.nextDouble() < hintFrequency
     }
+
+    // TODO ウララ特殊固有対応
+    val hintStatus = baseHintStatus
 
     val trainingRelation = type.trainingRelation
 

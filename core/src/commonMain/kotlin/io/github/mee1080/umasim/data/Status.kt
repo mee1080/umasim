@@ -21,21 +21,33 @@ package io.github.mee1080.umasim.data
 import kotlin.math.max
 import kotlin.math.min
 
+interface StatusValues {
+    val speed: Number
+    val stamina: Number
+    val power: Number
+    val guts: Number
+    val wisdom: Number
+    val skillPt: Number
+    val hp: Number
+    val motivation: Number
+    val maxHp: Number
+}
+
 data class Status(
-    val speed: Int = 0,
-    val stamina: Int = 0,
-    val power: Int = 0,
-    val guts: Int = 0,
-    val wisdom: Int = 0,
-    val skillPt: Int = 0,
-    val hp: Int = 0,
-    val motivation: Int = 0,
-    val maxHp: Int = 0,
+    override val speed: Int = 0,
+    override val stamina: Int = 0,
+    override val power: Int = 0,
+    override val guts: Int = 0,
+    override val wisdom: Int = 0,
+    override val skillPt: Int = 0,
+    override val hp: Int = 0,
+    override val motivation: Int = 0,
+    override val maxHp: Int = 0,
     val skillHint: Map<String, Int> = emptyMap(),
     @Deprecated("not use")
     val supportRelation: Map<Int, Int> = emptyMap(),
     val fanCount: Int = 0,
-) {
+) : StatusValues {
 
     val statusTotal by lazy { speed + stamina + power + guts + wisdom }
 

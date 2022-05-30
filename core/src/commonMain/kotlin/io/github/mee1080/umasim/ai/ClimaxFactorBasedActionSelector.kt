@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
@@ -239,21 +236,29 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         }
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(it.first) - expected) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first) - expected) * it.second / total
         } + calcRelationScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
 
-    private fun calcScore(status: Status): Double {
-        val score = status.speed * option.speedFactor +
-                status.stamina * option.staminaFactor +
-                status.power * option.powerFactor +
-                status.guts * option.gutsFactor +
-                status.wisdom * option.wisdomFactor +
-                status.skillPt * option.skillPtFactor +
-                status.hp * option.hpFactor +
-                status.motivation * option.motivationFactor
+    private fun calcExpectedHintStatus(action: Action): ExpectedStatus {
+        if (action !is Training) return ExpectedStatus()
+        val target = action.member.filter { it.hint }.map { it.card.hintStatus }
+        if (target.isEmpty()) return ExpectedStatus()
+        val rate = 1.0 / target.size
+        return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
+    }
+
+    private fun calcScore(status: StatusValues): Double {
+        val score = status.speed.toDouble() * option.speedFactor +
+                status.stamina.toDouble() * option.staminaFactor +
+                status.power.toDouble() * option.powerFactor +
+                status.guts.toDouble() * option.gutsFactor +
+                status.wisdom.toDouble() * option.wisdomFactor +
+                status.skillPt.toDouble() * option.skillPtFactor +
+                status.hp.toDouble() * option.hpFactor +
+                status.motivation.toDouble() * option.motivationFactor
         if (DEBUG) println("  $score $status")
         return score
     }

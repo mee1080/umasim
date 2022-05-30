@@ -21,7 +21,6 @@ package io.github.mee1080.umasim.web.state
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.simulation.Calculator
-import io.github.mee1080.umasim.simulation.ExpectedStatus
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 

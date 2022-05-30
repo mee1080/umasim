@@ -18,8 +18,6 @@
  */
 package io.github.mee1080.umasim.data
 
-import io.github.mee1080.umasim.simulation.ExpectedStatus
-
 data class AoharuTrainingTeam(
     val type: StatusType,
     val level: Int,

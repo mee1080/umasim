@@ -18,8 +18,8 @@
  */
 package io.github.mee1080.umasim.ai
 
+import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
@@ -303,13 +303,21 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         val expected = calcExpectedScore(state, action)
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(state, it.first) - expected) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first) - expected) * it.second / total
         } + calcRelationScore(state, action) + calcAoharuScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
 
-    private fun calcScore(state: SimulationState, status: Status): Double {
+    private fun calcExpectedHintStatus(action: Action): ExpectedStatus {
+        if (action !is Training) return ExpectedStatus()
+        val target = action.member.filter { it.hint }.map { it.card.hintStatus }
+        if (target.isEmpty()) return ExpectedStatus()
+        val rate = 1.0 / target.size
+        return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
+    }
+
+    private fun calcScore(status: ExpectedStatus): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
                 status.power * option.powerFactor +
