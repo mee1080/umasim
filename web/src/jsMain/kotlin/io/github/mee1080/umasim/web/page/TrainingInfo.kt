@@ -83,8 +83,8 @@ fun TrainingInfo(model: ViewModel, state: State) {
             alignItems(AlignItems.Center)
         }
     }) {
-        Span { Text("絆合計トレ効果：") }
-        MwcSlider(state.totalRelation, 0, 20) {
+        Span { Text("絆合計：") }
+        MwcSlider(state.totalRelation, 0, 600) {
             onInput { model.updateTotalRelation(it.toInt()) }
             style { width(300.px) }
         }
