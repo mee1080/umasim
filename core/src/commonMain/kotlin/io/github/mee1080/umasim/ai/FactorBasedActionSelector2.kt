@@ -93,9 +93,9 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
             staminaFactor = 1.0,
             powerFactor = 1.0,
             gutsFactor = 0.8,
-            wisdomFactor = 1.0,
+            wisdomFactor = 0.8,
             skillPtFactor = 0.2,
-            hpFactor = 0.8,
+            hpFactor = 0.7,
             motivationFactor = 25.0,
         )
 

@@ -103,7 +103,8 @@ class Simulator(
         selector.init(state)
         repeat(turn) {
             state = state.onTurnChange()
-            state = scenarioEvents.beforeAction(state) ?: events.beforeAction(state)
+            state = scenarioEvents.beforeAction(state) ?: state
+            state = events.beforeAction(state)
             state = state.shuffleMember()
             var action: Action?
             val useItem = mutableListOf<ShopItem>()

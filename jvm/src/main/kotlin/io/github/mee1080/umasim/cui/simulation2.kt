@@ -5,7 +5,6 @@ import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.time.LocalDateTime
-import kotlin.math.roundToInt
 
 fun doSimulation2(
     scenario: Scenario,
@@ -79,6 +78,13 @@ fun doSimulation2(
                     useSupport,
                     factor,
                     evaluateSetting,
+//                    events = ApproximateSimulationEvents(
+//                        beforeActionEvents = {
+//                            return@ApproximateSimulationEvents if (it.turn == 13) {
+//                                it.copy(condition = it.condition + "愛嬌○")
+//                            } else it
+//                        }
+//                    ),
                     selector = selector,
                 )
                 println("${card.id},${card.name},${card.talent},${evaluator.toSummaryString()},$score")

@@ -29,27 +29,29 @@ open class SimulationEvents(
 }
 
 class ApproximateSimulationEvents(
-    initialStatus: (status: Status) -> Status = { it }
+    initialStatus: (status: Status) -> Status = { it },
+    private val beforeActionEvents: (status: SimulationState) -> SimulationState = { it },
 ) : SimulationEvents(initialStatus) {
     override fun beforeAction(state: SimulationState): SimulationState {
-        val turn = state.turn
+        val newState = beforeActionEvents(state)
+        val turn = newState.turn
         return when {
             turn <= 24 -> {
                 if (turn % 3 == 0) {
-                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
-                } else state
+                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else newState
             }
             turn <= 48 -> {
                 if (turn % 6 == 0) {
-                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
-                } else state
+                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else newState
             }
             turn <= 72 -> {
                 if (turn % 12 == 0) {
-                    state.updateStatus { it + Status(4, 4, 4, 4, 4) }
-                } else state
+                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                } else newState
             }
-            else -> state
+            else -> newState
         }
     }
 }

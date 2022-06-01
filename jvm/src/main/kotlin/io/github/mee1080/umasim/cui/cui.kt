@@ -18,12 +18,10 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
@@ -206,7 +204,7 @@ fun openCui(args: Array<String>) {
             *(wisdom2(4, 2)),
         ).toTypedArray(),
 //        StatusType.WISDOM, 0..4,
-        Store.getSupportByName(*((0..4).map { "[Dear Mr. C.B.]ミスターシービー" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[あこがれの景色]ライスシャワー" to it }.toTypedArray())),
         factor(StatusType.SPEED, 6),
         100000,
         FactorBasedActionSelector2.aoharuPowerWisdom,
@@ -305,8 +303,9 @@ fun openCui(args: Array<String>) {
 //            *(power3(4, 2)),
 //            *(wisdom(4, 1)),
 //        ).toTypedArray(),
-//        StatusType.POWER,
-//        0..4,
+//        StatusType.POWER, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[うららか・ぱっしょん♪]ハルウララ" to it }.toTypedArray())),
+//        factor(StatusType.STAMINA, 6),
 //        100000,
 //        FactorBasedActionSelector2.speed2Power3Wisdom1,
 //    )
