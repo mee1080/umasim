@@ -74,6 +74,30 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 }
             }
         )
+
+        val guts4Wisdom2Guts = Option().copy(
+            speedFactor = 1.3,
+            staminaFactor = 1.2,
+            powerFactor = 1.3,
+            gutsFactor = 0.7,
+            wisdomFactor = 1.0,
+            hpFactor = 0.6,
+            motivationFactor = 25.0,
+            relationFactor = { type, rank, _ ->
+                when (type) {
+                    StatusType.GUTS -> when (rank) {
+                        1 -> 2.0
+                        2 -> 2.6
+                        3 -> 7.6
+                        else -> 7.8
+                    }
+                    else -> when (rank) {
+                        1 -> 9.4
+                        else -> 8.7
+                    }
+                }
+            }
+        )
     }
 
     @Serializable

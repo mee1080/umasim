@@ -18,10 +18,11 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
+import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
@@ -196,19 +197,19 @@ fun openCui(args: Array<String>) {
 //            *(wisdom2(4, 3)),
 //        )
 //    )
-    doSimulation2(
-        Scenario.AOHARU,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
-        Store.getSupportByName(
-            *(power3(4, 3)),
-            *(wisdom2(4, 2)),
-        ).toTypedArray(),
-//        StatusType.WISDOM, 0..4,
-        Store.getSupportByName(*((0..4).map { "[あこがれの景色]ライスシャワー" to it }.toTypedArray())),
-        factor(StatusType.SPEED, 6),
-        100000,
-        FactorBasedActionSelector2.aoharuPowerWisdom,
-    )
+//    doSimulation2(
+//        Scenario.AOHARU,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            *(power3(4, 3)),
+//            *(wisdom2(4, 2)),
+//        ).toTypedArray(),
+////        StatusType.WISDOM, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[あこがれの景色]ライスシャワー" to it }.toTypedArray())),
+//        factor(StatusType.SPEED, 6),
+//        100000,
+//        FactorBasedActionSelector2.aoharuPowerWisdom,
+//    )
 //    doSimulation2(
 //        Scenario.AOHARU,
 //        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
@@ -493,24 +494,25 @@ fun openCui(args: Array<String>) {
 //    )
 
     // クライマックス根性4賢さ2
-//    doSimulation2(
-//        Scenario.CLIMAX,
-//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
-//        Store.getSupportByName(
-//            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
-//            "[うらら～な休日]ハルウララ" to 4,
-//            "[バカと笑え]メジロパーマー" to 4,
-//            "[感謝は指先まで込めて]ファインモーション" to 4,
-//            "[願いまでは拭わない]ナイスネイチャ" to 4,
-//        ).toTypedArray(),
-////        StatusType.GUTS, 0..4,
-////        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
+    doSimulation2(
+        Scenario.CLIMAX,
+        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+        Store.getSupportByName(
+            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
+            "[届け、このオモイ！]バンブーメモリー" to 4,
+//            "[一等星を目指して]アドマイヤベガ" to 4,
+            "[好きなんだ、ご飯が]オグリキャップ" to 4,
+            "[感謝は指先まで込めて]ファインモーション" to 4,
+            "[願いまでは拭わない]ナイスネイチャ" to 4,
+        ).toTypedArray(),
+        StatusType.GUTS, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[爆速！最速！花あらし！]サクラバクシンオー" to it }.toTypedArray())),
 //        Store.getSupportByName("[一等星を目指して]アドマイヤベガ" to 4),
-//        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
-//        100000,
-//        ClimaxFactorBasedActionSelector.guts4Wisdom2,
-//        Runner.mileEvaluateSetting,
-//    )
+        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+        100000,
+        ClimaxFactorBasedActionSelector.guts4Wisdom2,
+        Runner.mileEvaluateSetting,
+    )
 //    doSimulation2(
 //        Scenario.CLIMAX,
 //        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
