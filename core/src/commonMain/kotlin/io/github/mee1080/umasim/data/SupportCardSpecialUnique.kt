@@ -81,8 +81,8 @@ data class SupportCardSpecialUnique(
         } else if (type == 109 && value0 == 8) {
             totalRelation / value1
         } else if (type == 110 && value0 == 8) {
-            // TODO 仮数値
-            trainingSupportCount * value1
+            // TODO value1?
+            trainingSupportCount * 5
         } else 0
     }
 
