@@ -22,6 +22,7 @@ data class SupportCardSpecialUnique(
             107 -> "現在体力30で${supportEffectName[value0]}15、体力1増えるごとに-0.15（小数点以下切り捨て）"
             108 -> "体力最大値100で${supportEffectName[value0]}${value3}、体力最大値1増えるごとに+0.$value2（最大${value4}、小数点以下切り捨て）"
             109 -> "${supportEffectName[value0]}合計絆×${value1}"
+            110 -> "参加サポートカード多いほどトレ効果アップ（${type},${value0},${value1},${value2},${value3},${value4}）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -65,6 +66,7 @@ data class SupportCardSpecialUnique(
         fanCount: Int,
         status: Status,
         totalRelation: Int,
+        trainingSupportCount: Int,
     ): Int {
         return if (type == 101 && relation >= value0 && value1 == 8) {
             value2
@@ -78,6 +80,9 @@ data class SupportCardSpecialUnique(
             min(value4, ((status.maxHp - value1) * value2 / 100.0 + value3).toInt())
         } else if (type == 109 && value0 == 8) {
             totalRelation / value1
+        } else if (type == 110 && value0 == 8) {
+            // TODO 仮数値
+            trainingSupportCount * value1
         } else 0
     }
 

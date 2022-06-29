@@ -98,6 +98,8 @@ object Calculator {
                     info.fanCount,
                     info.currentStatus,
                     info.totalRelation,
+                    // TODO アオハルのゲストは？
+                    support.size,
                 )
             } / 100.0
         val count = 1 + info.member.size * 0.05
