@@ -21,8 +21,8 @@ data class SupportCardSpecialUnique(
             106 -> "${supportEffectName[value1]}が友情トレーニング回数×${value2}（最大${value0}回）"
             107 -> "現在体力30で${supportEffectName[value0]}15、体力1増えるごとに-0.15（小数点以下切り捨て）"
             108 -> "体力最大値100で${supportEffectName[value0]}${value3}、体力最大値1増えるごとに+0.$value2（最大${value4}、小数点以下切り捨て）"
-            109 -> "${supportEffectName[value0]}合計絆×${value1}"
-            110 -> "参加サポートカード多いほどトレ効果アップ（${type},${value0},${value1},${value2},${value3},${value4}）"
+            109 -> "${supportEffectName[value0]}が合計絆÷${value1}"
+            110 -> "${supportEffectName[value0]}が参加サポートカード数×${value1}"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -81,8 +81,7 @@ data class SupportCardSpecialUnique(
         } else if (type == 109 && value0 == 8) {
             totalRelation / value1
         } else if (type == 110 && value0 == 8) {
-            // TODO value1?
-            trainingSupportCount * 5
+            trainingSupportCount * value1
         } else 0
     }
 
