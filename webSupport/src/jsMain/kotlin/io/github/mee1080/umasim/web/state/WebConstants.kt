@@ -96,8 +96,19 @@ object WebConstants {
         SortOrder("初期ステ合計") { initialStatus(emptyList()).statusTotal },
         SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
         SortOrder("やる気ボナ") { motivationFactor(0) },
-        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 0, 0, 0, Status(maxHp = 100, hp = 100), 0, 1) },
-        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(type, 100, 6, 1000000, Status(maxHp = 120, hp = 30), 600, 5) },
+        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 1, 0, 0, 0, Status(maxHp = 100, hp = 100), 0, 1) },
+        SortOrder("トレ効果（特殊固有あり）") {
+            trainingFactor(
+                type,
+                5,
+                100,
+                6,
+                1000000,
+                Status(maxHp = 120, hp = 30),
+                600,
+                5
+            )
+        },
         SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0) },
         SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0) },
         SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0) },
@@ -106,7 +117,12 @@ object WebConstants {
         SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0) },
         SortOrder("レスボ") { race },
         SortOrder("ファンボ") { fan },
-        SortOrder("得意率") { (calcRate(type, *Calculator.calcCardPositionSelection(this)) * 1000.0).roundToInt() / 10.0 },
+        SortOrder("得意率") {
+            (calcRate(
+                type,
+                *Calculator.calcCardPositionSelection(this)
+            ) * 1000.0).roundToInt() / 10.0
+        },
         SortOrder("ヒントLv") { hintLevel },
         SortOrder("ヒント率") { hintFrequency },
         SortOrder("賢さ友情回復") { wisdomFriendRecovery },

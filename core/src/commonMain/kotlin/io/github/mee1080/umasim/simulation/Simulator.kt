@@ -204,7 +204,7 @@ class Simulator(
 
     private fun calcTrainingFailureRate(training: TrainingInfo, support: List<Support>): Int {
         val base = (status.hp - status.maxHp) * (status.hp * 10 - training.failureRate) / 400.0
-        val supported = base * support.map { it.card.failureRate }.fold(1.0) { acc, d -> acc * d }
+        val supported = base * support.map { it.card.failureRate() }.fold(1.0) { acc, d -> acc * d }
         val supportedInRange = max(0, min(99, ceil(supported).toInt()))
         val conditioned = supportedInRange + arrayOf(
             "練習ベタ" to 2,

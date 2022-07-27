@@ -123,6 +123,7 @@ data class SupportCard(
 
     fun trainingFactor(
         trainingType: StatusType,
+        trainingLevel: Int,
         relation: Int,
         supportTypeCount: Int,
         fanCount: Int,
@@ -133,6 +134,7 @@ data class SupportCard(
         it.trainingFactor(
             type,
             trainingType,
+            trainingLevel,
             relation,
             supportTypeCount,
             fanCount,
@@ -144,7 +146,8 @@ data class SupportCard(
 
     val hpCost = status.hpCost + unique.hpCost
 
-    val failureRate = (100 - status.failureRate) * (100 - unique.failureRate) / 10000.0
+    fun failureRate() =
+        (100 - status.failureRate) * (100 - unique.failureRate) * specialUnique.fold(1) { acc, v -> acc * v.failureRate() } / 10000.0
 
     val hintLevel = status.hintLevel + unique.hintLevel
 

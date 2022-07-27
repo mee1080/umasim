@@ -139,6 +139,7 @@ object Calculator {
         supportTypeCount: Int,
         fanCount: Int,
     ): Int {
+        val level = trainingLevel ?: training.current.level
         val baseStatus = training.getBaseStatus(trainingLevel).get(type)
         if (baseStatus == 0) return 0
         val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
@@ -152,6 +153,7 @@ object Calculator {
             1 + support.sumOf {
                 it.card.trainingFactor(
                     training.type,
+                    level,
                     it.relation,
                     supportTypeCount,
                     fanCount,

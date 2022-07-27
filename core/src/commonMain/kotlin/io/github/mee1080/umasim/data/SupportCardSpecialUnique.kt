@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.data
 
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.random.Random
 
 data class SupportCardSpecialUnique(
     val type: Int,
@@ -23,6 +24,8 @@ data class SupportCardSpecialUnique(
             108 -> "体力最大値100で${supportEffectName[value0]}${value3}、体力最大値1増えるごとに+0.$value2（最大${value4}、小数点以下切り捨て）"
             109 -> "${supportEffectName[value0]}が合計絆÷${value1}"
             110 -> "${supportEffectName[value0]}が参加サポートカード数×${value1}"
+            111 -> "トレーニング効果がトレーニングLv×5"
+            112 -> "トレーニング失敗率が20%の確率で0%になる"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -61,6 +64,7 @@ data class SupportCardSpecialUnique(
     fun trainingFactor(
         cardType: StatusType,
         trainingType: StatusType,
+        trainingLevel: Int,
         relation: Int,
         supportTypeCount: Int,
         fanCount: Int,
@@ -82,6 +86,8 @@ data class SupportCardSpecialUnique(
             totalRelation / value1
         } else if (type == 110 && value0 == 8) {
             trainingSupportCount * value1
+        } else if (type == 111) {
+            trainingLevel * 5
         } else 0
     }
 
@@ -108,5 +114,12 @@ data class SupportCardSpecialUnique(
                 }
             }
         } else Status()
+    }
+
+    fun failureRate(
+    ): Int {
+        return if (type == 112) {
+            if (Random.nextDouble() < 0.2) 0 else 1
+        } else 1
     }
 }

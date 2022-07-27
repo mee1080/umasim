@@ -93,6 +93,7 @@ object Calculator {
             1 + support.sumOf {
                 it.card.trainingFactor(
                     info.training.type,
+                    info.training.level,
                     it.relation,
                     info.supportTypeCount,
                     info.fanCount,
