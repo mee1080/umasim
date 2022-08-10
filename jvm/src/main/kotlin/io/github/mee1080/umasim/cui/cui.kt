@@ -504,11 +504,11 @@ fun openCui(args: Array<String>) {
             "[願いまでは拭わない]ナイスネイチャ" to 4,
         ).toTypedArray(),
 //        StatusType.GUTS, 0..4,
-        Store.getSupportByName(*((0..4).map { "[私たちと夢、掴みましょう！]スペシャルウィーク" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[チョベリグ心あれば桜心]サクラチヨノオー" to it }.toTypedArray())),
 //        Store.getSupportByName("[キラキラカケル∞]エルコンドルパサー" to 4),
         factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
         100000,
-        ClimaxFactorBasedActionSelector.guts4Wisdom2Guts,
+        ClimaxFactorBasedActionSelector.guts4Wisdom2,
         Runner.mileEvaluateSetting,
     )
 //    doSimulation2(
@@ -561,6 +561,24 @@ fun openCui(args: Array<String>) {
 //            "[願いまでは拭わない]ナイスネイチャ" to 4,
 //        ).toTypedArray(),
 //        StatusType.SPEED, 0..4,
+////        Store.getSupportByName(*((0..4).map { "[キラキラカケル∞]エルコンドルパサー" to it }.toTypedArray())),
+////        Store.getSupportByName("[迫る熱に押されて]キタサンブラック" to 4),
+//        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+//        100000,
+//        ClimaxFactorBasedActionSelector.speed2guts2Wisdom2,
+//        Runner.mileEvaluateSetting,
+//    )
+//    doSimulation2(
+//        Scenario.CLIMAX,
+//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+//        Store.getSupportByName(
+//            "[桃色のバックショット]ナリタトップロード" to 4,
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[一等星を目指して]アドマイヤベガ" to 4,
+//            "[届け、このオモイ！]バンブーメモリー" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//        ).toTypedArray(),
+//        StatusType.WISDOM, 0..4,
 ////        Store.getSupportByName(*((0..4).map { "[キラキラカケル∞]エルコンドルパサー" to it }.toTypedArray())),
 ////        Store.getSupportByName("[迫る熱に押されて]キタサンブラック" to 4),
 //        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),

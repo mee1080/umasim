@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
+import io.github.mee1080.umasim.simulation2.Training
 
 
 fun singleSimulation() {
@@ -35,7 +36,7 @@ fun singleSimulation() {
         "[はやい！うまい！はやい！]サクラバクシンオー",
         "[ようこそ、トレセン学園へ！]駿川たづな",
         "[『愛してもらうんだぞ』]オグリキャップ",
-        "[一粒の安らぎ]スーパークリーク",
+        "[一天地六に身を任せ]ナカヤマフェスタ",
 //        "[感謝は指先まで込めて]ファインモーション",
     )
     println(chara)

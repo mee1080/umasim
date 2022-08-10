@@ -210,6 +210,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                             else -> 9.434084503148606
                         }
                     }
+
                     level == 4 -> 7.895556162884356
                     else -> 0.0
                 }
@@ -274,6 +275,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         else -> 0.0
                     }
                 }
+
                 level == 4 -> 10.0
                 else -> when {
                     turn <= 24 -> 3.0
@@ -298,6 +300,10 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
+//        if (action is Training) {
+//            val nakayama = action.support.any { it.name == "[一天地六に身を任せ]ナカヤマフェスタ" }
+//            println("${action.type} ${state.status.hp} ${action.failureRate} ${if (nakayama) "○" else "×"}")
+//        }
         if (DEBUG) println("${state.turn}: $action")
         val total = action.resultCandidate.sumOf { it.second }.toDouble()
         val expected = calcExpectedScore(state, action)
@@ -356,6 +362,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         expectedStatus.hp * option.hpFactor +
                         expectedStatus.motivation * option.motivationFactor
             }
+
             else -> 0.0
         }
     }

@@ -22,7 +22,7 @@ fun doSimulation2(
         chara,
         defaultSupport,
         Store.supportList.filter {
-            talent.contains(it.talent) && it.rarity == 2 && (it.type == targetStatus)
+            talent.contains(it.talent) && it.rarity in (2..3) && (it.type == targetStatus)
         },
         factor,
         testCount,
