@@ -417,11 +417,11 @@ internal val raceAchievementData = listOf(
     ),
     RaceAchievement(
         "東北マスター", 5,
-        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "福島" || courseName == "新潟") },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "福島" || courseName == "新潟" || courseName == "盛岡") },
     ),
     RaceAchievement(
         "関東マスター", 5,
-        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "東京" || courseName == "中山" || courseName == "大井") },
+        RaceCondition(3) { grade.ordinal >= RaceGrade.G3.ordinal && (courseName == "東京" || courseName == "中山" || courseName == "大井" || courseName == "川崎" || courseName == "船橋") },
     ),
     RaceAchievement(
         "西日本マスター", 5,
