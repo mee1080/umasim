@@ -144,7 +144,13 @@ data class SupportCard(
         )
     }
 
-    val hpCost = status.hpCost + unique.hpCost
+    fun hpCost(
+        friendTraining: Boolean,
+    ) = status.hpCost + unique.hpCost + specialUnique.sumOf {
+        it.hpCost(
+            friendTraining
+        )
+    }
 
     fun failureRate() =
         (100 - status.failureRate) * (100 - unique.failureRate) * specialUnique.fold(1) { acc, v -> acc * v.failureRate() } / 10000.0

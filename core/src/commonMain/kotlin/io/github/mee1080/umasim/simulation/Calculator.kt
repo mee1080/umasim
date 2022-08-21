@@ -176,9 +176,15 @@ object Calculator {
             training.type == StatusType.WISDOM -> {
                 baseHp + support.sumOf { it.wisdomFriendRecovery }
             }
+
             else -> {
-                // TODO 計算式不明のため近似値、体力消費ダウン複数所持の場合は未検証
-                baseHp - (baseHp * support.sumOf { it.card.hpCost } / 100.0).toInt()
+                baseHp - (baseHp * support.sumOf {
+                    it.card.hpCost(support.any { member ->
+                        member.isFriendTraining(
+                            training.type
+                        )
+                    })
+                } / 100.0).toInt()
             }
         }
     }

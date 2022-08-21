@@ -114,8 +114,15 @@ object Calculator {
             training.type == StatusType.WISDOM -> {
                 baseHp + support.sumOf { it.wisdomFriendRecovery }
             }
+
             else -> {
-                baseHp - (baseHp * support.sumOf { it.card.hpCost } / 100.0).toInt()
+                baseHp - (baseHp * support.sumOf {
+                    it.card.hpCost(support.any { member ->
+                        member.isFriendTraining(
+                            training.type
+                        )
+                    })
+                } / 100.0).toInt()
             }
         }
     }

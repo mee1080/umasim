@@ -26,6 +26,7 @@ data class SupportCardSpecialUnique(
             110 -> "${supportEffectName[value0]}が参加サポートカード数×${value1}"
             111 -> "トレーニング効果がトレーニングLv×5"
             112 -> "トレーニング失敗率が20%の確率で0%になる"
+            113 -> "友情トレーニングで体力消費ダウン"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -121,5 +122,13 @@ data class SupportCardSpecialUnique(
         return if (type == 112) {
             if (Random.nextDouble() < 0.2) 0 else 1
         } else 1
+    }
+
+    fun hpCost(
+        friendTraining: Boolean,
+    ): Int {
+        return if (type == 113 && friendTraining) {
+            20
+        } else 0
     }
 }
