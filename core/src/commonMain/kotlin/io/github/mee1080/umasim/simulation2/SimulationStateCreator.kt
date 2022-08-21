@@ -29,7 +29,9 @@ fun SupportCard.toMemberState(
                 aoharuIcon = false,
             )
         } ?: AoharuNotMemberState
+
         Scenario.CLIMAX -> ClimaxMemberState
+        Scenario.GRAND_LIVE -> GrandLiveMemberState
     }
 )
 
@@ -50,7 +52,9 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
             aoharuTrainingCount = 0,
             aoharuIcon = false,
         )
+
         Scenario.CLIMAX -> ClimaxMemberState
+        Scenario.GRAND_LIVE -> GrandLiveMemberState
     },
 )
 

@@ -130,9 +130,12 @@ object UraMemberState : ScenarioMemberState {
     override fun toString() = "URA"
 }
 
-// TODO
 object ClimaxMemberState : ScenarioMemberState {
     override fun toString() = "Climax"
+}
+
+object GrandLiveMemberState : ScenarioMemberState {
+    override fun toString() = "GrandLive"
 }
 
 data class AoharuMemberState(

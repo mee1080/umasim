@@ -95,6 +95,7 @@ class Simulator(
             Scenario.URA -> UraScenarioEvents()
             Scenario.AOHARU -> AoharuScenarioEvents()
             Scenario.CLIMAX -> ClimaxScenarioEvents()
+            Scenario.GRAND_LIVE -> GrandLiveScenarioEvents()
         }
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))

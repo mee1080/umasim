@@ -151,7 +151,7 @@ object WebConstants {
             "スピ2賢2代理ライス" to { FactorBasedActionSelector2.aoharuSpeed2Power1Wisdom2Friend1Optuna3.generateSelector() },
             "スピ2スタ1賢3" to { FactorBasedActionSelector2.aoharuSpeed2Stamina1Wisdom3.generateSelector() },
             "スピ1スタ1賢1代理デジタル" to { FactorBasedActionSelector2.aoharuSpeed2Stamina1Power1Wisdom1Friend1Optuna.generateSelector() },
-        ), Scenario.CLIMAX to listOf()
+        ), Scenario.CLIMAX to listOf(), Scenario.GRAND_LIVE to listOf()
     )
 
     val displaySimulationModeList =
