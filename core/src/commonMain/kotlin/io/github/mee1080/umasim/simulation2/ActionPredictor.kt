@@ -81,6 +81,7 @@ private fun SimulationState.calcTrainingResult(
             status.fanCount,
             status,
             totalRelation,
+            liveStatus,
         )
     )
     val successStatus = if (itemAvailable) {

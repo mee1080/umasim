@@ -188,6 +188,34 @@ class ViewModel {
         updateState { it.copy(shopItemWeight = index) }
     }
 
+    fun updateLiveSpeed(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(speed = value)) }
+    }
+
+    fun updateLiveStamina(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(stamina = value)) }
+    }
+
+    fun updateLivePower(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(power = value)) }
+    }
+
+    fun updateLiveGuts(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(guts = value)) }
+    }
+
+    fun updateLiveWisdom(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(wisdom = value)) }
+    }
+
+    fun updateLiveFriend(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(friendTrainingUpInput = value)) }
+    }
+
+    fun updateLiveSpecialityRate(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(specialityRateUpInput = value)) }
+    }
+
 //    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
 //
 //    fun updateTrainingParamTest(enabled: Boolean) {
@@ -213,6 +241,7 @@ class ViewModel {
                 fanCount,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
+                state.trainingLiveStateIfEnabled,
             ),
             state.teamJoinCount,
         )
@@ -239,6 +268,7 @@ class ViewModel {
                     fanCount,
                     Status(maxHp = state.maxHp, hp = state.hp),
                     state.totalRelation,
+                    state.trainingLiveStateIfEnabled,
                 ),
                 state.teamJoinCount,
             )
@@ -260,6 +290,7 @@ class ViewModel {
                 fanCount,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
+                state.trainingLiveStateIfEnabled,
             ),
             state.teamJoinCount,
         )

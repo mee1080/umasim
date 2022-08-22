@@ -34,6 +34,7 @@ object Calculator {
         val fanCount: Int,
         val currentStatus: Status,
         val totalRelation: Int,
+        val liveStatus: TrainingLiveStatus?,
         val type: StatusType = StatusType.NONE,
     )
 
@@ -82,11 +83,19 @@ object Calculator {
         val baseStatus = info.training.status.get(info.type)
         if (baseStatus == 0) return 0
         val support = info.member.filter { !it.guest }
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
+        var base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
+        if (info.liveStatus != null) {
+            // TODO トレーニング上昇量は基礎値上昇と解釈
+            base += info.liveStatus.trainingUp(info.type)
+        }
         val charaBonus = info.chara.getBonus(info.type) / 100.0
-        val friend = support
+        var friend = support
             .map { it.getFriendBonus(info.training.type, info.currentStatus) }
             .fold(1.0) { acc, d -> acc * d }
+        if (info.liveStatus != null && friend > 1.001) {
+            // TODO 友情トレーニング獲得量アップは乗算と解釈
+            friend *= (100 + info.liveStatus.friendTrainingUp) / 100.0
+        }
         val motivationBonus =
             1 + info.motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor(it.relation) } / 100.0)
         val trainingBonus =
@@ -127,7 +136,7 @@ object Calculator {
         }
     }
 
-    fun calcCardPositionSelection(card: SupportCard): Array<Pair<StatusType, Int>> {
+    fun calcCardPositionSelection(card: SupportCard, bonus: Int): Array<Pair<StatusType, Int>> {
         if (card.type.outingType) {
             return arrayOf(
                 StatusType.SPEED to 1,
@@ -138,9 +147,10 @@ object Calculator {
                 StatusType.NONE to 1,
             )
         }
-        val mainRate = card.specialtyRate
-        val otherRate = 10000
-        val noneRate = 5000
+        // TODO 得意率アップはサポカ得意率に乗算と解釈
+        val mainRate = card.specialtyRate * (100 + bonus)
+        val otherRate = 1000000
+        val noneRate = 500000
         return arrayOf(
             StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
             StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,
@@ -172,6 +182,7 @@ object Calculator {
         val scenario: Scenario,
         val supportTypeCount: Int,
         val fanCountLevel: Int,
+        val liveStatus: TrainingLiveStatus?,
     )
 
     @ThreadLocal
@@ -191,6 +202,7 @@ object Calculator {
                 )
             },
             info.scenario, info.supportTypeCount, info.fanCount / 10000,
+            info.liveStatus,
         )
         val cached = expectedStatusCache[key]
         if (cached != null) {
@@ -206,8 +218,9 @@ object Calculator {
                 calcTrainingSuccessStatus(info)
             )
         } else {
+            val specialityRateBonus = info.liveStatus?.specialityRateUp ?: 0
             val joinRate = info.member.map {
-                calcRate(info.training.type, *calcCardPositionSelection(it.card))
+                calcRate(info.training.type, *calcCardPositionSelection(it.card, specialityRateBonus))
             }
             val allJoinRate = if (info.member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
             var patterns = mutableListOf(arrayOf(true), arrayOf(false))
@@ -258,7 +271,6 @@ object Calculator {
         Scenario.URA -> Status()
         Scenario.AOHARU -> calcAoharuStatus(training, member)
         Scenario.CLIMAX -> Status()
-        // TODO GrandLive
         Scenario.GRAND_LIVE -> Status()
     }
 

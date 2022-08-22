@@ -37,6 +37,7 @@ data class SimulationState(
     val shopCoin: Int = 0,
     val possessionItem: List<ShopItem> = emptyList(),
     val enableItem: EnableItem = EnableItem(),
+    val liveStatus: LiveStatus? = null,
 ) {
     val itemAvailable get() = scenario == Scenario.CLIMAX
 

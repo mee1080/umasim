@@ -37,7 +37,7 @@ fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
     do {
-        newMember = member.map { it.onTurnChange(turn) }
+        newMember = member.map { it.onTurnChange(turn, this) }
     } while (newMember.groupBy { it.position }.any { it.value.size > 5 })
     return copy(
         member = newMember,
@@ -46,14 +46,15 @@ fun SimulationState.shuffleMember(): SimulationState {
 
 fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status).adjustRange())
 
-private fun MemberState.onTurnChange(turn: Int): MemberState {
+private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
     // 各トレーニングに配置
-    val position = randomSelect(*Calculator.calcCardPositionSelection(card))
+    val position = randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
     val scenarioState = when (scenarioState) {
         is AoharuMemberState -> scenarioState.copy(
             // アオハルアイコン表示
             aoharuIcon = turn >= 3 && Random.nextDouble() < 0.4
         )
+
         else -> scenarioState
     }
     // ヒントアイコン表示
@@ -210,15 +211,18 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
                 val relation = if (condition.contains("愛嬌○")) 7 else 5
                 copy(member = member.map { it.addRelation(relation) })
             }
+
             "リセットホイッスル" -> shuffleMember()
             "健康祈願のお守り" -> copy(enableItem = enableItem.copy(unique = item))
             else -> this
         }
+
         is AddConditionItem -> copy(condition = condition + item.condition)
         is RemoveConditionItem -> copy(condition = condition - item.condition.toSet())
         is TrainingLevelItem -> copy(training = training.map {
             if (it.type == item.type) it.copy(level = min(5, it.level + 1)) else it
         })
+
         is MegaphoneItem -> copy(enableItem = enableItem.copy(megaphone = item, megaphoneTurn = item.turn))
         is WeightItem -> copy(enableItem = enableItem.copy(weight = item))
         is RaceBonusItem -> copy(enableItem = enableItem.copy(raceBonus = item))

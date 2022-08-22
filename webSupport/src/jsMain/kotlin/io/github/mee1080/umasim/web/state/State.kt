@@ -33,7 +33,7 @@ data class State(
     val page: Page = Page.Top,
     val rotationState: RotationState? = null,
 
-    val scenario: Scenario = Scenario.CLIMAX,
+    val scenario: Scenario = Scenario.GRAND_LIVE,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),
@@ -69,6 +69,7 @@ data class State(
     val simulationResult: Status = Status(),
     val simulationHistory: List<Pair<String, Status>> = emptyList(),
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),
+    val trainingLiveState: TrainingLiveState = TrainingLiveState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -111,6 +112,8 @@ data class State(
     }
 
     fun calcRaceStatus(value: Int) = (value * (1 + totalRaceBonus / 100.0)).toInt()
+
+    val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
 }
 
 data class SupportSelection(
@@ -228,6 +231,27 @@ data class RotationState(
     val raceCount = selectedRace.count { it != null }
     val raceType = rotation.raceType
     val recommendation = calcState.recommendation.filter { recommendFilter(it) }
+}
+
+data class TrainingLiveState(
+    val speed: String = "0",
+    val stamina: String = "0",
+    val power: String = "0",
+    val guts: String = "0",
+    val wisdom: String = "0",
+    val friendTrainingUpInput: String = "0",
+    val specialityRateUpInput: String = "0",
+) : TrainingLiveStatus {
+    override val friendTrainingUp: Int get() = friendTrainingUpInput.toIntOrNull() ?: 0
+    override val specialityRateUp: Int get() = specialityRateUpInput.toIntOrNull() ?: 0
+    override fun trainingUp(type: StatusType) = when (type) {
+        StatusType.SPEED -> speed
+        StatusType.STAMINA -> stamina
+        StatusType.POWER -> power
+        StatusType.GUTS -> guts
+        StatusType.WISDOM -> wisdom
+        else -> "0"
+    }.toIntOrNull() ?: 0
 }
 
 sealed interface RecommendFilter {

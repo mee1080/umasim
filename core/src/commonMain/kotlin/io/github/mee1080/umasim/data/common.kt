@@ -80,7 +80,7 @@ enum class Scenario(val displayName: String) {
     URA("URA"),
     AOHARU("アオハル"),
     CLIMAX("クライマックス"),
-    GRAND_LIVE("グランドライブ（仮）"),
+    GRAND_LIVE("グランドライブ（掛かり）"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -146,6 +146,10 @@ fun toRaceGround(value: String) = when (value) {
     "芝" -> RaceGround.TURF
     "ダート" -> RaceGround.DIRT
     else -> RaceGround.UNKNOWN
+}
+
+enum class RaceRunningStyle(val displayName: String) {
+    NIGE("逃げ"), SENKO("先行"), SASHI("差し"), OIKOMI("追込"),
 }
 
 fun motivationToString(motivation: Int) = when (motivation) {

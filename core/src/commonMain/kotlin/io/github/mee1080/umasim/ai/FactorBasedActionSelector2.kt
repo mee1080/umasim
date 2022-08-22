@@ -351,6 +351,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         state.status.fanCount,
                         state.status,
                         state.totalRelation,
+                        state.liveStatus,
                     ),
                 ).first
                 expectedStatus.speed * option.speedFactor +

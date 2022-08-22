@@ -106,6 +106,50 @@ fun TrainingInfo(model: ViewModel, state: State) {
             model::updateShopItemWeight
         )
     }
+    if (state.scenario == Scenario.GRAND_LIVE) {
+        Div {
+            Span { Text("トレーニング上昇量：") }
+            Text("スピード")
+            TextInput(state.trainingLiveState.speed) {
+                size(10)
+                onInput { model.updateLiveSpeed(it.value) }
+            }
+            Text("スタミナ")
+            TextInput(state.trainingLiveState.stamina) {
+                size(10)
+                onInput { model.updateLiveStamina(it.value) }
+            }
+            Text("パワー")
+            TextInput(state.trainingLiveState.power) {
+                size(10)
+                onInput { model.updateLivePower(it.value) }
+            }
+            Text("根性")
+            TextInput(state.trainingLiveState.guts) {
+                size(10)
+                onInput { model.updateLiveGuts(it.value) }
+            }
+            Text("賢さ")
+            TextInput(state.trainingLiveState.wisdom) {
+                size(10)
+                onInput { model.updateLiveWisdom(it.value) }
+            }
+        }
+        Div {
+            Span { Text("友情トレーニング獲得量アップ：") }
+            TextInput(state.trainingLiveState.friendTrainingUpInput) {
+                size(10)
+                onInput { model.updateLiveFriend(it.value) }
+            }
+        }
+        Div {
+            Span { Text("得意率アップ：") }
+            TextInput(state.trainingLiveState.specialityRateUpInput) {
+                size(10)
+                onInput { model.updateLiveSpecialityRate(it.value) }
+            }
+        }
+    }
     Div {
         Table({ classes(AppStyle.table) }) {
             Tr {
