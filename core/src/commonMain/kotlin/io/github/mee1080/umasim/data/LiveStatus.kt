@@ -75,6 +75,12 @@ data class StatusUpBonus(
     override val displayName get() = list.joinToString(",") { "${it.first.displayName}+${it.second}" }
 }
 
+data class HpUpBonus(
+    val value: Int,
+) : LearnBonus {
+    override val displayName get() = "体力+$value"
+}
+
 data class DistanceSkillHintBonus(
     val target: RaceDistance,
     val value: Int,

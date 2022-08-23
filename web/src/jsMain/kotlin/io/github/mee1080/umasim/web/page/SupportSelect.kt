@@ -222,7 +222,7 @@ fun SupportSelect(model: ViewModel, state: State) {
             }
         }
     }
-    if (state.scenario == Scenario.AOHARU) {
+    if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
         H3 { Text("サポカ外参加人数") }
         Div {
             Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }

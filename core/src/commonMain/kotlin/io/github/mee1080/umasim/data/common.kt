@@ -32,6 +32,15 @@ enum class StatusType(val displayName: String, val outingType: Boolean = false) 
 
 val trainingType = arrayOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM)
 
+fun upInTraining(training: StatusType, target: StatusType): Boolean = when (training) {
+    StatusType.SPEED -> target == StatusType.SPEED || target == StatusType.POWER
+    StatusType.STAMINA -> target == StatusType.STAMINA || target == StatusType.GUTS
+    StatusType.POWER -> target == StatusType.POWER || target == StatusType.STAMINA
+    StatusType.GUTS -> target == StatusType.SPEED || target == StatusType.POWER || target == StatusType.GUTS
+    StatusType.WISDOM -> target == StatusType.SPEED || target == StatusType.WISDOM
+    else -> false
+}
+
 fun randomTrainingType(count: Int = 1) = trainingType.asList().shuffled().subList(0, count)
 
 fun toSupportType(value: String) = when (value) {

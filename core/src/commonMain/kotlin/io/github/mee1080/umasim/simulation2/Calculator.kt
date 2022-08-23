@@ -43,7 +43,7 @@ object Calculator {
         teamJoinCount: Int,
     ) = calcTrainingSuccessStatus(
         info.copy(
-            member = info.member + if (info.scenario == Scenario.AOHARU) createTeamMemberState(
+            member = info.member + if (info.scenario == Scenario.AOHARU || info.scenario == Scenario.GRAND_LIVE) createTeamMemberState(
                 teamJoinCount,
                 info.scenario,
             ) else emptyList()
@@ -60,21 +60,7 @@ object Calculator {
         wisdom = calcTrainingStatus(info.copy(type = StatusType.WISDOM)),
         skillPt = calcTrainingStatus(info.copy(type = StatusType.SKILL)),
         hp = calcTrainingHp(info.training, info.member),
-    ) + calcScenarioStatus(info.training, info.member, info.scenario)
-
-//    fun calcTrainingSuccessStatus(
-//        info: CalcInfo,
-//        type: StatusType,
-//        motivation: Int,
-//        member: List<MemberState>,
-//        status: Status,
-//        supportTypeCount: Int,
-//        fanCount: Int,
-//        currentStatus: Status,
-//        totalRelation: Int,
-//    ) = calcTrainingSuccessStatus(
-//        info.copy(training = TrainingBase(Scenario.URA, info.type, 1, 0, status)),
-//    )
+    ) + calcScenarioStatus(info)
 
     private fun calcTrainingStatus(
         info: CalcInfo,
@@ -83,11 +69,7 @@ object Calculator {
         val baseStatus = info.training.status.get(info.type)
         if (baseStatus == 0) return 0
         val support = info.member.filter { !it.guest }
-        var base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
-        if (info.liveStatus != null) {
-            // TODO トレーニング上昇量は基礎値上昇と解釈
-            base += info.liveStatus.trainingUp(info.type)
-        }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
         val charaBonus = info.chara.getBonus(info.type) / 100.0
         var friend = support
             .map { it.getFriendBonus(info.training.type, info.currentStatus) }
@@ -264,14 +246,12 @@ object Calculator {
     }
 
     private fun calcScenarioStatus(
-        training: TrainingBase,
-        member: List<MemberState>,
-        scenario: Scenario,
-    ) = when (scenario) {
+        info: CalcInfo,
+    ) = when (info.scenario) {
         Scenario.URA -> Status()
-        Scenario.AOHARU -> calcAoharuStatus(training, member)
+        Scenario.AOHARU -> calcAoharuStatus(info.training, info.member)
         Scenario.CLIMAX -> Status()
-        Scenario.GRAND_LIVE -> Status()
+        Scenario.GRAND_LIVE -> calcLiveStatus(info)
     }
 
     private fun calcAoharuStatus(
@@ -296,6 +276,25 @@ object Calculator {
             .map { it.status }
         return burn.fold(aoharuTraining) { acc, status -> acc + status }
     }
+
+    private fun calcLiveStatus(
+        info: CalcInfo,
+    ): Status {
+        return if (info.liveStatus != null) {
+            Status(
+                speed = calcLiveStatusSingle(info, StatusType.SPEED),
+                stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
+                power = calcLiveStatusSingle(info, StatusType.POWER),
+                guts = calcLiveStatusSingle(info, StatusType.GUTS),
+                wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
+            )
+        } else Status()
+    }
+
+    private fun calcLiveStatusSingle(
+        info: CalcInfo,
+        target: StatusType,
+    ) = if (upInTraining(info.training.type, target)) info.liveStatus?.trainingUp(target) ?: 0 else 0
 
     fun calcItemBonus(trainingType: StatusType, status: Status, item: List<ShopItem>): Status {
         val statusFactor = item.sumOf {

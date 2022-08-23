@@ -205,7 +205,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
     }
-    H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
+    if (state.scenario == Scenario.CLIMAX) {
+        H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
+    }
 //    H3 { Text("Status / Coin: ${(state.coinRate * 10000.0).roundToInt() / 10000.0}") }
     H3 { Text("期待値（練習配置率を考慮）") }
     Div {
