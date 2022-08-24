@@ -97,8 +97,7 @@ fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
 fun toScenario(value: Int) = when (value) {
     2 -> Scenario.AOHARU
     4 -> Scenario.CLIMAX
-    // TODO GrandLive
-    5 -> Scenario.GRAND_LIVE
+    3 -> Scenario.GRAND_LIVE
     else -> Scenario.URA
 }
 
