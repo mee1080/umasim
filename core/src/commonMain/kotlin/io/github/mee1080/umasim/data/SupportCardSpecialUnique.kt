@@ -97,7 +97,7 @@ data class SupportCardSpecialUnique(
         friendCount: Int,
         status: Status,
     ): Int {
-        return if (type == 101 && relation > value0 && value1 == 1) {
+        return if (type == 101 && relation >= value0 && value1 == 1) {
             value2
         } else if (type == 106 && value1 == 1) {
             min(value0, friendCount) * value2
