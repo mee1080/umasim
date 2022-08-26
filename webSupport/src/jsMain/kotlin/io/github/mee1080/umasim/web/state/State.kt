@@ -239,6 +239,7 @@ data class TrainingLiveState(
     val power: String = "0",
     val guts: String = "0",
     val wisdom: String = "0",
+    val skillPt: String = "0",
     val friendTrainingUpInput: String = "0",
     val specialityRateUpInput: String = "0",
 ) : TrainingLiveStatus {
@@ -250,6 +251,7 @@ data class TrainingLiveState(
         StatusType.POWER -> power
         StatusType.GUTS -> guts
         StatusType.WISDOM -> wisdom
+        StatusType.SKILL -> skillPt
         else -> "0"
     }.toIntOrNull() ?: 0
 }

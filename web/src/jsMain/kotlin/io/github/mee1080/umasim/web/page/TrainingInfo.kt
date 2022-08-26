@@ -134,6 +134,11 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 size(10)
                 onInput { model.updateLiveWisdom(it.value) }
             }
+            Text("スキルPt")
+            TextInput(state.trainingLiveState.skillPt) {
+                size(10)
+                onInput { model.updateLiveSkillPt(it.value) }
+            }
         }
         Div {
             Span { Text("友情トレーニング獲得量アップ：") }
@@ -153,7 +158,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
     Div {
         Table({ classes(AppStyle.table) }) {
             Tr {
-                if (state.scenario == Scenario.CLIMAX) {
+                if (state.scenario != Scenario.URA) {
                     Th({ style { property("border", "none") } }) { }
                 }
                 Th { Text("スピード") }
@@ -166,7 +171,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Th { Text("5ステ合計") }
             }
             Tr {
-                if (state.scenario == Scenario.CLIMAX) {
+                if (state.scenario != Scenario.URA) {
                     Th { Text("基本") }
                 }
                 Td { Text(state.trainingResult.speed.toString()) }
@@ -178,9 +183,14 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Td { Text(state.trainingResult.hp.toString()) }
                 Td { Text(state.trainingResult.statusTotal.toString()) }
             }
-            if (state.scenario == Scenario.CLIMAX) {
+            if (state.scenario != Scenario.URA) {
                 Tr {
-                    Th { Text("アイテム") }
+                    val label = when (state.scenario) {
+                        Scenario.CLIMAX -> "アイテム"
+                        Scenario.AOHARU -> "アオハル"
+                        else -> "ボーナス"
+                    }
+                    Th { Text(label) }
                     Td { Text(state.trainingItemBonus.speed.toString()) }
                     Td { Text(state.trainingItemBonus.stamina.toString()) }
                     Td { Text(state.trainingItemBonus.power.toString()) }

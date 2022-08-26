@@ -208,6 +208,10 @@ class ViewModel {
         updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(wisdom = value)) }
     }
 
+    fun updateLiveSkillPt(value: String) {
+        updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(skillPt = value)) }
+    }
+
     fun updateLiveFriend(value: String) {
         updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(friendTrainingUpInput = value)) }
     }
@@ -250,14 +254,14 @@ class ViewModel {
             WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone),
             WebConstants.shopItemWeight.getOrNull(state.shopItemWeight),
         )
-        val trainingItemBonus = if (state.scenario != Scenario.CLIMAX) {
-            Status()
-        } else {
-            Calculator.calcItemBonus(trainingType, trainingResult, itemList)
+        val trainingItemBonus = when (state.scenario) {
+            Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first, itemList)
+            Scenario.AOHARU, Scenario.GRAND_LIVE -> trainingResult.second
+            else -> Status()
         }
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
-            target.name to trainingResult - Calculator.calcTrainingSuccessStatus(
+            val notJoinResult = Calculator.calcTrainingSuccessStatus(
                 Calculator.CalcInfo(
                     state.chara,
                     WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
@@ -272,6 +276,7 @@ class ViewModel {
                 ),
                 state.teamJoinCount,
             )
+            target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
         }
 
         val expectedResult = Calculator.calcExpectedTrainingStatus(
@@ -294,7 +299,7 @@ class ViewModel {
             ),
             state.teamJoinCount,
         )
-        val total = trainingResult.statusTotal
+        val total = trainingResult.first.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 //
@@ -330,7 +335,7 @@ class ViewModel {
             KEY_SUPPORT_LIST, SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
         )
         return state.copy(
-            trainingResult = trainingResult,
+            trainingResult = trainingResult.first,
             trainingItemBonus = trainingItemBonus,
             trainingImpact = trainingImpact,
             expectedResult = expectedResult.first,
