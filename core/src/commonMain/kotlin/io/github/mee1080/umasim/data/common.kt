@@ -91,7 +91,7 @@ enum class Scenario(val displayName: String) {
     URA("URA"),
     AOHARU("アオハル"),
     CLIMAX("クライマックス"),
-    GRAND_LIVE("グランドライブ（掛かり）"),
+    GRAND_LIVE("グランドライブ"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
