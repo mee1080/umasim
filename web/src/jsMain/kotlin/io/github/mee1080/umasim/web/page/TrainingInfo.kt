@@ -153,9 +153,10 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 size(10)
                 onInput { model.updateLiveSpecialityRate(it.value) }
             }
+            Span { Text("※サポカの得意率に加算で実装（調査件数3育成分なので確定とは言えない）") }
         }
     }
-    Div {
+    Div({ style { marginTop(16.px) } }) {
         Table({ classes(AppStyle.table) }) {
             Tr {
                 if (state.scenario != Scenario.URA) {
@@ -218,6 +219,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
     if (state.scenario == Scenario.CLIMAX) {
         H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
     }
+    H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
 //    H3 { Text("Status / Coin: ${(state.coinRate * 10000.0).roundToInt() / 10000.0}") }
     H3 { Text("期待値（練習配置率を考慮）") }
     Div {

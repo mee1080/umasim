@@ -279,17 +279,15 @@ class ViewModel {
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
         }
 
+        val supportList = state.supportSelectionList.mapIndexedNotNull { index, support ->
+            support.toMemberState(state.scenario, index)
+        }
         val expectedResult = Calculator.calcExpectedTrainingStatus(
             Calculator.CalcInfo(
                 state.chara,
                 WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
                 state.motivation,
-                state.supportSelectionList.mapIndexedNotNull { index, support ->
-                    support.toMemberState(
-                        state.scenario,
-                        index
-                    )
-                },
+                supportList,
                 state.scenario,
                 supportTypeCount,
                 fanCount,
@@ -300,8 +298,10 @@ class ViewModel {
             state.teamJoinCount,
         )
         val total = trainingResult.first.statusTotal
-        val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
-            .sumOf { it.first } / expectedResult.second.sumOf { it.first }
+        val upperRate = if (state.scenario == Scenario.CLIMAX) {
+            expectedResult.second.filter { it.second.statusTotal < total }
+                .sumOf { it.first } / expectedResult.second.sumOf { it.first }
+        } else 0.0
 //
 //        val raceBonus = 100 + state.supportSelectionList.sumOf { it.card?.race ?: 0 }
 //        val raceScore: (Double) -> Double = {
@@ -330,6 +330,15 @@ class ViewModel {
 //                        )
 //            }
 //        } ?: 0.0
+        val friendProbability = 1.0 - supportList.fold(1.0) { acc, memberState ->
+            val type = memberState.card.type
+            acc * if (type.outingType || !memberState.friendTrainingEnabled) 1.0 else {
+                1.0 - calcRate(
+                    type,
+                    *Calculator.calcCardPositionSelection(memberState.card, state.trainingLiveState.specialityRateUp)
+                )
+            }
+        }
 
         localStorage.setItem(
             KEY_SUPPORT_LIST, SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
@@ -341,6 +350,7 @@ class ViewModel {
             expectedResult = expectedResult.first,
             upperRate = upperRate,
 //            coinRate = coinRate,
+            friendProbability = friendProbability,
         )
     }
 

@@ -59,6 +59,7 @@ data class State(
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
 //    val coinRate: Double = 0.0,
+    val friendProbability: Double = 0.0,
     val raceSetting: List<RaceSetting> = emptyList(),
     val totalRaceBonus: Int = 0,
     val totalFanBonus: Int = 0,
