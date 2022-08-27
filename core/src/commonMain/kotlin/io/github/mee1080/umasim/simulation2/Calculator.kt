@@ -36,25 +36,20 @@ object Calculator {
         val totalRelation: Int,
         val liveStatus: TrainingLiveStatus?,
         val type: StatusType = StatusType.NONE,
-    )
-
-    fun calcTrainingSuccessStatus(
-        info: CalcInfo,
-        teamJoinCount: Int,
-    ) = calcTrainingSuccessStatusSeparated(
-        info.copy(
-            member = info.member + if (info.scenario == Scenario.AOHARU || info.scenario == Scenario.GRAND_LIVE) createTeamMemberState(
+    ) {
+        fun setTeamMember(teamJoinCount: Int) = copy(
+            member = member + if (scenario == Scenario.AOHARU || scenario == Scenario.GRAND_LIVE) createTeamMemberState(
                 teamJoinCount,
-                info.scenario,
+                scenario,
             ) else emptyList()
-        ),
-    )
+        )
+    }
 
     fun calcTrainingSuccessStatus(
         info: CalcInfo,
     ): Status = calcTrainingSuccessStatusSeparated(info).let { it.first + it.second }
 
-    private fun calcTrainingSuccessStatusSeparated(
+    fun calcTrainingSuccessStatusSeparated(
         info: CalcInfo,
     ): Pair<Status, Status> {
         val base = Status(
@@ -315,6 +310,21 @@ object Calculator {
     ) = if (upInTraining(info.training.type, target)) info.liveStatus?.trainingUp(target) ?: 0 else 0
 
     private fun calcTrainingUp(value: Int, up: Int) = ((value * up) + 50) / 100
+
+    fun calcPerformanceValue(
+        info: CalcInfo,
+    ): Int {
+        val base = if (info.training.type == StatusType.WISDOM) 5 else 9
+        val link = 2 * info.member.count { !it.guest && Store.isScenarioLink(info.scenario, it.charaName) }
+        return (base + info.training.level) * when (info.member.size) {
+            1 -> 11
+            2 -> 13
+            3 -> 15
+            4 -> 17
+            5 -> 20
+            else -> 10
+        } / 10 + link
+    }
 
     fun calcItemBonus(trainingType: StatusType, status: Status, item: List<ShopItem>): Status {
         val statusFactor = item.sumOf {

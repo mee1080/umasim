@@ -55,6 +55,7 @@ data class State(
     val shopItemWeight: Int = -1,
     val trainingResult: Status = Status(),
     val trainingItemBonus: Status = Status(),
+    val trainingPerformanceValue: Int = 0,
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
@@ -90,8 +91,10 @@ data class State(
 
     fun isFriendTraining(position: Int): Boolean {
         val selection = supportSelectionList.getOrNull(position) ?: return false
-        return selection.friend && selectedTrainingType == selection.card?.type?.ordinal
+        return selection.friend && selection.join && selectedTrainingType == selection.card?.type?.ordinal
     }
+
+    val friendTraining: Boolean by lazy { (0..6).any { isFriendTraining(it) } }
 
     fun calcRaceStatus(race: RaceSetting): Pair<Int, Int> {
         val baseStatus = calcRaceStatus(race.statusValue)

@@ -170,6 +170,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Th { Text("スキルPt") }
                 Th { Text("体力") }
                 Th { Text("5ステ合計") }
+                if (state.scenario == Scenario.GRAND_LIVE) {
+                    Th({ style { width(120.px) } }) { Text("パフォーマンス") }
+                }
             }
             Tr {
                 if (state.scenario != Scenario.URA) {
@@ -183,6 +186,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Td { Text(state.trainingResult.skillPt.toString()) }
                 Td { Text(state.trainingResult.hp.toString()) }
                 Td { Text(state.trainingResult.statusTotal.toString()) }
+                if (state.scenario == Scenario.GRAND_LIVE) {
+                    Td { Text(state.trainingPerformanceValue.toString()) }
+                }
             }
             if (state.scenario != Scenario.URA) {
                 Tr {
@@ -200,6 +206,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Td { Text(state.trainingItemBonus.skillPt.toString()) }
                     Td { Text(state.trainingItemBonus.hp.toString()) }
                     Td { Text(state.trainingItemBonus.statusTotal.toString()) }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Td { Text(if (state.friendTraining) "×2" else "-") }
+                    }
                 }
                 Tr {
                     Th { Text("合計") }
@@ -212,6 +221,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Td { Text(totalStatus.skillPt.toString()) }
                     Td { Text(totalStatus.hp.toString()) }
                     Td { Text(totalStatus.statusTotal.toString()) }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
+                    }
                 }
             }
         }

@@ -7,10 +7,6 @@ interface TrainingLiveStatus {
 }
 
 data class LiveStatus(
-    val performance: Performance = Performance(),
-
-    val liveExpectations: Int = 0,
-
     val learnedLesson: List<Lesson> = emptyList(),
     val livedLesson: List<Lesson> = emptyList(),
     val lessonSelection: List<Lesson> = emptyList(),

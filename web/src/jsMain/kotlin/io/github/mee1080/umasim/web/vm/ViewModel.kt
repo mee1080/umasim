@@ -234,21 +234,22 @@ class ViewModel {
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount.toIntOrNull() ?: 1
-        val trainingResult = Calculator.calcTrainingSuccessStatus(
-            Calculator.CalcInfo(
-                state.chara,
-                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
-                state.motivation,
-                joinSupportList,
-                state.scenario,
-                supportTypeCount,
-                fanCount,
-                Status(maxHp = state.maxHp, hp = state.hp),
-                state.totalRelation,
-                state.trainingLiveStateIfEnabled,
-            ),
-            state.teamJoinCount,
-        )
+        val trainingCalcInfo = Calculator.CalcInfo(
+            state.chara,
+            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+            state.motivation,
+            joinSupportList,
+            state.scenario,
+            supportTypeCount,
+            fanCount,
+            Status(maxHp = state.maxHp, hp = state.hp),
+            state.totalRelation,
+            state.trainingLiveStateIfEnabled,
+        ).setTeamMember(state.teamJoinCount)
+        val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
+        val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
+            Calculator.calcPerformanceValue(trainingCalcInfo)
+        } else 0
 
         val itemList = listOfNotNull(
             WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone),
@@ -261,7 +262,7 @@ class ViewModel {
         }
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
-            val notJoinResult = Calculator.calcTrainingSuccessStatus(
+            val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
                 Calculator.CalcInfo(
                     state.chara,
                     WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
@@ -273,8 +274,7 @@ class ViewModel {
                     Status(maxHp = state.maxHp, hp = state.hp),
                     state.totalRelation,
                     state.trainingLiveStateIfEnabled,
-                ),
-                state.teamJoinCount,
+                ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
         }
@@ -346,6 +346,7 @@ class ViewModel {
         return state.copy(
             trainingResult = trainingResult.first,
             trainingItemBonus = trainingItemBonus,
+            trainingPerformanceValue = trainingPerformanceValue,
             trainingImpact = trainingImpact,
             expectedResult = expectedResult.first,
             upperRate = upperRate,
