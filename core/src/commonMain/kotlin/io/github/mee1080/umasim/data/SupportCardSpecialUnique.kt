@@ -24,9 +24,9 @@ data class SupportCardSpecialUnique(
             108 -> "体力最大値100で${supportEffectName[value0]}${value3}、体力最大値1増えるごとに+0.$value2（最大${value4}、小数点以下切り捨て）"
             109 -> "${supportEffectName[value0]}が合計絆÷${value1}"
             110 -> "${supportEffectName[value0]}が参加サポートカード数×${value1}"
-            111 -> "トレーニング効果がトレーニングLv×5"
-            112 -> "トレーニング失敗率が20%の確率で0%になる"
-            113 -> "友情トレーニングで体力消費ダウン"
+            111 -> "${supportEffectName[value0]}トレーニングLv×$value1"
+            112 -> "トレーニング失敗率が$value0%の確率で0%になる"
+            113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -87,8 +87,8 @@ data class SupportCardSpecialUnique(
             totalRelation / value1
         } else if (type == 110 && value0 == 8) {
             trainingSupportCount * value1
-        } else if (type == 111) {
-            trainingLevel * 5
+        } else if (type == 111 && value0 == 8) {
+            trainingLevel * value1
         } else 0
     }
 
@@ -120,15 +120,15 @@ data class SupportCardSpecialUnique(
     fun failureRate(
     ): Int {
         return if (type == 112) {
-            if (Random.nextDouble() < 0.2) 0 else 1
+            if (Random.nextInt(100) < value0) 0 else 1
         } else 1
     }
 
     fun hpCost(
         friendTraining: Boolean,
     ): Int {
-        return if (type == 113 && friendTraining) {
-            20
+        return if (type == 113 && friendTraining && value0 == 28) {
+            value1
         } else 0
     }
 }
