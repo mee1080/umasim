@@ -153,7 +153,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 size(10)
                 onInput { model.updateLiveSpecialityRate(it.value) }
             }
-            Span { Text("※サポカの得意率に加算で実装（調査件数3育成分なので確定とは言えない）") }
+            Span { Text("※サポカの得意率に加算で実装") }
         }
     }
     Div({ style { marginTop(16.px) } }) {
