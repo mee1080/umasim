@@ -28,11 +28,14 @@ import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class ViewModel {
+class ViewModel(private val scope: CoroutineScope) {
 
     companion object {
         private const val KEY_CHARA = "umasim.chara"
@@ -50,13 +53,19 @@ class ViewModel {
         state = state.copy(page = page)
     }
 
+    fun update(update: State.() -> State) {
+        updateState { it.update() }
+    }
+
     private fun updateState(calculate: Boolean = true, update: (State) -> State) {
-        var newState = update(state)
-        if (calculate) {
-            newState = calculate(newState)
-            newState = calculateBonus(newState)
+        scope.launch {
+            var newState = update(state)
+            if (calculate) {
+                newState = calculate(newState)
+                newState = calculateBonus(newState)
+            }
+            state = newState
         }
-        state = newState
     }
 
     private fun updateSupportSelection(
@@ -458,22 +467,24 @@ class ViewModel {
     }
 
     fun doUraSimulation() {
-        val supportList = state.supportSelectionList.mapNotNull { it.card }
-        val selector = WebConstants.simulationModeList[state.scenario]!![state.simulationMode].second()
-        val (summary, history) = Simulator(
-            state.scenario,
-            state.chara,
-            supportList,
-        ).simulateWithHistory(
-            state.simulationTurn,
-            selector,
-            ApproximateSimulationEvents(),
-        )
-        updateState(calculate = false) {
-            it.copy(
-                simulationResult = summary.status,
-                simulationHistory = history.map { it.action.name to it.state.status },
+        scope.launch(Dispatchers.Default) {
+            val supportList = state.supportSelectionList.mapNotNull { it.card }
+            val selector = WebConstants.simulationModeList[state.scenario]!![state.simulationMode].second()
+            val (summary, history) = Simulator(
+                state.scenario,
+                state.chara,
+                supportList,
+            ).simulateWithHistory(
+                state.simulationTurn,
+                selector,
+                ApproximateSimulationEvents(),
             )
+            updateState(calculate = false) {
+                it.copy(
+                    simulationResult = summary.status,
+                    simulationHistory = history.map { it.action.name to it.state.status },
+                )
+            }
         }
     }
 

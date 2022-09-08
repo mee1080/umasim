@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.web
 
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.web.components.material.MwcTabBar
 import io.github.mee1080.umasim.web.components.material.initLibraries
@@ -32,9 +34,10 @@ import org.jetbrains.compose.web.renderComposable
 fun main() {
     StoreLoader.load()
     initLibraries()
-    val model = ViewModel()
 
     renderComposable(rootElementId = "root") {
+        val scope = rememberCoroutineScope()
+        val model = remember { ViewModel(scope) }
         Style(AppStyle)
         MwcTabBar(
             Page.values().asList(),
