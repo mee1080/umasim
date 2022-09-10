@@ -127,10 +127,9 @@ object Calculator {
                 StatusType.NONE to 1,
             )
         }
-        // TODO 得意率アップはサポカ得意率に乗算と解釈
-        val mainRate = card.specialtyRate * (100 + bonus)
-        val otherRate = 1000000
-        val noneRate = 500000
+        val mainRate = card.specialtyRate(bonus)
+        val otherRate = 10000
+        val noneRate = 5000
         return arrayOf(
             StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
             StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,
@@ -281,6 +280,8 @@ object Calculator {
         base: Status
     ): Status {
         return if (info.liveStatus != null) {
+            // TODO パフォーマンス獲得率反映
+            val performance = calcPerformanceValue(info)
             val trainingUp = Status(
                 speed = calcLiveStatusSingle(info, StatusType.SPEED),
                 stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
@@ -288,6 +289,7 @@ object Calculator {
                 guts = calcLiveStatusSingle(info, StatusType.GUTS),
                 wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
                 skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
+                performance = Performance(performance),
             )
             val friendUp = if (info.member.any { it.isFriendTraining(info.training.type) }) {
                 val calc = base + trainingUp
@@ -298,6 +300,7 @@ object Calculator {
                     guts = calcTrainingUp(calc.guts, info.liveStatus.friendTrainingUp),
                     wisdom = calcTrainingUp(calc.wisdom, info.liveStatus.friendTrainingUp),
                     skillPt = calcTrainingUp(calc.skillPt, info.liveStatus.friendTrainingUp),
+                    performance = Performance(performance),
                 )
             } else Status()
             trainingUp + friendUp

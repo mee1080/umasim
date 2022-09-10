@@ -47,6 +47,7 @@ data class Status(
     @Deprecated("not use")
     val supportRelation: Map<Int, Int> = emptyMap(),
     val fanCount: Int = 0,
+    val performance: Performance? = null,
 ) : StatusValues {
 
     val statusTotal by lazy { speed + stamina + power + guts + wisdom }
@@ -64,6 +65,7 @@ data class Status(
         mergeIntMap(skillHint, other.skillHint, 0, 5),
         mergeIntMap(supportRelation, other.supportRelation, 0, 100),
         fanCount + other.fanCount,
+        performance?.plus(other.performance) ?: other.performance,
     )
 
     operator fun minus(other: Status) = Status(
@@ -79,6 +81,7 @@ data class Status(
         diffIntMap(skillHint, other.skillHint),
         diffIntMap(supportRelation, other.supportRelation),
         fanCount - other.fanCount,
+        performance?.minus(other.performance),
     )
 
     private fun <K> mergeIntMap(first: Map<K, Int>, second: Map<K, Int>, defaultValue: Int, max: Int): Map<K, Int> {

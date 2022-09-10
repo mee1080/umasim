@@ -18,16 +18,12 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
+    testExpected()
 //    dataCheck()
 //    singleSimulation()
 //    singleClimaxSimulation()
@@ -551,24 +547,24 @@ fun openCui(args: Array<String>) {
 //    )
 
     // クライマックススピ2根性2賢さ2
-    doSimulation2(
-        Scenario.CLIMAX,
-        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
-        Store.getSupportByName(
-            "[桃色のバックショット]ナリタトップロード" to 4,
-            "[一等星を目指して]アドマイヤベガ" to 4,
-            "[届け、このオモイ！]バンブーメモリー" to 4,
-            "[感謝は指先まで込めて]ファインモーション" to 4,
-            "[願いまでは拭わない]ナイスネイチャ" to 4,
-        ).toTypedArray(),
-//        StatusType.SPEED, 0..4,
-        Store.getSupportByName(*((0..4).map { "[Q≠0]アグネスタキオン" to it }.toTypedArray())),
-//        Store.getSupportByName("[迫る熱に押されて]キタサンブラック" to 4),
-        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
-        100000,
-        ClimaxFactorBasedActionSelector.speed2guts2Wisdom2,
-        Runner.mileEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.CLIMAX,
+//        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),
+//        Store.getSupportByName(
+//            "[桃色のバックショット]ナリタトップロード" to 4,
+//            "[一等星を目指して]アドマイヤベガ" to 4,
+//            "[届け、このオモイ！]バンブーメモリー" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//            "[願いまでは拭わない]ナイスネイチャ" to 4,
+//        ).toTypedArray(),
+////        StatusType.SPEED, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[Q≠0]アグネスタキオン" to it }.toTypedArray())),
+////        Store.getSupportByName("[迫る熱に押されて]キタサンブラック" to 4),
+//        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+//        100000,
+//        ClimaxFactorBasedActionSelector.speed2guts2Wisdom2,
+//        Runner.mileEvaluateSetting,
+//    )
 //    doSimulation2(
 //        Scenario.CLIMAX,
 //        Store.getChara("[秋桜ダンツァトリーチェ]ゴールドシチー", 5, 5),

@@ -157,7 +157,8 @@ data class SupportCard(
 
     val hintLevel = status.hintLevel + unique.hintLevel
 
-    val specialtyRate = (100 + status.specialtyRate) * (100 + unique.specialtyRate)
+    // ボーナスはカード数値に加算
+    fun specialtyRate(bonus: Int) = (100 + status.specialtyRate + bonus) * (100 + unique.specialtyRate)
 
     val wisdomFriendRecovery = status.wisdomFriendRecovery + unique.wisdomFriendRecovery
 

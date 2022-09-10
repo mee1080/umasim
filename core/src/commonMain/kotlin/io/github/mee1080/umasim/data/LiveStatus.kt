@@ -34,7 +34,30 @@ data class Performance(
     val vocal: Int = 0,
     val visual: Int = 0,
     val mental: Int = 0,
-)
+) {
+
+    operator fun plus(other: Performance?): Performance? {
+        return if (other == null) this else Performance(
+            dance + other.dance,
+            passion + other.passion,
+            vocal + other.vocal,
+            visual + other.visual,
+            mental + other.mental,
+        )
+    }
+
+    operator fun minus(other: Performance?): Performance? {
+        return if (other == null) this else Performance(
+            dance - other.dance,
+            passion - other.passion,
+            vocal - other.vocal,
+            visual - other.visual,
+            mental - other.mental,
+        )
+    }
+
+    val totalValue by lazy { dance + passion + vocal + visual + mental }
+}
 
 sealed interface Lesson {
     val displayName: String

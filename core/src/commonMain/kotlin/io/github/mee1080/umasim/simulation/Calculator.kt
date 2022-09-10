@@ -200,7 +200,7 @@ object Calculator {
                 StatusType.NONE to 1,
             )
         }
-        val mainRate = card.specialtyRate
+        val mainRate = card.specialtyRate(0)
         val otherRate = 10000
         val noneRate = 5000
         return arrayOf(

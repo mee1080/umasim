@@ -20,7 +20,7 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation.Calculator
+import io.github.mee1080.umasim.simulation2.Calculator
 import kotlin.math.roundToInt
 
 object WebConstants {
@@ -120,7 +120,7 @@ object WebConstants {
         SortOrder("得意率") {
             (calcRate(
                 type,
-                *Calculator.calcCardPositionSelection(this)
+                *Calculator.calcCardPositionSelection(this, 0)
             ) * 1000.0).roundToInt() / 10.0
         },
         SortOrder("ヒントLv") { hintLevel },
