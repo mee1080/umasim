@@ -26,9 +26,7 @@ import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -55,6 +53,10 @@ class ViewModel(private val scope: CoroutineScope) {
         updateState { it.update() }
     }
 
+    fun updateExpectedState(update: ExpectedState.() -> ExpectedState) {
+        updateState { it.copy(expectedState = it.expectedState.update()) }
+    }
+
     private fun updateState(calculate: Boolean = true, update: (State) -> State) {
         scope.launch {
             var newState = update(state)
@@ -63,6 +65,18 @@ class ViewModel(private val scope: CoroutineScope) {
                 newState = calculateBonus(newState)
             }
             state = newState
+        }
+    }
+
+    private suspend fun suspendUpdateState(calculate: Boolean = true, update: (State) -> State) {
+        withContext(Dispatchers.Main) {
+            var newState = update(state)
+            if (calculate) {
+                newState = calculate(newState)
+                newState = calculateBonus(newState)
+            }
+            state = newState
+            delay(100L)
         }
     }
 
@@ -305,10 +319,9 @@ class ViewModel(private val scope: CoroutineScope) {
             state.teamJoinCount,
         )
         val total = trainingResult.first.statusTotal
-        val upperRate = if (state.scenario == Scenario.CLIMAX) {
-            expectedResult.second.filter { it.second.statusTotal < total }
-                .sumOf { it.first } / expectedResult.second.sumOf { it.first }
-        } else 0.0
+        val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
+            .sumOf { it.first } / expectedResult.second.sumOf { it.first }
+
 //
 //        val raceBonus = 100 + state.supportSelectionList.sumOf { it.card?.race ?: 0 }
 //        val raceScore: (Double) -> Double = {
@@ -363,25 +376,32 @@ class ViewModel(private val scope: CoroutineScope) {
     }
 
     fun calculateExpected() {
-        val supportList =
-            state.supportSelectionList.filter { it.card != null }
-                .mapIndexedNotNull { index, support ->
-                    support.toMemberState(state.scenario, index)
-                } + createTeamMemberState(state.teamJoinCount, state.scenario)
-        val training = WebConstants.trainingInfo[state.scenario]!!.mapValues { it.value.base.last() }
-        val calcInfo = ExpectedCalculator.ExpectedCalcInfo(
-            state.chara,
-            training,
-            state.motivation,
-            supportList,
-            state.scenario,
-            state.fanCount.toIntOrNull() ?: 1,
-            Status(maxHp = state.maxHp, hp = state.hp),
-            state.totalRelation,
-            state.trainingLiveStateIfEnabled,
-        )
-        val expected = ExpectedCalculator(calcInfo).calc()
-        updateState { it.copy(expectedState = it.expectedState.copy(status = expected)) }
+        scope.launch(Dispatchers.Default) {
+            suspendUpdateState { it.copy(expectedState = it.expectedState.copy(status = null)) }
+            val supportList =
+                state.supportSelectionList.filter { it.card != null }
+                    .mapIndexedNotNull { index, support ->
+                        support.toMemberState(state.scenario, index)
+                    } + createTeamMemberState(state.expectedState.teamJoinCount.toIntOrNull() ?: 0, state.scenario)
+            val training = state.expectedState.getTraining(state.scenario)
+            val calcInfo = ExpectedCalculator.ExpectedCalcInfo(
+                state.chara,
+                training,
+                state.motivation,
+                supportList,
+                state.scenario,
+                state.fanCount.toIntOrNull() ?: 1,
+                Status(maxHp = state.maxHp, hp = state.hp),
+                state.totalRelation,
+                state.trainingLiveStateIfEnabled,
+            )
+            val expected = ExpectedCalculator(
+                calcInfo,
+                state.expectedState.targetTypes,
+                state.expectedState.createEvaluator(),
+            ).calc()
+            suspendUpdateState { it.copy(expectedState = it.expectedState.copy(status = expected)) }
+        }
     }
 
     private fun calculateBonus(state: State): State {

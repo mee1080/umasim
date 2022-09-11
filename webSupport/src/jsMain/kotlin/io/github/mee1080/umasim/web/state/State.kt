@@ -262,8 +262,87 @@ data class TrainingLiveState(
 }
 
 data class ExpectedState(
-    val status: ExpectedStatus = ExpectedStatus(),
-)
+    val status: ExpectedStatus? = null,
+    val teamJoinCount: String = "0",
+    val levelSpeed: Int = 3,
+    val levelStamina: Int = 3,
+    val levelPower: Int = 3,
+    val levelGuts: Int = 3,
+    val levelWisdom: Int = 3,
+    val evaluateSpeed: String = "100",
+    val evaluateStamina: String = "100",
+    val evaluatePower: String = "100",
+    val evaluateGuts: String = "100",
+    val evaluateWisdom: String = "100",
+    val evaluateSkillPt: String = "100",
+    val evaluateHp: String = "70",
+    val evaluatePerformance: String = "50",
+) {
+    val targetTypes by lazy {
+        listOfNotNull(
+            if (levelSpeed > 0) StatusType.SPEED else null,
+            if (levelStamina > 0) StatusType.STAMINA else null,
+            if (levelPower > 0) StatusType.POWER else null,
+            if (levelGuts > 0) StatusType.GUTS else null,
+            if (levelWisdom > 0) StatusType.WISDOM else null,
+        )
+    }
+
+    fun getTraining(scenario: Scenario): Map<StatusType, TrainingBase> {
+        return WebConstants.trainingInfo[scenario]!!.mapValues { entry ->
+            entry.value.base.firstOrNull {
+                it.level == when (it.type) {
+                    StatusType.SPEED -> levelSpeed
+                    StatusType.STAMINA -> levelStamina
+                    StatusType.POWER -> levelPower
+                    StatusType.GUTS -> levelGuts
+                    StatusType.WISDOM -> levelWisdom
+                    else -> -1
+                }
+            } ?: entry.value.base.first()
+        }
+    }
+
+    fun createEvaluator(): Status.() -> Int {
+        val evaluateSpeed = evaluateSpeed.toIntOrNull() ?: 0
+        val evaluateStamina = evaluateStamina.toIntOrNull() ?: 0
+        val evaluatePower = evaluatePower.toIntOrNull() ?: 0
+        val evaluateGuts = evaluateGuts.toIntOrNull() ?: 0
+        val evaluateWisdom = evaluateWisdom.toIntOrNull() ?: 0
+        val evaluateSkillPt = evaluateSkillPt.toIntOrNull() ?: 0
+        val evaluateHp = evaluateHp.toIntOrNull() ?: 0
+        val evaluatePerformance = evaluatePerformance.toIntOrNull() ?: 0
+        return {
+            speed * evaluateSpeed +
+                    stamina * evaluateStamina +
+                    power * evaluatePower +
+                    guts * evaluateGuts +
+                    wisdom * evaluateWisdom +
+                    skillPt * evaluateSkillPt +
+                    hp * evaluateHp +
+                    (performance?.totalValue ?: 0) * evaluatePerformance
+        }
+    }
+
+    fun evaluate(status: ExpectedStatus): Double {
+        val evaluateSpeed = evaluateSpeed.toIntOrNull() ?: 0
+        val evaluateStamina = evaluateStamina.toIntOrNull() ?: 0
+        val evaluatePower = evaluatePower.toIntOrNull() ?: 0
+        val evaluateGuts = evaluateGuts.toIntOrNull() ?: 0
+        val evaluateWisdom = evaluateWisdom.toIntOrNull() ?: 0
+        val evaluateSkillPt = evaluateSkillPt.toIntOrNull() ?: 0
+        val evaluateHp = evaluateHp.toIntOrNull() ?: 0
+        val evaluatePerformance = evaluatePerformance.toIntOrNull() ?: 0
+        return status.speed * evaluateSpeed +
+                status.stamina * evaluateStamina +
+                status.power * evaluatePower +
+                status.guts * evaluateGuts +
+                status.wisdom * evaluateWisdom +
+                status.skillPt * evaluateSkillPt +
+                status.hp * evaluateHp +
+                (status.performance?.totalValue ?: 0.0) * evaluatePerformance
+    }
+}
 
 sealed interface RecommendFilter {
     operator fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>): Boolean
