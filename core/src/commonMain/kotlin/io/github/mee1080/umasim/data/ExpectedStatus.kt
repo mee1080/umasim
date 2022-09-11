@@ -13,7 +13,11 @@ data class ExpectedStatus(
     val performance: ExpectedPerformance? = null,
 ) : StatusValues {
 
-    val statusTotal get() = speed + stamina + power + guts + wisdom
+    val statusTotal by lazy { speed + stamina + power + guts + wisdom }
+
+    val totalPlusSkillPt by lazy { statusTotal + skillPt }
+
+    val totalPlusSkillPtPerformance by lazy { totalPlusSkillPt + (performance?.totalValue ?: 0.0) / 2.0 }
 
     operator fun plus(status: Status) = add(1.0, status)
 

@@ -228,9 +228,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
     }
-    if (state.scenario == Scenario.CLIMAX) {
-        H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
-    }
+    H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率、編成外を反映していないためアオハルとグラライでは不正確)") }
     H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
 //    H3 { Text("Status / Coin: ${(state.coinRate * 10000.0).roundToInt() / 10000.0}") }
     H3 { Text("期待値（練習配置率を考慮）") }

@@ -52,6 +52,10 @@ data class Status(
 
     val statusTotal by lazy { speed + stamina + power + guts + wisdom }
 
+    val totalPlusSkillPt by lazy { statusTotal + skillPt }
+
+    val totalPlusSkillPtPerformanceX2 by lazy { totalPlusSkillPt * 2 + (performance?.totalValue ?: 0) }
+
     operator fun plus(other: Status) = Status(
         speed + other.speed,
         stamina + other.stamina,

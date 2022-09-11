@@ -72,6 +72,7 @@ data class State(
     val simulationHistory: List<Pair<String, Status>> = emptyList(),
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),
     val trainingLiveState: TrainingLiveState = TrainingLiveState(),
+    val expectedState: ExpectedState = ExpectedState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -259,6 +260,10 @@ data class TrainingLiveState(
         else -> "0"
     }.toIntOrNull() ?: 0
 }
+
+data class ExpectedState(
+    val status: ExpectedStatus = ExpectedStatus(),
+)
 
 sealed interface RecommendFilter {
     operator fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>): Boolean

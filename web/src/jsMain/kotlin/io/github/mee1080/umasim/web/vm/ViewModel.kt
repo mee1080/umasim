@@ -22,9 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
-import io.github.mee1080.umasim.simulation2.Calculator
-import io.github.mee1080.umasim.simulation2.Simulator
+import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
@@ -362,6 +360,28 @@ class ViewModel(private val scope: CoroutineScope) {
 //            coinRate = coinRate,
             friendProbability = friendProbability,
         )
+    }
+
+    fun calculateExpected() {
+        val supportList =
+            state.supportSelectionList.filter { it.card != null }
+                .mapIndexedNotNull { index, support ->
+                    support.toMemberState(state.scenario, index)
+                } + createTeamMemberState(state.teamJoinCount, state.scenario)
+        val training = WebConstants.trainingInfo[state.scenario]!!.mapValues { it.value.base.last() }
+        val calcInfo = ExpectedCalculator.ExpectedCalcInfo(
+            state.chara,
+            training,
+            state.motivation,
+            supportList,
+            state.scenario,
+            state.fanCount.toIntOrNull() ?: 1,
+            Status(maxHp = state.maxHp, hp = state.hp),
+            state.totalRelation,
+            state.trainingLiveStateIfEnabled,
+        )
+        val expected = ExpectedCalculator(calcInfo).calc()
+        updateState { it.copy(expectedState = it.expectedState.copy(status = expected)) }
     }
 
     private fun calculateBonus(state: State): State {
