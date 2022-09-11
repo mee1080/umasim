@@ -26,7 +26,7 @@ import kotlin.math.pow
 class ExpectedCalculator(
     private val info: ExpectedCalcInfo,
     private val targetTypes: List<StatusType> = trainingType.toList(),
-    private val evaluate: Status.() -> Int = { totalPlusSkillPtPerformanceX2 * 2 + hp }
+    private val evaluate: Status.() -> Int = { totalPlusSkillPtPerformanceX2 + hp }
 ) {
 
     class ExpectedCalcInfo(

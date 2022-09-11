@@ -2,6 +2,9 @@ package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.web.components.material.MwcButton
+import io.github.mee1080.umasim.web.components.material.raised
+import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -14,8 +17,9 @@ import org.jetbrains.compose.web.dom.*
 fun ExpectedStatusDisplay(model: ViewModel, state: State) {
     val status = state.expectedState.status
     Div {
-        Button({
-            onClick { model.calculateExpected() }
+        MwcButton({
+            onClickOrTouch { model.calculateExpected() }
+            raised()
         }) {
             Text("計算")
         }

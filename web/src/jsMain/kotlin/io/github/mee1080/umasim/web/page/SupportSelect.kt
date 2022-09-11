@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadio
@@ -222,12 +221,20 @@ fun SupportSelect(model: ViewModel, state: State) {
             }
         }
     }
-    if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
-        H3 { Text("サポカ外参加人数") }
-        Div {
-            Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
-            Span({ style { padding(8.px) } }) { Text(state.teamJoinCount.toString()) }
-            Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
+    Div {
+        MwcButton({
+            onClickOrTouch {
+                state.supportSelectionList.indices.forEach { model.updateRelation(it, 0) }
+            }
+        }) {
+            Text("全員絆0")
+        }
+        MwcButton({
+            onClickOrTouch {
+                state.supportSelectionList.indices.forEach { model.updateRelation(it, 80) }
+            }
+        }) {
+            Text("全員絆80")
         }
     }
 }

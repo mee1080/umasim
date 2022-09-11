@@ -21,74 +21,42 @@ package io.github.mee1080.umasim.web.page
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.material.MwcSlider
+import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.size
-import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.marginTop
+import org.jetbrains.compose.web.css.padding
+import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
 @Composable
 fun TrainingInfo(model: ViewModel, state: State) {
-
-    LabeledRadioGroup("motivation", "やる気：", WebConstants.motivationList, state.motivation, model::updateMotivation)
     LabeledRadioGroup(
         "training",
         "種別　：",
         WebConstants.displayTrainingTypeList,
         state.selectedTrainingType,
-        model::updateTrainingType
+        model::updateTrainingType,
     )
-    LabeledRadioGroup("level", "レベル：", WebConstants.trainingLevelList, state.trainingLevel, model::updateTrainingLevel)
-    Div {
-        Text("ファン数：")
-        TextInput(state.fanCount) {
-            size(10)
-            onInput { model.updateFanCount(it.value) }
+    LabeledRadioGroup(
+        "level",
+        "レベル：",
+        WebConstants.trainingLevelList,
+        state.trainingLevel,
+        model::updateTrainingLevel,
+    )
+    if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
+        Div {
+            Text("サポカ外参加人数")
+            Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
+            Span({ style { padding(8.px) } }) { Text(state.teamJoinCount.toString()) }
+            Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
         }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("体力：") }
-        MwcSlider(state.hp, 0, 120) {
-            onInput { model.updateHp(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.hp.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("体力最大値：") }
-        MwcSlider(state.maxHp, 100, 120) {
-            onInput { model.updateMaxHp(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.maxHp.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("絆合計：") }
-        MwcSlider(state.totalRelation, 0, 600) {
-            onInput { model.updateTotalRelation(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.totalRelation.toString()) }
     }
     if (state.scenario == Scenario.CLIMAX) {
         LabeledRadioGroup(
@@ -105,56 +73,6 @@ fun TrainingInfo(model: ViewModel, state: State) {
             state.shopItemWeight,
             model::updateShopItemWeight
         )
-    }
-    if (state.scenario == Scenario.GRAND_LIVE) {
-        Div {
-            Span { Text("トレーニング上昇量：") }
-            Text("スピード")
-            TextInput(state.trainingLiveState.speed) {
-                size(10)
-                onInput { model.updateLiveSpeed(it.value) }
-            }
-            Text("スタミナ")
-            TextInput(state.trainingLiveState.stamina) {
-                size(10)
-                onInput { model.updateLiveStamina(it.value) }
-            }
-            Text("パワー")
-            TextInput(state.trainingLiveState.power) {
-                size(10)
-                onInput { model.updateLivePower(it.value) }
-            }
-            Text("根性")
-            TextInput(state.trainingLiveState.guts) {
-                size(10)
-                onInput { model.updateLiveGuts(it.value) }
-            }
-            Text("賢さ")
-            TextInput(state.trainingLiveState.wisdom) {
-                size(10)
-                onInput { model.updateLiveWisdom(it.value) }
-            }
-            Text("スキルPt")
-            TextInput(state.trainingLiveState.skillPt) {
-                size(10)
-                onInput { model.updateLiveSkillPt(it.value) }
-            }
-        }
-        Div {
-            Span { Text("友情トレーニング獲得量アップ：") }
-            TextInput(state.trainingLiveState.friendTrainingUpInput) {
-                size(10)
-                onInput { model.updateLiveFriend(it.value) }
-            }
-        }
-        Div {
-            Span { Text("得意率アップ：") }
-            TextInput(state.trainingLiveState.specialityRateUpInput) {
-                size(10)
-                onInput { model.updateLiveSpecialityRate(it.value) }
-            }
-            Span { Text("※サポカの得意率に加算で実装") }
-        }
     }
     Div({ style { marginTop(16.px) } }) {
         Table({ classes(AppStyle.table) }) {

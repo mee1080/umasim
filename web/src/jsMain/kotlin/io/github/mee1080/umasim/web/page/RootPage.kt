@@ -31,6 +31,7 @@ fun RootPage(model: ViewModel, state: State) {
     ScenarioSelect(model, state)
     CharaSelect(model, state)
     SupportSelect(model, state)
+    HideBlock({ H2 { Text("トレーニング設定") } }, true) { TrainingSetting(model, state) }
     HideBlock({ H2 { Text("トレーニング上昇量") } }, true) { TrainingInfo(model, state) }
     HideBlock({ H2 { Text("トレーニング期待値") } }, true) { ExpectedStatusDisplay(model, state) }
     HideBlock({ H2 { Text("レースボーナス計算") } }) { RaceBonus(model, state) }
