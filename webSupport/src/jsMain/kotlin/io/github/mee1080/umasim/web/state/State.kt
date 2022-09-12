@@ -277,6 +277,7 @@ data class ExpectedState(
     val evaluateSkillPt: String = "100",
     val evaluateHp: String = "70",
     val evaluatePerformance: String = "50",
+    val evaluateRelation: String = "1000",
 ) {
     val targetTypes by lazy {
         listOfNotNull(
@@ -303,7 +304,7 @@ data class ExpectedState(
         }
     }
 
-    fun createEvaluator(): Status.() -> Int {
+    fun createEvaluator(): (Status, Int) -> Int {
         val evaluateSpeed = evaluateSpeed.toIntOrNull() ?: 0
         val evaluateStamina = evaluateStamina.toIntOrNull() ?: 0
         val evaluatePower = evaluatePower.toIntOrNull() ?: 0
@@ -312,15 +313,17 @@ data class ExpectedState(
         val evaluateSkillPt = evaluateSkillPt.toIntOrNull() ?: 0
         val evaluateHp = evaluateHp.toIntOrNull() ?: 0
         val evaluatePerformance = evaluatePerformance.toIntOrNull() ?: 0
-        return {
-            speed * evaluateSpeed +
-                    stamina * evaluateStamina +
-                    power * evaluatePower +
-                    guts * evaluateGuts +
-                    wisdom * evaluateWisdom +
-                    skillPt * evaluateSkillPt +
-                    hp * evaluateHp +
-                    (performance?.totalValue ?: 0) * evaluatePerformance
+        val evaluateRelation = evaluateRelation.toIntOrNull() ?: 0
+        return { status, needRelationCount ->
+            status.speed * evaluateSpeed +
+                    status.stamina * evaluateStamina +
+                    status.power * evaluatePower +
+                    status.guts * evaluateGuts +
+                    status.wisdom * evaluateWisdom +
+                    status.skillPt * evaluateSkillPt +
+                    status.hp * evaluateHp +
+                    (status.performance?.totalValue ?: 0) * evaluatePerformance +
+                    needRelationCount * evaluateRelation
         }
     }
 

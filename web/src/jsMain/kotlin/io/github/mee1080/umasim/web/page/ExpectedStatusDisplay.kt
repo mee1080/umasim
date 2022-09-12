@@ -121,6 +121,11 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
                     onInput { model.updateExpectedState { copy(evaluatePerformance = it.value) } }
                 }
             }
+            Text("絆（80未満時）")
+            TextInput(expectedState.evaluateRelation) {
+                size(10)
+                onInput { model.updateExpectedState { copy(evaluateRelation = it.value) } }
+            }
         }
     }
     Div({ style { marginTop(16.px) } }) {

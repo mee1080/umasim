@@ -26,7 +26,9 @@ import kotlin.math.pow
 class ExpectedCalculator(
     private val info: ExpectedCalcInfo,
     private val targetTypes: List<StatusType> = trainingType.toList(),
-    private val evaluate: Status.() -> Int = { totalPlusSkillPtPerformanceX2 + hp }
+    private val evaluate: (status: Status, needRelationCount: Int) -> Int = { status, needRelationCount ->
+        status.totalPlusSkillPtPerformanceX2 + status.hp + needRelationCount * 1000
+    }
 ) {
 
     class ExpectedCalcInfo(
@@ -87,6 +89,8 @@ class ExpectedCalculator(
             cardType -> specialityRate
             else -> notSpecialityRate
         }
+
+        val needRelation = factor.relation < 80
 
         override fun toString(): String {
             return factor.charaName
@@ -160,7 +164,7 @@ class ExpectedCalculator(
 
     private fun calcRecursive(
         out: MutableList<Triple<List<Pair<StatusType, List<Wrapper>>>, Pair<Int, Status>, Double>>?,
-        results: MutableMap<StatusType, Pair<List<Wrapper>, Status>>?,
+        results: MutableMap<StatusType, Triple<List<Wrapper>, Status, Int>>?,
         types: List<StatusType>,
         targetFactors: List<Wrapper>,
         targetOtherCount: Int,
@@ -191,8 +195,9 @@ class ExpectedCalculator(
                 var maxStatus = currentMaxStatus
                 if (!skip) {
                     val status = calc(type, positioned, positioned.size + other)
-                    results?.put(type, positioned to status)
-                    val result = status.evaluate()
+                    val needRelationCount = positioned.count { it.needRelation }
+                    val result = evaluate(status, needRelationCount)
+                    results?.put(type, Triple(positioned, status, result))
                     if (result > currentMax) {
                         max = result
                         maxStatus = status
@@ -207,7 +212,7 @@ class ExpectedCalculator(
                     }
                     if (out != null && results != null) {
                         val maxTargets = results
-                            .filterValues { it.second.evaluate() == max }
+                            .filterValues { it.third == max }
                             .map { it.key to it.value.first }
                             .sortedBy { it.first.ordinal }
                         out += Triple(maxTargets, max to maxStatus, finalRate)
@@ -231,12 +236,14 @@ class ExpectedCalculator(
         val result =
             if (otherCount > -1) null else mutableListOf<Triple<List<Pair<StatusType, List<Wrapper>>>, Pair<Int, Status>, Double>>()
         val results =
-            if (otherCount > -1) null else trainingType.associateWith { emptyList<Wrapper>() to Status() }
+            if (otherCount > -1) null else trainingType.associateWith { Triple(emptyList<Wrapper>(), Status(), 0) }
                 .toMutableMap()
         val maxByType = targetTypes.associateWith { type ->
             calc(type, factors, 6)
         }
-        val types = maxByType.toList().sortedByDescending { it.second.evaluate() }.map { it.first }
+        val types = maxByType.toList().sortedByDescending {
+            evaluate(it.second, factors.count { it.needRelation })
+        }.map { it.first }
 
         val ret = calcRecursive(result, results, types, factors, otherCount, 0, 0, Status(), 1.0)
 //        result
