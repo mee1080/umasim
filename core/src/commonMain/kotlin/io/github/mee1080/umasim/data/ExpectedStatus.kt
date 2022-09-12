@@ -73,6 +73,12 @@ data class ExpectedStatus(
     )
 
     fun enablePerformance() = copy(performance = ExpectedPerformance())
+
+    fun hpToSleep(sleepHp: Double = 50.0): ExpectedStatus {
+        return if (hp >= 0.0) this else {
+            div((sleepHp / -hp + 1) / (sleepHp / -hp))
+        }.copy(hp = 0.0)
+    }
 }
 
 data class ExpectedPerformance(

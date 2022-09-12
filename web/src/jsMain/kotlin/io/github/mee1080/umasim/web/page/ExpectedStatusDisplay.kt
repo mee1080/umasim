@@ -143,6 +143,7 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
         Div({ style { marginTop(16.px) } }) {
             Table({ classes(AppStyle.table) }) {
                 Tr {
+                    Th({ style { property("border", "none") } }) { }
                     Th { Text("スピード") }
                     Th { Text("スタミナ") }
                     Th { Text("パワー") }
@@ -161,6 +162,7 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
                     Th { Text("評価値") }
                 }
                 Tr {
+                    Th { Text("期待値") }
                     Td { Text(status.speed.round().toString()) }
                     Td { Text(status.stamina.round().toString()) }
                     Td { Text(status.power.round().toString()) }
@@ -178,6 +180,29 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
                     }
                     Td { Text(expectedState.evaluate(status).round().toString()) }
                 }
+                Tr {
+                    val sleep = status.hpToSleep()
+                    Th { Text("+お休み") }
+                    Td { Text(sleep.speed.round().toString()) }
+                    Td { Text(sleep.stamina.round().toString()) }
+                    Td { Text(sleep.power.round().toString()) }
+                    Td { Text(sleep.guts.round().toString()) }
+                    Td { Text(sleep.wisdom.round().toString()) }
+                    Td { Text(sleep.skillPt.round().toString()) }
+                    Td { Text(sleep.hp.round().toString()) }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Td { Text(sleep.performance?.totalValue?.round().toString()) }
+                    }
+                    Td { Text(sleep.statusTotal.round().toString()) }
+                    Td { Text((sleep.totalPlusSkillPt).round().toString()) }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Td { Text(sleep.totalPlusSkillPtPerformance.round().toString()) }
+                    }
+                    Td { Text(expectedState.evaluate(sleep).round().toString()) }
+                }
+            }
+            Div {
+                Small { Text("+お休み: 減った体力を50回復のお休みで回復させた場合の期待値") }
             }
         }
     }
