@@ -1,7 +1,9 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.material.MwcButton
 import io.github.mee1080.umasim.web.components.material.raised
@@ -140,72 +142,92 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
         Small({ style { color(Color.white) } }) { Text("※サポカ外100人とかやるなよ絶対だぞ") }
     }
     if (status != null) {
-        Div({ style { marginTop(16.px) } }) {
-            Div {
-                Text("トレーニング選択割合 " + expectedState.typeRateList.joinToString(", ") { "${it.first.displayName}: ${(it.second * 100).round()}%" })
+        ExpectedStatusTable(state.scenario, status, expectedState.typeRateList) {
+            expectedState.evaluate(it)
+        }
+        Div {
+            Small { Text("+お休み: 減った体力を50回復のお休みで回復させた場合の期待値") }
+        }
+    }
+    if (expectedState.statusHistory.isNotEmpty()) {
+        H3 { Text("履歴") }
+        expectedState.statusHistory.forEach { entry ->
+            ExpectedStatusTable(state.scenario, entry.first, entry.second) {
+                expectedState.evaluate(it)
             }
-            Table({ classes(AppStyle.table) }) {
-                Tr {
-                    Th({ style { property("border", "none") } }) { }
-                    Th { Text("スピード") }
-                    Th { Text("スタミナ") }
-                    Th { Text("パワー") }
-                    Th { Text("根性") }
-                    Th { Text("賢さ") }
-                    Th { Text("スキルPt") }
-                    Th { Text("体力") }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Th { Text("パフォ") }
-                    }
-                    Th { Text("5ステ合計") }
-                    Th { Text("+スキルPt") }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Th({ style { width(90.px) } }) { Text("+パフォ/2") }
-                    }
-                    Th { Text("評価値") }
+        }
+    }
+}
+
+@Composable
+private fun ExpectedStatusTable(
+    scenario: Scenario,
+    status: ExpectedStatus,
+    typeRateList: List<Pair<StatusType, Double>>,
+    evaluate: (ExpectedStatus) -> Double,
+) {
+    Div({ style { marginTop(16.px) } }) {
+        Div {
+            Text("トレーニング選択割合 " + typeRateList.joinToString(", ") { "${it.first.displayName}: ${(it.second * 100).round()}%" })
+        }
+        Table({ classes(AppStyle.table) }) {
+            Tr {
+                Th({ style { property("border", "none") } }) { }
+                Th { Text("スピード") }
+                Th { Text("スタミナ") }
+                Th { Text("パワー") }
+                Th { Text("根性") }
+                Th { Text("賢さ") }
+                Th { Text("スキルPt") }
+                Th { Text("体力") }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Th { Text("パフォ") }
                 }
-                Tr {
-                    Th { Text("期待値") }
-                    Td { Text(status.speed.round().toString()) }
-                    Td { Text(status.stamina.round().toString()) }
-                    Td { Text(status.power.round().toString()) }
-                    Td { Text(status.guts.round().toString()) }
-                    Td { Text(status.wisdom.round().toString()) }
-                    Td { Text(status.skillPt.round().toString()) }
-                    Td { Text(status.hp.round().toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(status.performance?.totalValue?.round().toString()) }
-                    }
-                    Td { Text(status.statusTotal.round().toString()) }
-                    Td { Text((status.totalPlusSkillPt).round().toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(status.totalPlusSkillPtPerformance.round().toString()) }
-                    }
-                    Td { Text(expectedState.evaluate(status).round().toString()) }
+                Th { Text("5ステ合計") }
+                Th { Text("+スキルPt") }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Th({ style { width(90.px) } }) { Text("+パフォ/2") }
                 }
-                Tr {
-                    val sleep = status.hpToSleep()
-                    Th { Text("+お休み") }
-                    Td { Text(sleep.speed.round().toString()) }
-                    Td { Text(sleep.stamina.round().toString()) }
-                    Td { Text(sleep.power.round().toString()) }
-                    Td { Text(sleep.guts.round().toString()) }
-                    Td { Text(sleep.wisdom.round().toString()) }
-                    Td { Text(sleep.skillPt.round().toString()) }
-                    Td { Text(sleep.hp.round().toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(sleep.performance?.totalValue?.round().toString()) }
-                    }
-                    Td { Text(sleep.statusTotal.round().toString()) }
-                    Td { Text((sleep.totalPlusSkillPt).round().toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(sleep.totalPlusSkillPtPerformance.round().toString()) }
-                    }
-                    Td { Text(expectedState.evaluate(sleep).round().toString()) }
-                }
+                Th { Text("評価値") }
             }
-            Div {
-                Small { Text("+お休み: 減った体力を50回復のお休みで回復させた場合の期待値") }
+            Tr {
+                Th { Text("期待値") }
+                Td { Text(status.speed.round().toString()) }
+                Td { Text(status.stamina.round().toString()) }
+                Td { Text(status.power.round().toString()) }
+                Td { Text(status.guts.round().toString()) }
+                Td { Text(status.wisdom.round().toString()) }
+                Td { Text(status.skillPt.round().toString()) }
+                Td { Text(status.hp.round().toString()) }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Td { Text(status.performance?.totalValue?.round().toString()) }
+                }
+                Td { Text(status.statusTotal.round().toString()) }
+                Td { Text((status.totalPlusSkillPt).round().toString()) }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Td { Text(status.totalPlusSkillPtPerformance.round().toString()) }
+                }
+                Td { Text(evaluate(status).round().toString()) }
+            }
+            Tr {
+                val sleep = status.hpToSleep()
+                Th { Text("+お休み") }
+                Td { Text(sleep.speed.round().toString()) }
+                Td { Text(sleep.stamina.round().toString()) }
+                Td { Text(sleep.power.round().toString()) }
+                Td { Text(sleep.guts.round().toString()) }
+                Td { Text(sleep.wisdom.round().toString()) }
+                Td { Text(sleep.skillPt.round().toString()) }
+                Td { Text(sleep.hp.round().toString()) }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Td { Text(sleep.performance?.totalValue?.round().toString()) }
+                }
+                Td { Text(sleep.statusTotal.round().toString()) }
+                Td { Text((sleep.totalPlusSkillPt).round().toString()) }
+                if (scenario == Scenario.GRAND_LIVE) {
+                    Td { Text(sleep.totalPlusSkillPtPerformance.round().toString()) }
+                }
+                Td { Text(evaluate(sleep).round().toString()) }
             }
         }
     }

@@ -248,9 +248,8 @@ class ViewModel(private val scope: CoroutineScope) {
 //    }
 
     private fun calculate(state: State): State {
-        val joinSupportList =
-            state.supportSelectionList.filter { it.join && it.card != null }
-                .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
+        val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
+            .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
@@ -377,12 +376,12 @@ class ViewModel(private val scope: CoroutineScope) {
 
     fun calculateExpected() {
         scope.launch(Dispatchers.Default) {
+            val oldStatus = state.expectedState.status
             suspendUpdateState { it.copy(expectedState = it.expectedState.copy(status = null)) }
             val supportList =
-                state.supportSelectionList.filter { it.card != null }
-                    .mapIndexedNotNull { index, support ->
-                        support.toMemberState(state.scenario, index)
-                    } + createTeamMemberState(state.expectedState.teamJoinCount.toIntOrNull() ?: 0, state.scenario)
+                state.supportSelectionList.filter { it.card != null }.mapIndexedNotNull { index, support ->
+                    support.toMemberState(state.scenario, index)
+                } + createTeamMemberState(state.expectedState.teamJoinCount.toIntOrNull() ?: 0, state.scenario)
             val training = state.expectedState.getTraining(state.scenario)
             val calcInfo = ExpectedCalculator.ExpectedCalcInfo(
                 state.chara,
@@ -403,10 +402,18 @@ class ViewModel(private val scope: CoroutineScope) {
             ).calc(typeRate)
             val typeRateList = state.expectedState.targetTypes.map { it to typeRate.getOrElse(it) { 0.0 } }
             suspendUpdateState {
+                var newHistory = it.expectedState.statusHistory
+                oldStatus?.let { status ->
+                    newHistory = listOf(status to it.expectedState.typeRateList) + newHistory
+                    if (newHistory.size > 5) {
+                        newHistory = newHistory.subList(0, 4)
+                    }
+                }
                 it.copy(
                     expectedState = it.expectedState.copy(
                         status = expected,
-                        typeRateList = typeRateList
+                        typeRateList = typeRateList,
+                        statusHistory = newHistory,
                     )
                 )
             }
@@ -569,12 +576,11 @@ class ViewModel(private val scope: CoroutineScope) {
     fun loadSupport() {
         val support = loadSupportData()[state.supportLoadName] ?: return
         val newList = state.supportSelectionList.toMutableList()
-        SaveDataConverter.stringToSupportList(support)
-            .forEachIndexed { index, supportInfo ->
-                if (newList.indices.contains(index)) {
-                    newList[index] = SupportSelection.fromSaveInfo(supportInfo)
-                }
+        SaveDataConverter.stringToSupportList(support).forEachIndexed { index, supportInfo ->
+            if (newList.indices.contains(index)) {
+                newList[index] = SupportSelection.fromSaveInfo(supportInfo)
             }
+        }
         updateState { it.copy(supportSelectionList = newList, supportSaveName = state.supportLoadName) }
     }
 
