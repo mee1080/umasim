@@ -395,12 +395,21 @@ class ViewModel(private val scope: CoroutineScope) {
                 state.totalRelation,
                 state.trainingLiveStateIfEnabled,
             )
+            val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
                 calcInfo,
                 state.expectedState.targetTypes,
                 state.expectedState.createEvaluator(),
-            ).calc()
-            suspendUpdateState { it.copy(expectedState = it.expectedState.copy(status = expected)) }
+            ).calc(typeRate)
+            val typeRateList = state.expectedState.targetTypes.map { it to typeRate.getOrElse(it) { 0.0 } }
+            suspendUpdateState {
+                it.copy(
+                    expectedState = it.expectedState.copy(
+                        status = expected,
+                        typeRateList = typeRateList
+                    )
+                )
+            }
         }
     }
 

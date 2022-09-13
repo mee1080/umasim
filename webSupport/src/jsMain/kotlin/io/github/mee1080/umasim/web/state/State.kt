@@ -263,6 +263,7 @@ data class TrainingLiveState(
 
 data class ExpectedState(
     val status: ExpectedStatus? = null,
+    val typeRateList: List<Pair<StatusType, Double>> = emptyList(),
     val teamJoinCount: String = "0",
     val levelSpeed: Int = 3,
     val levelStamina: Int = 3,

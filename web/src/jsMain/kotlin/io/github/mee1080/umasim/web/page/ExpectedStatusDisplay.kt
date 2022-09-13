@@ -141,6 +141,9 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
     }
     if (status != null) {
         Div({ style { marginTop(16.px) } }) {
+            Div {
+                Text("トレーニング選択割合 " + expectedState.typeRateList.joinToString(", ") { "${it.first.displayName}: ${(it.second * 100).round()}%" })
+            }
             Table({ classes(AppStyle.table) }) {
                 Tr {
                     Th({ style { property("border", "none") } }) { }

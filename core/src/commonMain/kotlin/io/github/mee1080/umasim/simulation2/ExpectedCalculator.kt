@@ -172,6 +172,8 @@ class ExpectedCalculator(
         currentMax: Int,
         currentMaxStatus: Status,
         currentRate: Double,
+        typeRate: MutableMap<StatusType, Double>?,
+        currentMaxType: List<StatusType>?,
     ): Pair<ExpectedStatus, Double> {
         var expected = ExpectedStatus().applyIf(info.liveStatus != null) { enablePerformance() }
         var totalRate = 0.0
@@ -193,6 +195,7 @@ class ExpectedCalculator(
 
                 var max = currentMax
                 var maxStatus = currentMaxStatus
+                var maxType = currentMaxType
                 if (!skip) {
                     val status = calc(type, positioned, positioned.size + other)
                     val needRelationCount = positioned.count { it.needRelation }
@@ -201,7 +204,13 @@ class ExpectedCalculator(
                     if (result > currentMax) {
                         max = result
                         maxStatus = status
+                        if (typeRate != null) {
+                            maxType = listOf(type)
+                        }
                     } else {
+                        if (currentMaxType != null && result == currentMax) {
+                            maxType = currentMaxType + type
+                        }
                         skip = true
                     }
                 }
@@ -217,12 +226,18 @@ class ExpectedCalculator(
                             .sortedBy { it.first.ordinal }
                         out += Triple(maxTargets, max to maxStatus, finalRate)
                     }
+                    if (typeRate != null && maxType != null) {
+                        val singleTypeRate = finalRate / maxType.size
+                        maxType.forEach {
+                            typeRate[it] = typeRate[it]!! + singleTypeRate
+                        }
+                    }
                     expected = expected.add(finalRate, maxStatus)
                     totalRate += finalRate
                 } else {
                     val ret = calcRecursive(
                         out, results, types, rest, targetOtherCount - other,
-                        stage + 1, max, maxStatus, rate
+                        stage + 1, max, maxStatus, rate, typeRate, maxType,
                     )
                     expected += ret.first
                     totalRate += ret.second
@@ -232,7 +247,7 @@ class ExpectedCalculator(
         return expected to totalRate
     }
 
-    fun calc(): ExpectedStatus {
+    fun calc(typeRate: MutableMap<StatusType, Double>? = null): ExpectedStatus {
         val result =
             if (otherCount > -1) null else mutableListOf<Triple<List<Pair<StatusType, List<Wrapper>>>, Pair<Int, Status>, Double>>()
         val results =
@@ -242,10 +257,13 @@ class ExpectedCalculator(
             calc(type, factors, 6)
         }
         val types = maxByType.toList().sortedByDescending {
-            evaluate(it.second, factors.count { it.needRelation })
+            evaluate(it.second, factors.count { factor -> factor.needRelation })
         }.map { it.first }
 
-        val ret = calcRecursive(result, results, types, factors, otherCount, 0, 0, Status(), 1.0)
+        val ret = calcRecursive(
+            result, results, types, factors, otherCount,
+            0, 0, Status(), 1.0, typeRate, null,
+        )
 //        result
 //            ?.sortedBy { it.second.first * 100 + it.first.size * 10 + (it.first.firstOrNull()?.first?.ordinal ?: 6) }
 //            ?.forEach { println(it) }
