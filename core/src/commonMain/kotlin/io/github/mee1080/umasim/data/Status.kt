@@ -178,4 +178,7 @@ data class Status(
     }
 
     fun toShortString() = "$speed,$stamina,$power,$guts,$wisdom"
+
+    fun countOver(value: Int) = (if (speed >= value) 1 else 0) + (if (stamina >= value) 1 else 0) +
+            (if (power >= value) 1 else 0) + (if (guts >= value) 1 else 0) + (if (wisdom >= value) 1 else 0)
 }

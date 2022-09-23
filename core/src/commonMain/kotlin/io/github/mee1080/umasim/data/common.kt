@@ -170,3 +170,17 @@ fun motivationToString(motivation: Int) = when (motivation) {
     -2 -> "絶不調"
     else -> "不明"
 }
+
+abstract class RatedSet<T>(
+    val list: List<Pair<T, Int>>,
+) {
+    val total by lazy { list.sumOf { it.second } }
+
+    val rateList by lazy { list.map { it.first to it.second.toDouble() / total } }
+
+    fun filter(predicate: (T) -> Boolean): RatedSet<T> {
+        return getInstance(list.filter { predicate(it.first) })
+    }
+
+    protected abstract fun getInstance(newList: List<Pair<T, Int>>): RatedSet<T>
+}

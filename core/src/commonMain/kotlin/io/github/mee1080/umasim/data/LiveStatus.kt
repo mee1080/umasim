@@ -36,7 +36,7 @@ data class Performance(
     val mental: Int = 0,
 ) {
 
-    operator fun plus(other: Performance?): Performance? {
+    operator fun plus(other: Performance?): Performance {
         return if (other == null) this else Performance(
             dance + other.dance,
             passion + other.passion,
@@ -46,7 +46,7 @@ data class Performance(
         )
     }
 
-    operator fun minus(other: Performance?): Performance? {
+    operator fun minus(other: Performance?): Performance {
         return if (other == null) this else Performance(
             dance - other.dance,
             passion - other.passion,
@@ -57,6 +57,17 @@ data class Performance(
     }
 
     val totalValue by lazy { dance + passion + vocal + visual + mental }
+
+    fun countOver(value: Int) = (if (dance >= value) 1 else 0) + (if (passion >= value) 1 else 0) +
+            (if (vocal >= value) 1 else 0) + (if (visual >= value) 1 else 0) + (if (mental >= value) 1 else 0)
+
+    val valid by lazy { dance >= 0 && passion >= 0 && vocal >= 0 && visual >= 0 && mental >= 0 }
+}
+
+enum class LessonPeriod(val displayName: String) {
+    Junior("ジュニア"),
+    Classic("クラシック"),
+    Senior("シニア/ファイナルズ"),
 }
 
 sealed interface Lesson {
@@ -75,12 +86,22 @@ data class SongLesson(
     override val displayName get() = "楽曲:$name"
 }
 
+enum class TechniqueLessonCategory(
+    val single: Boolean = true
+) {
+    Status(single = false), DualStatus, SkillPt, SkillHint, Rest,
+}
+
 data class TechniqueLesson(
-    val name: String,
     override val cost: Performance,
-    override val learnBonus: LearnBonus,
+    override val learnBonus: TechniqueLearnBonus,
 ) : Lesson {
-    override val displayName get() = "テクニック:$name"
+
+    constructor(cost: Performance, status: Status) : this(cost, StatusBonus(status))
+
+    val category get() = learnBonus.category
+    val level get() = learnBonus.level
+    override val displayName get() = "テクニック:${learnBonus.displayName}"
     override val liveBonus: LiveBonus? = null
 }
 
@@ -88,30 +109,60 @@ sealed interface LearnBonus {
     val displayName: String
 }
 
-data class StatusUpBonus(
-    val list: List<Pair<StatusType, Int>>,
-) : LearnBonus {
-    override val displayName get() = list.joinToString(",") { "${it.first.displayName}+${it.second}" }
+sealed interface TechniqueLearnBonus : LearnBonus {
+    val category: TechniqueLessonCategory
+    val level: Int
 }
 
-data class HpUpBonus(
-    val value: Int,
-) : LearnBonus {
-    override val displayName get() = "体力+$value"
+data class StatusBonus(
+    val status: Status,
+) : TechniqueLearnBonus {
+
+    override val category by lazy {
+        if (status.hp > 0) {
+            TechniqueLessonCategory.Rest
+        } else if (status.skillPt > 0) {
+            if (status.countOver(1) == 0) {
+                TechniqueLessonCategory.SkillPt
+            } else {
+                TechniqueLessonCategory.DualStatus
+            }
+        } else {
+            if (status.countOver(1) == 1) {
+                TechniqueLessonCategory.Status
+            } else {
+                TechniqueLessonCategory.DualStatus
+            }
+        }
+    }
+
+    override val displayName by lazy {
+        if (category == TechniqueLessonCategory.Rest) {
+            "体力+${status.hp}"
+        } else {
+            (trainingType + StatusType.SKILL).mapNotNull {
+                val value = status.get(it)
+                if (value == 0) null else "${it.displayName}+$value"
+            }.joinToString(",")
+        }
+    }
+
+    override val level by lazy {
+        if (category == TechniqueLessonCategory.Rest) {
+            when (status.hp) {
+                40 -> 3
+                30 -> 2
+                else -> 1
+            }
+        } else 1
+    }
 }
 
-data class DistanceSkillHintBonus(
-    val target: RaceDistance,
-    val value: Int,
-) : LearnBonus {
-    override val displayName get() = "<${target.displayName}>のスキルヒントLv+$value"
-}
-
-data class RunningStyleSkillHintBonus(
-    val target: RaceRunningStyle,
-    val value: Int,
-) : LearnBonus {
-    override val displayName get() = "<${target.displayName}>のスキルヒントLv+$value"
+data class SkillHintBonus(
+    override val level: Int,
+) : TechniqueLearnBonus {
+    override val category get() = TechniqueLessonCategory.SkillHint
+    override val displayName by lazy { "スキルヒントLv+$level" }
 }
 
 data class TrainingBonus(
@@ -128,4 +179,20 @@ enum class LiveBonus(
     ContinuousEvent("連続イベ率アップLv+1"),
     FriendTraining("友情トレ獲得量+5%"),
     SpecialtyRate("得意率+5"),
+}
+
+class TechniqueLessonSet(
+    list: List<Pair<TechniqueLesson, Int>>,
+) : RatedSet<TechniqueLesson>(list) {
+    companion object {
+        private val cache = mutableMapOf<List<Pair<TechniqueLesson, Int>>, TechniqueLessonSet>()
+    }
+
+    init {
+        cache[list] = this
+    }
+
+    override fun getInstance(newList: List<Pair<TechniqueLesson, Int>>): RatedSet<TechniqueLesson> {
+        return cache.getOrPut(newList) { TechniqueLessonSet(newList) }
+    }
 }

@@ -407,14 +407,7 @@ internal val raceAchievementData = listOf(
     RaceAchievement(
         "ワールドウマ娘", 5,
         RaceNameCondition(
-            3,
-            "サウジアラビアロイヤルカップ",
-            "ニュージーランドトロフィー",
-            "ブラジルカップ",
-            "アルゼンチン共和国杯",
-            "アメリカJCC",
-            "ジャパンカップ",
-            "ジャパンダートダービー"
+            3, "サウジアラビアロイヤルカップ", "ニュージーランドトロフィー", "ブラジルカップ", "アルゼンチン共和国杯", "アメリカJCC", "ジャパンカップ", "ジャパンダートダービー"
         ),
     ),
     RaceAchievement(
@@ -459,3 +452,274 @@ internal val raceAchievementData = listOf(
         RaceCondition(2) { grade.ordinal >= RaceGrade.G3.ordinal && courseName == "小倉" },
     ),
 ).reversed()
+
+val liveTechniqueLesson by lazy {
+    mapOf(
+        LessonPeriod.Junior to listOf(
+            TechniqueLesson(Performance(dance = 10), Status(speed = 5)),
+            TechniqueLesson(Performance(passion = 10), Status(stamina = 5)),
+            TechniqueLesson(Performance(vocal = 10), Status(power = 5)),
+            TechniqueLesson(Performance(visual = 10), Status(guts = 5)),
+            TechniqueLesson(Performance(mental = 10), Status(wisdom = 5)),
+
+            TechniqueLesson(Performance(dance = 10), Status(skillPt = 5)),
+            TechniqueLesson(Performance(passion = 10), Status(skillPt = 5)),
+            TechniqueLesson(Performance(vocal = 10), Status(skillPt = 5)),
+            TechniqueLesson(Performance(visual = 10), Status(skillPt = 5)),
+            TechniqueLesson(Performance(mental = 10), Status(skillPt = 5)),
+
+            TechniqueLesson(Performance(dance = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(passion = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(vocal = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(visual = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(mental = 15), SkillHintBonus(1)),
+
+            TechniqueLesson(Performance(dance = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(passion = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(vocal = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(visual = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(mental = 25), Status(hp = 20)),
+
+            TechniqueLesson(Performance(dance = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(passion = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(vocal = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(visual = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(mental = 30), Status(hp = 30)),
+        ).groupBy { it.category }.mapValues { entry ->
+            TechniqueLessonSet(entry.value.map {
+                it to when (it.category) {
+                    TechniqueLessonCategory.Rest -> when (it.level) {
+                        1 -> 60
+                        else -> 40
+                    }
+
+                    else -> 1
+                }
+            })
+        },
+        LessonPeriod.Classic to listOf(
+            TechniqueLesson(Performance(dance = 16), Status(speed = 8)),
+            TechniqueLesson(Performance(passion = 16), Status(stamina = 8)),
+            TechniqueLesson(Performance(vocal = 16), Status(power = 8)),
+            TechniqueLesson(Performance(visual = 16), Status(guts = 8)),
+            TechniqueLesson(Performance(mental = 16), Status(wisdom = 8)),
+
+            TechniqueLesson(Performance(dance = 16), Status(skillPt = 8)),
+            TechniqueLesson(Performance(passion = 16), Status(skillPt = 8)),
+            TechniqueLesson(Performance(vocal = 16), Status(skillPt = 8)),
+            TechniqueLesson(Performance(visual = 16), Status(skillPt = 8)),
+            TechniqueLesson(Performance(mental = 16), Status(skillPt = 8)),
+
+            TechniqueLesson(Performance(dance = 8, passion = 8), Status(speed = 4, stamina = 4)),
+            TechniqueLesson(Performance(dance = 8, vocal = 8), Status(speed = 4, power = 4)),
+            TechniqueLesson(Performance(dance = 8, visual = 8), Status(speed = 4, guts = 4)),
+            TechniqueLesson(Performance(dance = 8, mental = 8), Status(speed = 4, wisdom = 4)),
+            TechniqueLesson(Performance(dance = 10, visual = 6), Status(speed = 4, skillPt = 4)),
+            TechniqueLesson(Performance(passion = 8, vocal = 8), Status(stamina = 4, power = 4)),
+            TechniqueLesson(Performance(passion = 8, visual = 8), Status(stamina = 4, guts = 4)),
+            TechniqueLesson(Performance(passion = 8, mental = 8), Status(stamina = 4, wisdom = 4)),
+            TechniqueLesson(Performance(passion = 10, vocal = 6), Status(stamina = 4, skillPt = 4)),
+            TechniqueLesson(Performance(vocal = 8, visual = 8), Status(power = 4, guts = 4)),
+            TechniqueLesson(Performance(vocal = 8, mental = 8), Status(power = 4, wisdom = 4)),
+            TechniqueLesson(Performance(vocal = 10, mental = 6), Status(power = 4, skillPt = 4)),
+            TechniqueLesson(Performance(visual = 8, mental = 8), Status(guts = 4, wisdom = 4)),
+            TechniqueLesson(Performance(visual = 10, dance = 6), Status(guts = 4, skillPt = 4)),
+            TechniqueLesson(Performance(mental = 10, passion = 6), Status(wisdom = 4, skillPt = 4)),
+
+            TechniqueLesson(Performance(dance = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(passion = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(vocal = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(visual = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(mental = 15), SkillHintBonus(1)),
+
+            TechniqueLesson(Performance(dance = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(passion = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(vocal = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(visual = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(mental = 25), SkillHintBonus(2)),
+
+            TechniqueLesson(Performance(dance = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(passion = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(vocal = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(visual = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(mental = 25), Status(hp = 20)),
+
+            TechniqueLesson(Performance(dance = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(passion = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(vocal = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(visual = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(mental = 30), Status(hp = 30)),
+
+            TechniqueLesson(Performance(dance = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(passion = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(vocal = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(visual = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(mental = 35), Status(hp = 40)),
+        ).groupBy { it.category }.mapValues { entry ->
+            TechniqueLessonSet(entry.value.map {
+                it to when (it.category) {
+                    TechniqueLessonCategory.Rest -> when (it.level) {
+                        1 -> 55
+                        2 -> 40
+                        else -> 5
+                    }
+
+                    TechniqueLessonCategory.SkillHint -> when (it.level) {
+                        1 -> 60
+                        else -> 40
+                    }
+
+                    else -> 1
+                }
+            })
+        },
+        LessonPeriod.Senior to listOf(
+            TechniqueLesson(Performance(dance = 24), Status(speed = 12)),
+            TechniqueLesson(Performance(passion = 24), Status(stamina = 12)),
+            TechniqueLesson(Performance(vocal = 24), Status(power = 12)),
+            TechniqueLesson(Performance(visual = 24), Status(guts = 12)),
+            TechniqueLesson(Performance(mental = 24), Status(wisdom = 12)),
+
+            TechniqueLesson(Performance(dance = 24), Status(skillPt = 12)),
+            TechniqueLesson(Performance(passion = 24), Status(skillPt = 12)),
+            TechniqueLesson(Performance(vocal = 24), Status(skillPt = 12)),
+            TechniqueLesson(Performance(visual = 24), Status(skillPt = 12)),
+            TechniqueLesson(Performance(mental = 24), Status(skillPt = 12)),
+
+            TechniqueLesson(Performance(dance = 12, passion = 12), Status(speed = 6, stamina = 6)),
+            TechniqueLesson(Performance(dance = 12, vocal = 12), Status(speed = 6, power = 6)),
+            TechniqueLesson(Performance(dance = 12, visual = 12), Status(speed = 6, guts = 6)),
+            TechniqueLesson(Performance(dance = 12, mental = 12), Status(speed = 6, wisdom = 6)),
+            TechniqueLesson(Performance(dance = 14, visual = 10), Status(speed = 6, skillPt = 6)),
+            TechniqueLesson(Performance(passion = 12, vocal = 12), Status(stamina = 6, power = 6)),
+            TechniqueLesson(Performance(passion = 12, visual = 12), Status(stamina = 6, guts = 6)),
+            TechniqueLesson(Performance(passion = 12, mental = 12), Status(stamina = 6, wisdom = 6)),
+            TechniqueLesson(Performance(passion = 14, vocal = 10), Status(stamina = 6, skillPt = 6)),
+            TechniqueLesson(Performance(vocal = 12, visual = 12), Status(power = 6, guts = 6)),
+            TechniqueLesson(Performance(vocal = 12, mental = 12), Status(power = 6, wisdom = 6)),
+            TechniqueLesson(Performance(vocal = 14, mental = 10), Status(power = 6, skillPt = 6)),
+            TechniqueLesson(Performance(visual = 12, mental = 12), Status(guts = 6, wisdom = 6)),
+            TechniqueLesson(Performance(visual = 14, dance = 10), Status(guts = 6, skillPt = 6)),
+            TechniqueLesson(Performance(mental = 14, passion = 10), Status(wisdom = 6, skillPt = 6)),
+
+            TechniqueLesson(Performance(dance = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(passion = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(vocal = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(visual = 15), SkillHintBonus(1)),
+            TechniqueLesson(Performance(mental = 15), SkillHintBonus(1)),
+
+            TechniqueLesson(Performance(dance = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(passion = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(vocal = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(visual = 25), SkillHintBonus(2)),
+            TechniqueLesson(Performance(mental = 25), SkillHintBonus(2)),
+
+            TechniqueLesson(Performance(dance = 30), SkillHintBonus(3)),
+            TechniqueLesson(Performance(passion = 30), SkillHintBonus(3)),
+            TechniqueLesson(Performance(vocal = 30), SkillHintBonus(3)),
+            TechniqueLesson(Performance(visual = 30), SkillHintBonus(3)),
+            TechniqueLesson(Performance(mental = 30), SkillHintBonus(3)),
+
+            TechniqueLesson(Performance(dance = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(passion = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(vocal = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(visual = 25), Status(hp = 20)),
+            TechniqueLesson(Performance(mental = 25), Status(hp = 20)),
+
+            TechniqueLesson(Performance(dance = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(passion = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(vocal = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(visual = 30), Status(hp = 30)),
+            TechniqueLesson(Performance(mental = 30), Status(hp = 30)),
+
+            TechniqueLesson(Performance(dance = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(passion = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(vocal = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(visual = 35), Status(hp = 40)),
+            TechniqueLesson(Performance(mental = 35), Status(hp = 40)),
+        ).groupBy { it.category }.mapValues { entry ->
+            TechniqueLessonSet(entry.value.map {
+                it to when (it.category) {
+                    TechniqueLessonCategory.Rest -> when (it.level) {
+                        1 -> 55
+                        2 -> 40
+                        else -> 5
+                    }
+
+                    TechniqueLessonCategory.SkillHint -> when (it.level) {
+                        1 -> 40
+                        2 -> 30
+                        else -> 25
+                    }
+
+                    else -> 1
+                }
+            })
+        },
+    )
+}
+
+val liveTechniqueCategoryRate = mapOf(
+    LessonPeriod.Junior to arrayOf(
+        listOf(
+            TechniqueLessonCategory.Status to 80,
+            TechniqueLessonCategory.SkillPt to 6,
+            TechniqueLessonCategory.SkillHint to 12,
+            TechniqueLessonCategory.Rest to 2,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 23,
+            TechniqueLessonCategory.SkillPt to 2,
+            TechniqueLessonCategory.SkillHint to 73,
+            TechniqueLessonCategory.Rest to 2,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 55,
+            TechniqueLessonCategory.SkillPt to 7,
+            TechniqueLessonCategory.SkillHint to 27,
+            TechniqueLessonCategory.Rest to 11,
+        ),
+    ),
+    LessonPeriod.Classic to arrayOf(
+        listOf(
+            TechniqueLessonCategory.Status to 76,
+            TechniqueLessonCategory.SkillPt to 9,
+            TechniqueLessonCategory.SkillHint to 10,
+            TechniqueLessonCategory.Rest to 5,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 28,
+            TechniqueLessonCategory.SkillPt to 3,
+            TechniqueLessonCategory.SkillHint to 63,
+            TechniqueLessonCategory.Rest to 6,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 15,
+            TechniqueLessonCategory.DualStatus to 50,
+            TechniqueLessonCategory.SkillPt to 3,
+            TechniqueLessonCategory.SkillHint to 20,
+            TechniqueLessonCategory.Rest to 12,
+        ),
+    ),
+    LessonPeriod.Senior to arrayOf(
+        listOf(
+            TechniqueLessonCategory.Status to 76,
+            TechniqueLessonCategory.SkillPt to 9,
+            TechniqueLessonCategory.SkillHint to 10,
+            TechniqueLessonCategory.Rest to 5,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 28,
+            TechniqueLessonCategory.SkillPt to 3,
+            TechniqueLessonCategory.SkillHint to 63,
+            TechniqueLessonCategory.Rest to 6,
+        ),
+        listOf(
+            TechniqueLessonCategory.Status to 15,
+            TechniqueLessonCategory.DualStatus to 50,
+            TechniqueLessonCategory.SkillPt to 3,
+            TechniqueLessonCategory.SkillHint to 20,
+            TechniqueLessonCategory.Rest to 12,
+        ),
+    ),
+)
