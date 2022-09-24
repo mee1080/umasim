@@ -78,17 +78,7 @@ class LessonClearCalculator(
         return result
     }
 
-    fun calc(param: Performance, step: Int, filter: Double = 0.0): String {
-        val detail = mutableListOf<Pair<Performance, Double>>()
-        val total = calcStep(param, step, filter)
-        val resultString = detail.joinToString("\n")
-        return """
-total=${total.contentToString()}
-$resultString
-        """.trimIndent()
-    }
-
-    private fun calcStep(
+    fun calc(
         param: Performance,
         stepCount: Int,
         filter: Double,
@@ -97,7 +87,6 @@ $resultString
         var targets = mapOf(param to 1.0)
         repeat(stepCount) { step ->
             val stepResult = mutableMapOf<Performance, Double>()
-            println(targets.size)
             targets.forEach { target ->
                 calcSingle(target.key).forEach { entry ->
                     val rate = entry.value * target.value

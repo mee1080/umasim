@@ -31,7 +31,7 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-class ViewModel(private val scope: CoroutineScope) {
+class ViewModel(val scope: CoroutineScope) {
 
     companion object {
         private const val KEY_CHARA = "umasim.chara"
@@ -44,6 +44,8 @@ class ViewModel(private val scope: CoroutineScope) {
     var state by mutableStateOf(State())
 
     val rotationViewModel = RotationViewModel(this)
+
+    val lessonViewModel = LessonViewModel(this)
 
     fun navigate(page: Page) {
         state = state.copy(page = page)

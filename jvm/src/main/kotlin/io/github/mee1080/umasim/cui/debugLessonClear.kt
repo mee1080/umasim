@@ -16,15 +16,8 @@ fun testLessonClear() {
     val performance = Performance(78, 28, 17, 13, 11)
     val step = 4
 
-    var time = System.currentTimeMillis()
-    println(calculator.calc(performance, step, 0.0001))
+    val time = System.currentTimeMillis()
+    val result = calculator.calc(performance, step, 0.0001)
     println("calc: ${System.currentTimeMillis() - time} ms")
-
-//    time = System.currentTimeMillis()
-//    println(calculator.calc(performance, step))
-//    println("calc: ${System.currentTimeMillis() - time} ms")
-//
-//    time = System.currentTimeMillis()
-//    println(calculator.calc(performance, step))
-//    println("calc: ${System.currentTimeMillis() - time} ms")
+    println(result.contentToString())
 }

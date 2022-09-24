@@ -46,5 +46,4 @@ fun RootPage(model: ViewModel, state: State) {
 //        }
         }
     }
-    LicenseInfo()
 }

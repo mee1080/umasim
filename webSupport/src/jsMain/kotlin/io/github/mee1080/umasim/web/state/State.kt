@@ -25,13 +25,15 @@ import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 
 enum class Page(val displayName: String, val icon: String) {
-    Top("育成シミュレータ", "trending_up"),
-    Rotation("ローテーションシミュレータ", "event_note"),
+    Top("育成", "trending_up"),
+    Rotation("ローテーション", "event_note"),
+    Lesson("レッスン", "queue_music"),
 }
 
 data class State(
     val page: Page = Page.Top,
     val rotationState: RotationState? = null,
+    val lessonState: LessonState = LessonState(),
 
     val scenario: Scenario = Scenario.GRAND_LIVE,
     val chara: Chara = WebConstants.charaList[0],
@@ -372,4 +374,35 @@ class TurnAfterFilter(val turn: Int) : RecommendFilter {
 class AchievementFilter(val name: String) : RecommendFilter {
     override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.third.any { it.first == name }
     override fun toString() = name
+}
+
+data class LessonState(
+    val periodIndex: Int = 0,
+    val dance: String = "10",
+    val passion: String = "10",
+    val vocal: String = "10",
+    val visual: String = "10",
+    val mental: String = "10",
+    val stepCount: Int = 2,
+    val threshold: String = "0.001",
+
+    val message: String? = null,
+    val result: List<Double> = emptyList(),
+
+    val periodList: List<Pair<Int, String>> = LessonPeriod.values().map { it.ordinal to it.displayName }
+) {
+    val period get() = LessonPeriod.values().getOrElse(periodIndex) { LessonPeriod.Junior }
+
+    fun convertParameters() = kotlin.runCatching {
+        Pair(
+            Performance(
+                dance.toInt(),
+                passion.toInt(),
+                vocal.toInt(),
+                visual.toInt(),
+                mental.toInt(),
+            ),
+            threshold.toDouble(),
+        )
+    }.getOrNull()
 }
