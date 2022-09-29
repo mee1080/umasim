@@ -90,6 +90,8 @@ data class SupportCardSpecialUnique(
             trainingSupportCount * value1
         } else if (type == 111 && value0 == 8) {
             trainingLevel * value1
+        } else if (type == 114 && value0 == 8) {
+            value2 - max(0, (100 - status.hp) / value1)
         } else 0
     }
 
