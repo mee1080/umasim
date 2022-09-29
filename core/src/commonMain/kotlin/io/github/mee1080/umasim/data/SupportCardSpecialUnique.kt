@@ -27,7 +27,7 @@ data class SupportCardSpecialUnique(
             111 -> "${supportEffectName[value0]}トレーニングLv×$value1"
             112 -> "トレーニング失敗率が$value0%の確率で0%になる"
             113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
-            114 -> "体力高いほどトレ効果アップ、100以上で+20（${type},${value0},${value1},${value2},${value3},${value4}）"
+            114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
