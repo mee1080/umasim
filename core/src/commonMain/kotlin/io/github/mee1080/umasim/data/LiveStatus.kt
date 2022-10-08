@@ -25,6 +25,8 @@ interface TrainingLiveStatus {
 }
 
 data class LiveStatus(
+    val currentPeriod: LivePeriod = LivePeriod.Junior,
+    val lessonCount: Int = 1,
     val learnedLesson: List<Lesson> = emptyList(),
     val livedLesson: List<Lesson> = emptyList(),
     val lessonSelection: List<Lesson> = emptyList(),
@@ -33,17 +35,48 @@ data class LiveStatus(
 
     private val livedBonusList by lazy { livedLesson.mapNotNull { it.liveBonus } }
 
-    fun applyLive() = copy(
-        livedLesson = livedLesson + learnedLesson.subList(livedLesson.size + 1, learnedLesson.size)
-    )
+    val learnedSongs by lazy { learnedLesson.mapNotNull { it as? SongLesson } }
+
+    val newLesson by lazy { learnedLesson.subList(livedLesson.size + 1, learnedLesson.size) }
 
     override fun trainingUp(type: StatusType): Int {
         return learnedBonusList.mapNotNull { it as? TrainingBonus }.sumOf { it.valueOf(type) }
     }
 
-    override val friendTrainingUp by lazy { livedBonusList.count { it == LiveBonus.FriendTraining } * 5 }
+    override val friendTrainingUp by lazy { livedBonusList.sumOf { it.friendTraining } }
 
-    override val specialityRateUp by lazy { livedBonusList.count { it == LiveBonus.SpecialtyRate } * 5 }
+    override val specialityRateUp by lazy { livedBonusList.sumOf { it.specialityRate } }
+}
+
+enum class LivePeriod(val lessonPeriod: LessonPeriod) {
+    Junior(LessonPeriod.Junior),
+    Classic1(LessonPeriod.Classic),
+    Classic2(LessonPeriod.Classic),
+    Senior1(LessonPeriod.Senior),
+    Senior2(LessonPeriod.Senior),
+    Finals(LessonPeriod.Senior);
+
+    companion object {
+        fun turnToPeriod(turn: Int) = when {
+            turn <= 24 -> Junior
+            turn <= 36 -> Classic1
+            turn <= 48 -> Classic2
+            turn <= 60 -> Senior1
+            turn <= 72 -> Senior2
+            else -> Finals
+        }
+    }
+}
+
+enum class PerformanceType(
+    val asPerformance: (Int) -> Performance,
+    val getValue: (Performance) -> Int,
+) {
+    Dance({ Performance(dance = it) }, { it.dance }),
+    Passion({ Performance(passion = it) }, { it.passion }),
+    Vocal({ Performance(vocal = it) }, { it.vocal }),
+    Visual({ Performance(visual = it) }, { it.visual }),
+    Mental({ Performance(mental = it) }, { it.mental }),
 }
 
 data class Performance(
@@ -80,12 +113,20 @@ data class Performance(
             (if (vocal >= value) 1 else 0) + (if (visual >= value) 1 else 0) + (if (mental >= value) 1 else 0)
 
     val valid by lazy { dance >= 0 && passion >= 0 && vocal >= 0 && visual >= 0 && mental >= 0 }
+
+    val minimumType by lazy {
+        val minimumValue = PerformanceType.values().minOf { it.getValue(this) }
+        PerformanceType.values().filter { it.getValue(this) == minimumValue }
+    }
 }
 
-enum class LessonPeriod(val displayName: String) {
-    Junior("ジュニア"),
-    Classic("クラシック"),
-    Senior("シニア/ファイナルズ"),
+enum class LessonPeriod(
+    val displayName: String,
+    val baseCost: Int,
+) {
+    Junior("ジュニア", 10),
+    Classic("クラシック", 16),
+    Senior("シニア/ファイナルズ", 24),
 }
 
 sealed interface Lesson {
@@ -100,8 +141,24 @@ data class SongLesson(
     override val cost: Performance,
     override val learnBonus: LearnBonus,
     override val liveBonus: LiveBonus,
+    val specialSong: Boolean = false,
 ) : Lesson {
     override val displayName get() = "楽曲:$name"
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as SongLesson
+
+        if (name != other.name) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode()
+    }
 }
 
 enum class TechniqueLessonCategory(
@@ -130,6 +187,12 @@ sealed interface LearnBonus {
 sealed interface TechniqueLearnBonus : LearnBonus {
     val category: TechniqueLessonCategory
     val level: Int
+}
+
+data class PerformanceBonus(
+    val performance: Performance,
+) : LearnBonus {
+    override val displayName: String get() = "すべてのパフォーマンス +10"
 }
 
 data class StatusBonus(
@@ -193,10 +256,13 @@ data class TrainingBonus(
 
 enum class LiveBonus(
     val displayName: String,
+    val friendTraining: Int = 0,
+    val specialityRate: Int = 0,
 ) {
     ContinuousEvent("連続イベ率アップLv+1"),
-    FriendTraining("友情トレ獲得量+5%"),
-    SpecialtyRate("得意率+5"),
+    FriendTraining5("友情トレ獲得量+5%", friendTraining = 5),
+    FriendTraining10("友情トレ獲得量+10%", friendTraining = 10),
+    SpecialtyRate("得意率+5", specialityRate = 5),
 }
 
 class TechniqueLessonSet(

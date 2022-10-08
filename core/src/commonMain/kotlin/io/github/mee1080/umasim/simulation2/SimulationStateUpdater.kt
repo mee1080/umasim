@@ -178,8 +178,7 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     // TODO アオハル爆発スキル
     // val burnList = aoharuList.filter { it.aoharuBurn }
     if (Random.nextInt(100) >= 15) return Status()
-    val skillList = aoharuList
-        .filter { it.scenarioState is AoharuMemberState && !it.scenarioState.aoharuBurn }
+    val skillList = aoharuList.filter { it.scenarioState is AoharuMemberState && !it.scenarioState.aoharuBurn }
         .flatMap { member -> member.card.skills.map { member to it } }
         .filter { !status.skillHint.containsKey(it.second) }
     if (skillList.isEmpty()) return Status()
@@ -235,5 +234,110 @@ private fun MemberState.addRelation(relation: Int): MemberState {
         supportState = supportState?.copy(
             relation = min(100, supportState.relation + relation)
         ),
+    )
+}
+
+fun SimulationState.updateLesson(): SimulationState {
+    val liveStatus = liveStatus ?: return this
+    val currentPeriod = LivePeriod.turnToPeriod(turn)
+    val lessonCount = if (currentPeriod == liveStatus.currentPeriod) liveStatus.lessonCount else 1
+    val lessonSelection = LessonProvider.provide(
+        currentPeriod,
+        lessonCount,
+        liveStatus.learnedSongs,
+    )
+    return copy(
+        liveStatus = liveStatus.copy(
+            currentPeriod = currentPeriod,
+            lessonCount = lessonCount + 1,
+            lessonSelection = lessonSelection,
+        )
+    )
+}
+
+fun SimulationState.purchaseLesson(lesson: Lesson): SimulationState {
+    val liveStatus = liveStatus ?: return this
+    val performance = status.performance ?: return this
+    val lessonStatus = when (val learnBonus = lesson.learnBonus) {
+        is PerformanceBonus -> Status(performance = learnBonus.performance)
+        is SkillHintBonus -> Status(skillHint = mapOf("スキル" to learnBonus.level))
+        is StatusBonus -> learnBonus.status
+        is TrainingBonus -> Status()
+    }
+    return copy(
+        status = status.copy(performance = performance - lesson.cost) + lessonStatus,
+        liveStatus = liveStatus.copy(
+            learnedLesson = liveStatus.learnedLesson + lesson,
+        ),
+    ).updateLesson()
+}
+
+fun SimulationState.addLesson(lesson: Lesson): SimulationState {
+    val liveStatus = liveStatus ?: return this
+    return copy(
+        liveStatus = liveStatus.copy(
+            learnedLesson = liveStatus.learnedLesson + lesson,
+        ),
+    )
+}
+
+fun SimulationState.applyLive(): SimulationState {
+    val liveStatus = liveStatus ?: return this
+    val newLesson = liveStatus.newLesson
+    var special = ""
+    var songCount = 0
+    var techniqueCount = 0
+    newLesson.forEach {
+        if (it is SongLesson) {
+            if (it.specialSong) {
+                special = it.name
+            } else {
+                songCount++
+            }
+        } else {
+            techniqueCount++
+        }
+    }
+    val skillPtUp = techniqueCount * 5 + songCount * 25
+    val fanCountBase = when (LivePeriod.turnToPeriod(turn)) {
+        LivePeriod.Junior -> 100
+        LivePeriod.Classic1 -> 200
+        LivePeriod.Classic2 -> 550
+        else -> 650
+    }
+    val statusUp = when (special) {
+        // グランドライブ（特別）
+        specialSongs[2].name -> Status(
+            speed = 15, stamina = 15, power = 15, guts = 15, wisdom = 15,
+            skillPt = skillPtUp, fanCount = 9000,
+        )
+        // グランドライブ（通常）
+        specialSongs[1].name -> if (songCount >= 3) Status(
+            speed = 12, stamina = 12, power = 12, guts = 12, wisdom = 12,
+            skillPt = skillPtUp, fanCount = 2000,
+        ) else Status(
+            speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
+            skillPt = skillPtUp, fanCount = 200,
+        )
+        // 告知ライブ
+        else -> Status(
+            performance = Performance(10, 10, 10, 10, 10),
+        ) + if (songCount >= 3) Status(
+            speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
+            skillPt = skillPtUp, fanCount = fanCountBase * 10,
+        ) else Status(
+            speed = 3, stamina = 3, power = 3, guts = 3, wisdom = 3,
+            skillPt = skillPtUp, fanCount = fanCountBase,
+        )
+    }
+    return copy(
+        status = status + statusUp,
+        liveStatus = liveStatus.applyLive(),
+    )
+}
+
+private fun LiveStatus.applyLive(): LiveStatus {
+    return copy(
+        livedLesson = livedLesson + learnedLesson.subList(livedLesson.size + 1, learnedLesson.size)
     )
 }

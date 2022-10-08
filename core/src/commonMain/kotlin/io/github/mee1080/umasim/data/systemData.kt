@@ -453,6 +453,213 @@ internal val raceAchievementData = listOf(
     ),
 ).reversed()
 
+val firstPerformanceRate = mapOf(
+    StatusType.SPEED to listOf(
+        PerformanceType.Dance to 65,
+        PerformanceType.Passion to 3,
+        PerformanceType.Vocal to 3,
+        PerformanceType.Visual to 26,
+        PerformanceType.Mental to 3,
+    ),
+    StatusType.STAMINA to listOf(
+        PerformanceType.Dance to 3,
+        PerformanceType.Passion to 65,
+        PerformanceType.Vocal to 26,
+        PerformanceType.Visual to 3,
+        PerformanceType.Mental to 3,
+    ),
+    StatusType.POWER to listOf(
+        PerformanceType.Dance to 3,
+        PerformanceType.Passion to 3,
+        PerformanceType.Vocal to 65,
+        PerformanceType.Visual to 3,
+        PerformanceType.Mental to 26,
+    ),
+    StatusType.GUTS to listOf(
+        PerformanceType.Dance to 26,
+        PerformanceType.Passion to 3,
+        PerformanceType.Vocal to 3,
+        PerformanceType.Visual to 65,
+        PerformanceType.Mental to 3,
+    ),
+    StatusType.WISDOM to listOf(
+        PerformanceType.Dance to 3,
+        PerformanceType.Passion to 26,
+        PerformanceType.Vocal to 3,
+        PerformanceType.Visual to 3,
+        PerformanceType.Mental to 65,
+    ),
+)
+
+val specialSongs = listOf(
+    SongLesson(
+        "Make debut!",
+        Performance(),
+        PerformanceBonus(Performance(10, 10, 10, 10, 10)),
+        LiveBonus.SpecialtyRate,
+        true,
+    ),
+    SongLesson(
+        "GIRLS' LEGEND U (通常)",
+        Performance(),
+        StatusBonus(Status(10, 10, 10, 10, 10)),
+        LiveBonus.FriendTraining10,
+        true,
+    ),
+    SongLesson(
+        "GIRLS' LEGEND U (特別",
+        Performance(),
+        StatusBonus(Status(10, 10, 10, 10, 10)),
+        LiveBonus.FriendTraining10,
+        true,
+    ),
+)
+
+val liveSongLesson by lazy {
+    val junior = listOf(
+        SongLesson(
+            "青春が待ってる",
+            Performance(vocal = 32, mental = 12),
+            StatusBonus(Status(power = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "全速！前進！ウマドルパワー☆",
+            Performance(dance = 32, visual = 12),
+            StatusBonus(Status(speed = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "RUN×RUN！",
+            Performance(dance = 14, visual = 16, mental = 14),
+            StatusBonus(Status(skillPt = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "Go This Way",
+            Performance(vocal = 21, mental = 21),
+            TrainingBonus(StatusType.POWER, 1),
+            LiveBonus.ContinuousEvent,
+        ),
+        SongLesson(
+            "奇跡を信じて！",
+            Performance(passion = 21, mental = 21),
+            TrainingBonus(StatusType.WISDOM, 1),
+            LiveBonus.SpecialtyRate,
+        ),
+        SongLesson(
+            "逃げ切りっ！Fallin' Love",
+            Performance(vocal = 21, visual = 21),
+            TrainingBonus(StatusType.GUTS, 1),
+            LiveBonus.ContinuousEvent,
+        ),
+        SongLesson(
+            "Ring Ring ダイアリー",
+            Performance(passion = 21, visual = 21),
+            TrainingBonus(StatusType.STAMINA, 1),
+            LiveBonus.ContinuousEvent,
+        ),
+        SongLesson(
+            "立ち位置ゼロ番！順位は一番！",
+            Performance(dance = 21, visual = 21),
+            TrainingBonus(StatusType.SPEED, 1),
+            LiveBonus.ContinuousEvent,
+        ),
+    )
+    val classic1 = listOf(
+        SongLesson(
+            "ユメヲカケル！",
+            Performance(passion = 21, visual = 21),
+            TrainingBonus(StatusType.SKILL, 2),
+            LiveBonus.SpecialtyRate,
+        ),
+        SongLesson(
+            "ぼくらのブルーバードデイズ",
+            Performance(dance = 21, visual = 42),
+            TrainingBonus(StatusType.SPEED, 2),
+            LiveBonus.SpecialtyRate,
+        ),
+        SongLesson(
+            "A・NO・NE",
+            Performance(dance = 42, visual = 21),
+            TrainingBonus(StatusType.GUTS, 2),
+            LiveBonus.SpecialtyRate,
+        ),
+    )
+    val classic2 = listOf(
+        SongLesson(
+            "グロウアップ・シャイン！",
+            Performance(dance = 21, vocal = 21, mental = 21),
+            TrainingBonus(StatusType.SKILL, 3),
+            LiveBonus.ContinuousEvent,
+        ),
+        SongLesson(
+            "木漏れ日のエール",
+            Performance(passion = 42, mental = 21),
+            TrainingBonus(StatusType.WISDOM, 2),
+            LiveBonus.ContinuousEvent,
+        ),
+        SongLesson(
+            "七色の景色",
+            Performance(vocal = 21, mental = 42),
+            TrainingBonus(StatusType.POWER, 2),
+            LiveBonus.SpecialtyRate,
+        ),
+        SongLesson(
+            "ぴょいっと♪はれるや！",
+            Performance(passion = 42, vocal = 21),
+            TrainingBonus(StatusType.STAMINA, 2),
+            LiveBonus.SpecialtyRate,
+        ),
+    )
+    val senior = listOf(
+        SongLesson(
+            "世界は僕らの言いなりさ",
+            Performance(passion = 32, vocal = 12),
+            StatusBonus(Status(stamina = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "春空BLUE",
+            Performance(dance = 12, visual = 32),
+            StatusBonus(Status(guts = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "ユメゾラ",
+            Performance(passion = 22, mental = 22),
+            StatusBonus(Status(wisdom = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "PRESENT MARCH♪",
+            Performance(vocal = 22, mental = 22),
+            StatusBonus(Status(power = 22)),
+            LiveBonus.FriendTraining5,
+        ),
+        SongLesson(
+            "Fanfare for Future!",
+            Performance(dance = 26, visual = 42),
+            StatusBonus(Status(guts = 26)),
+            LiveBonus.FriendTraining10,
+        ),
+        SongLesson(
+            "大好きのタカラバコ",
+            Performance(dance = 42, visual = 26),
+            StatusBonus(Status(speed = 26)),
+            LiveBonus.FriendTraining10,
+        ),
+    )
+    mapOf(
+        LivePeriod.Junior to junior,
+        LivePeriod.Classic1 to junior + classic1,
+        LivePeriod.Classic2 to junior + classic1 + classic2,
+        LivePeriod.Senior1 to junior + classic1 + classic2 + senior,
+        LivePeriod.Senior2 to junior + classic1 + classic2 + senior,
+        LivePeriod.Finals to emptyList(),
+    )
+}
+
 val liveTechniqueLesson by lazy {
     mapOf(
         LessonPeriod.Junior to listOf(

@@ -140,4 +140,12 @@ object Store {
 
         val raceAchievement = raceAchievementData
     }
+
+    object GrandLive {
+        private val notLinkSupportList by lazy {
+            supportList.filter { it.rarity == 1 && it.talent == 0 && !it.type.outingType && !getScenarioLink(Scenario.GRAND_LIVE).contains(it.chara) }
+        }
+
+        fun getShuffledGuest() = notLinkSupportList.shuffled()
+    }
 }

@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
+import io.github.mee1080.umasim.ai.GrandLiveFactorBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
@@ -67,8 +68,8 @@ class CliMain : CliktCommand() {
             }
         }
         val scenarioValue = Scenario.valueOf(scenario)
-        val selector = if (scenarioValue == Scenario.CLIMAX) {
-            ClimaxFactorBasedActionSelector.Option(
+        val selector = when (scenarioValue) {
+            Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(
                 speedFactor = speed,
                 staminaFactor = stamina,
                 powerFactor = power,
@@ -79,8 +80,20 @@ class CliMain : CliktCommand() {
                 motivationFactor = motivation,
                 relationFactor = relationFactor,
             )::generateSelector
-        } else {
-            FactorBasedActionSelector2.Option(
+
+            Scenario.CLIMAX -> ClimaxFactorBasedActionSelector.Option(
+                speedFactor = speed,
+                staminaFactor = stamina,
+                powerFactor = power,
+                gutsFactor = guts,
+                wisdomFactor = wisdom,
+                skillPtFactor = skillPt,
+                hpFactor = hp,
+                motivationFactor = motivation,
+                relationFactor = relationFactor,
+            )::generateSelector
+
+            else -> FactorBasedActionSelector2.Option(
                 speedFactor = speed,
                 staminaFactor = stamina,
                 powerFactor = power,

@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.*
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
+import kotlin.random.Random
 
 object Calculator {
 
@@ -280,8 +281,8 @@ object Calculator {
         base: Status
     ): Status {
         return if (info.liveStatus != null) {
-            // TODO パフォーマンス獲得率反映
-            val performance = calcPerformanceValue(info)
+            val performanceValue = calcPerformanceValue(info)
+            val firstPerformanceType = selectFirstPerformanceType(info)
             val trainingUp = Status(
                 speed = calcLiveStatusSingle(info, StatusType.SPEED),
                 stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
@@ -289,10 +290,11 @@ object Calculator {
                 guts = calcLiveStatusSingle(info, StatusType.GUTS),
                 wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
                 skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
-                performance = Performance(performance),
+                performance = firstPerformanceType.asPerformance(performanceValue),
             )
             val friendUp = if (info.member.any { it.isFriendTraining(info.training.type) }) {
                 val calc = base + trainingUp
+                val secondPerformanceType = selectSecondPerformanceType(info, firstPerformanceType)
                 Status(
                     speed = calcTrainingUp(calc.speed, info.liveStatus.friendTrainingUp),
                     stamina = calcTrainingUp(calc.stamina, info.liveStatus.friendTrainingUp),
@@ -300,7 +302,7 @@ object Calculator {
                     guts = calcTrainingUp(calc.guts, info.liveStatus.friendTrainingUp),
                     wisdom = calcTrainingUp(calc.wisdom, info.liveStatus.friendTrainingUp),
                     skillPt = calcTrainingUp(calc.skillPt, info.liveStatus.friendTrainingUp),
-                    performance = Performance(performance),
+                    performance = secondPerformanceType.asPerformance(performanceValue),
                 )
             } else Status()
             trainingUp + friendUp
@@ -327,6 +329,24 @@ object Calculator {
             5 -> 20
             else -> 10
         } / 10 + link
+    }
+
+    private fun selectFirstPerformanceType(
+        info: CalcInfo,
+    ): PerformanceType {
+        return randomSelect(firstPerformanceRate[info.training.type]!!)
+    }
+
+    private fun selectSecondPerformanceType(
+        info: CalcInfo,
+        firstType: PerformanceType,
+    ): PerformanceType {
+        val minimumType = info.currentStatus.performance?.minimumType ?: PerformanceType.values().asList()
+        return if (!minimumType.contains(firstType) && Random.nextInt(100) >= 85) {
+            minimumType.random()
+        } else {
+            return randomSelect(firstPerformanceRate[info.training.type]!!.filterNot { it.first == firstType })
+        }
     }
 
     fun calcItemBonus(trainingType: StatusType, status: Status, item: List<ShopItem>): Status {

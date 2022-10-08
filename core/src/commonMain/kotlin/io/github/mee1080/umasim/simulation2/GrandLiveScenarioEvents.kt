@@ -1,18 +1,71 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.*
 
-// TODO GrandLive
 class GrandLiveScenarioEvents : CommonScenarioEvents() {
 
-    override fun onTurnEnd(state: SimulationState): SimulationState {
-        val newState = super.onTurnEnd(state)
-        return when (newState.turn) {
-            45 -> newState
-                .updateStatus { it + Status(wisdom = 20, skillPt = 20) }
+    override fun afterAction(state: SimulationState): SimulationState {
+        val base = super.afterAction(state) ?: state
+        return when (base.turn) {
+            // 導入
+            4 -> base.copy(
+                liveStatus = LiveStatus(),
+                status = state.status.copy(performance = Performance())
+            ).addMember("[トレセン学園]スマートファルコン").purchaseLesson(specialSongs[0])
 
-            else -> newState
+            // ジュニア9月：スマートファルコン編成時加入
+            18 -> base.addMember(1)
+
+            // グランドライブ楽曲決定
+            71 -> base.addLesson(
+                if (base.liveStatus!!.learnedSongs.size >= 18) specialSongs[2] else specialSongs[1]
+            )
+
+            // ライブ
+            24 -> base.applyLive()
+                .addMember("[トレセン学園]サイレンススズカ")
+                .addMember("[トレセン学園]アグネスタキオン")
+                .addMember(6)
+
+            36 -> base.applyLive()
+                .addMember("[トレセン学園]ミホノブルボン")
+                .addMember(8)
+
+            48 -> base.applyLive().addMember(9)
+
+            60 -> base.applyLive().addMember(11)
+
+            72 -> base.applyLive()
+
+            else -> base
         }
+    }
+
+    private fun SimulationState.addMember(name: String): SimulationState {
+        val current = member.map { it.charaName }
+        if (current.contains(name)) return this
+        return copy(member = member + createGuest(member.size, Store.getSupportByName(name, 0)))
+    }
+
+    private fun SimulationState.addMember(count: Int): SimulationState {
+        val guestCount = member.count { it.guest }
+        if (guestCount >= count) return this
+        val newMember = member.toMutableList()
+        println(Store.GrandLive.getShuffledGuest())
+        Store.GrandLive.getShuffledGuest().subList(0, count - guestCount).forEach {
+            newMember += createGuest(newMember.size, it)
+        }
+        return copy(member = newMember)
+    }
+
+    private fun createGuest(index: Int, card: SupportCard): MemberState {
+        return MemberState(
+            index,
+            card,
+            StatusType.NONE,
+            null,
+            GrandLiveMemberState,
+        )
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {

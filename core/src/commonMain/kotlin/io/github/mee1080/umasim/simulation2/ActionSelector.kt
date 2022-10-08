@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.Lesson
 import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.StatusType
 
@@ -46,4 +47,5 @@ class SelectedAction(
     val action: Action? = null,
     val buyItem: List<ShopItem>? = null,
     val useItem: List<ShopItem>? = null,
+    val lesson: Lesson? = null,
 )
