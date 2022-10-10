@@ -30,24 +30,25 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         private const val DEBUG_LESSON = false
 
         val speed2Power1Wisdom2Friend1 = Option().copy(
-            speedFactor = 1.4,
-            staminaFactor = 0.2,
-            powerFactor = 0.4,
-            gutsFactor = 0.2,
-            wisdomFactor = 0.5,
-            hpFactor = 0.7,
+            speedFactor = 1.75,
+            staminaFactor = 0.8,
+            powerFactor = 1.25,
+            gutsFactor = 0.25,
+            wisdomFactor = 1.0,
+            hpFactor = 0.85,
             motivationFactor = 25.0,
             relationFactor = { type, rank, _ ->
                 when (type) {
                     StatusType.SPEED -> when (rank) {
-                        1 -> 9.0
-                        2 -> 10.9
-                        else -> 14.7
+                        1 -> 6.8
+                        else -> 15.0
                     }
 
+                    StatusType.POWER -> 1.25
+
                     else -> when (rank) {
-                        1 -> 11.6
-                        else -> 12.5
+                        1 -> 10.7
+                        else -> 14.5
                     }
                 }
             }

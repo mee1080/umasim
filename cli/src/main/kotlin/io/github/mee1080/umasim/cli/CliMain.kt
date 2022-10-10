@@ -108,7 +108,12 @@ class CliMain : CliktCommand() {
         }
         val evaluateSetting = when (distance) {
             "short" -> Runner.shortEvaluateSetting
-            "mile" -> Runner.mileEvaluateSetting
+            "mile" -> if (scenarioValue == Scenario.GRAND_LIVE) {
+                Runner.grandLiveMileEvaluateSetting
+            } else {
+                Runner.mileEvaluateSetting
+            }
+
             "middle" -> Runner.middleEvaluateSetting
             else -> Runner.longEvaluateSetting
         }

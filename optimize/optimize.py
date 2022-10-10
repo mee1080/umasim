@@ -90,7 +90,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='ls2p1w2f_1',
+    study_name='ls2p1w2f_4',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'

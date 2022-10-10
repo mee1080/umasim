@@ -51,7 +51,6 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
         val guestCount = member.count { it.guest }
         if (guestCount >= count) return this
         val newMember = member.toMutableList()
-        println(Store.GrandLive.getShuffledGuest())
         Store.GrandLive.getShuffledGuest().subList(0, count - guestCount).forEach {
             newMember += createGuest(newMember.size, it)
         }

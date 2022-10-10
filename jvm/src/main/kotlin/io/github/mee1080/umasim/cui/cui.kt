@@ -18,12 +18,16 @@
  */
 package io.github.mee1080.umasim.cui
 
+import io.github.mee1080.umasim.ai.GrandLiveFactorBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.simulation2.Runner
 
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
-    singleGrandLiveSimulation()
+//    singleGrandLiveSimulation()
 //    testProvideLesson()
 //    testLessonClear()
 //    testExpected()
@@ -586,4 +590,23 @@ fun openCui(args: Array<String>) {
 //        ClimaxFactorBasedActionSelector.speed2guts2Wisdom2,
 //        Runner.mileEvaluateSetting,
 //    )
+
+    doSimulation2(
+        Scenario.GRAND_LIVE,
+        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
+        Store.getSupportByName(
+            "[迫る熱に押されて]キタサンブラック" to 4,
+            "[感謝は指先まで込めて]ファインモーション" to 4,
+            "[Dear Mr. C.B.]ミスターシービー" to 4,
+            "[嗚呼華麗ナル一族]ダイイチルビー" to 4,
+            "[from the GROUND UP]ライトハロー" to 4,
+        ).toTypedArray(),
+//        StatusType.SPEED, 0..4,
+        Store.getSupportByName(*((0..4).map { "[泥まみれのコンパネーロ]エルコンドルパサー" to it }.toTypedArray())),
+//        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
+        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+        10000,
+        GrandLiveFactorBasedActionSelector.speed2Power1Wisdom2Friend1,
+        Runner.grandLiveMileEvaluateSetting,
+    )
 }

@@ -87,7 +87,7 @@ fun doSimulation2(
 //                    ),
                     selector = selector,
                 )
-                println("${card.id},${card.name},${card.talent},${evaluator.toSummaryString()},$score")
+                println("${card.id},\"${card.name}\",${card.talent},${evaluator.toSummaryString()},$score")
                 // ヒストグラム
 //                evaluator.getStatusSum(evaluateSetting)
 //                    .map { it.roundToInt() }
