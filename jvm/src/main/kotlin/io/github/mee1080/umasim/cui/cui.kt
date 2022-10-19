@@ -602,7 +602,7 @@ fun openCui(args: Array<String>) {
             "[from the GROUND UP]ライトハロー" to 4,
         ).toTypedArray(),
 //        StatusType.SPEED, 0..4,
-        Store.getSupportByName(*((0..4).map { "[泥まみれのコンパネーロ]エルコンドルパサー" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[U & Me]ミホノブルボン" to it }.toTypedArray())),
 //        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
         factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
         10000,
