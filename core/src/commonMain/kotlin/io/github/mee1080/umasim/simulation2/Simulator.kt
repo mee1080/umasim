@@ -34,12 +34,20 @@ class Simulator(
         val raceBonusSkillPt: Int = 180,
     )
 
+    private val initialRelationAll = supportCardList.sumOf { it.initialRelationAll }
+
     private val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
         factor = factorList,
         goalRace = Store.getGoalRaceList(chara.charaId),
-        member = supportCardList.toMemberState(scenario),
+        member = supportCardList.toMemberState(scenario).map {
+            it.copy(
+                supportState = it.supportState?.copy(
+                    relation = it.supportState.relation + initialRelationAll
+                )
+            )
+        },
         training = Store.getTrainingList(scenario)
             .groupBy { it.type }
             .map { entry ->

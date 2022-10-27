@@ -28,6 +28,7 @@ data class SupportCardSpecialUnique(
             112 -> "トレーニング失敗率が$value0%の確率で0%になる"
             113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
+            115 -> "全員の初期絆+5（${type},${value0},${value1},${value2},${value3},${value4}）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -134,4 +135,6 @@ data class SupportCardSpecialUnique(
             value1
         } else 0
     }
+
+    val initialRelationAll = if (type == 115) 5 else 0
 }

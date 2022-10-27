@@ -96,6 +96,8 @@ data class SupportCard(
             total + unique.initialStatus(supportType)
         }
 
+    val initialRelationAll = specialUnique.sumOf { it.initialRelationAll }
+
     fun friendFactor(
         relation: Int,
         friendCount: Int,
