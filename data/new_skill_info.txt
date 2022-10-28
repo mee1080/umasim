@@ -1,40 +1,31 @@
-ヤマニンゼファー固有
-レース前半で控え、最終コーナー後半に前の方だと長時間加速力をちょっと上げ続ける、2番手なら効果が上がる
-distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50&order==2
-「距離割合>=50、順位率_out20_continue==1」の後「最終コーナー後半？、相対位置<=50、順位==2」、加速2000、持続8.0
-distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
-「距離割合>=50、順位率_out20_continue==1」の後「最終コーナー後半？、相対位置<=50」、加速1000、持続8.0
+タマモクロス固有
+レース中盤にスキルを2つ発動すると速度を少し上げ続ける、効果中スキルを発動すると2回まで効果が増える
+->activate_count_middle>=2
+「activate_count_middle>=2」、目標速度2500、目標速度250、持続6.0
 
-風光る
-レース前半で控え、最終コーナー後半に前の方だと長時間加速力をほんのちょっと上げ続ける、2番手なら効果が上がる
-distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50&order==2
-「距離割合>=50、順位率_out20_continue==1」の後「最終コーナー後半？、相対位置<=50、順位==2」、加速700、持続4.8
-distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
-「距離割合>=50、順位率_out20_continue==1」の後「最終コーナー後半？、相対位置<=50」、加速500、持続4.8
+イナリワン固有
+終盤コーナーで後方で詰寄ると最終直線で速度が上がる、終盤コーナーで追い抜いた回数に応じて効果が増える
+phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
+「終盤、コーナー、順位率>=60、追い抜き」の後「is_last_straight_onetime==1」、目標速度3500(特殊11)、持続5.0
 
-風雲の志
-レース終盤目前、2番手以降に控えて先頭から2バ身以内だとしばらくの間速度が少し上がる＜作戦・先行＞
-->running_style==2&order>=2&distance_diff_top<=5&distance_rate>=60&phase==1
-「先行、順位>=2、distance_diff_top<=5、距離割合>=60、中盤」、目標速度2500、持続4.0
+火神鳴
+レース中盤にスキルを2つ発動すると速度をちょっと上げ続ける、効果中スキルを発動すると2回まで効果が増える
+->activate_count_middle>=2
+「activate_count_middle>=2」、目標速度500、目標速度250、持続3.6
 
-向上心
-レース終盤目前、2番手以降に控えて先頭から2バ身以内だとしばらくの間速度がちょっと上がる＜作戦・先行＞
-->running_style==2&order>=2&distance_diff_top<=5&distance_rate>=60&phase==1
-「先行、順位>=2、distance_diff_top<=5、距離割合>=60、中盤」、目標速度500、持続4.0
+灯穂
+終盤コーナーで後方で詰寄ると最終直線で速度がわずかに上がる、終盤コーナーで追い抜いた回数に応じて効果が増える
+phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
+「終盤、コーナー、順位率>=60、追い抜き」の後「is_last_straight_onetime==1」、目標速度1500(特殊11)、持続3.0
 
-無我夢中
-ラストスパートで中団以降にいると持久力を少し使って加速力が上がる＜差し・長距離＞
-->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40
-「長距離、差し、ラストスパート、順位率>=40」、加速4000、体力-200、持続1.5
+快進撃
+終盤が迫ったとき先頭にいるか先頭から4バ身以内だと速度と加速力が少し上がる＜先行・中距離＞
+->distance_type==3&running_style==2&phase_laterhalf_random==1&distance_diff_top<=10
+「中距離、先行、中盤の後半、distance_diff_top<=10」、目標速度2500、加速3000、持続3.0
 
-がむしゃら
-ラストスパートで中団以降にいると持久力を少し使って加速力がわずかに上がる＜差し・長距離＞
-->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40
-「長距離、差し、ラストスパート、順位率>=40」、加速2000、体力-200、持続1.5
+確かな足取り
+終盤が迫ったとき先頭にいるか先頭から4バ身以内だと速度と加速力がちょっと上がる＜先行・中距離＞
+->distance_type==3&running_style==2&phase_laterhalf_random==1&distance_diff_top<=10
+「中距離、先行、中盤の後半、distance_diff_top<=10」、目標速度500、加速1000、持続3.0
 
 
-ヤマニンゼファー安田記念連覇！\n最後の末脚は素晴らしいものがありました\nヤマニンゼファーです！
-プレイヤーキャラ=ヤマニンゼファー(1078,0),プレイヤー着順=(1,0),レース名=安田記念(1011,0),?,実況対象勝利レース=(-1,0),シニア
-
-ヤマニンゼファー安田記念連覇！\n最後の末脚は素晴らしいものがありました\nヤマニンゼファーです！
-プレイヤーキャラ=ヤマニンゼファー(1078,0),プレイヤー着順=(1,0),レース名=安田記念(1011,0),?,実況対象勝利レース=(-1,0),シニア,着差<(2,0)
