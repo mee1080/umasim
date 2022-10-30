@@ -11,6 +11,7 @@ fun doSimulation2(
     chara: Chara,
     defaultSupport: Array<SupportCard>,
     targetStatus: StatusType,
+    rarity: IntRange = 2..3,
     talent: IntRange = 4..4,
     factor: List<Pair<StatusType, Int>>,
     testCount: Int,
@@ -22,7 +23,7 @@ fun doSimulation2(
         chara,
         defaultSupport,
         Store.supportList.filter {
-            talent.contains(it.talent) && it.rarity in (2..3) && (it.type == targetStatus)
+            talent.contains(it.talent) && it.rarity in rarity && (it.type == targetStatus)
         },
         factor,
         testCount,

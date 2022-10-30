@@ -21,11 +21,11 @@ def objective(trial):
 
     relationSpeed1 = trial.suggest_uniform('relationSpeed1', 0.2, 20.0)
     relationSpeed2 = trial.suggest_uniform('relationSpeed2', 0.2, 20.0)
-#    relationSpeed3 = trial.suggest_uniform('relationSpeed3', 0.2, 20.0)
+    relationSpeed3 = trial.suggest_uniform('relationSpeed3', 0.2, 20.0)
 #    relationStamina1 = trial.suggest_uniform('relationStamina1', 0.2, 20.0)
 #    relationStamina2 = trial.suggest_uniform('relationStamina2', 0.2, 20.0)
 #    relationStamina3 = trial.suggest_uniform('relationStamina3', 0.2, 20.0)
-    relationPower1 = trial.suggest_uniform('relationPower1', 0.2, 20.0)
+#    relationPower1 = trial.suggest_uniform('relationPower1', 0.2, 20.0)
 #    relationPower2 = trial.suggest_uniform('relationPower2', 0.2, 20.0)
 #    relationGuts1 = trial.suggest_uniform('relationGuts1', 0.2, 20.0)
 #    relationGuts2 = trial.suggest_uniform('relationGuts2', 0.2, 20.0)
@@ -65,6 +65,7 @@ def objective(trial):
           f' --factor POWER 3 --factor POWER 3 --factor STAMINA 3'
     """
 
+    """
     cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GRAND_LIVE'\
           f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
           f' --support "[迫る熱に押されて]キタサンブラック" 4'\
@@ -83,6 +84,26 @@ def objective(trial):
           f' --relation FRIEND 0 {relationFriend1}'\
           f' --factor POWER 3 --factor POWER 3 --factor POWER 3'\
           f' --factor POWER 3 --factor STAMINA 3 --factor STAMINA 3'
+    """
+
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GRAND_LIVE'\
+          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --support "[迫る熱に押されて]キタサンブラック" 4'\
+          f' --support "[Q≠0]アグネスタキオン" 4'\
+          f' --support "[おセンチ注意報♪]マルゼンスキー" 4'\
+          f' --support "[感謝は指先まで込めて]ファインモーション" 4'\
+          f' --support "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" 4'\
+          f' --support "[from the GROUND UP]ライトハロー" 4'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25'\
+          f' --relation SPEED 0 {relationSpeed1}'\
+          f' --relation SPEED 1 {relationSpeed2}'\
+          f' --relation SPEED 2 {relationSpeed3}'\
+          f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --relation WISDOM 1 {relationWisdom2}'\
+          f' --relation FRIEND 0 {relationFriend1}'\
+          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
+          f' --factor GUTS 3 --factor STAMINA 3 --factor STAMINA 3'
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -90,7 +111,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='ls2p1w2f_4',
+    study_name='ls3w2f_1',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'

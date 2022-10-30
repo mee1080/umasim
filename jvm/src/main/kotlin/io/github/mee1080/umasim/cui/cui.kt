@@ -591,6 +591,7 @@ fun openCui(args: Array<String>) {
 //        Runner.mileEvaluateSetting,
 //    )
 
+    // スピ2賢さ2ルビーハロー
 //    doSimulation2(
 //        Scenario.GRAND_LIVE,
 //        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
@@ -609,22 +610,42 @@ fun openCui(args: Array<String>) {
 //        GrandLiveFactorBasedActionSelector.speed2Power1Wisdom2Friend1,
 //        Runner.grandLiveMileEvaluateSetting,
 //    )
+//    doSimulation2(
+//        Scenario.GRAND_LIVE,
+//        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//            "[Q≠0]アグネスタキオン" to 4,
+//            "[嗚呼華麗ナル一族]ダイイチルビー" to 4,
+//            "[from the GROUND UP]ライトハロー" to 4,
+//        ).toTypedArray(),
+////        StatusType.WISDOM, 0..4,
+//        Store.getSupportByName(*((0..4).map { "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to it }.toTypedArray())),
+////        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
+//        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
+//        10000,
+//        GrandLiveFactorBasedActionSelector.speed2Power1Wisdom2Friend1,
+//        Runner.grandLiveMileEvaluateSetting,
+//    )
+
+    // スピ3賢さ2ハロー
     doSimulation2(
         Scenario.GRAND_LIVE,
         Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
         Store.getSupportByName(
             "[迫る熱に押されて]キタサンブラック" to 4,
-            "[感謝は指先まで込めて]ファインモーション" to 4,
             "[Q≠0]アグネスタキオン" to 4,
-            "[嗚呼華麗ナル一族]ダイイチルビー" to 4,
+            "[感謝は指先まで込めて]ファインモーション" to 4,
+            "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
             "[from the GROUND UP]ライトハロー" to 4,
         ).toTypedArray(),
-//        StatusType.WISDOM, 0..4,
-        Store.getSupportByName(*((0..4).map { "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to it }.toTypedArray())),
+        targetStatus = StatusType.SPEED, rarity = 3..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
 //        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
-        factor(StatusType.POWER, 4) + factor(StatusType.WISDOM, 2),
-        10000,
-        GrandLiveFactorBasedActionSelector.speed2Power1Wisdom2Friend1,
-        Runner.grandLiveMileEvaluateSetting,
+        factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
+        testCount = 10000,
+        option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
+        evaluateSetting = Runner.grandLiveMileEvaluateSetting,
     )
 }
