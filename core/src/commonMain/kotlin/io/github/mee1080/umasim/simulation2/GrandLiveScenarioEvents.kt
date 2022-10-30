@@ -37,6 +37,8 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
 
             72 -> base.applyLive(selector)
 
+            78 -> base.purchaseBeforeLive(selector)
+
             else -> base
         }
     }

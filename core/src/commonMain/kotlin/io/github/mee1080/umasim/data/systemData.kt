@@ -507,7 +507,7 @@ val specialSongs = listOf(
         true,
     ),
     SongLesson(
-        "GIRLS' LEGEND U (特別",
+        "GIRLS' LEGEND U (特別)",
         Performance(),
         StatusBonus(Status(10, 10, 10, 10, 10)),
         LiveBonus.FriendTraining10,

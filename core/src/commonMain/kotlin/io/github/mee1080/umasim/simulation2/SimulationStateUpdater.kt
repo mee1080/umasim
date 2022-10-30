@@ -281,13 +281,19 @@ fun SimulationState.addLesson(lesson: Lesson): SimulationState {
     )
 }
 
-fun SimulationState.applyLive(selector: ActionSelector): SimulationState {
-    val liveStatus = liveStatus ?: return this
+fun SimulationState.purchaseBeforeLive(selector: ActionSelector): SimulationState {
     var state = this
     while (true) {
         val lesson = selector.selectBeforeLiveLesson(state) ?: break
         state = state.purchaseLesson(lesson)
     }
+    return state
+}
+
+fun SimulationState.applyLive(selector: ActionSelector): SimulationState {
+    if (liveStatus == null) return this
+    val state = purchaseBeforeLive(selector)
+    val liveStatus = state.liveStatus!!
     val newLesson = liveStatus.newLesson
     var special = ""
     var songCount = 0

@@ -39,13 +39,19 @@ data class LiveStatus(
 
     val newLesson by lazy { learnedLesson.subList(livedLesson.size + 1, learnedLesson.size) }
 
+    val newSongCount by lazy { newLesson.count { it is SongLesson } }
+
     override fun trainingUp(type: StatusType): Int {
         return learnedBonusList.mapNotNull { it as? TrainingBonus }.sumOf { it.valueOf(type) }
     }
 
     override val friendTrainingUp by lazy { livedBonusList.sumOf { it.friendTraining } }
 
+    val friendTrainingUpAfterLive by lazy { friendTrainingUp + newLesson.sumOf { it.liveBonus?.friendTraining ?: 0 } }
+
     override val specialityRateUp by lazy { livedBonusList.sumOf { it.specialityRate } }
+
+    val specialityRateUpAfterLive by lazy { friendTrainingUp + newLesson.sumOf { it.liveBonus?.specialityRate ?: 0 } }
 }
 
 enum class LivePeriod(val lessonPeriod: LessonPeriod) {

@@ -1,6 +1,5 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Lesson
 import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.Status
 
@@ -9,7 +8,6 @@ class SimulationHistoryItem(
     val status: Status,
     val state: SimulationState,
     val useItem: List<ShopItem>,
-    val purchasedLesson: List<Lesson>,
 ) {
     @Deprecated("use action", ReplaceWith("action"))
     val first

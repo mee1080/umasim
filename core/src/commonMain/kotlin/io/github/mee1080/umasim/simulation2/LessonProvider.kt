@@ -27,22 +27,7 @@ object LessonProvider {
         lessonCount: Int,
         learnedSongs: List<SongLesson>
     ): List<Lesson> {
-        val song = when (period) {
-            LivePeriod.Junior -> {
-                val count = lessonCount % 16
-                count == 2 || count == 5 || count == 9 || count == 14
-            }
-
-            LivePeriod.Senior2 -> {
-                val count = lessonCount % 15
-                count == 2 || count == 5 || count == 8 || count == 13
-            }
-
-            else -> {
-                val count = lessonCount % 17
-                count == 2 || count == 5 || count == 8 || count == 13
-            }
-        }
+        val song = isSong(period, lessonCount)
         val result = mutableListOf<Lesson>()
         if (song) {
             val songs = liveSongLesson[period]!! - learnedSongs.toSet()
@@ -66,5 +51,29 @@ object LessonProvider {
             result += lesson
         }
         return result
+    }
+
+    fun isSong(
+        period: LivePeriod,
+        lessonCount: Int,
+    ): Boolean {
+        return when (period) {
+            LivePeriod.Junior -> {
+                val count = lessonCount % 16
+                count == 2 || count == 5 || count == 9 || count == 14
+            }
+
+            LivePeriod.Senior2 -> {
+                val count = lessonCount % 15
+                count == 2 || count == 5 || count == 8 || count == 13
+            }
+
+            LivePeriod.Finals -> false
+
+            else -> {
+                val count = lessonCount % 17
+                count == 2 || count == 5 || count == 8 || count == 13
+            }
+        }
     }
 }

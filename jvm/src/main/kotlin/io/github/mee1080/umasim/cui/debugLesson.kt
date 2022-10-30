@@ -84,9 +84,7 @@ fun singleGrandLiveSimulation() {
         history.state.liveStatus?.let { liveStatus ->
             println(" ${history.state.status.performance}")
             println(" ${liveStatus.lessonSelection.joinToString { it.displayName }}")
-            history.purchasedLesson.forEach {
-                println(" ${it.displayName}")
-            }
+            println(" ${liveStatus.learnedLesson.reversed().joinToString { it.displayName }}")
         }
         println(" ${history.action.toShortString()}")
         println(" ${history.status}")
@@ -94,4 +92,5 @@ fun singleGrandLiveSimulation() {
     println(result.first)
     result.second.last().state.liveStatus?.learnedLesson?.forEach { println(it.displayName) }
     println(result.first.status)
+    result.second.last().state.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()?.forEach { println(it) }
 }

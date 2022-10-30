@@ -80,9 +80,9 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         override fun generateSelector() = GrandLiveFactorBasedActionSelector(this)
     }
 
-    var reservedLesson: Lesson? = null
+    private var reservedLesson: Lesson? = null
 
-    var waitLesson: Boolean = false
+    private var waitLesson: Boolean = false
 
     override fun init(state: SimulationState) {
         reservedLesson = null
@@ -100,12 +100,14 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         if (liveStatus != null) {
             if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${liveStatus.lessonSelection.joinToString { it.displayName }}")
             if (reservedLesson == null && !waitLesson) {
-                if (liveStatus.lessonSelection.first() is SongLesson) {
+                waitLesson = checkWaitLesson(state)
+                if (DEBUG_LESSON && waitLesson) println("${state.turn}: wait lesson ${liveStatus.lessonSelection.first().displayName} <- ${liveStatus.newLesson.joinToString { it.displayName }}")
+                reservedLesson = if (waitLesson) null else if (liveStatus.lessonSelection.first() is SongLesson) {
                     // 楽曲の場合最も評価の高いものを予約
-                    reservedLesson = liveStatus.lessonSelection.maxByOrNull { calcLessonScore(state, it) }
+                    liveStatus.lessonSelection.maxByOrNull { calcLessonScore(state, it) }
                 } else {
                     // 楽曲以外はその場で選択
-                    reservedLesson = selectLessonImmediately(state)
+                    selectLessonImmediately(state)
                 }
             }
             reservedLesson?.let { lesson ->
@@ -126,7 +128,12 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
             waitLesson = false
             return null
         }
+        reservedLesson = null
         if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${state.liveStatus!!.lessonSelection.joinToString { it.displayName }}")
+        if (checkWaitLesson(state)) {
+            if (DEBUG_LESSON) println("${state.turn}: wait lesson ${state.liveStatus!!.lessonSelection.first().displayName} <- ${state.liveStatus.newLesson.joinToString { it.displayName }}")
+            return null
+        }
         val lesson = selectLessonImmediately(state)
         if (lesson != null) {
             if (DEBUG_LESSON) println("${state.turn}: before live purchase ${lesson.displayName}")
@@ -172,6 +179,32 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
 
     private fun calcLessonCostScore(rest: Performance, baseCost: Int): Int {
         return rest.countOver(baseCost) * 1000 + rest.totalValue
+    }
+
+    private fun checkWaitLesson(state: SimulationState): Boolean {
+        val liveStatus = state.liveStatus ?: return false
+        return when (LivePeriod.turnToPeriod(state.turn)) {
+            LivePeriod.Junior -> {
+                return liveStatus.lessonSelection.first() is SongLesson && liveStatus.newSongCount >= 4 && liveStatus.friendTrainingUpAfterLive >= 10
+            }
+
+            LivePeriod.Classic1 -> {
+                return liveStatus.lessonSelection.first() is SongLesson && liveStatus.newSongCount >= 3 && liveStatus.friendTrainingUpAfterLive >= 15
+            }
+
+            LivePeriod.Classic2 -> {
+                return liveStatus.newSongCount >= 3 && liveStatus.friendTrainingUpAfterLive >= 15
+            }
+
+            LivePeriod.Senior2 -> {
+                return LessonProvider.isSong(
+                    LivePeriod.Senior2,
+                    liveStatus.lessonCount + 1
+                ) && liveStatus.friendTrainingUpAfterLive >= 55
+            }
+
+            else -> false
+        }
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
