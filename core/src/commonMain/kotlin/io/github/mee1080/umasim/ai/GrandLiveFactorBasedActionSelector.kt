@@ -80,16 +80,13 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         override fun generateSelector() = GrandLiveFactorBasedActionSelector(this)
     }
 
-    private var lastItemCheckedTurn = -1
+    var reservedLesson: Lesson? = null
 
-    private var whistleCount = 5
-
-    private var amuletCount = 5
+    var waitLesson: Boolean = false
 
     override fun init(state: SimulationState) {
-        lastItemCheckedTurn = -1
-        whistleCount = 5
-        amuletCount = 5
+        reservedLesson = null
+        waitLesson = false
     }
 
     override fun select(state: SimulationState, selection: List<Action>): Action {
@@ -102,37 +99,79 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         val liveStatus = state.liveStatus
         if (liveStatus != null) {
             if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${liveStatus.lessonSelection.joinToString { it.displayName }}")
-            val period = LivePeriod.turnToPeriod(state.turn)
-            val lesson = liveStatus.lessonSelection.mapNotNull {
-                val rest = (state.status.performance!! - it.cost)
-                if (rest.valid) it to rest else null
-            }.minByOrNull {
-                if (it.first is SongLesson) {
-                    when (it.first.liveBonus) {
-                        LiveBonus.FriendTraining10 -> 40000
-                        LiveBonus.FriendTraining5 -> 30000
-                        else -> {
-                            val learnBonus = it.first.learnBonus
-                            if (learnBonus is TrainingBonus) {
-                                when (learnBonus.type) {
-                                    StatusType.SPEED -> 18000 * learnBonus.value
-                                    StatusType.SKILL -> 10000 * learnBonus.value
-                                    StatusType.POWER -> 500
-                                    else -> 0
-                                }
-                            } else 0
-                        }
-                    } + it.second.countOver(period.lessonPeriod.baseCost) * 1000 + it.second.totalValue
+            if (reservedLesson == null && !waitLesson) {
+                if (liveStatus.lessonSelection.first() is SongLesson) {
+                    // 楽曲の場合最も評価の高いものを予約
+                    reservedLesson = liveStatus.lessonSelection.maxByOrNull { calcLessonScore(state, it) }
                 } else {
-                    it.second.countOver(period.lessonPeriod.baseCost) * 1000 + it.second.totalValue
+                    // 楽曲以外はその場で選択
+                    reservedLesson = selectLessonImmediately(state)
                 }
-            }?.first
-            if (lesson != null) {
-                if (DEBUG_LESSON) println("purchase ${lesson.displayName}")
-                return SelectedAction(lesson = lesson)
+            }
+            reservedLesson?.let { lesson ->
+                val rest = state.status.performance!! - lesson.cost
+                if (rest.valid) {
+                    if (DEBUG_LESSON) println("${state.turn}: in turn purchase ${lesson.displayName}")
+                    reservedLesson = null
+                    return SelectedAction(lesson = lesson)
+                }
+                if (DEBUG_LESSON) println("${state.turn}: reserved ${lesson.displayName} ${state.status.performance}")
             }
         }
         return SelectedAction(action = select(state, selection))
+    }
+
+    override fun selectBeforeLiveLesson(state: SimulationState): Lesson? {
+        if (waitLesson) {
+            waitLesson = false
+            return null
+        }
+        if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${state.liveStatus!!.lessonSelection.joinToString { it.displayName }}")
+        val lesson = selectLessonImmediately(state)
+        if (lesson != null) {
+            if (DEBUG_LESSON) println("${state.turn}: before live purchase ${lesson.displayName}")
+        }
+        return lesson
+    }
+
+    private fun selectLessonImmediately(state: SimulationState): Lesson? {
+        val liveStatus = state.liveStatus ?: return null
+        val period = LivePeriod.turnToPeriod(state.turn)
+        return liveStatus.lessonSelection.mapNotNull {
+            val rest = (state.status.performance!! - it.cost)
+            if (rest.valid) it to rest else null
+        }.minByOrNull {
+            calcLessonScore(state, it.first) + calcLessonCostScore(it.second, period.lessonPeriod.baseCost)
+        }?.first
+    }
+
+    private fun calcLessonScore(state: SimulationState, lesson: Lesson): Int {
+        return if (lesson is SongLesson) {
+            when (lesson.liveBonus) {
+                LiveBonus.FriendTraining10 -> 40000
+                LiveBonus.FriendTraining5 -> 30000
+                else -> {
+                    val learnBonus = lesson.learnBonus
+                    if (learnBonus is TrainingBonus) {
+                        when (learnBonus.type) {
+                            StatusType.SPEED -> 18000 * learnBonus.value
+                            StatusType.SKILL -> 10000 * learnBonus.value
+                            StatusType.POWER -> 500
+                            else -> 0
+                        }
+                    } else 0
+                }
+            }
+        } else {
+            when (val learnBonus = lesson.learnBonus) {
+                is StatusBonus -> if (learnBonus.status.hp > 0) return 1000 else 0
+                else -> 0
+            }
+        }
+    }
+
+    private fun calcLessonCostScore(rest: Performance, baseCost: Int): Int {
+        return rest.countOver(baseCost) * 1000 + rest.totalValue
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {

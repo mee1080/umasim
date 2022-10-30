@@ -281,8 +281,13 @@ fun SimulationState.addLesson(lesson: Lesson): SimulationState {
     )
 }
 
-fun SimulationState.applyLive(): SimulationState {
+fun SimulationState.applyLive(selector: ActionSelector): SimulationState {
     val liveStatus = liveStatus ?: return this
+    var state = this
+    while (true) {
+        val lesson = selector.selectBeforeLiveLesson(state) ?: break
+        state = state.purchaseLesson(lesson)
+    }
     val newLesson = liveStatus.newLesson
     var special = ""
     var songCount = 0
@@ -330,7 +335,7 @@ fun SimulationState.applyLive(): SimulationState {
             skillPt = skillPtUp, fanCount = fanCountBase,
         )
     }
-    return copy(
+    return state.copy(
         status = status + statusUp,
         liveStatus = liveStatus.applyLive(),
     )

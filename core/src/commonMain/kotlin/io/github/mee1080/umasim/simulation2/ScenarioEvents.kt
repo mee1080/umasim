@@ -23,15 +23,15 @@ import io.github.mee1080.umasim.data.Status
 interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
     fun initialStatus(status: Status): Status = status
-    fun beforeAction(state: SimulationState): SimulationState? = null
-    fun afterAction(state: SimulationState): SimulationState? = null
+    fun beforeAction(state: SimulationState): SimulationState = state
+    fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState = state
     fun onTurnEnd(state: SimulationState): SimulationState = state
     fun afterSimulation(state: SimulationState): SimulationState = state
 }
 
 abstract class CommonScenarioEvents : ScenarioEvents {
 
-    override fun beforeAction(state: SimulationState): SimulationState? {
+    override fun beforeAction(state: SimulationState): SimulationState {
         return when (state.turn) {
             // ジュニア新年
             25 -> state
@@ -52,7 +52,8 @@ abstract class CommonScenarioEvents : ScenarioEvents {
             55 -> state
                 .updateFactor()
                 .updateStatus { it + Status(motivation = 1) }
-            else -> null
+
+            else -> state
         }
     }
 

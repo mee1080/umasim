@@ -18,7 +18,7 @@ class ClimaxScenarioEvents : ScenarioEvents {
         )
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState? {
+    override fun beforeAction(state: SimulationState): SimulationState {
         return when (state.turn) {
             // クラシック継承
             31 -> state
@@ -29,7 +29,7 @@ class ClimaxScenarioEvents : ScenarioEvents {
             // シニア継承
             55 -> state
                 .updateFactor()
-            else -> null
+            else -> state
         }
     }
 

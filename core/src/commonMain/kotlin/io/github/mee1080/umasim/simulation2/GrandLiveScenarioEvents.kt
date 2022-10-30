@@ -4,8 +4,8 @@ import io.github.mee1080.umasim.data.*
 
 class GrandLiveScenarioEvents : CommonScenarioEvents() {
 
-    override fun afterAction(state: SimulationState): SimulationState {
-        val base = super.afterAction(state) ?: state
+    override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.afterAction(state, selector)
         return when (base.turn) {
             // 導入
             4 -> base.copy(
@@ -22,20 +22,20 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
             )
 
             // ライブ
-            24 -> base.applyLive()
+            24 -> base.applyLive(selector)
                 .addMember("[トレセン学園]サイレンススズカ")
                 .addMember("[トレセン学園]アグネスタキオン")
                 .addMember(6)
 
-            36 -> base.applyLive()
+            36 -> base.applyLive(selector)
                 .addMember("[トレセン学園]ミホノブルボン")
                 .addMember(8)
 
-            48 -> base.applyLive().addMember(9)
+            48 -> base.applyLive(selector).addMember(9)
 
-            60 -> base.applyLive().addMember(11)
+            60 -> base.applyLive(selector).addMember(11)
 
-            72 -> base.applyLive()
+            72 -> base.applyLive(selector)
 
             else -> base
         }

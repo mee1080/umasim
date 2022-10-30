@@ -112,7 +112,7 @@ class Simulator(
         selector.init(state)
         repeat(turn) {
             state = state.onTurnChange()
-            state = scenarioEvents.beforeAction(state) ?: state
+            state = scenarioEvents.beforeAction(state)
             state = events.beforeAction(state)
             state = state.shuffleMember()
             var action: Action?
@@ -137,7 +137,7 @@ class Simulator(
             val result = randomSelect(action.resultCandidate)
             history.add(SimulationHistoryItem(action, result, state, useItem, purchasedLesson))
             state = state.applyAction(action, result)
-            state = scenarioEvents.afterAction(state) ?: events.afterAction(state)
+            state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)
         }
         state = scenarioEvents.afterSimulation(state)

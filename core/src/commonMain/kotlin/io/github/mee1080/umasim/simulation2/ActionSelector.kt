@@ -37,6 +37,8 @@ interface ActionSelector {
 
     fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction =
         SelectedAction(action = select(state, selection))
+
+    fun selectBeforeLiveLesson(state: SimulationState): Lesson? = null
 }
 
 interface ActionSelectorGenerator {
