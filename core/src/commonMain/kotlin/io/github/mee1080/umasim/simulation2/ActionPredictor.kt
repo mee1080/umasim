@@ -91,14 +91,24 @@ private fun SimulationState.calcTrainingResult(
             enableItem.list,
         )
     } else baseStatus
-    val successCandidate = listOf(successStatus to 100 - failureRate)
+    val successCandidate = if (liveAvailable && support.any { it.charaName == "ライトハロー" }) {
+        val eventRate = ((100 - failureRate) * 0.4).toInt()
+        val eventPerformance =
+            (status.performance!! + successStatus.performance!!).minimumType.random().asPerformance(20)
+        listOf(
+            successStatus + Status(performance = eventPerformance) to eventRate,
+            successStatus to 100 - failureRate - eventRate
+        )
+    } else listOf(successStatus to 100 - failureRate)
     val failureCandidate = when {
         failureRate == 0 -> {
             emptyList()
         }
+
         training.type == StatusType.WISDOM -> {
             listOf(Status(hp = successStatus.hp) to failureRate)
         }
+
         failureRate >= 30 -> {
             val target = trainingType.copyOf().apply { shuffle() }
                 .slice(0..1).map { it to -10 }.toTypedArray()
@@ -106,6 +116,7 @@ private fun SimulationState.calcTrainingResult(
                 Status(hp = 10, motivation = -2).add(training.type to -10, *target) to failureRate
             )
         }
+
         else -> {
             listOf(Status(motivation = -1).add(training.type to -5) to failureRate)
         }
@@ -147,6 +158,7 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
             78 -> raceStatus(5, 10, if (climax) 30 else 80)
             else -> Status()
         }
+
         RaceGrade.UNKNOWN -> Status()
     } else when (race.grade) {
         RaceGrade.PRE_OPEN -> raceStatus(1, 5, if (climax) 20 else 30)

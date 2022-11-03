@@ -640,12 +640,30 @@ fun openCui(args: Array<String>) {
             "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
             "[from the GROUND UP]ライトハロー" to 4,
         ).toTypedArray(),
-        targetStatus = StatusType.SPEED, rarity = 3..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+//        targetStatus = StatusType.SPEED, rarity = 3..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
 //        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
         factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
         testCount = 10000,
         option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
         evaluateSetting = Runner.grandLiveMileEvaluateSetting,
     )
+//    doSimulation2(
+//        Scenario.GRAND_LIVE,
+//        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[Q≠0]アグネスタキオン" to 4,
+//            "[おセンチ注意報♪]マルゼンスキー" to 4,
+//            "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
+//            "[from the GROUND UP]ライトハロー" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+////        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
+//        factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
+//        testCount = 10000,
+//        option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
+//        evaluateSetting = Runner.grandLiveMileEvaluateSetting,
+//    )
 }

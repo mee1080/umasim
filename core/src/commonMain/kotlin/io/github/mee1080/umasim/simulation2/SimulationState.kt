@@ -41,6 +41,8 @@ data class SimulationState(
 ) {
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
+    val liveAvailable get() = liveStatus != null
+
     val support get() = member.filter { !it.guest }
 
     val charm get() = condition.contains("愛嬌○")
