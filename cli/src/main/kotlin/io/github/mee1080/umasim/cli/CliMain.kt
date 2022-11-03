@@ -40,6 +40,7 @@ class CliMain : CliktCommand() {
     private val aoharu by option().pair().multiple()
     private val aoharuDefault by option().double().default(0.0)
     private val aoharuBurn by option().double()
+    private val performance by option().double().default(0.0)
 
     override fun run() {
         StoreLoader.load()
@@ -79,6 +80,7 @@ class CliMain : CliktCommand() {
                 hpFactor = hp,
                 motivationFactor = motivation,
                 relationFactor = relationFactor,
+                performanceFactor = performance,
             )::generateSelector
 
             Scenario.CLIMAX -> ClimaxFactorBasedActionSelector.Option(

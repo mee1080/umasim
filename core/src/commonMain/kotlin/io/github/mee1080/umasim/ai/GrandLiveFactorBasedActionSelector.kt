@@ -100,6 +100,7 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
                 }
             }
         },
+        val performanceFactor: Double = 0.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = GrandLiveFactorBasedActionSelector(this)
     }
@@ -258,7 +259,8 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
                 status.wisdom.toDouble() * option.wisdomFactor +
                 status.skillPt.toDouble() * option.skillPtFactor +
                 status.hp.toDouble() * option.hpFactor +
-                status.motivation.toDouble() * option.motivationFactor
+                status.motivation.toDouble() * option.motivationFactor +
+                status.performanceValue.toDouble() * option.performanceFactor
         if (DEBUG) println("  $score $status")
         return score
     }

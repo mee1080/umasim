@@ -31,6 +31,7 @@ interface StatusValues {
     val hp: Number
     val motivation: Number
     val maxHp: Number
+    val performanceValue: Number
 }
 
 data class Status(
@@ -49,6 +50,8 @@ data class Status(
     val fanCount: Int = 0,
     val performance: Performance? = null,
 ) : StatusValues {
+
+    override val performanceValue = performance?.totalValue ?: 0
 
     val statusTotal by lazy { speed + stamina + power + guts + wisdom }
 

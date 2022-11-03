@@ -13,6 +13,8 @@ data class ExpectedStatus(
     val performance: ExpectedPerformance? = null,
 ) : StatusValues {
 
+    override val performanceValue = performance?.totalValue ?: 0.0
+
     val statusTotal by lazy { speed + stamina + power + guts + wisdom }
 
     val totalPlusSkillPt by lazy { statusTotal + skillPt }
@@ -31,7 +33,7 @@ data class ExpectedStatus(
         hp + status.hp * rate,
         motivation + status.motivation * rate,
         maxHp + status.maxHp * rate,
-        performance?.add(rate, status.performance),
+        performance?.add(rate, status.performance) ?: status.performance?.let { ExpectedPerformance().add(rate, it) },
     )
 
     fun get(statusType: StatusType): Double {
@@ -56,7 +58,7 @@ data class ExpectedStatus(
         hp + status.hp,
         motivation + status.motivation,
         maxHp + status.maxHp,
-        performance?.plus(status.performance),
+        performance?.plus(status.performance) ?: status.performance,
     )
 
     operator fun div(divider: Double) = ExpectedStatus(
