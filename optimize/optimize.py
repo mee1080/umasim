@@ -14,7 +14,7 @@ def objective(trial):
 #    aoharuClassic2 = trial.suggest_uniform('aoharuClassic2', 0.0, 30.0)
 #    aoharuSenior = trial.suggest_uniform('aoharuSenior', 0.0, 30.0)
 #    aoharuBurn = trial.suggest_uniform('aoharuBurn', 0.0, 30.0)
-    performance = trial.suggest_uniform('skillPt', 0.1, 1.0)
+#    performance = trial.suggest_uniform('skillPt', 0.1, 1.0)
 
 #    cmd = f'java -jar ../cli/build/libs/cli.jar --count 50000 --chara "[超特急！フルカラー特殊PP]アグネスデジタル" 5 5 --support "[迫る熱に押されて]キタサンブラック" 4 --support "[袖振り合えば福となる♪]マチカネフクキタル" 4 --support "[感謝は指先まで込めて]ファインモーション" 4 --support "[願いまでは拭わない]ナイスネイチャ" 4 --support "[幸せは曲がり角の向こう]ライスシャワー" 4 --support "[徹底管理主義]樫本理子" 4 --speed {speed} --stamina {stamina} --power {power} --guts {guts} --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25 --relation SPEED 0 {relationSpeed1} --relation SPEED 1 {relationSpeed2} --relation POWER 0 {relationPower} --relation WISDOM 0 {relationWisdom1} --relation WISDOM 1 {relationWisdom2} --aoharu 24 {aoharuJunior} --aoharu 36 {aoharuClassic1} --aoharu 48 {aoharuClassic2} --aoharu-default {aoharuSenior} --aoharu-burn {aoharuBurn} --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3 --factor POWER 3 --factor POWER 3'
 
@@ -87,6 +87,7 @@ def objective(trial):
           f' --factor POWER 3 --factor STAMINA 3 --factor STAMINA 3'
     """
 
+    """
     cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GRAND_LIVE'\
           f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
           f' --support "[迫る熱に押されて]キタサンブラック" 4'\
@@ -106,6 +107,26 @@ def objective(trial):
           f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
           f' --factor GUTS 3 --factor STAMINA 3 --factor STAMINA 3'\
           f' --performance {performance}
+    """
+
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario URA'\
+          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --support "[迫る熱に押されて]キタサンブラック" 4'\
+          f' --support "[Q≠0]アグネスタキオン" 4'\
+          f' --support "[おセンチ注意報♪]マルゼンスキー" 4'\
+          f' --support "[感謝は指先まで込めて]ファインモーション" 4'\
+          f' --support "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" 4'\
+          f' --support "[from the GROUND UP]ライトハロー" 4'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25'\
+          f' --relation SPEED 0 {relationSpeed1}'\
+          f' --relation SPEED 1 {relationSpeed2}'\
+          f' --relation SPEED 2 {relationSpeed3}'\
+          f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --relation WISDOM 1 {relationWisdom2}'\
+          f' --relation FRIEND 0 {relationFriend1}'\
+          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
+          f' --factor GUTS 3 --factor STAMINA 3 --factor STAMINA 3
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -113,7 +134,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='ls3w2f_1',
+    study_name='us3w2f_1',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'
