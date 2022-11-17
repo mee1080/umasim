@@ -39,7 +39,7 @@ object Calculator {
         val type: StatusType = StatusType.NONE,
     ) {
         fun setTeamMember(teamJoinCount: Int) = copy(
-            member = member + if (scenario == Scenario.AOHARU || scenario == Scenario.GRAND_LIVE) createTeamMemberState(
+            member = member + if (scenario == Scenario.URA || scenario == Scenario.AOHARU || scenario == Scenario.GRAND_LIVE) createTeamMemberState(
                 teamJoinCount,
                 scenario,
             ) else emptyList()

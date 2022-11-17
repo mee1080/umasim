@@ -125,8 +125,8 @@ def objective(trial):
           f' --relation WISDOM 0 {relationWisdom1}'\
           f' --relation WISDOM 1 {relationWisdom2}'\
           f' --relation FRIEND 0 {relationFriend1}'\
-          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
-          f' --factor GUTS 3 --factor STAMINA 3 --factor STAMINA 3
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -134,7 +134,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='us3w2f_1',
+    study_name='us3w2f_2',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'

@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
@@ -50,6 +51,14 @@ fun TrainingInfo(model: ViewModel, state: State) {
         state.trainingLevel,
         model::updateTrainingLevel,
     )
+    if (state.scenario == Scenario.URA) {
+        Div {
+            Text("ハッピーミーク：")
+            LabeledCheckbox("specialMember", "参加", state.teamJoinCount >= 1) {
+                model.updateSpecialMember(it)
+            }
+        }
+    }
     if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
         Div {
             Text("サポカ外参加人数")

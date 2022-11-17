@@ -24,6 +24,7 @@ import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
+import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
@@ -166,13 +167,23 @@ class ViewModel(val scope: CoroutineScope) {
     }
 
     fun updateScenario(scenario: Scenario) {
-        updateState { it.copy(scenario = scenario).createRaceSetting() }
+        updateState {
+            it.copy(scenario = scenario)
+                .createRaceSetting()
+                .applyIf(scenario == Scenario.URA && it.teamJoinCount > 1) {
+                    copy(teamJoinCount = 1)
+                }
+        }
     }
 
     fun updateTeamJoinCount(delta: Int) {
         if (delta + state.teamJoinCount in 0..5) {
             updateState { it.copy(teamJoinCount = it.teamJoinCount + delta) }
         }
+    }
+
+    fun updateSpecialMember(join: Boolean) {
+        updateState { it.copy(teamJoinCount = if (join) 1 else 0) }
     }
 
     fun updateTrainingType(trainingType: Int) {

@@ -99,6 +99,23 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
             motivationFactor = 25.0,
         )
 
+        val uraMileSpeed3Wisdom2 = Option(
+            speedFactor = 0.9,
+            staminaFactor = 1.9,
+            powerFactor = 1.9,
+            gutsFactor = 0.25,
+            wisdomFactor = 1.1,
+            hpFactor = 1.1,
+            skillPtFactor = 0.7,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> if (rank == 0) 13.25 else if (rank == 1) 12.7 else 17.65
+                    StatusType.WISDOM -> if (rank == 0) 8.85 else 14.9
+                    else -> 0.0
+                }
+            },
+        )
+
         val aoharuSpeedWisdom = speedWisdom.let { it.copy(hpFactor = it.hpFactor * 0.9) }
 
         val aoharuPowerWisdom = Option(

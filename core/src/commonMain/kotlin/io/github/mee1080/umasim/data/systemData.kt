@@ -14,7 +14,7 @@ internal val trainingData = listOf(
     TrainingBase(toScenario(1), toSupportType("G"), 1, 532, Status(5, 0, 5, 8, 0, 4, -22)),
     TrainingBase(toScenario(1), toSupportType("G"), 2, 536, Status(5, 0, 5, 9, 0, 4, -23)),
     TrainingBase(toScenario(1), toSupportType("G"), 3, 540, Status(5, 0, 5, 10, 0, 4, -24)),
-    TrainingBase(toScenario(1), toSupportType("G"), 4, 544, Status(6, 0, 5, 11, 0, 4, -26)),
+    TrainingBase(toScenario(1), toSupportType("G"), 4, 544, Status(5, 0, 5, 12, 0, 4, -26)),
     TrainingBase(toScenario(1), toSupportType("G"), 5, 548, Status(6, 0, 5, 13, 0, 4, -28)),
     TrainingBase(toScenario(1), toSupportType("H"), 1, 507, Status(0, 10, 0, 6, 0, 4, -19)),
     TrainingBase(toScenario(1), toSupportType("H"), 2, 511, Status(0, 11, 0, 6, 0, 4, -20)),
