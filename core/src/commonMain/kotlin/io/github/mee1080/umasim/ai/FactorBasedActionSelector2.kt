@@ -100,17 +100,17 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         )
 
         val uraMileSpeed3Wisdom2 = Option(
-            speedFactor = 0.9,
-            staminaFactor = 1.9,
-            powerFactor = 1.9,
-            gutsFactor = 0.25,
-            wisdomFactor = 1.1,
-            hpFactor = 1.1,
-            skillPtFactor = 0.7,
+            speedFactor = 1.80,
+            staminaFactor = 0.96,
+            powerFactor = 1.09,
+            gutsFactor = 0.20,
+            wisdomFactor = 0.98,
+            hpFactor = 1.13,
+            skillPtFactor = 0.50,
             relationFactor = { type: StatusType, rank: Int, _: Int ->
                 when (type) {
-                    StatusType.SPEED -> if (rank == 0) 13.25 else if (rank == 1) 12.7 else 17.65
-                    StatusType.WISDOM -> if (rank == 0) 8.85 else 14.9
+                    StatusType.SPEED -> if (rank == 0) 17.0 else if (rank == 1) 16.7 else 19.0
+                    StatusType.WISDOM -> if (rank == 0) 14.4 else 14.8
                     else -> 0.0
                 }
             },
