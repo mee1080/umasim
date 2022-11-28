@@ -117,7 +117,11 @@ class CliMain : CliktCommand() {
             }
 
             "middle" -> Runner.middleEvaluateSetting
-            else -> Runner.longEvaluateSetting
+            else -> if (scenarioValue == Scenario.GRAND_LIVE) {
+                Runner.grandLiveLongEvaluateSetting
+            } else {
+                Runner.longEvaluateSetting
+            }
         }
         val result = Runner.runAndEvaluate(
             count, scenarioValue, charaData, supportList,

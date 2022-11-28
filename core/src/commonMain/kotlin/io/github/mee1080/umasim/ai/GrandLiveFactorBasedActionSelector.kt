@@ -77,6 +77,32 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
                 }
             }
         )
+
+        val speed3Stamina1Wisdom1Friend1 = Option().copy(
+            speedFactor = 1.59,
+            staminaFactor = 1.89,
+            powerFactor = 1.02,
+            gutsFactor = 0.91,
+            wisdomFactor = 0.88,
+            skillPtFactor = 0.97,
+            hpFactor = 1.24,
+            motivationFactor = 25.0,
+            relationFactor = { type, rank, _ ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        1 -> 11.1
+                        2 -> 11.8
+                        else -> 17.6
+                    }
+
+                    StatusType.STAMINA -> 3.53
+
+                    StatusType.WISDOM -> 17.5
+
+                    else -> 0.0
+                }
+            }
+        )
     }
 
     @Serializable

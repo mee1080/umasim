@@ -53,6 +53,15 @@ object Runner {
         StatusType.SKILL to (0.4 to Int.MAX_VALUE),
     )
 
+    val grandLiveLongEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.2 to 2000),
+        StatusType.STAMINA to (1.4 to 1000),
+        StatusType.POWER to (1.0 to 1100),
+        StatusType.GUTS to (0.8 to 700),
+        StatusType.WISDOM to (0.7 to 1000),
+        StatusType.SKILL to (0.4 to Int.MAX_VALUE),
+    )
+
     fun runAndEvaluate(
         count: Int,
         scenario: Scenario,
