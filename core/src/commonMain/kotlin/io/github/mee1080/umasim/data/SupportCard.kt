@@ -110,8 +110,10 @@ data class SupportCard(
         )
     }) / 1000000.0
 
-    fun motivationFactor(relation: Int) =
-        status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation) }
+    fun motivationFactor(
+        relation: Int,
+        friendTraining: Boolean,
+    ) = status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation, friendTraining) }
 
     fun getBaseBonus(type: StatusType, relation: Int) = when (type) {
         StatusType.SPEED -> status.speedBonus + unique.speedBonus

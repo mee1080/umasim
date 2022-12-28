@@ -41,9 +41,14 @@ data class SupportCardSpecialUnique(
 
     val needCheckFriendCount = type == 106
 
-    fun getMotivation(relation: Int): Int {
+    fun getMotivation(
+        relation: Int,
+        friendTraining: Boolean,
+    ): Int {
         return if (type == 101 && relation >= value0 && value1 == 2) {
             value2
+        } else if (type == 113 && friendTraining && value0 == 2) {
+            value1
         } else 0
     }
 

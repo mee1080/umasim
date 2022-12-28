@@ -77,8 +77,11 @@ object Calculator {
         val friend = support
             .map { it.getFriendBonus(info.training.type, info.currentStatus) }
             .fold(1.0) { acc, d -> acc * d }
+        val friendTraining = friend > 1.0001
         val motivationBonus =
-            1 + info.motivation / 10.0 * (1 + support.sumOf { it.card.motivationFactor(it.relation) } / 100.0)
+            1 + info.motivation / 10.0 * (1 + support.sumOf {
+                it.card.motivationFactor(it.relation, friendTraining)
+            } / 100.0)
         val trainingBonus =
             1 + support.sumOf {
                 it.card.trainingFactor(
