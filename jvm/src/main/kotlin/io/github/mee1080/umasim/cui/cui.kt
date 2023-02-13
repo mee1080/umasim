@@ -640,32 +640,32 @@ fun openCui(args: Array<String>) {
 //            "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
 //            "[from the GROUND UP]ライトハロー" to 4,
 //        ).toTypedArray(),
-//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-////        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+////        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[マーベラス☆ショコラSHOW]マーベラスサンデー" to it }.toTypedArray())),
 ////        Store.getSupportByName("[Q≠0]アグネスタキオン" to 4),
 //        factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
 //        testCount = 10000,
 //        option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
 //        evaluateSetting = Runner.grandLiveMileEvaluateSetting,
 //    )
-//    doSimulation2(
-//        Scenario.GRAND_LIVE,
-//        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
-//        Store.getSupportByName(
-//            "[迫る熱に押されて]キタサンブラック" to 4,
-//            "[Q≠0]アグネスタキオン" to 4,
-//            "[おセンチ注意報♪]マルゼンスキー" to 4,
-//            "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
-//            "[from the GROUND UP]ライトハロー" to 4,
-//        ).toTypedArray(),
-////        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
-////        Store.getSupportByName(*((0..4).map { "[気まぐれ絶佳]スイープトウショウ" to it }.toTypedArray())),
-//        Store.getSupportByName("[気まぐれ絶佳]スイープトウショウ" to 4),
-//        factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
-//        testCount = 10000,
-//        option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
-//        evaluateSetting = Runner.grandLiveMileEvaluateSetting,
-//    )
+    doSimulation2(
+        Scenario.GRAND_LIVE,
+        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
+        Store.getSupportByName(
+            "[迫る熱に押されて]キタサンブラック" to 4,
+            "[Q≠0]アグネスタキオン" to 4,
+            "[おセンチ注意報♪]マルゼンスキー" to 4,
+            "[駆けよ、駆けよ、駆けよ！！]オグリキャップ" to 4,
+            "[from the GROUND UP]ライトハロー" to 4,
+        ).toTypedArray(),
+//        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[フォンデンテで笑って]ヒシアケボノ" to it }.toTypedArray())),
+//        Store.getSupportByName("[フォンデンテで笑って]ヒシアケボノ" to 4),
+        factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
+        testCount = 10000,
+        option = GrandLiveFactorBasedActionSelector.speed3Wisdom2Friend1,
+        evaluateSetting = Runner.grandLiveMileEvaluateSetting,
+    )
 //    doSimulation2(
 //        Scenario.URA,
 //        Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5),
@@ -686,24 +686,24 @@ fun openCui(args: Array<String>) {
 //    )
 
     // スピ3スタ1賢さ1ハロー
-    doSimulation2(
-        Scenario.GRAND_LIVE,
-        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
-        Store.getSupportByName(
-            "[迫る熱に押されて]キタサンブラック" to 4,
-            "[Q≠0]アグネスタキオン" to 4,
-            "[おセンチ注意報♪]マルゼンスキー" to 4,
-            "[Dear Mr. C.B.]ミスターシービー" to 4,
-            "[from the GROUND UP]ライトハロー" to 4,
-        ).toTypedArray(),
-//        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[ハネ退け魔を退け願い込め]スペシャルウィーク" to it }.toTypedArray())),
-//        Store.getSupportByName("[一粒の安らぎ]スーパークリーク" to 4),
-        factor = factor(StatusType.STAMINA, 6),
-        testCount = 10000,
-        option = GrandLiveFactorBasedActionSelector.speed3Stamina1Wisdom1Friend1,
-        evaluateSetting = Runner.grandLiveLongEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.GRAND_LIVE,
+//        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[Q≠0]アグネスタキオン" to 4,
+//            "[おセンチ注意報♪]マルゼンスキー" to 4,
+//            "[Dear Mr. C.B.]ミスターシービー" to 4,
+//            "[from the GROUND UP]ライトハロー" to 4,
+//        ).toTypedArray(),
+////        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[ハネ退け魔を退け願い込め]スペシャルウィーク" to it }.toTypedArray())),
+////        Store.getSupportByName("[一粒の安らぎ]スーパークリーク" to 4),
+//        factor = factor(StatusType.STAMINA, 6),
+//        testCount = 10000,
+//        option = GrandLiveFactorBasedActionSelector.speed3Stamina1Wisdom1Friend1,
+//        evaluateSetting = Runner.grandLiveLongEvaluateSetting,
+//    )
 
     // スピ2スタ2賢さ1ハロー
 //    doSimulation2(
