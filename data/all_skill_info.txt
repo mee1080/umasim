@@ -3868,5 +3868,3 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ダート・中距離レースが得意になるこのスキルはイベント専用になります
 ->distance_type==3&ground_type==2
 「中距離、ダート」、根性600000、持続0
-
-
