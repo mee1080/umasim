@@ -87,6 +87,19 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
         Span { Text(state.totalRelation.toString()) }
     }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("速度スキル数：") }
+        MwcSlider(state.speedSkillCount, 0, 5) {
+            onInput { model.updateSpeedSkillCount(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.speedSkillCount.toString()) }
+    }
     if (state.scenario == Scenario.GRAND_LIVE) {
         Div {
             Span { Text("トレーニング上昇量：") }

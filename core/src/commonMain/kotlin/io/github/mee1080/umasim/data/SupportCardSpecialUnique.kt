@@ -29,6 +29,7 @@ data class SupportCardSpecialUnique(
             113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
             115 -> "全員の初期絆+5（${type},${value0},${value1},${value2},${value3},${value4}）"
+            116 -> "最大5個まで速度スキル所持数でトレ効果アップ"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -79,6 +80,7 @@ data class SupportCardSpecialUnique(
         status: Status,
         totalRelation: Int,
         trainingSupportCount: Int,
+        speedSkillCount: Int,
     ): Int {
         return if (type == 101 && relation >= value0 && value1 == 8) {
             value2
@@ -98,6 +100,8 @@ data class SupportCardSpecialUnique(
             trainingLevel * value1
         } else if (type == 114 && value0 == 8) {
             value2 - max(0, (100 - status.hp) / value1)
+        } else if (type == 116) {
+            4 * speedSkillCount
         } else 0
     }
 

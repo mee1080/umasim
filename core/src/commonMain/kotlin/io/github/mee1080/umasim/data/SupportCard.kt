@@ -134,6 +134,7 @@ data class SupportCard(
         currentStatus: Status,
         totalRelation: Int,
         trainingSupportCount: Int,
+        speedSkillCount: Int,
     ) = status.training + unique.training + specialUnique.sumOf {
         it.trainingFactor(
             type,
@@ -145,6 +146,7 @@ data class SupportCard(
             currentStatus,
             totalRelation,
             trainingSupportCount,
+            speedSkillCount,
         )
     }
 

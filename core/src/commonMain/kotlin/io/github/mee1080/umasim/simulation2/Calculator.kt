@@ -35,6 +35,7 @@ object Calculator {
         val fanCount: Int,
         val currentStatus: Status,
         val totalRelation: Int,
+        val speedSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
         val type: StatusType = StatusType.NONE,
     ) {
@@ -93,6 +94,7 @@ object Calculator {
                     info.currentStatus,
                     info.totalRelation,
                     support.size,
+                    info.speedSkillCount,
                 )
             } / 100.0
         val count = 1 + info.member.size * 0.05

@@ -40,6 +40,7 @@ class ExpectedCalculator(
         fanCount: Int,
         currentStatus: Status,
         totalRelation: Int,
+        speedSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
     ) {
 
@@ -53,6 +54,7 @@ class ExpectedCalculator(
             fanCount = fanCount,
             currentStatus = currentStatus,
             totalRelation = totalRelation,
+            speedSkillCount = speedSkillCount,
             liveStatus = liveStatus,
         )
 

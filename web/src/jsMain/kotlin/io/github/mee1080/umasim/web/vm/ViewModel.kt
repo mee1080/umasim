@@ -214,6 +214,10 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(totalRelation = totalRelation) }
     }
 
+    fun updateSpeedSkillCount(speedSkillCount: Int) {
+        updateState { it.copy(speedSkillCount = speedSkillCount) }
+    }
+
     fun updateShopItemMegaphone(index: Int) {
         updateState { it.copy(shopItemMegaphone = index) }
     }
@@ -277,6 +281,7 @@ class ViewModel(val scope: CoroutineScope) {
             fanCount,
             Status(maxHp = state.maxHp, hp = state.hp),
             state.totalRelation,
+            state.speedSkillCount,
             state.trainingLiveStateIfEnabled,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
@@ -306,6 +311,7 @@ class ViewModel(val scope: CoroutineScope) {
                     fanCount,
                     Status(maxHp = state.maxHp, hp = state.hp),
                     state.totalRelation,
+                    state.speedSkillCount,
                     state.trainingLiveStateIfEnabled,
                 ).setTeamMember(state.teamJoinCount)
             )
@@ -326,6 +332,7 @@ class ViewModel(val scope: CoroutineScope) {
                 fanCount,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
+                state.speedSkillCount,
                 state.trainingLiveStateIfEnabled,
             ),
             state.teamJoinCount,
@@ -405,6 +412,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.fanCount.toIntOrNull() ?: 1,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
+                state.speedSkillCount,
                 state.trainingLiveStateIfEnabled,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()

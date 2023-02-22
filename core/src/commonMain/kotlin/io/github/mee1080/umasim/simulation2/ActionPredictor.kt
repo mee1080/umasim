@@ -81,6 +81,8 @@ private fun SimulationState.calcTrainingResult(
             status.fanCount,
             status,
             totalRelation,
+            // TODO
+            0,
             liveStatus,
         )
     )

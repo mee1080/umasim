@@ -163,6 +163,7 @@ object Calculator {
                     Status(maxHp = 100, hp = 100),
                     600,
                     support.size,
+                    0,
                 )
             } / 100.0
         val count = 1 + support.size * 0.05 + if (scenario == Scenario.AOHARU) {
