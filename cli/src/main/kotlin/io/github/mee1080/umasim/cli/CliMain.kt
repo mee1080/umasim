@@ -70,6 +70,8 @@ class CliMain : CliktCommand() {
         }
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
+            // TODO GM
+
             Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(
                 speedFactor = speed,
                 staminaFactor = stamina,
@@ -109,6 +111,8 @@ class CliMain : CliktCommand() {
             )::generateSelector
         }
         val evaluateSetting = when (distance) {
+            // TODO GM
+
             "short" -> Runner.shortEvaluateSetting
             "mile" -> if (scenarioValue == Scenario.GRAND_LIVE) {
                 Runner.grandLiveMileEvaluateSetting

@@ -19,18 +19,19 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.material.MwcButton
 import io.github.mee1080.umasim.web.components.material.MwcSlider
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.attributes.disabled
+import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Span
-import org.jetbrains.compose.web.dom.Text
-import org.jetbrains.compose.web.dom.TextInput
+import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun TrainingSetting(model: ViewModel, state: State) {
@@ -148,6 +149,110 @@ fun TrainingSetting(model: ViewModel, state: State) {
                 onInput { model.updateLiveSpecialityRate(it.value) }
             }
             Span { Text("※サポカの得意率に加算で実装") }
+        }
+    }
+    if (state.scenario == Scenario.GM) {
+        H3 { Text("知識表") }
+        Div {
+            for (i in 12..13) {
+                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+            }
+        }
+        Div {
+            for (i in 8..11) {
+                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+            }
+        }
+        Div {
+            for (i in 0..7) {
+                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+            }
+        }
+        Div {
+            MwcButton({
+                onClick { model.clearGmKnowledge() }
+            }) { Text("クリア") }
+        }
+
+        H3 { Text("女神の叡智") }
+        val wisdomSelection = listOf(null, *Founder.values())
+        val selectedWisdom = state.gmState.wisdom
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                wisdomSelection.indexOfFirst { it == selectedWisdom }
+            )
+            onChange { model.updateGmWisdom(wisdomSelection[it.value!!.toInt()]) }
+        }) {
+            wisdomSelection.forEachIndexed { index, wisdom ->
+                Option(
+                    index.toString(),
+                    { if (wisdom == selectedWisdom) selected() }
+                ) { Text(wisdom?.longName ?: "なし") }
+            }
+        }
+
+        H3 { Text("知識Lv") }
+        Founder.values().forEach { founder ->
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("${founder.longName}：") }
+                MwcSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
+                    onInput { model.updateGmWisdomLevel(founder, it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.gmState.wisdomLevel[founder].toString()) }
+            }
+        }
+    }
+}
+
+@Composable
+fun KnowledgeTable(model: ViewModel, index: Int, knowledge: Knowledge?) {
+    Div({
+        style {
+            paddingLeft(16.px)
+            flexDirection(FlexDirection.Column)
+            display(DisplayStyle.LegacyInlineFlex)
+        }
+    }) {
+        val founderSelection = listOf(null, *Founder.values())
+        val selectedFounder = knowledge?.founder
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                founderSelection.indexOfFirst { it == selectedFounder }
+            )
+            onChange { model.updateGmKnowledgeFounder(index, founderSelection[it.value!!.toInt()]) }
+        }) {
+            founderSelection.forEachIndexed { index, founder ->
+                Option(
+                    index.toString(),
+                    { if (founder == selectedFounder) selected() }
+                ) { Text(founder?.colorName ?: "なし") }
+            }
+        }
+
+        val typeSelection = trainingTypeOrSkill
+        val selectedType = knowledge?.type ?: StatusType.SPEED
+        Select({
+            prop(
+                { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                typeSelection.indexOfFirst { it == selectedType }
+            )
+            onChange { model.updateGmKnowledgeType(index, typeSelection[it.value!!.toInt()]) }
+            if (knowledge == null) disabled()
+        }) {
+            typeSelection.forEachIndexed { index, type ->
+                Option(
+                    index.toString(),
+                    { if (type == selectedType) selected() }
+                ) { Text(type.displayName) }
+            }
         }
     }
 }

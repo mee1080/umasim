@@ -27,3 +27,13 @@ fun <T : R, R, D> T.applyIfNotNull(
     data: D?,
     action: T.(D) -> R,
 ) = data?.let { action(it) } ?: this
+
+fun <T> List<T>.mapIf(
+    condition: (T) -> Boolean,
+    action: T.() -> T
+) = map { if (condition(it)) it.action() else it }
+
+fun <T> List<T>.replace(
+    targetIndex: Int,
+    action: T.() -> T
+) = mapIndexed { index, item -> if (index == targetIndex) item.action() else item }

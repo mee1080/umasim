@@ -32,6 +32,8 @@ enum class StatusType(val displayName: String, val outingType: Boolean = false) 
 
 val trainingType = arrayOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM)
 
+val trainingTypeOrSkill = trainingType + StatusType.SKILL
+
 fun upInTraining(training: StatusType, target: StatusType): Boolean = if (target == StatusType.SKILL) true else {
     when (training) {
         StatusType.SPEED -> target == StatusType.SPEED || target == StatusType.POWER
@@ -92,6 +94,7 @@ enum class Scenario(val displayName: String) {
     AOHARU("アオハル"),
     CLIMAX("クライマックス"),
     GRAND_LIVE("グランドライブ"),
+    GM("グランドマスターズ"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -100,6 +103,7 @@ fun toScenario(value: Int) = when (value) {
     2 -> Scenario.AOHARU
     4 -> Scenario.CLIMAX
     3 -> Scenario.GRAND_LIVE
+    5 -> Scenario.GM
     else -> Scenario.URA
 }
 

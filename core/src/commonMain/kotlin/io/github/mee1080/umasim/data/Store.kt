@@ -148,4 +148,8 @@ object Store {
 
         fun getShuffledGuest() = notLinkSupportList.shuffled()
     }
+
+    object GM {
+        // TODO
+    }
 }

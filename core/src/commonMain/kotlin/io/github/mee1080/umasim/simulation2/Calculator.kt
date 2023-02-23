@@ -27,6 +27,7 @@ object Calculator {
 
     data class CalcInfo(
         val chara: Chara,
+        // TODO 叡智の効果で基本値変動あり
         val training: TrainingBase,
         val motivation: Int,
         val member: List<MemberState>,
@@ -37,7 +38,7 @@ object Calculator {
         val totalRelation: Int,
         val speedSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
-        val type: StatusType = StatusType.NONE,
+        val gmStatus: GmStatus?,
     ) {
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario == Scenario.AOHARU || scenario == Scenario.GRAND_LIVE) createTeamMemberState(
@@ -45,6 +46,14 @@ object Calculator {
                 scenario,
             ) else emptyList()
         )
+
+        val support by lazy { member.filter { !it.guest } }
+
+        val trainingLevelUp get() = gmStatus?.activeWisdom == Founder.Red
+
+        val hintFrequencyUp get() = gmStatus?.activeWisdom == Founder.Blue
+
+        val allFriend get() = gmStatus?.activeWisdom == Founder.Yellow
     }
 
     fun calcTrainingSuccessStatus(
@@ -54,31 +63,38 @@ object Calculator {
     fun calcTrainingSuccessStatusSeparated(
         info: CalcInfo,
     ): Pair<Status, Status> {
+        val friendTraining = if (info.allFriend) {
+            info.support.any { it.card.type != StatusType.FRIEND }
+        } else {
+            info.support.any { it.isFriendTraining(info.training.type) }
+        }
         val base = Status(
-            speed = calcTrainingStatus(info.copy(type = StatusType.SPEED)),
-            stamina = calcTrainingStatus(info.copy(type = StatusType.STAMINA)),
-            power = calcTrainingStatus(info.copy(type = StatusType.POWER)),
-            guts = calcTrainingStatus(info.copy(type = StatusType.GUTS)),
-            wisdom = calcTrainingStatus(info.copy(type = StatusType.WISDOM)),
-            skillPt = calcTrainingStatus(info.copy(type = StatusType.SKILL)),
-            hp = calcTrainingHp(info.training, info.member),
+            speed = calcTrainingStatus(info, StatusType.SPEED, friendTraining),
+            stamina = calcTrainingStatus(info, StatusType.STAMINA, friendTraining),
+            power = calcTrainingStatus(info, StatusType.POWER, friendTraining),
+            guts = calcTrainingStatus(info, StatusType.GUTS, friendTraining),
+            wisdom = calcTrainingStatus(info, StatusType.WISDOM, friendTraining),
+            skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining),
+            hp = calcTrainingHp(info.training, info.member, friendTraining),
         )
-        return base to calcScenarioStatus(info, base)
+        return base to calcScenarioStatus(info, base, friendTraining)
     }
 
     private fun calcTrainingStatus(
         info: CalcInfo,
+        targetType: StatusType,
+        friendTraining: Boolean,
     ): Int {
-        if (info.type == StatusType.NONE) throw IllegalArgumentException()
-        val baseStatus = info.training.status.get(info.type)
+        val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0
-        val support = info.member.filter { !it.guest }
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(info.type, it.relation) }
-        val charaBonus = info.chara.getBonus(info.type) / 100.0
-        val friend = support
-            .map { it.getFriendBonus(info.training.type, info.currentStatus) }
-            .fold(1.0) { acc, d -> acc * d }
-        val friendTraining = friend > 1.0001
+        val support = info.support
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(targetType, it.relation) }
+        val charaBonus = info.chara.getBonus(targetType) / 100.0
+        val friend = if (info.allFriend) {
+            support.map { it.getFriendBonusAll(info.currentStatus) }
+        } else {
+            support.map { it.getFriendBonus(info.training.type, info.currentStatus) }
+        }.fold(1.0) { acc, d -> acc * d }
         val motivationBonus =
             1 + info.motivation / 10.0 * (1 + support.sumOf {
                 it.card.motivationFactor(it.relation, friendTraining)
@@ -102,7 +118,11 @@ object Calculator {
         return min(100, (base * charaBonus * friend * motivationBonus * trainingBonus * count).toInt())
     }
 
-    private fun calcTrainingHp(training: TrainingBase, support: List<MemberState>): Int {
+    private fun calcTrainingHp(
+        training: TrainingBase,
+        support: List<MemberState>,
+        friendTraining: Boolean,
+    ): Int {
         val baseHp = training.status.hp
         return when {
             baseHp == 0 -> 0
@@ -112,11 +132,7 @@ object Calculator {
 
             else -> {
                 baseHp - (baseHp * support.sumOf {
-                    it.card.hpCost(support.any { member ->
-                        member.isFriendTraining(
-                            training.type
-                        )
-                    })
+                    it.card.hpCost(friendTraining)
                 } / 100.0).toInt()
             }
         }
@@ -168,6 +184,7 @@ object Calculator {
         val supportTypeCount: Int,
         val fanCountLevel: Int,
         val liveStatus: TrainingLiveStatus?,
+        val gmStatus: GmStatus?,
     )
 
     @ThreadLocal
@@ -188,6 +205,7 @@ object Calculator {
             },
             info.scenario, info.supportTypeCount, info.fanCount / 10000,
             info.liveStatus,
+            info.gmStatus,
         )
         val cached = expectedStatusCache[key]
         if (cached != null) {
@@ -251,11 +269,13 @@ object Calculator {
     private fun calcScenarioStatus(
         info: CalcInfo,
         base: Status,
+        friendTraining: Boolean,
     ) = when (info.scenario) {
         Scenario.URA -> Status()
         Scenario.AOHARU -> calcAoharuStatus(info.training, info.member)
         Scenario.CLIMAX -> Status()
-        Scenario.GRAND_LIVE -> calcLiveStatus(info, base)
+        Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
+        Scenario.GM -> calcGmStatus(info, base)
     }
 
     private fun calcAoharuStatus(
@@ -283,7 +303,8 @@ object Calculator {
 
     private fun calcLiveStatus(
         info: CalcInfo,
-        base: Status
+        base: Status,
+        friendTraining: Boolean,
     ): Status {
         return if (info.liveStatus != null) {
             val performanceValue = calcPerformanceValue(info)
@@ -297,7 +318,7 @@ object Calculator {
                 skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
                 performance = firstPerformanceType.asPerformance(performanceValue),
             )
-            val friendUp = if (info.member.any { it.isFriendTraining(info.training.type) }) {
+            val friendUp = if (friendTraining) {
                 val calc = base + trainingUp
                 val secondPerformanceType = selectSecondPerformanceType(info, firstPerformanceType)
                 Status(
@@ -373,5 +394,33 @@ object Calculator {
             skillPt = (status.skillPt * statusFactor / 100.0).toInt(),
             hp = (status.hp * hpFactor / 100.0).toInt(),
         )
+    }
+
+    private fun calcGmStatus(
+        info: CalcInfo,
+        base: Status
+    ): Status {
+        val gmStatus = info.gmStatus ?: return Status()
+        return Status(
+            speed = calcGmStatusSingle(gmStatus, StatusType.SPEED, base.speed),
+            stamina = calcGmStatusSingle(gmStatus, StatusType.STAMINA, base.stamina),
+            power = calcGmStatusSingle(gmStatus, StatusType.POWER, base.power),
+            guts = calcGmStatusSingle(gmStatus, StatusType.GUTS, base.guts),
+            wisdom = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.wisdom),
+            // TODO 体力消費ダウン計算式
+            hp = -(base.hp * gmStatus.wisdomHpCost / 100.0).toInt()
+        )
+    }
+
+    private fun calcGmStatusSingle(
+        gmStatus: GmStatus,
+        target: StatusType,
+        baseValue: Int,
+    ): Int {
+        if (baseValue == 0) return 0
+        // TODO トレ効果計算式
+        val bonus = gmStatus.getStatusBonus(target)
+        val factor = ((baseValue + bonus) * gmStatus.wisdomTrainingFactor / 100.0).toInt()
+        return bonus + factor
     }
 }

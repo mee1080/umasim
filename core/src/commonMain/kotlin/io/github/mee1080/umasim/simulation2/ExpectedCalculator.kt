@@ -42,6 +42,7 @@ class ExpectedCalculator(
         totalRelation: Int,
         speedSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
+        gmStatus: GmStatus?,
     ) {
 
         private val baseCalcInfo = Calculator.CalcInfo(
@@ -56,6 +57,7 @@ class ExpectedCalculator(
             totalRelation = totalRelation,
             speedSkillCount = speedSkillCount,
             liveStatus = liveStatus,
+            gmStatus = gmStatus,
         )
 
         fun toCalcInfo(type: StatusType, factors: List<Wrapper>, count: Int): Calculator.CalcInfo {

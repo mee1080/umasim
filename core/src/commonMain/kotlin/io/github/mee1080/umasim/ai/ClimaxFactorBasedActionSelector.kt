@@ -43,6 +43,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                         2 -> 10.9
                         else -> 14.7
                     }
+
                     else -> when (rank) {
                         1 -> 11.6
                         else -> 12.5
@@ -67,6 +68,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                         3 -> 7.6
                         else -> 7.8
                     }
+
                     else -> when (rank) {
                         1 -> 9.4
                         else -> 8.7
@@ -91,6 +93,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                         3 -> 7.6
                         else -> 7.8
                     }
+
                     else -> when (rank) {
                         1 -> 9.4
                         else -> 8.7
@@ -113,10 +116,12 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                         1 -> 6.78
                         else -> 14.92
                     }
+
                     StatusType.GUTS -> when (rank) {
                         1 -> 9.93
                         else -> 4.18
                     }
+
                     else -> when (rank) {
                         1 -> 13.98
                         else -> 10.06
@@ -214,6 +219,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 47, 60, 71 -> selectVital(state)
                 37, 39, 61, 63,
                 38, 40, 62, 64 -> selectCampItem(state, selection)
+
                 74, 76, 78 -> listOf("蹄鉄ハンマー・極")
                 else -> emptyList()
             } + listOfNotNull(
@@ -327,6 +333,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 state.totalRelation,
                 // TODO
                 0,
+                null,
                 null,
             ),
         ).first

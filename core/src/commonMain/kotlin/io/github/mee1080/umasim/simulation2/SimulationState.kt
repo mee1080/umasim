@@ -38,6 +38,7 @@ data class SimulationState(
     val possessionItem: List<ShopItem> = emptyList(),
     val enableItem: EnableItem = EnableItem(),
     val liveStatus: LiveStatus? = null,
+    val gmStatus: GmStatus? = null,
 ) {
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
@@ -110,6 +111,10 @@ data class MemberState(
     fun getFriendBonus(type: StatusType, currentStatus: Status) =
         if (isFriendTraining(type)) card.friendFactor(relation, friendCount, currentStatus) else 1.0
 
+    // TODO サポカ全てのトレーニングで友情発動、絆足りなくても？、友人は？
+    fun getFriendBonusAll(currentStatus: Status) =
+        if (card.type == StatusType.FRIEND) 1.0 else card.friendFactor(relation, friendCount, currentStatus)
+
     val wisdomFriendRecovery get() = if (isFriendTraining(StatusType.WISDOM)) card.wisdomFriendRecovery else 0
     val hint = supportState?.hintIcon == true
     fun getTrainingRelation(charm: Boolean) = getTrainingRelation(if (charm) 2 else 0)
@@ -139,6 +144,10 @@ object ClimaxMemberState : ScenarioMemberState {
 
 object GrandLiveMemberState : ScenarioMemberState {
     override fun toString() = "GrandLive"
+}
+
+object GmMemberState : ScenarioMemberState {
+    override fun toString() = "GM"
 }
 
 data class AoharuMemberState(

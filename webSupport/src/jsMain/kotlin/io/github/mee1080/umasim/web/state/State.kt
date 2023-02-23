@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.simulation.Calculator
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
+import io.github.mee1080.umasim.util.replace
 
 enum class Page(val displayName: String, val icon: String) {
     Top("育成", "trending_up"),
@@ -35,7 +36,7 @@ data class State(
     val rotationState: RotationState? = null,
     val lessonState: LessonState = LessonState(),
 
-    val scenario: Scenario = Scenario.GRAND_LIVE,
+    val scenario: Scenario = Scenario.GM,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),
@@ -76,6 +77,7 @@ data class State(
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),
     val trainingLiveState: TrainingLiveState = TrainingLiveState(),
     val expectedState: ExpectedState = ExpectedState(),
+    val gmState: GmState = GmState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -122,6 +124,8 @@ data class State(
     fun calcRaceStatus(value: Int) = (value * (1 + totalRaceBonus / 100.0)).toInt()
 
     val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
+
+    val gmStatusIfEnabled get() = if (scenario == Scenario.GM) gmState.toGmStatus() else null
 }
 
 data class SupportSelection(
@@ -406,4 +410,40 @@ data class LessonState(
             threshold.toDouble(),
         )
     }.getOrNull()
+}
+
+data class GmState(
+    val knowledgeTable: List<Knowledge?> = List(14) { null },
+    val wisdom: Founder? = null,
+    val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 }
+) {
+    fun toGmStatus() = GmStatus(
+        knowledgeTable1 = knowledgeTable.subList(0, 8).filterNotNull(),
+        knowledgeTable2 = knowledgeTable.subList(8, 12).filterNotNull(),
+        knowledgeTable3 = knowledgeTable.subList(12, 14).filterNotNull(),
+        activeWisdom = wisdom,
+        wisdomLevel = wisdomLevel,
+    )
+
+    fun updateFounder(index: Int, value: Founder?): GmState {
+        val knowledge = if (value == null) null else {
+            Knowledge(value, knowledgeTable[index]?.type ?: StatusType.SPEED)
+        }
+        return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
+    }
+
+    fun updateType(index: Int, type: StatusType): GmState {
+        val founder = knowledgeTable[index]?.founder ?: return this
+        val knowledge = Knowledge(founder, type)
+        return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
+    }
+
+    fun clearKnowledge(): GmState {
+        return copy(knowledgeTable = List(14) { null })
+    }
+
+    fun updateWisdomLevel(target: Founder, value: Int): GmState {
+        val newWisdomLevel = wisdomLevel.mapValues { if (it.key == target) value else it.value }
+        return copy(wisdomLevel = newWisdomLevel)
+    }
 }

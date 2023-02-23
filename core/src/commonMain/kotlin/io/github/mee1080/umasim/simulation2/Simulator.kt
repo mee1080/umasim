@@ -104,6 +104,7 @@ class Simulator(
             Scenario.AOHARU -> AoharuScenarioEvents()
             Scenario.CLIMAX -> ClimaxScenarioEvents()
             Scenario.GRAND_LIVE -> GrandLiveScenarioEvents()
+            Scenario.GM -> GmScenarioEvents()
         }
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))

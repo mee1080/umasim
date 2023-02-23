@@ -371,6 +371,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         // TODO
                         0,
                         state.liveStatus,
+                        state.gmStatus,
                     ),
                 ).first
                 expectedStatus.speed * option.speedFactor +

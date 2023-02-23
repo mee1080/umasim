@@ -258,6 +258,26 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(specialityRateUpInput = value)) }
     }
 
+    fun updateGmKnowledgeFounder(index: Int, value: Founder?) {
+        updateState { it.copy(gmState = it.gmState.updateFounder(index, value)) }
+    }
+
+    fun updateGmKnowledgeType(index: Int, value: StatusType) {
+        updateState { it.copy(gmState = it.gmState.updateType(index, value)) }
+    }
+
+    fun clearGmKnowledge() {
+        updateState { it.copy(gmState = it.gmState.clearKnowledge()) }
+    }
+
+    fun updateGmWisdom(value: Founder?) {
+        updateState { it.copy(gmState = it.gmState.copy(wisdom = value)) }
+    }
+
+    fun updateGmWisdomLevel(target: Founder, value: Int) {
+        updateState { it.copy(gmState = it.gmState.updateWisdomLevel(target, value)) }
+    }
+
 //    var trainingParamTest by mutableStateOf<TrainingParamTestModel?>(null)
 //
 //    fun updateTrainingParamTest(enabled: Boolean) {
@@ -283,6 +303,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.totalRelation,
             state.speedSkillCount,
             state.trainingLiveStateIfEnabled,
+            state.gmStatusIfEnabled,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -295,7 +316,7 @@ class ViewModel(val scope: CoroutineScope) {
         )
         val trainingItemBonus = when (state.scenario) {
             Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first, itemList)
-            Scenario.AOHARU, Scenario.GRAND_LIVE -> trainingResult.second
+            Scenario.AOHARU, Scenario.GRAND_LIVE, Scenario.GM -> trainingResult.second
             else -> Status()
         }
 
@@ -313,6 +334,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.totalRelation,
                     state.speedSkillCount,
                     state.trainingLiveStateIfEnabled,
+                    state.gmStatusIfEnabled,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
@@ -334,6 +356,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalRelation,
                 state.speedSkillCount,
                 state.trainingLiveStateIfEnabled,
+                state.gmStatusIfEnabled,
             ),
             state.teamJoinCount,
         )
@@ -414,6 +437,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalRelation,
                 state.speedSkillCount,
                 state.trainingLiveStateIfEnabled,
+                state.gmStatusIfEnabled,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(

@@ -84,6 +84,7 @@ private fun SimulationState.calcTrainingResult(
             // TODO
             0,
             liveStatus,
+            gmStatus,
         )
     )
     val successStatus = if (itemAvailable) {

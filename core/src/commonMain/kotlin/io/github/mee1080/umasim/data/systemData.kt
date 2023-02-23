@@ -104,6 +104,32 @@ internal val trainingData = listOf(
     TrainingBase(toScenario(3), toSupportType("W"), 3, 322, Status(2, 0, 0, 0, 8, 5, 5)),
     TrainingBase(toScenario(3), toSupportType("W"), 4, 323, Status(3, 0, 0, 0, 9, 5, 5)),
     TrainingBase(toScenario(3), toSupportType("W"), 5, 324, Status(4, 0, 0, 0, 10, 5, 5)),
+
+    TrainingBase(toScenario(5), toSupportType("S"), 1, 520, Status(8, 0, 4, 0, 0, 4, -19)),
+    TrainingBase(toScenario(5), toSupportType("S"), 2, 524, Status(9, 0, 4, 0, 0, 4, -20)),
+    TrainingBase(toScenario(5), toSupportType("S"), 3, 528, Status(10, 0, 4, 0, 0, 4, -21)),
+    TrainingBase(toScenario(5), toSupportType("S"), 4, 532, Status(11, 0, 5, 0, 0, 4, -23)),
+    TrainingBase(toScenario(5), toSupportType("S"), 5, 536, Status(12, 0, 6, 0, 0, 4, -25)),
+    TrainingBase(toScenario(5), toSupportType("P"), 1, 516, Status(0, 4, 9, 0, 0, 4, -20)),
+    TrainingBase(toScenario(5), toSupportType("P"), 2, 520, Status(0, 4, 10, 0, 0, 4, -21)),
+    TrainingBase(toScenario(5), toSupportType("P"), 3, 524, Status(0, 4, 11, 0, 0, 4, -22)),
+    TrainingBase(toScenario(5), toSupportType("P"), 4, 528, Status(0, 5, 12, 0, 0, 4, -24)),
+    TrainingBase(toScenario(5), toSupportType("P"), 5, 532, Status(0, 6, 13, 0, 0, 4, -26)),
+    TrainingBase(toScenario(5), toSupportType("G"), 1, 532, Status(2, 0, 2, 7, 0, 4, -20)),
+    TrainingBase(toScenario(5), toSupportType("G"), 2, 536, Status(2, 0, 2, 8, 0, 4, -21)),
+    TrainingBase(toScenario(5), toSupportType("G"), 3, 540, Status(2, 0, 2, 9, 0, 4, -22)),
+    TrainingBase(toScenario(5), toSupportType("G"), 4, 544, Status(3, 0, 2, 10, 0, 4, -24)),
+    TrainingBase(toScenario(5), toSupportType("G"), 5, 548, Status(3, 0, 3, 11, 0, 4, -26)),
+    TrainingBase(toScenario(5), toSupportType("H"), 1, 507, Status(0, 8, 0, 6, 0, 4, -20)),
+    TrainingBase(toScenario(5), toSupportType("H"), 2, 511, Status(0, 9, 0, 6, 0, 4, -21)),
+    TrainingBase(toScenario(5), toSupportType("H"), 3, 515, Status(0, 10, 0, 6, 0, 4, -22)),
+    TrainingBase(toScenario(5), toSupportType("H"), 4, 519, Status(0, 11, 0, 7, 0, 4, -24)),
+    TrainingBase(toScenario(5), toSupportType("H"), 5, 523, Status(0, 12, 0, 8, 0, 4, -26)),
+    TrainingBase(toScenario(5), toSupportType("W"), 1, 320, Status(2, 0, 0, 0, 6, 5, 5)),
+    TrainingBase(toScenario(5), toSupportType("W"), 2, 321, Status(2, 0, 0, 0, 7, 5, 5)),
+    TrainingBase(toScenario(5), toSupportType("W"), 3, 322, Status(2, 0, 0, 0, 8, 5, 5)),
+    TrainingBase(toScenario(5), toSupportType("W"), 4, 323, Status(3, 0, 0, 0, 9, 5, 5)),
+    TrainingBase(toScenario(5), toSupportType("W"), 5, 324, Status(4, 0, 0, 0, 10, 5, 5)),
 )
 
 internal val aoharuTrainingData = listOf(
@@ -196,6 +222,8 @@ internal val scenarioLinkData = mapOf(
     Scenario.AOHARU to setOf("タイキシャトル", "マチカネフクキタル", "ライスシャワー", "ハルウララ"),
     Scenario.CLIMAX to emptySet(),
     Scenario.GRAND_LIVE to setOf("スマートファルコン", "サイレンススズカ", "アグネスタキオン", "ミホノブルボン"),
+    // TODO シナリオリンクあれば追加
+    Scenario.GM to emptySet(),
 )
 
 val supportEffectName = mapOf(
@@ -930,5 +958,32 @@ val liveTechniqueCategoryRate = mapOf(
             TechniqueLessonCategory.SkillHint to 20,
             TechniqueLessonCategory.Rest to 12,
         ),
+    ),
+)
+
+val gmWisdomLevelEffect = mapOf(
+    Founder.Red to arrayOf(
+        WisdomLevelEffect(),
+        WisdomLevelEffect(hpCost = 10, trainingFactor = 5),
+        WisdomLevelEffect(hpCost = 15, trainingFactor = 8),
+        WisdomLevelEffect(hpCost = 18, trainingFactor = 11),
+        WisdomLevelEffect(hpCost = 20, trainingFactor = 13),
+        WisdomLevelEffect(hpCost = 23, trainingFactor = 15),
+    ),
+    Founder.Blue to arrayOf(
+        WisdomLevelEffect(),
+        WisdomLevelEffect(hintFrequency = 20, trainingEventFrequency = 20, trainingFactor = 5),
+        WisdomLevelEffect(hintFrequency = 25, trainingEventFrequency = 25, trainingFactor = 8),
+        WisdomLevelEffect(hintFrequency = 30, trainingEventFrequency = 30, trainingFactor = 11),
+        WisdomLevelEffect(hintFrequency = 33, trainingEventFrequency = 33, trainingFactor = 13),
+        WisdomLevelEffect(hintFrequency = 35, trainingEventFrequency = 35, trainingFactor = 15),
+    ),
+    Founder.Yellow to arrayOf(
+        WisdomLevelEffect(),
+        WisdomLevelEffect(supportEventEffect = 10, supportEventFrequency = 20, trainingFactor = 5),
+        WisdomLevelEffect(supportEventEffect = 15, supportEventFrequency = 40, trainingFactor = 8),
+        WisdomLevelEffect(supportEventEffect = 20, supportEventFrequency = 60, trainingFactor = 11),
+        WisdomLevelEffect(supportEventEffect = 23, supportEventFrequency = 80, trainingFactor = 13),
+        WisdomLevelEffect(supportEventEffect = 25, supportEventFrequency = 90, trainingFactor = 15),
     ),
 )

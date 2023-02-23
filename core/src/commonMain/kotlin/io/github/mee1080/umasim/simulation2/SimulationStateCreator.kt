@@ -32,6 +32,7 @@ fun SupportCard.toMemberState(
 
         Scenario.CLIMAX -> ClimaxMemberState
         Scenario.GRAND_LIVE -> GrandLiveMemberState
+        Scenario.GM -> GmMemberState
     }
 )
 
@@ -55,6 +56,7 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
 
         Scenario.CLIMAX -> ClimaxMemberState
         Scenario.GRAND_LIVE -> GrandLiveMemberState
+        Scenario.GM -> GmMemberState
     },
 )
 
