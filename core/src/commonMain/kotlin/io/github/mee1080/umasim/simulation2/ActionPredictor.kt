@@ -81,8 +81,8 @@ private fun SimulationState.calcTrainingResult(
             status.fanCount,
             status,
             totalRelation,
-            // TODO
-            0,
+            // TODO スキルPt160ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
+            min(5, status.skillPt / 160),
             liveStatus,
             gmStatus,
         )

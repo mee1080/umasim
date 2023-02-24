@@ -659,7 +659,7 @@ fun openCui(args: Array<String>) {
             "[from the GROUND UP]ライトハロー" to 4,
         ).toTypedArray(),
 //        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[フォンデンテで笑って]ヒシアケボノ" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[燦爛]メジロラモーヌ" to it }.toTypedArray())),
 //        Store.getSupportByName("[フォンデンテで笑って]ヒシアケボノ" to 4),
         factor = factor(StatusType.GUTS, 4) + factor(StatusType.STAMINA, 2),
         testCount = 10000,
