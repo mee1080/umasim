@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.material.MwcButton
 import io.github.mee1080.umasim.web.components.material.MwcSlider
+import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -170,7 +171,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
         Div {
             MwcButton({
-                onClick { model.clearGmKnowledge() }
+                onClickOrTouch { model.clearGmKnowledge() }
             }) { Text("クリア") }
         }
 

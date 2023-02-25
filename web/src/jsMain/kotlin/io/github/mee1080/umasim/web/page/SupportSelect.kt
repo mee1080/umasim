@@ -138,17 +138,14 @@ fun SupportSelect(model: ViewModel, state: State) {
                             val selection = WebConstants.displayStatusTypeList
                             val selectedValue = item.statusType
                             Select({
-                                prop(
-                                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                                    selection.indexOfFirst { it == selectedValue }
-                                )
+                                prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
+                                    selection.indexOfFirst { it == selectedValue })
                                 onChange { model.updateSupportType(index, selection[it.value!!.toInt()]) }
                             }) {
                                 selection.forEachIndexed { index, statusType ->
-                                    Option(
-                                        index.toString(),
-                                        { if (statusType == selectedValue) selected() }
-                                    ) { Text(statusType.displayName) }
+                                    Option(index.toString(), { if (statusType == selectedValue) selected() }) {
+                                        Text(statusType.displayName)
+                                    }
                                 }
                             }
                         }
@@ -161,17 +158,14 @@ fun SupportSelect(model: ViewModel, state: State) {
                             val selection = state.getSupportSelection(index)
                             val selectedValue = item.selectedSupport
                             Select({
-                                prop(
-                                    { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                                    selection.indexOfFirst { it.first == selectedValue }
-                                )
+                                prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
+                                    selection.indexOfFirst { it.first == selectedValue })
                                 onChange { model.updateSupport(index, it.value!!.toInt()) }
                             }) {
                                 selection.forEach { (index, card) ->
-                                    Option(
-                                        index.toString(),
-                                        { if (index == selectedValue) selected() }
-                                    ) { Text(card.displayName() + state.supportSortOrder.toInfo(card)) }
+                                    Option(index.toString(), { if (index == selectedValue) selected() }) {
+                                        Text(card.displayName() + state.supportSortOrder.toInfo(card))
+                                    }
                                 }
                             }
                             Div({ classes("after") })
@@ -189,10 +183,7 @@ fun SupportSelect(model: ViewModel, state: State) {
                             Text("絆")
                             item.relationSelection.forEach {
                                 LabeledRadio(
-                                    "relation$index",
-                                    "$it",
-                                    "$it",
-                                    item.relation == it
+                                    "relation$index", "$it", "$it", item.relation == it
                                 ) { model.updateRelation(index, it) }
                             }
                         }
@@ -208,10 +199,7 @@ fun SupportSelect(model: ViewModel, state: State) {
                                 Text("友情回数")
                                 (0..5).forEach {
                                     LabeledRadio(
-                                        "friendCount$index",
-                                        "$it",
-                                        "$it",
-                                        item.friendCount == it
+                                        "friendCount$index", "$it", "$it", item.friendCount == it
                                     ) { model.updateFriendCount(index, it) }
                                 }
                             }
@@ -235,6 +223,13 @@ fun SupportSelect(model: ViewModel, state: State) {
             }
         }) {
             Text("全員絆80")
+        }
+        MwcButton({
+            onClickOrTouch {
+                state.supportSelectionList.indices.forEach { model.updateJoin(it, false) }
+            }
+        }) {
+            Text("全員不参加")
         }
     }
 }
