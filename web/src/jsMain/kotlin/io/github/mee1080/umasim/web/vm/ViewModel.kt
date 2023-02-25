@@ -258,12 +258,12 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(trainingLiveState = it.trainingLiveState.copy(specialityRateUpInput = value)) }
     }
 
-    fun updateGmKnowledgeFounder(index: Int, value: Founder?) {
-        updateState { it.copy(gmState = it.gmState.updateFounder(index, value)) }
+    fun updateGmKnowledgeType(index: Int, value: StatusType?) {
+        updateState { it.copy(gmState = it.gmState.updateType(index, value)) }
     }
 
-    fun updateGmKnowledgeType(index: Int, value: StatusType) {
-        updateState { it.copy(gmState = it.gmState.updateType(index, value)) }
+    fun updateGmKnowledgeBonus(index: Int, value: Int) {
+        updateState { it.copy(gmState = it.gmState.updateBonus(index, value)) }
     }
 
     fun clearGmKnowledge() {

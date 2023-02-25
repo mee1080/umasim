@@ -30,8 +30,9 @@ data class GmStatus(
     val allFriend get() = activeWisdom == Founder.Yellow
 
     fun getStatusBonus(type: StatusType): Int {
-        // TODO ボーナス値調査
-        return knowledgeTable1.count { it.type == type } + knowledgeTable2.count { it.type == type } * 2 + knowledgeTable3.count { it.type == type } * 3
+        return knowledgeTable1.sumOf { it.getStatusBonus(type) } +
+                knowledgeTable2.sumOf { it.getStatusBonus(type) } +
+                knowledgeTable3.sumOf { it.getStatusBonus(type) }
     }
 
     fun addKnowledge(knowledge: Knowledge): GmStatus {
@@ -45,11 +46,13 @@ data class GmStatus(
             newKnowledgeTable2 = knowledgeTable2 + Knowledge(
                 newKnowledgeTable1[newKnowledgeTable1.size - 2].founder,
                 newKnowledgeTable1[newKnowledgeTable1.size - Random.nextInt(1, 3)].type,
+                2,
             )
             if (newKnowledgeTable2.size % 2 == 0) {
                 newKnowledgeTable3 = knowledgeTable3 + Knowledge(
                     newKnowledgeTable2[newKnowledgeTable2.size - 2].founder,
                     newKnowledgeTable2[newKnowledgeTable2.size - Random.nextInt(1, 3)].type,
+                    2,
                 )
                 if (newKnowledgeTable3.size == 2) {
                     newWisdom = newKnowledgeTable3[0].founder
@@ -103,7 +106,10 @@ data class GmStatus(
 data class Knowledge(
     val founder: Founder,
     val type: StatusType,
-)
+    val bonus: Int,
+) {
+    fun getStatusBonus(targetType: StatusType) = if (targetType == type) bonus else 0
+}
 
 data class WisdomLevelEffect(
     val trainingFactor: Int = 0,

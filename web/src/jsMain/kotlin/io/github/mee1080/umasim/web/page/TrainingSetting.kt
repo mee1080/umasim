@@ -19,7 +19,11 @@
 package io.github.mee1080.umasim.web.page
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Founder
+import io.github.mee1080.umasim.data.Knowledge
+import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.trainingTypeOrSkill
+import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.material.MwcButton
 import io.github.mee1080.umasim.web.components.material.MwcSlider
@@ -27,7 +31,6 @@ import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.disabled
 import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
@@ -221,38 +224,31 @@ fun KnowledgeTable(model: ViewModel, index: Int, knowledge: Knowledge?) {
             display(DisplayStyle.LegacyInlineFlex)
         }
     }) {
-        val founderSelection = listOf(null, *Founder.values())
-        val selectedFounder = knowledge?.founder
-        Select({
-            prop(
-                { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                founderSelection.indexOfFirst { it == selectedFounder }
-            )
-            onChange { model.updateGmKnowledgeFounder(index, founderSelection[it.value!!.toInt()]) }
-        }) {
-            founderSelection.forEachIndexed { index, founder ->
-                Option(
-                    index.toString(),
-                    { if (founder == selectedFounder) selected() }
-                ) { Text(founder?.colorName ?: "なし") }
-            }
-        }
-
-        val typeSelection = trainingTypeOrSkill
-        val selectedType = knowledge?.type ?: StatusType.SPEED
+        val typeSelection = listOf(null, *trainingTypeOrSkill)
+        val selectedType = knowledge?.type
         Select({
             prop(
                 { e: HTMLSelectElement, v -> e.selectedIndex = v },
                 typeSelection.indexOfFirst { it == selectedType }
             )
             onChange { model.updateGmKnowledgeType(index, typeSelection[it.value!!.toInt()]) }
-            if (knowledge == null) disabled()
         }) {
             typeSelection.forEachIndexed { index, type ->
                 Option(
                     index.toString(),
                     { if (type == selectedType) selected() }
-                ) { Text(type.displayName) }
+                ) { Text(type?.displayName ?: "なし") }
+            }
+        }
+
+        if (index >= 8) {
+            Div {
+                val selectedBonus = knowledge?.bonus ?: 2
+                for (i in 2..3) {
+                    LabeledRadio("knowledgeBonus$index", "$i", "$i", selectedBonus == i) {
+                        model.updateGmKnowledgeBonus(index, i)
+                    }
+                }
             }
         }
     }

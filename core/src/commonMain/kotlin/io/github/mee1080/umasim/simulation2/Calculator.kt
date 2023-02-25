@@ -402,7 +402,8 @@ object Calculator {
             stamina = calcGmStatusSingle(gmStatus, StatusType.STAMINA, base.stamina),
             power = calcGmStatusSingle(gmStatus, StatusType.POWER, base.power),
             guts = calcGmStatusSingle(gmStatus, StatusType.GUTS, base.guts),
-            wisdom = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.wisdom),
+            wisdom = calcGmStatusSingle(gmStatus, StatusType.WISDOM, base.wisdom),
+            skillPt = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.skillPt),
             // TODO 体力消費ダウン計算式
             hp = -(base.hp * gmStatus.wisdomHpCost / 100.0).toInt()
         )
@@ -414,7 +415,6 @@ object Calculator {
         baseValue: Int,
     ): Int {
         if (baseValue == 0) return 0
-        // TODO トレ効果計算式
         val bonus = gmStatus.getStatusBonus(target)
         val factor = ((baseValue + bonus) * gmStatus.wisdomTrainingFactor / 100.0).toInt()
         return bonus + factor

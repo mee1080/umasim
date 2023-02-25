@@ -425,16 +425,17 @@ data class GmState(
         wisdomLevel = wisdomLevel,
     )
 
-    fun updateFounder(index: Int, value: Founder?): GmState {
+    fun updateType(index: Int, value: StatusType?): GmState {
         val knowledge = if (value == null) null else {
-            Knowledge(value, knowledgeTable[index]?.type ?: StatusType.SPEED)
+            val bonus = knowledgeTable[index]?.bonus ?: if (index >= 8) 2 else 1
+            Knowledge(Founder.Red, value, bonus)
         }
         return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
     }
 
-    fun updateType(index: Int, type: StatusType): GmState {
-        val founder = knowledgeTable[index]?.founder ?: return this
-        val knowledge = Knowledge(founder, type)
+    fun updateBonus(index: Int, value: Int): GmState {
+        val type = knowledgeTable[index]?.type ?: return this
+        val knowledge = Knowledge(Founder.Red, type, value)
         return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
     }
 
