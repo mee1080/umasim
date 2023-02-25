@@ -49,11 +49,7 @@ object Calculator {
 
         val support by lazy { member.filter { !it.guest } }
 
-        val trainingLevelUp get() = gmStatus?.activeWisdom == Founder.Red
-
-        val hintFrequencyUp get() = gmStatus?.activeWisdom == Founder.Blue
-
-        val allFriend get() = gmStatus?.activeWisdom == Founder.Yellow
+        val allFriend get() = gmStatus?.allFriend == true
     }
 
     fun calcTrainingSuccessStatus(

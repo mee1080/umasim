@@ -291,9 +291,14 @@ class ViewModel(val scope: CoroutineScope) {
         val trainingType = StatusType.values()[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount.toIntOrNull() ?: 1
+        val gmStatus = state.gmStatusIfEnabled
+        val trainingLevel = if (gmStatus?.trainingLevelUp == true) 6 else state.trainingLevel
+        val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
+            it.type == trainingType && it.level == trainingLevel
+        }
         val trainingCalcInfo = Calculator.CalcInfo(
             state.chara,
-            WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+            trainingBase,
             state.motivation,
             joinSupportList,
             state.scenario,
@@ -303,7 +308,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.totalRelation,
             state.speedSkillCount,
             state.trainingLiveStateIfEnabled,
-            state.gmStatusIfEnabled,
+            gmStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -324,7 +329,7 @@ class ViewModel(val scope: CoroutineScope) {
             val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
                 Calculator.CalcInfo(
                     state.chara,
-                    WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+                    trainingBase,
                     state.motivation,
                     joinSupportList.filterIndexed { index, _ -> index != targetIndex },
                     state.scenario,
@@ -334,7 +339,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.totalRelation,
                     state.speedSkillCount,
                     state.trainingLiveStateIfEnabled,
-                    state.gmStatusIfEnabled,
+                    gmStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
@@ -346,7 +351,7 @@ class ViewModel(val scope: CoroutineScope) {
         val expectedResult = Calculator.calcExpectedTrainingStatus(
             Calculator.CalcInfo(
                 state.chara,
-                WebConstants.trainingList[state.scenario]!!.first { it.type == trainingType && it.level == state.trainingLevel },
+                trainingBase,
                 state.motivation,
                 supportList,
                 state.scenario,
@@ -356,7 +361,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalRelation,
                 state.speedSkillCount,
                 state.trainingLiveStateIfEnabled,
-                state.gmStatusIfEnabled,
+                gmStatus,
             ),
             state.teamJoinCount,
         )

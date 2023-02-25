@@ -23,6 +23,12 @@ data class GmStatus(
     val activeWisdom: Founder? = null,
     val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 }
 ) {
+    val trainingLevelUp get() = activeWisdom == Founder.Red
+
+    val hintFrequencyUp get() = activeWisdom == Founder.Blue
+
+    val allFriend get() = activeWisdom == Founder.Yellow
+
     fun getStatusBonus(type: StatusType): Int {
         // TODO ボーナス値調査
         return knowledgeTable1.count { it.type == type } + knowledgeTable2.count { it.type == type } * 2 + knowledgeTable3.count { it.type == type } * 3
