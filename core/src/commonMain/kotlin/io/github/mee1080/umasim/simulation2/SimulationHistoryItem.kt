@@ -1,13 +1,12 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.Status
 
 class SimulationHistoryItem(
     val action: Action,
     val status: Status,
     val state: SimulationState,
-    val useItem: List<ShopItem>,
+    val selections: List<Pair<List<Action>, SelectedAction>>,
 ) {
     @Deprecated("use action", ReplaceWith("action"))
     val first
@@ -20,4 +19,9 @@ class SimulationHistoryItem(
     @Deprecated("use state", ReplaceWith("state"))
     val third
         get() = state
+
+    val useItem
+        get() = selections.flatMap {
+            (it.second.scenarioAction as? SelectedClimaxAction)?.useItem ?: emptyList()
+        }
 }

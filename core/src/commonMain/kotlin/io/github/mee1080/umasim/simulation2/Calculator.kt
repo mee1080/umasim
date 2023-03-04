@@ -56,9 +56,13 @@ object Calculator {
         info: CalcInfo,
     ): Status = calcTrainingSuccessStatusSeparated(info).let { it.first + it.second }
 
+    fun calcTrainingSuccessStatusAndFriendEnabled(
+        info: CalcInfo,
+    ): Pair<Status, Boolean> = calcTrainingSuccessStatusSeparated(info).let { it.first + it.second to it.third }
+
     fun calcTrainingSuccessStatusSeparated(
         info: CalcInfo,
-    ): Pair<Status, Status> {
+    ): Triple<Status, Status, Boolean> {
         val friendTraining = if (info.allFriend) {
             info.support.any { it.card.type != StatusType.FRIEND }
         } else {
@@ -73,7 +77,7 @@ object Calculator {
             skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining),
             hp = calcTrainingHp(info.training, info.member, friendTraining),
         )
-        return base to calcScenarioStatus(info, base, friendTraining)
+        return Triple(base, calcScenarioStatus(info, base, friendTraining), friendTraining)
     }
 
     private fun calcTrainingStatus(

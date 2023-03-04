@@ -45,9 +45,22 @@ interface ActionSelectorGenerator {
     fun generateSelector(): ActionSelector
 }
 
-class SelectedAction(
+data class SelectedAction(
     val action: Action? = null,
+    val scenarioAction: SelectedScenarioAction? = null,
+)
+
+sealed interface SelectedScenarioAction
+
+data class SelectedClimaxAction(
     val buyItem: List<ShopItem>? = null,
     val useItem: List<ShopItem>? = null,
-    val lesson: Lesson? = null,
-)
+) : SelectedScenarioAction
+
+data class SelectedLiveAction(
+    val lesson: Lesson,
+) : SelectedScenarioAction
+
+sealed interface SelectedGmAction : SelectedScenarioAction
+
+object GmActivateWisdom : SelectedGmAction

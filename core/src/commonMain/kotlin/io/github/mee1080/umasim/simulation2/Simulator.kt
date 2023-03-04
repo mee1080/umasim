@@ -117,24 +117,16 @@ class Simulator(
             state = events.beforeAction(state)
             state = state.shuffleMember()
             var action: Action?
-            val useItem = mutableListOf<ShopItem>()
+            val selections = mutableListOf<Pair<List<Action>, SelectedAction>>()
             do {
                 val selection = state.predict(state.turn)
                 val selectedAction = selector.selectWithItem(state, selection)
-                selectedAction.buyItem?.let {
-                    state = state.buyItem(it)
-                }
-                selectedAction.useItem?.let {
-                    useItem.addAll(it)
-                    state = state.applyItem(it)
-                }
-                selectedAction.lesson?.let {
-                    state = state.purchaseLesson(it)
-                }
+                selections += selection to selectedAction
+                state = state.applySelectedScenarioAction(selectedAction.scenarioAction)
                 action = selectedAction.action
             } while (action == null)
             val result = randomSelect(action.resultCandidate)
-            history.add(SimulationHistoryItem(action, result, state, useItem))
+            history.add(SimulationHistoryItem(action, result, state, selections))
             state = state.applyAction(action, result)
             state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)

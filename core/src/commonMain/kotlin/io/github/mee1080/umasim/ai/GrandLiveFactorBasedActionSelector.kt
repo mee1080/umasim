@@ -194,7 +194,7 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
                 if (rest.valid) {
                     if (DEBUG_LESSON) println("${state.turn}: in turn purchase ${lesson.displayName}")
                     reservedLesson = null
-                    return SelectedAction(lesson = lesson)
+                    return SelectedAction(scenarioAction = SelectedLiveAction(lesson))
                 }
                 if (DEBUG_LESSON) println("${state.turn}: reserved ${lesson.displayName} ${state.status.performance}")
             }

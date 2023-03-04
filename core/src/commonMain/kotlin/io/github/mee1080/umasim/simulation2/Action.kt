@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.Founder
 import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
@@ -25,6 +26,7 @@ import io.github.mee1080.umasim.data.StatusType
 sealed interface Action {
     val name: String
     val resultCandidate: List<Pair<Status, Int>>
+    val scenarioActionParam: ScenarioActionParam?
     fun infoToString() = ""
     fun toShortString() = "$name ${infoToString()}"
     fun updateCandidate(resultCandidate: List<Pair<Status, Int>>): Action
@@ -33,6 +35,7 @@ sealed interface Action {
 data class Outing(
     val support: MemberState?,
     override val resultCandidate: List<Pair<Status, Int>>,
+    override val scenarioActionParam: ScenarioActionParam? = null,
 ) : Action {
     override val name = "お出かけ"
     override fun infoToString() = support?.let { "(${it.card.name})" } ?: ""
@@ -43,6 +46,7 @@ data class Outing(
 
 data class Sleep(
     override val resultCandidate: List<Pair<Status, Int>>,
+    override val scenarioActionParam: ScenarioActionParam? = null,
 ) : Action {
     override val name = "お休み"
     override fun toString() = "Sleep"
@@ -58,6 +62,8 @@ data class Training(
     val member: List<MemberState>,
     override val resultCandidate: List<Pair<Status, Int>>,
     val baseStatus: Status,
+    val friendTraining: Boolean,
+    override val scenarioActionParam: ScenarioActionParam? = null,
 ) : Action {
     val support get() = member.filter { !it.guest }
     override val name = "トレーニング(${type.displayName}Lv$level)"
@@ -82,9 +88,22 @@ data class Race(
     val raceName: String,
     val grade: RaceGrade,
     override val resultCandidate: List<Pair<Status, Int>>,
+    override val scenarioActionParam: ScenarioActionParam? = null,
 ) : Action {
     override val name = raceName + if (goal) "(目標)" else ""
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
         resultCandidate = resultCandidate
     )
+}
+
+sealed interface ScenarioActionParam {
+    fun toShortString(): String
+}
+
+data class GmActionParam(
+    val knowledgeFounder: Founder,
+    val knowledgeType: StatusType,
+    val knowledgeCount: Int,
+) : ScenarioActionParam {
+    override fun toShortString() = "$knowledgeFounder/${knowledgeType}x$knowledgeCount"
 }

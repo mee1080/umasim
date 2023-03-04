@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.data
 
-import kotlin.random.Random
+import io.github.mee1080.umasim.util.mapValuesIf
+import io.github.mee1080.umasim.util.replace
 
 enum class Founder(val charaName: String, val colorName: String) {
     Red("ダーレーアラビアン", "赤"),
@@ -21,13 +22,16 @@ data class GmStatus(
     val knowledgeTable3: List<Knowledge> = emptyList(),
     val waitingWisdom: Founder? = null,
     val activeWisdom: Founder? = null,
-    val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 }
+    val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 },
+    val fragmentCount: Map<StatusType, Int> = trainingTypeOrSkill.associateWith { 0 },
 ) {
     val trainingLevelUp get() = activeWisdom == Founder.Red
 
     val hintFrequencyUp get() = activeWisdom == Founder.Blue
 
     val allFriend get() = activeWisdom == Founder.Yellow
+
+    val knowledgeFragmentCount get() = knowledgeTable1.size
 
     fun getStatusBonus(type: StatusType): Int {
         return knowledgeTable1.sumOf { it.getStatusBonus(type) } +
@@ -36,26 +40,40 @@ data class GmStatus(
     }
 
     fun addKnowledge(knowledge: Knowledge): GmStatus {
-        // TODO 色と種別の引継ぎ条件調査
         if (waitingWisdom != null) return this
+        val newFragmentCount = fragmentCount.replace(knowledge.type) { it + 1 }
         val newKnowledgeTable1 = knowledgeTable1 + knowledge
         var newKnowledgeTable2 = knowledgeTable2
         var newKnowledgeTable3 = knowledgeTable3
         var newWisdom = waitingWisdom
         if (newKnowledgeTable1.size % 2 == 0) {
+            val left1 = newKnowledgeTable1[newKnowledgeTable1.size - 2]
+            val right1 = newKnowledgeTable1[newKnowledgeTable1.size - 1]
             newKnowledgeTable2 = knowledgeTable2 + Knowledge(
-                newKnowledgeTable1[newKnowledgeTable1.size - 2].founder,
-                newKnowledgeTable1[newKnowledgeTable1.size - Random.nextInt(1, 3)].type,
-                2,
+                left1.founder,
+                randomSelectPercent(0.8, left1.type, right1.type),
+                if (left1.founder == right1.founder) 2 else 3,
             )
             if (newKnowledgeTable2.size % 2 == 0) {
+                val left2 = newKnowledgeTable1[newKnowledgeTable2.size - 2]
+                val right2 = newKnowledgeTable1[newKnowledgeTable2.size - 1]
                 newKnowledgeTable3 = knowledgeTable3 + Knowledge(
-                    newKnowledgeTable2[newKnowledgeTable2.size - 2].founder,
-                    newKnowledgeTable2[newKnowledgeTable2.size - Random.nextInt(1, 3)].type,
-                    2,
+                    left2.founder,
+                    randomSelectPercent(0.8, left2.type, right2.type),
+                    if (left2.founder == right2.founder) 2 else 3,
                 )
                 if (newKnowledgeTable3.size == 2) {
-                    newWisdom = newKnowledgeTable3[0].founder
+                    val left3 = newKnowledgeTable3[0].founder
+                    val right3 = newKnowledgeTable3[1].founder
+                    newWisdom = if (left3 == right3) left3 else {
+                        val leftCount = newKnowledgeTable1.count { it.founder == left3 }
+                        val rightCount = newKnowledgeTable1.count { it.founder == right3 }
+                        when {
+                            leftCount > rightCount -> left3
+                            leftCount == rightCount -> randomSelectPercent(0.8, left3, right3)
+                            else -> right3
+                        }
+                    }
                 }
             }
         }
@@ -64,6 +82,7 @@ data class GmStatus(
             knowledgeTable2 = newKnowledgeTable2,
             knowledgeTable3 = newKnowledgeTable3,
             waitingWisdom = newWisdom,
+            fragmentCount = newFragmentCount,
         )
     }
 
@@ -71,10 +90,10 @@ data class GmStatus(
         val newStatus = if (waitingWisdom == null) this else copy(
             waitingWisdom = null,
             activeWisdom = waitingWisdom,
-            wisdomLevel = wisdomLevel.mapValues { if (it.key == waitingWisdom) it.value + 1 else it.value },
+            wisdomLevel = wisdomLevel.mapValuesIf({ it.key == waitingWisdom && it.value < 5 }) { it + 1 },
         )
         val effect = if (waitingWisdom == Founder.Red) {
-            Status(hp = 50, motivation = 1)
+            Status(hp = 50, motivation = 3)
         } else Status()
         return newStatus to effect
     }
@@ -84,6 +103,7 @@ data class GmStatus(
             knowledgeTable1 = emptyList(),
             knowledgeTable2 = emptyList(),
             knowledgeTable3 = emptyList(),
+            activeWisdom = null,
         )
     }
 
@@ -106,7 +126,7 @@ data class GmStatus(
 data class Knowledge(
     val founder: Founder,
     val type: StatusType,
-    val bonus: Int,
+    val bonus: Int = 1,
 ) {
     fun getStatusBonus(targetType: StatusType) = if (targetType == type) bonus else 0
 }

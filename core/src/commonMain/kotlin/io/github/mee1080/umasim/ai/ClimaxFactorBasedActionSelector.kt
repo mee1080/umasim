@@ -235,13 +235,12 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 whistleCount -= itemList.count { it == "リセットホイッスル" }
                 val list = itemList.map { Store.Climax.getShopItem(it) }
                 return SelectedAction(
-                    buyItem = list,
-                    useItem = list,
+                    scenarioAction = SelectedClimaxAction(list, list),
                 )
             }
         }
         if (state.possessionItem.isNotEmpty()) {
-            return SelectedAction(useItem = state.possessionItem)
+            return SelectedAction(scenarioAction = SelectedClimaxAction(useItem = state.possessionItem))
         }
         return SelectedAction(action = select(state, selection))
     }

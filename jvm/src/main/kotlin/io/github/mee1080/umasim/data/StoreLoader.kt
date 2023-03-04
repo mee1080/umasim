@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.data
 import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.coroutines.runBlocking
 import java.io.File
 
@@ -45,7 +46,7 @@ object StoreLoader {
         } else {
             runBlocking {
                 val data = HttpClient(CIO).use { client ->
-                    names.map { client.get<String>(URL_BASE + it) }
+                    names.map { client.get(URL_BASE + it).bodyAsText() }
                 }
                 if (FORCE_NETWORK) {
                     data.forEach { println(it) }

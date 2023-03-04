@@ -12,8 +12,8 @@ version = "1.0"
 dependencies {
     implementation(project(":core"))
     implementation(kotlin("stdlib"))
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.1")
-    implementation("io.ktor:ktor-client-cio:1.6.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("io.ktor:ktor-client-cio:2.2.4")
     implementation("org.xerial:sqlite-jdbc:3.36.0.3")
 }
 

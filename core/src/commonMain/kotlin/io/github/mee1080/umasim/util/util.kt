@@ -37,3 +37,18 @@ fun <T> List<T>.replace(
     targetIndex: Int,
     action: T.() -> T
 ) = mapIndexed { index, item -> if (index == targetIndex) item.action() else item }
+
+fun <K, V> Map<K, V>.mapValuesIf(
+    condition: (Map.Entry<K, V>) -> Boolean,
+    action: (V) -> V,
+) = mapValues { if (condition(it)) action(it.value) else it.value }
+
+fun <K, V> Map<K, V>.replace(
+    key: K,
+    value: V,
+) = toMutableMap().apply { put(key, value) }
+
+fun <K, V> Map<K, V>.replace(
+    key: K,
+    action: (V) -> V,
+) = toMutableMap().apply { get(key)?.let { put(key, action(it)) } }

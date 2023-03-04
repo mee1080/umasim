@@ -19,6 +19,8 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.util.applyIf
+import io.github.mee1080.umasim.util.applyIfNotNull
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -78,29 +80,28 @@ fun EnableItem.onTurnChange(): EnableItem {
 }
 
 fun SimulationState.applyAction(action: Action, result: Status): SimulationState {
+    // FIXME トレーニング失敗時にもLv上昇など発生
     // ステータス更新
     val newStatus = status + result
-    return if (action is Training) {
+    // Action結果反映
+    val newState = if (action is Training) {
         val newTraining = training.map {
             if (action.type == it.type) {
-                it.applyAction(action, scenario != Scenario.AOHARU)
+                it.applyAction(action, scenario.trainingAutoLevelUp)
             } else it
         }
         val memberIndices = action.member.map { it.index }
+        val trainingHint = selectTrainingHint(action.member)
+        val trainingHintIndices = trainingHint.second.map { it.index }
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
-                it.applyAction(action, charm, chara)
+                it.applyAction(action, charm, chara, trainingHintIndices.contains(it.index))
             } else it
-//            val relation = result.supportRelation[index]
-//            val supportState = member.supportState
-//            if (relation != null && supportState != null) {
-//                member.copy(supportState = supportState.copy(relation = supportState.relation + relation))
-//            } else member
         }
         copy(
             member = newMember,
             training = newTraining,
-            status = newStatus + selectTrainingHint(action.member) + selectAoharuTrainingHint(action.member),
+            status = newStatus + trainingHint.first + selectAoharuTrainingHint(action.member),
         )
     } else if (action is Race && itemAvailable && action.grade != RaceGrade.FINALS) {
         copy(
@@ -110,12 +111,14 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
     } else {
         copy(status = newStatus)
     }
+    // シナリオ別結果反映
+    return newState.applyScenarioAction(action)
 }
 
-private fun MemberState.applyAction(action: Training, charm: Boolean, chara: Chara): MemberState {
+private fun MemberState.applyAction(action: Training, charm: Boolean, chara: Chara, hint: Boolean): MemberState {
     // 絆上昇量を反映
     val supportState = supportState?.copy(
-        relation = min(100, supportState.relation + getTrainingRelation(charm))
+        relation = min(100, supportState.relation + getTrainingRelation(charm, hint))
     )
     // アオハル特訓上昇量を反映
     val scenarioState = when (scenarioState) {
@@ -159,15 +162,34 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
     }
 }
 
-private fun SimulationState.selectTrainingHint(support: List<MemberState>): Status {
-    val hintSupportList = support.filter { it.hint }
-    if (hintSupportList.isEmpty()) return Status()
-    val hintSupport = hintSupportList.random()
-    val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
-    return if (hintSkill.isEmpty()) {
-        hintSupport.card.hintStatus
+private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair<Status, List<MemberState>> {
+    return if (gmStatus?.hintFrequencyUp == true) {
+        val hintSupportList = support.filter { !it.card.type.outingType }
+        hintSupportList.map { hintSupport ->
+            val base = hintSupport.card.hintStatus
+            val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
+            Status(
+                (base.speed * Random.nextDouble(1.0, 2.0)).toInt(),
+                (base.stamina * Random.nextDouble(1.0, 2.0)).toInt(),
+                (base.power * Random.nextDouble(1.0, 2.0)).toInt(),
+                (base.guts * Random.nextDouble(1.0, 2.0)).toInt(),
+                (base.wisdom * Random.nextDouble(1.0, 2.0)).toInt(),
+                (base.skillPt * Random.nextDouble(1.0, 2.0)).toInt(),
+                skillHint = if (hintSkill.isEmpty()) emptyMap() else mapOf(hintSkill to 1 + hintSupport.card.hintLevel),
+            )
+        }.fold(Status(skillPt = support.size * 25)) { acc, status ->
+            acc + status
+        } to hintSupportList
     } else {
-        Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
+        val hintSupportList = support.filter { it.hint }
+        if (hintSupportList.isEmpty()) return Status() to emptyList()
+        val hintSupport = hintSupportList.random()
+        val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
+        if (hintSkill.isEmpty()) {
+            hintSupport.card.hintStatus
+        } else {
+            Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
+        } to listOf(hintSupport)
     }
 }
 
@@ -184,6 +206,19 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     if (skillList.isEmpty()) return Status()
     val target = skillList.random()
     return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
+}
+
+fun SimulationState.applySelectedScenarioAction(action: SelectedScenarioAction?): SimulationState {
+    return when (action) {
+        null -> this
+
+        is SelectedClimaxAction -> applyIfNotNull(action.buyItem) { buyItem(it) }
+            .applyIfNotNull(action.useItem) { applyItem(it) }
+
+        is SelectedLiveAction -> purchaseLesson(action.lesson)
+
+        is SelectedGmAction -> applySelectedGmAction(action)
+    }
 }
 
 fun SimulationState.buyItem(itemList: List<ShopItem>): SimulationState {
@@ -351,4 +386,32 @@ private fun LiveStatus.applyLive(): LiveStatus {
     return copy(
         livedLesson = livedLesson + learnedLesson.subList(livedLesson.size + 1, learnedLesson.size)
     )
+}
+
+private fun SimulationState.applyScenarioAction(action: Action): SimulationState {
+    val scenarioAction = action.scenarioActionParam ?: return this
+    return when (scenarioAction) {
+        is GmActionParam -> applyGmAction(scenarioAction)
+    }
+}
+
+private fun SimulationState.applyGmAction(action: GmActionParam): SimulationState {
+    val oldState = gmStatus ?: return this
+    if (action.knowledgeCount == 0) return this
+    val newState = oldState
+        .addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
+        .applyIf(action.knowledgeCount == 2) {
+            addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
+        }
+    return copy(gmStatus = newState)
+}
+
+private fun SimulationState.applySelectedGmAction(action: SelectedGmAction): SimulationState {
+    val gmStatus = gmStatus ?: return this
+    return when (action) {
+        GmActivateWisdom -> {
+            val effect = gmStatus.activateWisdom()
+            copy(gmStatus = effect.first, status = status + effect.second)
+        }
+    }
 }

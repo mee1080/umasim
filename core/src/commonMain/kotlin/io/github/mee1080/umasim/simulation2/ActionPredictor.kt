@@ -25,7 +25,8 @@ import kotlin.math.min
 import kotlin.random.Random
 
 fun SimulationState.predict(turn: Int): List<Action> {
-    return goalRace.find { it.turn == turn }?.let { listOf(predictRace(it)) } ?: predictNormal()
+    val result = goalRace.find { it.turn == turn }?.let { listOf(predictRace(it)) } ?: predictNormal()
+    return predictScenarioActionParams(result)
 }
 
 fun SimulationState.predictNormal(): List<Action> {
@@ -70,7 +71,7 @@ private fun SimulationState.calcTrainingResult(
     support: List<MemberState>,
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
-    val baseStatus = Calculator.calcTrainingSuccessStatus(
+    val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(
         Calculator.CalcInfo(
             chara,
             training.current,
@@ -131,6 +132,7 @@ private fun SimulationState.calcTrainingResult(
         support,
         successCandidate + failureCandidate,
         baseStatus,
+        friend,
     )
 }
 
@@ -155,11 +157,15 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         RaceGrade.G3 -> raceStatus(4, 3, 35)
         RaceGrade.G2 -> raceStatus(4, 3, 35)
         RaceGrade.G1 -> raceStatus(5, 3, 45)
-        RaceGrade.FINALS -> when (race.turn) {
-            74 -> raceStatus(5, 10, if (climax) 30 else 40)
-            76 -> raceStatus(5, 10, if (climax) 30 else 60)
-            78 -> raceStatus(5, 10, if (climax) 30 else 80)
-            else -> Status()
+        RaceGrade.FINALS -> if (scenario == Scenario.GM) {
+            raceStatus(5,20,80)
+        } else {
+            when (race.turn) {
+                74 -> raceStatus(5, 10, if (climax) 30 else 40)
+                76 -> raceStatus(5, 10, if (climax) 30 else 60)
+                78 -> raceStatus(5, 10, if (climax) 30 else 80)
+                else -> Status()
+            }
         }
 
         RaceGrade.UNKNOWN -> Status()
@@ -172,8 +178,24 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         else -> Status()
     } + Status(
         hp = if (goal) 0 else if (climax) -20 else -15,
-        fanCount = (race.getFan * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt(),
+        fanCount = raceFanCount(race.getFan),
     )
+    status = applyScenarioRaceBonus(status)
+    return Race(goal, race.name, race.grade, listOf(status to 1))
+}
+
+fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {
+    val bonusValue = value * (100 + totalRaceBonus) / 100
+    val targets = randomTrainingType(count).map { it to bonusValue }.toTypedArray()
+    return Status(skillPt = skillPt * (100 + totalRaceBonus) / 100).add(*targets)
+}
+
+fun SimulationState.raceFanCount(base: Int): Int {
+    return (base * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt()
+}
+
+fun SimulationState.applyScenarioRaceBonus(base: Status): Status {
+    var status = base
     if (itemAvailable) {
         status = enableItem.raceBonus?.let {
             status.copy(
@@ -190,11 +212,91 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
             )
         } ?: status
     }
-    return Race(goal, race.name, race.grade, listOf(status to 1))
+    if (gmStatus != null && gmStatus.activeWisdom == Founder.Red) {
+        status = status.copy(
+            speed = (status.speed * (1 + 35 / 100.0)).toInt(),
+            stamina = (status.speed * (1 + 35 / 100.0)).toInt(),
+            power = (status.speed * (1 + 35 / 100.0)).toInt(),
+            guts = (status.speed * (1 + 35 / 100.0)).toInt(),
+            wisdom = (status.speed * (1 + 35 / 100.0)).toInt(),
+        )
+    }
+    return status
 }
 
-fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {
-    val bonusValue = value * (100 + totalRaceBonus) / 100
-    val targets = randomTrainingType(count).map { it to bonusValue }.toTypedArray()
-    return Status(skillPt = skillPt * (100 + totalRaceBonus) / 100).add(*targets)
+fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List<Action> {
+    return when (scenario) {
+        Scenario.GM -> predictGmScenarioActionParams(baseActions)
+        else -> baseActions
+    }
+}
+
+private val gmTrainingKnowledgeType by lazy {
+    trainingType.associateWith { training ->
+        val upCount = if (training == StatusType.GUTS) 4 else 3
+        trainingTypeOrSkill.map {
+            it to if (upInTraining(training, it)) 0.8 / upCount else 0.2 / (6 - upCount)
+        }
+    }
+}
+
+fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): List<Action> {
+    return if (baseActions.size == 1) {
+        baseActions.map {
+            (it as Race).copy(
+                scenarioActionParam = GmActionParam(
+                    Founder.values().random(), trainingTypeOrSkill.random(), predictKnowledgeCount(1.0),
+                )
+            )
+        }
+    } else {
+        val trainingFounders = (Founder.values().asList() + Founder.values()).shuffled()
+        val sleepFounders = Founder.values().asList().shuffled()
+        val raceKnowledgeType = trainingTypeOrSkill.random()
+        baseActions.map {
+            when (it) {
+                is Training -> {
+                    val knowledgeTypeRate = gmTrainingKnowledgeType[it.type]!!
+                    val doubleRate = when {
+                        !it.friendTraining -> 0.0
+                        it.type == StatusType.WISDOM -> 0.5
+                        else -> 1.0
+                    }
+                    it.copy(
+                        scenarioActionParam = GmActionParam(
+                            trainingFounders[it.type.ordinal],
+                            randomSelectDouble(knowledgeTypeRate),
+                            predictKnowledgeCount(doubleRate),
+                        )
+                    )
+                }
+
+                is Sleep -> it.copy(
+                    scenarioActionParam = GmActionParam(
+                        sleepFounders[0], trainingTypeOrSkill.random(), predictKnowledgeCount(0.2)
+                    )
+                )
+
+                is Outing -> it.copy(
+                    scenarioActionParam = GmActionParam(
+                        sleepFounders[1], trainingTypeOrSkill.random(), predictKnowledgeCount(0.2)
+                    )
+                )
+
+                is Race -> it.copy(
+                    scenarioActionParam = GmActionParam(
+                        sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(0.2)
+                    )
+                )
+            }
+        }
+    }
+}
+
+private fun SimulationState.predictKnowledgeCount(doubleRate: Double): Int {
+    return when (gmStatus?.knowledgeFragmentCount) {
+        8, null -> 0
+        7 -> 1
+        else -> randomSelectPercent(doubleRate, 2, 1)
+    }
 }

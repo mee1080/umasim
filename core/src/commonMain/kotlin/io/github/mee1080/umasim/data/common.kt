@@ -68,6 +68,15 @@ fun randomSelect(vararg values: Int): Int {
     return values.size - 1
 }
 
+fun randomSelect(vararg values: Double): Int {
+    var random = Random.nextDouble(values.sum())
+    for (i in values.indices) {
+        random -= values[i]
+        if (random < 0) return i
+    }
+    return values.size - 1
+}
+
 fun <T> randomSelect(values: Map<T, Int>): T {
     val list = values.entries.toList()
     val index = randomSelect(*(list.map { it.value }.toIntArray()))
@@ -84,17 +93,29 @@ fun <T> randomSelect(values: List<Pair<T, Int>>): T {
     return values[index].first
 }
 
+fun <T> randomSelectDouble(values: List<Pair<T, Double>>): T {
+    val index = randomSelect(*(values.map { it.second }.toDoubleArray()))
+    return values[index].first
+}
+
 fun <T> calcRate(value: T, vararg values: Pair<T, Int>): Double {
     val target = values.firstOrNull { it.first == value } ?: return 0.0
     return target.second.toDouble() / values.sumOf { it.second }
 }
 
-enum class Scenario(val displayName: String) {
+fun <T> randomSelectPercent(percent: Double, success: T, failed: T): T {
+    return if (Random.nextDouble() < percent) success else failed
+}
+
+enum class Scenario(
+    val displayName: String,
+    val trainingAutoLevelUp: Boolean = true,
+) {
     URA("URA"),
-    AOHARU("アオハル"),
+    AOHARU("アオハル", false),
     CLIMAX("クライマックス"),
     GRAND_LIVE("グランドライブ"),
-    GM("グランドマスターズ"),
+    GM("グランドマスターズ", false),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
