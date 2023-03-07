@@ -89,7 +89,7 @@ fun UraSimulation(model: ViewModel, state: State) {
                 Th { Text("体力") }
                 Th { Text("やる気") }
                 Th { Text("ファン数") }
-                Th({ style { unsetWidth() } }) { Text("行動") }
+                Th({ unsetWidth() }) { Text("行動") }
             }
             state.simulationHistory.forEachIndexed { index, (action, status) ->
                 Tr {
@@ -104,8 +104,8 @@ fun UraSimulation(model: ViewModel, state: State) {
                     Td { Text(motivationToString(status.motivation)) }
                     Td { Text(status.fanCount.toString()) }
                     Td({
+                        unsetWidth()
                         style {
-                            unsetWidth()
                             textAlign("left")
                         }
                     }) { Text(action) }

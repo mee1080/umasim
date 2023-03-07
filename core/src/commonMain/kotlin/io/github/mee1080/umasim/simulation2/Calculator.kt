@@ -410,7 +410,7 @@ object Calculator {
             skillPt = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.skillPt),
             // TODO 体力消費ダウン計算式
             hp = -(base.hp * gmStatus.wisdomHpCost / 100.0).toInt()
-        )
+        ) + calcGmStatusHint(info.member, gmStatus)
     }
 
     private fun calcGmStatusSingle(
@@ -422,5 +422,28 @@ object Calculator {
         val bonus = gmStatus.getStatusBonus(target)
         val factor = ((baseValue + bonus) * gmStatus.wisdomTrainingFactor / 100.0).toInt()
         return bonus + factor
+    }
+
+    private fun calcGmStatusHint(
+        member: List<MemberState>,
+        gmStatus: GmStatus,
+    ): Status {
+        if (!gmStatus.hintFrequencyUp) return Status()
+        val hintSupportList = member.filter { !it.card.type.outingType }
+        val hintStatus = hintSupportList.map { hintSupport ->
+            val base = hintSupport.card.hintStatus
+            // ヒント全潰しは無視
+            if (hintSupport.card.skills.isNotEmpty()) base else base + base
+        }.fold(Status()) { acc, status ->
+            acc + status
+        }
+        return hintStatus + Status(
+            speed = if (hintStatus.speed > 0) gmStatus.getStatusBonus(StatusType.SPEED) else 0,
+            stamina = if (hintStatus.stamina > 0) gmStatus.getStatusBonus(StatusType.STAMINA) else 0,
+            power = if (hintStatus.power > 0) gmStatus.getStatusBonus(StatusType.POWER) else 0,
+            guts = if (hintStatus.guts > 0) gmStatus.getStatusBonus(StatusType.GUTS) else 0,
+            wisdom = if (hintStatus.wisdom > 0) gmStatus.getStatusBonus(StatusType.WISDOM) else 0,
+            skillPt = hintSupportList.size * 20,
+        )
     }
 }

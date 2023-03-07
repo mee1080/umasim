@@ -34,8 +34,8 @@ fun SupportCardInfo(model: ViewModel, state: State) {
             Th({
                 style {
                     property("border", "none")
-                    unsetWidth()
                 }
+                unsetWidth()
             }) { }
             Th { Text("友情ボーナス") }
             Th { Text("やる気効果アップ") }
@@ -72,7 +72,7 @@ fun SupportCardInfo(model: ViewModel, state: State) {
         }
         state.supportSelectionList.mapNotNull { it.card }.forEach { card ->
             Tr {
-                Td({ style { unsetWidth() } }) { Text(card.name) }
+                Td({ unsetWidth() }) { Text(card.name) }
                 StatusRow(card) { it.friend }
                 StatusRow(card) { it.motivation }
                 StatusRow(card) { it.speedBonus }

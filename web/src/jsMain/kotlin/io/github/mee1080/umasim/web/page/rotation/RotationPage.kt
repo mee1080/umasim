@@ -182,6 +182,7 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                                         }
                                     }) { Text("${it.first} 達成不可") }
                                 }
+
                                 0 -> {
                                     Div({
                                         style {
@@ -190,6 +191,7 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                                         }
                                     }) { Text("${it.first} 達成") }
                                 }
+
                                 else -> {
                                     Div { Text("${it.first} あと${it.second}") }
                                 }
@@ -232,9 +234,9 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                                 cursor("pointer")
                                 marginRight(8.px)
                                 fontSize(80.percent)
-                                onClickOrTouch {
-                                    model.updateRecommendFilter(TurnAfterFilter(turn))
-                                }
+                            }
+                            onClickOrTouch {
+                                model.updateRecommendFilter(TurnAfterFilter(turn))
                             }
                         }) { Text(turnToString(turn)) }
                         Span({
@@ -298,6 +300,7 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                                     }
                                 }) { Text("$name 達成不可") }
                             }
+
                             0 -> {
                                 Div({
                                     style {
@@ -306,6 +309,7 @@ fun RotationPage(model: RotationViewModel, state: RotationState?) {
                                     }
                                 }) { Text("$name 達成") }
                             }
+
                             else -> {
                                 Div { Text("$name あと$rest") }
                             }

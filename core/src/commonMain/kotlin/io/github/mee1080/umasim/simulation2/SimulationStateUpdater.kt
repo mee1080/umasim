@@ -164,20 +164,14 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
 
 private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair<Status, List<MemberState>> {
     return if (gmStatus?.hintFrequencyUp == true) {
+        // ステータス上昇はCalculatorで計算済み
         val hintSupportList = support.filter { !it.card.type.outingType }
         hintSupportList.map { hintSupport ->
-            val base = hintSupport.card.hintStatus
             val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
             Status(
-                (base.speed * Random.nextDouble(1.0, 2.0)).toInt(),
-                (base.stamina * Random.nextDouble(1.0, 2.0)).toInt(),
-                (base.power * Random.nextDouble(1.0, 2.0)).toInt(),
-                (base.guts * Random.nextDouble(1.0, 2.0)).toInt(),
-                (base.wisdom * Random.nextDouble(1.0, 2.0)).toInt(),
-                (base.skillPt * Random.nextDouble(1.0, 2.0)).toInt(),
                 skillHint = if (hintSkill.isEmpty()) emptyMap() else mapOf(hintSkill to 1 + hintSupport.card.hintLevel),
             )
-        }.fold(Status(skillPt = support.size * 25)) { acc, status ->
+        }.fold(Status()) { acc, status ->
             acc + status
         } to hintSupportList
     } else {
