@@ -70,7 +70,7 @@ data class GmStatus(
                         val rightCount = newKnowledgeTable1.count { it.founder == right3 }
                         when {
                             leftCount > rightCount -> left3
-                            leftCount == rightCount -> randomSelectPercent(0.8, left3, right3)
+                            leftCount == rightCount -> randomSelectPercent(0.5, left3, right3)
                             else -> right3
                         }
                     }
