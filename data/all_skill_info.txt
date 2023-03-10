@@ -474,6 +474,11 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50」、加速1000、持続8.0
 
+ダイイチルビー固有
+冷静に走行し終盤突入時に後方付近だと少し前に出て、先頭から4人までのウマ娘をちょっと萎縮させる
+->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
+「距離割合>=66、距離割合<=68、順位率>=60、順位率<=90、掛かり無し」、現在速度2500、現在速度-500、持続5.0
+
 アストンマーチャン固有
 残り400mを切って前の方で詰め寄られるとファンの心に残る走りで抜け出しやすくなる
 ->remain_distance<=400&order<=2&overtake_target_time>=1
@@ -771,6 +776,11 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 新聞を読んで意気込んでしまい、少し掛かりやすくなる
 ->always==1
 「常時」、掛かり率100000、持続0
+
+未来を拓く奇跡
+更なる奇跡を起こすべくレース終盤に加速力が上がる＜短距離＞
+->distance_type==1&phase_random==2
+「短距離、終盤前半？ランダム」、加速4000、持続1.8
 
 超遊び癖
 スタートがすごく苦手になり出遅れたりスタート時の加速力が低下したりするこのスキルは育成完了後に消滅する
@@ -1160,6 +1170,11 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50、順位==2」、加速700、持続4.8
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50」、加速500、持続4.8
+
+至上であれ
+冷静に走行し終盤突入時に後方付近だとちょっと前に出て、先頭から4人までのウマ娘をほんのちょっと萎縮させる
+->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
+「距離割合>=66、距離割合<=68、順位率>=60、順位率<=90、掛かり無し」、現在速度500、現在速度-250、持続3.0
 
 Silent letter
 残り400mを切って前の方で詰め寄られるとちょっと抜け出しやすくなる
@@ -4008,9 +4023,9 @@ Lose Myself
 「追込、前にウマ娘>=1、経過時間>=10」、体力550、持続0.0
 
 静かな誓い
-前が塞がれた時、持久力が回復しさらに速度がわずかに上がる＜作戦・追込＞
-->running_style==4&blocked_front_continuetime>=1&accumulatetime>=10
-「追込、前ブロック継続>=1、経過時間>=10」、体力550、目標速度1500、持続3.0
+前のウマ娘のすぐ後ろに付けると持久力が回復し速度がわずかに上がる＜作戦・追込＞
+->running_style==4&infront_near_lane_time>=1&accumulatetime>=10
+「追込、前にウマ娘>=1、経過時間>=10」、体力550、目標速度1500、持続3.0
 
 冷静
 前のウマ娘のすぐ後ろに付けると落ち着いて持久力をわずかに回復する＜作戦・追込＞
@@ -4233,7 +4248,7 @@ Lose Myself
 「差し、序盤後半ランダム、順位率>=40」、体力550、持続0.0
 
 虎視眈々
-レース中盤が迫ったとき後方にいると持久力を回復し速度がわずかに上がる＜作戦・差し＞
+レース中盤が迫ったとき中団以降にいると持久力を回復し速度がわずかに上がる＜作戦・差し＞
 ->running_style==3&phase_laterhalf_random==0&order_rate>=40
 「差し、序盤後半ランダム、順位率>=40」、体力550、目標速度1500、持続3.0
 
@@ -4403,7 +4418,7 @@ Lose Myself
 「中距離、終盤前1/4？ランダム、順位率>=40」、加速4000、持続4.0
 
 起死回生の一歩
-レース終盤始めの方に後ろの方にいるとしばらくの間加速力が上がる＜中距離＞
+レース終盤始めの方に中団以降にいるとしばらくの間加速力が上がる＜中距離＞
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=40
 「中距離、終盤前1/4？ランダム、順位率>=40」、加速4000、持続4.0
 
@@ -4743,6 +4758,11 @@ Lose Myself
 ->distance_type==1&phase>=2&order_rate>=50&is_overtake==1@distance_type==2&phase>=2&order_rate>=50&is_overtake==1
 「短距離、終盤、順位率>=50、追い抜きモード」または「マイル、終盤、順位率>=50、追い抜きモード」、加速4000、持続2.0
 
+常に最たる輝きを
+レース終盤に後方で追い抜こうとすると加速力を上げ、さらに目の前のウマ娘をわずかに萎縮させる＜短距離/マイル＞
+->distance_type==1&phase>=2&order_rate>=50&is_overtake==1@distance_type==2&phase>=2&order_rate>=50&is_overtake==1
+「短距離、終盤、順位率>=50、追い抜きモード」または「マイル、終盤、順位率>=50、追い抜きモード」、加速4000、現在速度-1500、持続2.0
+
 一足飛び
 レース終盤に後方で追い抜こうとすると加速力がわずかに上がる＜短距離/マイル＞
 ->distance_type==1&phase>=2&order_rate>=50&is_overtake==1@distance_type==2&phase>=2&order_rate>=50&is_overtake==1
@@ -4918,6 +4938,21 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 レース中盤に速度がわずかに上がる＜マイル/中距離＞
 ->distance_type==2&phase_random==1@distance_type==3&phase_random==1
 「マイル、中盤ランダム」または「中距離、中盤ランダム」、目標速度1500、持続2.4
+
+威風堂々
+最終コーナーで中団以降だと前後3人ずつの速度をわずかに下げ自分の速度を上げる＜作戦・差し＞
+->running_style==3&order_rate>=40&is_finalcorner_random==1
+「差し、順位率>=40、最終コーナーランダム」、目標速度3500、現在速度-1500、現在速度-1500、持続1.8
+
+華麗であれ
+最終コーナーで中団以降だと前後3人ずつの速度をわずかに下げ、自分の速度をすごく上げる＜作戦・差し＞
+->running_style==3&order_rate>=40&is_finalcorner_random==1
+「差し、順位率>=40、最終コーナーランダム」、目標速度4500、現在速度-1500、現在速度-1500、持続1.8
+
+プレッシャー
+最終コーナーで中団以降だと前後3人ずつの速度をほんのわずかに下げ、自分の速度をわずかに上げる＜作戦・差し＞
+->running_style==3&order_rate>=40&is_finalcorner_random==1
+「差し、順位率>=40、最終コーナーランダム」、目標速度1500、現在速度-350、現在速度-350、持続1.8
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
