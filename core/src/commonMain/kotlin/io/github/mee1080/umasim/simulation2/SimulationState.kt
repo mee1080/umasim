@@ -86,6 +86,8 @@ data class SimulationState(
     fun getTraining(type: StatusType) = training.first { it.type == type }
 
     val totalRelation by lazy { member.sumOf { it.relation } }
+
+    val hintFrequencyUp = gmStatus?.wisdomHintFrequency
 }
 
 data class MemberState(

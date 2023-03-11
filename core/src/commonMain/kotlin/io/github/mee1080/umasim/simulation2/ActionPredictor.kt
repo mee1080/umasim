@@ -158,7 +158,7 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         RaceGrade.G2 -> raceStatus(4, 3, 35)
         RaceGrade.G1 -> raceStatus(5, 3, 45)
         RaceGrade.FINALS -> if (scenario == Scenario.GM) {
-            raceStatus(5,20,80)
+            raceStatus(5, 20, 80)
         } else {
             when (race.turn) {
                 74 -> raceStatus(5, 10, if (climax) 30 else 40)
@@ -233,9 +233,14 @@ fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List
 
 private val gmTrainingKnowledgeType by lazy {
     trainingType.associateWith { training ->
-        val upCount = if (training == StatusType.GUTS) 4 else 3
-        trainingTypeOrSkill.map {
-            it to if (upInTraining(training, it)) 0.8 / upCount else 0.2 / (6 - upCount)
+        if (training == StatusType.GUTS) {
+            trainingTypeOrSkill.map {
+                it to if (upInTraining(training, it)) 0.85 / 4 else 0.15 / 2
+            }
+        } else {
+            trainingTypeOrSkill.map {
+                it to if (upInTraining(training, it)) 0.8 / 3 else 0.2 / 3
+            }
         }
     }
 }
@@ -259,7 +264,7 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
                     val knowledgeTypeRate = gmTrainingKnowledgeType[it.type]!!
                     val doubleRate = when {
                         !it.friendTraining -> 0.0
-                        it.type == StatusType.WISDOM -> 0.5
+                        it.type == StatusType.WISDOM -> 0.45
                         else -> 1.0
                     }
                     it.copy(

@@ -171,8 +171,10 @@ data class SupportCard(
     // 2.5+5*(1+ヒント発生率)*(1+固有ヒント発生率)
     val hintFrequency = 0.025 + 0.05 * (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0
 
-    fun checkHint(): Boolean {
-        return !type.outingType && Random.nextDouble() < hintFrequency
+    fun checkHint(frequencyUp: Int? = null): Boolean {
+        // ヒント発生率アップは基本値*(100+n)/100
+        val frequency = frequencyUp?.let { hintFrequency * (100 + it) / 100.0 } ?: hintFrequency
+        return !type.outingType && Random.nextDouble() < frequency
     }
 
     val hintStatus = if (id == 30098) Status(stamina = 4, power = 12, skillPt = 2) else baseHintStatus

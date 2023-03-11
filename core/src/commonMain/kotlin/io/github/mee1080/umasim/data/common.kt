@@ -45,6 +45,8 @@ fun upInTraining(training: StatusType, target: StatusType): Boolean = if (target
     }
 }
 
+fun randomSingleTrainingType() = trainingType.asList().shuffled().first()
+
 fun randomTrainingType(count: Int = 1) = trainingType.asList().shuffled().subList(0, count)
 
 fun toSupportType(value: String) = when (value) {

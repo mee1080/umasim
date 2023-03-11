@@ -61,7 +61,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     }
     // ヒントアイコン表示
     val supportState = supportState?.copy(
-        hintIcon = !scenarioState.hintBlocked && card.checkHint()
+        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.gmStatus?.wisdomHintFrequency)
     )
     return copy(
         position = position,

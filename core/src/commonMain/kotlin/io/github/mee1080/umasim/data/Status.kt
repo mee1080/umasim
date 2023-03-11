@@ -184,4 +184,16 @@ data class Status(
 
     fun countOver(value: Int) = (if (speed >= value) 1 else 0) + (if (stamina >= value) 1 else 0) +
             (if (power >= value) 1 else 0) + (if (guts >= value) 1 else 0) + (if (wisdom >= value) 1 else 0)
+
+    fun multiplyToInt(value: Int): Status {
+        val factor = (100 + value)
+        return copy(
+            speed = speed * factor / 100,
+            stamina = stamina * factor / 100,
+            power = power * factor / 100,
+            guts = guts * factor / 100,
+            wisdom = wisdom * factor / 100,
+            skillPt = skillPt * factor / 100,
+        )
+    }
 }

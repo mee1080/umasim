@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.util.applyIf
 
 class GmScenarioEvents : CommonScenarioEvents() {
 
@@ -43,19 +44,51 @@ class GmScenarioEvents : CommonScenarioEvents() {
             // 導入
             2 -> base.copy(gmStatus = GmStatus())
 
-            24 -> base.applyRace(state.raceStatus(5, 12, 60), 750)
+            24 -> base.applyRace(SpecialRace.GUR)
 
-            48 -> base.applyRace(state.raceStatus(5, 20, 75), 10000)
+            48 -> base.applyRace(SpecialRace.WBC)
 
-            72 -> base.applyRace(state.raceStatus(5, 25, 90), 20000)
+            72 -> base.applyRace(SpecialRace.SWBC)
+
+            // スキル獲得イベント（ステ上昇のみ反映）
+            77 -> if (state.gmStatus!!.wisdomLevel.maxOf { it.value } >= 4) {
+                base.updateStatus { it + Status(10, 10, 10, 10, 10, 40) }
+            } else base
 
             else -> base
         }
     }
 
-    private fun SimulationState.applyRace(raceStatus: Status, fanCount: Int): SimulationState {
+    private enum class SpecialRace(
+        statusValue: Int,
+        skillPt: Int,
+        val fanCount: Int,
+        val updateLevel: Int,
+        val updateStatusValue: Int,
+        val updateSkillPt: Int,
+    ) {
+        GUR(10, 50, 750, 1, 5, 20),
+        WBC(15, 60, 10000, 2, 10, 30),
+        SWBC(20, 70, 20000, 3, 10, 40),
+        ;
+
+        val baseStatus = Status(statusValue, statusValue, statusValue, statusValue, statusValue, skillPt)
+    }
+
+    private fun SimulationState.applyRace(race: SpecialRace): SimulationState {
+        val gmStatus = gmStatus ?: return this
+        // FIXME 青叡智のスキル獲得は未反映
+        val baseStatus = race.baseStatus
+            .applyIf(gmStatus.wisdomLevel[Founder.Red]!! > race.updateLevel) {
+                copy(skillPt = skillPt + race.updateSkillPt)
+            }
+            .applyIf(gmStatus.wisdomLevel[Founder.Yellow]!! > race.updateLevel) {
+                add(randomSingleTrainingType() to race.updateStatusValue)
+                    .add(randomSingleTrainingType() to race.updateStatusValue)
+            }
+        val raceBonusStatus = baseStatus.multiplyToInt(totalRaceBonus)
         return updateStatus {
-            it + applyScenarioRaceBonus(raceStatus) + Status(fanCount = raceFanCount(fanCount))
+            it + applyScenarioRaceBonus(raceBonusStatus) + Status(fanCount = raceFanCount(race.fanCount))
         }
     }
 
@@ -66,6 +99,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {
+        // エンディング、良鬼は未反映
         return super.afterSimulation(state).updateStatus {
             it + Status(20, 20, 20, 20, 20, 60)
         }
