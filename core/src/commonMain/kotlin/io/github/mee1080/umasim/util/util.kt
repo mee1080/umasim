@@ -46,9 +46,9 @@ fun <K, V> Map<K, V>.mapValuesIf(
 fun <K, V> Map<K, V>.replace(
     key: K,
     value: V,
-) = toMutableMap().apply { put(key, value) }
+) = toMutableMap().apply { put(key, value) } as Map<K, V>
 
 fun <K, V> Map<K, V>.replace(
     key: K,
     action: (V) -> V,
-) = toMutableMap().apply { get(key)?.let { put(key, action(it)) } }
+) = toMutableMap().apply { get(key)?.let { put(key, action(it)) } } as Map<K, V>

@@ -55,8 +55,8 @@ data class GmStatus(
                 if (left1.founder == right1.founder) 2 else 3,
             )
             if (newKnowledgeTable2.size % 2 == 0) {
-                val left2 = newKnowledgeTable1[newKnowledgeTable2.size - 2]
-                val right2 = newKnowledgeTable1[newKnowledgeTable2.size - 1]
+                val left2 = newKnowledgeTable2[newKnowledgeTable2.size - 2]
+                val right2 = newKnowledgeTable2[newKnowledgeTable2.size - 1]
                 newKnowledgeTable3 = knowledgeTable3 + Knowledge(
                     left2.founder,
                     randomSelectPercent(0.8, left2.type, right2.type),
