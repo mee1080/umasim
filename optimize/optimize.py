@@ -22,20 +22,20 @@ def objective(trial):
 
     relationSpeed1 = trial.suggest_uniform('relationSpeed1', 0.2, 20.0)
     relationSpeed2 = trial.suggest_uniform('relationSpeed2', 0.2, 20.0)
-#    relationSpeed3 = trial.suggest_uniform('relationSpeed3', 0.2, 20.0)
-    relationStamina1 = trial.suggest_uniform('relationStamina1', 0.2, 20.0)
-    relationStamina2 = trial.suggest_uniform('relationStamina2', 0.2, 20.0)
+    relationSpeed3 = trial.suggest_uniform('relationSpeed3', 0.2, 20.0)
+#    relationStamina1 = trial.suggest_uniform('relationStamina1', 0.2, 20.0)
+#    relationStamina2 = trial.suggest_uniform('relationStamina2', 0.2, 20.0)
 #    relationStamina3 = trial.suggest_uniform('relationStamina3', 0.2, 20.0)
-#    relationPower1 = trial.suggest_uniform('relationPower1', 0.2, 20.0)
+    relationPower1 = trial.suggest_uniform('relationPower1', 0.2, 20.0)
 #    relationPower2 = trial.suggest_uniform('relationPower2', 0.2, 20.0)
 #    relationGuts1 = trial.suggest_uniform('relationGuts1', 0.2, 20.0)
 #    relationGuts2 = trial.suggest_uniform('relationGuts2', 0.2, 20.0)
 #    relationGuts3 = trial.suggest_uniform('relationGuts3', 0.2, 20.0)
 #    relationGuts4 = trial.suggest_uniform('relationGuts4', 0.2, 20.0)
     relationWisdom1 = trial.suggest_uniform('relationWisdom1', 0.2, 20.0)
-#    relationWisdom2 = trial.suggest_uniform('relationWisdom2', 0.2, 20.0)
+    relationWisdom2 = trial.suggest_uniform('relationWisdom2', 0.2, 20.0)
 #    relationWisdom3 = trial.suggest_uniform('relationWisdom3', 0.2, 20.0)
-    relationFriend1 = trial.suggest_uniform('relationFriend1', 0.2, 20.0)
+#    relationFriend1 = trial.suggest_uniform('relationFriend1', 0.2, 20.0)
 
 #    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --chara "[初うらら♪さくさくら]ハルウララ" 4 5 --support "[In my way]トーセンジョーダン" 4 --support "[見習い魔女と長い夜]スイープトウショウ" 4 --support "[夕焼けはあこがれの色]スペシャルウィーク" 4 --support "[スノウクリスタル・デイ]マーベラスサンデー" 4 --support "[幽霊さんとハロウィンの魔法]ミホノブルボン" 4 --support "[夜に暁、空に瑞星]アドマイヤベガ" 4 --speed {speed} --stamina {stamina} --power {power} --guts {guts} --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.25 --relation SPEED 0 {relationSpeed1} --relation SPEED 1 {relationSpeed2} --relation SPEED 2 {relationSpeed3} --relation POWER 0 {relationPower1} --relation POWER 1 {relationPower2} --relation WISDOM 0 {relationWisdom} --aoharu 24 {aoharuJunior} --aoharu 36 {aoharuClassic1} --aoharu 48 {aoharuClassic2} --aoharu-default {aoharuSenior} --factor STAMINA 2 --factor SPEED 3 --factor SPEED 3 --factor STAMINA 2 --factor POWER 3 --factor POWER 3'
 
@@ -151,6 +151,7 @@ def objective(trial):
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'
     """
 
+    """
     cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GRAND_LIVE'\
           f' --distance long --chara "[プラタナス・ウィッチ]スイープトウショウ" 5 5'\
           f' --support "[迫る熱に押されて]キタサンブラック" 4'\
@@ -169,6 +170,47 @@ def objective(trial):
           f' --relation FRIEND 0 {relationFriend1}'\
           f' --factor WISDOM 3 --factor WISDOM 3 --factor WISDOM 3'\
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'
+    """
+
+    """
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GM'\
+          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --support "[泥まみれのコンパネーロ]エルコンドルパサー" 4'\
+          f' --support "[///WARNING GATE///]シンコウウインディ" 4'\
+          f' --support "[ほっと♪きゅーとメモリー]カレンチャン" 4'\
+          f' --support "[おてんば魔女、修行中。]スイープトウショウ" 4'\
+          f' --support "[Dear Mr. C.B.]ミスターシービー" 4'\
+          f' --support "[嗚呼華麗ナル一族]ダイイチルビー" 4'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.15'\
+          f' --relation SPEED 0 {relationSpeed1}'\
+          f' --relation SPEED 1 {relationSpeed2}'\
+          f' --relation SPEED 2 {relationSpeed3}'\
+          f' --relation POWER 0 {relationPower1}'\
+          f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --relation WISDOM 1 {relationWisdom2}'\
+          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'
+    """
+
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GM'\
+          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --support "[迫る熱に押されて]キタサンブラック" 4'\
+          f' --support "[おセンチ注意報♪]マルゼンスキー" 4'\
+          f' --support "[TT Ignition!]ツインターボ" 4'\
+          f' --support "[燦爛]メジロラモーヌ" 4'\
+          f' --support "[Dear Mr. C.B.]ミスターシービー" 4'\
+          f' --support "[嗚呼華麗ナル一族]ダイイチルビー" 4'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.15'\
+          f' --relation SPEED 0 {relationSpeed1}'\
+          f' --relation SPEED 1 {relationSpeed2}'\
+          f' --relation SPEED 2 {relationSpeed3}'\
+          f' --relation POWER 0 {relationPower1}'\
+          f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --relation WISDOM 1 {relationWisdom2}'\
+          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -176,7 +218,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='ls2h2w1f_1',
+    study_name='gms3p1w2_2',
     storage='sqlite:///optuna_study.db',
     load_if_exists=True,
     direction='maximize'

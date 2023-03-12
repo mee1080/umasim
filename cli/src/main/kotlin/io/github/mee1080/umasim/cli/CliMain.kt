@@ -6,6 +6,7 @@ import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
+import io.github.mee1080.umasim.ai.GmActionSelector
 import io.github.mee1080.umasim.ai.GrandLiveFactorBasedActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
@@ -70,7 +71,17 @@ class CliMain : CliktCommand() {
         }
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
-            // TODO GM
+            Scenario.GM -> GmActionSelector.Option(
+                speedFactor = speed,
+                staminaFactor = stamina,
+                powerFactor = power,
+                gutsFactor = guts,
+                wisdomFactor = wisdom,
+                skillPtFactor = skillPt,
+                hpFactor = hp,
+                motivationFactor = motivation,
+                relationFactor = relationFactor,
+            )::generateSelector
 
             Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(
                 speedFactor = speed,
@@ -111,16 +122,17 @@ class CliMain : CliktCommand() {
             )::generateSelector
         }
         val evaluateSetting = when (distance) {
-            // TODO GM
 
             "short" -> Runner.shortEvaluateSetting
-            "mile" -> if (scenarioValue == Scenario.GRAND_LIVE) {
-                Runner.grandLiveMileEvaluateSetting
-            } else {
-                Runner.mileEvaluateSetting
+
+            "mile" -> when (scenarioValue) {
+                Scenario.GM -> Runner.gmMileEvaluateSetting
+                Scenario.GRAND_LIVE -> Runner.grandLiveMileEvaluateSetting
+                else -> Runner.mileEvaluateSetting
             }
 
             "middle" -> Runner.middleEvaluateSetting
+
             else -> if (scenarioValue == Scenario.GRAND_LIVE) {
                 Runner.grandLiveLongEvaluateSetting
             } else {

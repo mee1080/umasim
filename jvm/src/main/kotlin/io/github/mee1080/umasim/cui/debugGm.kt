@@ -12,32 +12,31 @@ import io.github.mee1080.umasim.simulation2.Simulator
 
 fun main() {
     StoreLoader.load()
-    gmSingleSimulation()
-//    gmRunSimulation()
+//    gmSingleSimulation()
+    gmRunSimulation()
 }
 
-val gmMileEvaluateSetting = mapOf(
-    StatusType.SPEED to (1.2 to 1800),
-    StatusType.STAMINA to (1.4 to 700),
-    StatusType.POWER to (1.2 to 1500),
-    StatusType.GUTS to (0.6 to 1200),
-    StatusType.WISDOM to (0.9 to 1200),
-    StatusType.SKILL to (0.4 to Int.MAX_VALUE),
-)
-
 fun gmRunSimulation() {
-    val chara = Store.getChara("ハルウララ", 5, 5)
+    val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
+//    val support = Store.getSupportByName(
+//        "[泥まみれのコンパネーロ]エルコンドルパサー",
+//        "[///WARNING GATE///]シンコウウインディ",
+//        "[ほっと♪きゅーとメモリー]カレンチャン",
+//        "[Dear Mr. C.B.]ミスターシービー",
+//        "[おてんば魔女、修行中。]スイープトウショウ",
+//        "[嗚呼華麗ナル一族]ダイイチルビー",
+//    )
     val support = Store.getSupportByName(
-        "[泥まみれのコンパネーロ]エルコンドルパサー",
-        "[///WARNING GATE///]シンコウウインディ",
-        "[ほっと♪きゅーとメモリー]カレンチャン",
+        "[迫る熱に押されて]キタサンブラック",
+        "[おセンチ注意報♪]マルゼンスキー",
+        "[TT Ignition!]ツインターボ",
         "[Dear Mr. C.B.]ミスターシービー",
-        "[おてんば魔女、修行中。]スイープトウショウ",
+        "[燦爛]メジロラモーヌ",
         "[嗚呼華麗ナル一族]ダイイチルビー",
     )
     println(chara)
     println(support)
-    val selector = { GmActionSelector(GmActionSelector.speedWisdom) }
+    val selector = { GmActionSelector(GmActionSelector.speed3Power1Wisdom2SR) }
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
@@ -48,7 +47,7 @@ fun gmRunSimulation() {
         chara,
         support,
         factor,
-        gmMileEvaluateSetting,
+        Runner.gmMileEvaluateSetting,
         selector = selector,
     )
     println("0,test,0,${summary.second.toSummaryString()},${summary.first}")
@@ -67,7 +66,7 @@ fun gmSingleSimulation() {
     println(chara)
     println(support)
     val selector = GmActionSelector(
-        GmActionSelector.speedWisdom
+        GmActionSelector.speed3Power1Wisdom2SR
     )
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,

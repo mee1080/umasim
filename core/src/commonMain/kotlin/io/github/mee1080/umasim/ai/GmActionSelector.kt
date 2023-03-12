@@ -54,15 +54,58 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
             return doubleArrayOf(0.0, 0.0, 0.0)
         }
 
-        val speedWisdom = Option(
-            speedFactor = 1.0,
-            staminaFactor = 1.0,
-            powerFactor = 1.0,
-            gutsFactor = 1.0,
-            wisdomFactor = 0.8,
-            skillPtFactor = 0.4,
-            hpFactor = 0.6,
-            motivationFactor = 15.0
+        val speed3Power1Wisdom2SR = Option(
+            speedFactor = 1.7,
+            staminaFactor = 1.9,
+            powerFactor = 1.8,
+            gutsFactor = 0.5,
+            wisdomFactor = 1.3,
+            skillPtFactor = 0.8,
+            hpFactor = 1.4,
+            motivationFactor = 15.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        0 -> 9.4
+                        1 -> 19.0
+                        else -> 18.9
+                    }
+
+                    StatusType.POWER -> 17.3
+
+                    else -> when (rank) {
+                        0 -> 14.1
+                        else -> 10.3
+                    }
+                }
+            },
+        )
+
+        val speed2Power1Guts1Wisdom2 = Option(
+            speedFactor = 1.4,
+            staminaFactor = 1.48,
+            powerFactor = 1.3,
+            gutsFactor = 0.6,
+            wisdomFactor = 0.6,
+            skillPtFactor = 0.54,
+            hpFactor = 1.24,
+            motivationFactor = 15.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        0 -> 15.5
+                        1 -> 18.4
+                        else -> 16.8
+                    }
+
+                    StatusType.POWER -> 17.5
+
+                    else -> when (rank) {
+                        0 -> 15.6
+                        else -> 10.1
+                    }
+                }
+            },
         )
     }
 
