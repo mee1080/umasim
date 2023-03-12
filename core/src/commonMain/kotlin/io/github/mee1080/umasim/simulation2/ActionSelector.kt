@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.Founder
 import io.github.mee1080.umasim.data.Lesson
 import io.github.mee1080.umasim.data.ShopItem
 import io.github.mee1080.umasim.data.StatusType
@@ -63,4 +64,4 @@ data class SelectedLiveAction(
 
 sealed interface SelectedGmAction : SelectedScenarioAction
 
-object GmActivateWisdom : SelectedGmAction
+data class GmActivateWisdom(val founder: Founder) : SelectedGmAction

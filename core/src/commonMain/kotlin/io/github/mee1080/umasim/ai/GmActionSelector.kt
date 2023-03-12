@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.Founder
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
@@ -29,12 +30,39 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
     companion object {
         private const val DEBUG = false
 
+        /**
+         * 叡智Lv（R,B,Y） -> 色補正値（R,B,Y）
+         */
+//        private val targetFounderSetting: Map<Triple<Int, Int, Int>, DoubleArray> = buildMap {
+//            for (r in 0..5) {
+//                for (b in 0..5) {
+//                    for (y in 0..5) {
+//                        put(Triple(r, b, y), targetSetting(r, b, y))
+//                    }
+//                }
+//            }
+//        }
+
+        fun targetFounderSetting(r: Int, b: Int, y: Int): DoubleArray {
+            // 初手青（他色になった場合も青獲得まで青狙い）
+            if (b == 0) return doubleArrayOf(-0.5, 1.0, -0.5)
+            // 初手青→2手目黄（赤は年末狙い）
+            if (y == 0) return doubleArrayOf(-0.5, -0.5, 1.0)
+            // まず3種1にする
+            if (r == 0) return doubleArrayOf(1.0, -0.5, -0.5)
+
+            return doubleArrayOf(0.0, 0.0, 0.0)
+        }
+
         val speedWisdom = Option(
-            speedFactor = 1.5,
+            speedFactor = 1.0,
             staminaFactor = 1.0,
-            powerFactor = 1.2,
+            powerFactor = 1.0,
+            gutsFactor = 1.0,
             wisdomFactor = 0.8,
+            skillPtFactor = 0.4,
             hpFactor = 0.6,
+            motivationFactor = 15.0
         )
     }
 
@@ -68,12 +96,34 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
     }
 
     override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
-        return if (state.gmStatus?.waitingWisdom != null) {
-            SelectedAction(scenarioAction = GmActivateWisdom)
-        } else {
-            val action = selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
-            return SelectedAction(action)
+        val forceUse = false
+        when (val wisdom = state.gmStatus?.waitingWisdom) {
+            Founder.Red -> {
+                if (state.turn !in 20..23 && (forceUse || state.status.hp < 60 || state.status.motivation < 2)) {
+                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                }
+            }
+
+            Founder.Blue -> {
+                if (forceUse || selection.any { it is Training && it.failureRate < 10 && it.member.size >= 3 }) {
+                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                }
+            }
+
+            Founder.Yellow -> {
+                if (forceUse || selection.any {
+                        it is Training && it.failureRate < 10 && it.member.count { member ->
+                            !member.isFriendTraining(it.type)
+                        } >= 2
+                    }) {
+                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                }
+            }
+
+            null -> {}
         }
+        val action = selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
+        return SelectedAction(action)
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
@@ -82,7 +132,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             (calcScore(calcExpectedHintStatus(action) + it.first)) * it.second / total
-        } + calcRelationScore(state, action)
+        } + calcRelationScore(state, action) + calcKnowledgeScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
@@ -124,6 +174,36 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         if (DEBUG) println("  relation $score")
         return score
     }
+
+    private fun calcKnowledgeScore(state: SimulationState, action: Action): Double {
+        val gmStatus = state.gmStatus ?: return 0.0
+        val param = action.scenarioActionParam as? GmActionParam ?: return 0.0
+        val baseFactor = 10.0
+        val typeFactor = when (param.knowledgeType) {
+            StatusType.SPEED -> 0.0
+            StatusType.STAMINA -> 0.0
+            StatusType.POWER -> 0.0
+            StatusType.GUTS -> 0.0
+            StatusType.WISDOM -> 0.0
+            else -> 0.0
+        }
+        val fragmentCount = gmStatus.knowledgeTable1.size
+        val founderEffect = when (fragmentCount) {
+            0 -> 1.0
+            3 -> if (param.knowledgeCount == 2) 1.0 else 0.0
+            4 -> 1.0
+            else -> 0.0
+        }
+        val founderFactor = targetFounderSetting(
+            gmStatus.wisdomLevel[Founder.Red]!!,
+            gmStatus.wisdomLevel[Founder.Blue]!!,
+            gmStatus.wisdomLevel[Founder.Yellow]!!,
+        )[param.knowledgeFounder.ordinal] * founderEffect * 10.0
+        val score = (baseFactor + typeFactor + founderFactor) * param.knowledgeCount
+        if (DEBUG) println("  knowledge $score $param")
+        return score
+    }
+
 
     override fun toString(): String {
         return "GmActionSelector $option"

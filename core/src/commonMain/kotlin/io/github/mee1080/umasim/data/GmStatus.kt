@@ -25,6 +25,20 @@ data class GmStatus(
     val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 },
     val fragmentCount: Map<StatusType, Int> = trainingTypeOrSkill.associateWith { 0 },
 ) {
+    fun toShortString() = buildString {
+        append(knowledgeTable1.joinToString { it.toShortString() })
+        append(" : ")
+        append(knowledgeTable2.joinToString { it.toShortString() })
+        append(" : ")
+        append(knowledgeTable3.joinToString { it.toShortString() })
+        append(" : ")
+        append(waitingWisdom ?: activeWisdom)
+        append(" : Lv=")
+        append(wisdomLevel.map { "${it.key}${it.value}" }.joinToString())
+        append(" : Count=")
+        append(fragmentCount.map { "${it.key}${it.value}" }.joinToString())
+    }
+
     val trainingLevelUp get() = activeWisdom == Founder.Red
 
     val hintFrequencyUp get() = activeWisdom == Founder.Blue
@@ -129,6 +143,8 @@ data class Knowledge(
     val bonus: Int = 1,
 ) {
     fun getStatusBonus(targetType: StatusType) = if (targetType == type) bonus else 0
+
+    fun toShortString() = "$founder/$type/$bonus"
 }
 
 data class WisdomLevelEffect(

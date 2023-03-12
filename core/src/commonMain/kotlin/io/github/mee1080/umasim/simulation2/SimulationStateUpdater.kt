@@ -403,7 +403,7 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
 private fun SimulationState.applySelectedGmAction(action: SelectedGmAction): SimulationState {
     val gmStatus = gmStatus ?: return this
     return when (action) {
-        GmActivateWisdom -> {
+        is GmActivateWisdom -> {
             val effect = gmStatus.activateWisdom()
             copy(gmStatus = effect.first, status = status + effect.second)
         }

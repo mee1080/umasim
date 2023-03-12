@@ -30,8 +30,8 @@ class Simulator(
 
     class Option(
         val levelUpTurns: IntArray? = null,
-        val raceBonusStatus: Int = 8,
-        val raceBonusSkillPt: Int = 180,
+        val raceBonusStatus: Int = 0,
+        val raceBonusSkillPt: Int = 0,
     )
 
     private val initialRelationAll = supportCardList.sumOf { it.initialRelationAll }
