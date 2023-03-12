@@ -89,13 +89,13 @@ class Simulator(
     fun simulate(
         turn: Int,
         selector: ActionSelector,
-        events: SimulationEvents = SimulationEvents()
-    ) = simulateWithHistory(turn, selector, events).first
+        eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
+    ) = simulateWithHistory(turn, selector, eventsProducer).first
 
     fun simulateWithHistory(
         turn: Int,
         selector: ActionSelector,
-        events: SimulationEvents = SimulationEvents()
+        eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
     ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
         val history = mutableListOf<SimulationHistoryItem>()
@@ -106,6 +106,7 @@ class Simulator(
             Scenario.GRAND_LIVE -> GrandLiveScenarioEvents()
             Scenario.GM -> GmScenarioEvents()
         }
+        val events = eventsProducer(state)
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))
         state = events.beforeSimulation(state)

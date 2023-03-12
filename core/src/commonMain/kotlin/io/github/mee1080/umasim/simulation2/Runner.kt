@@ -70,7 +70,7 @@ object Runner {
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         evaluateSetting: Map<StatusType, Pair<Double, Int>>,
         turn: Int = 78,
-        events: SimulationEvents = ApproximateSimulationEvents(),
+        events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): Pair<Double, Evaluator> {
         val summaries = run(count, scenario, chara, supportCardList, factorList, turn, events, selector)
@@ -85,7 +85,7 @@ object Runner {
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         turn: Int = 78,
-        events: SimulationEvents = ApproximateSimulationEvents(),
+        events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): List<Summary> {
         val summaries = mutableListOf<Summary>()

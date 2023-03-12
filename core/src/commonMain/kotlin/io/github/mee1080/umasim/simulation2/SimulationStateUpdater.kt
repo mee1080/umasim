@@ -61,7 +61,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     }
     // ヒントアイコン表示
     val supportState = supportState?.copy(
-        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.gmStatus?.wisdomHintFrequency)
+        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp)
     )
     return copy(
         position = position,
@@ -258,7 +258,7 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
     }.copy(possessionItem = possessionItem - item)
 }
 
-private fun MemberState.addRelation(relation: Int): MemberState {
+fun MemberState.addRelation(relation: Int): MemberState {
     return copy(
         supportState = supportState?.copy(
             relation = min(100, supportState.relation + relation)

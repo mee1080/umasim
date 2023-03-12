@@ -75,8 +75,7 @@ fun singleGrandLiveSimulation() {
     ).simulateWithHistory(
         78,
         selector,
-        ApproximateSimulationEvents(),
-    )
+    ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.state.status}")
@@ -92,5 +91,6 @@ fun singleGrandLiveSimulation() {
     println(result.first)
     result.second.last().state.liveStatus?.learnedLesson?.forEach { println(it.displayName) }
     println(result.first.status)
-    result.second.last().state.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()?.forEach { println(it) }
+    result.second.last().state.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()
+        ?.forEach { println(it) }
 }

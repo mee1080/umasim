@@ -88,6 +88,8 @@ data class SimulationState(
     val totalRelation by lazy { member.sumOf { it.relation } }
 
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
+
+    val supportEventEffect = gmStatus?.wisdomSupportEventEffect
 }
 
 data class MemberState(

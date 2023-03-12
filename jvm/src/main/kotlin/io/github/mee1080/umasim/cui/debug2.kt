@@ -33,9 +33,8 @@ fun testAoharuSimulation() {
 //    )
     val result = simulator.simulateWithHistory(
         78,
-        selector,
-        ApproximateSimulationEvents()
-    )
+        selector
+    ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
         println("${turnToString(history.state.turn)}: ${history.action.toShortString()}")
         println(history.state.status)
@@ -70,9 +69,9 @@ fun compareAoharuSimulation() {
             val summary = mutableListOf<Summary>()
             val simulator = Simulator(Scenario.URA, chara, support)
             repeat(testCount) {
-                summary.add(simulator.simulate(turn, selector(), SimulationEvents(
-                    initialStatus = { it.copy(motivation = 2) }
-                )))
+                summary.add(simulator.simulate(turn, selector()) {
+                    SimulationEvents(initialStatus = { it.copy(motivation = 2) })
+                })
             }
             println("URA,${Evaluator(summary).toSummaryString()}")
 //            summary.last().support.forEach { println("${it.name} ${it.state.supportState} ${it.state.scenarioState}") }
@@ -82,9 +81,9 @@ fun compareAoharuSimulation() {
             val summary = mutableListOf<Summary>()
             val simulator = Simulator(Scenario.AOHARU, chara, support)
             repeat(testCount) {
-                summary.add(simulator.simulate(turn, selector(), SimulationEvents(
-                    initialStatus = { it.copy(motivation = 2) }
-                )))
+                summary.add(simulator.simulate(turn, selector()) {
+                    SimulationEvents(initialStatus = { it.copy(motivation = 2) })
+                })
             }
             println("Aoharu,${Evaluator(summary).toSummaryString()}")
 //            summary.last().support.forEach { println("${it.name} ${it.state.supportState} ${it.state.scenarioState}") }
@@ -120,9 +119,10 @@ fun compareExpectedBasedAI() {
                     )
                 }
                 repeat(testCount) {
-                    summary.add(simulator.simulate(turn, selector(), SimulationEvents(
-                        initialStatus = { it.copy(motivation = 2) }
-                    )))
+                    summary.add(simulator.simulate(turn, selector()) {
+                        SimulationEvents(initialStatus = { it.copy(motivation = 2) }
+                        )
+                    })
                 }
                 println("$factor,${Evaluator(summary).toSummaryString()}")
 //            summary.last().support.forEach { println("${it.name} ${it.state.supportState} ${it.state.scenarioState}") }
@@ -159,9 +159,9 @@ fun compareNextStateBasedAI() {
                     )
                 }
                 repeat(testCount) {
-                    summary.add(simulator.simulate(turn, selector(), SimulationEvents(
-                        initialStatus = { it.copy(motivation = 2) }
-                    )))
+                    summary.add(simulator.simulate(turn, selector()) {
+                        SimulationEvents(initialStatus = { it.copy(motivation = 2) })
+                    })
                 }
                 println("$factor,${Evaluator(summary).toSummaryString()}")
 //            summary.last().support.forEach { println("${it.name} ${it.state.supportState} ${it.state.scenarioState}") }

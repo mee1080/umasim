@@ -5,7 +5,7 @@ import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
+import io.github.mee1080.umasim.simulation2.RandomEvents
 import io.github.mee1080.umasim.simulation2.Simulator
 
 fun main() {
@@ -33,7 +33,7 @@ fun gmSingleSimulation() {
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
     val result = Simulator(Scenario.GM, chara, support, factor)
-        .simulateWithHistory(78, selector, ApproximateSimulationEvents())
+        .simulateWithHistory(78, selector) { RandomEvents(it) }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         history.selections.forEach { (selection, selectedAction) ->

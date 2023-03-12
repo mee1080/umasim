@@ -25,7 +25,6 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
-import io.github.mee1080.umasim.simulation2.Training
 
 
 fun singleSimulation() {
@@ -112,8 +111,7 @@ fun singleClimaxSimulation() {
     ).simulateWithHistory(
         78,
         selector,
-        ApproximateSimulationEvents(),
-    )
+    ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.state.status}")
