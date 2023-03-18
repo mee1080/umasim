@@ -121,25 +121,18 @@ class Evaluator(val summaries: List<Summary>) {
                 val friendTrainingCount = averageFriendTrainingCount(type)
                 "$averageTrainingCount,${friendTrainingCount.joinToString(",")}"
             },
-            averageSum(StatusType.SPEED, StatusType.POWER),
-            upperSum(0.2, StatusType.SPEED, StatusType.POWER),
-            upperSum(0.05, StatusType.SPEED, StatusType.POWER),
-            averageSum(StatusType.SPEED, StatusType.STAMINA),
-            upperSum(0.2, StatusType.SPEED, StatusType.STAMINA),
-            upperSum(0.05, StatusType.SPEED, StatusType.STAMINA),
-            averageSum(StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
-            upperSum(0.2, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
-            upperSum(0.05, StatusType.SPEED, StatusType.POWER, StatusType.STAMINA),
-            averageSum(StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
-            upperSum(0.2, StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
-            upperSum(0.05, StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
             averageSum(StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
             upperSum(0.2, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
             upperSum(0.05, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
+            averageSum(StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.2, StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.05, StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
+            averageSum(StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.2, StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.05, StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
             averageSum(
                 StatusType.SPEED to 1.0,
                 StatusType.POWER to 1.0,
-                StatusType.STAMINA to 1.0,
                 StatusType.GUTS to 1.0,
                 StatusType.SKILL to skillFactor
             ),
@@ -147,7 +140,6 @@ class Evaluator(val summaries: List<Summary>) {
                 0.2,
                 StatusType.SPEED to 1.0,
                 StatusType.POWER to 1.0,
-                StatusType.STAMINA to 1.0,
                 StatusType.GUTS to 1.0,
                 StatusType.SKILL to skillFactor
             ),
@@ -155,67 +147,12 @@ class Evaluator(val summaries: List<Summary>) {
                 0.05,
                 StatusType.SPEED to 1.0,
                 StatusType.POWER to 1.0,
-                StatusType.STAMINA to 1.0,
                 StatusType.GUTS to 1.0,
                 StatusType.SKILL to skillFactor
             ),
-            averageSum(
-                StatusType.SPEED to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.2,
-                StatusType.SPEED to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.05,
-                StatusType.SPEED to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            averageSum(
-                StatusType.SPEED to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.2,
-                StatusType.SPEED to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.05,
-                StatusType.SPEED to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            averageSum(
-                StatusType.SPEED to 1.0,
-                StatusType.STAMINA to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.2,
-                StatusType.SPEED to 1.0,
-                StatusType.STAMINA to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.05,
-                StatusType.SPEED to 1.0,
-                StatusType.STAMINA to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
+            averageSum(StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.2, StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
+            upperSum(0.05, StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
             averageSum(
                 StatusType.SPEED to 1.0,
                 StatusType.STAMINA to 1.0,

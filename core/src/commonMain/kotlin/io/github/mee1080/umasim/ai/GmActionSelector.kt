@@ -107,6 +107,43 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
                 }
             },
         )
+
+        val speed2Power1Guts1Wisdom2V2 = Option(
+            speedFactor = 1.6,
+            staminaFactor = 1.55,
+            powerFactor = 1.3,
+            gutsFactor = 1.2,
+            wisdomFactor = 0.75,
+            skillPtFactor = 0.65,
+            hpFactor = 1.35,
+            motivationFactor = 15.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        0 -> 14.0
+                        else -> 11.5
+                    }
+
+                    StatusType.POWER -> 19.0
+
+                    StatusType.GUTS -> 19.5
+
+                    else -> when (rank) {
+                        0 -> 12.0
+                        else -> 10.5
+                    }
+                }
+            },
+            knowledgeSpeedFactor = 8.5,
+            knowledgeStaminaFactor = -1.0,
+            knowledgePowerFactor = -2.5,
+            knowledgeGutsFactor = -4.0,
+            knowledgeWisdomFactor = 1.0,
+            knowledgeSkillPtFactor = -5.0,
+            knowledgeFounderFactor = 4.0,
+            knowledgeCountBase = 10.5,
+            knowledgeCountFactor = 1.0,
+        )
     }
 
     @Serializable
@@ -130,6 +167,15 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
                 }
             }
         },
+        val knowledgeSpeedFactor: Double = 0.0,
+        val knowledgeStaminaFactor: Double = 0.0,
+        val knowledgePowerFactor: Double = 0.0,
+        val knowledgeGutsFactor: Double = 0.0,
+        val knowledgeWisdomFactor: Double = 0.0,
+        val knowledgeSkillPtFactor: Double = 0.0,
+        val knowledgeFounderFactor: Double = 10.0,
+        val knowledgeCountBase: Double = 10.0,
+        val knowledgeCountFactor: Double = 2.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = GmActionSelector(this)
     }
@@ -221,17 +267,15 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
     private fun calcKnowledgeScore(state: SimulationState, action: Action): Double {
         val gmStatus = state.gmStatus ?: return 0.0
         val param = action.scenarioActionParam as? GmActionParam ?: return 0.0
-        val baseFactor = 10.0
         val typeFactor = when (param.knowledgeType) {
-            StatusType.SPEED -> 0.0
-            StatusType.STAMINA -> 0.0
-            StatusType.POWER -> 0.0
-            StatusType.GUTS -> 0.0
-            StatusType.WISDOM -> 0.0
-            else -> 0.0
+            StatusType.SPEED -> option.knowledgeSpeedFactor
+            StatusType.STAMINA -> option.knowledgeStaminaFactor
+            StatusType.POWER -> option.knowledgePowerFactor
+            StatusType.GUTS -> option.knowledgeGutsFactor
+            StatusType.WISDOM -> option.knowledgeWisdomFactor
+            else -> option.knowledgeSkillPtFactor
         }
-        val fragmentCount = gmStatus.knowledgeTable1.size
-        val founderEffect = when (fragmentCount) {
+        val founderEffect = when (gmStatus.knowledgeTable1.size) {
             0 -> 1.0
             3 -> if (param.knowledgeCount == 2) 1.0 else 0.0
             4 -> 1.0
@@ -241,8 +285,10 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
             gmStatus.wisdomLevel[Founder.Red]!!,
             gmStatus.wisdomLevel[Founder.Blue]!!,
             gmStatus.wisdomLevel[Founder.Yellow]!!,
-        )[param.knowledgeFounder.ordinal] * founderEffect * 10.0
-        val score = (baseFactor + typeFactor + founderFactor) * param.knowledgeCount
+        )[param.knowledgeFounder.ordinal] * founderEffect * option.knowledgeFounderFactor
+        val score = if (param.knowledgeCount == 1) typeFactor + founderFactor else {
+            option.knowledgeCountBase + (typeFactor + founderFactor) * option.knowledgeCountFactor
+        }
         if (DEBUG) println("  knowledge $score $param")
         return score
     }

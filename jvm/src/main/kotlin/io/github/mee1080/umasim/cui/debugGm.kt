@@ -5,17 +5,24 @@ import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.simulation2.GmActivateWisdom
-import io.github.mee1080.umasim.simulation2.RandomEvents
-import io.github.mee1080.umasim.simulation2.Runner
-import io.github.mee1080.umasim.simulation2.Simulator
+import io.github.mee1080.umasim.simulation2.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.async
+import kotlinx.coroutines.runBlocking
+import kotlin.coroutines.CoroutineContext
+import kotlin.math.roundToInt
 
+@OptIn(ExperimentalCoroutinesApi::class)
 fun main() {
-    StoreLoader.load()
+    with(Dispatchers.Default.limitedParallelism(4)) {
+        StoreLoader.load()
 //    gmSingleSimulation()
-    gmRunSimulation()
+        gmRunSimulation()
+    }
 }
 
+context(CoroutineContext)
 fun gmRunSimulation() {
     val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
 //    val support = Store.getSupportByName(
@@ -29,28 +36,38 @@ fun gmRunSimulation() {
     val support = Store.getSupportByName(
         "[迫る熱に押されて]キタサンブラック",
         "[おセンチ注意報♪]マルゼンスキー",
-        "[TT Ignition!]ツインターボ",
+        "[うらら～な休日]ハルウララ",
         "[Dear Mr. C.B.]ミスターシービー",
         "[燦爛]メジロラモーヌ",
         "[嗚呼華麗ナル一族]ダイイチルビー",
     )
     println(chara)
     println(support)
-    val selector = { GmActionSelector(GmActionSelector.speed3Power1Wisdom2SR) }
+    val selector = { GmActionSelector(GmActionSelector.speed2Power1Guts1Wisdom2V2) }
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
-    val summary = Runner.runAndEvaluate(
-        1000,
-        Scenario.GM,
-        chara,
-        support,
-        factor,
-        Runner.gmMileEvaluateSetting,
-        selector = selector,
-    )
-    println("0,test,0,${summary.second.toSummaryString()},${summary.first}")
+    val results = runBlocking {
+        List(4) {
+            async(this@CoroutineContext) {
+                println("start")
+                Runner.run(
+                    20000,
+                    Scenario.GM,
+                    chara,
+                    support,
+                    factor,
+                    selector = selector,
+                )
+            }
+        }.map {
+            it.await()
+        }
+    }
+    val evaluator = Evaluator(results.flatten())
+    val score = (evaluator.upperSum(0.2, Runner.gmMileEvaluateSetting) * 1000).roundToInt() / 1000.0
+    println("0,test,0,${evaluator.toSummaryString()},$score")
 }
 
 fun gmSingleSimulation() {

@@ -42,6 +42,15 @@ class CliMain : CliktCommand() {
     private val aoharuDefault by option().double().default(0.0)
     private val aoharuBurn by option().double()
     private val performance by option().double().default(0.0)
+    private val knowledgeSpeed by option().double().default(0.0)
+    private val knowledgeStamina by option().double().default(0.0)
+    private val knowledgePower by option().double().default(0.0)
+    private val knowledgeGuts by option().double().default(0.0)
+    private val knowledgeWisdom by option().double().default(0.0)
+    private val knowledgeSkillPt by option().double().default(0.0)
+    private val knowledgeFounder by option().double().default(10.0)
+    private val knowledgeCountBase by option().double().default(10.0)
+    private val knowledgeCountFactor by option().double().default(2.0)
 
     override fun run() {
         StoreLoader.load()
@@ -81,6 +90,15 @@ class CliMain : CliktCommand() {
                 hpFactor = hp,
                 motivationFactor = motivation,
                 relationFactor = relationFactor,
+                knowledgeSpeedFactor = knowledgeSpeed,
+                knowledgeStaminaFactor = knowledgeStamina,
+                knowledgePowerFactor = knowledgePower,
+                knowledgeGutsFactor = knowledgeGuts,
+                knowledgeWisdomFactor = knowledgeWisdom,
+                knowledgeSkillPtFactor = knowledgeSkillPt,
+                knowledgeFounderFactor = knowledgeFounder,
+                knowledgeCountBase = knowledgeCountBase,
+                knowledgeCountFactor = knowledgeCountFactor,
             )::generateSelector
 
             Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(
