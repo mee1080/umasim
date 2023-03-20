@@ -304,6 +304,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
     private fun calcKnowledgeScore(state: SimulationState, action: Action): Double {
         val gmStatus = state.gmStatus ?: return 0.0
         val param = action.scenarioActionParam as? GmActionParam ?: return 0.0
+        if (gmStatus.knowledgeFragmentCount == 8) return 0.0
         val typeFactor = when (param.knowledgeType) {
             StatusType.SPEED -> option.knowledgeSpeedFactor
             StatusType.STAMINA -> option.knowledgeStaminaFactor
@@ -312,7 +313,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
             StatusType.WISDOM -> option.knowledgeWisdomFactor
             else -> option.knowledgeSkillPtFactor
         }
-        val founderEffect = when (gmStatus.knowledgeTable1.size) {
+        val founderEffect = when (gmStatus.knowledgeFragmentCount) {
             0 -> 1.0
             3 -> if (param.knowledgeCount == 2) 1.0 else 0.0
             4 -> 1.0
@@ -325,7 +326,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         )[param.knowledgeFounder.ordinal] * founderEffect * option.knowledgeFounderFactor
         val score = if (param.knowledgeCount == 1) typeFactor + founderFactor else {
             option.knowledgeCountBase + (typeFactor + founderFactor) * option.knowledgeCountFactor
-        }
+        } + param.knowledgeEventRate * option.knowledgeCountBase
         if (DEBUG) println("  knowledge $score $param")
         return score
     }

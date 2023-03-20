@@ -6,7 +6,7 @@ fun SupportCard.toMemberState(
     scenario: Scenario,
     index: Int,
     relation: Int? = null,
-    passion: Boolean = false,
+    passionTurn: Int = 0,
     friendCount: Int = 0,
 ) = MemberState(
     index = index,
@@ -15,7 +15,7 @@ fun SupportCard.toMemberState(
     supportState = SupportState(
         relation = relation ?: initialRelation,
         hintIcon = false,
-        passion = passion,
+        passionTurn = passionTurn,
         friendCount = friendCount,
     ),
     scenarioState = when (scenario) {

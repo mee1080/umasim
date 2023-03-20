@@ -37,6 +37,7 @@ def objective(trial):
     knowledgeCountBase = trial.suggest_discrete_uniform ('knowledgeCountBase', 0.0, 20.0, 0.5)
     knowledgeCountFactor = trial.suggest_discrete_uniform ('knowledgeCountFactor', 0.0, 4.0, 1.0)
 
+    """
     cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GM'\
           f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
           f' --support "[迫る熱に押されて]キタサンブラック" 4'\
@@ -65,6 +66,35 @@ def objective(trial):
           f' --knowledge-count-base {knowledgeCountBase}'\
           f' --knowledge-count-factor {knowledgeCountFactor}'\
           f''
+    """
+
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GM'\
+          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --support "[迫る熱に押されて]キタサンブラック" 4'\
+          f' --support "[おセンチ注意報♪]マルゼンスキー" 4'\
+          f' --support "[うらら～な休日]ハルウララ" 4'\
+          f' --support "[永劫続く栄光へ]祖にして導く者" 4'\
+          f' --support "[Dear Mr. C.B.]ミスターシービー" 4'\
+          f' --support "[嗚呼華麗ナル一族]ダイイチルビー" 4'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp} --motivation 0.15'\
+          f' --relation SPEED 0 {relationSpeed1}'\
+          f' --relation SPEED 1 {relationSpeed2}'\
+          f' --relation GUTS 0 {relationGuts1}'\
+          f' --relation POWER 0 {relationPower1}'\
+          f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
+          f' --knowledge-speed {knowledgeSpeed}'\
+          f' --knowledge-stamina {knowledgeStamina}'\
+          f' --knowledge-power {knowledgePower}'\
+          f' --knowledge-guts {knowledgeGuts}'\
+          f' --knowledge-wisdom {knowledgeWisdom}'\
+          f' --knowledge-skill-pt {knowledgeSkillPt}'\
+          f' --knowledge-founder {knowledgeFounder}'\
+          f' --knowledge-count-base {knowledgeCountBase}'\
+          f' --knowledge-count-factor {knowledgeCountFactor}'\
+          f''
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -72,7 +102,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='gms2p1g1w2_2',
+    study_name='gms2p1g1w1g1_1',
     storage='sqlite:///optuna_study_gm.db',
     load_if_exists=True,
     direction='maximize'

@@ -104,6 +104,8 @@ data class GmActionParam(
     val knowledgeFounder: Founder,
     val knowledgeType: StatusType,
     val knowledgeCount: Int,
+    val knowledgeEventRate: Double = 0.0,
 ) : ScenarioActionParam {
-    override fun toShortString() = "$knowledgeFounder/${knowledgeType}x$knowledgeCount"
+    override fun toShortString() =
+        "$knowledgeFounder/${knowledgeType}x$knowledgeCount${if (knowledgeEventRate > 0.0) "+1?" else ""}"
 }

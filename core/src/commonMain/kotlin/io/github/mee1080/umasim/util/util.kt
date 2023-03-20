@@ -23,6 +23,11 @@ fun <T : R, R> T.applyIf(
     action: T.() -> R,
 ) = if (condition) action() else this
 
+fun <T : R, R> T.applyIf(
+    condition: (T) -> Boolean,
+    action: T.() -> R,
+) = if (condition(this)) action() else this
+
 fun <T : R, R, D> T.applyIfNotNull(
     data: D?,
     action: T.(D) -> R,

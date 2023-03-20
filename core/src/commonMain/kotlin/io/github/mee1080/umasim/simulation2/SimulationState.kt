@@ -44,6 +44,8 @@ data class SimulationState(
 
     val liveAvailable get() = liveStatus != null
 
+    val wisdomAvailable get() = gmStatus != null
+
     val support get() = member.filter { !it.guest }
 
     val charm get() = condition.contains("愛嬌○")
@@ -129,9 +131,11 @@ data class MemberState(
 data class SupportState(
     val relation: Int,
     val hintIcon: Boolean,
-    val passion: Boolean,
+    val passionTurn: Int,
     val friendCount: Int,
-)
+) {
+    val passion get() = passionTurn > 0
+}
 
 sealed interface ScenarioMemberState {
     val hintBlocked get() = false

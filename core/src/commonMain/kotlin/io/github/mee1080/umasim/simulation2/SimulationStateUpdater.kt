@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.util.applyIfNotNull
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
@@ -59,9 +60,10 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
 
         else -> scenarioState
     }
-    // ヒントアイコン表示
+    // ヒントアイコン表示、情熱ゾーン減少
     val supportState = supportState?.copy(
-        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp)
+        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp),
+        passionTurn = max(0, supportState.passionTurn - 1),
     )
     return copy(
         position = position,
@@ -95,7 +97,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
         val trainingHintIndices = trainingHint.second.map { it.index }
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
-                it.applyAction(action, charm, chara, trainingHintIndices.contains(it.index))
+                it.applyAction(action, charm, chara, trainingHintIndices.contains(it.index), turn)
             } else it
         }
         copy(
@@ -115,10 +117,27 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
     return newState.applyScenarioAction(action)
 }
 
-private fun MemberState.applyAction(action: Training, charm: Boolean, chara: Chara, hint: Boolean): MemberState {
+private fun MemberState.applyAction(
+    action: Training,
+    charm: Boolean,
+    chara: Chara,
+    hint: Boolean,
+    turn: Int,
+): MemberState {
     // 絆上昇量を反映
     val supportState = supportState?.copy(
-        relation = min(100, supportState.relation + getTrainingRelation(charm, hint))
+        relation = min(100, supportState.relation + getTrainingRelation(charm, hint)),
+        passionTurn = if (card.type == StatusType.GROUP) {
+            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
+            if (turn <= 12 || supportState.passion || Random.nextDouble() > 0.2) supportState.passionTurn else {
+                randomSelect(
+                    3 to 60,
+                    4 to 20,
+                    5 to 10,
+                    6 to 10,
+                )
+            }
+        } else 0
     )
     // アオハル特訓上昇量を反映
     val scenarioState = when (scenarioState) {
@@ -396,6 +415,10 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
         .addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
         .applyIf(action.knowledgeCount == 2) {
             addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
+        }
+        .applyIf(action.knowledgeEventRate > Random.nextDouble()) {
+            // FIXME 色選択
+            addKnowledge(Knowledge(Founder.values().random(), trainingTypeOrSkill.random()))
         }
     return copy(gmStatus = newState)
 }

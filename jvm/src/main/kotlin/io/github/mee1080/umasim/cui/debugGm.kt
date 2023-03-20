@@ -17,8 +17,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(4)) {
         StoreLoader.load()
-//    gmSingleSimulation()
-        gmRunSimulation()
+    gmSingleSimulation()
+//        gmRunSimulation()
     }
 }
 
@@ -75,7 +75,7 @@ fun gmSingleSimulation() {
     val support = Store.getSupportByName(
         "[泥まみれのコンパネーロ]エルコンドルパサー",
         "[///WARNING GATE///]シンコウウインディ",
-        "[ほっと♪きゅーとメモリー]カレンチャン",
+        "[永劫続く栄光へ]祖にして導く者",
         "[Dear Mr. C.B.]ミスターシービー",
         "[おてんば魔女、修行中。]スイープトウショウ",
         "[嗚呼華麗ナル一族]ダイイチルビー",

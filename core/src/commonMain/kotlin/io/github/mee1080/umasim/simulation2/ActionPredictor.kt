@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.util.applyIf
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -246,6 +247,7 @@ private val gmTrainingKnowledgeType by lazy {
 }
 
 fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): List<Action> {
+    val gmStatus = gmStatus ?: return baseActions
     return if (baseActions.size == 1) {
         baseActions.map {
             (it as Race).copy(
@@ -272,7 +274,9 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
                             trainingFounders[it.type.ordinal],
                             randomSelectDouble(knowledgeTypeRate),
                             predictKnowledgeCount(doubleRate),
-                        )
+                        ).applyIf({ param -> gmStatus.knowledgeFragmentCount + param.knowledgeCount < 8 && it.support.any { support -> support.charaName == "ダーレーアラビアン" } }) {
+                            copy(knowledgeEventRate = 0.4)
+                        }
                     )
                 }
 

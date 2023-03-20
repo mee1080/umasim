@@ -179,7 +179,7 @@ data class SupportSelection(
         } ?: 0.0
 
     fun toMemberState(scenario: Scenario, index: Int) = card?.toMemberState(
-        scenario, index, relation, passion, friendCount,
+        scenario, index, relation, if (passion) 1 else 0, friendCount,
     )
 }
 
