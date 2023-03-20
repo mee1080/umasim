@@ -41,7 +41,7 @@ object Runner {
         StatusType.POWER to (1.0 to 1500),
         StatusType.GUTS to (0.9 to 1200),
         StatusType.WISDOM to (0.9 to 1200),
-        StatusType.SKILL to (1.2 to 3200),
+        StatusType.SKILL to (0.6 to 3200),
     )
 
     val middleEvaluateSetting = mapOf(
