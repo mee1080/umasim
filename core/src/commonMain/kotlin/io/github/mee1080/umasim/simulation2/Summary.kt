@@ -36,6 +36,9 @@ class Summary(
     var outingCount = 0
         private set
 
+    var raceCount = 0
+        private set
+
     val trainingSupportCount = trainingType.associateWith { IntArray(6) { 0 } }.toMutableMap()
 
     val trainingSupportCountToString get() = toString(trainingSupportCount)
@@ -80,6 +83,7 @@ class Summary(
                     sleepCount++
                 }
                 is Race -> {
+                    raceCount++
                 }
             }
         }

@@ -95,6 +95,8 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun averageOutingCount() = summaries.map { it.outingCount }.average()
 
+    fun averageRaceCount() = summaries.map { it.raceCount }.average()
+
     fun toSummaryString(): String {
         val skillFactor = 0.4
         return arrayOf(
@@ -181,6 +183,7 @@ class Evaluator(val summaries: List<Summary>) {
             ),
             averageSleepCount(),
             averageOutingCount(),
+            averageRaceCount(),
         ).joinToString(",")
 //        val averageSpeed = average(StatusType.SPEED)
 //        val upperSpeed = upper(StatusType.SPEED, 0.2)

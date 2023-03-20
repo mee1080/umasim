@@ -43,7 +43,7 @@ fun gmRunSimulation() {
     )
     println(chara)
     println(support)
-    val selector = { GmActionSelector(GmActionSelector.speed2Power1Guts1Wisdom2V2) }
+    val selector = { GmActionSelector(GmActionSelector.speed2Power1Guts1Wisdom2SP) }
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
@@ -53,7 +53,7 @@ fun gmRunSimulation() {
             async(this@CoroutineContext) {
                 println("start")
                 Runner.run(
-                    20000,
+                    1000,
                     Scenario.GM,
                     chara,
                     support,

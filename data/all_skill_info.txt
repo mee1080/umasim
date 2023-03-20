@@ -474,6 +474,13 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50」、加速1000、持続8.0
 
+シンボリクリスエス固有
+レース中間付近以降の直線で中団にいると速度を上げる、さらにそこが下り坂なら上げ続ける
+->distance_rate>=40&corner==0&slope==2&order_rate>=40&order_rate<=80
+「距離割合>=40、コーナー以外、下り坂、順位率>=40、順位率<=80」、目標速度3500、持続6.0
+->distance_rate>=40&corner==0&order_rate>=40&order_rate<=80
+「距離割合>=40、コーナー以外、順位率>=40、順位率<=80」、目標速度3500、持続5.0
+
 ダイイチルビー固有
 冷静に走行し終盤突入時に後方付近だと少し前に出て、先頭から4人までのウマ娘をちょっと萎縮させる
 ->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
@@ -1170,6 +1177,13 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50、順位==2」、加速700、持続4.8
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持==1」の後「最終コーナー後半、相対位置<=50」、加速500、持続4.8
+
+Mission: Triumph
+レース中間付近以降の直線で中団にいるとわずかに速度を上げる、さらにそこが下り坂ならわずかに上げ続ける
+->distance_rate>=40&corner==0&slope==2&order_rate>=40&order_rate<=80
+「距離割合>=40、コーナー以外、下り坂、順位率>=40、順位率<=80」、目標速度1500、持続3.6
+->distance_rate>=40&corner==0&order_rate>=40&order_rate<=80
+「距離割合>=40、コーナー以外、順位率>=40、順位率<=80」、目標速度1500、持続3.0
 
 至上であれ
 冷静に走行し終盤突入時に後方付近だとちょっと前に出て、先頭から4人までのウマ娘をほんのちょっと萎縮させる
@@ -4793,6 +4807,13 @@ Lose Myself
 ->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40
 「長距離、差し、ラストスパート、順位率>=40」、加速4000、体力-50、持続1.5
 
+質実剛健
+ラストスパート中団以降で持久力を少し使い加速力を上げる、中山なら持久力を使わずわずかに回復＜差し・長距離＞
+->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40&track_id==10005
+「長距離、差し、ラストスパート、順位率>=40、レース場==10005」、加速4000、体力150、持続1.5
+->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40
+「長距離、差し、ラストスパート、順位率>=40」、加速4000、体力-200、持続1.5
+
 がむしゃら
 ラストスパートで中団以降にいると持久力を少し使って加速力がわずかに上がる＜差し・長距離＞
 ->distance_type==4&running_style==3&is_lastspurt==1&order_rate>=40
@@ -4953,6 +4974,31 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 最終コーナーで中団以降だと前後3人ずつの速度をほんのわずかに下げ、自分の速度をわずかに上げる＜作戦・差し＞
 ->running_style==3&order_rate>=40&is_finalcorner_random==1
 「差し、順位率>=40、最終コーナーランダム」、目標速度1500、現在速度-350、現在速度-350、持続1.8
+
+神速
+レース後半のどこかで前に出て持久力をわずかに回復する
+->distance_rate_after_random==50
+「距離50%以降」、現在速度3500、体力150、持続3.0
+
+快速
+レース後半のどこかでわずかに前に出て持久力をほんのわずかに回復する
+->distance_rate_after_random==50
+「距離50%以降」、現在速度1500、体力35、持続3.0
+
+一発必中
+レース終盤が迫ったとき後方にいると速度が上がる＜長距離＞
+->distance_type==4&phase_laterhalf_random==1&order_rate>=50
+「長距離、中盤後半ランダム、順位率>=50」、目標速度3500、持続2.4
+
+革命をもたらす威容
+レース終盤が迫ったとき後方にいると速度が上がり持久力をわずかに回復する＜中距離/長距離＞
+->distance_type==3&phase_laterhalf_random==1&order_rate>=50@distance_type==4&phase_laterhalf_random==1&order_rate>=50
+「中距離、中盤後半ランダム、順位率>=50」または「長距離、中盤後半ランダム、順位率>=50」、目標速度3500、体力150、持続2.4
+
+ロックオン
+レース終盤が迫ったとき後方にいると速度がわずかに上がる＜長距離＞
+->distance_type==4&phase_laterhalf_random==1&order_rate>=50
+「長距離、中盤後半ランダム、順位率>=50」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
