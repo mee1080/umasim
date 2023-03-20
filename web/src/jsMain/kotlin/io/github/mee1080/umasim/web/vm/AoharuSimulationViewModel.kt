@@ -53,8 +53,7 @@ class AoharuSimulationViewModel(val root: ViewModel) {
         ).simulateWithHistory(
             state.simulationTurn,
             selector,
-            ApproximateSimulationEvents(),
-        )
+        ) { ApproximateSimulationEvents() }
         val newHistory = mutableListOf<HistoryItem>()
         updateAoharuState { it.copy(simulationHistory = newHistory) }
     }

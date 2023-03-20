@@ -583,8 +583,7 @@ class ViewModel(val scope: CoroutineScope) {
             ).simulateWithHistory(
                 state.simulationTurn,
                 selector,
-                ApproximateSimulationEvents(),
-            )
+            ) { ApproximateSimulationEvents() }
             updateState(calculate = false) {
                 it.copy(
                     simulationResult = summary.status,
