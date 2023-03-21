@@ -17,7 +17,7 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(4)) {
         StoreLoader.load()
-    gmSingleSimulation()
+        gmSingleSimulation()
 //        gmRunSimulation()
     }
 }
@@ -107,6 +107,7 @@ fun gmSingleSimulation() {
         println("  ${history.state.training.map { "${it.type}${it.level} " }}")
         println("  ${history.state.gmStatus?.toShortString()}")
         println("  ${history.status + history.state.status}")
+        println("  ${history.state.member.first { it.card.type == StatusType.GROUP }.supportState?.passionTurn}")
     }
     println(result.first)
     println(result.first.status)

@@ -133,6 +133,7 @@ data class SupportState(
     val hintIcon: Boolean,
     val passionTurn: Int,
     val friendCount: Int,
+    val outingEnabled: Boolean,
 ) {
     val passion get() = passionTurn > 0
 }

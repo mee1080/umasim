@@ -51,6 +51,7 @@ class CliMain : CliktCommand() {
     private val knowledgeFounder by option().double().default(10.0)
     private val knowledgeCountBase by option().double().default(10.0)
     private val knowledgeCountFactor by option().double().default(2.0)
+    private val passionChallenge by option().double().default(0.0)
 
     override fun run() {
         StoreLoader.load()
@@ -99,6 +100,7 @@ class CliMain : CliktCommand() {
                 knowledgeFounderFactor = knowledgeFounder,
                 knowledgeCountBase = knowledgeCountBase,
                 knowledgeCountFactor = knowledgeCountFactor,
+                passionChallengeFactor = passionChallenge,
             )::generateSelector
 
             Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(

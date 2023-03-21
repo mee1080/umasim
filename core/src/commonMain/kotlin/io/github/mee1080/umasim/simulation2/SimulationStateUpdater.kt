@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.util.applyIfNotNull
+import io.github.mee1080.umasim.util.mapIf
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -64,6 +65,8 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     val supportState = supportState?.copy(
         hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp),
         passionTurn = max(0, supportState.passionTurn - 1),
+        // TODO 13ターン目以降お出かけ可能と仮定
+        outingEnabled = card.type.outingType && turn > 12,
     )
     return copy(
         position = position,
@@ -127,17 +130,18 @@ private fun MemberState.applyAction(
     // 絆上昇量を反映
     val supportState = supportState?.copy(
         relation = min(100, supportState.relation + getTrainingRelation(charm, hint)),
-        passionTurn = if (card.type == StatusType.GROUP) {
-            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
-            if (turn <= 12 || supportState.passion || Random.nextDouble() > 0.2) supportState.passionTurn else {
-                randomSelect(
-                    3 to 60,
-                    4 to 20,
-                    5 to 10,
-                    6 to 10,
-                )
-            }
-        } else 0
+        // FIXME GMの三女神の情熱ゾーンは欠片獲得と同時確定なので別処理、その他は実装保留
+//        passionTurn = if (card.type == StatusType.GROUP) {
+//            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
+//            if (turn <= 12 || supportState.passion || Random.nextDouble() > 0.2) supportState.passionTurn else {
+//                randomSelect(
+//                    3 to 60,
+//                    4 to 20,
+//                    5 to 10,
+//                    6 to 10,
+//                )
+//            }
+//        } else 0
     )
     // アオハル特訓上昇量を反映
     val scenarioState = when (scenarioState) {
@@ -225,8 +229,11 @@ fun SimulationState.applySelectedScenarioAction(action: SelectedScenarioAction?)
     return when (action) {
         null -> this
 
-        is SelectedClimaxAction -> applyIfNotNull(action.buyItem) { buyItem(it) }
-            .applyIfNotNull(action.useItem) { applyItem(it) }
+        is SelectedClimaxAction -> applyIfNotNull(action.buyItem) { buyItem(it) }.applyIfNotNull(action.useItem) {
+            applyItem(
+                it
+            )
+        }
 
         is SelectedLiveAction -> purchaseLesson(action.lesson)
 
@@ -409,18 +416,38 @@ private fun SimulationState.applyScenarioAction(action: Action): SimulationState
 }
 
 private fun SimulationState.applyGmAction(action: GmActionParam): SimulationState {
-    val oldState = gmStatus ?: return this
+    val oldGmStatus = gmStatus ?: return this
     if (action.knowledgeCount == 0) return this
-    val newState = oldState
-        .addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
+    var newMember = member
+    var addStatus = Status()
+    val newGmStatus = oldGmStatus.addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
         .applyIf(action.knowledgeCount == 2) {
             addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
-        }
-        .applyIf(action.knowledgeEventRate > Random.nextDouble()) {
+        }.applyIf(action.knowledgeEventRate > Random.nextDouble()) {
+            newMember = member.mapIf({ it.card.chara == "ダーレーアラビアン" }) {
+                val newSupportState = supportState?.copy(
+                    passionTurn = if (!supportState.outingEnabled || supportState.passion) supportState.passionTurn else {
+                        randomSelect(
+                            3 to 50,
+                            4 to 20,
+                            5 to 15,
+                            6 to 15,
+                        )
+                    },
+                    relation = min(100, supportState.relation + 5),
+                )
+                copy(supportState = newSupportState)
+            }
             // FIXME 色選択
-            addKnowledge(Knowledge(Founder.values().random(), trainingTypeOrSkill.random()))
+            val founder = Founder.values().random()
+            addStatus = when (founder) {
+                Founder.Red -> Status(skillPt = 9)
+                Founder.Blue -> Status(speed = 4, skillPt = 4)
+                Founder.Yellow -> Status(stamina = 4, skillPt = 4)
+            }
+            addKnowledge(Knowledge(founder, trainingTypeOrSkill.random()))
         }
-    return copy(gmStatus = newState)
+    return copy(gmStatus = newGmStatus, member = newMember, status = status + addStatus)
 }
 
 private fun SimulationState.applySelectedGmAction(action: SelectedGmAction): SimulationState {

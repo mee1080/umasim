@@ -274,8 +274,14 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
                             trainingFounders[it.type.ordinal],
                             randomSelectDouble(knowledgeTypeRate),
                             predictKnowledgeCount(doubleRate),
-                        ).applyIf({ param -> gmStatus.knowledgeFragmentCount + param.knowledgeCount < 8 && it.support.any { support -> support.charaName == "ダーレーアラビアン" } }) {
-                            copy(knowledgeEventRate = 0.4)
+                        ).applyIf(it.support.any { support -> support.charaName == "ダーレーアラビアン" }) {
+                            val eventRate =
+                                if (it.support.first { support -> support.charaName == "ダーレーアラビアン" }.supportState?.passion == true) {
+                                    1.0
+                                } else {
+                                    0.4 * (100 + gmStatus.wisdomHintFrequency) / 100.0
+                                }
+                            copy(knowledgeEventRate = eventRate)
                         }
                     )
                 }

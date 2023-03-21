@@ -23,9 +23,11 @@ def objective(trial):
 #    relationGuts3 = trial.suggest_discrete_uniform ('relationGuts3', 0.0, 20.0, 0.5)
 #    relationGuts4 = trial.suggest_discrete_uniform ('relationGuts4', 0.0, 20.0, 0.5)
     relationWisdom1 = trial.suggest_discrete_uniform ('relationWisdom1', 0.0, 20.0, 0.5)
-    relationWisdom2 = trial.suggest_discrete_uniform ('relationWisdom2', 0.0, 20.0, 0.5)
+#    relationWisdom2 = trial.suggest_discrete_uniform ('relationWisdom2', 0.0, 20.0, 0.5)
 #    relationWisdom3 = trial.suggest_discrete_uniform ('relationWisdom3', 0.0, 20.0, 0.5)
 #    relationFriend1 = trial.suggest_discrete_uniform ('relationFriend1', 0.0, 20.0, 0.5)
+    relationGroup1 = trial.suggest_discrete_uniform ('relationGroup1', 0.0, 20.0, 0.5)
+    passionChallenge = trial.suggest_discrete_uniform ('passionChallenge', 0.0, 20.0, 0.5)
 
     knowledgeSpeed = trial.suggest_discrete_uniform ('knowledgeSpeed', -10.0, 10.0, 0.5)
     knowledgeStamina = trial.suggest_discrete_uniform ('knowledgeStamina', -10.0, 10.0, 0.5)
@@ -83,6 +85,7 @@ def objective(trial):
           f' --relation GUTS 0 {relationGuts1}'\
           f' --relation POWER 0 {relationPower1}'\
           f' --relation WISDOM 0 {relationWisdom1}'\
+          f' --relation GROUP 0 {relationGroup1}'\
           f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
           f' --knowledge-speed {knowledgeSpeed}'\
@@ -94,6 +97,7 @@ def objective(trial):
           f' --knowledge-founder {knowledgeFounder}'\
           f' --knowledge-count-base {knowledgeCountBase}'\
           f' --knowledge-count-factor {knowledgeCountFactor}'\
+          f' --passion-challenge {passionChallenge}'\
           f''
 
     print(cmd)
@@ -102,7 +106,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='gms2p1g1w1g1_2',
+    study_name='gms2p1g1w1g1_3',
     storage='sqlite:///optuna_study_gm.db',
     load_if_exists=True,
     direction='maximize'

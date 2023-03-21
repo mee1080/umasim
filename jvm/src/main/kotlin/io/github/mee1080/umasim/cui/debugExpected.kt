@@ -39,7 +39,7 @@ fun testExpected() {
             index,
             supportCard,
             StatusType.NONE,
-            SupportState(relation = 100, hintIcon = false, passionTurn = 0, friendCount = 5),
+            SupportState(relation = 100, hintIcon = false, passionTurn = 0, friendCount = 5, outingEnabled = false),
             GrandLiveMemberState,
         )
     } + createTeamMemberState(teamJoinCount, scenario)

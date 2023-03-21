@@ -185,38 +185,38 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         val speed2Power1Guts1Wisdom1Group1 = Option(
             speedFactor = 1.6,
             staminaFactor = 1.4,
-            powerFactor = 1.15,
-            gutsFactor = 1.35,
+            powerFactor = 1.1,
+            gutsFactor = 1.2,
             wisdomFactor = 1.15,
-            skillPtFactor = 0.95,
-            hpFactor = 1.5,
+            skillPtFactor = 0.75,
+            hpFactor = 1.4,
             motivationFactor = 15.0,
             relationFactor = { type: StatusType, rank: Int, _: Int ->
                 when (type) {
                     StatusType.SPEED -> when (rank) {
-                        0 -> 18.0
-                        else -> 19.0
+                        0 -> 14.0
+                        else -> 11.0
                     }
 
-                    StatusType.POWER -> 7.5
+                    StatusType.POWER -> 16.0
 
-                    StatusType.GUTS -> 12.0
+                    StatusType.GUTS -> 11.0
 
-                    else -> when (rank) {
-                        0 -> 17.5
-                        else -> 18.5
-                    }
+                    StatusType.WISDOM -> 18.5
+
+                    else -> 11.5
                 }
             },
-            knowledgeSpeedFactor = 2.5,
-            knowledgeStaminaFactor = 2.0,
-            knowledgePowerFactor =  6.0,
-            knowledgeGutsFactor = -7.0,
-            knowledgeWisdomFactor = -10.0,
-            knowledgeSkillPtFactor = -2.0,
-            knowledgeFounderFactor = 9.5,
-            knowledgeCountBase = 19.5,
-            knowledgeCountFactor = 1.0,
+            knowledgeSpeedFactor = 8.0,
+            knowledgeStaminaFactor = -5.0,
+            knowledgePowerFactor = 6.5,
+            knowledgeGutsFactor = -3.0,
+            knowledgeWisdomFactor = 0.5,
+            knowledgeSkillPtFactor = 1.0,
+            knowledgeFounderFactor = 10.5,
+            knowledgeCountBase = 10.5,
+            knowledgeCountFactor = 0.0,
+            passionChallengeFactor = 11.0,
         )
     }
 
@@ -250,6 +250,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         val knowledgeFounderFactor: Double = 10.0,
         val knowledgeCountBase: Double = 10.0,
         val knowledgeCountFactor: Double = 2.0,
+        val passionChallengeFactor: Double = 0.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = GmActionSelector(this)
     }
@@ -259,7 +260,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
     }
 
     override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
-        val forceUse = false
+        val forceUse = true
         when (val wisdom = state.gmStatus?.waitingWisdom) {
             Founder.Red -> {
                 if (state.turn !in 20..23 && (forceUse || state.status.hp < 60 || state.status.motivation < 2)) {
@@ -295,7 +296,9 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             (calcScore(calcExpectedHintStatus(action) + it.first)) * it.second / total
-        } + calcRelationScore(state, action) + calcKnowledgeScore(state, action)
+        } + calcRelationScore(state, action) +
+                calcKnowledgeScore(state, action) +
+                calcPassionChallengeScore(state, action)
         if (DEBUG) println("total $score")
         return score
     }
@@ -356,6 +359,8 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
             4 -> 1.0
             else -> 0.0
         }
+        val knowledgeEventRate =
+            if (gmStatus.knowledgeFragmentCount + param.knowledgeCount >= 8) 0.0 else param.knowledgeEventRate
         val founderFactor = targetFounderSetting(
             gmStatus.wisdomLevel[Founder.Red]!!,
             gmStatus.wisdomLevel[Founder.Blue]!!,
@@ -363,11 +368,19 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         )[param.knowledgeFounder.ordinal] * founderEffect * option.knowledgeFounderFactor
         val score = if (param.knowledgeCount == 1) typeFactor + founderFactor else {
             option.knowledgeCountBase + (typeFactor + founderFactor) * option.knowledgeCountFactor
-        } + param.knowledgeEventRate * option.knowledgeCountBase
+        } + knowledgeEventRate * option.knowledgeCountBase
         if (DEBUG) println("  knowledge $score $param")
         return score
     }
 
+    private fun calcPassionChallengeScore(state: SimulationState, action: Action): Double {
+        return when {
+            action !is Training -> 0.0
+            action.support.any { it.supportState != null && it.supportState.outingEnabled && !it.supportState.passion } -> option.passionChallengeFactor
+            else -> 0.0
+        }
+
+    }
 
     override fun toString(): String {
         return "GmActionSelector $option"
