@@ -17,8 +17,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(4)) {
         StoreLoader.load()
-        gmSingleSimulation()
-//        gmRunSimulation()
+//        gmSingleSimulation()
+        gmRunSimulation()
     }
 }
 
@@ -33,13 +33,21 @@ fun gmRunSimulation() {
 //        "[おてんば魔女、修行中。]スイープトウショウ",
 //        "[嗚呼華麗ナル一族]ダイイチルビー",
 //    )
+//    val support = Store.getSupportByName(
+//        "[迫る熱に押されて]キタサンブラック",
+//        "[おセンチ注意報♪]マルゼンスキー",
+//        "[うらら～な休日]ハルウララ",
+//        "[Dear Mr. C.B.]ミスターシービー",
+//        "[燦爛]メジロラモーヌ",
+//        "[嗚呼華麗ナル一族]ダイイチルビー",
+//    )
     val support = Store.getSupportByName(
         "[迫る熱に押されて]キタサンブラック",
         "[おセンチ注意報♪]マルゼンスキー",
-        "[うらら～な休日]ハルウララ",
+        "[一粒の安らぎ]スーパークリーク",
         "[Dear Mr. C.B.]ミスターシービー",
-        "[燦爛]メジロラモーヌ",
-        "[嗚呼華麗ナル一族]ダイイチルビー",
+        "[パッションチャンピオーナ！]エルコンドルパサー",
+        "[永劫続く栄光へ]祖にして導く者",
     )
     println(chara)
     println(support)
@@ -53,7 +61,7 @@ fun gmRunSimulation() {
             async(this@CoroutineContext) {
                 println("start")
                 Runner.run(
-                    1000,
+                    10000,
                     Scenario.GM,
                     chara,
                     support,

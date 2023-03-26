@@ -103,7 +103,7 @@ def objective(trial):
     """
 
     cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario GM'\
-          f' --distance mile --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
+          f' --distance long --chara "[餓狼]ナリタブライアン" 5 5'\
           f' --support "[迫る熱に押されて]キタサンブラック" 4'\
           f' --support "[おセンチ注意報♪]マルゼンスキー" 4'\
           f' --support "[一粒の安らぎ]スーパークリーク" 4'\
@@ -138,7 +138,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='gms2p1g1w1g1_3',
+    study_name='gms2h1p1w1g1_1',
     storage='sqlite:///optuna_study_gm.db',
     load_if_exists=True,
     direction='maximize'
