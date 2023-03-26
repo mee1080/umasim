@@ -28,8 +28,8 @@ data class SupportCardSpecialUnique(
             112 -> "トレーニング失敗率が$value0%の確率で0%になる"
             113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
-            115 -> "全員の初期絆+5（${type},${value0},${value1},${value2},${value3},${value4}）"
-            116 -> "最大5個まで速度スキル所持数でトレ効果アップ"
+            115 -> "全員の${supportEffectName[value0]}+${value1}"
+            116 -> "${supportEffectName[value1]}が速度スキル所持数×${value2}（最大${value3}個）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
