@@ -24,7 +24,7 @@ fun main() {
 
 context(CoroutineContext)
 fun gmRunSimulation() {
-    val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
+    val chara = Store.getChara("[餓狼]ナリタブライアン", 5, 5)
 //    val support = Store.getSupportByName(
 //        "[泥まみれのコンパネーロ]エルコンドルパサー",
 //        "[///WARNING GATE///]シンコウウインディ",
@@ -51,10 +51,10 @@ fun gmRunSimulation() {
     )
     println(chara)
     println(support)
-    val selector = { GmActionSelector(GmActionSelector.speed2Power1Guts1Wisdom2SP) }
+    val selector = { GmActionSelector(GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long) }
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-        StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
+        StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.WISDOM to 3,
     )
     val results = runBlocking {
         List(4) {

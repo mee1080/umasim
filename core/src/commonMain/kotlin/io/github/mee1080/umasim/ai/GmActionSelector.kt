@@ -221,39 +221,39 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
 
         val speed2Stamina1Power1Wisdom1Group1Long = Option(
             speedFactor = 1.8,
-            staminaFactor = 1.75,
-            powerFactor = 1.3,
-            gutsFactor = 1.25,
-            wisdomFactor = 1.75,
-            skillPtFactor = 0.75,
+            staminaFactor = 1.8,
+            powerFactor = 1.0,
+            gutsFactor = 1.0,
+            wisdomFactor = 1.25,
+            skillPtFactor = 0.95,
             hpFactor = 1.5,
             motivationFactor = 15.0,
             relationFactor = { type: StatusType, rank: Int, _: Int ->
                 when (type) {
                     StatusType.SPEED -> when (rank) {
-                        0 -> 20.0
-                        else -> 20.0
+                        0 -> 15.5
+                        else -> 4.5
                     }
 
-                    StatusType.STAMINA -> 18.4
+                    StatusType.STAMINA -> 13.5
 
-                    StatusType.POWER -> 18.5
+                    StatusType.POWER -> 10.5
 
-                    StatusType.WISDOM -> 18.5
+                    StatusType.WISDOM -> 17.0
 
-                    else -> 18.0
+                    else -> 14.5
                 }
             },
-            knowledgeSpeedFactor = -5.5,
-            knowledgeStaminaFactor = -3.5,
-            knowledgePowerFactor = -4.5,
+            knowledgeSpeedFactor = 8.0,
+            knowledgeStaminaFactor = -7.5,
+            knowledgePowerFactor = 0.0,
             knowledgeGutsFactor = -8.0,
-            knowledgeWisdomFactor = -7.5,
-            knowledgeSkillPtFactor = -3.5,
-            knowledgeFounderFactor = 6.0,
-            knowledgeCountBase = 18.5,
+            knowledgeWisdomFactor = -3.0,
+            knowledgeSkillPtFactor = 1.0,
+            knowledgeFounderFactor = 13.5,
+            knowledgeCountBase = 17.0,
             knowledgeCountFactor = 1.0,
-            passionChallengeFactor = 10.5,
+            passionChallengeFactor = 16.0,
         )
     }
 
