@@ -92,7 +92,7 @@ object Runner {
         selector: () -> ActionSelector,
     ): Pair<Double, Evaluator> {
         val summaries = run(count, scenario, chara, supportCardList, factorList, turn, events, selector)
-        val evaluator = Evaluator(summaries)
+        val evaluator = Evaluator(summaries, evaluateSetting, 0.2)
         return (evaluator.upperSum(0.2, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
 

@@ -23,14 +23,33 @@ import io.github.mee1080.umasim.data.trainingType
 
 class Evaluator(val summaries: List<Summary>) {
 
-    private val outputStatus = arrayOf(
-        StatusType.SPEED to 1.0,
-        StatusType.STAMINA to 1.0,
-        StatusType.POWER to 1.0,
-        StatusType.GUTS to 1.0,
-        StatusType.WISDOM to 1.0,
-        StatusType.SKILL to 0.4,
+    constructor(summaries: List<Summary>, evaluateSetting: Map<StatusType, Pair<Double, Int>>, rate: Double) : this(
+        summaries.sortedByDescending { summary ->
+            evaluateSetting.entries.sumOf {
+                kotlin.math.min(summary.status.get(it.key), it.value.second) * it.value.first
+            }
+        }.slice(0 until (summaries.size * rate).toInt())
     )
+
+    companion object {
+        val outputStatus = arrayOf(
+            StatusType.SPEED to 1.0,
+            StatusType.STAMINA to 1.0,
+            StatusType.POWER to 1.0,
+            StatusType.GUTS to 1.0,
+            StatusType.WISDOM to 1.0,
+            StatusType.SKILL to 0.4,
+        )
+
+        val defaultSetting = mapOf(
+            StatusType.SPEED to (1.0 to Int.MAX_VALUE),
+            StatusType.STAMINA to (1.0 to Int.MAX_VALUE),
+            StatusType.POWER to (1.0 to Int.MAX_VALUE),
+            StatusType.GUTS to (1.0 to Int.MAX_VALUE),
+            StatusType.WISDOM to (1.0 to Int.MAX_VALUE),
+            StatusType.SKILL to (0.4 to Int.MAX_VALUE),
+        )
+    }
 
     val results = lazy { summaries.map { it.status } }
 

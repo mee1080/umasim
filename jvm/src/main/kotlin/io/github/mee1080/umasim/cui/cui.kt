@@ -802,6 +802,24 @@ fun openCui(args: Array<String>) {
 //    )
 
     // GMスピ2スタ1パワ1賢さ1三女神
+//    doSimulation2(
+//        Scenario.GM,
+//        Store.getChara("[餓狼]ナリタブライアン", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[おセンチ注意報♪]マルゼンスキー" to 4,
+//            "[Dear Mr. C.B.]ミスターシービー" to 4,
+//            "[永劫続く栄光へ]祖にして導く者" to 4,
+//            "[パッションチャンピオーナ！]エルコンドルパサー" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((2..4).map { "[一粒の安らぎ]スーパークリーク" to it }.toTypedArray())),
+////        Store.getSupportByName("[一粒の安らぎ]スーパークリーク" to 4),
+//        factor = factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 1) + factor(StatusType.WISDOM, 1),
+//        testCount = 20000,
+//        option = GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long,
+//        evaluateSetting = Runner.gmLongEvaluateSetting,
+//    )
     doSimulation2(
         Scenario.GM,
         Store.getChara("[餓狼]ナリタブライアン", 5, 5),
@@ -810,11 +828,11 @@ fun openCui(args: Array<String>) {
             "[おセンチ注意報♪]マルゼンスキー" to 4,
             "[Dear Mr. C.B.]ミスターシービー" to 4,
             "[永劫続く栄光へ]祖にして導く者" to 4,
-            "[パッションチャンピオーナ！]エルコンドルパサー" to 4,
+            "[一粒の安らぎ]スーパークリーク" to 4,
         ).toTypedArray(),
-        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[永劫続く栄光へ]祖にして導く者" to it }.toTypedArray())),
-//        Store.getSupportByName("[フォンデンテで笑って]ヒシアケボノ" to 4),
+        targetStatus = StatusType.POWER, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((2..4).map { "[一粒の安らぎ]スーパークリーク" to it }.toTypedArray())),
+//        Store.getSupportByName("[一粒の安らぎ]スーパークリーク" to 4),
         factor = factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 1) + factor(StatusType.WISDOM, 1),
         testCount = 20000,
         option = GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long,
