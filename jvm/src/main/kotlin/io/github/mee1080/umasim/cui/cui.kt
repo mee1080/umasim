@@ -844,7 +844,7 @@ fun openCui(args: Array<String>) {
         Store.getSupportByName(
             "[迫る熱に押されて]キタサンブラック" to 4,
             "[パッションチャンピオーナ！]エルコンドルパサー" to 4,
-            "[Dear Mr. C.B.]ミスターシービー" to 4,
+            "[感謝は指先まで込めて]ファインモーション" to 4,
             "[永劫続く栄光へ]祖にして導く者" to 4,
             "[一粒の安らぎ]スーパークリーク" to 4,
         ).toTypedArray(),

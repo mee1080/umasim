@@ -467,6 +467,13 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 ->distance_rate>=50&order_rate>=40&order_rate<=80
 「距離割合>=50、順位率>=40、順位率<=80」、目標速度1500、持続5.0(特殊3)
 
+サクラローレル固有
+レース中間地点で中団にいると速度を少し上げる、長距離レースだと効果時間が増えさらに持久力をすごく回復する
+->distance_type==4&distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
+「長距離、距離割合>=50、距離割合<=51、順位率>=30、順位率<=80」、目標速度2500、体力750、持続6.0
+->distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
+「距離割合>=50、距離割合<=51、順位率>=30、順位率<=80」、目標速度2500、持続5.0
+
 ヤマニンゼファー固有
 レース前半で控え、最終コーナー後半に前の方だと長時間加速力をちょっと上げ続ける、2番手なら効果が上がる
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50&order==2
@@ -1180,6 +1187,13 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 レース後半に中団から残り持久力に応じたロングスパートをかけて速度をほんのわずかに上げ続ける
 ->distance_rate>=50&order_rate>=40&order_rate<=80
 「距離割合>=50、順位率>=40、順位率<=80」、目標速度350、持続3.0(特殊3)
+
+花開き、世界
+レース中間地点で中団にいると速度をちょっと上げる、長距離レースだと効果時間が増えさらに持久力を少し回復する
+->distance_type==4&distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
+「長距離、距離割合>=50、距離割合<=51、順位率>=30、順位率<=80」、目標速度500、体力350、持続3.6
+->distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
+「距離割合>=50、距離割合<=51、順位率>=30、順位率<=80」、目標速度500、持続3.0
 
 風光る
 レース前半で控え、最終コーナー後半に前の方だと長時間加速力をほんのちょっと上げ続ける、2番手なら効果が上がる
@@ -4561,6 +4575,11 @@ Lose Myself
 ->running_style==3&phase_random==1
 「差し、中盤ランダム」、目標速度4500、体力-200、持続2.4
 
+桜前線進行中！
+レース中盤に速度をすごく上げる＜作戦・差し＞
+->running_style==3&phase_random==1
+「差し、中盤ランダム」、目標速度4500、持続2.4
+
 フルスロットル
 レース中盤に持久力を少し使って速度を少し上げる＜作戦・差し＞
 ->running_style==3&phase_random==1
@@ -5049,6 +5068,21 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 レース中盤に持久力をわずかに回復しさらに速度がちょっと上がる＜長距離＞
 ->distance_type==4&phase_random==1
 「長距離、中盤ランダム」、体力150、目標速度500、持続2.4
+
+一気呵成
+レース終盤始めの方で余力十分なら前に出る＜差し・長距離＞
+->distance_type==4&running_style==3&phase_firsthalf_random==2&lastspurt==2
+「長距離、差し、終盤前1/4？ランダム、最大スパート」、現在速度3500、持続3.0
+
+一花咲かせましょう！
+レース終盤始めの方で余力十分ならすごく前に出る＜差し・長距離＞
+->distance_type==4&running_style==3&phase_firsthalf_random==2&lastspurt==2
+「長距離、差し、終盤前1/4？ランダム、最大スパート」、現在速度4500、持続3.0
+
+大急ぎ
+レース終盤始めの方で余力十分ならわずかに前に出る＜差し・長距離＞
+->distance_type==4&running_style==3&phase_firsthalf_random==2&lastspurt==2
+「長距離、差し、終盤前1/4？ランダム、最大スパート」、現在速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
