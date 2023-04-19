@@ -838,22 +838,43 @@ fun openCui(args: Array<String>) {
 //        option = GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long,
 //        evaluateSetting = Runner.gmLongEvaluateSetting,
 //    )
+//    doSimulation2(
+//        Scenario.GM,
+//        Store.getChara("[餓狼]ナリタブライアン", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[パッションチャンピオーナ！]エルコンドルパサー" to 4,
+//            "[感謝は指先まで込めて]ファインモーション" to 4,
+//            "[永劫続く栄光へ]祖にして導く者" to 4,
+//            "[一粒の安らぎ]スーパークリーク" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[今は瞳を閉じないで]ナイスネイチャ" to it }.toTypedArray())),
+////        Store.getSupportByName("[今は瞳を閉じないで]ナイスネイチャ" to 4),
+//        factor = factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 1) + factor(StatusType.WISDOM, 1),
+//        testCount = 20000,
+//        option = GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long,
+//        evaluateSetting = Runner.gmLongEvaluateSetting,
+//    )
+
+    // スピ2根性2賢さ1三女神
     doSimulation2(
         Scenario.GM,
-        Store.getChara("[餓狼]ナリタブライアン", 5, 5),
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
         Store.getSupportByName(
             "[迫る熱に押されて]キタサンブラック" to 4,
-            "[パッションチャンピオーナ！]エルコンドルパサー" to 4,
-            "[感謝は指先まで込めて]ファインモーション" to 4,
+            "[うらら～な休日]ハルウララ" to 4,
+//            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
+            "[爆速！最速！花あらし！]サクラバクシンオー" to 4,
+            "[燦爛]メジロラモーヌ" to 4,
             "[永劫続く栄光へ]祖にして導く者" to 4,
-            "[一粒の安らぎ]スーパークリーク" to 4,
         ).toTypedArray(),
         targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[今は瞳を閉じないで]ナイスネイチャ" to it }.toTypedArray())),
-//        Store.getSupportByName("[今は瞳を閉じないで]ナイスネイチャ" to 4),
-        factor = factor(StatusType.STAMINA, 4) + factor(StatusType.POWER, 1) + factor(StatusType.WISDOM, 1),
-        testCount = 20000,
-        option = GmActionSelector.speed2Stamina1Power1Wisdom1Group1Long,
-        evaluateSetting = Runner.gmLongEvaluateSetting,
+//        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+//        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+        factor = factor(StatusType.STAMINA, 6),
+        testCount = 50000,
+        option = GmActionSelector.speed2Guts2Wisdom1Group1Middle,
+        evaluateSetting = Runner.gmMiddleEvaluateSetting,
     )
 }

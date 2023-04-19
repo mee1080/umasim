@@ -255,6 +255,44 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
             knowledgeCountFactor = 1.0,
             passionChallengeFactor = 16.0,
         )
+
+        val speed2Guts2Wisdom1Group1Middle = Option(
+            speedFactor = 1.15,
+            staminaFactor = 1.2,
+            powerFactor = 1.05,
+            gutsFactor = 1.15,
+            wisdomFactor = 1.0,
+            skillPtFactor = 0.95,
+            hpFactor = 1.45,
+            motivationFactor = 15.0,
+            relationFactor = { type: StatusType, rank: Int, _: Int ->
+                when (type) {
+                    StatusType.SPEED -> when (rank) {
+                        0 -> 19.0
+                        else -> 17.0
+                    }
+
+                    StatusType.GUTS -> when(rank) {
+                        0 -> 9.5
+                        else -> 19.5
+                    }
+
+                    StatusType.WISDOM -> 16.5
+
+                    else -> 18.0
+                }
+            },
+            knowledgeSpeedFactor = -4.0,
+            knowledgeStaminaFactor = -7.0,
+            knowledgePowerFactor = -4.0,
+            knowledgeGutsFactor = -2.5,
+            knowledgeWisdomFactor = -1.5,
+            knowledgeSkillPtFactor = -0.5,
+            knowledgeFounderFactor = 2.5,
+            knowledgeCountBase = 19.5,
+            knowledgeCountFactor = 2.0,
+            passionChallengeFactor = 9.0,
+        )
     }
 
     @Serializable

@@ -117,7 +117,7 @@ class Evaluator(val summaries: List<Summary>) {
     fun averageRaceCount() = summaries.map { it.raceCount }.average()
 
     fun toSummaryString(): String {
-        val skillFactor = 0.4
+        val skillFactor = 1.0
         return arrayOf(
             average(StatusType.SPEED),
             average(StatusType.STAMINA),

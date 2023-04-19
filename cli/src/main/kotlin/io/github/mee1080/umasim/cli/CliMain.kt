@@ -151,7 +151,10 @@ class CliMain : CliktCommand() {
                 else -> Runner.mileEvaluateSetting
             }
 
-            "middle" -> Runner.middleEvaluateSetting
+            "middle" -> when (scenarioValue) {
+                Scenario.GM -> Runner.gmMiddleEvaluateSetting
+                else -> Runner.middleEvaluateSetting
+            }
 
             else -> when (scenarioValue) {
                 Scenario.GM -> Runner.gmLongEvaluateSetting
