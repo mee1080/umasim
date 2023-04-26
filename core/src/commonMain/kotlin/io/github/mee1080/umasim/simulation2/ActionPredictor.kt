@@ -85,6 +85,8 @@ private fun SimulationState.calcTrainingResult(
             totalRelation,
             // TODO スキルPt160ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
             min(5, status.skillPt / 160),
+            // TODO スキルPt160ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
+            min(3, status.skillPt / 160),
             liveStatus,
             gmStatus,
         )

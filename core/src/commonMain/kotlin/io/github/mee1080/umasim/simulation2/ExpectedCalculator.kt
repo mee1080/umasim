@@ -41,6 +41,7 @@ class ExpectedCalculator(
         currentStatus: Status,
         totalRelation: Int,
         speedSkillCount: Int,
+        healSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
         gmStatus: GmStatus?,
     ) {
@@ -56,6 +57,7 @@ class ExpectedCalculator(
             currentStatus = currentStatus,
             totalRelation = totalRelation,
             speedSkillCount = speedSkillCount,
+            healSkillCount = healSkillCount,
             liveStatus = liveStatus,
             gmStatus = gmStatus,
         )

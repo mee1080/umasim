@@ -370,6 +370,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         state.totalRelation,
                         // TODO
                         0,
+                        0,
                         state.liveStatus,
                         state.gmStatus,
                     ),

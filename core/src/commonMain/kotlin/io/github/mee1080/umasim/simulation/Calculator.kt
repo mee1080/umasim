@@ -142,7 +142,7 @@ object Calculator {
         val level = trainingLevel ?: training.current.level
         val baseStatus = training.getBaseStatus(trainingLevel).get(type)
         if (baseStatus == 0) return 0
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation) }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(type, it.relation, 0) }
         val charaBonus = chara.getBonus(type) / 100.0
         val friend = support
             .map { it.getFriendBonus(training.type) }

@@ -55,6 +55,7 @@ data class State(
     val maxHp: Int = 100,
     val totalRelation: Int = 0,
     val speedSkillCount: Int = 0,
+    val healSkillCount: Int = 0,
     val shopItemMegaphone: Int = -1,
     val shopItemWeight: Int = -1,
     val trainingResult: Status = Status(),

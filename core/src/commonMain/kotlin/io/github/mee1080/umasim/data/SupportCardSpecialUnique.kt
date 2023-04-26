@@ -30,6 +30,7 @@ data class SupportCardSpecialUnique(
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
             115 -> "全員の${supportEffectName[value0]}+${value1}"
             116 -> "${supportEffectName[value1]}が速度スキル所持数×${value2}（最大${value3}個）"
+            117 -> "スタミナボーナスが回復スキル所持数×1（最大3個）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -53,7 +54,11 @@ data class SupportCardSpecialUnique(
         } else 0
     }
 
-    fun getBaseBonus(statusType: StatusType, relation: Int): Int {
+    fun getBaseBonus(
+        statusType: StatusType,
+        relation: Int,
+        healSkillCount: Int,
+    ): Int {
         return if (type == 101 && relation >= value0) {
             listOf(value1 to value2, value3 to value4).sumOf {
                 val targetType = when (it.first) {
@@ -67,6 +72,9 @@ data class SupportCardSpecialUnique(
                 }
                 if (statusType == targetType) it.second else 0
             }
+        } else if (type == 117) {
+            // TODO
+            if (statusType == StatusType.STAMINA) min(3, healSkillCount) else 0
         } else 0
     }
 

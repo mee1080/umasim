@@ -218,6 +218,10 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(speedSkillCount = speedSkillCount) }
     }
 
+    fun updateHealSkillCount(healSkillCount: Int) {
+        updateState { it.copy(healSkillCount = healSkillCount) }
+    }
+
     fun updateShopItemMegaphone(index: Int) {
         updateState { it.copy(shopItemMegaphone = index) }
     }
@@ -307,6 +311,7 @@ class ViewModel(val scope: CoroutineScope) {
             Status(maxHp = state.maxHp, hp = state.hp),
             state.totalRelation,
             state.speedSkillCount,
+            state.healSkillCount,
             state.trainingLiveStateIfEnabled,
             gmStatus,
         ).setTeamMember(state.teamJoinCount)
@@ -338,6 +343,7 @@ class ViewModel(val scope: CoroutineScope) {
                     Status(maxHp = state.maxHp, hp = state.hp),
                     state.totalRelation,
                     state.speedSkillCount,
+                    state.healSkillCount,
                     state.trainingLiveStateIfEnabled,
                     gmStatus,
                 ).setTeamMember(state.teamJoinCount)
@@ -360,6 +366,7 @@ class ViewModel(val scope: CoroutineScope) {
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
                 state.speedSkillCount,
+                state.healSkillCount,
                 state.trainingLiveStateIfEnabled,
                 gmStatus,
             ),
@@ -441,6 +448,7 @@ class ViewModel(val scope: CoroutineScope) {
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
                 state.speedSkillCount,
+                state.healSkillCount,
                 state.trainingLiveStateIfEnabled,
                 state.gmStatusIfEnabled,
             )

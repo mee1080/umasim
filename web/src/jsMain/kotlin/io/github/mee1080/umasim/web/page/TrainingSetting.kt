@@ -105,6 +105,19 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
         Span { Text(state.speedSkillCount.toString()) }
     }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("回復スキル数：") }
+        MwcSlider(state.healSkillCount, 0, 3) {
+            onInput { model.updateHealSkillCount(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.healSkillCount.toString()) }
+    }
     if (state.scenario == Scenario.GRAND_LIVE) {
         Div {
             Span { Text("トレーニング上昇量：") }

@@ -37,6 +37,7 @@ object Calculator {
         val currentStatus: Status,
         val totalRelation: Int,
         val speedSkillCount: Int,
+        val healSkillCount: Int,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
     ) {
@@ -88,7 +89,7 @@ object Calculator {
         val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0
         val support = info.support
-        val base = baseStatus + support.sumOf { it.card.getBaseBonus(targetType, it.relation) }
+        val base = baseStatus + support.sumOf { it.card.getBaseBonus(targetType, it.relation, info.healSkillCount) }
         val charaBonus = info.chara.getBonus(targetType) / 100.0
         val friend = if (info.allFriend) {
             support.map { it.getFriendBonusAll(info.currentStatus) }
