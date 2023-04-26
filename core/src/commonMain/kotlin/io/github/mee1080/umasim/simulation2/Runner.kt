@@ -17,6 +17,15 @@ object Runner {
         StatusType.SKILL to (0.4 to Int.MAX_VALUE),
     )
 
+    val gmShortEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.2 to 1900),
+        StatusType.STAMINA to (1.4 to 450),
+        StatusType.POWER to (1.0 to 1500),
+        StatusType.GUTS to (0.9 to 1250),
+        StatusType.WISDOM to (0.85 to 1250),
+        StatusType.SKILL to (1.0 to 3200),
+    )
+
     val mileEvaluateSetting = mapOf(
         StatusType.SPEED to (1.2 to 1600),
         StatusType.STAMINA to (1.4 to 700),
@@ -37,11 +46,11 @@ object Runner {
 
     val gmMileEvaluateSetting = mapOf(
         StatusType.SPEED to (1.2 to 1800),
-        StatusType.STAMINA to (1.4 to 700),
+        StatusType.STAMINA to (1.4 to 600),
         StatusType.POWER to (1.0 to 1500),
         StatusType.GUTS to (0.9 to 1200),
         StatusType.WISDOM to (0.9 to 1200),
-        StatusType.SKILL to (0.6 to 3200),
+        StatusType.SKILL to (1.0 to 3200),
     )
 
     val middleEvaluateSetting = mapOf(

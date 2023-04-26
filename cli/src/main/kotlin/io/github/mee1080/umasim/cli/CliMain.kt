@@ -143,7 +143,10 @@ class CliMain : CliktCommand() {
         }
         val evaluateSetting = when (distance) {
 
-            "short" -> Runner.shortEvaluateSetting
+            "short" -> when (scenarioValue) {
+                Scenario.GM -> Runner.gmShortEvaluateSetting
+                else -> Runner.shortEvaluateSetting
+            }
 
             "mile" -> when (scenarioValue) {
                 Scenario.GM -> Runner.gmMileEvaluateSetting

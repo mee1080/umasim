@@ -858,23 +858,81 @@ fun openCui(args: Array<String>) {
 //    )
 
     // スピ2根性2賢さ1三女神
+//    doSimulation2(
+//        Scenario.GM,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[うらら～な休日]ハルウララ" to 4,
+////            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
+//            "[爆速！最速！花あらし！]サクラバクシンオー" to 4,
+//            "[燦爛]メジロラモーヌ" to 4,
+//            "[永劫続く栄光へ]祖にして導く者" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+////        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+//        factor = factor(StatusType.STAMINA, 6),
+//        testCount = 50000,
+//        option = GmActionSelector.speed2Guts2Wisdom1Group1Middle,
+//        evaluateSetting = Runner.gmMiddleEvaluateSetting,
+////    )
+//    doSimulation2(
+//        Scenario.GM,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            "[迫る熱に押されて]キタサンブラック" to 4,
+//            "[おセンチ注意報♪]マルゼンスキー" to 4,
+//            "[うらら～な休日]ハルウララ" to 4,
+//            "[燦爛]メジロラモーヌ" to 4,
+//            "[永劫続く栄光へ]祖にして導く者" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[うらら～な休日]ハルウララ" to it }.toTypedArray())),
+////        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+//        factor = factor(StatusType.STAMINA, 6),
+//        testCount = 50000,
+//        option = GmActionSelector.speed2Guts2Wisdom1Group1Middle,
+//        evaluateSetting = Runner.gmMiddleEvaluateSetting,
+//    )
+
+    // スピ1根性2賢さ2三女神
+//    doSimulation2(
+//        Scenario.GM,
+//        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
+//        Store.getSupportByName(
+////            "[おセンチ注意報♪]マルゼンスキー" to 4,
+//            "[うらら～な休日]ハルウララ" to 4,
+//            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
+//            "[燦爛]メジロラモーヌ" to 4,
+//            "[Dear Mr. C.B.]ミスターシービー" to 4,
+//            "[永劫続く栄光へ]祖にして導く者" to 4,
+//        ).toTypedArray(),
+//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[うらら～な休日]ハルウララ" to it }.toTypedArray())),
+////        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+//        factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
+//        testCount = 50000,
+//        option = GmActionSelector.speed1Guts2Wisdom2Group1Short,
+//        evaluateSetting = Runner.gmShortEvaluateSetting,
+//    )
     doSimulation2(
         Scenario.GM,
-        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
         Store.getSupportByName(
-            "[迫る熱に押されて]キタサンブラック" to 4,
+            "[おセンチ注意報♪]マルゼンスキー" to 4,
             "[うらら～な休日]ハルウララ" to 4,
 //            "[飛び出せ、キラメケ]アイネスフウジン" to 4,
-            "[爆速！最速！花あらし！]サクラバクシンオー" to 4,
             "[燦爛]メジロラモーヌ" to 4,
+            "[Dear Mr. C.B.]ミスターシービー" to 4,
             "[永劫続く栄光へ]祖にして導く者" to 4,
         ).toTypedArray(),
-        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[おセンチ注意報♪]マルゼンスキー" to it }.toTypedArray())),
+        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[うらら～な休日]ハルウララ" to it }.toTypedArray())),
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
-        factor = factor(StatusType.STAMINA, 6),
+        factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 50000,
-        option = GmActionSelector.speed2Guts2Wisdom1Group1Middle,
-        evaluateSetting = Runner.gmMiddleEvaluateSetting,
+        option = GmActionSelector.speed1Guts2Wisdom2Group1Short,
+        evaluateSetting = Runner.gmShortEvaluateSetting,
     )
 }

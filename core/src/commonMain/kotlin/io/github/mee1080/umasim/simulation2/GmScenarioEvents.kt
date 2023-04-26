@@ -64,12 +64,12 @@ class GmScenarioEvents : CommonScenarioEvents() {
         skillPt: Int,
         val fanCount: Int,
         val updateLevel: Int,
-        val updateStatusValue: Int,
+        val updateStatusCount: Int,
         val updateSkillPt: Int,
     ) {
-        GUR(10, 50, 750, 1, 5, 20),
-        WBC(15, 60, 10000, 2, 10, 30),
-        SWBC(20, 70, 20000, 3, 10, 40),
+        GUR(10, 50, 750, 1, 1, 20),
+        WBC(15, 60, 10000, 2, 2, 30),
+        SWBC(20, 70, 20000, 3, 3, 40),
         ;
 
         val baseStatus = Status(statusValue, statusValue, statusValue, statusValue, statusValue, skillPt)
@@ -83,8 +83,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
                 copy(skillPt = skillPt + race.updateSkillPt)
             }
             .applyIf(gmStatus.wisdomLevel[Founder.Yellow]!! > race.updateLevel) {
-                add(randomSingleTrainingType() to race.updateStatusValue)
-                    .add(randomSingleTrainingType() to race.updateStatusValue)
+                add(*(randomTrainingType(race.updateStatusCount).map { it to 10 }).toTypedArray())
             }
         val raceBonusStatus = baseStatus.multiplyToInt(totalRaceBonus)
         return updateStatus {
