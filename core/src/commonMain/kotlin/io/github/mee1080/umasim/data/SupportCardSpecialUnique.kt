@@ -29,8 +29,7 @@ data class SupportCardSpecialUnique(
             113 -> "友情トレーニングで${supportEffectName[value0]}$value1"
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
             115 -> "全員の${supportEffectName[value0]}+${value1}"
-            116 -> "${supportEffectName[value1]}が速度スキル所持数×${value2}（最大${value3}個）"
-            117 -> "スタミナボーナスが回復スキル所持数×1（最大3個）"
+            116 -> "${supportEffectName[value1]}が${skillEffectName[value0] ?: "($value0)"}スキル所持数×${value2}（最大${value3}個）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -61,21 +60,28 @@ data class SupportCardSpecialUnique(
     ): Int {
         return if (type == 101 && relation >= value0) {
             listOf(value1 to value2, value3 to value4).sumOf {
-                val targetType = when (it.first) {
-                    3 -> StatusType.SPEED
-                    4 -> StatusType.STAMINA
-                    5 -> StatusType.POWER
-                    6 -> StatusType.GUTS
-                    7 -> StatusType.WISDOM
-                    30 -> StatusType.SKILL
-                    else -> null
-                }
-                if (statusType == targetType) it.second else 0
+                if (statusType == bonusStatus(it.first)) it.second else 0
             }
-        } else if (type == 117) {
-            // TODO
-            if (statusType == StatusType.STAMINA) min(3, healSkillCount) else 0
+        } else if (type == 116) {
+            val skillCount = when (value0) {
+                3 -> healSkillCount
+                // TODO
+                else -> 0
+            }
+            if (statusType == bonusStatus(value1)) {
+                value2 * min(skillCount, value3)
+            } else 0
         } else 0
+    }
+
+    private fun bonusStatus(value: Int) = when (value) {
+        3 -> StatusType.SPEED
+        4 -> StatusType.STAMINA
+        5 -> StatusType.POWER
+        6 -> StatusType.GUTS
+        7 -> StatusType.WISDOM
+        30 -> StatusType.SKILL
+        else -> null
     }
 
     fun trainingFactor(
@@ -108,8 +114,13 @@ data class SupportCardSpecialUnique(
             trainingLevel * value1
         } else if (type == 114 && value0 == 8) {
             value2 - max(0, (100 - status.hp) / value1)
-        } else if (type == 116) {
-            4 * speedSkillCount
+        } else if (type == 116 && value1 == 8) {
+            val skillCount = when (value0) {
+                1 -> speedSkillCount
+                // TODO
+                else -> 0
+            }
+            value2 * min(skillCount, value3)
         } else 0
     }
 

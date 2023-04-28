@@ -265,6 +265,11 @@ val supportEffectName = mapOf(
     31 to "賢さ友情回復量アップ",
 )
 
+val skillEffectName = mapOf(
+    1 to "速度",
+    3 to "回復",
+)
+
 internal val shopItemData = listOf(
     StatusItem("スピードのメモ帳", 10, Status(speed = 3)),
     StatusItem("スタミナのメモ帳", 10, Status(stamina = 3)),
