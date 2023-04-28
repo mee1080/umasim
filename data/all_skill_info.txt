@@ -697,6 +697,11 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 ->is_finalcorner==1&corner!=0&order_rate>=30&order_rate<=70&blocked_side_continuetime>=2
 「最終コーナー以降、コーナー、順位率>=30、順位率<=70、横ブロック継続>=2」、目標速度2500、加速3000、持続5.0
 
+サクラバクシンオー固有
+残り400m地点で前方だと短い間加速力がちょっと上がる、中盤に長く競り合い続けるほど効果と時間が増える
+->order_rate<=20&remain_distance<=401&remain_distance>=399
+「順位率<=20、残り距離<=401、残り距離>=399」、加速1000(特殊20)、持続1.0(特殊5)
+
 スーパークリーク固有
 最終直線を好位置で走行中前のウマ娘との距離が近いと抜け出しやすくなる
 ->is_finalcorner==1&corner==0&order<=4&bashin_diff_infront<=1
@@ -745,6 +750,13 @@ is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate
 レース前半、掛からず最後方付近に控え続けていると、最終直線で気合を爆発させて加速力が上がる
 distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_finalcorner==1&corner==0
 「距離割合>=50、順位率70以降維持==1、掛かり無し」の後「最終コーナー以降、コーナー以外」、加速4000、持続4.0
+
+マチカネタンホイザ固有
+レース後半のコーナーで中団だと残り持久力に応じた時間速度を少し上げる中距離では加速力もちょっと上げる
+->distance_rate>=50&corner!=0&order_rate>=40&order_rate<=80&distance_type==3
+「距離割合>=50、コーナー、順位率>=40、順位率<=80、中距離」、目標速度2500、加速1000、持続2.0(特殊7)
+->distance_rate>=50&corner!=0&order_rate>=40&order_rate<=80
+「距離割合>=50、コーナー、順位率>=40、順位率<=80」、目標速度2500、持続2.0(特殊7)
 
 サトノダイヤモンド固有
 レース中間付近で中団にいるとき燦然と輝きを放って速度が上がりさらに持久力を少し回復する
@@ -1421,6 +1433,11 @@ GET DOWN
 ->is_finalcorner==1&corner!=0&order_rate>=30&order_rate<=70&blocked_side_continuetime>=2
 「最終コーナー以降、コーナー、順位率>=30、順位率<=70、横ブロック継続>=2」、目標速度500、加速1000、持続3.0
 
+CHERRY☆スクランブル
+残り400m地点で前方だと短い間加速力がほんのちょっと上がる、中盤に長く競り合い続けるほど効果と時間が増える
+->order_rate<=20&remain_distance<=401&remain_distance>=399
+「順位率<=20、残り距離<=401、残り距離>=399」、加速500(特殊20)、持続0.6(特殊5)
+
 ぐるぐるマミートリック♡
 最終直線を好位置で走行中前のウマ娘との距離が近いとちょっと抜け出しやすくなる
 ->is_finalcorner==1&corner==0&order<=4&bashin_diff_infront<=1
@@ -1469,6 +1486,13 @@ is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate
 レース前半、掛からず最後方付近に控え続けていると、最終直線で加速力がわずかに上がる
 distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_finalcorner==1&corner==0
 「距離割合>=50、順位率70以降維持==1、掛かり無し」の後「最終コーナー以降、コーナー以外」、加速2000、持続2.4
+
+ごろりん！？パワードライブ
+レース後半のコーナーで中団だと残り持久力に応じた時間速度をちょっと上げ中距離では加速力もほんのちょっと上げる
+->distance_rate>=50&corner!=0&order_rate>=40&order_rate<=80&distance_type==3
+「距離割合>=50、コーナー、順位率>=40、順位率<=80、中距離」、目標速度500、加速500、持続1.2(特殊7)
+->distance_rate>=50&corner!=0&order_rate>=40&order_rate<=80
+「距離割合>=50、コーナー、順位率>=40、順位率<=80」、目標速度500、持続1.2(特殊7)
 
 玄雲散らす、黄金甲矢
 レース中間付近で中団にいるとき速度がわずかに上がりさらに持久力をちょっと回復する
@@ -3177,6 +3201,11 @@ Frontier Spirit
 ->distance_type==1&straight_random==1
 「短距離、直線ランダム==1」、目標速度3500、持続3.0
 
+驀進！爆進！バクシーン！
+直線でしばらくの間前に出る＜短距離＞
+->distance_type==1&straight_random==1
+「短距離、直線ランダム==1」、現在速度3500、持続4.0
+
 世界を貫く至高の輝き
 直線で速度が上がりさらにわずかに前に出る＜短距離/マイル＞
 ->distance_type==1&straight_random==1@distance_type==2&straight_random==1
@@ -4214,6 +4243,11 @@ Lose Myself
 ->near_count>=3&accumulatetime>=5
 「近くにウマ娘>=3、経過時間>=5」、目標速度1500、持続3.0
 
+盤石の構え
+レース序盤にスキルを多く発動すると加速力が上がる
+->activate_count_start>=3
+「activate_count_start>=3」、加速4000、持続3.0
+
 地固め
 レース序盤にスキルを多く発動すると加速力がわずかに上がる
 ->activate_count_start>=3
@@ -4328,6 +4362,11 @@ Lose Myself
 レース中盤が迫ったとき中団以降にいると持久力を回復し速度がわずかに上がる＜作戦・差し＞
 ->running_style==3&phase_laterhalf_random==0&order_rate>=40
 「差し、序盤後半ランダム、順位率>=40」、体力550、目標速度1500、持続3.0
+
+ポジティブスマイル
+レース中盤始めの方で持久力をすごく回復する＜作戦・差し＞
+->running_style==3&phase_firsthalf_random==1
+「差し、中盤前半ランダム」、体力750、持続0.0
 
 金剛不壊
 レース中盤が迫ったとき中団以降にいると持久力を回復し速度がわずかに上がる＜作戦・差し＞
@@ -4454,6 +4493,11 @@ Lose Myself
 ->distance_type==1&phase_laterhalf_random==1&order_rate<=50
 「短距離、中盤後半ランダム、順位率<=50」、目標速度3500、持続2.4
 
+猪突猛進！バクシンロード！
+レース終盤が迫ったとき前方にいると速度がすごく上がる＜短距離＞
+->distance_type==1&phase_laterhalf_random==1&order_rate<=50
+「短距離、中盤後半ランダム、順位率<=50」、目標速度4500、持続2.4
+
 記憶に刻む足取り
 レース終盤が迫ったとき前方にいると速度が上がり、さらに加速力がわずかに上がる＜短距離＞
 ->distance_type==1&phase_laterhalf_random==1&order_rate<=50
@@ -4501,6 +4545,11 @@ Lose Myself
 
 起死回生の一歩
 レース終盤始めの方に中団以降にいるとしばらくの間加速力が上がる＜中距離＞
+->distance_type==3&phase_firsthalf_random==2&order_rate>=40
+「中距離、終盤前1/4？ランダム、順位率>=40」、加速4000、持続4.0
+
+大どんでんがえし
+レース終盤始めの方で中団以降にいるとしばらくの間加速力が上がる＜中距離＞
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=40
 「中距離、終盤前1/4？ランダム、順位率>=40」、加速4000、持続4.0
 
@@ -5117,6 +5166,16 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 レース中にスキルを13回発動するとわずかに前に出る＜中距離＞
 ->distance_type==3&activate_count_all>=13
 「中距離、スキル発動回数>=13」、現在速度1500、持続2.4
+
+溢れる情熱
+レース中盤が迫ったとき中団以降にいると速度がわずかに上がる＜作戦・差し＞
+->running_style==3&phase_laterhalf_random==0&order_rate>=40
+「差し、序盤後半ランダム、順位率>=40」、目標速度1500、持続2.4
+
+進出開始
+レース終盤が迫ったとき中団以降にいると速度がわずかに上がる＜作戦・差し＞
+->running_style==3&phase_laterhalf_random==1&order_rate>=40
+「差し、中盤後半ランダム、順位率>=40」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
