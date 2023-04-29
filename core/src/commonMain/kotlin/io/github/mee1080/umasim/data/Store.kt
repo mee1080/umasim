@@ -18,8 +18,6 @@
  */
 package io.github.mee1080.umasim.data
 
-import io.github.mee1080.umasim.simulation.TrainingInfo
-
 object Store {
 
     private lateinit var charaSource: String

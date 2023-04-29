@@ -22,18 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
 import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
-import io.github.mee1080.umasim.simulation.Runner
-import io.github.mee1080.umasim.simulation.Simulator
-import io.github.mee1080.umasim.simulation.Summary
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Job
 import java.io.File
-import java.util.concurrent.Executors
-import java.util.concurrent.atomic.AtomicInteger
 
 class ViewModel(private val scope: CoroutineScope) {
 
@@ -220,44 +215,45 @@ class ViewModel(private val scope: CoroutineScope) {
         val simulationThread = simulationThread
         simulationRunningCount = simulationCount
         simulationFinishedCount = 0
-        simulationJob = scope.launch(Dispatchers.Default) {
-            val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
-            simulationContext.use { context ->
-                try {
-                    val finishedCount = AtomicInteger(0)
-                    val totalSummary = (0 until simulationThread).map { thread ->
-                        async(context) {
-                            val summary = mutableListOf<Summary>()
-                            val count =
-                                simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
-                            repeat(count) {
-                                if (!isActive) throw CancellationException()
-                                val simulator = Simulator(chara, support, Store.getTrainingList(scenario))
-                                val selector = FactorBasedActionSelector(option)
-                                summary.add(Runner.simulate(simulationTurn, simulator, selector))
-                                if (it % 100 == 99) {
-                                    simulationFinishedCount = finishedCount.addAndGet(100)
-                                }
-                            }
-                            simulationFinishedCount = finishedCount.addAndGet(count % 100)
-                            summary
-                        }
-                    }.fold(mutableListOf<Summary>()) { acc, result ->
-                        acc.addAll(result.await())
-                        acc
-                    }
-                    if (!isActive) throw CancellationException()
-                    val file =
-                        ResultWriter().output(chara, support, option, simulationCount, simulationTurn, totalSummary)
-                    simulationResultFile = file.absolutePath
-                    simulationResultVisible = true
-                } catch (e: CancellationException) {
-                    // nothing to do
-                } finally {
-                    simulationJob = null
-                }
-            }
-        }
+        // FIXME 新実装
+//        simulationJob = scope.launch(Dispatchers.Default) {
+//            val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
+//            simulationContext.use { context ->
+//                try {
+//                    val finishedCount = AtomicInteger(0)
+//                    val totalSummary = (0 until simulationThread).map { thread ->
+//                        async(context) {
+//                            val summary = mutableListOf<Summary>()
+//                            val count =
+//                                simulationCount / simulationThread + (if (simulationCount % simulationThread > thread) 1 else 0)
+//                            repeat(count) {
+//                                if (!isActive) throw CancellationException()
+//                                val simulator = Simulator(chara, support, Store.getTrainingList(scenario))
+//                                val selector = FactorBasedActionSelector(option)
+//                                summary.add(Runner.simulate(simulationTurn, simulator, selector))
+//                                if (it % 100 == 99) {
+//                                    simulationFinishedCount = finishedCount.addAndGet(100)
+//                                }
+//                            }
+//                            simulationFinishedCount = finishedCount.addAndGet(count % 100)
+//                            summary
+//                        }
+//                    }.fold(mutableListOf<Summary>()) { acc, result ->
+//                        acc.addAll(result.await())
+//                        acc
+//                    }
+//                    if (!isActive) throw CancellationException()
+//                    val file =
+//                        ResultWriter().output(chara, support, option, simulationCount, simulationTurn, totalSummary)
+//                    simulationResultFile = file.absolutePath
+//                    simulationResultVisible = true
+//                } catch (e: CancellationException) {
+//                    // nothing to do
+//                } finally {
+//                    simulationJob = null
+//                }
+//            }
+//        }
     }
 
     fun cancelSimulation() {
