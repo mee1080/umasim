@@ -488,6 +488,13 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 ->distance_rate>=40&corner==0&order_rate>=40&order_rate<=80
 「距離割合>=40、コーナー以外、順位率>=40、順位率<=80」、目標速度3500、持続5.0
 
+タニノギムレット固有
+レース終盤に後方にいると最終直線で力を解放し前に出る、東京レース場の中距離レースならものすごく前に出る
+phase>=2&order_rate>=50->is_finalcorner==1&corner==0&track_id==10006&distance_type==3
+「終盤、順位率>=50」の後「最終コーナー以降、コーナー以外、レース場==10006、中距離」、現在速度5500、持続5.0
+phase>=2&order_rate>=50->is_finalcorner==1&corner==0
+「終盤、順位率>=50」の後「最終コーナー以降、コーナー以外」、現在速度3500、持続5.0
+
 ダイイチルビー固有
 冷静に走行し終盤突入時に後方付近だと少し前に出て、先頭から4人までのウマ娘をちょっと萎縮させる
 ->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
@@ -1234,6 +1241,11 @@ Mission: Triumph
 「距離割合>=40、コーナー以外、下り坂、順位率>=40、順位率<=80」、目標速度1500、持続3.6
 ->distance_rate>=40&corner==0&order_rate>=40&order_rate<=80
 「距離割合>=40、コーナー以外、順位率>=40、順位率<=80」、目標速度1500、持続3.0
+
+霹靂のアウフヘーベン
+レース終盤に後方にいると最終直線でわずかに前に出る
+phase>=2&order_rate>=50->is_finalcorner==1&corner==0
+「終盤、順位率>=50」の後「最終コーナー以降、コーナー以外」、現在速度1500、持続3.0
 
 至上であれ
 冷静に走行し終盤突入時に後方付近だとちょっと前に出て、先頭から4人までのウマ娘をほんのちょっと萎縮させる
@@ -2836,6 +2848,11 @@ phase>=2&distance_diff_rate>=50->running_style==4&phase_firsthalf_random==3&is_l
 「終盤、相対位置>=50」の後「追込、phase_firsthalf_random==3、ラストスパート」、目標速度4500、持続3.0
 
 己身焦がすほうき星
+レース終盤に後方にいるとラストスパートの最中に速度がすごく上がる＜作戦・追込＞
+phase>=2&distance_diff_rate>=50->running_style==4&phase_firsthalf_random==3&is_lastspurt==1
+「終盤、相対位置>=50」の後「追込、phase_firsthalf_random==3、ラストスパート」、目標速度4500、持続3.0
+
+嵐を呼ぶ破壊神
 レース終盤に後方にいるとラストスパートの最中に速度がすごく上がる＜作戦・追込＞
 phase>=2&distance_diff_rate>=50->running_style==4&phase_firsthalf_random==3&is_lastspurt==1
 「終盤、相対位置>=50」の後「追込、phase_firsthalf_random==3、ラストスパート」、目標速度4500、持続3.0
@@ -5211,6 +5228,31 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->running_style==3&phase_random==1&order_rate>=40&order_rate<=90
 「差し、中盤ランダム、順位率>=40、順位率<=90」、目標速度500、持続4.0
 
+雲蒸竜変
+スピードとパワーが十分に強いとスピードとパワーが上がる＜マイル/中距離＞
+->base_speed>=1000&base_power>=1000&distance_type==2@base_speed>=1000&base_power>=1000&distance_type==3
+「base_speed>=1000、base_power>=1000、マイル」または「base_speed>=1000、base_power>=1000、中距離」、スピード600000、パワー600000、持続0
+
+酔い痴れよ、世界
+スピードとパワーが十分に強いとスピードとパワーがすごく上がる＜マイル/中距離＞
+->base_speed>=1000&base_power>=1000&distance_type==2@base_speed>=1000&base_power>=1000&distance_type==3
+「base_speed>=1000、base_power>=1000、マイル」または「base_speed>=1000、base_power>=1000、中距離」、スピード800000、パワー800000、持続0
+
+自信家
+スピードとパワーが十分に強いとスピードとパワーがわずかに上がる＜マイル/中距離＞
+->base_speed>=1000&base_power>=1000&distance_type==2@base_speed>=1000&base_power>=1000&distance_type==3
+「base_speed>=1000、base_power>=1000、マイル」または「base_speed>=1000、base_power>=1000、中距離」、スピード200000、パワー200000、持続0
+
+昂る鼓動
+レース終盤始めの方に中団にいると前に出る＜中距離/長距離＞
+->distance_type==3&phase_firsthalf_random==2&order_rate>=30&order_rate<=80@distance_type==4&phase_firsthalf_random==2&order_rate>=30&order_rate<=80
+「中距離、終盤前1/4？ランダム、順位率>=30、順位率<=80」または「長距離、終盤前1/4？ランダム、順位率>=30、順位率<=80」、現在速度3500、持続3.0
+
+込み上げる熱
+レース終盤始めの方に中団にいるとわずかに前に出る＜中距離/長距離＞
+->distance_type==3&phase_firsthalf_random==2&order_rate>=30&order_rate<=80@distance_type==4&phase_firsthalf_random==2&order_rate>=30&order_rate<=80
+「中距離、終盤前1/4？ランダム、順位率>=30、順位率<=80」または「長距離、終盤前1/4？ランダム、順位率>=30、順位率<=80」、現在速度1500、持続3.0
+
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
 ->phase_random==1
@@ -5413,6 +5455,10 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 
 カーニバルボーナス
 レーシングカーニバルで獲得するカーニバルptにボーナスが付く（＋{0}％）このスキルはイベント終了時に消滅する
+
+
+カーニバルボーナス
+レーシングカーニバルで基礎能力+{0}％、さらに{1}％の確率で絶好調になるこのスキルはイベント終了時に消滅する
 
 
 カーニバルボーナス
