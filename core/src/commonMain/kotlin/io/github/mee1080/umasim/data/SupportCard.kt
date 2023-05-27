@@ -132,6 +132,7 @@ data class SupportCard(
     fun trainingFactor(
         trainingType: StatusType,
         trainingLevel: Int,
+        totalTrainingLevel: Int,
         relation: Int,
         supportTypeCount: Int,
         fanCount: Int,
@@ -144,6 +145,7 @@ data class SupportCard(
             type,
             trainingType,
             trainingLevel,
+            totalTrainingLevel,
             relation,
             supportTypeCount,
             fanCount,

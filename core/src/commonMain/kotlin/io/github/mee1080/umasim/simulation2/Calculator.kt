@@ -27,7 +27,6 @@ object Calculator {
 
     data class CalcInfo(
         val chara: Chara,
-        // TODO 叡智の効果で基本値変動あり
         val training: TrainingBase,
         val motivation: Int,
         val member: List<MemberState>,
@@ -38,6 +37,7 @@ object Calculator {
         val totalRelation: Int,
         val speedSkillCount: Int,
         val healSkillCount: Int,
+        val totalTrainingLevel: Int,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
     ) {
@@ -105,6 +105,7 @@ object Calculator {
                 it.card.trainingFactor(
                     info.training.type,
                     info.training.level,
+                    info.totalTrainingLevel,
                     it.relation,
                     info.supportTypeCount,
                     info.fanCount,

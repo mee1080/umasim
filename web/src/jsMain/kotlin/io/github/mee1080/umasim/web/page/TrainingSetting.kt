@@ -118,6 +118,19 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
         Span { Text(state.healSkillCount.toString()) }
     }
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }) {
+        Span { Text("合計トレーニングLv：") }
+        MwcSlider(state.totalTrainingLevel, 5, 20) {
+            onInput { model.updateTotalTraningLevel(it.toInt()) }
+            style { width(300.px) }
+        }
+        Span { Text(state.totalTrainingLevel.toString()) }
+    }
     if (state.scenario == Scenario.GRAND_LIVE) {
         Div {
             Span { Text("トレーニング上昇量：") }

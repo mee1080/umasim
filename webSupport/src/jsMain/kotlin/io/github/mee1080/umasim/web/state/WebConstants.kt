@@ -97,11 +97,12 @@ object WebConstants {
         SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
         SortOrder("やる気ボナ（特殊固有なし）") { motivationFactor(0, false) },
         SortOrder("やる気ボナ（特殊固有あり）") { motivationFactor(100, true) },
-        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 1, 0, 0, 0, Status(maxHp = 100, hp = 100), 0, 1, 0) },
+        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 1, 5, 0, 0, 0, Status(maxHp = 100, hp = 100), 0, 1, 0) },
         SortOrder("トレ効果（特殊固有あり）") {
             trainingFactor(
                 type,
                 5,
+                20,
                 100,
                 6,
                 1000000,
