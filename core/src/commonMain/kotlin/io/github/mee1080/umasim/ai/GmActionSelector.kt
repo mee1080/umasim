@@ -295,41 +295,41 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         )
 
         val speed1Guts2Wisdom2Group1Short = Option(
-            speedFactor = 1.1,
-            staminaFactor = 0.85,
-            powerFactor = 1.4,
-            gutsFactor = 1.45,
-            wisdomFactor = 0.85,
-            skillPtFactor = 1.0,
-            hpFactor = 1.45,
+            speedFactor = 0.8,
+            staminaFactor = 0.3,
+            powerFactor = 1.15,
+            gutsFactor = 1.05,
+            wisdomFactor = 0.6,
+            skillPtFactor = 0.95,
+            hpFactor = 1.1,
             motivationFactor = 15.0,
             relationFactor = { type: StatusType, rank: Int, _: Int ->
                 when (type) {
-                    StatusType.SPEED -> 19.5
+                    StatusType.SPEED -> 12.0
 
                     StatusType.GUTS -> when(rank) {
-                        0 -> 1.5
-                        else -> 6.5
+                        0 -> 2.0
+                        else -> 4.0
                     }
 
                     StatusType.WISDOM -> when(rank) {
-                        0 -> 15.0
-                        else -> 18.0
+                        0 -> 13.5
+                        else -> 5.5
                     }
 
-                    else -> 18.0
+                    else -> 12.0
                 }
             },
-            knowledgeSpeedFactor = 5.0,
-            knowledgeStaminaFactor = -2.5,
-            knowledgePowerFactor = 9.0,
-            knowledgeGutsFactor = -3.5,
-            knowledgeWisdomFactor = 3.0,
-            knowledgeSkillPtFactor = -1.5,
-            knowledgeFounderFactor = 11.5,
-            knowledgeCountBase = 16.5,
-            knowledgeCountFactor = 0.0,
-            passionChallengeFactor = 19.0,
+            knowledgeSpeedFactor = 4.5,
+            knowledgeStaminaFactor = -4.0,
+            knowledgePowerFactor = 4.0,
+            knowledgeGutsFactor = -1.5,
+            knowledgeWisdomFactor = -0.5,
+            knowledgeSkillPtFactor = 3.0,
+            knowledgeFounderFactor = 9.0,
+            knowledgeCountBase = 12.0,
+            knowledgeCountFactor = 1.0,
+            passionChallengeFactor = 6.5,
         )
     }
 
