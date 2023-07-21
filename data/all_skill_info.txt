@@ -459,6 +459,13 @@ phase==1&blocked_side_continuetime>=2&corner!=0->phase>=2&is_finalcorner_laterha
 ->remain_distance<=300&order_rate<=40&bashin_diff_infront<=1
 「残り距離<=300、順位率40以下（チャンミ～4/LoH～5）、前とのバ身差<=1」、目標速度3500、持続5.0
 
+シリウスシンボリ固有
+残り800m地点で中団にいると加速力がわずかに上がる、2400ｍのレースで人気が高いとすごく上がる
+->remain_distance>=799&remain_distance<=801&order_rate>=30&order_rate<=60&course_distance==2400&popularity<=3
+「残り距離799～801、順位率30～60（チャンミ3～5/LoH4～7）、course_distance==2400、人気<=3」、加速5000、持続4.0
+->remain_distance>=799&remain_distance<=801&order_rate>=30&order_rate<=60
+「残り距離799～801、順位率30～60（チャンミ3～5/LoH4～7）」、加速2000、持続4.0
+
 メジロアルダン固有
 最終直線で後ろのウマ娘と距離が近いとこの瞬間に懸け持久力をわずかに使い少しの間速度がすごく上がる
 ->is_finalcorner==1&corner==0&bashin_diff_behind<=1
@@ -1252,6 +1259,13 @@ Pride of KING
 残り300mを切って好位置にいるとき前のウマ娘との距離が近いと速度がわずかに上がる
 ->remain_distance<=300&order_rate<=40&bashin_diff_infront<=1
 「残り距離<=300、順位率40以下（チャンミ～4/LoH～5）、前とのバ身差<=1」、目標速度1500、持続3.0
+
+セイリオス
+残り800m地点で中団にいると加速力がほんのわずかに上がる、2400mのレースで人気が高いと少し上がる
+->remain_distance>=799&remain_distance<=801&order_rate>=30&order_rate<=60&course_distance==2400&popularity<=3
+「残り距離799～801、順位率30～60（チャンミ3～5/LoH4～7）、course_distance==2400、人気<=3」、加速3000、持続2.4
+->remain_distance>=799&remain_distance<=801&order_rate>=30&order_rate<=60
+「残り距離799～801、順位率30～60（チャンミ3～5/LoH4～7）」、加速700、持続2.4
 
 一期の夢、刹那の飛翔
 最終直線で後ろのウマ娘と距離が近いと持久力をわずかに使い少しの間速度が少し上がる
@@ -3138,6 +3152,11 @@ Frontier Spirit
 ->distance_type==3&phase_random==1&order_rate<=50
 「中距離、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続2.4
 
+一等星のアラベスク
+レース中盤に前の方だと速度がすごく上がる＜中距離＞
+->distance_type==3&phase_random==1&order_rate<=50
+「中距離、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続2.4
+
 テンポアップ
 レース中盤に前の方だとわずかに好位置を取りやすくなる＜中距離＞
 ->distance_type==3&phase_random==1&order_rate<=50
@@ -4544,6 +4563,11 @@ Lose Myself
 ラストスパートの直線で好位置にいるとしばらくの間速度が上がる＜中距離＞
 ->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
 「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度3500、持続4.0
+
+揺るがぬアスター
+ラストスパートの直線で好位置にいると速度がすごく上がる＜中距離＞
+->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
+「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
 
 刹那への覚悟
 ラストスパートの直線で好位置にいると速度がすごく上がる＜中距離＞
