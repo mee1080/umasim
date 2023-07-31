@@ -30,7 +30,7 @@ data class SupportCardSpecialUnique(
             114 -> "${supportEffectName[value0]}が${value2}-(100-体力)/${value1}（小数点以下切り捨て）、最大+20"
             115 -> "全員の${supportEffectName[value0]}+${value1}"
             116 -> "${supportEffectName[value1]}が${skillEffectName[value0] ?: "($value0)"}スキル所持数×${value2}（最大${value3}個）"
-            117 -> "トレーニング効果が合計トレーニングLv×x"
+            117 -> "${supportEffectName[value0]}が合計トレーニングLv×1（最大${value2}）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -123,8 +123,8 @@ data class SupportCardSpecialUnique(
                 else -> 0
             }
             value2 * min(skillCount, value3)
-        } else if (type == 117) {
-            min(20, totalTrainingLevel)
+        } else if (type == 117 && value0 == 8) {
+            min(value2, totalTrainingLevel)
         } else 0
     }
 

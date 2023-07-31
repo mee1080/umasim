@@ -564,6 +564,13 @@ phase==1&blocked_side_continuetime>=2&corner!=0->is_lastspurt==1&order_rate<=40&
 ->phase==1&order>=2&order_rate<=70&activate_count_middle>=2
 「中盤、順位>=2、順位率70以下（チャンミ～6/LoH～8）、中盤スキル発動回数>=2」、体力550、持続0.0
 
+サイレンススズカ固有
+終盤突入時に先頭だと少し前に出るそこが第3コーナーで中盤に大きく差をつけて先頭にいた場合すごく前に出る
+phase==1&bashin_diff_behind>=3&order==1->distance_rate>=66&distance_rate<=68&corner==3&order==1
+「中盤、後ろとのバ身差>=3、順位==1」の後「距離割合66～68、第3コーナー、順位==1」、現在速度4500、持続5.0
+->distance_rate>=66&distance_rate<=68&order==1
+「距離割合66～68、順位==1」、現在速度2500、持続5.0
+
 トウカイテイオー固有
 最終コーナー以降に前の方で追いすがっていると最終直線を走行中不屈の闘志で速度がすごく上がる
 is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_finalcorner==1&corner==0
@@ -711,6 +718,13 @@ phase>=2&order_rate<=50&overtake_target_time>=2->is_finalcorner==1
 レース中盤始めの方に前の方にいると速度を少し上げ続けおまけに持久力を少し回復する
 ->phase_firsthalf_random==1&order_rate<=30
 「中盤前半ランダム、順位率30以下（チャンミ～3/LoH～4）」、目標速度2500、体力350、持続6.0
+
+アグネスタキオン固有
+後半のコーナーで好位置だと少しの間速度をすごく上げる、中山レース場ならスピードの能力に応じて加速力も上げる
+->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50&track_id==10005
+「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）、レース場==10005」、目標速度4500、加速500(特殊22)、持続4.0
+->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50
+「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度4500、持続4.0
 
 イナリワン固有
 終盤コーナーで後方で詰寄ると最終直線で速度が上がる、終盤コーナーで追い抜いた回数に応じて効果が増える
@@ -1361,6 +1375,13 @@ Bang☆ミラクるわせ！
 ->phase==1&order>=2&order_rate<=70&activate_count_middle>=2
 「中盤、順位>=2、順位率70以下（チャンミ～6/LoH～8）、中盤スキル発動回数>=2」、体力150、持続0.0
 
+水平線のその先へ
+終盤突入時に先頭だとちょっと前に出るそこが第3コーナーで中盤に大きく差をつけて先頭にいた場合少し前に出る
+phase==1&bashin_diff_behind>=3&order==1->distance_rate>=66&distance_rate<=68&corner==3&order==1
+「中盤、後ろとのバ身差>=3、順位==1」の後「距離割合66～68、第3コーナー、順位==1」、現在速度2500、持続3.0
+->distance_rate>=66&distance_rate<=68&order==1
+「距離割合66～68、順位==1」、現在速度500、持続3.0
+
 絶対は、ボクだ
 最終コーナー以降に前の方で追いすがっていると最終直線を走行中速度が少し上がる
 is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_finalcorner==1&corner==0
@@ -1506,6 +1527,13 @@ Drain for rose
 レース中盤始めの方に前の方にいると速度をちょっと上げ続けさらに持久力をちょっと回復する
 ->phase_firsthalf_random==1&order_rate<=30
 「中盤前半ランダム、順位率30以下（チャンミ～3/LoH～4）」、目標速度500、体力50、持続3.6
+
+夏空ハレーション
+後半のコーナーで好位置だと少しの間速度を少し上げる、中山レース場ならスピードの能力に応じて加速力も上げる
+->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50&track_id==10005
+「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）、レース場==10005」、目標速度2500、加速250(特殊22)、持続2.4
+->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50
+「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続2.4
 
 灯穂
 終盤コーナーで後方で詰寄ると最終直線で速度がわずかに上がる、終盤コーナーで追い抜いた回数に応じて効果が増える
@@ -2687,6 +2715,11 @@ I copy!
 レース中盤で前に行きやすくなる＜作戦・逃げ＞
 ->running_style==1&phase_random==1&order_rate<=50
 「逃げ、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続3.0
+
+瑠璃色エスケイプ
+レース中盤に前の方にいると速度がすごく上がる＜作戦・逃げ＞
+->running_style==1&phase_random==1&order_rate<=50
+「逃げ、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続3.0
 
 脱出大作戦
 レース中盤に前の方にいるとしばらくの間速度が上がる＜作戦・逃げ＞
@@ -5069,6 +5102,11 @@ Lose Myself
 ->phase_random==1&running_style==2
 「中盤ランダム、先行」、目標速度3500、持続2.4
 
+眩耀のルクシオン
+レース中盤に速度が上がるスピードの能力に応じて効果が増える＜作戦・先行＞
+->phase_random==1&running_style==2
+「中盤ランダム、先行」、目標速度3500、目標速度500(特殊23)、持続2.4
+
 攻めの姿勢
 レース中盤に速度がわずかに上がる＜作戦・先行＞
 ->phase_random==1&running_style==2
@@ -5394,6 +5432,11 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->running_style==3&phase_laterhalf_random==0&order_rate>=40
 「差し、序盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
 
+突撃魂
+レース終盤が迫ったとき中団以降にいると速度が上がる＜作戦・差し＞
+->running_style==3&phase_laterhalf_random==1&order_rate>=40
+「差し、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続2.4
+
 進出開始
 レース終盤が迫ったとき中団以降にいると速度がわずかに上がる＜作戦・差し＞
 ->running_style==3&phase_laterhalf_random==1&order_rate>=40
@@ -5458,6 +5501,42 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 レース中盤に速度がわずかに上がりさらに持久力をちょっと回復する＜長距離＞
 ->distance_type==4&phase_random==1
 「長距離、中盤ランダム」、目標速度1500、体力50、持続2.4
+
+誰より前へ！
+スタート時に加速力が上がる＜中距離＞
+->distance_type==3&phase==0
+「中距離、序盤」、加速4000、持続1.5
+
+蒼天を駆けるラーファガ
+スタート時に加速力がすごく上がる＜中距離＞
+->distance_type==3&phase==0
+「中距離、序盤」、加速5000、持続1.5
+
+一番乗り
+スタート時に加速力がわずかに上がる＜中距離＞
+->distance_type==3&phase==0
+「中距離、序盤」、加速2000、持続1.5
+
+シンギュラリティ
+スピードが十二分に高いとスピードが上がる、賢さも十二分ならスピードがすごく上がる＜先行・中距離＞
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz>=1200
+「先行、中距離、基礎スピード>=1200、base_wiz>=1200」、スピード80、持続0
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz<1200
+「先行、中距離、基礎スピード>=1200、base_wiz<1200」、スピード60、持続0
+
+ラプラスの悪魔
+スピードが十二分に高いとスピードがすごく上がる、賢さも十二分ならスピードがものすごく上がる＜先行・中距離＞
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz>=1200
+「先行、中距離、基礎スピード>=1200、base_wiz>=1200」、スピード100、持続0
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz<1200
+「先行、中距離、基礎スピード>=1200、base_wiz<1200」、スピード80、持続0
+
+探求心
+スピードが十二分に高いとスピードがわずかに上がる、賢さも十二分ならスピードが少し上がる＜先行・中距離＞
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz>=1200
+「先行、中距離、基礎スピード>=1200、base_wiz>=1200」、スピード40、持続0
+->running_style==2&distance_type==3&base_speed>=1200&base_wiz<1200
+「先行、中距離、基礎スピード>=1200、base_wiz<1200」、スピード20、持続0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
