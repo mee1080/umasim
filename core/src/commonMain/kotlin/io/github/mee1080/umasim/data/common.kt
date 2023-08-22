@@ -118,6 +118,7 @@ enum class Scenario(
     CLIMAX("クライマックス"),
     GRAND_LIVE("グランドライブ"),
     GM("グランドマスターズ", false),
+    LARC("プロジェクトL'Arc（実装中）")
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -127,6 +128,7 @@ fun toScenario(value: Int) = when (value) {
     4 -> Scenario.CLIMAX
     3 -> Scenario.GRAND_LIVE
     5 -> Scenario.GM
+    6 -> Scenario.LARC
     else -> Scenario.URA
 }
 
@@ -149,7 +151,9 @@ fun turnToString(turn: Int) = buildString {
 }
 
 enum class RaceGrade(val displayName: String) {
-    DEBUT("メイクデビュー"), PRE_OPEN("Pre-OP"), OPEN("OP"), G3("GIII"), G2("GII"), G1("GI"), FINALS("ファイナルズ"), UNKNOWN("不明"),
+    DEBUT("メイクデビュー"), PRE_OPEN("Pre-OP"), OPEN("OP"), G3("GIII"), G2("GII"), G1("GI"), FINALS("ファイナルズ"), UNKNOWN(
+        "不明"
+    ),
 }
 
 fun toRaceGrade(value: Int) = when {

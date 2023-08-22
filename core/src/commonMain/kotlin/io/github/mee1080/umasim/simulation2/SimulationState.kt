@@ -160,6 +160,10 @@ object GmMemberState : ScenarioMemberState {
     override fun toString() = "GM"
 }
 
+object LArcMemberState : ScenarioMemberState {
+    override fun toString() = "LArc"
+}
+
 data class AoharuMemberState(
     val member: TeamMemberData,
     val status: Status,

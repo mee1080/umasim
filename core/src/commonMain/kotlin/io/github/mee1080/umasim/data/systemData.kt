@@ -135,6 +135,38 @@ internal val trainingData = listOf(
     TrainingBase(toScenario(5), toSupportType("W"), 4, 323, Status(3, 0, 0, 0, 11, 5, 5)),
     TrainingBase(toScenario(5), toSupportType("W"), 5, 324, Status(4, 0, 0, 0, 12, 5, 5)),
     TrainingBase(toScenario(5), toSupportType("W"), 6, 324, Status(5, 0, 0, 0, 13, 5, 5)),
+
+    // TODO LArcトレ基本値
+    TrainingBase(toScenario(6), toSupportType("S"), 1, 520, Status(10, 0, 3, 0, 0, 5, -19)),
+    TrainingBase(toScenario(6), toSupportType("S"), 2, 524, Status(11, 0, 3, 0, 0, 5, -20)),
+    TrainingBase(toScenario(6), toSupportType("S"), 3, 528, Status(12, 0, 3, 0, 0, 5, -21)),
+    TrainingBase(toScenario(6), toSupportType("S"), 4, 532, Status(13, 0, 4, 0, 0, 5, -23)),
+    TrainingBase(toScenario(6), toSupportType("S"), 5, 536, Status(14, 0, 5, 0, 0, 5, -25)),
+    TrainingBase(toScenario(6), toSupportType("S"), 6, 536, Status(15, 0, 6, 0, 0, 5, -25)),
+    TrainingBase(toScenario(6), toSupportType("P"), 1, 516, Status(0, 4, 9, 0, 0, 5, -20)),
+    TrainingBase(toScenario(6), toSupportType("P"), 2, 520, Status(0, 4, 10, 0, 0, 5, -21)),
+    TrainingBase(toScenario(6), toSupportType("P"), 3, 524, Status(0, 4, 11, 0, 0, 5, -22)),
+    TrainingBase(toScenario(6), toSupportType("P"), 4, 528, Status(0, 5, 12, 0, 0, 5, -24)),
+    TrainingBase(toScenario(6), toSupportType("P"), 5, 532, Status(0, 6, 13, 0, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("P"), 6, 532, Status(0, 7, 14, 0, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("G"), 1, 532, Status(2, 0, 3, 9, 0, 5, -20)),
+    TrainingBase(toScenario(6), toSupportType("G"), 2, 536, Status(2, 0, 3, 10, 0, 5, -21)),
+    TrainingBase(toScenario(6), toSupportType("G"), 3, 540, Status(2, 0, 3, 11, 0, 5, -22)),
+    TrainingBase(toScenario(6), toSupportType("G"), 4, 544, Status(3, 0, 3, 12, 0, 5, -24)),
+    TrainingBase(toScenario(6), toSupportType("G"), 5, 548, Status(3, 0, 4, 13, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("G"), 6, 548, Status(4, 0, 5, 14, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("H"), 1, 507, Status(0, 8, 0, 6, 0, 5, -20)),
+    TrainingBase(toScenario(6), toSupportType("H"), 2, 511, Status(0, 9, 0, 6, 0, 5, -21)),
+    TrainingBase(toScenario(6), toSupportType("H"), 3, 515, Status(0, 10, 0, 6, 0, 5, -22)),
+    TrainingBase(toScenario(6), toSupportType("H"), 4, 519, Status(0, 11, 0, 7, 0, 5, -24)),
+    TrainingBase(toScenario(6), toSupportType("H"), 5, 523, Status(0, 12, 0, 8, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("H"), 6, 523, Status(0, 13, 0, 9, 0, 5, -26)),
+    TrainingBase(toScenario(6), toSupportType("W"), 1, 320, Status(2, 0, 0, 0, 8, 5, 5)),
+    TrainingBase(toScenario(6), toSupportType("W"), 2, 321, Status(2, 0, 0, 0, 9, 5, 5)),
+    TrainingBase(toScenario(6), toSupportType("W"), 3, 322, Status(2, 0, 0, 0, 10, 5, 5)),
+    TrainingBase(toScenario(6), toSupportType("W"), 4, 323, Status(3, 0, 0, 0, 11, 5, 5)),
+    TrainingBase(toScenario(6), toSupportType("W"), 5, 324, Status(4, 0, 0, 0, 12, 5, 5)),
+    TrainingBase(toScenario(6), toSupportType("W"), 6, 324, Status(5, 0, 0, 0, 13, 5, 5)),
 )
 
 internal val aoharuTrainingData = listOf(
@@ -306,7 +338,11 @@ internal val shopItemData = listOf(
     RemoveConditionItem("スリムスキャナー", 15, listOf("太り気味")),
     RemoveConditionItem("アロマディフューザー", 15, listOf("片頭痛")),
     RemoveConditionItem("練習改善DVD", 15, listOf("練習ベタ")),
-    RemoveConditionItem("ナンデモナオール", 40, listOf("夜ふかし気味", "なまけ癖", "肌荒れ", "太り気味", "片頭痛", "練習ベタ")),
+    RemoveConditionItem(
+        "ナンデモナオール",
+        40,
+        listOf("夜ふかし気味", "なまけ癖", "肌荒れ", "太り気味", "片頭痛", "練習ベタ")
+    ),
     TrainingLevelItem("スピードトレーニング嘆願書", 150, toSupportType("スピード")),
     TrainingLevelItem("スタミナトレーニング嘆願書", 150, toSupportType("スタミナ")),
     TrainingLevelItem("パワートレーニング嘆願書", 150, toSupportType("パワー")),
@@ -447,7 +483,14 @@ internal val raceAchievementData = listOf(
     RaceAchievement(
         "ワールドウマ娘", 5,
         RaceNameCondition(
-            3, "サウジアラビアロイヤルカップ", "ニュージーランドトロフィー", "ブラジルカップ", "アルゼンチン共和国杯", "アメリカJCC", "ジャパンカップ", "ジャパンダートダービー"
+            3,
+            "サウジアラビアロイヤルカップ",
+            "ニュージーランドトロフィー",
+            "ブラジルカップ",
+            "アルゼンチン共和国杯",
+            "アメリカJCC",
+            "ジャパンカップ",
+            "ジャパンダートダービー"
         ),
     ),
     RaceAchievement(

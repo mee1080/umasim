@@ -38,7 +38,7 @@ object WebConstants {
         StatusType.GROUP,
     )
 
-    val scenarioList = Scenario.values().asList()
+    val scenarioList = Scenario.entries.reversed()
 
     val charaList =
         listOf(Chara.empty()) + Store.charaList.filter { it.rank == 5 && it.rarity == 5 }.sortedBy { it.charaName }
@@ -84,6 +84,10 @@ object WebConstants {
         override fun equals(other: Any?): Boolean {
             return label == (other as? SortOrder<*>)?.label
         }
+
+        override fun hashCode(): Int {
+            return label.hashCode()
+        }
     }
 
     val supportSortOrder = listOf(
@@ -97,7 +101,20 @@ object WebConstants {
         SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
         SortOrder("やる気ボナ（特殊固有なし）") { motivationFactor(0, false) },
         SortOrder("やる気ボナ（特殊固有あり）") { motivationFactor(100, true) },
-        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(type, 1, 5, 0, 0, 0, Status(maxHp = 100, hp = 100), 0, 1, 0) },
+        SortOrder("トレ効果（特殊固有なし）") {
+            trainingFactor(
+                type,
+                1,
+                5,
+                0,
+                0,
+                0,
+                Status(maxHp = 100, hp = 100),
+                0,
+                1,
+                0
+            )
+        },
         SortOrder("トレ効果（特殊固有あり）") {
             trainingFactor(
                 type,
@@ -137,9 +154,9 @@ object WebConstants {
 
     val motivationList = listOf(2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
 
-    val trainingInfo = Scenario.values().associateWith { Store.getTrainingInfo(it) }
+    val trainingInfo = Scenario.entries.associateWith { Store.getTrainingInfo(it) }
 
-    val trainingList = Scenario.values().associateWith { Store.getTrainingList(it) }
+    val trainingList = Scenario.entries.associateWith { Store.getTrainingList(it) }
 
     val simulationModeList = mapOf(
         Scenario.URA to listOf(
@@ -177,7 +194,8 @@ object WebConstants {
 
     val shopItemMegaphone = Store.Climax.shopItem.filterIsInstance<MegaphoneItem>()
 
-    val shopItemMegaphoneNames = listOf(-1 to "なし") + shopItemMegaphone.mapIndexed { index, item -> index to item.name }
+    val shopItemMegaphoneNames =
+        listOf(-1 to "なし") + shopItemMegaphone.mapIndexed { index, item -> index to item.name }
 
     val shopItemWeight = Store.Climax.shopItem.filterIsInstance<WeightItem>()
 

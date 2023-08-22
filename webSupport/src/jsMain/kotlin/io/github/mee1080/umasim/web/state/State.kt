@@ -36,7 +36,7 @@ data class State(
     val rotationState: RotationState? = null,
     val lessonState: LessonState = LessonState(),
 
-    val scenario: Scenario = Scenario.GM,
+    val scenario: Scenario = Scenario.LARC,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),

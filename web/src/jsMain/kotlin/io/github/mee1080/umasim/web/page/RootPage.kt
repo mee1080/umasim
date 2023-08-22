@@ -37,7 +37,7 @@ fun RootPage(model: ViewModel, state: State) {
     HideBlock({ H2 { Text("レースボーナス計算") } }) { RaceBonus(model, state) }
     HideBlock({ H2 { Text("編成情報") } }) { SupportInfo(model, state) }
     HideBlock({ H2 { Text("サポートカード情報") } }) { SupportCardInfo(model, state) }
-    if (state.scenario != Scenario.CLIMAX && state.scenario != Scenario.GRAND_LIVE && state.scenario != Scenario.GM) {
+    if (state.scenario == Scenario.URA) {
         HideBlock({ H2 { Text("シミュレーション") } }) {
             UraSimulation(model, state)
 //        when (state.scenario) {

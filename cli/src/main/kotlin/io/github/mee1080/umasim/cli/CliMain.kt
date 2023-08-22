@@ -4,10 +4,7 @@ import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.double
 import com.github.ajalt.clikt.parameters.types.int
-import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.ai.GmActionSelector
-import io.github.mee1080.umasim.ai.GrandLiveFactorBasedActionSelector
+import io.github.mee1080.umasim.ai.*
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
@@ -81,6 +78,21 @@ class CliMain : CliktCommand() {
         }
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
+
+            // TODO LArc
+            Scenario.LARC -> LArcActionSelector.Option(
+                speedFactor = speed,
+                staminaFactor = stamina,
+                powerFactor = power,
+                gutsFactor = guts,
+                wisdomFactor = wisdom,
+                skillPtFactor = skillPt,
+                hpFactor = hp,
+                motivationFactor = motivation,
+                relationFactor = relationFactor,
+                aoharuFactor = aoharuFactor,
+            )::generateSelector
+
             Scenario.GM -> GmActionSelector.Option(
                 speedFactor = speed,
                 staminaFactor = stamina,
