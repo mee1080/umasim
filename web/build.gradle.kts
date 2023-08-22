@@ -22,7 +22,7 @@ kotlin {
             dependencies {
                 implementation(project(":core"))
                 implementation(project(":webSupport"))
-                implementation(compose.web.core)
+                implementation(compose.html.core)
                 implementation(compose.runtime)
                 implementation(npm("@material/mwc-button", "0.25.3"))
                 implementation(npm("@material/mwc-select", "0.25.3"))
@@ -34,6 +34,7 @@ kotlin {
                 implementation(npm("@material/mwc-tab", "0.25.3"))
                 implementation(npm("@material/mwc-tab-bar", "0.25.3"))
                 implementation(npm("@material/mwc-slider", "0.25.3"))
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
             }
         }
     }
