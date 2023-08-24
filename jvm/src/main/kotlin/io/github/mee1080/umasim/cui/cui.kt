@@ -909,7 +909,7 @@ fun openCui(args: Array<String>) {
             "[永劫続く栄光へ]祖にして導く者" to 4,
         ).toTypedArray(),
 //        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[Seaside Bloom]エアグルーヴ" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[大望は飛んでいく]エルコンドルパサー" to it }.toTypedArray())),
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 50000,

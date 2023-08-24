@@ -12,7 +12,7 @@ kotlin {
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "15"
+            kotlinOptions.jvmTarget = "16"
         }
     }
 

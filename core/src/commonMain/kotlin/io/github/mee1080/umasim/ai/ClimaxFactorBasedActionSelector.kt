@@ -20,7 +20,6 @@ package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
-import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSelector {
@@ -131,7 +130,6 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         )
     }
 
-    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,
@@ -278,7 +276,8 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
 
         val topTrainingType = topTraining.first.type
         val megaphone = if (state.enableItem.megaphone == null) "ブートキャンプメガホン" else null
-        val weight = if (topTrainingType == StatusType.WISDOM) null else "${topTrainingType.displayName}アンクルウェイト"
+        val weight =
+            if (topTrainingType == StatusType.WISDOM) null else "${topTrainingType.displayName}アンクルウェイト"
         val vital = selectVitalOrAmulet(state)
         return listOfNotNull(megaphone, weight) + vital
     }

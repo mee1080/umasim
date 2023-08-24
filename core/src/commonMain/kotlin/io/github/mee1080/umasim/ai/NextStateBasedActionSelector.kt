@@ -3,7 +3,6 @@ package io.github.mee1080.umasim.ai
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.simulation2.*
-import kotlinx.serialization.Serializable
 import kotlin.math.min
 
 class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelector {
@@ -12,7 +11,6 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
         private const val DEBUG = true
     }
 
-    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,

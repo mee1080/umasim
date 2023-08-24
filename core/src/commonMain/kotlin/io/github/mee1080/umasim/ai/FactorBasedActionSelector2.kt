@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
-import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector {
@@ -261,7 +260,6 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         )
     }
 
-    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,

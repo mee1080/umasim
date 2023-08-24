@@ -20,7 +20,6 @@ package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
-import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : ActionSelector {
@@ -133,7 +132,6 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         )
     }
 
-    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,

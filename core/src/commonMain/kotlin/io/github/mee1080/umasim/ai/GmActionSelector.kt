@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Founder
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
-import kotlinx.serialization.Serializable
 
 @Suppress("unused")
 class GmActionSelector(val option: Option = Option()) : ActionSelector {
@@ -272,7 +271,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
                         else -> 17.0
                     }
 
-                    StatusType.GUTS -> when(rank) {
+                    StatusType.GUTS -> when (rank) {
                         0 -> 9.5
                         else -> 19.5
                     }
@@ -307,12 +306,12 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
                 when (type) {
                     StatusType.SPEED -> 12.0
 
-                    StatusType.GUTS -> when(rank) {
+                    StatusType.GUTS -> when (rank) {
                         0 -> 2.0
                         else -> 4.0
                     }
 
-                    StatusType.WISDOM -> when(rank) {
+                    StatusType.WISDOM -> when (rank) {
                         0 -> 13.5
                         else -> 5.5
                     }
@@ -333,7 +332,6 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         )
     }
 
-    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,
