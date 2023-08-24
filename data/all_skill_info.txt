@@ -15,13 +15,13 @@
 
 グラスワンダー固有
 最終直線で後ろの方から追い抜くと末脚を使って速度が少し上がる
-->is_finalcorner==1&corner==0&change_order_onetime<0&order>=3
-「最終コーナー以降、コーナー以外、追い抜き、順位>=3」、目標速度2500、持続5.0
+->is_last_straight==1&change_order_onetime<0&order>=3
+「is_last_straight==1、追い抜き、順位>=3」、目標速度2500、持続5.0
 
 エルコンドルパサー固有
 最終直線で余力を持って前にいるとわずかに優位を保ちやすくなる
-->is_finalcorner==1&corner==0&hp_per>=30&order<=2
-「最終コーナー以降、コーナー以外、残り体力>=30、順位<=2」、目標速度1500、加速2000、持続5.0
+->is_last_straight==1&hp_per>=30&order<=2
+「is_last_straight==1、残り体力>=30、順位<=2」、目標速度1500、加速2000、持続5.0
 
 エアグルーヴ固有
 最終コーナーで中団以降から追い抜くと女帝たる走りで速度が少し上がる
@@ -45,8 +45,8 @@
 
 ウイニングチケット固有
 最終コーナー以降に競り合っていると最終直線で前方にいる時強い気持ちが湧き速度が少し上がる
-is_finalcorner==1&blocked_side_continuetime>=2->is_finalcorner==1&corner==0&order<=5
-「最終コーナー以降、横ブロック継続>=2」の後「最終コーナー以降、コーナー以外、順位<=5」、目標速度2500、持続5.0
+is_finalcorner==1&blocked_side_continuetime>=2->is_last_straight==1&order<=5
+「最終コーナー以降、横ブロック継続>=2」の後「is_last_straight==1、順位<=5」、目標速度2500、持続5.0
 
 サクラバクシンオー固有
 レース後半に前の方で競り合うとバクシン力（？）を発揮、速度が少し上がる
@@ -102,8 +102,8 @@ is_finalcorner==1&blocked_side_continuetime>=2->is_finalcorner==1&corner==0&orde
 
 トウカイテイオー固有
 レース終盤に前と差が詰まると最終直線で華麗な脚取りを披露し速度がすごく上がる
-phase>=2&order<=3&bashin_diff_infront<=1&is_overtake==1->is_finalcorner==1&corner==0
-「終盤、順位<=3、前とのバ身差<=1、追い抜きモード」の後「最終コーナー以降、コーナー以外」、目標速度4500、持続5.0
+phase>=2&order<=3&bashin_diff_infront<=1&is_overtake==1->is_last_straight==1
+「終盤、順位<=3、前とのバ身差<=1、追い抜きモード」の後「is_last_straight==1」、目標速度4500、持続5.0
 
 マルゼンスキー固有
 最終コーナー以降で前の方にいるとギアを変えて加速力が上がる
@@ -136,19 +136,19 @@ phase>=2&order_rate<=40&behind_near_lane_time_set1>=1->remain_distance<=300
 「距離割合>=50、順位==1、後ろとのバ身差<=1」または「距離割合>=50、順位==2、追い抜きモード」、目標速度2500、加速3000、持続5.0
 
 タイキシャトル固有
-最終直線が迫ったとき好位置にいると弾みを付けて加速力が上がる
+最終コーナー後半で好位置にいると弾みを付けて加速力を上げ続ける
 ->is_finalcorner_laterhalf==1&corner!=0&order>=3&order_rate<=40
-「最終コーナー後半、コーナー、順位>=3、順位率40以下（チャンミ～4/LoH～5）」、加速4000、持続4.0
+「最終コーナー後半、コーナー、順位>=3、順位率40以下（チャンミ～4/LoH～5）」、加速4000、持続5.0
 
 グラスワンダー固有
 最終直線で後ろの方から追い抜くと末脚を使って速度が上がる
-->is_finalcorner==1&corner==0&change_order_onetime<0&order>=3
-「最終コーナー以降、コーナー以外、追い抜き、順位>=3」、目標速度3500、持続5.0
+->is_last_straight==1&change_order_onetime<0&order>=3
+「is_last_straight==1、追い抜き、順位>=3」、目標速度3500、持続5.0
 
 ヒシアマゾン固有
 最終コーナー以降に後ろの方から外を回って追い抜いていると最終直線で速度を上げる
-is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_finalcorner==1&corner==0
-「最終コーナー以降、外から、追い抜き、順位率40以上（チャンミ4～/LoH5～）」の後「最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
+is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_last_straight==1
+「最終コーナー以降、外から、追い抜き、順位率40以上（チャンミ4～/LoH5～）」の後「is_last_straight==1」、目標速度3500、持続5.0
 
 メジロマックイーン固有
 最終コーナーで前の方にいると抜かせない覚悟を決めて速度が上がる長距離で余力十分ならすごく上がる
@@ -159,8 +159,8 @@ is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_fina
 
 エルコンドルパサー固有
 最終直線で余力を持って前にいるとより優位を保ちやすくなる
-->is_finalcorner==1&corner==0&hp_per>=30&order<=2
-「最終コーナー以降、コーナー以外、残り体力>=30、順位<=2」、目標速度2500、加速3000、持続5.0
+->is_last_straight==1&hp_per>=30&order<=2
+「is_last_straight==1、残り体力>=30、順位<=2」、目標速度2500、加速3000、持続5.0
 
 テイエムオペラオー固有
 最終コーナー以降に前の方で前または後ろのウマ娘と距離が近いと王たる輝きで速度が上がる
@@ -176,8 +176,8 @@ phase==1&blocked_side_continuetime>=2->is_finalcorner==1&order>=2&order_rate<=75
 
 シンボリルドルフ固有
 レース終盤に3回追い抜くと最終直線で速度がすごく上がる
-->is_finalcorner==1&change_order_up_end_after>=3&corner==0
-「最終コーナー以降、終盤追い抜き>=3、コーナー以外」、目標速度4500、持続5.0
+->is_last_straight==1&change_order_up_end_after>=3
+「is_last_straight==1、終盤追い抜き>=3」、目標速度4500、持続5.0
 
 エアグルーヴ固有
 最終コーナーで中団以降から追い抜くと女帝たる走りで速度が上がる
@@ -223,10 +223,10 @@ phase==1&blocked_side_continuetime>=2->is_finalcorner==1&order>=2&order_rate<=75
 
 ミホノブルボン固有
 出遅れずに最終直線で前の方にいると速度が上がる、前方の順位をキープしていた場合はすごく上がる
-->is_badstart==0&order<=3&is_finalcorner==1&corner==0&order_rate_in20_continue==1
-「出遅れ無し、順位<=3、最終コーナー以降、コーナー以外、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」、目標速度4500、持続5.0
-->is_badstart==0&order<=3&is_finalcorner==1&corner==0
-「出遅れ無し、順位<=3、最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
+->is_badstart==0&order<=3&is_last_straight==1&order_rate_in20_continue==1
+「出遅れ無し、順位<=3、is_last_straight==1、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」、目標速度4500、持続5.0
+->is_badstart==0&order<=3&is_last_straight==1
+「出遅れ無し、順位<=3、is_last_straight==1」、目標速度3500、持続5.0
 
 メジロライアン固有
 レース終盤のコーナーで前の位置につこうとして加速力が上がる
@@ -245,8 +245,8 @@ phase==1&blocked_side_continuetime>=2->is_finalcorner==1&order>=2&order_rate<=75
 
 ライスシャワー固有
 レース終盤に追い抜いて先団につけると最終直線で強い意志を持って速度が上がる
-phase>=2&order<=4&change_order_onetime<0->is_finalcorner==1&corner==0
-「終盤、順位<=4、追い抜き」の後「最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
+phase>=2&order<=4&change_order_onetime<0->is_last_straight==1
+「終盤、順位<=4、追い抜き」の後「is_last_straight==1」、目標速度3500、持続5.0
 
 アイネスフウジン固有
 残り300m付近で前の方だと速度を少し上げる、ちょうど坂を上りきったところだった場合はすごく上げる
@@ -262,10 +262,10 @@ remain_distance<=305&remain_distance>=300&slope==1->remain_distance<=299&remain_
 
 アドマイヤベガ固有
 最終直線で先頭から離されていると星に導かれるように速度が上がる最後方付近にいる場合はすごく上がる
-->is_finalcorner==1&corner==0&distance_diff_top>=5&order_rate<80
-「最終コーナー以降、コーナー以外、先頭との距離>=5、順位率80未満（チャンミ～8/LoH～10）」、目標速度3500、持続5.0
-->is_finalcorner==1&corner==0&distance_diff_top>=5&order_rate>=80
-「最終コーナー以降、コーナー以外、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度4500、持続5.0
+->is_last_straight==1&distance_diff_top>=5&order_rate<80
+「is_last_straight==1、先頭との距離>=5、順位率80未満（チャンミ～8/LoH～10）」、目標速度3500、持続5.0
+->is_last_straight==1&distance_diff_top>=5&order_rate>=80
+「is_last_straight==1、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度4500、持続5.0
 
 イナリワン固有
 レース前半、中団以降に控え続けると追い比べをしたとき、江戸っ子の底力を見せつけて速度をすごく上げる
@@ -274,20 +274,20 @@ distance_rate>=50&order_rate_out40_continue==1->compete_fight_count>0
 
 ウイニングチケット固有
 最終コーナー以降に競り合っていると最終直線で前方にいる時強い気持ちが湧き速度が上がる
-is_finalcorner==1&blocked_side_continuetime>=2->is_finalcorner==1&corner==0&order<=5
-「最終コーナー以降、横ブロック継続>=2」の後「最終コーナー以降、コーナー以外、順位<=5」、目標速度3500、持続5.0
+is_finalcorner==1&blocked_side_continuetime>=2->is_last_straight==1&order<=5
+「最終コーナー以降、横ブロック継続>=2」の後「is_last_straight==1、順位<=5」、目標速度3500、持続5.0
 
 エアシャカール固有
 最終コーナー以降に中団の内ラチ側にいると勝利への道筋を見出して最終直線で速度が上がりコース取りがうまくなる
-is_finalcorner==1&order_rate>=40&order_rate<=75&lane_type==0->is_finalcorner==1&corner==0
-「最終コーナー以降、順位率40～75（チャンミ4～7/LoH5～9）、内ラチ側」の後「最終コーナー以降、コーナー以外」、目標速度3500、横移動速度350、持続5.0
+is_finalcorner==1&order_rate>=40&order_rate<=75&lane_type==0->is_last_straight==1
+「最終コーナー以降、順位率40～75（チャンミ4～7/LoH5～9）、内ラチ側」の後「is_last_straight==1」、目標速度3500、横移動速度350、持続5.0
 
 エイシンフラッシュ固有
 冷静にレースを運び最終直線で3番手以降だと速度が上がる、中団の位置取りを維持しているとすごく上がる
-->temptation_count==0&order>=3&is_finalcorner==1&corner==0&order_rate_in80_continue==1&order_rate_out40_continue==1
-「掛かり無し、順位>=3、最終コーナー以降、コーナー以外、順位率40～80維持（チャンミ4～7/LoH5～9）」、目標速度4500、持続5.0
-->temptation_count==0&order>=3&is_finalcorner==1&corner==0
-「掛かり無し、順位>=3、最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
+->temptation_count==0&order>=3&is_last_straight==1&order_rate_in80_continue==1&order_rate_out40_continue==1
+「掛かり無し、順位>=3、is_last_straight==1、順位率40～80維持（チャンミ4～7/LoH5～9）」、目標速度4500、持続5.0
+->temptation_count==0&order>=3&is_last_straight==1
+「掛かり無し、順位>=3、is_last_straight==1」、目標速度3500、持続5.0
 
 カレンチャン固有
 レース中間付近で好位置にいる時に追い抜くと勢いづき進出を開始する
@@ -296,8 +296,8 @@ is_finalcorner==1&order_rate>=40&order_rate<=75&lane_type==0->is_finalcorner==1&
 
 カワカミプリンセス固有
 最終直線を走行中に競り合うと可憐にぶっ飛ばして速度を上げる
-->is_finalcorner==1&corner==0&blocked_side_continuetime>=2
-「最終コーナー以降、コーナー以外、横ブロック継続>=2」、目標速度3500、持続5.0
+->is_last_straight==1&blocked_side_continuetime>=2
+「is_last_straight==1、横ブロック継続>=2」、目標速度3500、持続5.0
 
 ゴールドシチー固有
 レース後半に中団から仕掛け始める時に持てるパフォーマンスを発揮して加速力を少し上げ続ける
@@ -347,8 +347,8 @@ order_rate_out50_continue==1&temptation_count==0&is_finalcorner==1->remain_dista
 
 トーセンジョーダン固有
 最終直線を走行中に前の方で追い抜こうとするか詰め寄られるとテンションを上げて速度を上げる
-->is_finalcorner==1&corner==0&order_rate<=40&overtake_target_time>=1@is_finalcorner==1&corner==0&order_rate<=40&is_overtake==1
-「最終コーナー以降、コーナー以外、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「最終コーナー以降、コーナー以外、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度3500、持続5.0
+->is_last_straight==1&order_rate<=40&overtake_target_time>=1@is_last_straight==1&order_rate<=40&is_overtake==1
+「is_last_straight==1、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「is_last_straight==1、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度3500、持続5.0
 
 ナカヤマフェスタ固有
 最終コーナー以降に追い抜こうとすると残り400ｍ以降に好位置で速度が上がる人気が低い場合はすごく上がる
@@ -468,8 +468,8 @@ phase==1&blocked_side_continuetime>=2&corner!=0->phase>=2&is_finalcorner_laterha
 
 メジロアルダン固有
 最終直線で後ろのウマ娘と距離が近いとこの瞬間に懸け持久力をわずかに使い少しの間速度がすごく上がる
-->is_finalcorner==1&corner==0&bashin_diff_behind<=1
-「最終コーナー以降、コーナー以外、後ろとのバ身差<=1」、目標速度4500、体力-100、持続4.0
+->is_last_straight==1&bashin_diff_behind<=1
+「is_last_straight==1、後ろとのバ身差<=1」、目標速度4500、体力-100、持続4.0
 
 ヤエノムテキ固有
 最終コーナー以降に追い抜いていた場合残り300mを切って先団にいるとき烈火の如き闘争心で速度が上がる
@@ -488,6 +488,13 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 ->distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
 「距離割合50～51、順位率30～80（チャンミ3～7/LoH4～9）」、目標速度2500、持続5.0
 
+ナリタトップロード固有
+レース終盤目前で好位置にいた場合残り400m地点で速度がすごく上がる長距離でスキル発動時、先頭か先頭から1バ身以内にいるとものすごく上がる
+distance_rate>=60&phase==1&order>=2&order_rate<=40->remain_distance<=401&remain_distance>=399&distance_diff_top_float<=25&distance_type==4
+「距離割合>=60、中盤、順位>=2、順位率40以下（チャンミ～4/LoH～5）」の後「残り距離399～401、先頭との距離_float<=25、長距離」、目標速度5500、持続5.0
+distance_rate>=60&phase==1&order>=2&order_rate<=40->remain_distance<=401&remain_distance>=399
+「距離割合>=60、中盤、順位>=2、順位率40以下（チャンミ～4/LoH～5）」の後「残り距離399～401」、目標速度4500、持続5.0
+
 ヤマニンゼファー固有
 レース前半で控え、最終コーナー後半に前の方だと長時間加速力をちょっと上げ続ける、2番手なら効果が上がる
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50&order==2
@@ -504,10 +511,10 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 
 タニノギムレット固有
 レース終盤に後方にいると最終直線で力を解放し前に出る、東京レース場の中距離レースならものすごく前に出る
-phase>=2&order_rate>=50->is_finalcorner==1&corner==0&track_id==10006&distance_type==3
-「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「最終コーナー以降、コーナー以外、レース場==10006、中距離」、現在速度5500、持続5.0
-phase>=2&order_rate>=50->is_finalcorner==1&corner==0
-「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「最終コーナー以降、コーナー以外」、現在速度3500、持続5.0
+phase>=2&order_rate>=50->is_last_straight==1&track_id==10006&distance_type==3
+「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「is_last_straight==1、レース場==10006、中距離」、現在速度5500、持続5.0
+phase>=2&order_rate>=50->is_last_straight==1
+「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「is_last_straight==1」、現在速度3500、持続5.0
 
 ダイイチルビー固有
 冷静に走行し終盤突入時に後方付近だと少し前に出て、先頭から4人までのウマ娘をちょっと萎縮させる
@@ -573,8 +580,8 @@ phase==1&bashin_diff_behind>=3&order==1->distance_rate>=66&distance_rate<=68&cor
 
 トウカイテイオー固有
 最終コーナー以降に前の方で追いすがっていると最終直線を走行中不屈の闘志で速度がすごく上がる
-is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_finalcorner==1&corner==0
-「最終コーナー以降、追い抜きモード、順位<=5、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象順位変化なし？>=2」の後「最終コーナー以降、コーナー以外」、目標速度4500、持続5.0
+is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_last_straight==1
+「最終コーナー以降、追い抜きモード、順位<=5、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象順位変化なし？>=2」の後「is_last_straight==1」、目標速度4500、持続5.0
 
 マルゼンスキー固有
 スキルで持久力を回復するとレース後半で前のほうにいる時にレッツラゴー！と速度を上げる
@@ -733,13 +740,13 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 
 ウイニングチケット固有
 ラストスパートの最終直線に中団以降で速度を少しずつ上げ、効果中スキルを発動すると3回まで効果が増える
-->is_lastspurt==1&is_finalcorner==1&corner==0&order_rate>=40
-「ラストスパート、最終コーナー以降、コーナー以外、順位率40以上（チャンミ4～/LoH5～）」、目標速度2500、目標速度500(追加効果2)、持続6.0
+->is_lastspurt==1&is_last_straight==1&order_rate>=40
+「ラストスパート、is_last_straight==1、順位率40以上（チャンミ4～/LoH5～）」、目標速度2500、目標速度500(追加効果2)、持続6.0
 
 エイシンフラッシュ固有
 最終コーナー以降に2回追い抜くと抱いた誇りを力に変えて最終直線で速度を上げ続ける
-->change_order_up_finalcorner_after>=2&is_finalcorner==1&corner==0
-「最終コーナー以降追い抜き>=2、最終コーナー以降、コーナー以外」、目標速度3500、持続6.0
+->change_order_up_finalcorner_after>=2&is_last_straight==1
+「最終コーナー以降追い抜き>=2、is_last_straight==1」、目標速度3500、持続6.0
 
 カレンチャン固有
 残り350mを切って前の方で後ろのウマ娘との距離が近いと譲らぬ思いで抜け出しやすくなる
@@ -758,8 +765,8 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 
 スーパークリーク固有
 最終直線を好位置で走行中前のウマ娘との距離が近いと抜け出しやすくなる
-->is_finalcorner==1&corner==0&order<=4&bashin_diff_infront<=1
-「最終コーナー以降、コーナー以外、順位<=4、前とのバ身差<=1」、目標速度2500、加速3000、持続5.0
+->is_last_straight==1&order<=4&bashin_diff_infront<=1
+「is_last_straight==1、順位<=4、前とのバ身差<=1」、目標速度2500、加速3000、持続5.0
 
 スマートファルコン固有
 レース中間付近で先頭付近だと速度が少しずつ上がる、ダートレースではさらに持久力が少し回復する
@@ -776,7 +783,7 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 「距離割合40～50、順位率40～80（チャンミ4～7/LoH5～9）」、目標速度2500、持続6.0
 
 ナリタタイシン固有
-レース終盤で最終直線が迫ったとき高みを目指して中団から速度を上げる
+レース終盤の最終コーナー後半で高みを目指して中団から速度を上げる
 ->phase>=2&is_finalcorner_laterhalf==1&order_rate<=75&order_rate>=40
 「終盤、最終コーナー後半、順位率40～75（チャンミ4～7/LoH5～9）」、目標速度3500、持続5.0
 
@@ -816,15 +823,15 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 
 ナイスネイチャ固有
 最終コーナー以降に追い抜いていた場合最終直線で中団から速度を上げる人気が低い場合は奮起して上げ続ける
-is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate>=40&order_rate<=70&popularity>=4
-「最終コーナー以降、追い抜き」の後「最終コーナー以降、コーナー以外、順位率40～70（チャンミ4～6/LoH5～8）、人気>=4」、目標速度3500、持続6.0
-is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate>=40&order_rate<=70&popularity<4
-「最終コーナー以降、追い抜き」の後「最終コーナー以降、コーナー以外、順位率40～70（チャンミ4～6/LoH5～8）、人気<4」、目標速度3500、持続5.0
+is_finalcorner==1&change_order_onetime<0->is_last_straight==1&order_rate>=40&order_rate<=70&popularity>=4
+「最終コーナー以降、追い抜き」の後「is_last_straight==1、順位率40～70（チャンミ4～6/LoH5～8）、人気>=4」、目標速度3500、持続6.0
+is_finalcorner==1&change_order_onetime<0->is_last_straight==1&order_rate>=40&order_rate<=70&popularity<4
+「最終コーナー以降、追い抜き」の後「is_last_straight==1、順位率40～70（チャンミ4～6/LoH5～8）、人気<4」、目標速度3500、持続5.0
 
 キングヘイロー固有
 レース前半、掛からず最後方付近に控え続けていると、最終直線で気合を爆発させて加速力が上がる
-distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_finalcorner==1&corner==0
-「距離割合>=50、順位率70以降維持（チャンミ6～/LoH8～）（チャンミ6～/LoH8～）、掛かり無し」の後「最終コーナー以降、コーナー以外」、加速4000、持続4.0
+distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_last_straight==1
+「距離割合>=50、順位率70以降維持（チャンミ6～/LoH8～）（チャンミ6～/LoH8～）、掛かり無し」の後「is_last_straight==1」、加速4000、持続4.0
 
 マチカネタンホイザ固有
 レース後半のコーナーで中団だと残り持久力に応じた時間速度を少し上げる中距離では加速力もちょっと上げる
@@ -850,8 +857,8 @@ phase==1&blocked_side_continuetime>=2->remain_distance<=651&remain_distance>=649
 
 メジロアルダン固有
 終盤の最終直線で好位置にいて後ろのウマ娘と近いと、持久力を使って速度を上げ、わずかに前に出る
-->phase>=2&is_finalcorner==1&corner==0&order_rate>=20&order_rate<=40&bashin_diff_behind<=1
-「終盤、最終コーナー以降、コーナー以外、順位率20～40（チャンミ2～4/LoH3～5）、後ろとのバ身差<=1」、目標速度3500、現在速度1500、体力-300、持続5.0
+->phase>=2&is_last_straight==1&order_rate>=20&order_rate<=40&bashin_diff_behind<=1
+「終盤、is_last_straight==1、順位率20～40（チャンミ2～4/LoH3～5）、後ろとのバ身差<=1」、目標速度3500、現在速度1500、体力-300、持続5.0
 
 スペシャルウィーク固有
 終盤最終コーナーでスキルを発動すると声援を胸に速度を少し上げる中山レース場ならすごく上げる
@@ -917,8 +924,8 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 
 究極テイオーステップ
 レース終盤に前と差が詰まると最終直線で速度が少し上がる
-phase>=2&order<=3&bashin_diff_infront<=1&is_overtake==1->is_finalcorner==1&corner==0
-「終盤、順位<=3、前とのバ身差<=1、追い抜きモード」の後「最終コーナー以降、コーナー以外」、目標速度2500、持続3.0
+phase>=2&order<=3&bashin_diff_infront<=1&is_overtake==1->is_last_straight==1
+「終盤、順位<=3、前とのバ身差<=1、追い抜きモード」の後「is_last_straight==1」、目標速度2500、持続3.0
 
 紅焔ギア/LP1211-M
 最終コーナー以降で前の方にいると加速力がわずかに上がる
@@ -951,19 +958,19 @@ phase>=2&order_rate<=40&behind_near_lane_time_set1>=1->remain_distance<=300
 「距離割合>=50、順位==1、後ろとのバ身差<=1」または「距離割合>=50、順位==2、追い抜きモード」、目標速度500、加速1000、持続3.0
 
 ヴィクトリーショット！
-最終直線が迫ったとき好位置にいると弾みを付けて加速力がわずかに上がる
+最終コーナー後半で好位置にいると弾みを付けて加速力をわずかに上げ続ける
 ->is_finalcorner_laterhalf==1&corner!=0&order>=3&order_rate<=40
-「最終コーナー後半、コーナー、順位>=3、順位率40以下（チャンミ～4/LoH～5）」、加速2000、持続2.4
+「最終コーナー後半、コーナー、順位>=3、順位率40以下（チャンミ～4/LoH～5）」、加速2000、持続3.0
 
 精神一到何事か成らざらん
 最終直線で後ろの方から追い抜くと速度がわずかに上がる
-->is_finalcorner==1&corner==0&change_order_onetime<0&order>=3
-「最終コーナー以降、コーナー以外、追い抜き、順位>=3」、目標速度1500、持続3.0
+->is_last_straight==1&change_order_onetime<0&order>=3
+「is_last_straight==1、追い抜き、順位>=3」、目標速度1500、持続3.0
 
 タイマン！デッドヒート！
 最終コーナー以降に後ろの方から外を回って追い抜いていると最終直線で速度をわずかに上げる
-is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_finalcorner==1&corner==0
-「最終コーナー以降、外から、追い抜き、順位率40以上（チャンミ4～/LoH5～）」の後「最終コーナー以降、コーナー以外」、目標速度1500、持続3.0
+is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_last_straight==1
+「最終コーナー以降、外から、追い抜き、順位率40以上（チャンミ4～/LoH5～）」の後「is_last_straight==1」、目標速度1500、持続3.0
 
 貴顕の使命を果たすべく
 最終コーナーで前の方にいると速度がわずかに上がる長距離で余力十分なら少し上がる
@@ -974,8 +981,8 @@ is_finalcorner==1&is_behind_in==1&change_order_onetime<0&order_rate>=40->is_fina
 
 プランチャ☆ガナドール
 最終直線で余力を持って前にいるとちょっと優位を保ちやすくなる
-->is_finalcorner==1&corner==0&hp_per>=30&order<=2
-「最終コーナー以降、コーナー以外、残り体力>=30、順位<=2」、目標速度500、加速1000、持続3.0
+->is_last_straight==1&hp_per>=30&order<=2
+「is_last_straight==1、残り体力>=30、順位<=2」、目標速度500、加速1000、持続3.0
 
 ヴィットーリアに捧ぐ舞踏
 最終コーナー以降に前の方で前または後ろのウマ娘と距離が近いと速度がわずかに上がる
@@ -991,8 +998,8 @@ phase==1&blocked_side_continuetime>=2->is_finalcorner==1&order>=2&order_rate<=75
 
 汝、皇帝の神威を見よ
 レース終盤に3回追い抜くと最終直線で速度が少し上がる
-->is_finalcorner==1&change_order_up_end_after>=3&corner==0
-「最終コーナー以降、終盤追い抜き>=3、コーナー以外」、目標速度2500、持続3.0
+->is_last_straight==1&change_order_up_end_after>=3
+「is_last_straight==1、終盤追い抜き>=3」、目標速度2500、持続3.0
 
 ブレイズ・オブ・プライド
 最終コーナーで中団以降から追い抜くと速度がわずかに上がる
@@ -1038,10 +1045,10 @@ Fairy tale
 
 G00 1st.F∞;
 出遅れずに最終直線で前の方にいると速度がわずかに上がる、前方の順位をキープしていた場合は少し上がる
-->is_badstart==0&order<=3&is_finalcorner==1&corner==0&order_rate_in20_continue==1
-「出遅れ無し、順位<=3、最終コーナー以降、コーナー以外、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」、目標速度2500、持続3.0
-->is_badstart==0&order<=3&is_finalcorner==1&corner==0
-「出遅れ無し、順位<=3、最終コーナー以降、コーナー以外」、目標速度1500、持続3.0
+->is_badstart==0&order<=3&is_last_straight==1&order_rate_in20_continue==1
+「出遅れ無し、順位<=3、is_last_straight==1、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」、目標速度2500、持続3.0
+->is_badstart==0&order<=3&is_last_straight==1
+「出遅れ無し、順位<=3、is_last_straight==1」、目標速度1500、持続3.0
 
 レッツ・アナボリック！
 レース終盤のコーナーで前の位置につこうとして加速力がわずかに上がる
@@ -1060,8 +1067,8 @@ I'M☆FULL☆SPEED!!
 
 ブルーローズチェイサー
 レース終盤に追い抜いて先団につけると最終直線で速度がわずかに上がる
-phase>=2&order<=4&change_order_onetime<0->is_finalcorner==1&corner==0
-「終盤、順位<=4、追い抜き」の後「最終コーナー以降、コーナー以外」、目標速度1500、持続3.0
+phase>=2&order<=4&change_order_onetime<0->is_last_straight==1
+「終盤、順位<=4、追い抜き」の後「is_last_straight==1」、目標速度1500、持続3.0
 
 チャージ完了！全速前進！
 残り300m付近で前の方だと速度をちょっと上げる、ちょうど坂を上りきったところだった場合は少し上げる
@@ -1077,10 +1084,10 @@ U=ma2
 
 ディオスクロイの流星
 最終直線で先頭から離されていると速度がわずかに上がる最後方付近にいる場合は少し上がる
-->is_finalcorner==1&corner==0&distance_diff_top>=5&order_rate<80
-「最終コーナー以降、コーナー以外、先頭との距離>=5、順位率80未満（チャンミ～8/LoH～10）」、目標速度1500、持続3.0
-->is_finalcorner==1&corner==0&distance_diff_top>=5&order_rate>=80
-「最終コーナー以降、コーナー以外、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度2500、持続3.0
+->is_last_straight==1&distance_diff_top>=5&order_rate<80
+「is_last_straight==1、先頭との距離>=5、順位率80未満（チャンミ～8/LoH～10）」、目標速度1500、持続3.0
+->is_last_straight==1&distance_diff_top>=5&order_rate>=80
+「is_last_straight==1、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度2500、持続3.0
 
 快走かな、快走かな！
 レース前半、中団以降に控え続けると追い比べをしたとき、速度を少し上げる
@@ -1089,20 +1096,20 @@ distance_rate>=50&order_rate_out40_continue==1->compete_fight_count>0
 
 勝利のチケットを、君にッ！
 最終コーナー以降に競り合っていると最終直線で前方にいる時速度がわずかに上がる
-is_finalcorner==1&blocked_side_continuetime>=2->is_finalcorner==1&corner==0&order<=5
-「最終コーナー以降、横ブロック継続>=2」の後「最終コーナー以降、コーナー以外、順位<=5」、目標速度1500、持続3.0
+is_finalcorner==1&blocked_side_continuetime>=2->is_last_straight==1&order<=5
+「最終コーナー以降、横ブロック継続>=2」の後「is_last_straight==1、順位<=5」、目標速度1500、持続3.0
 
 trigger:BEAT
 最終コーナー以降に中団の内ラチ側にいると最終直線で速度がわずかに上がりコース取りがわずかにうまくなる
-is_finalcorner==1&order_rate>=40&order_rate<=75&lane_type==0->is_finalcorner==1&corner==0
-「最終コーナー以降、順位率40～75（チャンミ4～7/LoH5～9）、内ラチ側」の後「最終コーナー以降、コーナー以外」、目標速度1500、横移動速度150、持続3.0
+is_finalcorner==1&order_rate>=40&order_rate<=75&lane_type==0->is_last_straight==1
+「最終コーナー以降、順位率40～75（チャンミ4～7/LoH5～9）、内ラチ側」の後「is_last_straight==1」、目標速度1500、横移動速度150、持続3.0
 
 Schwarzes Schwert
 冷静にレースを運び最終直線で3番手以降だと速度がわずかに上がる、中団の位置取りを維持していると少し上がる
-->temptation_count==0&order>=3&is_finalcorner==1&corner==0&order_rate_in80_continue==1&order_rate_out40_continue==1
-「掛かり無し、順位>=3、最終コーナー以降、コーナー以外、順位率40～80維持（チャンミ4～7/LoH5～9）」、目標速度2500、持続3.0
-->temptation_count==0&order>=3&is_finalcorner==1&corner==0
-「掛かり無し、順位>=3、最終コーナー以降、コーナー以外」、目標速度1500、持続3.0
+->temptation_count==0&order>=3&is_last_straight==1&order_rate_in80_continue==1&order_rate_out40_continue==1
+「掛かり無し、順位>=3、is_last_straight==1、順位率40～80維持（チャンミ4～7/LoH5～9）」、目標速度2500、持続3.0
+->temptation_count==0&order>=3&is_last_straight==1
+「掛かり無し、順位>=3、is_last_straight==1」、目標速度1500、持続3.0
 
 #LookatCurren
 レース中間付近で好位置にいる時に追い抜くとちょっと進出を開始する
@@ -1111,8 +1118,8 @@ Schwarzes Schwert
 
 姫たるもの、勝利をこの手に
 最終直線を走行中に競り合うと速度をわずかに上げる
-->is_finalcorner==1&corner==0&blocked_side_continuetime>=2
-「最終コーナー以降、コーナー以外、横ブロック継続>=2」、目標速度1500、持続3.0
+->is_last_straight==1&blocked_side_continuetime>=2
+「is_last_straight==1、横ブロック継続>=2」、目標速度1500、持続3.0
 
 KEEP IT REAL.
 レース後半に中団から仕掛け始める時に加速力をちょっと上げ続ける
@@ -1162,8 +1169,8 @@ order_rate_out50_continue==1&temptation_count==0&is_finalcorner==1->remain_dista
 
 YEAH☆VIVID TIME!
 最終直線を走行中に前の方で追い抜こうとするか詰め寄られると速度をわずかに上げる
-->is_finalcorner==1&corner==0&order_rate<=40&overtake_target_time>=1@is_finalcorner==1&corner==0&order_rate<=40&is_overtake==1
-「最終コーナー以降、コーナー以外、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「最終コーナー以降、コーナー以外、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度1500、持続3.0
+->is_last_straight==1&order_rate<=40&overtake_target_time>=1@is_last_straight==1&order_rate<=40&is_overtake==1
+「is_last_straight==1、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「is_last_straight==1、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度1500、持続3.0
 
 剣ヶ峰より、狂気に嗤え
 最終コーナー以降に追い抜こうとすると残り400ｍ以降に好位置で速度がわずかに上がる、人気が低い場合は少し上がる
@@ -1283,8 +1290,8 @@ Pride of KING
 
 一期の夢、刹那の飛翔
 最終直線で後ろのウマ娘と距離が近いと持久力をわずかに使い少しの間速度が少し上がる
-->is_finalcorner==1&corner==0&bashin_diff_behind<=1
-「最終コーナー以降、コーナー以外、後ろとのバ身差<=1」、目標速度2500、体力-100、持続2.4
+->is_last_straight==1&bashin_diff_behind<=1
+「is_last_straight==1、後ろとのバ身差<=1」、目標速度2500、体力-100、持続2.4
 
 烈火繚乱、無敵之舞
 最終コーナー以降に追い抜いていた場合残り300mを切って先団にいるとき速度がわずかに上がる
@@ -1303,6 +1310,11 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 ->distance_rate>=50&distance_rate<=51&order_rate>=30&order_rate<=80
 「距離割合50～51、順位率30～80（チャンミ3～7/LoH4～9）」、目標速度500、持続3.0
 
+Road to Glory
+レース終盤目前で好位置にいた場合残り400m地点で速度が少し上がる
+distance_rate>=60&phase==1&order>=2&order_rate<=40->remain_distance<=401&remain_distance>=399
+「距離割合>=60、中盤、順位>=2、順位率40以下（チャンミ～4/LoH～5）」の後「残り距離399～401」、目標速度2500、持続3.0
+
 風光る
 レース前半で控え、最終コーナー後半に前の方だと長時間加速力をほんのちょっと上げ続ける、2番手なら効果が上がる
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50&order==2
@@ -1319,8 +1331,8 @@ Mission: Triumph
 
 霹靂のアウフヘーベン
 レース終盤に後方にいると最終直線でわずかに前に出る
-phase>=2&order_rate>=50->is_finalcorner==1&corner==0
-「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「最終コーナー以降、コーナー以外」、現在速度1500、持続3.0
+phase>=2&order_rate>=50->is_last_straight==1
+「終盤、順位率50以上（チャンミ5～/LoH6～）」の後「is_last_straight==1」、現在速度1500、持続3.0
 
 至上であれ
 冷静に走行し終盤突入時に後方付近だとちょっと前に出て、先頭から4人までのウマ娘をほんのちょっと萎縮させる
@@ -1384,8 +1396,8 @@ phase==1&bashin_diff_behind>=3&order==1->distance_rate>=66&distance_rate<=68&cor
 
 絶対は、ボクだ
 最終コーナー以降に前の方で追いすがっていると最終直線を走行中速度が少し上がる
-is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_finalcorner==1&corner==0
-「最終コーナー以降、追い抜きモード、順位<=5、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象順位変化なし？>=2」の後「最終コーナー以降、コーナー以外」、目標速度2500、持続3.0
+is_finalcorner==1&is_overtake==1&order<=5&order_rate<=50&overtake_target_no_order_up_time>=2->is_last_straight==1
+「最終コーナー以降、追い抜きモード、順位<=5、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象順位変化なし？>=2」の後「is_last_straight==1」、目標速度2500、持続3.0
 
 グッときて♪Chu
 スキルで持久力を回復するとレース後半で前のほうにいる時にわずかに速度を上げる
@@ -1542,13 +1554,13 @@ phase>=2&corner!=0&order_rate>=60&is_overtake==1->is_last_straight_onetime==1
 
 夢の先へ、届け！
 ラストスパートの最終直線に中団以降で速度をちょっとずつ上げ、効果中スキルを発動すると3回まで効果が増える
-->is_lastspurt==1&is_finalcorner==1&corner==0&order_rate>=40
-「ラストスパート、最終コーナー以降、コーナー以外、順位率40以上（チャンミ4～/LoH5～）」、目標速度500、目標速度500(追加効果2)、持続3.6
+->is_lastspurt==1&is_last_straight==1&order_rate>=40
+「ラストスパート、is_last_straight==1、順位率40以上（チャンミ4～/LoH5～）」、目標速度500、目標速度500(追加効果2)、持続3.6
 
 Guten Appetit♪
 最終コーナー以降に2回追い抜くと最終直線で速度をわずかに上げ続ける
-->change_order_up_finalcorner_after>=2&is_finalcorner==1&corner==0
-「最終コーナー以降追い抜き>=2、最終コーナー以降、コーナー以外」、目標速度1500、持続3.6
+->change_order_up_finalcorner_after>=2&is_last_straight==1
+「最終コーナー以降追い抜き>=2、is_last_straight==1」、目標速度1500、持続3.6
 
 One True Color
 残り350mを切って前の方で後ろのウマ娘との距離が近いとちょっと抜け出しやすくなる
@@ -1567,8 +1579,8 @@ CHERRY☆スクランブル
 
 ぐるぐるマミートリック♡
 最終直線を好位置で走行中前のウマ娘との距離が近いとちょっと抜け出しやすくなる
-->is_finalcorner==1&corner==0&order<=4&bashin_diff_infront<=1
-「最終コーナー以降、コーナー以外、順位<=4、前とのバ身差<=1」、目標速度500、加速1000、持続3.0
+->is_last_straight==1&order<=4&bashin_diff_infront<=1
+「is_last_straight==1、順位<=4、前とのバ身差<=1」、目標速度500、加速1000、持続3.0
 
 α-star*
 レース中間付近で先頭付近だと速度がちょっとずつ上がる、ダートレースではさらに持久力がちょっと回復する
@@ -1585,7 +1597,7 @@ GALmem.ふぉーえば♪
 「距離割合40～50、順位率40～80（チャンミ4～7/LoH5～9）」、目標速度500、持続3.6
 
 Hephaistos
-レース終盤で最終直線が迫ったとき中団から速度をわずかに上げる
+レース終盤の最終コーナー後半で中団から速度をわずかに上げる
 ->phase>=2&is_finalcorner_laterhalf==1&order_rate<=75&order_rate>=40
 「終盤、最終コーナー後半、順位率40～75（チャンミ4～7/LoH5～9）」、目標速度1500、持続3.0
 
@@ -1625,15 +1637,15 @@ Spooky-Scary-Happy
 
 Go☆Go☆for it!
 最終コーナー以降に追い抜いていた場合最終直線中団から速度をわずかに上げる人気が低い場合はわずかに上げ続ける
-is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate>=40&order_rate<=70&popularity>=4
-「最終コーナー以降、追い抜き」の後「最終コーナー以降、コーナー以外、順位率40～70（チャンミ4～6/LoH5～8）、人気>=4」、目標速度1500、持続3.6
-is_finalcorner==1&change_order_onetime<0->is_finalcorner==1&corner==0&order_rate>=40&order_rate<=70&popularity<4
-「最終コーナー以降、追い抜き」の後「最終コーナー以降、コーナー以外、順位率40～70（チャンミ4～6/LoH5～8）、人気<4」、目標速度1500、持続3.0
+is_finalcorner==1&change_order_onetime<0->is_last_straight==1&order_rate>=40&order_rate<=70&popularity>=4
+「最終コーナー以降、追い抜き」の後「is_last_straight==1、順位率40～70（チャンミ4～6/LoH5～8）、人気>=4」、目標速度1500、持続3.6
+is_finalcorner==1&change_order_onetime<0->is_last_straight==1&order_rate>=40&order_rate<=70&popularity<4
+「最終コーナー以降、追い抜き」の後「is_last_straight==1、順位率40～70（チャンミ4～6/LoH5～8）、人気<4」、目標速度1500、持続3.0
 
 轟！トレセン応援団！！
 レース前半、掛からず最後方付近に控え続けていると、最終直線で加速力がわずかに上がる
-distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_finalcorner==1&corner==0
-「距離割合>=50、順位率70以降維持（チャンミ6～/LoH8～）（チャンミ6～/LoH8～）、掛かり無し」の後「最終コーナー以降、コーナー以外」、加速2000、持続2.4
+distance_rate>=50&order_rate_out70_continue==1&temptation_count==0->is_last_straight==1
+「距離割合>=50、順位率70以降維持（チャンミ6～/LoH8～）（チャンミ6～/LoH8～）、掛かり無し」の後「is_last_straight==1」、加速2000、持続2.4
 
 ごろりん！？パワードライブ
 レース後半のコーナーで中団だと残り持久力に応じた時間速度をちょっと上げ中距離では加速力もほんのちょっと上げる
@@ -1659,8 +1671,8 @@ phase==1&blocked_side_continuetime>=2->remain_distance<=651&remain_distance>=649
 
 Danser le présent
 終盤の最終直線で好位置にいて、後ろのウマ娘と近いと、持久力を使って速度をわずかに上げ、ほんのわずかに前に出る
-->phase>=2&is_finalcorner==1&corner==0&order_rate>=20&order_rate<=40&bashin_diff_behind<=1
-「終盤、最終コーナー以降、コーナー以外、順位率20～40（チャンミ2～4/LoH3～5）、後ろとのバ身差<=1」、目標速度1500、現在速度350、体力-300、持続3.0
+->phase>=2&is_last_straight==1&order_rate>=20&order_rate<=40&bashin_diff_behind<=1
+「終盤、is_last_straight==1、順位率20～40（チャンミ2～4/LoH3～5）、後ろとのバ身差<=1」、目標速度1500、現在速度350、体力-300、持続3.0
 
 威風堂々、夢錦！
 終盤最終コーナーでスキルを発動すると速度をちょっと上げる中山レース場なら少し上げる
@@ -1939,6 +1951,26 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 ->track_id==10105
 「レース場==10105」、スタミナ-40、持続0
 
+ロンシャンの申し子
+ロンシャンレース場が得意になりスタミナ、賢さ、スピードが上昇する
+->track_id==10201
+「レース場==10201」、スタミナ60、賢さ60、スピード60、持続0
+
+ロンシャンレース場◎
+ロンシャンレース場が得意になる
+->track_id==10201
+「レース場==10201」、スタミナ60、持続0
+
+ロンシャンレース場○
+ロンシャンレース場が少し得意になる
+->track_id==10201
+「レース場==10201」、スタミナ40、持続0
+
+ロンシャンレース場×
+ロンシャンレース場が少し苦手になる
+->track_id==10201
+「レース場==10201」、スタミナ-40、持続0
+
 根幹距離◎
 根幹距離（400mの倍数）が得意になる
 ->is_basis_distance==1
@@ -1973,6 +2005,13 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 「良」のバ場状態が得意になりパワーとスピードが上昇する
 ->ground_condition==1
 「良」、パワー60、スピード60、持続0
+
+ターフの主人公
+パワーとスピードが少し上がる「良」のバ場状態ならすごく上がる＜芝＞
+->ground_condition==1&ground_type==1
+「良、芝」、パワー80、スピード80、持続0
+->ground_condition!=1&ground_type==1
+「ground_condition!=1、芝」、パワー40、スピード40、持続0
 
 良バ場◎
 「良」のバ場状態が得意になる
@@ -3641,9 +3680,9 @@ Frontier Spirit
 「中距離、直線ランダム==1」、目標速度4500、持続3.0
 
 淡く儚い残照
-ラストスパートの直線で、持久力を少し使い、速度がものすごく上がる＜先行・中距離＞
-->running_style==2&distance_type==3&corner==0&is_lastspurt==1
-「先行、中距離、コーナー以外、ラストスパート」、目標速度5500、体力-200、持続3.0
+終盤の最終直線で、持久力を少し使い、速度がものすごく上がる＜先行・中距離＞
+->running_style==2&distance_type==3&is_last_straight==1&phase>=2
+「先行、中距離、is_last_straight==1、終盤」、目標速度5500、体力-200、持続3.0
 
 中距離直線◎
 直線で速度が少し上がる＜中距離＞
@@ -4588,34 +4627,34 @@ Lose Myself
 「差し、序盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、体力150、持続0.0
 
 決死の覚悟
-ラストスパートの直線で好位置にいると速度が上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度3500、持続3.0
+終盤の最終直線で好位置にいると速度が上がる＜中距離＞
+->distance_type==3&is_last_straight==1&order_rate>=20&order_rate<=60&phase>=2
+「中距離、is_last_straight==1、順位率20～60（チャンミ2～5/LoH3～7）、終盤」、目標速度3500、持続3.0
 
 きっと飛べる！
-ラストスパートの直線で好位置にいるとしばらくの間速度が上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度3500、持続4.0
+終盤の最終直線で好位置にいるとしばらくの間速度が上がる＜中距離＞
+->distance_type==3&is_last_straight==1&phase>=2&order_rate>=20&order_rate<=60
+「中距離、is_last_straight==1、終盤、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度3500、持続4.0
 
 揺るがぬアスター
-ラストスパートの直線で好位置にいると速度がすごく上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
+終盤の最終直線で好位置にいると速度がすごく上がる＜中距離＞
+->distance_type==3&phase>=2&is_last_straight==1&order_rate>=20&order_rate<=60
+「中距離、終盤、is_last_straight==1、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
 
 刹那への覚悟
-ラストスパートの直線で好位置にいると速度がすごく上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
+終盤の最終直線で好位置にいると速度がすごく上がる＜中距離＞
+->distance_type==3&is_last_straight==1&phase>=2&order_rate>=20&order_rate<=60
+「中距離、is_last_straight==1、終盤、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
 
 銀河のその先へ、あなたと
-ラストスパートの直線で好位置にいると速度がすごく上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
+終盤の最終直線で好位置にいると速度がすごく上がる＜中距離＞
+->distance_type==3&phase>=2&is_last_straight==1&order_rate>=20&order_rate<=60
+「中距離、終盤、is_last_straight==1、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度4500、持続3.0
 
 ありったけ
-ラストスパートの直線で好位置にいると速度がわずかに上がる＜中距離＞
-->distance_type==3&is_lastspurt==1&corner==0&order_rate>=20&order_rate<=60
-「中距離、ラストスパート、コーナー以外、順位率20～60（チャンミ2～5/LoH3～7）」、目標速度1500、持続3.0
+終盤の最終直線で好位置にいると速度がわずかに上がる＜中距離＞
+->distance_type==3&is_last_straight==1&order_rate>=20&order_rate<=60&phase>=2
+「中距離、is_last_straight==1、順位率20～60（チャンミ2～5/LoH3～7）、終盤」、目標速度1500、持続3.0
 
 鍔迫り合い
 レース終盤始めの方で前方にいると加速力が上がる＜作戦・先行＞
@@ -4671,6 +4710,13 @@ Lose Myself
 レース終盤が迫ったとき前方にいると速度がすごく上がる＜長距離＞
 ->distance_type==4&phase_laterhalf_random==1&order_rate<=50
 「長距離、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続2.4
+
+正道
+レース終盤が迫ったとき前方にいると速度が上がる、その後ラストスパートで加速力がわずかに上がる＜長距離＞
+->distance_type==4&phase_laterhalf_random==1&order_rate<=50
+「長距離、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続2.4
+->is_activate_other_skill_detail==1&is_lastspurt==1
+「上記効果発動後、ラストスパート」、加速2000、持続0.9
 
 影打
 レース終盤が迫ったとき前方にいると速度がわずかに上がる＜長距離＞
@@ -5227,40 +5273,40 @@ Lose Myself
 
 トップギア
 最終直線で2番手以降で先頭から4バ身以内にいると速度がすごく上がる＜作戦・差し＞
-->running_style==3&is_finalcorner==1&corner==0&order>=2&distance_diff_top<=10
-「差し、最終コーナー以降、コーナー以外、順位>=2、先頭との距離<=10」、目標速度4500、持続2.4
+->running_style==3&is_last_straight==1&order>=2&distance_diff_top<=10
+「差し、is_last_straight==1、順位>=2、先頭との距離<=10」、目標速度4500、持続2.4
 
 最速のトップギア
 最終直線で2番手以降で先頭から4バ身以内にいると速度がものすごく上がる＜作戦・差し＞
-->running_style==3&is_finalcorner==1&corner==0&order>=2&distance_diff_top<=10
-「差し、最終コーナー以降、コーナー以外、順位>=2、先頭との距離<=10」、目標速度5500、持続2.4
+->running_style==3&is_last_straight==1&order>=2&distance_diff_top<=10
+「差し、is_last_straight==1、順位>=2、先頭との距離<=10」、目標速度5500、持続2.4
 
 キレる脚
 最終直線で2番手以降で先頭から4バ身以内にいると速度が少し上がる＜作戦・差し＞
-->running_style==3&is_finalcorner==1&corner==0&order>=2&distance_diff_top<=10
-「差し、最終コーナー以降、コーナー以外、順位>=2、先頭との距離<=10」、目標速度2500、持続2.4
+->running_style==3&is_last_straight==1&order>=2&distance_diff_top<=10
+「差し、is_last_straight==1、順位>=2、先頭との距離<=10」、目標速度2500、持続2.4
 
 踏ませぬ影
 最終直線で先頭のとき後ろ1バ身以内にウマ娘がいると速度がすごく上がる＜作戦・逃げ＞
-->running_style==1&is_finalcorner==1&corner==0&order==1&bashin_diff_behind<=1
-「逃げ、最終コーナー以降、コーナー以外、順位==1、後ろとのバ身差<=1」、目標速度4500、持続2.4
+->running_style==1&is_last_straight==1&order==1&bashin_diff_behind<=1
+「逃げ、is_last_straight==1、順位==1、後ろとのバ身差<=1」、目標速度4500、持続2.4
 
 開かれる夢の扉
 最終直線で先頭のとき後ろ1バ身以内にウマ娘がいると速度がものすごく上がる＜作戦・逃げ＞
-->running_style==1&is_finalcorner==1&corner==0&order==1&bashin_diff_behind<=1
-「逃げ、最終コーナー以降、コーナー以外、順位==1、後ろとのバ身差<=1」、目標速度5500、持続2.4
+->running_style==1&is_last_straight==1&order==1&bashin_diff_behind<=1
+「逃げ、is_last_straight==1、順位==1、後ろとのバ身差<=1」、目標速度5500、持続2.4
 
 逃げっ切りの1人旅
 中盤大きく差をつけ先頭かつ最終直線で先頭だと速度がすごく上がる、東京中距離レースで効果が増える＜作戦・逃げ＞
-phase==1&bashin_diff_behind>=3&order==1->running_style==1&is_finalcorner==1&corner==0&order==1&track_id==10006&distance_type==3
-「中盤、後ろとのバ身差>=3、順位==1」の後「逃げ、最終コーナー以降、コーナー以外、順位==1、レース場==10006、中距離」、目標速度5500、持続2.4
-phase==1&bashin_diff_behind>=3&order==1->running_style==1&is_finalcorner==1&corner==0&order==1
-「中盤、後ろとのバ身差>=3、順位==1」の後「逃げ、最終コーナー以降、コーナー以外、順位==1」、目標速度4500、持続2.4
+phase==1&bashin_diff_behind>=3&order==1->running_style==1&is_last_straight==1&order==1&track_id==10006&distance_type==3
+「中盤、後ろとのバ身差>=3、順位==1」の後「逃げ、is_last_straight==1、順位==1、レース場==10006、中距離」、目標速度5500、持続2.4
+phase==1&bashin_diff_behind>=3&order==1->running_style==1&is_last_straight==1&order==1
+「中盤、後ろとのバ身差>=3、順位==1」の後「逃げ、is_last_straight==1、順位==1」、目標速度4500、持続2.4
 
 粘り腰
 最終直線で先頭のとき後ろ1バ身以内にウマ娘がいると速度が少し上がる＜作戦・逃げ＞
-->running_style==1&is_finalcorner==1&corner==0&order==1&bashin_diff_behind<=1
-「逃げ、最終コーナー以降、コーナー以外、順位==1、後ろとのバ身差<=1」、目標速度2500、持続2.4
+->running_style==1&is_last_straight==1&order==1&bashin_diff_behind<=1
+「逃げ、is_last_straight==1、順位==1、後ろとのバ身差<=1」、目標速度2500、持続2.4
 
 猛追
 レース後半に追い抜こうとすると速度が上がる＜先行/差し＞
@@ -5538,6 +5584,26 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->running_style==2&distance_type==3&base_speed>=1200&base_wiz<1200
 「先行、中距離、基礎スピード>=1200、base_wiz<1200」、スピード20、持続0
 
+王手
+終盤の最終コーナーで中団以前にいる時ゴールまで遠いと加速力が上がる＜先行/差し＞
+->running_style==2&phase>=2&is_finalcorner==1&corner!=0&remain_distance>=600&order_rate<=70@running_style==3&phase>=2&is_finalcorner==1&corner!=0&remain_distance>=600&order_rate<=70
+「先行、終盤、最終コーナー以降、コーナー、残り距離>=600、順位率70以下（チャンミ～6/LoH～8）」または「差し、終盤、最終コーナー以降、コーナー、残り距離>=600、順位率70以下（チャンミ～6/LoH～8）」、加速4000、持続0.9
+
+会心の一歩
+終盤の最終コーナーで中団以前にいる時ゴールまで遠いと加速力がわずかに上がる＜先行/差し＞
+->running_style==2&phase>=2&is_finalcorner==1&corner!=0&remain_distance>=600&order_rate<=70@running_style==3&phase>=2&is_finalcorner==1&corner!=0&remain_distance>=600&order_rate<=70
+「先行、終盤、最終コーナー以降、コーナー、残り距離>=600、順位率70以下（チャンミ～6/LoH～8）」または「差し、終盤、最終コーナー以降、コーナー、残り距離>=600、順位率70以下（チャンミ～6/LoH～8）」、加速2000、持続0.9
+
+ネバーギブアップ
+レース中盤のコーナーでしばらくの間速度が少し上がる
+->phase_corner_random==1
+「phase_最初のコーナーランダム==1」、目標速度2500、持続4.0
+
+折れない心
+レース中盤のコーナーでしばらくの間速度がちょっと上がる
+->phase_corner_random==1
+「phase_最初のコーナーランダム==1」、目標速度500、持続4.0
+
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
 ->phase_random==1
@@ -5678,6 +5744,16 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->phase_laterhalf_random==2
 「終盤1/4～1/2ランダム」、目標速度1500(特殊2)、持続2.4
 
+最高峰の夢
+最終直線で速度が上がる獲得した海外適性Lvの合計が高いほど効果が高まる
+->is_last_straight==1
+「is_last_straight==1」、目標速度3500(特殊24)、持続2.4
+
+想いを背負って
+最終直線で速度がわずかに上がる
+->is_last_straight==1
+「is_last_straight==1」、目標速度1500、持続2.4
+
 癒えない渇き
 レースへの渇望により能力が少し発揮しやすくなる
 ->track_id==10008
@@ -5705,8 +5781,8 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 
 夢の走り
 みんなの想いと共にゴールを走り抜ける気持ちを強く持つと最終直線で速度を上げる
-->is_finalcorner==1&corner==0
-「最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
+->is_last_straight==1
+「is_last_straight==1」、目標速度3500、持続5.0
 
 未知への走りを見せてくれ
 次のステージを見せてくれる期待を伝えてサイレンススズカの能力を少し発揮しやすくさせる
