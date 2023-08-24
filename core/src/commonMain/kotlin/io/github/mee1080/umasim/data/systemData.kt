@@ -295,6 +295,7 @@ val supportEffectName = mapOf(
     29 to "ミニゲーム効果アップ",
     30 to "スキルPtボーナス",
     31 to "賢さ友情回復量アップ",
+    41 to "全ステータスボーナス",
 )
 
 val skillEffectName = mapOf(
