@@ -40,9 +40,10 @@ object Calculator {
         val totalTrainingLevel: Int,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
+        val lArcStatus: LArcStatus?,
     ) {
         fun setTeamMember(teamJoinCount: Int) = copy(
-            member = member + if (scenario == Scenario.URA || scenario == Scenario.AOHARU || scenario == Scenario.GRAND_LIVE) createTeamMemberState(
+            member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
                 teamJoinCount,
                 scenario,
             ) else emptyList()
@@ -187,6 +188,7 @@ object Calculator {
         val fanCountLevel: Int,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
+        val lArcStatus: LArcStatus?,
     )
 
     @ThreadLocal
@@ -208,6 +210,7 @@ object Calculator {
             info.scenario, info.supportTypeCount, info.fanCount / 10000,
             info.liveStatus,
             info.gmStatus,
+            info.lArcStatus,
         )
         val cached = expectedStatusCache[key]
         if (cached != null) {
@@ -278,8 +281,7 @@ object Calculator {
         Scenario.CLIMAX -> Status()
         Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
         Scenario.GM -> calcGmStatus(info, base)
-        // TODO LArc
-        Scenario.LARC -> Status()
+        Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
     }
 
     private fun calcAoharuStatus(
@@ -449,5 +451,76 @@ object Calculator {
             wisdom = if (hintStatus.wisdom > 0) gmStatus.getStatusBonus(StatusType.WISDOM) else 0,
             skillPt = hintSupportList.size * 20,
         )
+    }
+
+    private fun calcLArcStatus(
+        info: CalcInfo,
+        base: Status,
+        friendTraining: Boolean,
+    ): Status {
+        val lArcStatus = info.lArcStatus ?: return Status()
+        val trainingType = info.training.type
+        val overseas = info.training.level == 6
+        return Status(
+            speed = calcLArcStatusSingle(
+                lArcStatus,
+                trainingType,
+                StatusType.SPEED,
+                base.speed,
+                overseas,
+                friendTraining
+            ),
+            stamina = calcLArcStatusSingle(
+                lArcStatus,
+                trainingType,
+                StatusType.STAMINA,
+                base.stamina,
+                overseas,
+                friendTraining
+            ),
+            power = calcLArcStatusSingle(
+                lArcStatus,
+                trainingType,
+                StatusType.POWER,
+                base.power,
+                overseas,
+                friendTraining
+            ),
+            guts = calcLArcStatusSingle(lArcStatus, trainingType, StatusType.GUTS, base.guts, overseas, friendTraining),
+            wisdom = calcLArcStatusSingle(
+                lArcStatus,
+                trainingType,
+                StatusType.WISDOM,
+                base.wisdom,
+                overseas,
+                friendTraining
+            ),
+            skillPt = calcLArcStatusSingle(
+                lArcStatus,
+                trainingType,
+                StatusType.SKILL,
+                base.skillPt,
+                overseas,
+                friendTraining
+            ),
+            hp = -(base.hp * lArcStatus.hpCost(overseas) / 100.0).toInt()
+        )
+    }
+
+    private fun calcLArcStatusSingle(
+        lArcStatus: LArcStatus,
+        trainingType: StatusType,
+        target: StatusType,
+        baseValue: Int,
+        overseas: Boolean,
+        friendTraining: Boolean,
+    ): Int {
+        if (baseValue == 0) return 0
+        val bonus = lArcStatus.getStatusBonus(target)
+        val factor = ((baseValue + bonus) * lArcStatus.getTrainingFactor(trainingType, overseas) / 100.0).toInt()
+        val friend = if (friendTraining) {
+            ((baseValue + bonus + factor) * lArcStatus.friendFactor / 100.0).toInt()
+        } else 0
+        return bonus + factor + friend
     }
 }

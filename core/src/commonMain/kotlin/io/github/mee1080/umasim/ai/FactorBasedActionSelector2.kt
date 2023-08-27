@@ -372,6 +372,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         state.totalTrainingLevel,
                         state.liveStatus,
                         state.gmStatus,
+                        state.lArcStatus,
                     ),
                 ).first
                 expectedStatus.speed * option.speedFactor +

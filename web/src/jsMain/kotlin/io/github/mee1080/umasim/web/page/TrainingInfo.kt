@@ -59,7 +59,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
     }
-    if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
+    if (state.scenario.guestMember) {
         Div {
             Text("サポカ外参加人数")
             Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }

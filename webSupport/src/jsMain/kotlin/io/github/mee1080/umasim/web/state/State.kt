@@ -80,6 +80,7 @@ data class State(
     val trainingLiveState: TrainingLiveState = TrainingLiveState(),
     val expectedState: ExpectedState = ExpectedState(),
     val gmState: GmState = GmState(),
+    val lArcState: LArcState = LArcState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -128,6 +129,8 @@ data class State(
     val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
 
     val gmStatusIfEnabled get() = if (scenario == Scenario.GM) gmState.toGmStatus() else null
+
+    val lArcStatusIfEnabled get() = if (scenario == Scenario.LARC) lArcState.toLArcStatus() else null
 }
 
 data class SupportSelection(
@@ -396,9 +399,9 @@ data class LessonState(
     val message: String? = null,
     val result: List<Double> = emptyList(),
 
-    val periodList: List<Pair<Int, String>> = LessonPeriod.values().map { it.ordinal to it.displayName }
+    val periodList: List<Pair<Int, String>> = LessonPeriod.entries.map { it.ordinal to it.displayName }
 ) {
-    val period get() = LessonPeriod.values().getOrElse(periodIndex) { LessonPeriod.Junior }
+    val period get() = LessonPeriod.entries.getOrElse(periodIndex) { LessonPeriod.Junior }
 
     fun convertParameters() = kotlin.runCatching {
         Pair(
@@ -417,7 +420,7 @@ data class LessonState(
 data class GmState(
     val knowledgeTable: List<Knowledge?> = List(14) { null },
     val wisdom: Founder? = null,
-    val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 }
+    val wisdomLevel: Map<Founder, Int> = Founder.entries.associateWith { 0 }
 ) {
     fun toGmStatus() = GmStatus(
         knowledgeTable1 = knowledgeTable.subList(0, 8).filterNotNull(),
@@ -449,4 +452,34 @@ data class GmState(
         val newWisdomLevel = wisdomLevel.mapValues { if (it.key == target) value else it.value }
         return copy(wisdomLevel = newWisdomLevel)
     }
+}
+
+data class LArcState(
+    val expectations: Int = 0,
+    val overseas: Boolean = false,
+    val overseasTurfAptitude: Int = 0,
+    val longchampAptitude: Int = 0,
+    val lifeRhythm: Int = 0,
+    val nutritionManagement: Int = 0,
+    val frenchSkill: Int = 0,
+    val overseasExpedition: Int = 0,
+    val strongHeart: Int = 0,
+    val mentalStrength: Int = 0,
+    val hopeOfLArc: Int = 0,
+) {
+    fun toLArcStatus() = LArcStatus(
+        supporterPt = expectations * 1700,
+        memberSupporterPt = 0,
+        aptitudePt = 0,
+        overseasTurfAptitude,
+        longchampAptitude,
+        lifeRhythm,
+        nutritionManagement,
+        frenchSkill,
+        overseasExpedition,
+        strongHeart,
+        mentalStrength,
+        hopeOfLArc,
+        consecutiveVictories = 0,
+    )
 }

@@ -296,11 +296,15 @@ class ViewModel(val scope: CoroutineScope) {
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
-        val trainingType = StatusType.values()[state.selectedTrainingType]
+        val trainingType = StatusType.entries[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount.toIntOrNull() ?: 1
         val gmStatus = state.gmStatusIfEnabled
-        val trainingLevel = if (gmStatus?.trainingLevelUp == true) 6 else state.trainingLevel
+        val lArcStatus = state.lArcStatusIfEnabled
+        val trainingLevel = if (
+            gmStatus?.trainingLevelUp == true
+            || (state.scenario == Scenario.LARC && state.lArcState.overseas)
+        ) 6 else state.trainingLevel
         val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
             it.type == trainingType && it.level == trainingLevel
         }
@@ -319,6 +323,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.totalTrainingLevel,
             state.trainingLiveStateIfEnabled,
             gmStatus,
+            lArcStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -331,7 +336,7 @@ class ViewModel(val scope: CoroutineScope) {
         )
         val trainingItemBonus = when (state.scenario) {
             Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first, itemList)
-            Scenario.AOHARU, Scenario.GRAND_LIVE, Scenario.GM -> trainingResult.second
+            Scenario.AOHARU, Scenario.GRAND_LIVE, Scenario.GM, Scenario.LARC -> trainingResult.second
             else -> Status()
         }
 
@@ -352,6 +357,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.totalTrainingLevel,
                     state.trainingLiveStateIfEnabled,
                     gmStatus,
+                    lArcStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
@@ -376,6 +382,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalTrainingLevel,
                 state.trainingLiveStateIfEnabled,
                 gmStatus,
+                lArcStatus,
             ),
             state.teamJoinCount,
         )
@@ -437,6 +444,7 @@ class ViewModel(val scope: CoroutineScope) {
     }
 
     fun calculateExpected() {
+        val state = state
         scope.launch(Dispatchers.Default) {
             val oldStatus = state.expectedState.status
             suspendUpdateState { it.copy(expectedState = it.expectedState.copy(status = null)) }
@@ -459,6 +467,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalTrainingLevel,
                 state.trainingLiveStateIfEnabled,
                 state.gmStatusIfEnabled,
+                state.lArcStatusIfEnabled,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
@@ -523,8 +532,6 @@ class ViewModel(val scope: CoroutineScope) {
         } else {
             list.add(RaceSetting("メイクデビュー", 1, 3, 3, 30, false))
             val goalRace = Store.getGoalRaceList(chara.charaId).groupBy { it.grade }.mapValues { it.value.size }
-            console.log("createRaceSetting $goalRace")
-            console.log("createRaceSetting ${Store.getGoalRaceList(chara.charaId)}")
             val openCount = goalRace.filterKeys { it == RaceGrade.OPEN || it == RaceGrade.PRE_OPEN }.values.sum()
             if (openCount > 0) {
                 list.add(RaceSetting("目標 OP/Pre-OP", openCount, 3, 3, 30, false))
@@ -673,6 +680,26 @@ class ViewModel(val scope: CoroutineScope) {
                 supportLoadList = supportLoadList,
                 supportLoadName = supportLoadList.firstOrNull() ?: "",
             ).createRaceSetting()
+        }
+    }
+
+    fun updateLArc(update: LArcState.() -> LArcState) {
+        update { copy(lArcState = lArcState.update()) }
+    }
+
+    fun setAllAptitude(value: Int) {
+        updateLArc {
+            copy(
+                overseasTurfAptitude = value,
+                longchampAptitude = value,
+                lifeRhythm = value,
+                nutritionManagement = value,
+                frenchSkill = value,
+                overseasExpedition = value,
+                strongHeart = value,
+                mentalStrength = value,
+                hopeOfLArc = value,
+            )
         }
     }
 }

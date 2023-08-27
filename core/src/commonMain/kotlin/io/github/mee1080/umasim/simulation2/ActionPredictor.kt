@@ -90,6 +90,7 @@ private fun SimulationState.calcTrainingResult(
             totalTrainingLevel,
             liveStatus,
             gmStatus,
+            lArcStatus,
         )
     )
     val successStatus = if (itemAvailable) {

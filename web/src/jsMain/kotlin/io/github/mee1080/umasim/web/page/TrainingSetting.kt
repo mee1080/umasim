@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.data.trainingTypeOrSkill
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.material.MwcButton
+import io.github.mee1080.umasim.web.components.material.MwcCheckbox
 import io.github.mee1080.umasim.web.components.material.MwcSlider
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
@@ -35,6 +36,7 @@ import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLSelectElement
 
 @Composable
@@ -205,7 +207,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
 
         H3 { Text("女神の叡智") }
-        val wisdomSelection = listOf(null, *Founder.values())
+        val wisdomSelection = listOf(null) + Founder.entries
         val selectedWisdom = state.gmState.wisdom
         Select({
             prop(
@@ -223,7 +225,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
 
         H3 { Text("知識Lv") }
-        Founder.values().forEach { founder ->
+        Founder.entries.forEach { founder ->
             Div({
                 style {
                     display(DisplayStyle.Flex)
@@ -239,6 +241,75 @@ fun TrainingSetting(model: ViewModel, state: State) {
             }
         }
     }
+    if (state.scenario == Scenario.LARC) {
+        val lArcState = state.lArcState
+        H3 { Text("プロジェクトL'Arc関連") }
+        SliderEntry("期待度：", lArcState.expectations, 0, 200) {
+            model.updateLArc { copy(expectations = it.toInt()) }
+        }
+        SliderEntry("海外洋芝適性：", lArcState.overseasTurfAptitude, 0, 3) {
+            model.updateLArc { copy(overseasTurfAptitude = it.toInt()) }
+        }
+        SliderEntry("ロンシャン適性：", lArcState.longchampAptitude, 0, 3) {
+            model.updateLArc { copy(longchampAptitude = it.toInt()) }
+        }
+        SliderEntry("生活リズム：", lArcState.lifeRhythm, 0, 3) {
+            model.updateLArc { copy(lifeRhythm = it.toInt()) }
+        }
+        SliderEntry("栄養管理：", lArcState.nutritionManagement, 0, 3) {
+            model.updateLArc { copy(nutritionManagement = it.toInt()) }
+        }
+        SliderEntry("フランス語力：", lArcState.frenchSkill, 0, 3) {
+            model.updateLArc { copy(frenchSkill = it.toInt()) }
+        }
+        SliderEntry("海外遠征：", lArcState.overseasExpedition, 0, 3) {
+            model.updateLArc { copy(overseasExpedition = it.toInt()) }
+        }
+        SliderEntry("強心臓：", lArcState.strongHeart, 0, 3) {
+            model.updateLArc { copy(strongHeart = it.toInt()) }
+        }
+        SliderEntry("精神力：", lArcState.mentalStrength, 0, 3) {
+            model.updateLArc { copy(mentalStrength = it.toInt()) }
+        }
+        SliderEntry("L’Arcの希望：", lArcState.hopeOfLArc, 0, 3) {
+            model.updateLArc { copy(hopeOfLArc = it.toInt()) }
+        }
+        DivFlexCenter {
+            MwcButton({ onClickOrTouch { model.setAllAptitude(0) } }) { Text("海外適性すべて0") }
+            MwcButton({ onClickOrTouch { model.setAllAptitude(1) } }) { Text("海外適性すべて1") }
+            MwcButton({ onClickOrTouch { model.setAllAptitude(2) } }) { Text("海外適性すべて2") }
+            MwcButton({ onClickOrTouch { model.setAllAptitude(3) } }) { Text("海外適性すべて3") }
+        }
+        DivFlexCenter {
+            MwcCheckbox("海外遠征中", lArcState.overseas) {
+                onChange { model.updateLArc { copy(overseas = it) } }
+            }
+        }
+    }
+}
+
+@Composable
+private fun SliderEntry(label: String, value: Int, min: Int, max: Int, onInput: (Number) -> Unit) {
+    DivFlexCenter {
+        Span { Text(label) }
+        MwcSlider(value, min, max) {
+            onInput(onInput)
+            style { width(300.px) }
+        }
+        Span { Text(value.toString()) }
+    }
+}
+
+@Composable
+private fun DivFlexCenter(
+    content: ContentBuilder<HTMLDivElement>
+) {
+    Div({
+        style {
+            display(DisplayStyle.Flex)
+            alignItems(AlignItems.Center)
+        }
+    }, content)
 }
 
 @Composable

@@ -39,6 +39,7 @@ data class SimulationState(
     val enableItem: EnableItem = EnableItem(),
     val liveStatus: LiveStatus? = null,
     val gmStatus: GmStatus? = null,
+    val lArcStatus: LArcStatus? = null,
 ) {
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
@@ -160,9 +161,14 @@ object GmMemberState : ScenarioMemberState {
     override fun toString() = "GM"
 }
 
-object LArcMemberState : ScenarioMemberState {
-    override fun toString() = "LArc"
-}
+data class LArcMemberState(
+    val status: Status,
+    val supporterPt: Int,
+    val initialRank: Int,
+    val starType: StatusType,
+    val starLevel: Int,
+    val starGauge: Int,
+) : ScenarioMemberState
 
 data class AoharuMemberState(
     val member: TeamMemberData,
@@ -175,7 +181,7 @@ data class AoharuMemberState(
     override val hintBlocked get() = aoharuIcon
 }
 
-object AoharuNotMemberState : ScenarioMemberState
+data object AoharuNotMemberState : ScenarioMemberState
 
 data class TrainingState(
     val type: StatusType, val base: List<TrainingBase>, val level: Int, val count: Int, val levelOverride: Int?

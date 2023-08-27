@@ -112,13 +112,14 @@ fun <T> randomSelectPercent(percent: Double, success: T, failed: T): T {
 enum class Scenario(
     val displayName: String,
     val trainingAutoLevelUp: Boolean = true,
+    val guestMember: Boolean = false,
 ) {
     URA("URA"),
-    AOHARU("アオハル", false),
+    AOHARU("アオハル", trainingAutoLevelUp = false, guestMember = true),
     CLIMAX("クライマックス"),
-    GRAND_LIVE("グランドライブ"),
-    GM("グランドマスターズ", false),
-    LARC("プロジェクトL'Arc（実装中）")
+    GRAND_LIVE("グランドライブ", guestMember = true),
+    GM("グランドマスターズ", trainingAutoLevelUp = false),
+    LARC("プロジェクトL'Arc（実装中）", guestMember = true)
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)

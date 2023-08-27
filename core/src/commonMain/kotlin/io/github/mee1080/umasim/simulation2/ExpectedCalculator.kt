@@ -45,6 +45,7 @@ class ExpectedCalculator(
         totalTrainingLevel: Int,
         val liveStatus: TrainingLiveStatus?,
         gmStatus: GmStatus?,
+        lArcStatus: LArcStatus?
     ) {
 
         private val baseCalcInfo = Calculator.CalcInfo(
@@ -62,6 +63,7 @@ class ExpectedCalculator(
             totalTrainingLevel = totalTrainingLevel,
             liveStatus = liveStatus,
             gmStatus = gmStatus,
+            lArcStatus = lArcStatus,
         )
 
         fun toCalcInfo(type: StatusType, factors: List<Wrapper>, count: Int): Calculator.CalcInfo {

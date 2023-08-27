@@ -12,7 +12,7 @@ enum class Founder(val charaName: String, val colorName: String) {
     val longName = "${charaName}（${colorName}）"
 
     companion object {
-        fun fromColor(colorName: String) = values().firstOrNull { it.colorName == colorName }
+        fun fromColor(colorName: String) = entries.firstOrNull { it.colorName == colorName }
     }
 }
 
@@ -22,7 +22,7 @@ data class GmStatus(
     val knowledgeTable3: List<Knowledge> = emptyList(),
     val waitingWisdom: Founder? = null,
     val activeWisdom: Founder? = null,
-    val wisdomLevel: Map<Founder, Int> = Founder.values().associateWith { 0 },
+    val wisdomLevel: Map<Founder, Int> = Founder.entries.associateWith { 0 },
     val fragmentCount: Map<StatusType, Int> = trainingTypeOrSkill.associateWith { 0 },
 ) {
     fun toShortString() = buildString {
