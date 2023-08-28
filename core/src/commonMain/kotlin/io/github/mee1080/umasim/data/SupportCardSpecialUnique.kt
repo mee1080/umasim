@@ -61,7 +61,7 @@ data class SupportCardSpecialUnique(
     ): Int {
         return if (type == 101 && relation >= value0) {
             listOf(value1 to value2, value3 to value4).sumOf {
-                if (it.first == 41 || statusType == bonusStatus(it.first)) it.second else 0
+                if ((it.first == 41 && statusType != StatusType.SKILL) || statusType == bonusStatus(it.first)) it.second else 0
             }
         } else if (type == 116) {
             val skillCount = when (value0) {
@@ -113,7 +113,7 @@ data class SupportCardSpecialUnique(
         } else if (type == 110 && value0 == 8) {
             trainingSupportCount * value1
         } else if (type == 111 && value0 == 8) {
-            trainingLevel * value1
+            min(5, trainingLevel) * value1
         } else if (type == 114 && value0 == 8) {
             value2 - max(0, (100 - status.hp) / value1)
         } else if (type == 116 && value1 == 8) {

@@ -517,10 +517,10 @@ object Calculator {
     ): Int {
         if (baseValue == 0) return 0
         val bonus = lArcStatus.getStatusBonus(target)
-        val factor = ((baseValue + bonus) * lArcStatus.getTrainingFactor(trainingType, overseas) / 100.0).toInt()
+        val factor = (baseValue + bonus) * lArcStatus.getTrainingFactor(trainingType, overseas) / 100.0
         val friend = if (friendTraining) {
-            ((baseValue + bonus + factor) * lArcStatus.friendFactor / 100.0).toInt()
-        } else 0
-        return bonus + factor + friend
+            (baseValue + bonus + factor) * lArcStatus.friendFactor / 100.0
+        } else 0.0
+        return bonus + (factor + friend).toInt()
     }
 }
