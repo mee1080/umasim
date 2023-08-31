@@ -867,6 +867,13 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 ->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 「終盤、最終コーナー以降、コーナー、スキル発動」、目標速度2500、持続5.0
 
+ゴールドシップ固有
+中距離か長距離レースで最終コーナー以降に後方から追い抜こうとすると速度が上がる、スタート時に出遅れているとすごく上がる
+->distance_type==3&is_finalcorner==1&is_overtake==1&order_rate>=50&is_badstart==1@distance_type==4&is_finalcorner==1&is_overtake==1&order_rate>=50&is_badstart==1
+「中距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）、is_badstart==1」または「長距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）、is_badstart==1」、目標速度4500、持続5.0
+->distance_type==3&is_finalcorner==1&is_overtake==1&order_rate>=50@distance_type==4&is_finalcorner==1&is_overtake==1&order_rate>=50
+「中距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」または「長距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」、目標速度3500、持続5.0
+
 メジロマックイーン固有
 レース後半に先団にいると残りの持久力に応じたロングスパートをかけて速度をわずかに上げ続ける
 ->distance_rate>=50&order_rate<=40
@@ -1681,6 +1688,13 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 ->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 「終盤、最終コーナー以降、コーナー、スキル発動」、目標速度500、持続3.0
 
+Vive la GOLD
+中距離か長距離レースで最終コーナー以降に後方から追い抜こうとすると速度がわずかに上がる、スタート時に出遅れていると少し上がる
+->distance_type==3&is_finalcorner==1&is_overtake==1&order_rate>=50&is_badstart==1@distance_type==4&is_finalcorner==1&is_overtake==1&order_rate>=50&is_badstart==1
+「中距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）、is_badstart==1」または「長距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）、is_badstart==1」、目標速度2500、持続3.0
+->distance_type==3&is_finalcorner==1&is_overtake==1&order_rate>=50@distance_type==4&is_finalcorner==1&is_overtake==1&order_rate>=50
+「中距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」または「長距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、持続3.0
+
 きらめくは海、まばゆきは君
 レース後半に先団にいると残りの持久力に応じたロングスパートをかけて速度をほんのわずかに上げ続ける
 ->distance_rate>=50&order_rate<=40
@@ -2027,6 +2041,16 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 「良」のバ場状態が少し苦手になる
 ->ground_condition==1
 「良」、パワー-40、持続0
+
+道悪の鬼
+「稍重」「重」「不良」のバ場状態が得意になりパワーとスピードが上昇する
+->ground_condition==2@ground_condition==3@ground_condition==4
+「稍重」または「重」または「不良」、パワー60、スピード60、持続0
+
+荒磯好みの黄金船
+「稍重」「重」「不良」のバ場状態が得意になりパワーとスピードがすごく上がるが、舞い上がってしまい出遅れる時間が長くなる
+->ground_condition==2@ground_condition==3@ground_condition==4
+「稍重」または「重」または「不良」、出遅れ時間1000、パワー80、スピード80、持続0
 
 道悪◎
 「稍重」「重」「不良」のバ場状態が得意になる
@@ -3056,6 +3080,13 @@ phase==2&distance_diff_rate>=50->running_style==4&phase_firsthalf_random==3&is_l
 ラストスパートの直線で加速力が上がる＜作戦・追込＞
 ->running_style==4&is_lastspurt==1&corner==0
 「追込、ラストスパート、コーナー以外」、加速4000、持続0.9
+
+押し寄せるジュテーム
+ラストスパートの直線で加速力が上がるその後最終直線で速度がわずかに上がる＜作戦・追込＞
+->running_style==4&is_lastspurt==1&corner==0
+「追込、ラストスパート、コーナー以外」、加速4000、持続0.9
+->is_activate_other_skill_detail==1&is_last_straight==1
+「上記効果発動後、is_last_straight==1」、目標速度1500、持続3.0
 
 大見得切り
 ラストスパートの直線で加速力が上がりさらに視野がわずかに広くなる＜作戦・追込＞
