@@ -39,6 +39,9 @@ class Summary(
     var raceCount = 0
         private set
 
+    var ssMatchCount = 0
+        private set
+
     val trainingSupportCount = trainingType.associateWith { IntArray(6) { 0 } }.toMutableMap()
 
     val trainingSupportCountToString get() = toString(trainingSupportCount)
@@ -84,6 +87,9 @@ class Summary(
                 }
                 is Race -> {
                     raceCount++
+                }
+                is SSMatch -> {
+                    ssMatchCount++
                 }
             }
         }

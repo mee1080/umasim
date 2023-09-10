@@ -18,6 +18,10 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.simulation2.MemberState
+import io.github.mee1080.umasim.simulation2.ScenarioMemberState
+import io.github.mee1080.umasim.util.replace
+
 private val baseTrainingFactorMap = (0..200).associateWith {
     when {
         it >= 100 -> it / 10 + 20
@@ -30,23 +34,76 @@ private val baseTrainingFactorMap = (0..200).associateWith {
     }
 }
 
-data class LArcStatus(
-    val supporterPt: Int,
-    val memberSupporterPt: Int,
-    val aptitudePt: Int,
-    val overseasTurfAptitude: Int,
-    val longchampAptitude: Int,
-    val lifeRhythm: Int,
-    val nutritionManagement: Int,
-    val frenchSkill: Int,
-    val overseasExpedition: Int,
-    val strongHeart: Int,
-    val mentalStrength: Int,
-    val hopeOfLArc: Int,
-    val consecutiveVictories: Int,
+enum class LArcAptitude(
+    private val level2Cost: Int,
+    private val level3Cost: Int,
+    private val getLevel: LArcStatus.() -> Int,
+    val addLevel: LArcStatus.() -> LArcStatus,
 ) {
+    OverseasTurfAptitude(50, 200, { overseasTurfAptitude }, {
+        copy(overseasTurfAptitude = overseasTurfAptitude + 1)
+    }),
+    LongchampAptitude(50, 200, { longchampAptitude }, {
+        copy(longchampAptitude = longchampAptitude + 1)
+    }),
+    LifeRhythm(100, 200, { lifeRhythm }, {
+        copy(lifeRhythm = lifeRhythm + 1)
+    }),
+    NutritionManagement(100, 200, { nutritionManagement }, {
+        copy(nutritionManagement = nutritionManagement + 1)
+    }),
+    FrenchSkill(100, 200, { frenchSkill }, {
+        copy(frenchSkill = frenchSkill + 1)
+    }),
+    OverseasExpedition(100, 200, { overseasExpedition }, {
+        copy(overseasExpedition = overseasExpedition + 1)
+    }),
+    StrongHeart(200, 300, { strongHeart }, {
+        copy(strongHeart = strongHeart + 1)
+    }),
+    MentalStrength(200, 300, { mentalStrength }, {
+        copy(mentalStrength = mentalStrength + 1)
+    }),
+    HopeOfLArc(200, 0, { hopeOfLArc }, {
+        copy(hopeOfLArc = hopeOfLArc + 1)
+    }),
+    ConsecutiveVictories(150, 0, { consecutiveVictories }, {
+        copy(consecutiveVictories = consecutiveVictories + 1)
+    });
+
+    fun getCost(status: LArcStatus) = when (status.getLevel()) {
+        1 -> level2Cost
+        2 -> level3Cost
+        else -> 0
+    }
+}
+
+data class LArcStatus(
+    val supporterPt: Int = 0,
+    val memberSupporterPt: Int = 0,
+    val aptitudePt: Int = 0,
+    val ssMatchCount: Int = 0,
+    val totalSSMatchCount: Int = 0,
+    val isSSSMatch: Boolean? = null,
+    val lastExpectationEvent: Int = 0,
+
+    val overseasTurfAptitude: Int = 0,
+    val longchampAptitude: Int = 0,
+    val lifeRhythm: Int = 0,
+    val nutritionManagement: Int = 0,
+    val frenchSkill: Int = 0,
+    val overseasExpedition: Int = 0,
+    val strongHeart: Int = 0,
+    val mentalStrength: Int = 0,
+    val hopeOfLArc: Int = 0,
+    val consecutiveVictories: Int = 0,
+
+    val ssMatchMember: Set<MemberState> = emptySet(),
+) {
+    val expectationLevel get() = (supporterPt + memberSupporterPt) / 1700
+
     private val baseTrainingFactor =
-        (baseTrainingFactorMap[(supporterPt + memberSupporterPt) / 1700] ?: 0) + (if (hopeOfLArc >= 1) 5 else 0)
+        (baseTrainingFactorMap[expectationLevel] ?: 0) + (if (hopeOfLArc >= 1) 5 else 0)
 
     fun getStatusBonus(type: StatusType): Int {
         return when (type) {
@@ -76,4 +133,85 @@ data class LArcStatus(
     val friendFactor get() = if (mentalStrength >= 3) 20 else 0
 
     fun hpCost(overseas: Boolean) = if (overseas && strongHeart >= 3) 20 else 0
+
+    fun addAptitude(aptitude: LArcAptitude): LArcStatus {
+        val cost = aptitude.getCost(this)
+        if (cost == 0) return this
+        return aptitude.addLevel(this).copy(
+            aptitudePt = aptitudePt - cost
+        )
+    }
+}
+
+enum class StarEffect {
+    Status, SkillHint, SkillPt, AptitudePt, StarGauge, MaxHp, Motivation, Hp, Aikyou, GoodTraining
+}
+
+private val initialMemberStatus = arrayOf(
+    1520 to Status(150, 150, 150, 150, 150),
+    1420 to Status(140, 140, 140, 140, 140),
+    1320 to Status(130, 130, 130, 130, 130),
+    1120 to Status(120, 120, 120, 120, 120),
+    1020 to Status(110, 110, 110, 110, 110),
+    920 to Status(100, 100, 100, 100, 100),
+    720 to Status(94, 94, 94, 94, 94),
+    720 to Status(88, 88, 88, 88, 88),
+    620 to Status(82, 82, 82, 82, 82),
+    520 to Status(76, 76, 76, 76, 76),
+    520 to Status(70, 70, 70, 70, 70),
+    420 to Status(68, 68, 68, 68, 68),
+    420 to Status(66, 66, 66, 66, 66),
+    320 to Status(64, 64, 64, 64, 64),
+    320 to Status(62, 62, 62, 62, 62),
+)
+
+private val linkMemberStarEffect = mapOf(
+    "ゴールドシップ" to StarEffect.Status,
+    "エルコンドルパサー" to StarEffect.AptitudePt,
+    "マンハッタンカフェ" to StarEffect.MaxHp,
+    "ナカヤマフェスタ" to StarEffect.SkillPt,
+    "サトノダイヤモンド" to StarEffect.Motivation,
+    "シリウスシンボリ" to StarEffect.StarGauge,
+)
+
+data class LArcMemberState(
+    val status: Status = Status(),
+    val supporterPt: Int = 0,
+    val initialRank: Int = 0,
+    val starType: StatusType = StatusType.NONE,
+    val specialStarEffect: StarEffect = StarEffect.Status,
+    val nextStarEffect: List<StarEffect> = emptyList(),
+    val starLevel: Int = 1,
+    val starGauge: Int = 0,
+) : ScenarioMemberState {
+    override val scenarioLink get() = Store.getScenarioLink(Scenario.LARC)
+
+    fun initialize(initialRank: Int, charaName: String): LArcMemberState {
+        val initialStatus = initialMemberStatus[initialRank - 1]
+        val specialStarEffect = linkMemberStarEffect[charaName] ?: when (initialRank) {
+            7, 13 -> StarEffect.SkillPt
+            8 -> StarEffect.Motivation
+            9 -> StarEffect.Hp
+            10 -> StarEffect.StarGauge
+            else -> StarEffect.AptitudePt
+        }
+        val nextStarEffectBase = listOf(
+            specialStarEffect,
+            StarEffect.Status,
+            StarEffect.SkillHint
+        ).shuffled()
+        val nextStarEffect = when (charaName) {
+            "ゴールドシップ" -> nextStarEffectBase.replace(0) { StarEffect.Aikyou }
+            "エルコンドルパサー" -> nextStarEffectBase.replace(StarEffect.Status, StarEffect.GoodTraining)
+            else -> nextStarEffectBase
+        }
+        return copy(
+            status = initialStatus.second,
+            supporterPt = initialStatus.first,
+            initialRank = initialRank,
+            starType = trainingType[(initialRank - 1) % 5],
+            specialStarEffect = specialStarEffect,
+            nextStarEffect = nextStarEffect,
+        )
+    }
 }

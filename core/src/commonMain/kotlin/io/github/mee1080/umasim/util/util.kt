@@ -43,6 +43,11 @@ fun <T> List<T>.replace(
     action: T.() -> T
 ) = mapIndexed { index, item -> if (index == targetIndex) item.action() else item }
 
+fun <T> List<T>.replace(
+    targetItem: T,
+    newItem: T
+) = map { if (it == targetItem) newItem else it } as List<T>
+
 fun <K, V> Map<K, V>.mapValuesIf(
     condition: (Map.Entry<K, V>) -> Boolean,
     action: (V) -> V,

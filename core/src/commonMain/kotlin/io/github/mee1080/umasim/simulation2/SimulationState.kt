@@ -103,6 +103,7 @@ data class MemberState(
     val position: StatusType,
     val supportState: SupportState?,
     val scenarioState: ScenarioMemberState,
+    val isScenarioLink: Boolean = scenarioState.scenarioLink.contains(card.chara),
 ) {
     val name get() = card.name
     val charaName get() = card.chara
@@ -141,8 +142,9 @@ data class SupportState(
     val passion get() = passionTurn > 0
 }
 
-sealed interface ScenarioMemberState {
+interface ScenarioMemberState {
     val hintBlocked get() = false
+    val scenarioLink get() = emptySet<String>()
 }
 
 object UraMemberState : ScenarioMemberState {
@@ -160,15 +162,6 @@ object GrandLiveMemberState : ScenarioMemberState {
 object GmMemberState : ScenarioMemberState {
     override fun toString() = "GM"
 }
-
-data class LArcMemberState(
-    val status: Status,
-    val supporterPt: Int,
-    val initialRank: Int,
-    val starType: StatusType,
-    val starLevel: Int,
-    val starGauge: Int,
-) : ScenarioMemberState
 
 data class AoharuMemberState(
     val member: TeamMemberData,

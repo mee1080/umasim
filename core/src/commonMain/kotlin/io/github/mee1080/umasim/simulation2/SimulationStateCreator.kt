@@ -35,14 +35,7 @@ fun SupportCard.toMemberState(
         Scenario.GRAND_LIVE -> GrandLiveMemberState
         Scenario.GM -> GmMemberState
         // TODO LArc
-        Scenario.LARC -> LArcMemberState(
-            status = Status(),
-            supporterPt = 0,
-            initialRank = 0,
-            starType = StatusType.SPEED,
-            starLevel = 1,
-            starGauge = 0,
-        )
+        Scenario.LARC -> LArcMemberState()
     }
 )
 
@@ -67,15 +60,7 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
         Scenario.CLIMAX -> ClimaxMemberState
         Scenario.GRAND_LIVE -> GrandLiveMemberState
         Scenario.GM -> GmMemberState
-        // TODO LArc
-        Scenario.LARC -> LArcMemberState(
-            status = Status(),
-            supporterPt = 0,
-            initialRank = 0,
-            starType = StatusType.SPEED,
-            starLevel = 1,
-            starGauge = 0,
-        )
+        Scenario.LARC -> LArcMemberState()
     },
 )
 

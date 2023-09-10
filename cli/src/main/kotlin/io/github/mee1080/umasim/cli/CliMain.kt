@@ -49,6 +49,9 @@ class CliMain : CliktCommand() {
     private val knowledgeCountBase by option().double().default(10.0)
     private val knowledgeCountFactor by option().double().default(2.0)
     private val passionChallenge by option().double().default(0.0)
+    private val starGauge by option().double().default(10.0)
+    private val aptitudePt by option().double().default(10.0)
+    private val ssMatch by option().double().default(100.0)
 
     override fun run() {
         StoreLoader.load()
@@ -89,8 +92,10 @@ class CliMain : CliktCommand() {
                 skillPtFactor = skillPt,
                 hpFactor = hp,
                 motivationFactor = motivation,
-                relationFactor = relationFactor,
-                aoharuFactor = aoharuFactor,
+                relationFactor = relationFactor(StatusType.NONE, 0, 0),
+                starGaugeFactor = starGauge,
+                aptitudePtFactor = aptitudePt,
+                ssMatchScore = ssMatch,
             )::generateSelector
 
             Scenario.GM -> GmActionSelector.Option(
@@ -174,6 +179,7 @@ class CliMain : CliktCommand() {
             else -> when (scenarioValue) {
                 Scenario.GM -> Runner.gmLongEvaluateSetting
                 Scenario.GRAND_LIVE -> Runner.grandLiveLongEvaluateSetting
+                Scenario.LARC -> Runner.lArcLongEvaluateSetting
                 else -> Runner.longEvaluateSetting
             }
         }

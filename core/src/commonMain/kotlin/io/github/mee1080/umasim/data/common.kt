@@ -61,6 +61,8 @@ fun toSupportType(value: String) = when (value) {
     else -> StatusType.NONE
 }
 
+fun random(min: Int, max: Int) = min + Random.nextInt(max - min)
+
 fun randomSelect(vararg values: Int): Int {
     var random = Random.nextInt(values.sum())
     for (i in values.indices) {
@@ -152,9 +154,14 @@ fun turnToString(turn: Int) = buildString {
 }
 
 enum class RaceGrade(val displayName: String) {
-    DEBUT("メイクデビュー"), PRE_OPEN("Pre-OP"), OPEN("OP"), G3("GIII"), G2("GII"), G1("GI"), FINALS("ファイナルズ"), UNKNOWN(
-        "不明"
-    ),
+    DEBUT("メイクデビュー"),
+    PRE_OPEN("Pre-OP"),
+    OPEN("OP"),
+    G3("GIII"),
+    G2("GII"),
+    G1("GI"),
+    FINALS("ファイナルズ"),
+    UNKNOWN("不明"),
 }
 
 fun toRaceGrade(value: Int) = when {

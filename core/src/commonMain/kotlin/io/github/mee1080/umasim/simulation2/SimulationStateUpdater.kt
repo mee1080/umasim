@@ -28,7 +28,9 @@ import kotlin.random.Random
 
 fun SimulationState.onTurnChange(): SimulationState {
     val turn = turn + 1
-    val levelOverride = if (levelUpTurns.contains(turn)) 5 else null
+    val levelOverride = if (levelUpTurns.contains(turn)) {
+        if (scenario == Scenario.LARC) 6 else 5
+    } else null
     return copy(
         turn = turn,
         status = status.adjustRange(),
@@ -49,6 +51,8 @@ fun SimulationState.shuffleMember(): SimulationState {
 }
 
 fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status).adjustRange())
+
+fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
 
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
     // 各トレーニングに配置
@@ -100,7 +104,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
         val trainingHintIndices = trainingHint.second.map { it.index }
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
-                it.applyAction(action, charm, chara, trainingHintIndices.contains(it.index), turn)
+                it.applyTraining(action, charm, chara, trainingHintIndices.contains(it.index), this)
             } else it
         }
         copy(
@@ -120,12 +124,12 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
     return newState.applyScenarioAction(action)
 }
 
-private fun MemberState.applyAction(
+private fun MemberState.applyTraining(
     action: Training,
     charm: Boolean,
     chara: Chara,
     hint: Boolean,
-    turn: Int,
+    state: SimulationState,
 ): MemberState {
     // 絆上昇量を反映
     val supportState = supportState?.copy(
@@ -145,7 +149,8 @@ private fun MemberState.applyAction(
     )
     // アオハル特訓上昇量を反映
     val scenarioState = when (scenarioState) {
-        is AoharuMemberState -> scenarioState.applyAction(action, chara)
+        is AoharuMemberState -> scenarioState.applyTraining(action, chara)
+        is LArcMemberState -> scenarioState.applyTraining(action, state.isLevelUpTurn)
         else -> scenarioState
     }
     return copy(
@@ -154,7 +159,7 @@ private fun MemberState.applyAction(
     )
 }
 
-private fun AoharuMemberState.applyAction(action: Training, chara: Chara): AoharuMemberState {
+private fun AoharuMemberState.applyTraining(action: Training, chara: Chara): AoharuMemberState {
     if (!aoharuIcon) return this
     var status = status
     var maxStatus = maxStatus
@@ -238,6 +243,8 @@ fun SimulationState.applySelectedScenarioAction(action: SelectedScenarioAction?)
         is SelectedLiveAction -> purchaseLesson(action.lesson)
 
         is SelectedGmAction -> applySelectedGmAction(action)
+
+        is SelectedLArcAction -> applySelectedLArcAction(action)
     }
 }
 
@@ -412,6 +419,7 @@ private fun SimulationState.applyScenarioAction(action: Action): SimulationState
     val scenarioAction = action.scenarioActionParam ?: return this
     return when (scenarioAction) {
         is GmActionParam -> applyGmAction(scenarioAction)
+        is LArcActionParam -> applyLArcAction(action, scenarioAction)
     }
 }
 
@@ -439,7 +447,7 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
                 copy(supportState = newSupportState)
             }
             // FIXME 色選択
-            val founder = Founder.values().random()
+            val founder = Founder.entries.random()
             addStatus = when (founder) {
                 Founder.Red -> Status(skillPt = 9)
                 Founder.Blue -> Status(speed = 4, skillPt = 4)
@@ -458,4 +466,76 @@ private fun SimulationState.applySelectedGmAction(action: SelectedGmAction): Sim
             copy(gmStatus = effect.first, status = status + effect.second)
         }
     }
+}
+
+fun SimulationState.updateLArcStatus(update: LArcStatus.() -> LArcStatus): SimulationState {
+    return copy(lArcStatus = lArcStatus?.update())
+}
+
+private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActionParam): SimulationState {
+    return if (action is SSMatch) {
+        val ssMatchMemberIndex = action.member.map { it.index }
+        val starGaugeMemberIndex = lArcAction.starGaugeMember.map { it.index }
+        val newMember = member.mapIf({ ssMatchMemberIndex.contains(it.index) }) {
+            val memberState = scenarioState as LArcMemberState
+            val next = when (memberState.starLevel % 3) {
+                1 -> StarEffect.SkillHint
+                2 -> randomSelect(StarEffect.Status to 1, memberState.specialStarEffect to 1)
+                else -> if (memberState.nextStarEffect[2] == StarEffect.Status) memberState.specialStarEffect else StarEffect.Status
+            }
+            val newNextStarEffect = memberState.nextStarEffect.takeLast(2) + next
+            val newMemberState = memberState.copy(
+                starLevel = memberState.starLevel + 1,
+                starGauge = if (starGaugeMemberIndex.contains(index)) 3 else 0,
+                nextStarEffect = newNextStarEffect,
+            )
+            copy(scenarioState = newMemberState)
+        }
+        updateLArcStatus {
+            copy(
+                supporterPt = supporterPt + lArcAction.supporterPt,
+                aptitudePt = aptitudePt + lArcAction.aptitudePt,
+                ssMatchCount = if (isSSSMatch == true) 0 else ssMatchCount + ssMatchMemberIndex.size,
+                totalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size,
+                isSSSMatch = null,
+            ).applyIf(totalSSMatchCount >= 2 && overseasTurfAptitude == 0) {
+                copy(
+                    overseasTurfAptitude = 1,
+                    longchampAptitude = 1,
+                )
+            }.applyIf(totalSSMatchCount >= 10 && lifeRhythm == 0) {
+                copy(
+                    lifeRhythm = 1,
+                    nutritionManagement = 1,
+                )
+            }
+        }.copy(
+            member = newMember,
+            condition = condition + lArcAction.condition,
+        )
+    } else {
+        updateLArcStatus {
+            copy(aptitudePt = aptitudePt + lArcAction.aptitudePt)
+        }
+    }
+}
+
+fun LArcMemberState.applyTraining(action: Training, isLevelUpTurn: Boolean): LArcMemberState {
+    if (starType == StatusType.NONE) return this
+    val addStatus = when (action.type) {
+        StatusType.SPEED -> Status(random(15, 20), random(2, 5), random(7, 12), random(2, 5), random(2, 5))
+        StatusType.STAMINA -> Status(random(2, 5), random(15, 20), random(2, 5), random(7, 12), random(2, 5))
+        StatusType.POWER -> Status(random(2, 5), random(7, 12), random(15, 20), random(2, 5), random(2, 5))
+        StatusType.GUTS -> Status(random(6, 11), random(2, 5), random(6, 11), random(15, 20), random(2, 5))
+        StatusType.WISDOM -> Status(random(7, 12), random(2, 5), random(2, 5), random(2, 5), random(15, 20))
+        else -> Status()
+    }
+    return copy(
+        status = status + addStatus,
+        starGauge = if (isLevelUpTurn) starGauge else min(3, starGauge + 1 + action.friendCount),
+    )
+}
+
+fun SimulationState.applySelectedLArcAction(action: SelectedLArcAction): SimulationState {
+    return updateLArcStatus { addAptitude(action.aptitude) }
 }

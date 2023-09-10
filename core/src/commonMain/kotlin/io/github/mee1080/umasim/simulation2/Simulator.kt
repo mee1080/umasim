@@ -59,7 +59,10 @@ class Simulator(
                     levelOverride = null,
                 )
             },
-        levelUpTurns = option.levelUpTurns?.asList() ?: listOf(37, 38, 39, 40, 61, 62, 63, 64),
+        levelUpTurns = option.levelUpTurns?.asList() ?: when (scenario) {
+            Scenario.LARC -> listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66)
+            else -> listOf(37, 38, 39, 40, 61, 62, 63, 64)
+        },
         status = Status(
             skillPt = 120,
             hp = 100,

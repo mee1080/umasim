@@ -51,6 +51,13 @@ object Store {
         List(73) { grouped[it]?.sortedByDescending { entry -> entry.getFan } ?: emptyList() }
     }
 
+    val guestSupportCardList by lazy {
+        supportList.filter { it.rarity == 1 && it.talent == 0 && !it.type.outingType }
+    }
+
+    val guestSupportCardMap by lazy {
+        guestSupportCardList.associateBy { it.chara }
+    }
 
     fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 
@@ -141,13 +148,13 @@ object Store {
 
     object GrandLive {
         private val notLinkSupportList by lazy {
-            supportList.filter { it.rarity == 1 && it.talent == 0 && !it.type.outingType && !getScenarioLink(Scenario.GRAND_LIVE).contains(it.chara) }
+            supportList.filter {
+                it.rarity == 1 && it.talent == 0 && !it.type.outingType && !getScenarioLink(Scenario.GRAND_LIVE).contains(
+                    it.chara
+                )
+            }
         }
 
         fun getShuffledGuest() = notLinkSupportList.shuffled()
-    }
-
-    object GM {
-        // TODO
     }
 }

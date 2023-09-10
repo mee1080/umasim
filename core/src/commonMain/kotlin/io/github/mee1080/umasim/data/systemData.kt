@@ -258,14 +258,14 @@ internal val scenarioLinkData = mapOf(
     Scenario.AOHARU to setOf("タイキシャトル", "マチカネフクキタル", "ライスシャワー", "ハルウララ"),
     Scenario.CLIMAX to emptySet(),
     Scenario.GRAND_LIVE to setOf("スマートファルコン", "サイレンススズカ", "アグネスタキオン", "ミホノブルボン"),
-    Scenario.GM to setOf(
+    Scenario.LARC to setOf(
         "ゴールドシップ",
         "エルコンドルパサー",
-        "マンハッタンカフェ",
-        "ナカヤマフェスタ",
         "サトノダイヤモンド",
+        "マンハッタンカフェ",
         "シリウスシンボリ",
-        "タップダンスシチー",
+        "ナカヤマフェスタ",
+//        "タップダンスシチー",
     ),
 )
 

@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Founder
-import io.github.mee1080.umasim.data.RaceGrade
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.*
 
 sealed interface Action {
     val name: String
@@ -69,7 +66,7 @@ data class Training(
     override val name = "トレーニング(${type.displayName}Lv$level)"
     override fun infoToString() = member.joinToString("/") {
         buildString {
-            append(it.name)
+            if (it.guest) append("(ゲスト)${it.charaName}") else append(it.name)
             if (it.isFriendTraining(type)) append("(友情)")
             if (it.hint) append("(ヒント)")
             (it.scenarioState as? AoharuMemberState)?.let { aoharu ->
@@ -81,6 +78,10 @@ data class Training(
     override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
         resultCandidate = resultCandidate
     )
+
+    val friendCount by lazy {
+        if (!friendTraining) 0 else member.count { it.isFriendTraining(type) }
+    }
 }
 
 data class Race(
@@ -108,4 +109,46 @@ data class GmActionParam(
 ) : ScenarioActionParam {
     override fun toShortString() =
         "$knowledgeFounder/${knowledgeType}x$knowledgeCount${if (knowledgeEventRate > 0.0) "+1?" else ""}"
+}
+
+data class SSMatch(
+    val isSSSMatch: Boolean,
+    val member: Set<MemberState>,
+    override val resultCandidate: List<Pair<Status, Int>>,
+    override val scenarioActionParam: LArcActionParam,
+) : Action {
+    override val name = if (isSSSMatch) "SSSマッチ(${member.size}人)" else "SSマッチ(${member.size}人)"
+
+    override fun infoToString() = member.joinToString("/") {
+        buildString {
+            if (it.guest) append("(ゲスト)${it.charaName}") else append(it.name)
+            val lArc = it.scenarioState as LArcMemberState
+            append('(')
+            append(lArc.starType)
+            append(',')
+            append(lArc.nextStarEffect[0])
+            append(',')
+            append(lArc.starLevel)
+            append(')')
+        }
+    }
+
+    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
+        resultCandidate = resultCandidate
+    )
+}
+
+data class LArcActionParam(
+    val supporterPt: Int = 0,
+    val aptitudePt: Int = 0,
+    val starGaugeMember: Set<MemberState> = emptySet(),
+    val condition: Set<String> = emptySet(),
+) : ScenarioActionParam {
+    override fun toShortString() = "supporterPt=$supporterPt, aptitudePt=$aptitudePt"
+
+    operator fun plus(other: LArcActionParam) = LArcActionParam(
+        supporterPt = supporterPt + other.supporterPt,
+        aptitudePt = aptitudePt + other.aptitudePt,
+        starGaugeMember = starGaugeMember + other.starGaugeMember,
+    )
 }

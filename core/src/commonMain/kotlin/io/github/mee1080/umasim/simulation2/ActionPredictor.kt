@@ -63,7 +63,10 @@ fun SimulationState.predictNormal(): List<Action> {
             )
         )),
         // TODO 出走可否判定、レース後イベント
-        *(Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: arrayOf())
+        *(if (scenario == Scenario.LARC) emptyArray() else {
+            Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: emptyArray()
+        }),
+        *(predictSSMatch())
     ).map { adjustRange(it) }
 }
 
@@ -155,7 +158,18 @@ fun SimulationState.adjustRange(action: Action) = action.updateCandidate(
 
 fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
     val climax = scenario == Scenario.CLIMAX
-    var status = if (goal) when (race.grade) {
+    var status = if (scenario == Scenario.LARC && race.courseName == "ロンシャン") when (turn) {
+        41 -> raceStatus(5, 5, 40)
+        43 -> raceStatus(5, 7, 50)
+        65 -> raceStatus(5, 7, 40)
+        67 -> if (lArcStatus!!.consecutiveVictories >= 2) {
+            raceStatus(5, 30, 140)
+        } else {
+            raceStatus(5, 10, 60)
+        }
+
+        else -> throw IllegalArgumentException()
+    } else if (goal) when (race.grade) {
         RaceGrade.DEBUT -> raceStatus(3, 3, if (climax) 15 else 30)
         RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
         RaceGrade.OPEN -> raceStatus(3, 3, 30)
@@ -232,6 +246,7 @@ fun SimulationState.applyScenarioRaceBonus(base: Status): Status {
 fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List<Action> {
     return when (scenario) {
         Scenario.GM -> predictGmScenarioActionParams(baseActions)
+        Scenario.LARC -> predictLArcScenarioActionParams(baseActions)
         else -> baseActions
     }
 }
@@ -256,13 +271,13 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
         baseActions.map {
             (it as Race).copy(
                 scenarioActionParam = GmActionParam(
-                    Founder.values().random(), trainingTypeOrSkill.random(), predictKnowledgeCount(1.0),
+                    Founder.entries.random(), trainingTypeOrSkill.random(), predictKnowledgeCount(1.0),
                 )
             )
         }
     } else {
-        val trainingFounders = (Founder.values().asList() + Founder.values()).shuffled()
-        val sleepFounders = Founder.values().asList().shuffled()
+        val trainingFounders = (Founder.entries + Founder.entries).shuffled()
+        val sleepFounders = Founder.entries.shuffled()
         val raceKnowledgeType = trainingTypeOrSkill.random()
         baseActions.map {
             when (it) {
@@ -307,6 +322,8 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
                         sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(0.2)
                     )
                 )
+
+                else -> it
             }
         }
     }
@@ -318,4 +335,79 @@ private fun SimulationState.predictKnowledgeCount(doubleRate: Double): Int {
         7 -> 1
         else -> randomSelectPercent(doubleRate, 2, 1)
     }
+}
+
+private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Action>): List<Action> {
+    if (!isLevelUpTurn) return baseActions
+    return baseActions.map {
+        if (it is Training) {
+            val param = LArcActionParam(
+                aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0)
+            )
+            it.copy(scenarioActionParam = param)
+        } else it
+    }
+}
+
+private fun SimulationState.predictSSMatch(): Array<Action> {
+    val lArcStatus = lArcStatus ?: return emptyArray()
+    if (isLevelUpTurn) return emptyArray()
+    val joinMember = lArcStatus.ssMatchMember
+    if (joinMember.isEmpty()) return emptyArray()
+    val supporterRank = (listOf(-1 to lArcStatus.supporterPt) + member
+        .filter { !it.card.type.outingType }
+        .map { it.index to (it.scenarioState as LArcMemberState).supporterPt })
+        .sortedByDescending { it.second }
+        .mapIndexed { order, (index, _) -> index to order }
+        .toMap()
+
+    var status = Status()
+    var lArcParam = LArcActionParam()
+    joinMember.forEach {
+        val memberState = it.scenarioState as LArcMemberState
+        val effect = memberState.nextStarEffect[0]
+        status += Status(
+            speed = memberState.predictSSMatchStatus(StatusType.SPEED, it.isScenarioLink),
+            stamina = memberState.predictSSMatchStatus(StatusType.STAMINA, it.isScenarioLink),
+            power = memberState.predictSSMatchStatus(StatusType.POWER, it.isScenarioLink),
+            guts = memberState.predictSSMatchStatus(StatusType.GUTS, it.isScenarioLink),
+            wisdom = memberState.predictSSMatchStatus(StatusType.WISDOM, it.isScenarioLink),
+            skillPt = 5,
+        ) + when (effect) {
+            StarEffect.Status -> Status().add(memberState.starType to (if (it.isScenarioLink) 15 else 10))
+            StarEffect.SkillPt -> Status(skillPt = 20)
+            StarEffect.Hp -> Status(hp = 20)
+            StarEffect.MaxHp -> Status(hp = 20, maxHp = 4)
+            StarEffect.Motivation -> Status(hp = 20, motivation = 1)
+            else -> Status()
+        }
+        val rank = supporterRank[it.index]!! + supporterRank[-1]!! + 2
+        lArcParam += LArcActionParam(
+            supporterPt = 800 + (13 - rank) * (if (rank >= 13) 10 else 15),
+            aptitudePt = 10,
+        ) + when (effect) {
+            StarEffect.AptitudePt -> LArcActionParam(aptitudePt = 50)
+            StarEffect.StarGauge -> LArcActionParam(starGaugeMember = setOf(it))
+            StarEffect.Aikyou -> LArcActionParam(condition = setOf("愛嬌○"))
+            StarEffect.GoodTraining -> LArcActionParam(condition = setOf("練習上手○"))
+            else -> LArcActionParam()
+        }
+        // スキルヒントは無視
+    }
+    val isSSSMatch = lArcStatus.isSSSMatch == true
+    if (isSSSMatch) {
+        status += Status(15, 15, 15, 15, 15, 25)
+        lArcParam += LArcActionParam(supporterPt = lArcParam.supporterPt)
+    }
+    return arrayOf(SSMatch(isSSSMatch, joinMember, listOf(status to 1), lArcParam))
+}
+
+private fun LArcMemberState.predictSSMatchStatus(type: StatusType, scenarioLink: Boolean): Int {
+    val baseValue = min(5, max(1, (status.get(type) / 150)))
+    val typeValue = when {
+        type != starType -> 0
+        scenarioLink -> 6
+        else -> 4
+    }
+    return baseValue + typeValue
 }
