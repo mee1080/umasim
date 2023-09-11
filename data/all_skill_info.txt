@@ -268,7 +268,7 @@ remain_distance<=305&remain_distance>=300&slope==1->remain_distance<=299&remain_
 「is_last_straight==1、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度4500、持続5.0
 
 イナリワン固有
-レース前半、中団以降に控え続けると追い比べをしたとき、江戸っ子の底力を見せつけて速度をすごく上げる
+レース前半中団以降に控え続けており追い比べをしていると江戸っ子の底力を見せつけて速度をすごく上げる
 distance_rate>=50&order_rate_out40_continue==1->compete_fight_count>0
 「距離割合>=50、順位率40以降維持（チャンミ4～/LoH5～）（チャンミ4～/LoH5～）」の後「追い比べ」、目標速度4500、持続5.0
 
@@ -879,6 +879,13 @@ track_id==10005->phase>=2&is_finalcorner==1&corner!=0&is_activate_any_skill==1
 ->distance_rate>=50&order_rate<=40
 「距離割合>=50、順位率40以下（チャンミ～4/LoH～5）」、目標速度1500、持続5.0(特殊3)
 
+サトノダイヤモンド固有
+終盤が迫ったときどこかで中団にいると速度が少し上がる、中距離レースなら効果が増える
+->phase_laterhalf_random==1&order_rate>=40&order_rate<=80&distance_type==3
+「中盤後半ランダム、順位率40～80（チャンミ4～7/LoH5～9）、中距離」、目標速度3500、持続5.0
+->phase_laterhalf_random==1&order_rate>=40&order_rate<=80&distance_type!=3
+「中盤後半ランダム、順位率40～80（チャンミ4～7/LoH5～9）、距離!=3」、目標速度2500、持続5.0
+
 メジロマックイーン固有
 全身全霊、ぶつけます！
 ->remain_distance>=350&remain_distance<=400
@@ -1097,7 +1104,7 @@ U=ma2
 「is_last_straight==1、先頭との距離>=5、順位率80以上（チャンミ7～/LoH9～）」、目標速度2500、持続3.0
 
 快走かな、快走かな！
-レース前半、中団以降に控え続けると追い比べをしたとき、速度を少し上げる
+レース前半中団以降に控え続けており追い比べをしていると速度を少し上げる
 distance_rate>=50&order_rate_out40_continue==1->compete_fight_count>0
 「距離割合>=50、順位率40以降維持（チャンミ4～/LoH5～）（チャンミ4～/LoH5～）」の後「追い比べ」、目標速度2500、持続3.0
 
@@ -1699,6 +1706,13 @@ Vive la GOLD
 レース後半に先団にいると残りの持久力に応じたロングスパートをかけて速度をほんのわずかに上げ続ける
 ->distance_rate>=50&order_rate<=40
 「距離割合>=50、順位率40以下（チャンミ～4/LoH～5）」、目標速度350、持続3.0(特殊3)
+
+ポンテ・デ・ディアマン
+終盤が迫ったときどこかで中団にいると速度がちょっと上がる、中距離レースなら効果が増える
+->phase_laterhalf_random==1&order_rate>=40&order_rate<=80&distance_type==3
+「中盤後半ランダム、順位率40～80（チャンミ4～7/LoH5～9）、中距離」、目標速度1500、持続3.0
+->phase_laterhalf_random==1&order_rate>=40&order_rate<=80&distance_type!=3
+「中盤後半ランダム、順位率40～80（チャンミ4～7/LoH5～9）、距離!=3」、目標速度500、持続3.0
 
 大逃げ
 通常の逃げの作戦よりさらに大きく後続を引き離して、そのまま最後まで逃げ切ろうとする＜作戦・逃げ＞
@@ -3735,6 +3749,13 @@ Frontier Spirit
 ->distance_type==3&all_corner_random==1@distance_type==4&all_corner_random==1
 「中距離、全コーナーからランダム」または「長距離、全コーナーからランダム」、目標速度4500、持続3.0
 
+ダンス・デ・レぺ
+コーナーで速度がすごく上がる、さらにロンシャンレース場で絶好調なら効果時間が増える＜中距離＞
+->track_id==10201&distance_type==3&all_corner_random==1&motivation==5
+「レース場==10201、中距離、全コーナーからランダム、絶好調」、目標速度4500、持続4.0
+->track_id!=10201&distance_type==3&all_corner_random==1@track_id==10201&all_corner_random==1&motivation<=4&distance_type==3
+「レース場!=10201、中距離、全コーナーからランダム」または「レース場==10201、全コーナーからランダム、やる気<=4、中距離」、目標速度4500、持続3.0
+
 中距離コーナー◎
 コーナーで速度が少し上がる＜中距離＞
 ->distance_type==3&all_corner_random==1
@@ -4856,6 +4877,11 @@ Lose Myself
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=40
 「中距離、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続4.0
 
+蒼色革命
+レース終盤始めの方に中団以降にいるとしばらくの間加速力が上がる＜中距離＞
+->distance_type==3&phase_firsthalf_random==2&order_rate>=40
+「中距離、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続4.0
+
 ワンチャンス
 レース終盤始めの方で中団以降にいると加速力がわずかに上がる＜中距離＞
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=40
@@ -4906,7 +4932,7 @@ Lose Myself
 ->distance_type==2&is_finalcorner_random==1&order_rate>=50
 「マイル、最終コーナーランダム、順位率50以上（チャンミ5～/LoH6～）」、目標速度3500、持続1.8
 
-押忍ッ！気合十分ッス！
+押忍ッ！気合十分っス！
 最終コーナーで後ろの方にいると速度が上がり加速力がわずかに上がる＜マイル＞
 ->distance_type==2&is_finalcorner_random==1&order_rate>=50
 「マイル、最終コーナーランダム、順位率50以上（チャンミ5～/LoH6～）」、目標速度3500、加速2000、持続1.8
