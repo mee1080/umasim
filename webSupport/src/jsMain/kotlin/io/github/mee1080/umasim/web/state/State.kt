@@ -469,17 +469,14 @@ data class LArcState(
 ) {
     fun toLArcStatus() = LArcStatus(
         supporterPt = expectations * 1700,
-        memberSupporterPt = 0,
-        aptitudePt = 0,
-        overseasTurfAptitude,
-        longchampAptitude,
-        lifeRhythm,
-        nutritionManagement,
-        frenchSkill,
-        overseasExpedition,
-        strongHeart,
-        mentalStrength,
-        hopeOfLArc,
-        consecutiveVictories = 0,
+        overseasTurfAptitude = overseasTurfAptitude,
+        longchampAptitude = longchampAptitude,
+        lifeRhythm = lifeRhythm,
+        nutritionManagement = nutritionManagement,
+        frenchSkill = frenchSkill,
+        overseasExpedition = overseasExpedition,
+        strongHeart = strongHeart,
+        mentalStrength = mentalStrength,
+        hopeOfLArc = hopeOfLArc,
     )
 }

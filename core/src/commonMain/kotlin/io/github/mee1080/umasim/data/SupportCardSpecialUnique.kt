@@ -31,6 +31,7 @@ data class SupportCardSpecialUnique(
             115 -> "全員の${supportEffectName[value0]}+${value1}"
             116 -> "${supportEffectName[value1]}が${skillEffectName[value0] ?: "($value0)"}スキル所持数×${value2}（最大${value3}個）"
             117 -> "${supportEffectName[value0]}が合計トレーニングLv×1（最大${value2}）"
+            118 -> "絆${value1}以上でトレーニング最大2箇所に配置"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
