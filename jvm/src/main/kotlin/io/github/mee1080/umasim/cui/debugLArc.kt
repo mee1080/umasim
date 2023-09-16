@@ -18,8 +18,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-//        lArcRunSimulation()
-        lArcSingleSimulation()
+        lArcRunSimulation()
+//        lArcSingleSimulation()
     }
 }
 
@@ -43,7 +43,8 @@ fun lArcRunSimulation() {
     runBlocking {
         List(8) { 1.4 + it * 0.1 }.forEach { hpFactor ->
 //            val selector = { LArcActionSelector(LArcActionSelector.Option(hpFactor = hpFactor)) }
-            val selector = { LArcActionSelector(LArcActionSelector.speed3Stamina1Wisdom1Long) }
+//            val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
+            val selector = LArcActionSelector.speed3Stamina1Wisdom1LongOld
             launch(this@CoroutineContext) {
                 val summary = Runner.run(
                     10000,
@@ -73,7 +74,7 @@ fun lArcSingleSimulation() {
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = LArcActionSelector(LArcActionSelector.speed3Stamina1Wisdom1Long)
+    val selector = LArcActionSelector.speed3Stamina1Wisdom1Long()
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.WISDOM to 3,

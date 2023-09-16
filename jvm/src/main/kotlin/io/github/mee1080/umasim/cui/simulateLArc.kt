@@ -23,7 +23,7 @@ fun simulateLarc() {
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
         factor = factor(StatusType.STAMINA, 5) + factor(StatusType.WISDOM, 1),
         testCount = 50000,
-        option = LArcActionSelector.speed3Stamina1Wisdom1Long,
+        selector = LArcActionSelector.speed3Stamina1Wisdom1Long,
         evaluateSetting = Runner.lArcLongEvaluateSetting,
     )
 }

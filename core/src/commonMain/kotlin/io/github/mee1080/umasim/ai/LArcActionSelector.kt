@@ -32,22 +32,90 @@ class LArcActionSelector(
     private val overseasOption2: Option = overseasOption1,
 ) : ActionSelector {
 
+    constructor(options: List<Option>) : this(options[0], options[1], options[2], options[3])
+
     companion object {
         private const val DEBUG = false
 
-        val speed3Stamina1Wisdom1Long = Option(
-            speedFactor = 0.9,
-            staminaFactor = 1.0,
-            powerFactor = 0.6,
-            gutsFactor = 0.7,
-            wisdomFactor = 0.45,
-            skillPtFactor = 0.45,
-            hpFactor = 1.0,
-            motivationFactor = 15.0,
-            relationFactor = 7.5,
-            starGaugeFactor = 4.0,
-            aptitudePtFactor = 0.0,
-            ssMatchScore = 70.0,
+        val speed3Stamina1Wisdom1LongOld = {
+            LArcActionSelector(
+                Option(
+                    speedFactor = 0.9,
+                    staminaFactor = 1.0,
+                    powerFactor = 0.6,
+                    gutsFactor = 0.7,
+                    wisdomFactor = 0.45,
+                    skillPtFactor = 0.45,
+                    hpFactor = 1.0,
+                    motivationFactor = 15.0,
+                    relationFactor = 7.5,
+                    starGaugeFactor = 4.0,
+                    aptitudePtFactor = 0.0,
+                    ssMatchScore = 70.0,
+                )
+            )
+        }
+
+        val speed3Stamina1Wisdom1Long = {
+            LArcActionSelector(speed3Stamina1Wisdom1LongOptions)
+        }
+        private val speed3Stamina1Wisdom1LongOptions = listOf(
+            Option(
+                speedFactor = 1.2,
+                staminaFactor = 1.4,
+                powerFactor = 0.2,
+                gutsFactor = 0.35,
+                wisdomFactor = 0.85,
+                skillPtFactor = 0.1,
+                hpFactor = 1.0,
+                motivationFactor = 15.0,
+                relationFactor = 11.5,
+                starGaugeFactor = 5.5,
+                aptitudePtFactor = 0.0,
+                ssMatchScore = 90.0,
+            ),
+            Option(
+                speedFactor = 0.55,
+                staminaFactor = 1.1,
+                powerFactor = 1.6,
+                gutsFactor = 1.2,
+                wisdomFactor = 1.8,
+                skillPtFactor = 0.15,
+                hpFactor = 1.25,
+                motivationFactor = 15.0,
+                relationFactor = 11.5,
+                starGaugeFactor = 0.0,
+                aptitudePtFactor = 1.0,
+                ssMatchScore = 0.0,
+            ),
+            Option(
+                speedFactor = 0.2,
+                staminaFactor = 0.85,
+                powerFactor = 0.75,
+                gutsFactor = 0.5,
+                wisdomFactor = 0.35,
+                skillPtFactor = 0.75,
+                hpFactor = 1.15,
+                motivationFactor = 15.0,
+                relationFactor = 11.5,
+                starGaugeFactor = 1.0,
+                aptitudePtFactor = 0.0,
+                ssMatchScore = 70.0,
+            ),
+            Option(
+                speedFactor = 1.05,
+                staminaFactor = 1.75,
+                powerFactor = 1.0,
+                gutsFactor = 0.4,
+                wisdomFactor = 0.35,
+                skillPtFactor = 0.75,
+                hpFactor = 1.4,
+                motivationFactor = 15.0,
+                relationFactor = 11.5,
+                starGaugeFactor = 0.0,
+                aptitudePtFactor = 1.5,
+                ssMatchScore = 0.0,
+            ),
         )
     }
 
@@ -218,6 +286,6 @@ class LArcActionSelector(
     }
 
     override fun toString(): String {
-        return "LArcActionSelector $option"
+        return "LArcActionSelector $domesticOption1 -> $overseasOption1 -> $domesticOption2 -> $overseasOption2"
     }
 }

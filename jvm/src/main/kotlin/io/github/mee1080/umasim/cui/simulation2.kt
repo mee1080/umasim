@@ -36,6 +36,32 @@ fun doSimulation2(
     scenario: Scenario,
     chara: Chara,
     defaultSupport: Array<SupportCard>,
+    targetStatus: StatusType,
+    rarity: IntRange = 2..3,
+    talent: IntRange = 4..4,
+    factor: List<Pair<StatusType, Int>>,
+    testCount: Int,
+    selector: () -> ActionSelector,
+    evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+) {
+    doSimulation2(
+        scenario,
+        chara,
+        defaultSupport,
+        Store.supportList.filter {
+            talent.contains(it.talent) && it.rarity in rarity && (it.type == targetStatus)
+        },
+        factor,
+        testCount,
+        selector,
+        evaluateSetting,
+    )
+}
+
+fun doSimulation2(
+    scenario: Scenario,
+    chara: Chara,
+    defaultSupport: Array<SupportCard>,
     target: List<SupportCard>,
     factor: List<Pair<StatusType, Int>>,
     testCount: Int,

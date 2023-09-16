@@ -25,14 +25,14 @@ class CliMain : CliktCommand() {
 
     private val distance by option(help = "距離(short|mile|middle|long)").default("middle")
 
-    private val speed by option().double().default(1.0)
-    private val stamina by option().double().default(1.0)
-    private val power by option().double().default(1.0)
-    private val guts by option().double().default(0.0)
-    private val wisdom by option().double().default(0.0)
-    private val skillPt by option().double().default(0.4)
-    private val hp by option().double().default(0.5)
-    private val motivation by option().double().default(15.0)
+    private val speed by option().double().multiple()
+    private val stamina by option().double().multiple()
+    private val power by option().double().multiple()
+    private val guts by option().double().multiple()
+    private val wisdom by option().double().multiple()
+    private val skillPt by option().double().multiple()
+    private val hp by option().double().multiple()
+    private val motivation by option().double().multiple()
     private val relation by option().triple().multiple()
     private val relationDefault by option().double().default(0.0)
     private val aoharu by option().pair().multiple()
@@ -49,9 +49,9 @@ class CliMain : CliktCommand() {
     private val knowledgeCountBase by option().double().default(10.0)
     private val knowledgeCountFactor by option().double().default(2.0)
     private val passionChallenge by option().double().default(0.0)
-    private val starGauge by option().double().default(10.0)
-    private val aptitudePt by option().double().default(10.0)
-    private val ssMatch by option().double().default(100.0)
+    private val starGauge by option().double().multiple()
+    private val aptitudePt by option().double().multiple()
+    private val ssMatch by option().double().multiple()
 
     override fun run() {
         StoreLoader.load()
@@ -83,30 +83,37 @@ class CliMain : CliktCommand() {
         val selector = when (scenarioValue) {
 
             // TODO LArc
-            Scenario.LARC -> LArcActionSelector.Option(
-                speedFactor = speed,
-                staminaFactor = stamina,
-                powerFactor = power,
-                gutsFactor = guts,
-                wisdomFactor = wisdom,
-                skillPtFactor = skillPt,
-                hpFactor = hp,
-                motivationFactor = motivation,
-                relationFactor = relationFactor(StatusType.NONE, 0, 0),
-                starGaugeFactor = starGauge,
-                aptitudePtFactor = aptitudePt,
-                ssMatchScore = ssMatch,
-            )::generateSelector
+            Scenario.LARC -> {
+                {
+                    val options = (0..3).map {
+                        LArcActionSelector.Option(
+                            speedFactor = speed.getOrElse(it) { 1.0 },
+                            staminaFactor = stamina.getOrElse(it) { 1.0 },
+                            powerFactor = power.getOrElse(it) { 1.0 },
+                            gutsFactor = guts.getOrElse(it) { 1.0 },
+                            wisdomFactor = wisdom.getOrElse(it) { 1.0 },
+                            skillPtFactor = skillPt.getOrElse(it) { 1.0 },
+                            hpFactor = hp.getOrElse(it) { 1.0 },
+                            motivationFactor = motivation.getOrElse(it) { 1.0 },
+                            relationFactor = relationFactor(StatusType.NONE, 0, 0),
+                            starGaugeFactor = starGauge.getOrElse(it) { 1.0 },
+                            aptitudePtFactor = aptitudePt.getOrElse(it) { 1.0 },
+                            ssMatchScore = ssMatch.getOrElse(it) { 1.0 },
+                        )
+                    }
+                    LArcActionSelector(options[0], options[1], options[2], options[3])
+                }
+            }
 
             Scenario.GM -> GmActionSelector.Option(
-                speedFactor = speed,
-                staminaFactor = stamina,
-                powerFactor = power,
-                gutsFactor = guts,
-                wisdomFactor = wisdom,
-                skillPtFactor = skillPt,
-                hpFactor = hp,
-                motivationFactor = motivation,
+                speedFactor = speed.getOrElse(0) { 1.0 },
+                staminaFactor = stamina.getOrElse(0) { 1.0 },
+                powerFactor = power.getOrElse(0) { 1.0 },
+                gutsFactor = guts.getOrElse(0) { 1.0 },
+                wisdomFactor = wisdom.getOrElse(0) { 1.0 },
+                skillPtFactor = skillPt.getOrElse(0) { 1.0 },
+                hpFactor = hp.getOrElse(0) { 1.0 },
+                motivationFactor = motivation.getOrElse(0) { 1.0 },
                 relationFactor = relationFactor,
                 knowledgeSpeedFactor = knowledgeSpeed,
                 knowledgeStaminaFactor = knowledgeStamina,
@@ -121,39 +128,39 @@ class CliMain : CliktCommand() {
             )::generateSelector
 
             Scenario.GRAND_LIVE -> GrandLiveFactorBasedActionSelector.Option(
-                speedFactor = speed,
-                staminaFactor = stamina,
-                powerFactor = power,
-                gutsFactor = guts,
-                wisdomFactor = wisdom,
-                skillPtFactor = skillPt,
-                hpFactor = hp,
-                motivationFactor = motivation,
+                speedFactor = speed.getOrElse(0) { 1.0 },
+                staminaFactor = stamina.getOrElse(0) { 1.0 },
+                powerFactor = power.getOrElse(0) { 1.0 },
+                gutsFactor = guts.getOrElse(0) { 1.0 },
+                wisdomFactor = wisdom.getOrElse(0) { 1.0 },
+                skillPtFactor = skillPt.getOrElse(0) { 1.0 },
+                hpFactor = hp.getOrElse(0) { 1.0 },
+                motivationFactor = motivation.getOrElse(0) { 1.0 },
                 relationFactor = relationFactor,
                 performanceFactor = performance,
             )::generateSelector
 
             Scenario.CLIMAX -> ClimaxFactorBasedActionSelector.Option(
-                speedFactor = speed,
-                staminaFactor = stamina,
-                powerFactor = power,
-                gutsFactor = guts,
-                wisdomFactor = wisdom,
-                skillPtFactor = skillPt,
-                hpFactor = hp,
-                motivationFactor = motivation,
+                speedFactor = speed.getOrElse(0) { 1.0 },
+                staminaFactor = stamina.getOrElse(0) { 1.0 },
+                powerFactor = power.getOrElse(0) { 1.0 },
+                gutsFactor = guts.getOrElse(0) { 1.0 },
+                wisdomFactor = wisdom.getOrElse(0) { 1.0 },
+                skillPtFactor = skillPt.getOrElse(0) { 1.0 },
+                hpFactor = hp.getOrElse(0) { 1.0 },
+                motivationFactor = motivation.getOrElse(0) { 1.0 },
                 relationFactor = relationFactor,
             )::generateSelector
 
             else -> FactorBasedActionSelector2.Option(
-                speedFactor = speed,
-                staminaFactor = stamina,
-                powerFactor = power,
-                gutsFactor = guts,
-                wisdomFactor = wisdom,
-                skillPtFactor = skillPt,
-                hpFactor = hp,
-                motivationFactor = motivation,
+                speedFactor = speed.getOrElse(0) { 1.0 },
+                staminaFactor = stamina.getOrElse(0) { 1.0 },
+                powerFactor = power.getOrElse(0) { 1.0 },
+                gutsFactor = guts.getOrElse(0) { 1.0 },
+                wisdomFactor = wisdom.getOrElse(0) { 1.0 },
+                skillPtFactor = skillPt.getOrElse(0) { 1.0 },
+                hpFactor = hp.getOrElse(0) { 1.0 },
+                motivationFactor = motivation.getOrElse(0) { 1.0 },
                 relationFactor = relationFactor,
                 aoharuFactor = aoharuFactor,
             )::generateSelector
