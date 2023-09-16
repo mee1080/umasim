@@ -100,6 +100,9 @@ data class LArcStatus(
 
     val ssMatchMember: Set<MemberState> = emptySet(),
 ) {
+    fun toShortString() =
+        "LArcStatus(SupporterPt=$supporterPt/$memberSupporterPt, aptitudePt=$aptitudePt, ssMatch=$ssMatchCount/$totalSSMatchCount/$isSSSMatch, aptitude=$overseasTurfAptitude/$longchampAptitude/$lifeRhythm/$nutritionManagement/$frenchSkill/$overseasExpedition/$strongHeart/$mentalStrength/$hopeOfLArc/$consecutiveVictories)"
+
     val expectationLevel get() = (supporterPt + memberSupporterPt) / 1700
 
     private val baseTrainingFactor =
@@ -184,6 +187,9 @@ data class LArcMemberState(
     val starLevel: Int = 1,
     val starGauge: Int = 0,
 ) : ScenarioMemberState {
+    override fun toShortString() =
+        "LArcMemberState(status=${status.toShortString()}, supporterPt=$supporterPt, initialRank=$initialRank, starGauge=$starGauge/Lv$starLevel/$starType/$specialStarEffect"
+
     override val scenarioLink get() = Store.getScenarioLink(Scenario.LARC)
 
     fun initialize(initialRank: Int, charaName: String): LArcMemberState {

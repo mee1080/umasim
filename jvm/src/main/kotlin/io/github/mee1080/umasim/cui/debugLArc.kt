@@ -18,8 +18,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-        lArcRunSimulation()
-//        lArcSingleSimulation()
+//        lArcRunSimulation()
+        lArcSingleSimulation()
     }
 }
 
@@ -83,26 +83,26 @@ fun lArcSingleSimulation() {
     result.second.forEachIndexed { index, history ->
         println()
         println("${index + 1}:")
-        println("  開始時: ${history.state.status}")
+        println("  開始時: ${history.state.status.toShortString()}")
         history.selections.forEach { (selection, selectedAction) ->
             selection.forEach {
                 println("  ${it.scenarioActionParam?.toShortString()} : ${it.toShortString()}")
             }
             println("  -> ${selectedAction.action?.toShortString() ?: ""}${selectedAction.scenarioAction ?: ""}")
         }
-        println("  上昇量: ${history.status}")
+        println("  上昇量: ${history.status.toShortString()}")
         println("  トレLv: ${history.state.training.map { "${it.type}${it.level} " }}")
-        println("  LArc: ${history.state.lArcStatus?.toString()}")
-        println("  終了時: ${history.status + history.state.status}")
+        println("  LArc: ${history.state.lArcStatus?.toShortString()}")
+        println("  終了時: ${(history.status + history.state.status).toShortString()}")
         history.state.member
             .sortedByDescending { (it.scenarioState as LArcMemberState).supporterPt }
             .applyIf(index != 2 && index != 66) { take(3) }
             .forEach {
-                println("  ${it.charaName}${if (it.guest) "(ゲスト)" else ""} ${it.scenarioState}")
+                println("  ${it.charaName}${if (it.guest) "(ゲスト)" else ""} ${it.scenarioState.toShortString()}")
             }
         println("  スターゲージ: " + history.state.member.map { it.scenarioState as LArcMemberState }
             .joinToString("/") { "${it.starLevel}:${it.starGauge}" })
     }
     println(result.first)
-    println(result.first.status)
+    println(result.first.status.toShortString())
 }

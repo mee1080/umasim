@@ -103,8 +103,11 @@ data class MemberState(
     val position: StatusType,
     val supportState: SupportState?,
     val scenarioState: ScenarioMemberState,
-    val isScenarioLink: Boolean = scenarioState.scenarioLink.contains(card.chara),
+    val isScenarioLink: Boolean = supportState != null && scenarioState.scenarioLink.contains(card.chara),
 ) {
+    fun toShortString() =
+        "MemberState($index, ${card.name}, scenarioState=${scenarioState.toShortString()}, position=$position, supportState=$supportState)"
+
     val name get() = card.name
     val charaName get() = card.chara
     val guest get() = supportState == null
@@ -145,6 +148,7 @@ data class SupportState(
 interface ScenarioMemberState {
     val hintBlocked get() = false
     val scenarioLink get() = emptySet<String>()
+    fun toShortString() = toString()
 }
 
 object UraMemberState : ScenarioMemberState {

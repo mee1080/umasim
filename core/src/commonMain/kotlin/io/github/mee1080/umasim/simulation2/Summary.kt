@@ -60,6 +60,8 @@ class Summary(
     ) {
         val relation get() = state.relation
         val name get() = state.name
+        fun toShortString() =
+            "SupportSummary(${state.toShortString()}, trainingCount=$trainingCount, friendCount=$friendCount, hintCount=$hintCount)"
     }
 
     val support = supportList.map { SupportSummary(it) }.toTypedArray()
@@ -79,15 +81,19 @@ class Summary(
                         if (it.hint) summary.hintCount++
                     }
                 }
+
                 is Outing -> {
                     outingCount++
                 }
+
                 is Sleep -> {
                     sleepCount++
                 }
+
                 is Race -> {
                     raceCount++
                 }
+
                 is SSMatch -> {
                     ssMatchCount++
                 }
@@ -96,18 +102,16 @@ class Summary(
     }
 
 
-    fun toString(map: Map<StatusType, IntArray>) = buildString {
-        if (map.isEmpty()) {
-            append("{}")
-        } else {
-            append("{")
-            map.forEach { (key, value) -> append("$key=${value.contentToString()}, ") }
-            deleteRange(length - 2, length)
-            append("}")
-        }
-    }
+    fun toString(map: Map<StatusType, IntArray>) = trainingType.joinToString("/") { map[it]!!.joinToString(",") }
 
-    override fun toString(): String {
-        return "Summary(trainingCount=$trainingCount, sleepCount=$sleepCount, outingCount=$outingCount, trainingSupportCountToString='$trainingSupportCountToString', trainingFriendCountToString='$trainingFriendCountToString', trainingHintCount=$trainingHintCount, support=${support.contentToString()})"
+    override fun toString() = buildString {
+        append("Summary(trainingCount=")
+        append(trainingType.joinToString("/") { trainingCount[it]!!.toString() })
+        append(", sleepCount=$sleepCount, outingCount=$outingCount, trainingSupportCount=")
+        append(trainingSupportCountToString)
+        append(", trainingFriendCount")
+        append(trainingFriendCountToString)
+        append(", trainingHintCount=$trainingHintCount, support=")
+        append(support.joinToString("/") { it.toShortString() })
     }
 }

@@ -66,11 +66,23 @@ data class Training(
     override val name = "トレーニング(${type.displayName}Lv$level)"
     override fun infoToString() = member.joinToString("/") {
         buildString {
-            if (it.guest) append("(ゲスト)${it.charaName}") else append(it.name)
+            if (it.guest) append("(ゲスト)${it.charaName}") else append("${it.name}(${it.relation})")
             if (it.isFriendTraining(type)) append("(友情)")
             if (it.hint) append("(ヒント)")
-            (it.scenarioState as? AoharuMemberState)?.let { aoharu ->
-                if (aoharu.aoharuBurn) append("(アオハル魂爆発)") else if (aoharu.aoharuIcon) append("(アオハル特訓)")
+            when (val scenario = it.scenarioState) {
+                is AoharuMemberState -> {
+                    if (scenario.aoharuBurn) {
+                        append("(アオハル魂爆発)")
+                    } else if (scenario.aoharuIcon) {
+                        append("(アオハル特訓)")
+                    } else {
+                        append("(${scenario.aoharuTrainingCount})")
+                    }
+                }
+
+                is LArcMemberState -> {
+                    append("(${scenario.starGauge},Lv${scenario.starLevel})")
+                }
             }
         }
     }
