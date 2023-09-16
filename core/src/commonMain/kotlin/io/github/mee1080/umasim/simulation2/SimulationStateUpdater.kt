@@ -61,6 +61,9 @@ fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(stat
 fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
 
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
+    // シナリオ友人不在判定
+    if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
+
     // 各トレーニングに配置
     var position: StatusType
     var secondPosition: StatusType
@@ -208,7 +211,7 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
 private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair<Status, List<MemberState>> {
     return if (gmStatus?.hintFrequencyUp == true) {
         // ステータス上昇はCalculatorで計算済み
-        val hintSupportList = support.filter { !it.card.type.outingType }
+        val hintSupportList = support.filter { !it.outingType }
         hintSupportList.map { hintSupport ->
             val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
             Status(
@@ -529,7 +532,29 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
             condition = condition + lArcAction.condition,
         )
     } else {
-        updateLArcStatus {
+        val newState = if (lArcAction.mayEventChance && Random.nextDouble() < 0.4) {
+            if (isLevelUpTurn) {
+                updateLArcStatus { copy(aptitudePt = aptitudePt + 50) }
+            } else {
+                val training = action as Training
+                val joinTargets = training.member
+                    .filter { !it.outingType && (it.scenarioState as LArcMemberState).starGauge < 2 - training.friendCount }
+                    .map { it.index }
+                val notJoinTargets = member
+                    .filter {
+                        !it.outingType && (it.scenarioState as LArcMemberState).starGauge < 3 && !joinTargets.contains(
+                            it.index
+                        )
+                    }.shuffled().take(5 - joinTargets.size).map { it.index }
+                val targets = joinTargets + notJoinTargets
+                val newMember = member.mapIf({ targets.contains(it.index) }) {
+                    val lArcState = scenarioState as LArcMemberState
+                    copy(scenarioState = lArcState.copy(starGauge = lArcState.starGauge + 1))
+                }
+                copy(member = newMember)
+            }
+        } else this
+        newState.updateLArcStatus {
             copy(aptitudePt = aptitudePt + lArcAction.aptitudePt)
         }
     }

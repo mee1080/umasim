@@ -190,16 +190,16 @@ class LArcActionSelector(
 
     private fun calcLarcScore(state: SimulationState, action: Action): Double {
         if (action !is Training || state.lArcStatus == null) return 0.0
-        val param = action.scenarioActionParam as? LArcActionParam
-        return if (param == null) {
+        val param = action.scenarioActionParam as LArcActionParam
+        return if (state.isLevelUpTurn) {
+            // 海外
+            option.aptitudePtFactor * param.aptitudePt + (if (param.mayEventChance) option.aptitudePtFactor * 20.0 else 0.0)
+        } else {
             // 国内
             action.member.sumOf {
                 val scenarioState = it.scenarioState as LArcMemberState
                 option.starGaugeFactor * min(3 - scenarioState.starLevel, 1 + action.friendCount)
-            }
-        } else {
-            // 海外
-            option.aptitudePtFactor * param.aptitudePt
+            } + (if (param.mayEventChance) option.starGaugeFactor * 2.0 else 0.0)
         }
     }
 

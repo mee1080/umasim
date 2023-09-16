@@ -155,6 +155,7 @@ data class LArcActionParam(
     val aptitudePt: Int = 0,
     val starGaugeMember: Set<MemberState> = emptySet(),
     val condition: Set<String> = emptySet(),
+    val mayEventChance: Boolean = false,
 ) : ScenarioActionParam {
     override fun toShortString() = "supporterPt=$supporterPt, aptitudePt=$aptitudePt"
 

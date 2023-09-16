@@ -435,7 +435,7 @@ object Calculator {
         gmStatus: GmStatus,
     ): Status {
         if (!gmStatus.hintFrequencyUp) return Status()
-        val hintSupportList = member.filter { !it.card.type.outingType }
+        val hintSupportList = member.filter { !it.outingType }
         val hintStatus = hintSupportList.map { hintSupport ->
             val base = hintSupport.card.hintStatus
             // ヒント全潰しは無視

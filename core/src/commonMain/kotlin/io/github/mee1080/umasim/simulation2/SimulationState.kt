@@ -47,6 +47,8 @@ data class SimulationState(
 
     val wisdomAvailable get() = gmStatus != null
 
+    val lArcAvailable get() = lArcStatus != null
+
     val support get() = member.filter { !it.guest }
 
     val charm get() = condition.contains("愛嬌○")
@@ -115,6 +117,7 @@ data class MemberState(
     val relation get() = supportState?.relation ?: 0
     val friendTrainingEnabled get() = relation >= 80
     val friendCount get() = supportState?.friendCount ?: 0
+    val outingType get() = card.type.outingType
 
     fun isFriendTraining(type: StatusType) = if (card.type == StatusType.GROUP) {
         supportState?.passion == true

@@ -342,11 +342,13 @@ private fun SimulationState.predictKnowledgeCount(doubleRate: Double): Int {
 }
 
 private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Action>): List<Action> {
-    if (!isLevelUpTurn) return baseActions
     return baseActions.map {
         if (it is Training) {
-            val param = LArcActionParam(
-                aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0)
+            val param = if (isLevelUpTurn) LArcActionParam(
+                aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0),
+                mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" },
+            ) else LArcActionParam(
+                mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" }
             )
             it.copy(scenarioActionParam = param)
         } else it
@@ -359,7 +361,7 @@ private fun SimulationState.predictSSMatch(): Array<Action> {
     val joinMember = lArcStatus.ssMatchMember
     if (joinMember.isEmpty()) return emptyArray()
     val supporterRank = (listOf(-1 to lArcStatus.supporterPt) + member
-        .filter { !it.card.type.outingType }
+        .filter { !it.outingType }
         .map { it.index to (it.scenarioState as LArcMemberState).supporterPt })
         .sortedByDescending { it.second }
         .mapIndexed { order, (index, _) -> index to order }

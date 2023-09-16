@@ -110,8 +110,8 @@ class LArcScenarioEvents : CommonScenarioEvents() {
 
     private fun SimulationState.createLArcStatus(): SimulationState {
         val linkChara = Store.getScenarioLink(Scenario.LARC)
-        val outingMember = member.filter { it.card.type.outingType }
-        val supportMember = member.filter { !it.card.type.outingType }
+        val outingMember = member.filter { it.outingType }
+        val supportMember = member.filter { !it.outingType }
         var memberIndex = 6
         val linkSupportMember = supportMember.filter { linkChara.contains(it.charaName) }
         val linkSupportCharaNames = linkSupportMember.map { it.charaName }.toSet()
@@ -144,7 +144,7 @@ class LArcScenarioEvents : CommonScenarioEvents() {
     private fun SimulationState.turnUpdate(): SimulationState {
         if (lArcStatus == null) return this
         val newMember = member.map {
-            if (it.card.type.outingType) return@map it
+            if (it.outingType) return@map it
             val lArcMemberState = it.scenarioState as LArcMemberState
             val addStatus = when (lArcMemberState.starType) {
                 StatusType.SPEED -> Status(random(6, 8), random(3, 5), random(5, 7), random(3, 5), random(3, 5))

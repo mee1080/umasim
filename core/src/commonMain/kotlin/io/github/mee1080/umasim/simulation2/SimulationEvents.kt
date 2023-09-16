@@ -105,10 +105,10 @@ class RandomEvents(
     init {
         val supportTargets = state.member
             .mapIndexed { index, member -> index to member }
-            .filter { !it.second.guest && !it.second.card.type.outingType }
+            .filter { !it.second.guest && !it.second.outingType }
         val commonEventTargets = supportTargets.map { it.first }.shuffled().take(3)
         supportTargets.forEach { (index, member) ->
-            if (!member.guest && !member.card.type.outingType) {
+            if (!member.guest && !member.outingType) {
                 val type = member.card.type
                 eventQueue += EventEntry.Continuous(index, type)
                 eventQueue += EventEntry.Continuous(index, type)
