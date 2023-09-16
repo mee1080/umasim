@@ -39,6 +39,7 @@ data class SupportCardSpecialUnique(
 
     val targetRelation = when (type) {
         101, 102 -> value0
+        118 -> value1
         else -> null
     }
 
@@ -170,4 +171,6 @@ data class SupportCardSpecialUnique(
     }
 
     val initialRelationAll = if (type == 115) 5 else 0
+
+    fun hasSecondPosition(relation: Int) = type == 118 && relation >= value1
 }

@@ -191,7 +191,11 @@ data class SupportCard(
         name.contains(filter) || type.displayName.contains(filter) || skills.any { it.contains(filter) }
     }
 
-    val targetRelation = (listOf(0, 80) + specialUnique.mapNotNull { it.targetRelation }).sorted().distinct()
+    val targetRelation =
+        (listOf(0) + if (type == StatusType.FRIEND) emptyList() else listOf(80) + specialUnique.mapNotNull { it.targetRelation })
+            .sorted().distinct()
 
     val requiredRelation = targetRelation.maxOrNull() ?: 80
+
+    fun hasSecondPosition(relation: Int) = specialUnique.any { it.hasSecondPosition(relation) }
 }

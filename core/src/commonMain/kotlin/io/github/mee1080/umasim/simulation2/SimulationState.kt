@@ -104,6 +104,7 @@ data class MemberState(
     val supportState: SupportState?,
     val scenarioState: ScenarioMemberState,
     val isScenarioLink: Boolean = supportState != null && scenarioState.scenarioLink.contains(card.chara),
+    val secondPosition: StatusType = StatusType.NONE,
 ) {
     fun toShortString() =
         "MemberState($index, ${card.name}, scenarioState=${scenarioState.toShortString()}, position=$position, supportState=$supportState)"
@@ -133,6 +134,8 @@ data class MemberState(
     private fun getTrainingRelation(charmValue: Int, hint: Boolean) = card.trainingRelation + charmValue + if (hint) {
         5 + charmValue
     } else 0
+
+    val positions get() = listOf(position, secondPosition).filter { it != StatusType.NONE }
 }
 
 data class SupportState(

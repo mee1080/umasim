@@ -31,7 +31,11 @@ fun SimulationState.predict(turn: Int): List<Action> {
 }
 
 fun SimulationState.predictNormal(): List<Action> {
-    val supportPosition = member.groupBy { it.position }
+    val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
+    member.forEach {
+        if (it.position != StatusType.NONE) supportPosition[it.position]!!.add(it)
+        if (it.secondPosition != StatusType.NONE) supportPosition[it.secondPosition]!!.add(it)
+    }
     return mutableListOf(
         *(training.map {
             calcTrainingResult(it, supportPosition[it.type] ?: emptyList())

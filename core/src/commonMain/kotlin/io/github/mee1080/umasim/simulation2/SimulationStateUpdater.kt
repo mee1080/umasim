@@ -42,9 +42,15 @@ fun SimulationState.onTurnChange(): SimulationState {
 fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
+    var supportPosition: Map<StatusType, List<MemberState>>
     do {
         newMember = member.map { it.onTurnChange(turn, this) }
-    } while (newMember.groupBy { it.position }.any { it.value.size > 5 })
+        supportPosition = trainingType.associateWith { mutableListOf() }
+        newMember.forEach {
+            if (it.position != StatusType.NONE) supportPosition[it.position]!!.add(it)
+            if (it.secondPosition != StatusType.NONE) supportPosition[it.secondPosition]!!.add(it)
+        }
+    } while (supportPosition.any { it.value.size > 5 })
     return copy(
         member = newMember,
     )
@@ -56,7 +62,15 @@ fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
 
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
     // 各トレーニングに配置
-    val position = randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
+    var position: StatusType
+    var secondPosition: StatusType
+    do {
+        position = randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
+        secondPosition = if (card.hasSecondPosition(relation)) {
+            randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
+        } else StatusType.NONE
+    } while (position == secondPosition && position != StatusType.NONE)
+
     val scenarioState = when (scenarioState) {
         is AoharuMemberState -> scenarioState.copy(
             // アオハルアイコン表示
@@ -76,6 +90,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
         position = position,
         supportState = supportState,
         scenarioState = scenarioState,
+        secondPosition = secondPosition,
     )
 }
 
