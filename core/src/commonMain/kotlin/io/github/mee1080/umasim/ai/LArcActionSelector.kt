@@ -105,6 +105,9 @@ class LArcActionSelector(
 
             // TODO クラシック遠征中、状況に応じてトレ効果+50%を取る
 
+            // FIXME 固定でスピ+50%を取る
+            turn in 37..40 && status.nutritionManagement == 2 -> LArcAptitude.NutritionManagement
+
             // スキルPt+10を取る
             status.overseasExpedition in 1..2 -> LArcAptitude.OverseasExpedition
 
@@ -128,7 +131,18 @@ class LArcActionSelector(
             // TODO シニア遠征中、状況に応じてトレ効果+50%を取る
 
             // シニア遠征中、体力軽減を取る
-            turn in 61..64 && status.strongHeart == 2 -> LArcAptitude.StrongHeart
+            turn in 61..63 && status.strongHeart == 2 -> LArcAptitude.StrongHeart
+
+            // FIXME 固定でスピ→賢さ→パワ→スタ→根性の順で取る
+            turn in 61..63 && status.nutritionManagement == 2 -> LArcAptitude.NutritionManagement
+            turn in 61..63 && status.frenchSkill == 2 -> LArcAptitude.FrenchSkill
+            turn in 61..63 && status.lifeRhythm == 2 -> LArcAptitude.LifeRhythm
+            turn in 61..63 && status.longchampAptitude == 2 -> LArcAptitude.LongchampAptitude
+            turn in 61..63 && status.overseasTurfAptitude == 2 -> LArcAptitude.OverseasTurfAptitude
+
+            // デバフ未解除の場合
+            turn in 61..63 && status.frenchSkill == 1 -> LArcAptitude.FrenchSkill
+            turn in 61..63 && status.strongHeart == 1 -> LArcAptitude.StrongHeart
 
             // シニア凱旋門賞、デバフ解除、凱旋門賞の夢を取る
             turn == 67 -> {
