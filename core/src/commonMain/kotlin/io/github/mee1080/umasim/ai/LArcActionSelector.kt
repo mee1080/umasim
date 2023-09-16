@@ -59,64 +59,29 @@ class LArcActionSelector(
         val speed3Stamina1Wisdom1Long = {
             LArcActionSelector(speed3Stamina1Wisdom1LongOptions)
         }
-        private val speed3Stamina1Wisdom1LongOptions = listOf(
-            Option(
-                speedFactor = 1.2,
-                staminaFactor = 1.4,
-                powerFactor = 0.2,
-                gutsFactor = 0.35,
-                wisdomFactor = 0.85,
-                skillPtFactor = 0.1,
-                hpFactor = 1.0,
+
+        private val speed3Stamina1Wisdom1LongOptions: List<Option>
+
+        init {
+            val domestic = Option(
+                speedFactor = 1.45,
+                staminaFactor = 1.95,
+                powerFactor = 0.65,
+                gutsFactor = 0.85,
+                wisdomFactor = 0.75,
+                skillPtFactor = 0.4,
+                hpFactor = 1.3,
                 motivationFactor = 15.0,
-                relationFactor = 11.5,
-                starGaugeFactor = 5.5,
-                aptitudePtFactor = 0.0,
-                ssMatchScore = 90.0,
-            ),
-            Option(
-                speedFactor = 0.55,
-                staminaFactor = 1.1,
-                powerFactor = 1.6,
-                gutsFactor = 1.2,
-                wisdomFactor = 1.8,
-                skillPtFactor = 0.15,
-                hpFactor = 1.25,
-                motivationFactor = 15.0,
-                relationFactor = 11.5,
-                starGaugeFactor = 0.0,
+                relationFactor = 7.0,
+                starGaugeFactor = 4.5,
                 aptitudePtFactor = 1.0,
-                ssMatchScore = 0.0,
-            ),
-            Option(
-                speedFactor = 0.2,
-                staminaFactor = 0.85,
-                powerFactor = 0.75,
-                gutsFactor = 0.5,
-                wisdomFactor = 0.35,
-                skillPtFactor = 0.75,
-                hpFactor = 1.15,
-                motivationFactor = 15.0,
-                relationFactor = 11.5,
-                starGaugeFactor = 1.0,
-                aptitudePtFactor = 0.0,
-                ssMatchScore = 70.0,
-            ),
-            Option(
-                speedFactor = 1.05,
-                staminaFactor = 1.75,
-                powerFactor = 1.0,
-                gutsFactor = 0.4,
-                wisdomFactor = 0.35,
-                skillPtFactor = 0.75,
-                hpFactor = 1.4,
-                motivationFactor = 15.0,
-                relationFactor = 11.5,
-                starGaugeFactor = 0.0,
-                aptitudePtFactor = 1.5,
-                ssMatchScore = 0.0,
-            ),
-        )
+                ssMatchScore = 100.0,
+            )
+            val overseas = domestic.copy(
+                hpFactor = 0.95,
+            )
+            speed3Stamina1Wisdom1LongOptions = listOf(domestic, overseas, domestic, overseas)
+        }
     }
 
     data class Option(
@@ -234,9 +199,10 @@ class LArcActionSelector(
         if (DEBUG) println("${state.turn}: $action")
         if (action is SSMatch) return if (action.member.size == 5) option.ssMatchScore else 0.0
         val total = action.resultCandidate.sumOf { it.second }.toDouble()
+        val needHp = state.turn in listOf(35, 36, 58, 59)
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first)) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first, needHp)) * it.second / total
         } + calcRelationScore(state, action) + calcLarcScore(state, action)
         if (DEBUG) println("total $score")
         return score
@@ -250,14 +216,14 @@ class LArcActionSelector(
         return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
     }
 
-    private fun calcScore(status: ExpectedStatus): Double {
+    private fun calcScore(status: ExpectedStatus, needHp: Boolean): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
                 status.power * option.powerFactor +
                 status.guts * option.gutsFactor +
                 status.wisdom * option.wisdomFactor +
                 status.skillPt * option.skillPtFactor +
-                status.hp * option.hpFactor +
+                status.hp * (if (needHp) option.hpFactor * 10 else option.hpFactor) +
                 status.motivation * option.motivationFactor
         if (DEBUG) println("  $score $status")
         return score

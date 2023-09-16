@@ -43,8 +43,8 @@ fun lArcRunSimulation() {
     runBlocking {
         List(8) { 1.4 + it * 0.1 }.forEach { hpFactor ->
 //            val selector = { LArcActionSelector(LArcActionSelector.Option(hpFactor = hpFactor)) }
-//            val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
-            val selector = LArcActionSelector.speed3Stamina1Wisdom1LongOld
+            val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
+//            val selector = LArcActionSelector.speed3Stamina1Wisdom1LongOld
             launch(this@CoroutineContext) {
                 val summary = Runner.run(
                     10000,
