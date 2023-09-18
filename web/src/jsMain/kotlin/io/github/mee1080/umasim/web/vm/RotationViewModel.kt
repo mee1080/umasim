@@ -23,10 +23,12 @@ import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+@OptIn(ExperimentalSerializationApi::class)
 class RotationViewModel(private val root: ViewModel) {
 
     companion object {

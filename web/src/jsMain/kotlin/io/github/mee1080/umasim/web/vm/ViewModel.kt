@@ -28,10 +28,12 @@ import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
+import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
+@OptIn(ExperimentalSerializationApi::class)
 class ViewModel(val scope: CoroutineScope) {
 
     companion object {

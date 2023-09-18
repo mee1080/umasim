@@ -16,7 +16,7 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.web.page
+package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.StatusType

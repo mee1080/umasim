@@ -16,11 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.web.page
+package io.github.mee1080.umasim.web.page.top
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.HideBlock
+import io.github.mee1080.umasim.web.page.top.result.*
+import io.github.mee1080.umasim.web.page.top.setting.CharaSelect
+import io.github.mee1080.umasim.web.page.top.setting.ScenarioSelect
+import io.github.mee1080.umasim.web.page.top.setting.SupportSelect
+import io.github.mee1080.umasim.web.page.top.setting.TrainingSetting
+import io.github.mee1080.umasim.web.page.top.simulation.UraSimulation
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.dom.H2

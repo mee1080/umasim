@@ -23,9 +23,9 @@ import androidx.compose.runtime.rememberCoroutineScope
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.web.components.material.MwcTabBar
 import io.github.mee1080.umasim.web.components.material.initLibraries
-import io.github.mee1080.umasim.web.page.LessonPage
+import io.github.mee1080.umasim.web.page.lesson.LessonPage
 import io.github.mee1080.umasim.web.page.LicenseInfo
-import io.github.mee1080.umasim.web.page.RootPage
+import io.github.mee1080.umasim.web.page.top.RootPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
 import io.github.mee1080.umasim.web.state.Page
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -42,7 +42,7 @@ fun main() {
         val model = remember { ViewModel(scope) }
         Style(AppStyle)
         MwcTabBar(
-            Page.values().asList(),
+            Page.entries,
             model.state.page,
             { it.displayName },
             { it.icon },

@@ -16,18 +16,17 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.web.page
+package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
-import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
 @Composable
-fun SupportInfo(model: ViewModel, state: State) {
+fun SupportInfo(state: State) {
     H3 { Text("レースボーナス合計：${state.totalRaceBonus}") }
     H3 { Text("ファンボーナス合計：${state.totalFanBonus}") }
     H3 { Text("初期ステータスアップ") }

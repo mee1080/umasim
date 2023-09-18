@@ -16,19 +16,18 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.web.page
+package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
-import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.*
 
 @Composable
-fun SupportCardInfo(model: ViewModel, state: State) {
+fun SupportCardInfo(state: State) {
     Table({ classes(AppStyle.supportCardTable) }) {
         Tr {
             Th({
