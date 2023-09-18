@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import kotlin.math.min
 
 class Simulator(
     scenario: Scenario,
@@ -116,7 +117,7 @@ class Simulator(
         state = events.beforeSimulation(state)
         state = state.copy(status = events.initialStatus(state.status))
         selector.init(state)
-        repeat(turn) {
+        repeat(min(turn, if (state.scenario == Scenario.LARC) 67 else 78)) {
             state = state.onTurnChange()
             state = scenarioEvents.beforeAction(state)
             state = events.beforeAction(state)

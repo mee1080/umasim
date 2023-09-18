@@ -37,30 +37,11 @@ class LArcActionSelector(
     companion object {
         private const val DEBUG = false
 
-        val speed3Stamina1Wisdom1LongOld = {
-            LArcActionSelector(
-                Option(
-                    speedFactor = 0.9,
-                    staminaFactor = 1.0,
-                    powerFactor = 0.6,
-                    gutsFactor = 0.7,
-                    wisdomFactor = 0.45,
-                    skillPtFactor = 0.45,
-                    hpFactor = 1.0,
-                    motivationFactor = 15.0,
-                    relationFactor = 7.5,
-                    starGaugeFactor = 4.0,
-                    aptitudePtFactor = 0.0,
-                    ssMatchScore = 70.0,
-                )
-            )
-        }
-
         val speed3Stamina1Wisdom1Long = {
             LArcActionSelector(speed3Stamina1Wisdom1LongOptions)
         }
 
-        private val speed3Stamina1Wisdom1LongOptions: List<Option>
+        val speed3Stamina1Wisdom1LongOptions: List<Option>
 
         init {
             val domestic = Option(
@@ -81,6 +62,33 @@ class LArcActionSelector(
                 hpFactor = 1.6,
             )
             speed3Stamina1Wisdom1LongOptions = listOf(domestic, overseas, domestic, overseas)
+        }
+
+        val speed3Power1Wisdom1Middle = {
+            LArcActionSelector(speed3Power1Wisdom1MiddleOptions)
+        }
+
+        val speed3Power1Wisdom1MiddleOptions: List<Option>
+
+        init {
+            val domestic = Option(
+                speedFactor = 1.3,
+                staminaFactor = 1.3,
+                powerFactor = 1.2,
+                gutsFactor = 1.2,
+                wisdomFactor = 1.0,
+                skillPtFactor = 0.4,
+                hpFactor = 1.2,
+                motivationFactor = 17.0,
+                relationFactor = 4.0,
+                starGaugeFactor = 3.6,
+                aptitudePtFactor = 1.3,
+                ssMatchScore = 110.0,
+            )
+            val overseas = domestic.copy(
+                hpFactor = 1.2,
+            )
+            speed3Power1Wisdom1MiddleOptions = listOf(domestic, overseas, domestic, overseas)
         }
     }
 
