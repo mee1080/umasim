@@ -80,7 +80,7 @@ def objective(trial):
           f''
     """
 
-    cmd = f'java -jar ../cli/build/libs/cli.jar --count 20000 --scenario LARC'\
+    cmd = f'java -jar ../cli/build/libs/cli.jar --count 50000 --scenario LARC'\
           f' --distance long --chara "[うららん一等賞♪]ハルウララ" 5 5'\
           f' --support "[大望は飛んでいく]エルコンドルパサー" 4'\
           f' --support "[The frontier]ジャングルポケット" 4'\
@@ -111,9 +111,9 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='larcls3h1w1f1_3',
+    study_name='larcls3h1w1f1_5',
     storage='sqlite:///optuna_study_larc.db',
     load_if_exists=True,
     direction='maximize'
 )
-study.optimize(objective, n_trials=1000)
+study.optimize(objective, n_trials=10000)

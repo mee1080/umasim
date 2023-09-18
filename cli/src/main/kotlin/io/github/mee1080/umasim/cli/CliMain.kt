@@ -23,7 +23,7 @@ class CliMain : CliktCommand() {
 
     private val count by option(help = "実行回数").int().default(100)
 
-    private val distance by option(help = "距離(short|mile|middle|long)").default("middle")
+    private val distance by option(help = "距離(short|mile|middle|long|none)").default("none")
 
     private val speed by option().double().multiple()
     private val stamina by option().double().multiple()
@@ -183,12 +183,14 @@ class CliMain : CliktCommand() {
                 else -> Runner.middleEvaluateSetting
             }
 
-            else -> when (scenarioValue) {
+            "long" -> when (scenarioValue) {
                 Scenario.GM -> Runner.gmLongEvaluateSetting
                 Scenario.GRAND_LIVE -> Runner.grandLiveLongEvaluateSetting
                 Scenario.LARC -> Runner.lArcLongEvaluateSetting
                 else -> Runner.longEvaluateSetting
             }
+
+            else -> Runner.lArcFlatEvaluateSetting
         }
         val result = Runner.runAndEvaluate(
             count, scenarioValue, charaData, supportList,

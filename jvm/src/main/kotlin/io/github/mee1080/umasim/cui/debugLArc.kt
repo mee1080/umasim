@@ -38,10 +38,10 @@ fun lArcRunSimulation() {
     println(support)
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.WISDOM to 3,
+        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
     )
     runBlocking {
-        List(8) { 1.4 + it * 0.1 }.forEach { hpFactor ->
+        repeat(8) { index ->
 //            val selector = { LArcActionSelector(LArcActionSelector.Option(hpFactor = hpFactor)) }
             val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
 //            val selector = LArcActionSelector.speed3Stamina1Wisdom1LongOld
@@ -56,7 +56,7 @@ fun lArcRunSimulation() {
                 )
                 val evaluator = Evaluator(summary)
                 val score = (evaluator.upperSum(0.2, Runner.lArcLongEvaluateSetting) * 1000).roundToInt() / 1000.0
-                println("0,$hpFactor,0,${evaluator.toSummaryString()},$score")
+                println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }
     }
