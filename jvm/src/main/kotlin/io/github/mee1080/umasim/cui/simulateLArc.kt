@@ -7,7 +7,8 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLarc() {
-    speed3Power1Wisdom1MiddlePower()
+    speed3Stamina1Wisdom1LongSpeed()
+//    speed3Power1Wisdom1MiddlePower()
 }
 
 private fun speed3Stamina1Wisdom1LongSpeed() {
@@ -22,8 +23,8 @@ private fun speed3Stamina1Wisdom1LongSpeed() {
             "[君と見る泡沫]マンハッタンカフェ",
             "[L'aubeは迫りて]佐岳メイ",
         ).toTypedArray(),
-//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[見習い魔女と長い夜]スイープトウショウ" to it }.toTypedArray())),
+        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[見習い魔女と長い夜]スイープトウショウ" to it }.toTypedArray())),
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
         factor = factor(StatusType.STAMINA, 6),
         testCount = 50000,
