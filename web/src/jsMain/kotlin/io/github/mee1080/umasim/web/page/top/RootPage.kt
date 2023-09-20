@@ -41,8 +41,8 @@ fun RootPage(model: ViewModel, state: State) {
     HideBlock({ H2 { Text("トレーニング上昇量") } }, true) { TrainingInfo(model, state) }
     HideBlock({ H2 { Text("トレーニング期待値") } }, true) { ExpectedStatusDisplay(model, state) }
     HideBlock({ H2 { Text("レースボーナス計算") } }) { RaceBonus(model, state) }
-    HideBlock({ H2 { Text("編成情報") } }) { SupportInfo(model, state) }
-    HideBlock({ H2 { Text("サポートカード情報") } }) { SupportCardInfo(model, state) }
+    HideBlock({ H2 { Text("編成情報") } }) { SupportInfo(state) }
+    HideBlock({ H2 { Text("サポートカード情報") } }) { SupportCardInfo(state) }
     if (state.scenario == Scenario.URA) {
         HideBlock({ H2 { Text("シミュレーション") } }) {
             UraSimulation(model, state)
