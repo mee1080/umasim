@@ -343,15 +343,34 @@ private fun SimulationState.predictKnowledgeCount(doubleRate: Double): Int {
 
 private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Action>): List<Action> {
     return baseActions.map {
-        if (it is Training) {
-            val param = if (isLevelUpTurn) LArcActionParam(
-                aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0),
-                mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" },
-            ) else LArcActionParam(
-                mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" }
-            )
-            it.copy(scenarioActionParam = param)
-        } else it
+        when (it) {
+            is Training -> {
+                val param = if (isLevelUpTurn) LArcActionParam(
+                    aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0),
+                    mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" },
+                ) else LArcActionParam(
+                    mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" }
+                )
+                it.copy(scenarioActionParam = param)
+            }
+
+            is Race -> {
+                val supporterPt = when (turn) {
+                    41, 65 -> 2000
+                    43 -> 3000
+                    67 -> 0
+                    else -> when (it.grade) {
+                        RaceGrade.G1 -> 1300
+                        RaceGrade.G2 -> 900
+                        RaceGrade.G3 -> 700
+                        else -> 0
+                    }
+                }
+                it.copy(scenarioActionParam = LArcActionParam(supporterPt = supporterPt))
+            }
+
+            else -> it
+        }
     }
 }
 

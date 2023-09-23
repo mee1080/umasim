@@ -510,18 +510,19 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
             copy(scenarioState = newMemberState)
         }
         updateLArcStatus {
+            val newTotalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size
             copy(
                 supporterPt = supporterPt + lArcAction.supporterPt,
                 aptitudePt = aptitudePt + lArcAction.aptitudePt,
                 ssMatchCount = if (isSSSMatch == true) 0 else ssMatchCount + ssMatchMemberIndex.size,
-                totalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size,
+                totalSSMatchCount = newTotalSSMatchCount,
                 isSSSMatch = null,
-            ).applyIf(totalSSMatchCount >= 2 && overseasTurfAptitude == 0) {
+            ).applyIf(newTotalSSMatchCount >= 2 && overseasTurfAptitude == 0) {
                 copy(
                     overseasTurfAptitude = 1,
                     longchampAptitude = 1,
                 )
-            }.applyIf(totalSSMatchCount >= 10 && lifeRhythm == 0) {
+            }.applyIf(newTotalSSMatchCount >= 10 && lifeRhythm == 0) {
                 copy(
                     lifeRhythm = 1,
                     nutritionManagement = 1,
@@ -555,7 +556,10 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
             }
         } else this
         newState.updateLArcStatus {
-            copy(aptitudePt = aptitudePt + lArcAction.aptitudePt)
+            copy(
+                supporterPt = supporterPt + lArcAction.supporterPt,
+                aptitudePt = aptitudePt + lArcAction.aptitudePt,
+            )
         }
     }
 }

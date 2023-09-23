@@ -18,8 +18,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-//        lArcRunSimulation()
-        lArcSingleSimulation()
+        lArcRunSimulation()
+//        lArcSingleSimulation()
     }
 }
 
