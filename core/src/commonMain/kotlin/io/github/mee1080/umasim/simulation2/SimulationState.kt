@@ -27,7 +27,6 @@ data class SimulationState(
     val goalRace: List<RaceEntry>,
     val member: List<MemberState>,
     val training: List<TrainingState>,
-    val levelUpTurns: Collection<Int>,
     val turn: Int = 0,
     val status: Status,
     val condition: List<String> = emptyList(),
@@ -60,6 +59,8 @@ data class SimulationState(
             "小さなほころび" to 5,
             "大輪の輝き" to -2,
         ).sumOf { if (condition.contains(it.first)) it.second else 0 }
+
+    val levelUpTurns get() = scenario.levelUpTurns
 
     val isLevelUpTurn get() = levelUpTurns.contains(turn)
 

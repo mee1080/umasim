@@ -18,8 +18,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-        lArcRunSimulation()
-//        lArcSingleSimulation()
+//        lArcRunSimulation()
+        lArcSingleSimulation()
     }
 }
 
@@ -84,7 +84,7 @@ fun lArcSingleSimulation() {
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.WISDOM to 3,
     )
     val result = Simulator(Scenario.LARC, chara, support, factor)
-        .simulateWithHistory(78, selector) { RandomEvents(it) }
+        .simulateWithHistory(selector) { RandomEvents(it) }
     result.second.forEachIndexed { index, history ->
         println()
         println("${index + 1}:")

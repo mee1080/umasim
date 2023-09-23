@@ -132,11 +132,10 @@ object Runner {
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         evaluateSetting: Map<StatusType, Pair<Double, Int>>,
-        turn: Int = 78,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): Pair<Double, Evaluator> {
-        val summaries = run(count, scenario, chara, supportCardList, factorList, turn, events, selector)
+        val summaries = run(count, scenario, chara, supportCardList, factorList, events, selector)
         val evaluator = Evaluator(summaries, evaluateSetting, 0.2)
         return (evaluator.upperSum(0.2, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
@@ -147,7 +146,6 @@ object Runner {
         chara: Chara,
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
-        turn: Int = 78,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): List<Summary> {
@@ -159,7 +157,7 @@ object Runner {
                     chara,
                     supportCardList,
                     factorList,
-                ).simulate(turn, selector(), events)
+                ).simulate(selector(), events)
             )
         }
         return summaries

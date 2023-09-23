@@ -32,7 +32,6 @@ fun testAoharuSimulation() {
 //        )
 //    )
     val result = simulator.simulateWithHistory(
-        78,
         selector
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
@@ -58,7 +57,6 @@ fun compareAoharuSimulation() {
         *(wisdom(4, 3)),
     )
 
-    val turn = 78
     val testCount = 1000
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
     val selector = { FactorBasedActionSelector2(FactorBasedActionSelector2.speedWisdom) }
@@ -69,7 +67,7 @@ fun compareAoharuSimulation() {
             val summary = mutableListOf<Summary>()
             val simulator = Simulator(Scenario.URA, chara, support)
             repeat(testCount) {
-                summary.add(simulator.simulate(turn, selector()) {
+                summary.add(simulator.simulate(selector()) {
                     SimulationEvents(initialStatus = { it.copy(motivation = 2) })
                 })
             }
@@ -81,7 +79,7 @@ fun compareAoharuSimulation() {
             val summary = mutableListOf<Summary>()
             val simulator = Simulator(Scenario.AOHARU, chara, support)
             repeat(testCount) {
-                summary.add(simulator.simulate(turn, selector()) {
+                summary.add(simulator.simulate(selector()) {
                     SimulationEvents(initialStatus = { it.copy(motivation = 2) })
                 })
             }
@@ -119,7 +117,7 @@ fun compareExpectedBasedAI() {
                     )
                 }
                 repeat(testCount) {
-                    summary.add(simulator.simulate(turn, selector()) {
+                    summary.add(simulator.simulate(selector()) {
                         SimulationEvents(initialStatus = { it.copy(motivation = 2) }
                         )
                     })
@@ -140,7 +138,6 @@ fun compareNextStateBasedAI() {
         *(wisdom(4, 1)),
     )
 
-    val turn = 78
     val testCount = 100
 //    val selector = { SimpleActionSelector(StatusType.SPEED) }
     val option = Simulator.Option()
@@ -159,7 +156,7 @@ fun compareNextStateBasedAI() {
                     )
                 }
                 repeat(testCount) {
-                    summary.add(simulator.simulate(turn, selector()) {
+                    summary.add(simulator.simulate(selector()) {
                         SimulationEvents(initialStatus = { it.copy(motivation = 2) })
                     })
                 }

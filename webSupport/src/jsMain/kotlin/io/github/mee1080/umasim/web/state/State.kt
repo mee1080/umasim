@@ -73,7 +73,6 @@ data class State(
     val initialStatus: Status = Status(),
     val availableHint: Map<String, List<String>> = mapOf(),
     val simulationMode: Int = 0,
-    val simulationTurn: Int = 78,
     val simulationResult: Status = Status(),
     val simulationHistory: List<Pair<String, Status>> = emptyList(),
     val aoharuSimulationState: AoharuSimulationState = AoharuSimulationState(),

@@ -593,10 +593,6 @@ class ViewModel(val scope: CoroutineScope) {
         updateState(calculate = false) { it.copy(simulationMode = mode) }
     }
 
-    fun updateSimulationTurn(turn: Int) {
-        updateState(calculate = false) { it.copy(simulationTurn = turn) }
-    }
-
     fun doUraSimulation() {
         scope.launch(Dispatchers.Default) {
             val supportList = state.supportSelectionList.mapNotNull { it.card }
@@ -606,7 +602,6 @@ class ViewModel(val scope: CoroutineScope) {
                 state.chara,
                 supportList,
             ).simulateWithHistory(
-                state.simulationTurn,
                 selector,
             ) { ApproximateSimulationEvents() }
             updateState(calculate = false) {

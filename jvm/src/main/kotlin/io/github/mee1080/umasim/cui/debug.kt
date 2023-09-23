@@ -47,7 +47,7 @@ fun singleSimulation() {
             wisdomFactor = 0.5,
         )
     )
-    val result = Simulator(Scenario.URA, chara, support).simulateWithHistory(78, selector)
+    val result = Simulator(Scenario.URA, chara, support).simulateWithHistory(selector)
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.action.toShortString()}")
@@ -109,7 +109,6 @@ fun singleClimaxSimulation() {
         support,
         factor(StatusType.WISDOM, 3) + factor(StatusType.POWER, 3)
     ).simulateWithHistory(
-        78,
         selector,
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->

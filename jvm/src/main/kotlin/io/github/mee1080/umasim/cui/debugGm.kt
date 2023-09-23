@@ -98,7 +98,7 @@ fun gmSingleSimulation() {
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
     val result = Simulator(Scenario.GM, chara, support, factor)
-        .simulateWithHistory(78, selector) { RandomEvents(it) }
+        .simulateWithHistory(selector) { RandomEvents(it) }
     val founders = mutableListOf<String>()
     result.second.forEachIndexed { index, history ->
         println()

@@ -57,7 +57,7 @@ fun skillSimulation(
                 val skillCount = targetSkills.associateWith { 0 }.toMutableMap()
                 val totalSkillCount = IntArray(targetSkills.size + 1) { 0 }
                 repeat(testCount) {
-                    val summary = Simulator(scenario, chara, support).simulate(59, SkillActionSelector(targetSkills))
+                    val summary = Simulator(scenario, chara, support).simulate(SkillActionSelector(targetSkills))
                     summaries.add(summary)
                     val skills =
                         summary.status.skillHint.keys.filter { targetSkills.contains(it) }

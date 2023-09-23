@@ -73,7 +73,6 @@ fun singleGrandLiveSimulation() {
         support,
         factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 4)
     ).simulateWithHistory(
-        78,
         selector,
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->

@@ -42,13 +42,6 @@ fun UraSimulation(model: ViewModel, state: State) {
             model::updateSimulationMode
         )
         Div({ style { padding(8.px) } }) {
-            Text("ターン数")
-            NumberInput {
-                value(state.simulationTurn.toString())
-                onInput { model.updateSimulationTurn(it.value?.toInt() ?: 0) }
-            }
-        }
-        Div({ style { padding(8.px) } }) {
             Button({ onClickOrTouch { model.doUraSimulation() } }) { Text("シミュレーション実行（β版）") }
         }
     }

@@ -17,7 +17,6 @@ class Optimizer<T : ActionSelector>(
     private val chara: Chara,
     private val support: List<SupportCard>,
     private val option: Simulator.Option,
-    private val turn: Int,
     private val selectors: List<T>,
     private val calcScore: (Evaluator) -> Double,
 ) {
@@ -69,7 +68,7 @@ class Optimizer<T : ActionSelector>(
                 launch(context) {
                     val summary = mutableListOf<Summary>()
                     repeat(testCount) {
-                        summary.add(Simulator(scenario, chara, support, option = option).simulate(turn, target))
+                        summary.add(Simulator(scenario, chara, support, option = option).simulate(target))
                     }
                     result.add(target to summary)
                     if (DEBUG) println("$testCount: ${index + 1}/${selectors.size}")

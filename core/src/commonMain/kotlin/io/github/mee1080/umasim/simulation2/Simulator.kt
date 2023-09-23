@@ -30,9 +30,7 @@ class Simulator(
 ) {
 
     class Option(
-        val levelUpTurns: IntArray? = null,
-        val raceBonusStatus: Int = 0,
-        val raceBonusSkillPt: Int = 0,
+        val turn: Int = Int.MAX_VALUE,
     )
 
     private val initialRelationAll = supportCardList.sumOf { it.initialRelationAll }
@@ -60,10 +58,6 @@ class Simulator(
                     levelOverride = null,
                 )
             },
-        levelUpTurns = option.levelUpTurns?.asList() ?: when (scenario) {
-            Scenario.LARC -> listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66)
-            else -> listOf(37, 38, 39, 40, 61, 62, 63, 64)
-        },
         status = Status(
             skillPt = 120,
             hp = 100,
@@ -79,29 +73,17 @@ class Simulator(
         totalFanBonus = supportCardList.sumOf { it.fan },
     )
 
-    private val raceBonus = initialState.totalRaceBonus.let {
-        Status(
-            speed = option.raceBonusStatus * it / 100,
-            stamina = option.raceBonusStatus * it / 100,
-            power = option.raceBonusStatus * it / 100,
-            guts = option.raceBonusStatus * it / 100,
-            wisdom = option.raceBonusStatus * it / 100,
-            skillPt = option.raceBonusSkillPt * it / 100
-        )
-    }
-
     fun simulate(
-        turn: Int,
         selector: ActionSelector,
         eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
-    ) = simulateWithHistory(turn, selector, eventsProducer).first
+    ) = simulateWithHistory(selector, eventsProducer).first
 
     fun simulateWithHistory(
-        turn: Int,
         selector: ActionSelector,
         eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
     ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
+        val turn = min(option.turn, state.scenario.turn)
         val history = mutableListOf<SimulationHistoryItem>()
         val scenarioEvents = when (state.scenario) {
             Scenario.URA -> UraScenarioEvents()
@@ -138,7 +120,6 @@ class Simulator(
             state = scenarioEvents.onTurnEnd(state)
         }
         state = scenarioEvents.afterSimulation(state)
-        state = state.updateStatus { it + raceBonus }
         return Summary(state.status, history, state.member) to history
     }
 }

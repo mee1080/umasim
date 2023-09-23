@@ -115,13 +115,20 @@ enum class Scenario(
     val displayName: String,
     val trainingAutoLevelUp: Boolean = true,
     val guestMember: Boolean = false,
+    val turn: Int = 78,
+    val levelUpTurns: List<Int> = listOf(37, 38, 39, 40, 61, 62, 63, 64),
 ) {
     URA("URA"),
     AOHARU("アオハル", trainingAutoLevelUp = false, guestMember = true),
     CLIMAX("クライマックス"),
     GRAND_LIVE("グランドライブ", guestMember = true),
     GM("グランドマスターズ", trainingAutoLevelUp = false),
-    LARC("プロジェクトL'Arc（実装中）", guestMember = true)
+    LARC(
+        "プロジェクトL'Arc",
+        guestMember = true,
+        turn = 67,
+        levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
+    )
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
