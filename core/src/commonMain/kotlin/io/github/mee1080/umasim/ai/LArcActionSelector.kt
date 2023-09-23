@@ -21,7 +21,9 @@ package io.github.mee1080.umasim.ai
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.LArcAptitude
 import io.github.mee1080.umasim.data.LArcMemberState
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.simulation2.*
+import kotlin.math.max
 import kotlin.math.min
 
 @Suppress("unused")
@@ -76,19 +78,29 @@ class LArcActionSelector(
                 staminaFactor = 1.3,
                 powerFactor = 1.2,
                 gutsFactor = 1.2,
-                wisdomFactor = 1.0,
+                wisdomFactor = 0.95,
                 skillPtFactor = 0.4,
-                hpFactor = 1.2,
-                motivationFactor = 17.0,
-                relationFactor = 4.0,
-                starGaugeFactor = 3.6,
-                aptitudePtFactor = 1.3,
-                ssMatchScore = 110.0,
+                hpFactor = 1.0,
+                motivationFactor = 18.0,
+                relationFactor = 7.0,
+                hpKeepFactor = 0.4,
+                riskFactor = 7.6,
+                starGaugeFactor = 3.0,
+                aptitudePtFactor = 0.8,
+                ssMatchScore = 100.0,
             )
             val overseas = domestic.copy(
-                hpFactor = 1.2,
+                hpFactor = 1.5,
+                hpKeepFactor = 3.0,
+                riskFactor = 4.0,
             )
-            speed3Power1Wisdom1MiddleOptions = listOf(domestic, overseas, domestic, overseas)
+            val domestic2 = domestic.copy(
+                hpKeepFactor = 0.8
+            )
+            val overseas2 = overseas.copy(
+                hpKeepFactor = 3.4
+            )
+            speed3Power1Wisdom1MiddleOptions = listOf(domestic, overseas, domestic2, overseas2)
         }
     }
 
@@ -102,6 +114,8 @@ class LArcActionSelector(
         val hpFactor: Double = 1.6,
         val motivationFactor: Double = 15.0,
         val relationFactor: Double = 10.0,
+        val hpKeepFactor: Double = 1.0,
+        val riskFactor: Double = 2.0,
 
         val starGaugeFactor: Double = 10.0,
         val aptitudePtFactor: Double = 10.0,
@@ -141,7 +155,6 @@ class LArcActionSelector(
             // 上4つは取れる時に取る
             status.overseasTurfAptitude == 1 -> LArcAptitude.OverseasTurfAptitude
             status.longchampAptitude == 1 -> LArcAptitude.LongchampAptitude
-            status.lifeRhythm == 1 -> LArcAptitude.LifeRhythm
             status.nutritionManagement == 1 -> LArcAptitude.NutritionManagement
 
             // TODO クラシック遠征中、状況に応じてトレ効果+50%を取る
@@ -156,12 +169,13 @@ class LArcActionSelector(
             turn == 42 && status.mentalStrength == 1 && aptitudePt >= 700 -> LArcAptitude.MentalStrength
             turn == 42 && status.mentalStrength == 2 && aptitudePt >= 500 -> LArcAptitude.MentalStrength
 
-            // クラシック凱旋門賞、デバフ解除
+            // クラシック凱旋門賞、残り220Pt（+80Ptで友情+20%）までデバフ解除
             turn == 43 -> {
                 when {
                     status.mentalStrength == 1 -> LArcAptitude.MentalStrength
-                    status.strongHeart == 1 -> LArcAptitude.StrongHeart
-                    status.frenchSkill == 1 -> LArcAptitude.FrenchSkill
+                    status.lifeRhythm == 1 && aptitudePt >= 320 -> LArcAptitude.LifeRhythm
+                    status.strongHeart == 1 && aptitudePt >= 420 -> LArcAptitude.StrongHeart
+                    status.frenchSkill == 1 && aptitudePt >= 320 -> LArcAptitude.FrenchSkill
                     else -> null
                 }
             }
@@ -182,6 +196,7 @@ class LArcActionSelector(
             turn in 61..63 && status.overseasTurfAptitude == 2 -> LArcAptitude.OverseasTurfAptitude
 
             // デバフ未解除の場合
+            turn in 61..63 && status.lifeRhythm == 1 -> LArcAptitude.LifeRhythm
             turn in 61..63 && status.frenchSkill == 1 -> LArcAptitude.FrenchSkill
             turn in 61..63 && status.strongHeart == 1 -> LArcAptitude.StrongHeart
 
@@ -189,6 +204,7 @@ class LArcActionSelector(
             turn == 67 -> {
                 when {
                     status.hopeOfLArc == 1 -> LArcAptitude.HopeOfLArc
+                    status.lifeRhythm == 1 -> LArcAptitude.LifeRhythm
                     status.mentalStrength == 1 -> LArcAptitude.MentalStrength
                     status.strongHeart == 1 -> LArcAptitude.StrongHeart
                     status.frenchSkill == 1 -> LArcAptitude.FrenchSkill
@@ -210,7 +226,7 @@ class LArcActionSelector(
         val needHp = state.turn in listOf(35, 36, 58, 59)
         val score = action.resultCandidate.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first, needHp)) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first, needHp, state.status)) * it.second / total
         } + calcRelationScore(state, action) + calcLarcScore(state, action)
         if (DEBUG) println("total $score")
         return score
@@ -224,7 +240,7 @@ class LArcActionSelector(
         return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
     }
 
-    private fun calcScore(status: ExpectedStatus, needHp: Boolean): Double {
+    private fun calcScore(status: ExpectedStatus, needHp: Boolean, currentStatus: Status): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
                 status.power * option.powerFactor +
@@ -232,9 +248,10 @@ class LArcActionSelector(
                 status.wisdom * option.wisdomFactor +
                 status.skillPt * option.skillPtFactor +
                 status.hp * (if (needHp) option.hpFactor * 10 else option.hpFactor) +
-                status.motivation * option.motivationFactor
+                status.motivation * option.motivationFactor +
+                min(0.0, max(-20.0, currentStatus.hp + status.hp - 70.0)) * option.hpKeepFactor
         if (DEBUG) println("  $score $status")
-        return score
+        return score * (if (score < 0) option.riskFactor else 1.0)
     }
 
     private fun calcRelationScore(state: SimulationState, action: Action): Double {

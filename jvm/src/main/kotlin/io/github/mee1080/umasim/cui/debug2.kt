@@ -35,11 +35,11 @@ fun testAoharuSimulation() {
         selector
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
-        println("${turnToString(history.state.turn)}: ${history.action.toShortString()}")
-        println(history.state.status)
-        println(history.state.teamStatusRank.map { "${it.key}:${it.value.rank}" }.joinToString(" "))
-        println(history.state.training.joinToString(" ") { "${it.type}:${it.level}" })
-        history.state.teamMember.forEach {
+        println("${turnToString(history.beforeActionState.turn)}: ${history.action.toShortString()}")
+        println(history.beforeActionState.status)
+        println(history.beforeActionState.teamStatusRank.map { "${it.key}:${it.value.rank}" }.joinToString(" "))
+        println(history.beforeActionState.training.joinToString(" ") { "${it.type}:${it.level}" })
+        history.beforeActionState.teamMember.forEach {
             val aoharuState = it.scenarioState as AoharuMemberState
             println("${it.name}: ${aoharuState.status.toShortString()}/${aoharuState.maxStatus.toShortString()} ${aoharuState.aoharuTrainingCount}")
         }

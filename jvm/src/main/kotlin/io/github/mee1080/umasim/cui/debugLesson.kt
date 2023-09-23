@@ -77,19 +77,19 @@ fun singleGrandLiveSimulation() {
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
-        println(" ${history.state.status}")
-        println(" ${history.state.member.joinToString { "${it.charaName}=${it.relation}" }}")
-        history.state.liveStatus?.let { liveStatus ->
-            println(" ${history.state.status.performance}")
+        println(" ${history.beforeActionState.status}")
+        println(" ${history.beforeActionState.member.joinToString { "${it.charaName}=${it.relation}" }}")
+        history.beforeActionState.liveStatus?.let { liveStatus ->
+            println(" ${history.beforeActionState.status.performance}")
             println(" ${liveStatus.lessonSelection.joinToString { it.displayName }}")
             println(" ${liveStatus.learnedLesson.reversed().joinToString { it.displayName }}")
         }
         println(" ${history.action.toShortString()}")
-        println(" ${history.status}")
+        println(" ${history.actionResult}")
     }
     println(result.first)
-    result.second.last().state.liveStatus?.learnedLesson?.forEach { println(it.displayName) }
+    result.second.last().beforeActionState.liveStatus?.learnedLesson?.forEach { println(it.displayName) }
     println(result.first.status)
-    result.second.last().state.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()
+    result.second.last().beforeActionState.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()
         ?.forEach { println(it) }
 }

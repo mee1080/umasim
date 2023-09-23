@@ -157,7 +157,10 @@ data class LArcActionParam(
     val condition: Set<String> = emptySet(),
     val mayEventChance: Boolean = false,
 ) : ScenarioActionParam {
-    override fun toShortString() = "supporterPt=$supporterPt, aptitudePt=$aptitudePt"
+    override fun toShortString() = buildString {
+        if (supporterPt > 0) append("sup=$supporterPt,")
+        if (supporterPt > 0) append("apt=$aptitudePt,")
+    }
 
     operator fun plus(other: LArcActionParam) = LArcActionParam(
         supporterPt = supporterPt + other.supporterPt,

@@ -6,10 +6,10 @@ import kotlin.math.min
 import kotlin.random.Random
 
 // TODO LArc
-class LArcScenarioEvents : CommonScenarioEvents() {
+class LArcScenarioEvents : ScenarioEvents {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
-        return state.copy(
+        return state.updateFactor().copy(
             goalRace = listOf(
                 state.goalRace.first(),
                 RaceEntry(34, "東京優駿（日本ダービー）", 6000, 20000, RaceGrade.G1, 2400, RaceGround.TURF, "東京"),
@@ -23,10 +23,22 @@ class LArcScenarioEvents : CommonScenarioEvents() {
     }
 
     override fun beforeAction(state: SimulationState): SimulationState {
-        val base = super.beforeAction(state).turnUpdate()
+        val base = state.turnUpdate()
         return when (base.turn) {
             // 3T行動前 メイちゃん/理事長参加、L'Arcメンバー加入
             3 -> base.createLArcStatus()
+
+            // クラシック継承
+            31 -> state
+                .updateFactor()
+
+            // クラシック新年
+            49 -> state
+                .updateStatus { it.copy(hp = min(it.maxHp, it.hp + 30)) }
+
+            // シニア継承
+            55 -> state
+                .updateFactor()
 
             // C7前行動前 海外適性獲得
             37 -> base.updateLArcStatus {
@@ -41,7 +53,7 @@ class LArcScenarioEvents : CommonScenarioEvents() {
     }
 
     override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
-        val base = super.afterAction(state, selector).applyExpectationEvent()
+        val base = state.applyExpectationEvent()
         return when (base.turn) {
             // J10前行動後 適性Pt+100
             19 -> base.addAptitudePt(100)
@@ -103,9 +115,8 @@ class LArcScenarioEvents : CommonScenarioEvents() {
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {
-        val base = super.afterSimulation(state)
         // 交流戦全勝、凱旋門賞連覇
-        return base.addStatus(Status(30, 30, 30, 30, 30, 60))
+        return state.addStatus(Status(30, 30, 30, 30, 30, 60))
     }
 
     private fun SimulationState.createLArcStatus(): SimulationState {

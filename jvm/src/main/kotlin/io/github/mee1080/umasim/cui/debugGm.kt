@@ -112,10 +112,10 @@ fun gmSingleSimulation() {
                 founders += "${index + 1}: ${it.founder}"
             }
         }
-        println("  ${history.state.training.map { "${it.type}${it.level} " }}")
-        println("  ${history.state.gmStatus?.toShortString()}")
-        println("  ${history.status + history.state.status}")
-        println("  ${history.state.member.first { it.card.type == StatusType.GROUP }.supportState?.passionTurn}")
+        println("  ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")
+        println("  ${history.beforeActionState.gmStatus?.toShortString()}")
+        println("  ${history.actionResult + history.beforeActionState.status}")
+        println("  ${history.beforeActionState.member.first { it.card.type == StatusType.GROUP }.supportState?.passionTurn}")
     }
     println(result.first)
     println(result.first.status)

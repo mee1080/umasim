@@ -607,7 +607,7 @@ class ViewModel(val scope: CoroutineScope) {
             updateState(calculate = false) {
                 it.copy(
                     simulationResult = summary.status,
-                    simulationHistory = history.map { it.action.name to it.state.status },
+                    simulationHistory = history.map { it.action.name to it.beforeActionState.status },
                 )
             }
         }

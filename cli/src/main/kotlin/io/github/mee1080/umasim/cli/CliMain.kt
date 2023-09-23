@@ -10,6 +10,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.simulation2.Runner
+import io.github.mee1080.umasim.util.replace
 
 class CliMain : CliktCommand() {
 
@@ -35,6 +36,8 @@ class CliMain : CliktCommand() {
     private val motivation by option().double().multiple()
     private val relation by option().triple().multiple()
     private val relationDefault by option().double().default(0.0)
+    private val hpKeep by option().double().multiple()
+    private val risk by option().double().multiple()
     private val aoharu by option().pair().multiple()
     private val aoharuDefault by option().double().default(0.0)
     private val aoharuBurn by option().double()
@@ -52,6 +55,8 @@ class CliMain : CliktCommand() {
     private val starGauge by option().double().multiple()
     private val aptitudePt by option().double().multiple()
     private val ssMatch by option().double().multiple()
+
+    private val evaluate by option().triple().multiple()
 
     override fun run() {
         StoreLoader.load()
@@ -82,7 +87,6 @@ class CliMain : CliktCommand() {
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
 
-            // TODO LArc
             Scenario.LARC -> {
                 {
                     val options = (0..3).map {
@@ -96,6 +100,8 @@ class CliMain : CliktCommand() {
                             hpFactor = hp.getOrElse(it) { 1.0 },
                             motivationFactor = motivation.getOrElse(it) { 1.0 },
                             relationFactor = relationFactor(StatusType.NONE, 0, 0),
+                            hpKeepFactor = hpKeep.getOrElse(it) { 1.0 },
+                            riskFactor = risk.getOrElse(it) { 2.0 },
                             starGaugeFactor = starGauge.getOrElse(it) { 1.0 },
                             aptitudePtFactor = aptitudePt.getOrElse(it) { 1.0 },
                             ssMatchScore = ssMatch.getOrElse(it) { 1.0 },
@@ -165,7 +171,7 @@ class CliMain : CliktCommand() {
                 aoharuFactor = aoharuFactor,
             )::generateSelector
         }
-        val evaluateSetting = when (distance) {
+        val evaluateSettingBase = when (distance) {
 
             "short" -> when (scenarioValue) {
                 Scenario.GM -> Runner.gmShortEvaluateSetting
@@ -191,6 +197,9 @@ class CliMain : CliktCommand() {
             }
 
             else -> Runner.lArcFlatEvaluateSetting
+        }
+        val evaluateSetting = evaluate.fold(evaluateSettingBase) { acc, setting ->
+            acc.replace(StatusType.valueOf(setting.first), setting.second.toDouble() to setting.third.toInt())
         }
         val result = Runner.runAndEvaluate(
             count, scenarioValue, charaData, supportList,

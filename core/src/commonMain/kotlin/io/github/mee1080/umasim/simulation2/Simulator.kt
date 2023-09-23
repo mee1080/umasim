@@ -104,6 +104,7 @@ class Simulator(
             state = scenarioEvents.beforeAction(state)
             state = events.beforeAction(state)
             state = state.shuffleMember()
+            val beforeActionState = state
             var action: Action?
             val selections = mutableListOf<Pair<List<Action>, SelectedAction>>()
             do {
@@ -114,10 +115,10 @@ class Simulator(
                 action = selectedAction.action
             } while (action == null)
             val result = randomSelect(action.resultCandidate)
-            history.add(SimulationHistoryItem(action, result, state, selections))
             state = state.applyAction(action, result)
             state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)
+            history.add(SimulationHistoryItem(action, result, beforeActionState, state, selections))
         }
         state = scenarioEvents.afterSimulation(state)
         return Summary(state.status, history, state.member) to history

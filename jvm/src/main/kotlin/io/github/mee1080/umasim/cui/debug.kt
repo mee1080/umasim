@@ -51,8 +51,8 @@ fun singleSimulation() {
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.action.toShortString()}")
-        println(" ${history.state.status}")
-        println(" ${history.status}")
+        println(" ${history.beforeActionState.status}")
+        println(" ${history.actionResult}")
     }
     println(result.first)
     println(result.first.status)
@@ -113,11 +113,11 @@ fun singleClimaxSimulation() {
     ) { ApproximateSimulationEvents() }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
-        println(" ${history.state.status}")
-        println(" coin:${history.state.shopCoin} ${history.state.member.joinToString { "${it.charaName}=${it.relation}" }}")
+        println(" ${history.beforeActionState.status}")
+        println(" coin:${history.beforeActionState.shopCoin} ${history.beforeActionState.member.joinToString { "${it.charaName}=${it.relation}" }}")
         println(" ${history.useItem.joinToString { it.name }}")
         println(" ${history.action.toShortString()}")
-        println(" ${history.status}")
+        println(" ${history.actionResult}")
     }
     println(result.first)
     println(result.first.status)

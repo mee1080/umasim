@@ -4,21 +4,22 @@ import io.github.mee1080.umasim.data.Status
 
 class SimulationHistoryItem(
     val action: Action,
-    val status: Status,
-    val state: SimulationState,
+    val actionResult: Status,
+    val beforeActionState: SimulationState,
+    val afterTurnState: SimulationState,
     val selections: List<Pair<List<Action>, SelectedAction>>,
 ) {
     @Deprecated("use action", ReplaceWith("action"))
     val first
         get() = action
 
-    @Deprecated("use status", ReplaceWith("status"))
+    @Deprecated("use actionResult", ReplaceWith("actionResult"))
     val second
-        get() = status
+        get() = actionResult
 
-    @Deprecated("use state", ReplaceWith("state"))
+    @Deprecated("use beforeActionState", ReplaceWith("beforeActionState"))
     val third
-        get() = state
+        get() = beforeActionState
 
     val useItem
         get() = selections.flatMap {
