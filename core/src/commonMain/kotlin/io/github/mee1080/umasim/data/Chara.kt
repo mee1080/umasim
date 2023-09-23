@@ -63,4 +63,24 @@ data class Chara(
     fun matches(filters: Collection<String>) = filters.all { filter ->
         name.contains(filter) || initialStatus.skillHint.any { it.key.contains(filter) }
     }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (other == null || this::class != other::class) return false
+
+        other as Chara
+
+        if (id != other.id) return false
+        if (rarity != other.rarity) return false
+        if (rank != other.rank) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = id
+        result = 31 * result + rarity
+        result = 31 * result + rank
+        return result
+    }
 }
