@@ -18,7 +18,7 @@ private fun speed3Stamina1Wisdom1LongSpeed() {
         Store.getSupportByName(
             "[大望は飛んでいく]エルコンドルパサー",
             "[The frontier]ジャングルポケット",
-//            "[見習い魔女と長い夜]スイープトウショウ",
+//            "[迫る熱に押されて]キタサンブラック",
             "[ハネ退け魔を退け願い込め]スペシャルウィーク",
             "[君と見る泡沫]マンハッタンカフェ",
             "[L'aubeは迫りて]佐岳メイ",
