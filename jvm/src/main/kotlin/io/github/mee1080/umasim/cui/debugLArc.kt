@@ -29,25 +29,21 @@ fun lArcRunSimulation() {
         "[大望は飛んでいく]エルコンドルパサー",
         "[The frontier]ジャングルポケット",
         "[迫る熱に押されて]キタサンブラック",
-        "[ロード・オブ・ウオッカ]ウオッカ",
-        "[Dear Mr. C.B.]ミスターシービー",
+        "[一粒の安らぎ]スーパークリーク",
+        "[君と見る泡沫]マンハッタンカフェ",
         "[L'aubeは迫りて]佐岳メイ",
     )
     println(chara)
     println(support)
     val factor = listOf(
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-        StatusType.STAMINA to 3, StatusType.GUTS to 3, StatusType.GUTS to 3,
+        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.GUTS to 3,
     )
     runBlocking {
         repeat(9) { index ->
 //            val selector = { LArcActionSelector(LArcActionSelector.Option(hpFactor = hpFactor)) }
             val riskFactor = 0.5 * index + 1.0
-            val selector = {
-                LArcActionSelector(LArcActionSelector.speed3Power1Wisdom1MiddleOptions.map {
-                    it.copy(riskFactor = riskFactor)
-                })
-            }
+            val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
             launch(this@CoroutineContext) {
                 val summary = Runner.run(
                     10000,
@@ -57,8 +53,8 @@ fun lArcRunSimulation() {
                     factor,
                     selector = selector,
                 )
-                val evaluator = Evaluator(summary, Runner.lArcMiddleEvaluateSetting, 0.2)
-                val score = (evaluator.upperSum(0.2, Runner.lArcMiddleEvaluateSetting) * 1000).roundToInt() / 1000.0
+                val evaluator = Evaluator(summary, Runner.lArcLongEvaluateSetting, 0.2)
+                val score = (evaluator.upperSum(0.2, Runner.lArcLongEvaluateSetting) * 1000).roundToInt() / 1000.0
                 println("0,$riskFactor,0,${evaluator.toSummaryString()},$score")
             }
         }

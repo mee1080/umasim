@@ -135,10 +135,10 @@ def objective(trial):
     """
 
     speed = 1.5
-    stamina = 1.6
-    power = 1.3
-    guts = 1.3
-    wisdom = trial.suggest_float ('wisdom', 1.0, 1.5, step=0.05)
+    stamina = 1.7
+    power = 1.0
+    guts = 1.1
+    wisdom = 0.9
     skillPt = 0.4
     hp1 = trial.suggest_float ('hp1', 0.4, 2.0, step=0.1)
     hp2 = trial.suggest_float ('hp2', 0.4, 2.0, step=0.1)
@@ -163,7 +163,7 @@ def objective(trial):
           f' --support "[L\'aubeは迫りて]佐岳メイ" 4'\
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
-          f' --evaluate WISDOM 0.8 1250'\
+          f' --distance long'\
           f' --relation NONE 0 {relation}'\
           f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
           f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp1} --motivation {motivation}'\
@@ -189,7 +189,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='larcms3h1w1f1_1',
+    study_name='larcms3h1w1f1_2',
     storage='sqlite:///optuna_study_larc.db',
     load_if_exists=True,
     direction='maximize'

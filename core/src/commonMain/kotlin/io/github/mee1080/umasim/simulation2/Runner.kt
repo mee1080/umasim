@@ -118,10 +118,10 @@ object Runner {
 
     val lArcLongEvaluateSetting = mapOf(
         StatusType.SPEED to (1.3 to 2000),
-        StatusType.STAMINA to (1.3 to 1500),
+        StatusType.STAMINA to (1.3 to 1600),
         StatusType.POWER to (1.0 to 1400),
-        StatusType.GUTS to (0.7 to 1200),
-        StatusType.WISDOM to (1.0 to 1300),
+        StatusType.GUTS to (0.7 to 1000),
+        StatusType.WISDOM to (1.0 to 1100),
         StatusType.SKILL to (0.8 to 3600),
     )
 

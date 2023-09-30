@@ -128,7 +128,7 @@ class LArcScenarioEvents : ScenarioEvents {
         val linkSupportCharaNames = linkSupportMember.map { it.charaName }.toSet()
         val linkGuestMember = linkChara
             .filter { !linkSupportCharaNames.contains(it) }
-            .take(6 - linkSupportMember.size)
+            .take(linkChara.size - linkSupportMember.size)
             .map { Store.guestSupportCardMap[it]!! }
             .map { MemberState(memberIndex++, it, StatusType.NONE, null, LArcMemberState()) }
 
@@ -137,7 +137,7 @@ class LArcScenarioEvents : ScenarioEvents {
         val notLinkGuestMember = Store.guestSupportCardList
             .filter { !linkChara.contains(it.chara) && !notLinkSupportCharaNames.contains(it.chara) }
             .shuffled()
-            .take(9 - notLinkSupportMember.size)
+            .take(15 - linkChara.size - notLinkSupportMember.size)
             .map { MemberState(memberIndex++, it, StatusType.NONE, null, LArcMemberState()) }
 
         val linkShuffled = (linkSupportMember + linkGuestMember).shuffled()
