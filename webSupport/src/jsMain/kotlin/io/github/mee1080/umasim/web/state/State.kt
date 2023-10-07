@@ -26,7 +26,7 @@ import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.util.replace
 
 enum class Page(val displayName: String, val icon: String) {
-    Top("育成", "trending_up"),
+    Top("トレーニング", "trending_up"),
     Rotation("ローテーション", "event_note"),
     Lesson("レッスン", "queue_music"),
 }
@@ -47,7 +47,7 @@ data class State(
     val filteredSupportList: List<Pair<Int, SupportCard?>> = WebConstants.displaySupportList,
     val supportSelectionList: List<SupportSelection> = Array(6) { SupportSelection() }.asList(),
     val teamJoinCount: Int = 0,
-    val selectedTrainingType: Int = StatusType.SPEED.ordinal,
+    val selectedTrainingType: StatusType = StatusType.SPEED,
     val trainingLevel: Int = 1,
     val motivation: Int = 2,
     val fanCount: Int = 0,
@@ -57,8 +57,8 @@ data class State(
     val speedSkillCount: Int = 0,
     val healSkillCount: Int = 0,
     val totalTrainingLevel: Int = 5,
-    val shopItemMegaphone: Int = -1,
-    val shopItemWeight: Int = -1,
+    val shopItemMegaphone: MegaphoneItem = WebConstants.dummyMegaphoneItem,
+    val shopItemWeight: WeightItem = WebConstants.dummyWeightItem,
     val trainingResult: Status = Status(),
     val trainingItemBonus: Status = Status(),
     val trainingPerformanceValue: Int = 0,
@@ -99,7 +99,7 @@ data class State(
 
     fun isFriendTraining(position: Int): Boolean {
         val selection = supportSelectionList.getOrNull(position) ?: return false
-        return selection.friend && selection.join && selectedTrainingType == selection.card?.type?.ordinal
+        return selection.friend && selection.join && selectedTrainingType == selection.card?.type
     }
 
     val friendTraining: Boolean by lazy { (0..6).any { isFriendTraining(it) } }

@@ -23,8 +23,9 @@ import io.github.mee1080.umasim.web.components.atoms.MdElevation
 import io.github.mee1080.umasim.web.components.atoms.MdIcon
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor
 import io.github.mee1080.umasim.web.components.atoms.mdElevationLevel
+import io.github.mee1080.umasim.web.components.lib.UserSelectStyle
 import io.github.mee1080.umasim.web.components.lib.stylePermanently
-import org.jetbrains.compose.web.ExperimentalComposeWebApi
+import io.github.mee1080.umasim.web.components.lib.userSelect
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.css.keywords.auto
 import org.jetbrains.compose.web.dom.AttrBuilderContext
@@ -60,6 +61,31 @@ fun HideBlock(
 
 @Composable
 fun HideBlock(
+    header: ContentBuilder<HTMLElement>,
+    initialOpen: Boolean = false,
+    wrapperAttr: AttrBuilderContext<HTMLElement>? = null,
+    headerAttr: AttrBuilderContext<HTMLElement>? = null,
+    headerClosed: ContentBuilder<HTMLElement> = header,
+    headerAttrClosed: AttrBuilderContext<HTMLElement>? = headerAttr,
+    contentAttr: AttrBuilderContext<HTMLElement>? = null,
+    content: ContentBuilder<HTMLElement>,
+) {
+    var open by remember { mutableStateOf(initialOpen) }
+    HideBlock(
+        open = open,
+        onToggle = { open = !open },
+        header = header,
+        wrapperAttr = wrapperAttr,
+        headerAttr = headerAttr,
+        headerClosed = headerClosed,
+        headerAttrClosed = headerAttrClosed,
+        contentAttr = contentAttr,
+        content = content,
+    )
+}
+
+@Composable
+fun HideBlock(
     open: Boolean,
     onToggle: () -> Unit,
     header: ContentBuilder<HTMLElement>,
@@ -87,7 +113,9 @@ fun HideBlock(
                 onToggle()
             }
         }) {
-            MdIcon(if (open) "arrow_drop_up" else "arrow_drop_down")
+            MdIcon(if (open) "arrow_drop_up" else "arrow_drop_down") {
+                style { flexShrink(0) }
+            }
             if (open) header() else headerClosed()
         }
         Div({
@@ -127,7 +155,6 @@ fun NestedHideBlock(
     )
 }
 
-@OptIn(ExperimentalComposeWebApi::class)
 private object HideBlockStyle : StyleSheet() {
     val wrapper by style {
         position(Position.Relative)
@@ -152,6 +179,7 @@ private object HideBlockStyle : StyleSheet() {
         width(100.percent)
         borderRadius(16.px)
         cursor("pointer")
+        userSelect(UserSelectStyle.None)
 
         color(MdSysColor.onSecondaryContainer.value)
         backgroundColor(MdSysColor.secondaryContainer.value)

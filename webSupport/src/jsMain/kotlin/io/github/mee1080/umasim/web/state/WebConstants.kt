@@ -148,11 +148,9 @@ object WebConstants {
         SortOrder("賢さ友情回復") { wisdomFriendRecovery },
     )
 
-    val displayTrainingTypeList = trainingType.map { it.ordinal to it.displayName }
+    val trainingTypeList = trainingType.toList()
 
-    val trainingLevelList = listOf(1, 2, 3, 4, 5).map { it to it.toString() }
-
-    val motivationList = listOf(2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
+    val motivationMap = mapOf(2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
 
     val trainingInfo = Scenario.entries.associateWith { Store.getTrainingInfo(it) }
 
@@ -192,12 +190,13 @@ object WebConstants {
         )
     )
 
-    val shopItemMegaphone = Store.Climax.shopItem.filterIsInstance<MegaphoneItem>()
+    val dummyMegaphoneItem = MegaphoneItem("なし", 0, 0, 0)
 
-    val shopItemMegaphoneNames =
-        listOf(-1 to "なし") + shopItemMegaphone.mapIndexed { index, item -> index to item.name }
+    val shopItemMegaphone = listOf(dummyMegaphoneItem) + Store.Climax.shopItem.filterIsInstance<MegaphoneItem>()
 
-    val shopItemWeight = Store.Climax.shopItem.filterIsInstance<WeightItem>()
+    val dummyWeightItem = WeightItem("なし", 0, 0, 0, StatusType.NONE)
+
+    val shopItemWeight = listOf(dummyWeightItem) + Store.Climax.shopItem.filterIsInstance<WeightItem>()
 
     val shopItemWeightNames = listOf(-1 to "なし") + shopItemWeight.mapIndexed { index, item -> index to item.name }
 

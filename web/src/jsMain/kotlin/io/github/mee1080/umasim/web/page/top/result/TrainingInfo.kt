@@ -20,18 +20,20 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.web.components.LabeledCheckbox
-import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
+import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
+import io.github.mee1080.umasim.web.components.atoms.onChange
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
-import io.github.mee1080.umasim.web.onClickOrTouch
+import io.github.mee1080.umasim.web.components.parts.SliderEntry
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
+import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.css.marginTop
-import org.jetbrains.compose.web.css.padding
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.width
 import org.jetbrains.compose.web.dom.*
@@ -40,58 +42,64 @@ import kotlin.math.roundToInt
 @Composable
 fun TrainingInfo(model: ViewModel, state: State) {
     HideBlock("トレーニング上昇量", true) {
-        LabeledRadioGroup(
-            "training",
-            "種別　：",
-            WebConstants.displayTrainingTypeList,
-            state.selectedTrainingType,
-            model::updateTrainingType,
-        )
-        LabeledRadioGroup(
-            "level",
-            "レベル：",
-            WebConstants.trainingLevelList,
-            state.trainingLevel,
-            model::updateTrainingLevel,
-        )
-        LabeledRadioGroup(
-            "motivation",
-            "やる気：",
-            WebConstants.motivationList,
-            state.motivation,
-            model::updateMotivation,
-        )
+        DivFlexCenter {
+            Text("種別　：")
+            MdRadioGroup(
+                trainingTypeList,
+                state.selectedTrainingType,
+                onSelect = model::updateTrainingType,
+                itemToLabel = { it.displayName },
+            )
+        }
+        DivFlexCenter {
+            Text("レベル：")
+            MdRadioGroup(
+                listOf(1, 2, 3, 4, 5),
+                state.trainingLevel,
+                onSelect = model::updateTrainingLevel,
+            )
+        }
+        DivFlexCenter {
+            Text("やる気：")
+            MdRadioGroup(
+                listOf(2, 1, 0, -1, -2),
+                state.motivation,
+                onSelect = model::updateMotivation,
+                itemToLabel = { WebConstants.motivationMap[it] ?: "" },
+            )
+        }
         if (state.scenario == Scenario.URA) {
-            Div {
+            DivFlexCenter {
                 Text("ハッピーミーク：")
-                LabeledCheckbox("specialMember", "参加", state.teamJoinCount >= 1) {
-                    model.updateSpecialMember(it)
+                MdCheckbox("参加", state.teamJoinCount >= 1) {
+                    onChange { model.updateSpecialMember(it) }
                 }
             }
         }
         if (state.scenario.guestMember) {
-            Div {
-                Text("サポカ外参加人数")
-                Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
-                Span({ style { padding(8.px) } }) { Text(state.teamJoinCount.toString()) }
-                Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
+            SliderEntry("サポカ外参加人数：", state.teamJoinCount, 0, 5) {
+                model.updateTeamJoinCount(it.toInt())
             }
         }
         if (state.scenario == Scenario.CLIMAX) {
-            LabeledRadioGroup(
-                "shopItemMegaphone",
-                "メガホン：",
-                WebConstants.shopItemMegaphoneNames,
-                state.shopItemMegaphone,
-                model::updateShopItemMegaphone
-            )
-            LabeledRadioGroup(
-                "shopItemWeight",
-                "アンクルウェイト：",
-                WebConstants.shopItemWeightNames,
-                state.shopItemWeight,
-                model::updateShopItemWeight
-            )
+            DivFlexCenter {
+                Text("メガホン：")
+                MdRadioGroup(
+                    WebConstants.shopItemMegaphone,
+                    state.shopItemMegaphone,
+                    onSelect = model::updateShopItemMegaphone,
+                    itemToLabel = { it.name }
+                )
+            }
+            DivFlexCenter {
+                Text("アンクルウェイト：")
+                MdRadioGroup(
+                    WebConstants.shopItemWeight,
+                    state.shopItemWeight,
+                    onSelect = model::updateShopItemWeight,
+                    itemToLabel = { it.name }
+                )
+            }
         }
         Div({ style { marginTop(16.px) } }) {
             Table({ classes(AppStyle.table) }) {

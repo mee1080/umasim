@@ -18,6 +18,10 @@
  */
 package io.github.mee1080.umasim.web.style
 
+import io.github.mee1080.umasim.web.components.lib.GridRepeatStyle
+import io.github.mee1080.umasim.web.components.lib.gridTemplateColumns
+import io.github.mee1080.umasim.web.components.lib.minMax
+import io.github.mee1080.umasim.web.components.lib.repeatGrid
 import org.jetbrains.compose.web.css.*
 
 object AppStyle : StyleSheet() {
@@ -37,28 +41,16 @@ object AppStyle : StyleSheet() {
     }
 
     val supportCardArea by style {
-        display(DisplayStyle.Flex)
-
-        self + " div" style {
-            flexGrow(1)
-            flexBasis(30.percent)
-        }
+        display(DisplayStyle.Grid)
+        gridTemplateColumns(repeatGrid(GridRepeatStyle.AutoFit, minMax(360.px, 1.fr)))
+        maxWidth(1440.px)
+        gap(16.px)
+        padding(16.px)
     }
 
     val supportCard by style {
-        position(Position.Relative)
-        self + " .after" style {
-            position(Position.Absolute)
-            property("z-index", "-1")
-            top(0.px)
-            left(0.px)
-            height((100).percent)
-            width((100).percent)
-            opacity(0.0)
-            borderRadius(50.px)
-            background("linear-gradient(to right, #e0c000, #ea4335)")
-            property("filter", "blur(5px)")
-            property("transition", "all 0.5s")
+        self + " select" style {
+            maxWidth(100.percent)
         }
     }
 

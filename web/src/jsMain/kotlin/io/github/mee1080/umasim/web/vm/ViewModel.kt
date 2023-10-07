@@ -178,17 +178,15 @@ class ViewModel(val scope: CoroutineScope) {
         }
     }
 
-    fun updateTeamJoinCount(delta: Int) {
-        if (delta + state.teamJoinCount in 0..5) {
-            updateState { it.copy(teamJoinCount = it.teamJoinCount + delta) }
-        }
+    fun updateTeamJoinCount(teamJoinCount: Int) {
+        updateState { it.copy(teamJoinCount = teamJoinCount) }
     }
 
     fun updateSpecialMember(join: Boolean) {
         updateState { it.copy(teamJoinCount = if (join) 1 else 0) }
     }
 
-    fun updateTrainingType(trainingType: Int) {
+    fun updateTrainingType(trainingType: StatusType) {
         updateState { it.copy(selectedTrainingType = trainingType) }
     }
 
@@ -224,16 +222,16 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(healSkillCount = healSkillCount) }
     }
 
-    fun updateTotalTraningLevel(totalTrainingLevel: Int) {
+    fun updateTotalTrainingLevel(totalTrainingLevel: Int) {
         updateState { it.copy(totalTrainingLevel = totalTrainingLevel) }
     }
 
-    fun updateShopItemMegaphone(index: Int) {
-        updateState { it.copy(shopItemMegaphone = index) }
+    fun updateShopItemMegaphone(shopItemMegaphone: MegaphoneItem) {
+        updateState { it.copy(shopItemMegaphone = shopItemMegaphone) }
     }
 
-    fun updateShopItemWeight(index: Int) {
-        updateState { it.copy(shopItemWeight = index) }
+    fun updateShopItemWeight(shopItemWeight: WeightItem) {
+        updateState { it.copy(shopItemWeight = shopItemWeight) }
     }
 
     fun updateLiveSpeed(value: String) {
@@ -298,7 +296,7 @@ class ViewModel(val scope: CoroutineScope) {
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
-        val trainingType = StatusType.entries[state.selectedTrainingType]
+        val trainingType = state.selectedTrainingType
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
@@ -333,8 +331,8 @@ class ViewModel(val scope: CoroutineScope) {
         } else 0
 
         val itemList = listOfNotNull(
-            WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone),
-            WebConstants.shopItemWeight.getOrNull(state.shopItemWeight),
+            if (state.shopItemMegaphone == WebConstants.dummyMegaphoneItem) null else state.shopItemMegaphone,
+            if (state.shopItemWeight == WebConstants.dummyWeightItem) null else state.shopItemWeight,
         )
         val trainingItemBonus = when (state.scenario) {
             Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first, itemList)

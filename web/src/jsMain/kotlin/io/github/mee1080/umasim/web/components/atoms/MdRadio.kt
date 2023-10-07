@@ -27,10 +27,7 @@ import io.github.mee1080.umasim.web.components.lib.addEventListener
 import io.github.mee1080.umasim.web.components.lib.generateId
 import io.github.mee1080.umasim.web.components.lib.require
 import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.css.AlignItems
-import org.jetbrains.compose.web.css.DisplayStyle
-import org.jetbrains.compose.web.css.alignItems
-import org.jetbrains.compose.web.css.display
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLLabelElement
@@ -54,7 +51,14 @@ fun <T : Any> MdRadioGroup(
     itemToLabel: (T) -> String = { it.toString() }
 ) {
     val name = remember { generateId() }
-    Span(attrs) {
+    Span({
+        style {
+            display(DisplayStyle.Flex)
+            columnGap(12.px)
+            padding(12.px)
+        }
+        attrs?.invoke(this)
+    }) {
         selection.forEach { item ->
             key(itemToKey(item)) {
                 MdRadio(
@@ -81,6 +85,7 @@ fun MdRadio(
     Label(attrs = {
         style {
             display(DisplayStyle.LegacyInlineFlex)
+            columnGap(4.px)
             alignItems(AlignItems.Center)
         }
         labelAttrs()

@@ -24,108 +24,45 @@ import io.github.mee1080.umasim.data.Knowledge
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
 import io.github.mee1080.umasim.web.components.LabeledRadio
-import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
+import io.github.mee1080.umasim.web.components.atoms.MdTextButton
+import io.github.mee1080.umasim.web.components.atoms.onChange
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
+import io.github.mee1080.umasim.web.components.parts.SliderEntry
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
-import org.w3c.dom.HTMLDivElement
 import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun TrainingSetting(model: ViewModel, state: State) {
     HideBlock("トレーニング設定", true) {
         NestedHideBlock("特殊固有") {
-            Div {
-                Span { Text("ファン数：") }
-                MdSlider(state.fanCount, 0, 200000) {
-                    step(10000)
-                    onInput { model.updateFanCount(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.fanCount.toString()) }
+            SliderEntry("ファン数：", state.fanCount, 0, 200000, 10000) {
+                model.updateFanCount(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("体力：") }
-                MdSlider(state.hp, 0, 120) {
-                    onInput { model.updateHp(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.hp.toString()) }
+            SliderEntry("体力：", state.hp, 0, 120) {
+                model.updateHp(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("体力最大値：") }
-                MdSlider(state.maxHp, 100, 120) {
-                    onInput { model.updateMaxHp(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.maxHp.toString()) }
+            SliderEntry("体力最大値：", state.maxHp, 100, 120) {
+                model.updateMaxHp(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("絆合計：") }
-                MdSlider(state.totalRelation, 0, 600) {
-                    onInput { model.updateTotalRelation(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.totalRelation.toString()) }
+            SliderEntry("絆合計：", state.totalRelation, 0, 600) {
+                model.updateTotalRelation(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("速度スキル数：") }
-                MdSlider(state.speedSkillCount, 0, 5) {
-                    onInput { model.updateSpeedSkillCount(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.speedSkillCount.toString()) }
+            SliderEntry("速度スキル数：", state.speedSkillCount, 0, 5) {
+                model.updateSpeedSkillCount(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("回復スキル数：") }
-                MdSlider(state.healSkillCount, 0, 3) {
-                    onInput { model.updateHealSkillCount(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.healSkillCount.toString()) }
+            SliderEntry("回復スキル数：", state.healSkillCount, 0, 3) {
+                model.updateHealSkillCount(it.toInt())
             }
-            Div({
-                style {
-                    display(DisplayStyle.Flex)
-                    alignItems(AlignItems.Center)
-                }
-            }) {
-                Span { Text("合計トレーニングLv：") }
-                MdSlider(state.totalTrainingLevel, 5, 20) {
-                    onInput { model.updateTotalTraningLevel(it.toInt()) }
-                    style { width(300.px) }
-                }
-                Span { Text(state.totalTrainingLevel.toString()) }
+            SliderEntry("合計トレLv：", state.totalTrainingLevel, 5, 20) {
+                model.updateTotalTrainingLevel(it.toInt())
             }
         }
         if (state.scenario == Scenario.GRAND_LIVE) {
@@ -224,18 +161,8 @@ fun TrainingSetting(model: ViewModel, state: State) {
 
                 H3 { Text("知識Lv") }
                 Founder.entries.forEach { founder ->
-                    Div({
-                        style {
-                            display(DisplayStyle.Flex)
-                            alignItems(AlignItems.Center)
-                        }
-                    }) {
-                        Span { Text("${founder.longName}：") }
-                        MdSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
-                            onInput { model.updateGmWisdomLevel(founder, it.toInt()) }
-                            style { width(300.px) }
-                        }
-                        Span { Text(state.gmState.wisdomLevel[founder].toString()) }
+                    SliderEntry("${founder.longName}：", state.gmState.wisdomLevel[founder]!!, 0, 5) {
+                        model.updateGmWisdomLevel(founder, it.toInt())
                     }
                 }
             }
@@ -287,30 +214,6 @@ fun TrainingSetting(model: ViewModel, state: State) {
             }
         }
     }
-}
-
-@Composable
-private fun SliderEntry(label: String, value: Int, min: Int, max: Int, onInput: (Number) -> Unit) {
-    DivFlexCenter {
-        Span { Text(label) }
-        MdSlider(value, min, max) {
-            onInput(onInput)
-            style { width(300.px) }
-        }
-        Span { Text(value.toString()) }
-    }
-}
-
-@Composable
-private fun DivFlexCenter(
-    content: ContentBuilder<HTMLDivElement>
-) {
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }, content)
 }
 
 @Composable

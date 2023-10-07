@@ -20,13 +20,12 @@ package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.web.components.LabeledCheckbox
-import io.github.mee1080.umasim.web.components.LabeledRadio
-import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.state.State
+import io.github.mee1080.umasim.web.state.SupportSelection
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.displayName
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -41,7 +40,31 @@ import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun SupportSelect(model: ViewModel, state: State) {
-    HideBlock("サポートカード", true) {
+    HideBlock(
+        header = { Text("サポートカード") },
+        initialOpen = true,
+        headerClosed = {
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Column)
+                }
+            }) {
+                Div { Text("サポートカード:") }
+                Div({
+                    style {
+                        display(DisplayStyle.Flex)
+                        flexWrap(FlexWrap.Wrap)
+                        columnGap(16.px)
+                    }
+                }) {
+                    state.supportSelectionList.forEach {
+                        Div { Text(it.name) }
+                    }
+                }
+            }
+        }
+    ) {
         NestedHideBlock("保存・読み込み") {
             Div({
                 style {
@@ -114,100 +137,9 @@ fun SupportSelect(model: ViewModel, state: State) {
                 itemToValue = { it.label },
             )
         }
-        Div {
-            (0..1).forEach { row ->
-                Div({ classes(AppStyle.supportCardArea) }) {
-                    state.supportSelectionList.slice((row * 3)..(row * 3 + 2)).forEachIndexed { offset, item ->
-                        val index = row * 3 + offset
-                        Div({
-                            when (item.card?.type) {
-                                StatusType.SPEED -> rgb(69, 196, 255)
-                                StatusType.STAMINA -> rgb(255, 144, 127)
-                                StatusType.POWER -> rgb(255, 185, 21)
-                                StatusType.GUTS -> rgb(255, 144, 186)
-                                StatusType.WISDOM -> rgb(32, 216, 169)
-                                StatusType.FRIEND -> rgb(255, 211, 108)
-                                StatusType.GROUP -> rgb(149, 243, 86)
-                                else -> null
-                            }?.let {
-                                style {
-                                    background("linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it)")
-                                }
-                            }
-                        }) {
-                            Div {
-                                val selection = WebConstants.displayStatusTypeList
-                                val selectedValue = item.statusType
-                                Select({
-                                    prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
-                                        selection.indexOfFirst { it == selectedValue })
-                                    onChange { model.updateSupportType(index, selection[it.value!!.toInt()]) }
-                                }) {
-                                    selection.forEachIndexed { index, statusType ->
-                                        Option(index.toString(), { if (statusType == selectedValue) selected() }) {
-                                            Text(statusType.displayName)
-                                        }
-                                    }
-                                }
-                            }
-                            Div({
-                                classes(AppStyle.supportCard)
-                                if (state.isFriendTraining(index)) {
-                                    classes(AppStyle.friendSupportCard)
-                                }
-                            }) {
-                                val selection = state.getSupportSelection(index)
-                                val selectedValue = item.selectedSupport
-                                Select({
-                                    prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
-                                        selection.indexOfFirst { it.first == selectedValue })
-                                    onChange { model.updateSupport(index, it.value!!.toInt()) }
-                                }) {
-                                    selection.forEach { (index, card) ->
-                                        Option(index.toString(), { if (index == selectedValue) selected() }) {
-                                            Text(card.displayName() + state.supportSortOrder.toInfo(card))
-                                        }
-                                    }
-                                }
-                                Div({ classes("after") })
-                            }
-                            LabeledRadioGroup(
-                                "talent$index",
-                                "上限解放：",
-                                WebConstants.supportTalentList,
-                                item.supportTalent,
-                            ) { model.updateSupportTalent(index, it) }
-                            Div {
-                                LabeledCheckbox("join$index", "練習参加", item.join) { model.updateJoin(index, it) }
-                            }
-                            Div {
-                                Text("絆")
-                                item.relationSelection.forEach {
-                                    LabeledRadio(
-                                        "relation$index", "$it", "$it", item.relation == it
-                                    ) { model.updateRelation(index, it) }
-                                }
-                            }
-                            Div {
-                                if (item.statusType == StatusType.GROUP) {
-                                    LabeledCheckbox("passion$index", "情熱ゾーン", item.passion) {
-                                        model.updatePassion(index, it)
-                                    }
-                                }
-                            }
-                            Div {
-                                if (item.card?.specialUnique?.any { it.needCheckFriendCount } == true) {
-                                    Text("友情回数")
-                                    (0..5).forEach {
-                                        LabeledRadio(
-                                            "friendCount$index", "$it", "$it", item.friendCount == it
-                                        ) { model.updateFriendCount(index, it) }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
+        Div({ classes(AppStyle.supportCardArea) }) {
+            state.supportSelectionList.forEachIndexed { index, item ->
+                SupportCardBlock(item, index, model, state)
             }
         }
         Div {
@@ -225,6 +157,98 @@ fun SupportSelect(model: ViewModel, state: State) {
                 onClick {
                     state.supportSelectionList.indices.forEach { model.updateJoin(it, false) }
                 }
+            }
+        }
+    }
+}
+
+@Composable
+fun SupportCardBlock(item: SupportSelection, index: Int, model: ViewModel, state: State) {
+    Card({
+        when (item.card?.type) {
+            StatusType.SPEED -> rgb(69, 196, 255)
+            StatusType.STAMINA -> rgb(255, 144, 127)
+            StatusType.POWER -> rgb(255, 185, 21)
+            StatusType.GUTS -> rgb(255, 144, 186)
+            StatusType.WISDOM -> rgb(32, 216, 169)
+            StatusType.FRIEND -> rgb(255, 211, 108)
+            StatusType.GROUP -> rgb(149, 243, 86)
+            else -> null
+        }?.let {
+            style {
+                if (state.isFriendTraining(index)) {
+                    background("linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it), linear-gradient(to right, #e0c00020, #ea433520)")
+                } else {
+                    background("linear-gradient(170deg, #ffffff00, #ffffff00 70%, $it)")
+                }
+            }
+        }
+    }) {
+        Div {
+            val selection = WebConstants.displayStatusTypeList
+            val selectedValue = item.statusType
+            Select({
+                prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
+                    selection.indexOfFirst { it == selectedValue })
+                onChange { model.updateSupportType(index, selection[it.value!!.toInt()]) }
+            }) {
+                selection.forEachIndexed { index, statusType ->
+                    Option(index.toString(), { if (statusType == selectedValue) selected() }) {
+                        Text(statusType.displayName)
+                    }
+                }
+            }
+        }
+        Div({
+            classes(AppStyle.supportCard)
+            if (state.isFriendTraining(index)) {
+                classes(AppStyle.friendSupportCard)
+            }
+        }) {
+            val selection = state.getSupportSelection(index)
+            val selectedValue = item.selectedSupport
+            Select({
+                prop({ e: HTMLSelectElement, v -> e.selectedIndex = v },
+                    selection.indexOfFirst { it.first == selectedValue })
+                onChange { model.updateSupport(index, it.value!!.toInt()) }
+            }) {
+                selection.forEach { (index, card) ->
+                    Option(index.toString(), { if (index == selectedValue) selected() }) {
+                        Text(card.displayName() + state.supportSortOrder.toInfo(card))
+                    }
+                }
+            }
+        }
+        DivFlexCenter {
+            Text("上限解放：")
+            MdRadioGroup(listOf(0, 1, 2, 3, 4), item.supportTalent, onSelect = {
+                model.updateSupportTalent(index, it)
+            })
+        }
+        Div {
+            MdCheckbox("練習参加", item.join) {
+                onChange { model.updateJoin(index, it) }
+            }
+        }
+        DivFlexCenter {
+            Text("絆：")
+            MdRadioGroup(item.relationSelection, item.relation, onSelect = {
+                model.updateRelation(index, it)
+            })
+        }
+        Div {
+            if (item.statusType == StatusType.GROUP) {
+                MdCheckbox("情熱ゾーン", item.passion) {
+                    onChange { model.updatePassion(index, it) }
+                }
+            }
+        }
+        if (item.card?.specialUnique?.any { it.needCheckFriendCount } == true) {
+            DivFlexCenter {
+                Text("友情回数：")
+                MdRadioGroup(listOf(0, 1, 2, 3, 4, 5), item.friendCount, onSelect = {
+                    model.updateFriendCount(index, it)
+                })
             }
         }
     }
