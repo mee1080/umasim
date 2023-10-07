@@ -20,9 +20,9 @@ package io.github.mee1080.umasim.web.page.lesson
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.material.MwcButton
-import io.github.mee1080.umasim.web.components.material.MwcSlider
-import io.github.mee1080.umasim.web.components.material.raised
+import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
+import io.github.mee1080.umasim.web.components.atoms.MdSlider
+import io.github.mee1080.umasim.web.components.atoms.onInput
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.LessonState
@@ -79,7 +79,7 @@ fun LessonPage(model: LessonViewModel, state: LessonState) {
         }
     }) {
         Span { Text("計算回数: ") }
-        MwcSlider(state.stepCount, 1, 5) {
+        MdSlider(state.stepCount, 1, 5) {
             onInput { model.update { copy(stepCount = it.toInt()) } }
             style { width(300.px) }
         }
@@ -96,11 +96,8 @@ fun LessonPage(model: LessonViewModel, state: LessonState) {
         }
     }
     Div({ style { margin(16.px) } }) {
-        MwcButton({
+        MdFilledButton("計算実行") {
             onClickOrTouch { model.calculate() }
-            raised()
-        }) {
-            Text("計算実行")
         }
     }
     state.message?.let { message ->

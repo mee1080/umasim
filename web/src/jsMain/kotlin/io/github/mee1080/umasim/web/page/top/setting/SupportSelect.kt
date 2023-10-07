@@ -23,8 +23,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.material.*
-import io.github.mee1080.umasim.web.onClickOrTouch
+import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.displayName
@@ -46,18 +45,16 @@ fun SupportSelect(model: ViewModel, state: State) {
             }
         }) {
             Text("保存: ")
-            MwcTextField(state.supportSaveName) {
+            MdOutlinedTextField(state.supportSaveName) {
                 placeholder("保存名")
-                size(40)
-                outlined()
                 onInput { model.updateSupportSaveName(it) }
+                style {
+                    width(400.px)
+                }
             }
-            MwcButton({
+            MdFilledButton(if (state.supportLoadList.contains(state.supportSaveName)) "上書保存" else "新規保存") {
                 if (state.supportSaveName.isEmpty()) disabled()
-                onClickOrTouch { model.saveSupport() }
-                raised()
-            }) {
-                Text(if (state.supportLoadList.contains(state.supportSaveName)) "上書保存" else "新規保存")
+                onClick { model.saveSupport() }
             }
         }
         Div({
@@ -67,16 +64,15 @@ fun SupportSelect(model: ViewModel, state: State) {
             }
         }) {
             Text("読込: ")
-            MwcSelect(
+            MdOutlinedSelect(
                 state.supportLoadList,
                 state.supportLoadName,
                 onSelect = model::updateSupportLoadName,
             )
-            MwcButton({
+            MdFilledButton("読込") {
                 if (state.supportLoadName.isEmpty()) disabled()
                 onClick { model.loadSupport() }
-                raised()
-            }) { Text("読込") }
+            }
         }
     }
     Div({
@@ -86,17 +82,17 @@ fun SupportSelect(model: ViewModel, state: State) {
             alignItems(AlignItems.Center)
         }
     }) {
-        MwcTextField(state.supportFilter) {
+        MdOutlinedTextField(state.supportFilter) {
             placeholder("カード名、スキルヒントでフィルタ (空白区切りでAnd検索)")
-            size(60)
-            outlined()
             onInput { model.updateSupportFilter(it) }
+            style {
+                width(400.px)
+            }
         }
-        MwcButton({
+        MdFilledTonalButton("フィルタ適用") {
             if (state.supportFilterApplied) disabled()
-            onClickOrTouch { model.applyFilter() }
-            raised()
-        }) { Text("フィルタ適用") }
+            onClick { model.applyFilter() }
+        }
     }
     Div({
         style {
@@ -106,7 +102,7 @@ fun SupportSelect(model: ViewModel, state: State) {
         }
     }) {
         Text("ソート順: ")
-        MwcSelect(
+        MdOutlinedSelect(
             WebConstants.supportSortOrder,
             state.supportSortOrder,
             onSelect = model::updateSorOrder,
@@ -210,26 +206,20 @@ fun SupportSelect(model: ViewModel, state: State) {
         }
     }
     Div {
-        MwcButton({
-            onClickOrTouch {
+        MdTextButton("全員絆0") {
+            onClick {
                 state.supportSelectionList.indices.forEach { model.updateRelation(it, 0) }
             }
-        }) {
-            Text("全員絆0")
         }
-        MwcButton({
-            onClickOrTouch {
+        MdTextButton("全員絆80") {
+            onClick {
                 state.supportSelectionList.indices.forEach { model.updateRelation(it, 80) }
             }
-        }) {
-            Text("全員絆80")
         }
-        MwcButton({
-            onClickOrTouch {
+        MdTextButton("全員不参加") {
+            onClick {
                 state.supportSelectionList.indices.forEach { model.updateJoin(it, false) }
             }
-        }) {
-            Text("全員不参加")
         }
     }
 }

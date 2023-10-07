@@ -19,7 +19,8 @@
 package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.web.components.material.MwcSelect
+import io.github.mee1080.umasim.web.components.atoms.MdFilledSelect
+import io.github.mee1080.umasim.web.components.atoms.MdOutlinedSelect
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -33,7 +34,7 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun CharaSelect(model: ViewModel, state: State) {
     H2 { Text("育成ウマ娘") }
-    MwcSelect(
+    MdOutlinedSelect(
         WebConstants.charaList,
         state.chara,
         {
@@ -43,6 +44,7 @@ fun CharaSelect(model: ViewModel, state: State) {
             }
         },
         onSelect = model::updateChara,
-        itemToValue = { "${it.name} (${it.speedBonus},${it.staminaBonus},${it.powerBonus},${it.gutsBonus},${it.wisdomBonus})" },
+        itemToValue = { it.id.toString() },
+        itemToDisplayText = { "${it.name} (${it.speedBonus},${it.staminaBonus},${it.powerBonus},${it.gutsBonus},${it.wisdomBonus})" },
     )
 }

@@ -23,9 +23,7 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.material.MwcButton
-import io.github.mee1080.umasim.web.components.material.raised
-import io.github.mee1080.umasim.web.onClickOrTouch
+import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -149,11 +147,8 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
         }
     }
     Div({ style { marginTop(16.px) } }) {
-        MwcButton({
-            onClickOrTouch { model.calculateExpected() }
-            raised()
-        }) {
-            Text("計算")
+        MdFilledButton("計算") {
+            onClick { model.calculateExpected() }
         }
     }
     Div {

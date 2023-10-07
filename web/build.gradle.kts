@@ -24,16 +24,7 @@ kotlin {
                 implementation(project(":webSupport"))
                 implementation(compose.html.core)
                 implementation(compose.runtime)
-                implementation(npm("@material/mwc-button", "0.25.3"))
-                implementation(npm("@material/mwc-select", "0.25.3"))
-                implementation(npm("@material/mwc-list", "0.25.3"))
-                implementation(npm("@material/mwc-textfield", "0.25.3"))
-                implementation(npm("@material/mwc-formfield", "0.25.3"))
-                implementation(npm("@material/mwc-radio", "0.25.3"))
-                implementation(npm("@material/mwc-checkbox", "0.25.3"))
-                implementation(npm("@material/mwc-tab", "0.25.3"))
-                implementation(npm("@material/mwc-tab-bar", "0.25.3"))
-                implementation(npm("@material/mwc-slider", "0.25.3"))
+                implementation(npm("@material/web", "1.0.0"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
             }
         }

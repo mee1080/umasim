@@ -25,10 +25,7 @@ import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
-import io.github.mee1080.umasim.web.components.material.MwcButton
-import io.github.mee1080.umasim.web.components.material.MwcCheckbox
-import io.github.mee1080.umasim.web.components.material.MwcSlider
-import io.github.mee1080.umasim.web.onClickOrTouch
+import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -62,7 +59,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("体力：") }
-        MwcSlider(state.hp, 0, 120) {
+        MdSlider(state.hp, 0, 120) {
             onInput { model.updateHp(it.toInt()) }
             style { width(300.px) }
         }
@@ -75,7 +72,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("体力最大値：") }
-        MwcSlider(state.maxHp, 100, 120) {
+        MdSlider(state.maxHp, 100, 120) {
             onInput { model.updateMaxHp(it.toInt()) }
             style { width(300.px) }
         }
@@ -88,7 +85,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("絆合計：") }
-        MwcSlider(state.totalRelation, 0, 600) {
+        MdSlider(state.totalRelation, 0, 600) {
             onInput { model.updateTotalRelation(it.toInt()) }
             style { width(300.px) }
         }
@@ -101,7 +98,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("速度スキル数：") }
-        MwcSlider(state.speedSkillCount, 0, 5) {
+        MdSlider(state.speedSkillCount, 0, 5) {
             onInput { model.updateSpeedSkillCount(it.toInt()) }
             style { width(300.px) }
         }
@@ -114,7 +111,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("回復スキル数：") }
-        MwcSlider(state.healSkillCount, 0, 3) {
+        MdSlider(state.healSkillCount, 0, 3) {
             onInput { model.updateHealSkillCount(it.toInt()) }
             style { width(300.px) }
         }
@@ -127,7 +124,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
         }
     }) {
         Span { Text("合計トレーニングLv：") }
-        MwcSlider(state.totalTrainingLevel, 5, 20) {
+        MdSlider(state.totalTrainingLevel, 5, 20) {
             onInput { model.updateTotalTraningLevel(it.toInt()) }
             style { width(300.px) }
         }
@@ -201,9 +198,9 @@ fun TrainingSetting(model: ViewModel, state: State) {
             }
         }
         Div {
-            MwcButton({
-                onClickOrTouch { model.clearGmKnowledge() }
-            }) { Text("クリア") }
+            MdTextButton("クリア") {
+                onClick { model.clearGmKnowledge() }
+            }
         }
 
         H3 { Text("女神の叡智") }
@@ -233,7 +230,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
                 }
             }) {
                 Span { Text("${founder.longName}：") }
-                MwcSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
+                MdSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
                     onInput { model.updateGmWisdomLevel(founder, it.toInt()) }
                     style { width(300.px) }
                 }
@@ -275,13 +272,13 @@ fun TrainingSetting(model: ViewModel, state: State) {
             model.updateLArc { copy(hopeOfLArc = it.toInt()) }
         }
         DivFlexCenter {
-            MwcButton({ onClickOrTouch { model.setAllAptitude(0) } }) { Text("海外適性すべて0") }
-            MwcButton({ onClickOrTouch { model.setAllAptitude(1) } }) { Text("海外適性すべて1") }
-            MwcButton({ onClickOrTouch { model.setAllAptitude(2) } }) { Text("海外適性すべて2") }
-            MwcButton({ onClickOrTouch { model.setAllAptitude(3) } }) { Text("海外適性すべて3") }
+            MdTextButton("海外適性すべて0") { onClick { model.setAllAptitude(0) } }
+            MdTextButton("海外適性すべて1") { onClick { model.setAllAptitude(1) } }
+            MdTextButton("海外適性すべて2") { onClick { model.setAllAptitude(2) } }
+            MdTextButton("海外適性すべて3") { onClick { model.setAllAptitude(3) } }
         }
         DivFlexCenter {
-            MwcCheckbox("海外遠征中", lArcState.overseas) {
+            MdCheckbox("海外遠征中", lArcState.overseas) {
                 onChange { model.updateLArc { copy(overseas = it) } }
             }
         }
@@ -292,7 +289,7 @@ fun TrainingSetting(model: ViewModel, state: State) {
 private fun SliderEntry(label: String, value: Int, min: Int, max: Int, onInput: (Number) -> Unit) {
     DivFlexCenter {
         Span { Text(label) }
-        MwcSlider(value, min, max) {
+        MdSlider(value, min, max) {
             onInput(onInput)
             style { width(300.px) }
         }

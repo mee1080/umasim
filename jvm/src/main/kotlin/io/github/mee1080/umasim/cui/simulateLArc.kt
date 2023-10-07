@@ -7,8 +7,8 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLarc() {
-//    speed3Stamina1Wisdom1Long()
-    speed3Power1Wisdom1Middle()
+    speed3Stamina1Wisdom1Long()
+//    speed3Power1Wisdom1Middle()
 }
 
 private fun speed3Stamina1Wisdom1Long() {

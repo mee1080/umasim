@@ -1,5 +1,5 @@
 /*
- * Copyright 2021 mee1080
+ * Copyright 2023 mee1080
  *
  * This file is part of umasim.
  *
@@ -16,23 +16,23 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with umasim.  If not, see <https://www.gnu.org/licenses/>.
  */
-package io.github.mee1080.umasim.web.page.top.setting
+package io.github.mee1080.umasim.web.components.lib
 
-import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
-import io.github.mee1080.umasim.web.state.State
-import io.github.mee1080.umasim.web.state.WebConstants
-import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.dom.H2
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.css.CSSSizeValue
+import org.jetbrains.compose.web.css.CSSUnitRel
+import org.jetbrains.compose.web.css.CSSUnitValueTyped
 
-@Composable
-fun ScenarioSelect(model: ViewModel, state: State) {
-    H2 { Text("育成シナリオ") }
-    MdRadioGroup(
-        WebConstants.scenarioList,
-        state.scenario,
-        onSelect = model::updateScenario,
-        itemToLabel = { it.displayName },
-    )
+@Suppress("ClassName")
+interface CSSUnitExt {
+
+    interface dvw : CSSUnitRel
+    interface dvh : CSSUnitRel
+
+    companion object {
+        inline val dvw get() = "dvw".unsafeCast<dvw>()
+        inline val dvh get() = "dvh".unsafeCast<dvh>()
+    }
 }
+
+val Number.dvw get(): CSSSizeValue<CSSUnitExt.dvw> = CSSUnitValueTyped(this.toFloat(), CSSUnitExt.dvw)
+val Number.dvh get(): CSSSizeValue<CSSUnitExt.dvh> = CSSUnitValueTyped(this.toFloat(), CSSUnitExt.dvh)

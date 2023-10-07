@@ -53,25 +53,25 @@ class LArcActionSelector(
                 gutsFactor = 1.1,
                 wisdomFactor = 0.9,
                 skillPtFactor = 0.4,
-                hpFactor = 0.7,
+                hpFactor = 0.8,
                 motivationFactor = 20.0,
-                relationFactor = 2.0,
-                hpKeepFactor = 1.0,
-                riskFactor = 3.8,
-                starGaugeFactor = 4.2,
-                aptitudePtFactor = 0.6,
-                ssMatchScore = 115.0,
+                relationFactor = 4.5,
+                hpKeepFactor = 1.2,
+                riskFactor = 1.4,
+                starGaugeFactor = 3.6,
+                aptitudePtFactor = 0.4,
+                ssMatchScore = 100.0,
             )
             val overseas = domestic.copy(
-                hpFactor = 0.6,
-                hpKeepFactor = 5.0,
-                riskFactor = 1.2,
+                hpFactor = 1.6,
+                hpKeepFactor = 2.6,
+                riskFactor = 2.6,
             )
             val domestic2 = domestic.copy(
-                hpKeepFactor = 2.2
+                hpKeepFactor = 2.4
             )
             val overseas2 = overseas.copy(
-                hpKeepFactor = 2.8
+                hpKeepFactor = 0.4
             )
             speed3Stamina1Wisdom1LongOptions = listOf(domestic, overseas, domestic2, overseas2)
         }

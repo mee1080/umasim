@@ -4,7 +4,7 @@ plugins {
     kotlin("js") version "1.9.10" apply false
     kotlin("kapt") version "1.9.10" apply false
     kotlin("plugin.serialization") version "1.9.10" apply false
-    id("org.jetbrains.compose") version "1.5.1" apply false
+    id("org.jetbrains.compose") version "1.5.2" apply false
 }
 
 buildscript {

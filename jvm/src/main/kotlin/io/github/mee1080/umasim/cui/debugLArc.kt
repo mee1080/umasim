@@ -24,7 +24,7 @@ fun main() {
 
 context(CoroutineContext)
 fun lArcRunSimulation() {
-    val chara = Store.getChara("[プリンセス・オブ・ピンク]カワカミプリンセス", 5, 5)
+    val chara = Store.getChara("[うららん一等賞♪]ハルウララ", 5, 5)
     val support = Store.getSupportByName(
         "[大望は飛んでいく]エルコンドルパサー",
         "[The frontier]ジャングルポケット",

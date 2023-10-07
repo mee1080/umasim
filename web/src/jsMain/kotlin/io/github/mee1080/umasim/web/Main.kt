@@ -21,38 +21,67 @@ package io.github.mee1080.umasim.web
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.mee1080.umasim.data.StoreLoader
-import io.github.mee1080.umasim.web.components.material.MwcTabBar
-import io.github.mee1080.umasim.web.components.material.initLibraries
-import io.github.mee1080.umasim.web.page.lesson.LessonPage
+import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.lib.ROOT_ELEMENT_ID
+import io.github.mee1080.umasim.web.components.lib.dvh
+import io.github.mee1080.umasim.web.components.lib.dvw
 import io.github.mee1080.umasim.web.page.LicenseInfo
-import io.github.mee1080.umasim.web.page.top.RootPage
+import io.github.mee1080.umasim.web.page.lesson.LessonPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
+import io.github.mee1080.umasim.web.page.top.RootPage
 import io.github.mee1080.umasim.web.state.Page
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.css.Style
+import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.renderComposable
 
 fun main() {
     StoreLoader.load()
-    initLibraries()
 
-    renderComposable(rootElementId = "root") {
+    renderComposable(rootElementId = ROOT_ELEMENT_ID) {
         val scope = rememberCoroutineScope()
         val model = remember { ViewModel(scope) }
         Style(AppStyle)
-        MwcTabBar(
-            Page.entries,
-            model.state.page,
-            { it.displayName },
-            { it.icon },
-            onSelect = { model.navigate(it) },
-        )
-        when (model.state.page) {
-            Page.Top -> RootPage(model, model.state)
-            Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)
-            Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
+        Div({
+            classes(MdClass.background, MdClass.onBackgroundText)
+            style {
+                position(Position.Relative)
+                width(100.dvw)
+                height(100.dvh)
+                display(DisplayStyle.Flex)
+                flexDirection(FlexDirection.Column)
+                typeScale(MdSysTypeScale.bodyLarge)
+            }
+        }) {
+            Div({
+                style {
+                    flexGrow(1)
+                    overflowY("scroll")
+                }
+            }) {
+                when (model.state.page) {
+                    Page.Top -> RootPage(model, model.state)
+                    Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)
+                    Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
+                }
+                LicenseInfo()
+            }
+            Div({
+                style {
+                    position(Position.Relative)
+                }
+            }) {
+                MdElevation(3)
+                MdDivider()
+                MdPrimaryTabs(
+                    selection = Page.entries,
+                    selectedItem = model.state.page,
+                    itemToLabel = { it.displayName },
+                    itemToIcon = { it.icon },
+                    onSelect = { model.navigate(it) },
+                )
+            }
         }
-        LicenseInfo()
     }
 }
