@@ -20,7 +20,8 @@ package io.github.mee1080.umasim.web.page.top
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.web.components.parts.HideBlock
+import io.github.mee1080.umasim.web.components.atoms.MdSysTypeScale
+import io.github.mee1080.umasim.web.components.atoms.typeScale
 import io.github.mee1080.umasim.web.page.top.result.*
 import io.github.mee1080.umasim.web.page.top.setting.CharaSelect
 import io.github.mee1080.umasim.web.page.top.setting.ScenarioSelect
@@ -29,25 +30,26 @@ import io.github.mee1080.umasim.web.page.top.setting.TrainingSetting
 import io.github.mee1080.umasim.web.page.top.simulation.UraSimulation
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun RootPage(model: ViewModel, state: State) {
+    Div({
+        style { typeScale(MdSysTypeScale.headlineMedium) }
+    }) {
+        Text("トレーニング計算機")
+    }
     ScenarioSelect(model, state)
     CharaSelect(model, state)
     SupportSelect(model, state)
-    HideBlock("トレーニング設定", true) { TrainingSetting(model, state) }
-    HideBlock("トレーニング上昇量", true) { TrainingInfo(model, state) }
-    HideBlock("トレーニング期待値") { ExpectedStatusDisplay(model, state) }
-    HideBlock("レースボーナス計算") { RaceBonus(model, state) }
-    HideBlock("編成情報") { SupportInfo(state) }
-    HideBlock("サポートカード情報", true) { SupportCardInfo(state) }
+    TrainingSetting(model, state)
+    TrainingInfo(model, state)
+    ExpectedStatusDisplay(model, state)
+    RaceBonus(model, state)
+    SupportInfo(state)
+    SupportCardInfo(state)
     if (state.scenario == Scenario.URA) {
-        HideBlock("シミュレーション") {
-            UraSimulation(model, state)
-//        when (state.scenario) {
-//            Scenario.URA -> UraSimulation(model, state)
-//            Scenario.AOHARU -> AoharuSimulation(model.aoharuSimulationViewModel, state.aoharuSimulationState)
-//        }
-        }
+        UraSimulation(model, state)
     }
 }

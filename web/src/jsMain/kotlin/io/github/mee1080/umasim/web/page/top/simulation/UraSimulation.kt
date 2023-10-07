@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.web.page.top.simulation
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.motivationToString
 import io.github.mee1080.umasim.web.components.LabeledSelect
+import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -34,74 +35,76 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun UraSimulation(model: ViewModel, state: State) {
-    Div {
-        LabeledSelect(
-            "モード",
-            WebConstants.displaySimulationModeList[state.scenario]!!,
-            state.simulationMode,
-            model::updateSimulationMode
-        )
-        Div({ style { padding(8.px) } }) {
-            Button({ onClickOrTouch { model.doUraSimulation() } }) { Text("シミュレーション実行（β版）") }
-        }
-    }
-    Div {
-        H3 { Text("ステータス") }
-        Table({ classes(AppStyle.table) }) {
-            Tr {
-                Th { Text("スピード") }
-                Th { Text("スタミナ") }
-                Th { Text("パワー") }
-                Th { Text("根性") }
-                Th { Text("賢さ") }
-                Th { Text("スキルPt") }
-            }
-            Tr {
-                Td { Text(state.simulationResult.speed.toString()) }
-                Td { Text(state.simulationResult.stamina.toString()) }
-                Td { Text(state.simulationResult.power.toString()) }
-                Td { Text(state.simulationResult.guts.toString()) }
-                Td { Text(state.simulationResult.wisdom.toString()) }
-                Td { Text(state.simulationResult.skillPt.toString()) }
-            }
-        }
-        H3 { Text("ヒント") }
+    HideBlock("シミュレーション") {
         Div {
-            Text(state.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
-        }
-        H3 { Text("履歴") }
-        Table({ classes(AppStyle.table) }) {
-            Tr {
-                Th { Text("ターン") }
-                Th { Text("スピード") }
-                Th { Text("スタミナ") }
-                Th { Text("パワー") }
-                Th { Text("根性") }
-                Th { Text("賢さ") }
-                Th { Text("スキルPt") }
-                Th { Text("体力") }
-                Th { Text("やる気") }
-                Th { Text("ファン数") }
-                Th({ unsetWidth() }) { Text("行動") }
+            LabeledSelect(
+                "モード",
+                WebConstants.displaySimulationModeList[state.scenario]!!,
+                state.simulationMode,
+                model::updateSimulationMode
+            )
+            Div({ style { padding(8.px) } }) {
+                Button({ onClickOrTouch { model.doUraSimulation() } }) { Text("シミュレーション実行（β版）") }
             }
-            state.simulationHistory.forEachIndexed { index, (action, status) ->
+        }
+        Div {
+            H3 { Text("ステータス") }
+            Table({ classes(AppStyle.table) }) {
                 Tr {
-                    Td { Text("${index + 1}") }
-                    Td { Text(status.speed.toString()) }
-                    Td { Text(status.stamina.toString()) }
-                    Td { Text(status.power.toString()) }
-                    Td { Text(status.guts.toString()) }
-                    Td { Text(status.wisdom.toString()) }
-                    Td { Text(status.skillPt.toString()) }
-                    Td { Text(status.hp.toString()) }
-                    Td { Text(motivationToString(status.motivation)) }
-                    Td { Text(status.fanCount.toString()) }
-                    Td({
-                        unsetWidth()
-                        style {
-                            textAlign("left")
-                        }
-                    }) { Text(action) }
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
+                }
+                Tr {
+                    Td { Text(state.simulationResult.speed.toString()) }
+                    Td { Text(state.simulationResult.stamina.toString()) }
+                    Td { Text(state.simulationResult.power.toString()) }
+                    Td { Text(state.simulationResult.guts.toString()) }
+                    Td { Text(state.simulationResult.wisdom.toString()) }
+                    Td { Text(state.simulationResult.skillPt.toString()) }
+                }
+            }
+            H3 { Text("ヒント") }
+            Div {
+                Text(state.simulationResult.skillHint.map { "${it.key}:${it.value}" }.joinToString("\n"))
+            }
+            H3 { Text("履歴") }
+            Table({ classes(AppStyle.table) }) {
+                Tr {
+                    Th { Text("ターン") }
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
+                    Th { Text("体力") }
+                    Th { Text("やる気") }
+                    Th { Text("ファン数") }
+                    Th({ unsetWidth() }) { Text("行動") }
+                }
+                state.simulationHistory.forEachIndexed { index, (action, status) ->
+                    Tr {
+                        Td { Text("${index + 1}") }
+                        Td { Text(status.speed.toString()) }
+                        Td { Text(status.stamina.toString()) }
+                        Td { Text(status.power.toString()) }
+                        Td { Text(status.guts.toString()) }
+                        Td { Text(status.wisdom.toString()) }
+                        Td { Text(status.skillPt.toString()) }
+                        Td { Text(status.hp.toString()) }
+                        Td { Text(motivationToString(status.motivation)) }
+                        Td { Text(status.fanCount.toString()) }
+                        Td({
+                            unsetWidth()
+                            style {
+                                textAlign("left")
+                            }
+                        }) { Text(action) }
+                    }
                 }
             }
         }

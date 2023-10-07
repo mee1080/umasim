@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.size
@@ -27,54 +28,56 @@ import org.jetbrains.compose.web.dom.*
 
 @Composable
 fun RaceBonus(model: ViewModel, state: State) {
-    H3 { Text("レースボーナス合計：${state.totalRaceBonus}") }
-    var totalStatus = 0
-    var totalSkillPt = 0
-    Table {
-        Tr {
-            Th { Text("種別") }
-            Th { Text("回数") }
-            Th { Text("ステ―タス") }
-            Th { Text("スキルPt") }
-            if (state.scenario == Scenario.CLIMAX) {
-                Th { Text("使用アイテム") }
-            }
-            Th { Text("合計ステ") }
-            Th { Text("合計スキルPt") }
-        }
-        state.raceSetting.forEach { race ->
+    HideBlock("レースボーナス計算") {
+        H3 { Text("レースボーナス合計：${state.totalRaceBonus}") }
+        var totalStatus = 0
+        var totalSkillPt = 0
+        Table {
             Tr {
-                Th { Text(race.label) }
-                if (race.editable) {
-                    Td {
-                        TextInput(race.raceCount) {
-                            size(5)
-                            onInput { model.updateRaceCount(race, it.value) }
-                        }
-                    }
-                } else {
-                    Td { Text(race.raceCount) }
-                }
-                Td { Text("${state.calcRaceStatus(race.statusValue)}(${race.statusValue}) × ${race.statusCount}") }
-                Td { Text("${state.calcRaceStatus(race.skillPt)}(${race.skillPt})") }
+                Th { Text("種別") }
+                Th { Text("回数") }
+                Th { Text("ステ―タス") }
+                Th { Text("スキルPt") }
                 if (state.scenario == Scenario.CLIMAX) {
-                    Td {
-                        race.item.forEach { (label, count) ->
-                            Text("$label ")
-                            TextInput(count) {
+                    Th { Text("使用アイテム") }
+                }
+                Th { Text("合計ステ") }
+                Th { Text("合計スキルPt") }
+            }
+            state.raceSetting.forEach { race ->
+                Tr {
+                    Th { Text(race.label) }
+                    if (race.editable) {
+                        Td {
+                            TextInput(race.raceCount) {
                                 size(5)
-                                onInput { model.updateRaceItemCount(race, label, it.value) }
+                                onInput { model.updateRaceCount(race, it.value) }
+                            }
+                        }
+                    } else {
+                        Td { Text(race.raceCount) }
+                    }
+                    Td { Text("${state.calcRaceStatus(race.statusValue)}(${race.statusValue}) × ${race.statusCount}") }
+                    Td { Text("${state.calcRaceStatus(race.skillPt)}(${race.skillPt})") }
+                    if (state.scenario == Scenario.CLIMAX) {
+                        Td {
+                            race.item.forEach { (label, count) ->
+                                Text("$label ")
+                                TextInput(count) {
+                                    size(5)
+                                    onInput { model.updateRaceItemCount(race, label, it.value) }
+                                }
                             }
                         }
                     }
+                    val status = state.calcRaceStatus(race)
+                    totalStatus += status.first
+                    totalSkillPt += status.second
+                    Td { Text(status.first.toString()) }
+                    Td { Text(status.second.toString()) }
                 }
-                val status = state.calcRaceStatus(race)
-                totalStatus += status.first
-                totalSkillPt += status.second
-                Td { Text(status.first.toString()) }
-                Td { Text(status.second.toString()) }
             }
         }
+        H3 { Text("総合計 ステータス: $totalStatus / スキルPt: $totalSkillPt") }
     }
-    H3 { Text("総合計 ステータス: $totalStatus / スキルPt: $totalSkillPt") }
 }

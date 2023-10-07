@@ -50,7 +50,7 @@ data class State(
     val selectedTrainingType: Int = StatusType.SPEED.ordinal,
     val trainingLevel: Int = 1,
     val motivation: Int = 2,
-    val fanCount: String = "1",
+    val fanCount: Int = 0,
     val hp: Int = 50,
     val maxHp: Int = 100,
     val totalRelation: Int = 0,

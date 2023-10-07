@@ -20,19 +20,22 @@ package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
+import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.dom.H2
-import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun ScenarioSelect(model: ViewModel, state: State) {
-    H2 { Text("育成シナリオ") }
-    MdRadioGroup(
-        WebConstants.scenarioList,
-        state.scenario,
-        onSelect = model::updateScenario,
-        itemToLabel = { it.displayName },
-    )
+    HideBlock(
+        header = "育成シナリオ",
+        headerClosed = "育成シナリオ: ${state.scenario.displayName}"
+    ) {
+        MdRadioGroup(
+            WebConstants.scenarioList,
+            state.scenario,
+            onSelect = model::updateScenario,
+            itemToLabel = { it.displayName },
+        )
+    }
 }

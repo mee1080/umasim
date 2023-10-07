@@ -200,7 +200,7 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(motivation = motivation) }
     }
 
-    fun updateFanCount(fanCount: String) {
+    fun updateFanCount(fanCount: Int) {
         updateState { it.copy(fanCount = fanCount) }
     }
 
@@ -300,7 +300,7 @@ class ViewModel(val scope: CoroutineScope) {
 
         val trainingType = StatusType.entries[state.selectedTrainingType]
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
-        val fanCount = state.fanCount.toIntOrNull() ?: 1
+        val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
         val lArcStatus = state.lArcStatusIfEnabled
         val trainingLevel = if (
@@ -461,7 +461,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.motivation,
                 supportList,
                 state.scenario,
-                state.fanCount.toIntOrNull() ?: 1,
+                state.fanCount,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
                 state.speedSkillCount,

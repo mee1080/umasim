@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import io.github.mee1080.umasim.web.components.atoms.MdElevation
 import io.github.mee1080.umasim.web.components.atoms.MdIcon
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor
+import io.github.mee1080.umasim.web.components.atoms.mdElevationLevel
 import io.github.mee1080.umasim.web.components.lib.stylePermanently
 import org.jetbrains.compose.web.ExperimentalComposeWebApi
 import org.jetbrains.compose.web.css.*
@@ -100,11 +101,43 @@ fun HideBlock(
     }
 }
 
+@Composable
+fun NestedHideBlock(
+    header: String,
+    initialOpen: Boolean = false,
+    wrapperAttr: AttrBuilderContext<HTMLElement>? = null,
+    headerAttr: AttrBuilderContext<HTMLElement>? = null,
+    headerClosed: String = header,
+    headerAttrClosed: AttrBuilderContext<HTMLElement>? = headerAttr,
+    contentAttr: AttrBuilderContext<HTMLElement>? = null,
+    content: ContentBuilder<HTMLElement>,
+) {
+    HideBlock(
+        header = header,
+        initialOpen = initialOpen,
+        wrapperAttr = {
+            classes(HideBlockStyle.nested)
+            wrapperAttr?.invoke(this)
+        },
+        headerAttr = headerAttr,
+        headerClosed = headerClosed,
+        headerAttrClosed = headerAttrClosed,
+        contentAttr = contentAttr,
+        content = content,
+    )
+}
+
 @OptIn(ExperimentalComposeWebApi::class)
 private object HideBlockStyle : StyleSheet() {
     val wrapper by style {
         position(Position.Relative)
         borderRadius(16.px)
+        margin(8.px)
+        mdElevationLevel(1)
+    }
+
+    val nested by style {
+        mdElevationLevel(1)
     }
 
     val open by style {}
@@ -128,6 +161,11 @@ private object HideBlockStyle : StyleSheet() {
         ".$header.$open" style {
             borderRadius(16.px, 16.px, 0.px, 0.px)
         }
+
+        ".$nested .$header" style {
+            color(MdSysColor.onTertiaryContainer.value)
+            backgroundColor(MdSysColor.tertiaryContainer.value)
+        }
     }
 
     val content by style {
@@ -145,6 +183,11 @@ private object HideBlockStyle : StyleSheet() {
         ".$content.$open" style {
             height(auto)
             padding(8.px)
+            overflow("unset")
+        }
+
+        ".$nested .$content" style {
+            backgroundColor(MdSysColor.surfaceContainer.value)
         }
     }
 }

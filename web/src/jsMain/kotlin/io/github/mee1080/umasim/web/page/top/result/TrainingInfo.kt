@@ -22,6 +22,8 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
+import io.github.mee1080.umasim.web.components.parts.HideBlock
+import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.onClickOrTouch
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -37,164 +39,66 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TrainingInfo(model: ViewModel, state: State) {
-    LabeledRadioGroup(
-        "training",
-        "種別　：",
-        WebConstants.displayTrainingTypeList,
-        state.selectedTrainingType,
-        model::updateTrainingType,
-    )
-    LabeledRadioGroup(
-        "level",
-        "レベル：",
-        WebConstants.trainingLevelList,
-        state.trainingLevel,
-        model::updateTrainingLevel,
-    )
-    if (state.scenario == Scenario.URA) {
-        Div {
-            Text("ハッピーミーク：")
-            LabeledCheckbox("specialMember", "参加", state.teamJoinCount >= 1) {
-                model.updateSpecialMember(it)
-            }
-        }
-    }
-    if (state.scenario.guestMember) {
-        Div {
-            Text("サポカ外参加人数")
-            Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
-            Span({ style { padding(8.px) } }) { Text(state.teamJoinCount.toString()) }
-            Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
-        }
-    }
-    if (state.scenario == Scenario.CLIMAX) {
+    HideBlock("トレーニング上昇量", true) {
         LabeledRadioGroup(
-            "shopItemMegaphone",
-            "メガホン：",
-            WebConstants.shopItemMegaphoneNames,
-            state.shopItemMegaphone,
-            model::updateShopItemMegaphone
+            "training",
+            "種別　：",
+            WebConstants.displayTrainingTypeList,
+            state.selectedTrainingType,
+            model::updateTrainingType,
         )
         LabeledRadioGroup(
-            "shopItemWeight",
-            "アンクルウェイト：",
-            WebConstants.shopItemWeightNames,
-            state.shopItemWeight,
-            model::updateShopItemWeight
+            "level",
+            "レベル：",
+            WebConstants.trainingLevelList,
+            state.trainingLevel,
+            model::updateTrainingLevel,
         )
-    }
-    Div({ style { marginTop(16.px) } }) {
-        Table({ classes(AppStyle.table) }) {
-            Tr {
-                if (state.scenario != Scenario.URA) {
-                    Th({ style { property("border", "none") } }) { }
-                }
-                Th { Text("スピード") }
-                Th { Text("スタミナ") }
-                Th { Text("パワー") }
-                Th { Text("根性") }
-                Th { Text("賢さ") }
-                Th { Text("スキルPt") }
-                Th { Text("体力") }
-                Th { Text("5ステ合計") }
-                if (state.scenario == Scenario.GRAND_LIVE) {
-                    Th({ style { width(120.px) } }) { Text("パフォーマンス") }
-                }
-            }
-            Tr {
-                if (state.scenario != Scenario.URA) {
-                    Th { Text("基本") }
-                }
-                Td { Text(state.trainingResult.speed.toString()) }
-                Td { Text(state.trainingResult.stamina.toString()) }
-                Td { Text(state.trainingResult.power.toString()) }
-                Td { Text(state.trainingResult.guts.toString()) }
-                Td { Text(state.trainingResult.wisdom.toString()) }
-                Td { Text(state.trainingResult.skillPt.toString()) }
-                Td { Text(state.trainingResult.hp.toString()) }
-                Td { Text(state.trainingResult.statusTotal.toString()) }
-                if (state.scenario == Scenario.GRAND_LIVE) {
-                    Td { Text(state.trainingPerformanceValue.toString()) }
-                }
-            }
-            if (state.scenario != Scenario.URA) {
-                Tr {
-                    val label = when (state.scenario) {
-                        Scenario.CLIMAX -> "アイテム"
-                        Scenario.AOHARU -> "アオハル"
-                        else -> "ボーナス"
-                    }
-                    Th { Text(label) }
-                    Td { Text(state.trainingItemBonus.speed.toString()) }
-                    Td { Text(state.trainingItemBonus.stamina.toString()) }
-                    Td { Text(state.trainingItemBonus.power.toString()) }
-                    Td { Text(state.trainingItemBonus.guts.toString()) }
-                    Td { Text(state.trainingItemBonus.wisdom.toString()) }
-                    Td { Text(state.trainingItemBonus.skillPt.toString()) }
-                    Td { Text(state.trainingItemBonus.hp.toString()) }
-                    Td { Text(state.trainingItemBonus.statusTotal.toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(if (state.friendTraining) "×2" else "-") }
-                    }
-                }
-                Tr {
-                    Th { Text("合計") }
-                    val totalStatus = state.trainingResult + state.trainingItemBonus
-                    Td { Text(totalStatus.speed.toString()) }
-                    Td { Text(totalStatus.stamina.toString()) }
-                    Td { Text(totalStatus.power.toString()) }
-                    Td { Text(totalStatus.guts.toString()) }
-                    Td { Text(totalStatus.wisdom.toString()) }
-                    Td { Text(totalStatus.skillPt.toString()) }
-                    Td { Text(totalStatus.hp.toString()) }
-                    Td { Text(totalStatus.statusTotal.toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
-                    }
+        LabeledRadioGroup(
+            "motivation",
+            "やる気：",
+            WebConstants.motivationList,
+            state.motivation,
+            model::updateMotivation,
+        )
+        if (state.scenario == Scenario.URA) {
+            Div {
+                Text("ハッピーミーク：")
+                LabeledCheckbox("specialMember", "参加", state.teamJoinCount >= 1) {
+                    model.updateSpecialMember(it)
                 }
             }
         }
-    }
-    H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率、編成外を反映していないためアオハルとグラライでは不正確)") }
-    H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
-//    H3 { Text("Status / Coin: ${(state.coinRate * 10000.0).roundToInt() / 10000.0}") }
-    H3 { Text("期待値（練習配置率を考慮）") }
-    Div {
-        Table({ classes(AppStyle.table) }) {
-            Tr {
-                Th { Text("スピード") }
-                Th { Text("スタミナ") }
-                Th { Text("パワー") }
-                Th { Text("根性") }
-                Th { Text("賢さ") }
-                Th { Text("スキルPt") }
-                Th { Text("体力") }
-                Th { Text("5ステ合計") }
-            }
-            Tr {
-                Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
-                Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+        if (state.scenario.guestMember) {
+            Div {
+                Text("サポカ外参加人数")
+                Button({ onClickOrTouch { model.updateTeamJoinCount(-1) } }) { Text("-") }
+                Span({ style { padding(8.px) } }) { Text(state.teamJoinCount.toString()) }
+                Button({ onClickOrTouch { model.updateTeamJoinCount(1) } }) { Text("+") }
             }
         }
-        Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
-    }
-    if (state.trainingImpact.isNotEmpty()) {
-        H3 { Text("サポカ影響度") }
-        Div {
+        if (state.scenario == Scenario.CLIMAX) {
+            LabeledRadioGroup(
+                "shopItemMegaphone",
+                "メガホン：",
+                WebConstants.shopItemMegaphoneNames,
+                state.shopItemMegaphone,
+                model::updateShopItemMegaphone
+            )
+            LabeledRadioGroup(
+                "shopItemWeight",
+                "アンクルウェイト：",
+                WebConstants.shopItemWeightNames,
+                state.shopItemWeight,
+                model::updateShopItemWeight
+            )
+        }
+        Div({ style { marginTop(16.px) } }) {
             Table({ classes(AppStyle.table) }) {
                 Tr {
-                    Th({
-                        style {
-                            property("border", "none")
-                        }
-                        unsetWidth()
-                    }) { }
+                    if (state.scenario != Scenario.URA) {
+                        Th({ style { property("border", "none") } }) { }
+                    }
                     Th { Text("スピード") }
                     Th { Text("スタミナ") }
                     Th { Text("パワー") }
@@ -203,24 +107,134 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Th { Text("スキルPt") }
                     Th { Text("体力") }
                     Th { Text("5ステ合計") }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Th({ style { width(120.px) } }) { Text("パフォーマンス") }
+                    }
                 }
-                state.trainingImpact.forEach { (name, status) ->
+                Tr {
+                    if (state.scenario != Scenario.URA) {
+                        Th { Text("基本") }
+                    }
+                    Td { Text(state.trainingResult.speed.toString()) }
+                    Td { Text(state.trainingResult.stamina.toString()) }
+                    Td { Text(state.trainingResult.power.toString()) }
+                    Td { Text(state.trainingResult.guts.toString()) }
+                    Td { Text(state.trainingResult.wisdom.toString()) }
+                    Td { Text(state.trainingResult.skillPt.toString()) }
+                    Td { Text(state.trainingResult.hp.toString()) }
+                    Td { Text(state.trainingResult.statusTotal.toString()) }
+                    if (state.scenario == Scenario.GRAND_LIVE) {
+                        Td { Text(state.trainingPerformanceValue.toString()) }
+                    }
+                }
+                if (state.scenario != Scenario.URA) {
                     Tr {
-                        Td({
-                            unsetWidth()
-                        }) { Text(name) }
-                        Td { Text(status.speed.toString()) }
-                        Td { Text(status.stamina.toString()) }
-                        Td { Text(status.power.toString()) }
-                        Td { Text(status.guts.toString()) }
-                        Td { Text(status.wisdom.toString()) }
-                        Td { Text(status.skillPt.toString()) }
-                        Td { Text(status.hp.toString()) }
-                        Td { Text(status.statusTotal.toString()) }
+                        val label = when (state.scenario) {
+                            Scenario.CLIMAX -> "アイテム"
+                            Scenario.AOHARU -> "アオハル"
+                            else -> "ボーナス"
+                        }
+                        Th { Text(label) }
+                        Td { Text(state.trainingItemBonus.speed.toString()) }
+                        Td { Text(state.trainingItemBonus.stamina.toString()) }
+                        Td { Text(state.trainingItemBonus.power.toString()) }
+                        Td { Text(state.trainingItemBonus.guts.toString()) }
+                        Td { Text(state.trainingItemBonus.wisdom.toString()) }
+                        Td { Text(state.trainingItemBonus.skillPt.toString()) }
+                        Td { Text(state.trainingItemBonus.hp.toString()) }
+                        Td { Text(state.trainingItemBonus.statusTotal.toString()) }
+                        if (state.scenario == Scenario.GRAND_LIVE) {
+                            Td { Text(if (state.friendTraining) "×2" else "-") }
+                        }
+                    }
+                    Tr {
+                        Th { Text("合計") }
+                        val totalStatus = state.trainingResult + state.trainingItemBonus
+                        Td { Text(totalStatus.speed.toString()) }
+                        Td { Text(totalStatus.stamina.toString()) }
+                        Td { Text(totalStatus.power.toString()) }
+                        Td { Text(totalStatus.guts.toString()) }
+                        Td { Text(totalStatus.wisdom.toString()) }
+                        Td { Text(totalStatus.skillPt.toString()) }
+                        Td { Text(totalStatus.hp.toString()) }
+                        Td { Text(totalStatus.statusTotal.toString()) }
+                        if (state.scenario == Scenario.GRAND_LIVE) {
+                            Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
+                        }
                     }
                 }
             }
         }
-        Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+        if (!state.scenario.guestMember) {
+            H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
+        }
+        if (state.trainingImpact.isNotEmpty()) {
+            NestedHideBlock("サポカ影響度") {
+                Div {
+                    Table({ classes(AppStyle.table) }) {
+                        Tr {
+                            Th({
+                                style {
+                                    property("border", "none")
+                                }
+                                unsetWidth()
+                            }) { }
+                            Th { Text("スピード") }
+                            Th { Text("スタミナ") }
+                            Th { Text("パワー") }
+                            Th { Text("根性") }
+                            Th { Text("賢さ") }
+                            Th { Text("スキルPt") }
+                            Th { Text("体力") }
+                            Th { Text("5ステ合計") }
+                        }
+                        state.trainingImpact.forEach { (name, status) ->
+                            Tr {
+                                Td({
+                                    unsetWidth()
+                                }) { Text(name) }
+                                Td { Text(status.speed.toString()) }
+                                Td { Text(status.stamina.toString()) }
+                                Td { Text(status.power.toString()) }
+                                Td { Text(status.guts.toString()) }
+                                Td { Text(status.wisdom.toString()) }
+                                Td { Text(status.skillPt.toString()) }
+                                Td { Text(status.hp.toString()) }
+                                Td { Text(status.statusTotal.toString()) }
+                            }
+                        }
+                    }
+                }
+                Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+            }
+        }
+        H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
+        NestedHideBlock("期待値（練習配置率を考慮）") {
+            Div {
+                Table({ classes(AppStyle.table) }) {
+                    Tr {
+                        Th { Text("スピード") }
+                        Th { Text("スタミナ") }
+                        Th { Text("パワー") }
+                        Th { Text("根性") }
+                        Th { Text("賢さ") }
+                        Th { Text("スキルPt") }
+                        Th { Text("体力") }
+                        Th { Text("5ステ合計") }
+                    }
+                    Tr {
+                        Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+                    }
+                }
+                Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
+            }
+        }
     }
 }

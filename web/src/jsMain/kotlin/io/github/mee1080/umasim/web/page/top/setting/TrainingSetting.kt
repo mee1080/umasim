@@ -24,10 +24,10 @@ import io.github.mee1080.umasim.data.Knowledge
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
 import io.github.mee1080.umasim.web.components.LabeledRadio
-import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.parts.HideBlock
+import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.state.State
-import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.attributes.selected
 import org.jetbrains.compose.web.attributes.size
@@ -38,248 +38,252 @@ import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun TrainingSetting(model: ViewModel, state: State) {
-    LabeledRadioGroup(
-        "motivation",
-        "やる気：",
-        WebConstants.motivationList,
-        state.motivation,
-        model::updateMotivation,
-    )
-    Div {
-        Text("ファン数：")
-        TextInput(state.fanCount) {
-            size(10)
-            onInput { model.updateFanCount(it.value) }
-        }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("体力：") }
-        MdSlider(state.hp, 0, 120) {
-            onInput { model.updateHp(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.hp.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("体力最大値：") }
-        MdSlider(state.maxHp, 100, 120) {
-            onInput { model.updateMaxHp(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.maxHp.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("絆合計：") }
-        MdSlider(state.totalRelation, 0, 600) {
-            onInput { model.updateTotalRelation(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.totalRelation.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("速度スキル数：") }
-        MdSlider(state.speedSkillCount, 0, 5) {
-            onInput { model.updateSpeedSkillCount(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.speedSkillCount.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("回復スキル数：") }
-        MdSlider(state.healSkillCount, 0, 3) {
-            onInput { model.updateHealSkillCount(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.healSkillCount.toString()) }
-    }
-    Div({
-        style {
-            display(DisplayStyle.Flex)
-            alignItems(AlignItems.Center)
-        }
-    }) {
-        Span { Text("合計トレーニングLv：") }
-        MdSlider(state.totalTrainingLevel, 5, 20) {
-            onInput { model.updateTotalTraningLevel(it.toInt()) }
-            style { width(300.px) }
-        }
-        Span { Text(state.totalTrainingLevel.toString()) }
-    }
-    if (state.scenario == Scenario.GRAND_LIVE) {
-        Div {
-            Span { Text("トレーニング上昇量：") }
-            Text("スピード")
-            TextInput(state.trainingLiveState.speed) {
-                size(10)
-                onInput { model.updateLiveSpeed(it.value) }
+    HideBlock("トレーニング設定", true) {
+        NestedHideBlock("特殊固有") {
+            Div {
+                Span { Text("ファン数：") }
+                MdSlider(state.fanCount, 0, 200000) {
+                    step(10000)
+                    onInput { model.updateFanCount(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.fanCount.toString()) }
             }
-            Text("スタミナ")
-            TextInput(state.trainingLiveState.stamina) {
-                size(10)
-                onInput { model.updateLiveStamina(it.value) }
-            }
-            Text("パワー")
-            TextInput(state.trainingLiveState.power) {
-                size(10)
-                onInput { model.updateLivePower(it.value) }
-            }
-            Text("根性")
-            TextInput(state.trainingLiveState.guts) {
-                size(10)
-                onInput { model.updateLiveGuts(it.value) }
-            }
-            Text("賢さ")
-            TextInput(state.trainingLiveState.wisdom) {
-                size(10)
-                onInput { model.updateLiveWisdom(it.value) }
-            }
-            Text("スキルPt")
-            TextInput(state.trainingLiveState.skillPt) {
-                size(10)
-                onInput { model.updateLiveSkillPt(it.value) }
-            }
-        }
-        Div {
-            Span { Text("友情トレーニング獲得量アップ：") }
-            TextInput(state.trainingLiveState.friendTrainingUpInput) {
-                size(10)
-                onInput { model.updateLiveFriend(it.value) }
-            }
-        }
-        Div {
-            Span { Text("得意率アップ：") }
-            TextInput(state.trainingLiveState.specialityRateUpInput) {
-                size(10)
-                onInput { model.updateLiveSpecialityRate(it.value) }
-            }
-            Span { Text("※サポカの得意率に加算で実装") }
-        }
-    }
-    if (state.scenario == Scenario.GM) {
-        H3 { Text("知識表") }
-        Div {
-            for (i in 12..13) {
-                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-            }
-        }
-        Div {
-            for (i in 8..11) {
-                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-            }
-        }
-        Div {
-            for (i in 0..7) {
-                KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-            }
-        }
-        Div {
-            MdTextButton("クリア") {
-                onClick { model.clearGmKnowledge() }
-            }
-        }
-
-        H3 { Text("女神の叡智") }
-        val wisdomSelection = listOf(null) + Founder.entries
-        val selectedWisdom = state.gmState.wisdom
-        Select({
-            prop(
-                { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                wisdomSelection.indexOfFirst { it == selectedWisdom }
-            )
-            onChange { model.updateGmWisdom(wisdomSelection[it.value!!.toInt()]) }
-        }) {
-            wisdomSelection.forEachIndexed { index, wisdom ->
-                Option(
-                    index.toString(),
-                    { if (wisdom == selectedWisdom) selected() }
-                ) { Text(wisdom?.longName ?: "なし") }
-            }
-        }
-
-        H3 { Text("知識Lv") }
-        Founder.entries.forEach { founder ->
             Div({
                 style {
                     display(DisplayStyle.Flex)
                     alignItems(AlignItems.Center)
                 }
             }) {
-                Span { Text("${founder.longName}：") }
-                MdSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
-                    onInput { model.updateGmWisdomLevel(founder, it.toInt()) }
+                Span { Text("体力：") }
+                MdSlider(state.hp, 0, 120) {
+                    onInput { model.updateHp(it.toInt()) }
                     style { width(300.px) }
                 }
-                Span { Text(state.gmState.wisdomLevel[founder].toString()) }
+                Span { Text(state.hp.toString()) }
+            }
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("体力最大値：") }
+                MdSlider(state.maxHp, 100, 120) {
+                    onInput { model.updateMaxHp(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.maxHp.toString()) }
+            }
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("絆合計：") }
+                MdSlider(state.totalRelation, 0, 600) {
+                    onInput { model.updateTotalRelation(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.totalRelation.toString()) }
+            }
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("速度スキル数：") }
+                MdSlider(state.speedSkillCount, 0, 5) {
+                    onInput { model.updateSpeedSkillCount(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.speedSkillCount.toString()) }
+            }
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("回復スキル数：") }
+                MdSlider(state.healSkillCount, 0, 3) {
+                    onInput { model.updateHealSkillCount(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.healSkillCount.toString()) }
+            }
+            Div({
+                style {
+                    display(DisplayStyle.Flex)
+                    alignItems(AlignItems.Center)
+                }
+            }) {
+                Span { Text("合計トレーニングLv：") }
+                MdSlider(state.totalTrainingLevel, 5, 20) {
+                    onInput { model.updateTotalTraningLevel(it.toInt()) }
+                    style { width(300.px) }
+                }
+                Span { Text(state.totalTrainingLevel.toString()) }
             }
         }
-    }
-    if (state.scenario == Scenario.LARC) {
-        val lArcState = state.lArcState
-        H3 { Text("プロジェクトL'Arc関連") }
-        SliderEntry("期待度：", lArcState.expectations, 0, 200) {
-            model.updateLArc { copy(expectations = it.toInt()) }
+        if (state.scenario == Scenario.GRAND_LIVE) {
+            NestedHideBlock("グランドライブ") {
+                Div {
+                    Span { Text("トレーニング上昇量：") }
+                    Text("スピード")
+                    TextInput(state.trainingLiveState.speed) {
+                        size(10)
+                        onInput { model.updateLiveSpeed(it.value) }
+                    }
+                    Text("スタミナ")
+                    TextInput(state.trainingLiveState.stamina) {
+                        size(10)
+                        onInput { model.updateLiveStamina(it.value) }
+                    }
+                    Text("パワー")
+                    TextInput(state.trainingLiveState.power) {
+                        size(10)
+                        onInput { model.updateLivePower(it.value) }
+                    }
+                    Text("根性")
+                    TextInput(state.trainingLiveState.guts) {
+                        size(10)
+                        onInput { model.updateLiveGuts(it.value) }
+                    }
+                    Text("賢さ")
+                    TextInput(state.trainingLiveState.wisdom) {
+                        size(10)
+                        onInput { model.updateLiveWisdom(it.value) }
+                    }
+                    Text("スキルPt")
+                    TextInput(state.trainingLiveState.skillPt) {
+                        size(10)
+                        onInput { model.updateLiveSkillPt(it.value) }
+                    }
+                }
+                Div {
+                    Span { Text("友情トレーニング獲得量アップ：") }
+                    TextInput(state.trainingLiveState.friendTrainingUpInput) {
+                        size(10)
+                        onInput { model.updateLiveFriend(it.value) }
+                    }
+                }
+                Div {
+                    Span { Text("得意率アップ：") }
+                    TextInput(state.trainingLiveState.specialityRateUpInput) {
+                        size(10)
+                        onInput { model.updateLiveSpecialityRate(it.value) }
+                    }
+                    Span { Text("※サポカの得意率に加算で実装") }
+                }
+            }
         }
-        SliderEntry("海外洋芝適性：", lArcState.overseasTurfAptitude, 0, 3) {
-            model.updateLArc { copy(overseasTurfAptitude = it.toInt()) }
+        if (state.scenario == Scenario.GM) {
+            NestedHideBlock("グランドマスターズ") {
+                H3 { Text("知識表") }
+                Div {
+                    for (i in 12..13) {
+                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+                    }
+                }
+                Div {
+                    for (i in 8..11) {
+                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+                    }
+                }
+                Div {
+                    for (i in 0..7) {
+                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
+                    }
+                }
+                Div {
+                    MdTextButton("クリア") {
+                        onClick { model.clearGmKnowledge() }
+                    }
+                }
+
+                H3 { Text("女神の叡智") }
+                val wisdomSelection = listOf(null) + Founder.entries
+                val selectedWisdom = state.gmState.wisdom
+                Select({
+                    prop(
+                        { e: HTMLSelectElement, v -> e.selectedIndex = v },
+                        wisdomSelection.indexOfFirst { it == selectedWisdom }
+                    )
+                    onChange { model.updateGmWisdom(wisdomSelection[it.value!!.toInt()]) }
+                }) {
+                    wisdomSelection.forEachIndexed { index, wisdom ->
+                        Option(
+                            index.toString(),
+                            { if (wisdom == selectedWisdom) selected() }
+                        ) { Text(wisdom?.longName ?: "なし") }
+                    }
+                }
+
+                H3 { Text("知識Lv") }
+                Founder.entries.forEach { founder ->
+                    Div({
+                        style {
+                            display(DisplayStyle.Flex)
+                            alignItems(AlignItems.Center)
+                        }
+                    }) {
+                        Span { Text("${founder.longName}：") }
+                        MdSlider(state.gmState.wisdomLevel[founder]!!, 0, 5) {
+                            onInput { model.updateGmWisdomLevel(founder, it.toInt()) }
+                            style { width(300.px) }
+                        }
+                        Span { Text(state.gmState.wisdomLevel[founder].toString()) }
+                    }
+                }
+            }
         }
-        SliderEntry("ロンシャン適性：", lArcState.longchampAptitude, 0, 3) {
-            model.updateLArc { copy(longchampAptitude = it.toInt()) }
-        }
-        SliderEntry("生活リズム：", lArcState.lifeRhythm, 0, 3) {
-            model.updateLArc { copy(lifeRhythm = it.toInt()) }
-        }
-        SliderEntry("栄養管理：", lArcState.nutritionManagement, 0, 3) {
-            model.updateLArc { copy(nutritionManagement = it.toInt()) }
-        }
-        SliderEntry("フランス語力：", lArcState.frenchSkill, 0, 3) {
-            model.updateLArc { copy(frenchSkill = it.toInt()) }
-        }
-        SliderEntry("海外遠征：", lArcState.overseasExpedition, 0, 3) {
-            model.updateLArc { copy(overseasExpedition = it.toInt()) }
-        }
-        SliderEntry("強心臓：", lArcState.strongHeart, 0, 3) {
-            model.updateLArc { copy(strongHeart = it.toInt()) }
-        }
-        SliderEntry("精神力：", lArcState.mentalStrength, 0, 3) {
-            model.updateLArc { copy(mentalStrength = it.toInt()) }
-        }
-        SliderEntry("L’Arcの希望：", lArcState.hopeOfLArc, 0, 3) {
-            model.updateLArc { copy(hopeOfLArc = it.toInt()) }
-        }
-        DivFlexCenter {
-            MdTextButton("海外適性すべて0") { onClick { model.setAllAptitude(0) } }
-            MdTextButton("海外適性すべて1") { onClick { model.setAllAptitude(1) } }
-            MdTextButton("海外適性すべて2") { onClick { model.setAllAptitude(2) } }
-            MdTextButton("海外適性すべて3") { onClick { model.setAllAptitude(3) } }
-        }
-        DivFlexCenter {
-            MdCheckbox("海外遠征中", lArcState.overseas) {
-                onChange { model.updateLArc { copy(overseas = it) } }
+        if (state.scenario == Scenario.LARC) {
+            NestedHideBlock("プロジェクトL'Arc") {
+                val lArcState = state.lArcState
+                SliderEntry("期待度：", lArcState.expectations, 0, 200) {
+                    model.updateLArc { copy(expectations = it.toInt()) }
+                }
+                SliderEntry("海外洋芝適性：", lArcState.overseasTurfAptitude, 0, 3) {
+                    model.updateLArc { copy(overseasTurfAptitude = it.toInt()) }
+                }
+                SliderEntry("ロンシャン適性：", lArcState.longchampAptitude, 0, 3) {
+                    model.updateLArc { copy(longchampAptitude = it.toInt()) }
+                }
+                SliderEntry("生活リズム：", lArcState.lifeRhythm, 0, 3) {
+                    model.updateLArc { copy(lifeRhythm = it.toInt()) }
+                }
+                SliderEntry("栄養管理：", lArcState.nutritionManagement, 0, 3) {
+                    model.updateLArc { copy(nutritionManagement = it.toInt()) }
+                }
+                SliderEntry("フランス語力：", lArcState.frenchSkill, 0, 3) {
+                    model.updateLArc { copy(frenchSkill = it.toInt()) }
+                }
+                SliderEntry("海外遠征：", lArcState.overseasExpedition, 0, 3) {
+                    model.updateLArc { copy(overseasExpedition = it.toInt()) }
+                }
+                SliderEntry("強心臓：", lArcState.strongHeart, 0, 3) {
+                    model.updateLArc { copy(strongHeart = it.toInt()) }
+                }
+                SliderEntry("精神力：", lArcState.mentalStrength, 0, 3) {
+                    model.updateLArc { copy(mentalStrength = it.toInt()) }
+                }
+                SliderEntry("L’Arcの希望：", lArcState.hopeOfLArc, 0, 3) {
+                    model.updateLArc { copy(hopeOfLArc = it.toInt()) }
+                }
+                DivFlexCenter {
+                    MdTextButton("海外適性すべて0") { onClick { model.setAllAptitude(0) } }
+                    MdTextButton("海外適性すべて1") { onClick { model.setAllAptitude(1) } }
+                    MdTextButton("海外適性すべて2") { onClick { model.setAllAptitude(2) } }
+                    MdTextButton("海外適性すべて3") { onClick { model.setAllAptitude(3) } }
+                }
+                DivFlexCenter {
+                    MdCheckbox("海外遠征中", lArcState.overseas) {
+                        onChange { model.updateLArc { copy(overseas = it) } }
+                    }
+                }
             }
         }
     }
