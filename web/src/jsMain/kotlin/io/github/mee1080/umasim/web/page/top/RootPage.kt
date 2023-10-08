@@ -20,8 +20,7 @@ package io.github.mee1080.umasim.web.page.top
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.web.components.atoms.MdSysTypeScale
-import io.github.mee1080.umasim.web.components.atoms.typeScale
+import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.page.top.result.*
 import io.github.mee1080.umasim.web.page.top.setting.CharaSelect
 import io.github.mee1080.umasim.web.page.top.setting.ScenarioSelect
@@ -30,16 +29,58 @@ import io.github.mee1080.umasim.web.page.top.setting.TrainingSetting
 import io.github.mee1080.umasim.web.page.top.simulation.UraSimulation
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun RootPage(model: ViewModel, state: State) {
     Div({
-        style { typeScale(MdSysTypeScale.headlineMedium) }
+        style {
+            display(DisplayStyle.Flex)
+            justifyContent(JustifyContent.SpaceBetween)
+            alignItems(AlignItems.Center)
+        }
     }) {
-        Text("トレーニング計算機")
+        Div({
+            style { typeScale(MdSysTypeScale.headlineMedium) }
+        }) {
+            Text("トレーニング計算機")
+        }
+        MdCheckbox("上下分割", state.divideMode) {
+            onChange { model.update { copy(divideMode = it) } }
+        }
     }
+    if (state.divideMode) {
+        Div({
+            style {
+                display(DisplayStyle.Flex)
+                height(0.px)
+                flexGrow(1)
+                flexDirection(FlexDirection.Column)
+                justifyContent(JustifyContent.Stretch)
+            }
+        }) {
+            repeat(2) {
+                MdDivider(1.px)
+                Div({
+                    style {
+                        height(0.px)
+                        flexGrow(1)
+                        overflowY("scroll")
+                    }
+                }) {
+                    RootPageContent(model, state)
+                }
+            }
+        }
+    } else {
+        RootPageContent(model, state)
+    }
+}
+
+@Composable
+private fun RootPageContent(model: ViewModel, state: State) {
     ScenarioSelect(model, state)
     CharaSelect(model, state)
     SupportSelect(model, state)

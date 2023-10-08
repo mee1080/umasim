@@ -25,7 +25,6 @@ import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.lib.ROOT_ELEMENT_ID
 import io.github.mee1080.umasim.web.components.lib.dvh
 import io.github.mee1080.umasim.web.components.lib.dvw
-import io.github.mee1080.umasim.web.page.LicenseInfo
 import io.github.mee1080.umasim.web.page.lesson.LessonPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
 import io.github.mee1080.umasim.web.page.top.RootPage
@@ -56,6 +55,8 @@ fun main() {
         }) {
             Div({
                 style {
+                    display(DisplayStyle.Flex)
+                    flexDirection(FlexDirection.Column)
                     flexGrow(1)
                     overflowY("scroll")
                 }
@@ -65,7 +66,6 @@ fun main() {
                     Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)
                     Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
                 }
-                LicenseInfo()
             }
             Div({
                 style {
