@@ -25,10 +25,12 @@ import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.util.replace
 
+// https://fonts.google.com/icons
 enum class Page(val displayName: String, val icon: String) {
     Top("トレーニング", "trending_up"),
     Rotation("ローテーション", "event_note"),
     Lesson("レッスン", "queue_music"),
+    Simulation("シミュレーション", "person_raised_hand"),
 }
 
 data class State(

@@ -5,15 +5,13 @@ import io.github.mee1080.umasim.web.components.atoms.MdSlider
 import io.github.mee1080.umasim.web.components.atoms.onInput
 import io.github.mee1080.umasim.web.components.atoms.step
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.ContentBuilder
-import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Span
-import org.jetbrains.compose.web.dom.Text
+import org.jetbrains.compose.web.dom.*
 import org.w3c.dom.HTMLDivElement
 
 
 @Composable
 fun DivFlexCenter(
+    attrs: AttrBuilderContext<HTMLDivElement>? = null,
     content: ContentBuilder<HTMLDivElement>
 ) {
     Div({
@@ -22,6 +20,7 @@ fun DivFlexCenter(
             flexWrap(FlexWrap.Wrap)
             alignItems(AlignItems.Center)
         }
+        attrs?.invoke(this)
     }, content)
 }
 

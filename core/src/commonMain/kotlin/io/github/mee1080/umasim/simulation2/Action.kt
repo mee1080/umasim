@@ -29,6 +29,8 @@ sealed interface Action {
     fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam): List<Pair<ActionResult, Int>> {
         return candidates.map { it.first.addScenarioActionParam(scenarioActionParam) to it.second }
     }
+
+    val totalRate get() = candidates.sumOf { it.second }
 }
 
 sealed interface ActionResult {
@@ -84,9 +86,11 @@ data class Training(
 ) : Action {
     val support get() = member.filter { !it.guest }
     override val name = "トレーニング(${type.displayName}Lv$level)"
-    override fun infoToString() = member.joinToString("/") {
+
+    fun memberToStrings() = member.map {
         buildString {
-            if (it.guest) append("(ゲスト)${it.charaName}") else append("${it.name}(${it.relation})")
+            append(it.name)
+            if (!it.guest) append("(${it.relation})")
             if (it.isFriendTraining(type)) append("(友情)")
             if (it.hint) append("(ヒント)")
             when (val scenario = it.scenarioState) {
@@ -106,6 +110,8 @@ data class Training(
             }
         }
     }
+
+    override fun infoToString() = memberToStrings().joinToString("/")
 
     val friendCount by lazy {
         if (!friendTraining) 0 else member.count { it.isFriendTraining(type) }
@@ -142,19 +148,21 @@ data class SSMatch(
 ) : Action {
     override val name = if (isSSSMatch) "SSSマッチ(${member.size}人)" else "SSマッチ(${member.size}人)"
 
-    override fun infoToString() = member.joinToString("/") {
+    fun memberToStrings() = member.map {
         buildString {
-            if (it.guest) append("(ゲスト)${it.charaName}") else append(it.name)
+            append(it.name)
             val lArc = it.scenarioState as LArcMemberState
             append('(')
-            append(lArc.starType)
-            append(',')
-            append(lArc.nextStarEffect[0])
-            append(',')
+            append(lArc.nextStarEffect[0].displayName)
+            append(' ')
+            append(lArc.starType.displayName)
+            append("Lv")
             append(lArc.starLevel)
             append(')')
         }
     }
+
+    override fun infoToString() = memberToStrings().joinToString("/")
 }
 
 data class LArcActionParam(

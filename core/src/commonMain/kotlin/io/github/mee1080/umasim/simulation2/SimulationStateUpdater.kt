@@ -494,6 +494,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
     return if (action is SSMatch) {
         val ssMatchMemberIndex = action.member.map { it.index }
         val starGaugeMemberIndex = lArcAction.starGaugeMember.map { it.index }
+        val relation = if (condition.contains("愛嬌○")) 9 else 7
         val newMember = member.mapIf({ ssMatchMemberIndex.contains(it.index) }) {
             val memberState = scenarioState as LArcMemberState
             val next = when (memberState.starLevel % 3) {
@@ -507,7 +508,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                 starGauge = if (starGaugeMemberIndex.contains(index)) 3 else 0,
                 nextStarEffect = newNextStarEffect,
             )
-            copy(scenarioState = newMemberState)
+            copy(scenarioState = newMemberState).addRelation(relation)
         }
         updateLArcStatus {
             val newTotalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size
@@ -534,8 +535,16 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
         )
     } else {
         val newState = if (lArcAction.mayEventChance && Random.nextDouble() < 0.4) {
+            val newMember = member.mapIf({ it.charaName == "佐岳メイ" }) {
+                addRelation(if (condition.contains("愛嬌○")) 7 else 5)
+            }
+            val addStatus = Status(guts = 3, skillPt = 3, motivation = if (Random.nextDouble() < 0.5) 1 else 0)
+            val base = copy(
+                member = newMember,
+                status = (status + addStatus).adjustRange(),
+            )
             if (isLevelUpTurn) {
-                updateLArcStatus { copy(aptitudePt = aptitudePt + 50) }
+                base.updateLArcStatus { copy(aptitudePt = aptitudePt + 50) }
             } else {
                 val training = action as Training
                 val joinTargets = training.member
@@ -548,11 +557,11 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                         )
                     }.shuffled().take(5 - joinTargets.size).map { it.index }
                 val targets = joinTargets + notJoinTargets
-                val newMember = member.mapIf({ targets.contains(it.index) }) {
+                val matchMember = base.member.mapIf({ targets.contains(it.index) }) {
                     val lArcState = scenarioState as LArcMemberState
                     copy(scenarioState = lArcState.copy(starGauge = lArcState.starGauge + 1))
                 }
-                copy(member = newMember)
+                base.copy(member = matchMember)
             }
         } else this
         newState.updateLArcStatus {

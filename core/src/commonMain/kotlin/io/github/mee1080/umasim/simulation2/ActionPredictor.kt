@@ -40,12 +40,12 @@ fun SimulationState.predictNormal(): List<Action> {
         *(training.map {
             calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
         }).toTypedArray(),
+        *(predictSSMatch()),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario == Scenario.LARC) emptyArray() else {
             Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: emptyArray()
         }),
-        *(predictSSMatch())
     )
 }
 
@@ -139,6 +139,7 @@ private fun SimulationState.calcTrainingResult(
 
 private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, support: List<MemberState>): Int {
     if (itemAvailable && enableItem.unique?.name == "健康祈願のお守り") return 0
+    if (status.hp >= 100) return 0
     val base = (status.hp - 100) * (status.hp * 10 - training.failureRate) / 400.0
     val supported = base * support.map { it.card.failureRate() }.fold(1.0) { acc, d -> acc * d }
     val supportedInRange = max(0, min(99, ceil(supported).toInt()))

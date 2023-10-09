@@ -146,8 +146,11 @@ data class LArcStatus(
     }
 }
 
-enum class StarEffect {
-    Status, SkillHint, SkillPt, AptitudePt, StarGauge, MaxHp, Motivation, Hp, Aikyou, GoodTraining
+enum class StarEffect(val displayName: String) {
+    Status("ステータス"), SkillHint("スキルヒント"), SkillPt("スキルPt"),
+    AptitudePt("適性Pt"), StarGauge("スターゲージ"), MaxHp("体力最大値+回復"),
+    Motivation("やる気+回復"), Hp("体力回復"),
+    Aikyou("愛嬌○"), GoodTraining("練習上手○"),
 }
 
 private val initialMemberStatus = arrayOf(

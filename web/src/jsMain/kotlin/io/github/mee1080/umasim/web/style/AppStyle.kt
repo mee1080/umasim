@@ -18,11 +18,13 @@
  */
 package io.github.mee1080.umasim.web.style
 
+import io.github.mee1080.umasim.web.components.atoms.MdSysColor
 import io.github.mee1080.umasim.web.components.lib.GridRepeatStyle
 import io.github.mee1080.umasim.web.components.lib.gridTemplateColumns
 import io.github.mee1080.umasim.web.components.lib.minMax
 import io.github.mee1080.umasim.web.components.lib.repeatGrid
 import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.selectors.Nth
 
 object AppStyle : StyleSheet() {
     val table by style {
@@ -70,6 +72,20 @@ object AppStyle : StyleSheet() {
         "td" style {
             textAlign("right")
             border(1.px, LineStyle.Solid, Color("black"))
+        }
+    }
+
+    val statusTable by style {
+        display(DisplayStyle.Grid)
+        gridTemplateColumns(repeatGrid(8, 64.px))
+        gap(1.px)
+        self + " > " + nthChild(Nth.Functional(-1, 8)) style {
+            border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
+            textAlign("center")
+        }
+        self + " > " + nthChild(Nth.Functional(1, 9)) style {
+            border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
+            textAlign("right")
         }
     }
 }

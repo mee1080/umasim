@@ -158,7 +158,6 @@ fun AttrsScope<MdTabsElement>.autoActivate() = attr("auto-activate", "")
 
 fun AttrsScope<MdTabsElement>.onChange(listener: (Number) -> Unit) =
     addEventListener("change", {
-        console.log(this)
         activeTabIndex
     }, listener)
 

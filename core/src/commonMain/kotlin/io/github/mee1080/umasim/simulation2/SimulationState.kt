@@ -112,7 +112,7 @@ data class MemberState(
     fun toShortString() =
         "MemberState($index, ${card.name}, scenarioState=${scenarioState.toShortString()}, position=$position, supportState=$supportState)"
 
-    val name get() = card.name
+    val name get() = if (guest) "(ゲスト)${charaName}" else card.name
     val charaName get() = card.chara
     val guest get() = supportState == null
     val relation get() = supportState?.relation ?: 0
