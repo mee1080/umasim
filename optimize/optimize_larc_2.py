@@ -153,7 +153,8 @@ def objective(trial):
     risk1 = trial.suggest_float ('risk1', 1.0, 10.0, step=0.2)
     risk2 = trial.suggest_float ('risk2', 1.0, 10.0, step=0.2)
 
-    cmd = f'java -jar ../cli/build/libs/cli.jar --count 100000 --scenario LARC'\
+    cmd = f'java -jar ../cli/build/libs/cli.jar --data-dir ../data'\
+          f' --count 100000 --scenario LARC'\
           f' --chara "[うららん一等賞♪]ハルウララ" 5 5'\
           f' --support "[大望は飛んでいく]エルコンドルパサー" 4'\
           f' --support "[The frontier]ジャングルポケット" 4'\

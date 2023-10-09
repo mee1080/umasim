@@ -33,8 +33,9 @@ object StoreLoader {
 
     private val names = arrayOf("chara.txt", "support_card.txt", "team_member.txt", "goal_race.txt", "race.txt")
 
-    fun load() {
-        val files = names.map { File(FILE_BASE + it) }
+    fun load(dataDir: String? = null) {
+        val base = File(dataDir ?: FILE_BASE)
+        val files = names.map { File(base, it) }
         if (!FORCE_NETWORK && files.all { it.canRead() }) {
             Store.load(
                 files[0].readText(),
@@ -44,6 +45,7 @@ object StoreLoader {
                 files[4].readText(),
             )
         } else {
+            System.err.println("not found ${base.absolutePath} ${base.list().contentToString()}")
             runBlocking {
                 val data = HttpClient(CIO).use { client ->
                     names.map { client.get(URL_BASE + it).bodyAsText() }

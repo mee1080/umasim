@@ -13,6 +13,7 @@ import io.github.mee1080.umasim.simulation2.Runner
 import io.github.mee1080.umasim.util.replace
 
 class CliMain : CliktCommand() {
+    private val dataDir by option()
 
     private val chara by option(help = "育成ウマ娘 レアリティ ランク").triple().required()
 
@@ -59,7 +60,7 @@ class CliMain : CliktCommand() {
     private val evaluate by option().triple().multiple()
 
     override fun run() {
-        StoreLoader.load()
+        StoreLoader.load(dataDir)
         val charaData = Store.getChara(chara.first, chara.second.toInt(), chara.third.toInt())
         val supportList = support.map { Store.getSupportByName(it.first, it.second.toInt()) }
         val relationFactor = if (relation.isEmpty()) {
