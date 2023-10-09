@@ -45,8 +45,6 @@ data class Status(
     override val motivation: Int = 0,
     override val maxHp: Int = 0,
     val skillHint: Map<String, Int> = emptyMap(),
-    @Deprecated("not use")
-    val supportRelation: Map<Int, Int> = emptyMap(),
     val fanCount: Int = 0,
     val performance: Performance? = null,
 ) : StatusValues {
@@ -70,7 +68,6 @@ data class Status(
         motivation + other.motivation,
         maxHp + other.maxHp,
         mergeIntMap(skillHint, other.skillHint, 0, 5),
-        mergeIntMap(supportRelation, other.supportRelation, 0, 100),
         fanCount + other.fanCount,
         performance?.plus(other.performance) ?: other.performance,
     )
@@ -86,7 +83,6 @@ data class Status(
         motivation - other.motivation,
         maxHp - other.maxHp,
         diffIntMap(skillHint, other.skillHint),
-        diffIntMap(supportRelation, other.supportRelation),
         fanCount - other.fanCount,
         performance?.minus(other.performance),
     )
@@ -161,9 +157,6 @@ data class Status(
             else -> 0
         }
     }
-
-    @Deprecated("not use")
-    fun getSupportRelation(index: Int) = supportRelation[index] ?: 0
 
     fun add(vararg target: Pair<StatusType, Int>): Status {
         val map = mutableMapOf<StatusType, Int>()
