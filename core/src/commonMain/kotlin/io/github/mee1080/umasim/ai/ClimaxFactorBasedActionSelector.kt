@@ -208,7 +208,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         }
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
         if (state.turn >= 13 && lastItemCheckedTurn != state.turn) {
             val itemList = (when (state.turn) {
                 13 -> listOf("にんじんBBQセット")

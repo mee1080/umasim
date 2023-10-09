@@ -97,8 +97,10 @@ fun gmSingleSimulation() {
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
-    val result = Simulator(Scenario.GM, chara, support, factor)
-        .simulateWithHistory(selector) { RandomEvents(it) }
+    val result = runBlocking {
+        Simulator(Scenario.GM, chara, support, factor)
+            .simulateWithHistory(selector) { RandomEvents(it) }
+    }
     val founders = mutableListOf<String>()
     result.second.forEachIndexed { index, history ->
         println()

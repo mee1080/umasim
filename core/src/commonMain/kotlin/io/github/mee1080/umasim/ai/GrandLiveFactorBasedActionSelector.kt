@@ -172,7 +172,7 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
             .maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
         val liveStatus = state.liveStatus
         if (liveStatus != null) {
             if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${liveStatus.lessonSelection.joinToString { it.displayName }}")

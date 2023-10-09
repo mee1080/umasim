@@ -28,12 +28,14 @@ fun testAoharuSimulation() {
 //            staminaFactor = 1.0,
 //            powerFactor = 0.8,
 //            wisdomFactor = 1.2,
-//            hpFactor = 0.7,
+//            hpFactor = 0.7,z
 //        )
 //    )
-    val result = simulator.simulateWithHistory(
-        selector
-    ) { ApproximateSimulationEvents() }
+    val result = runBlocking {
+        simulator.simulateWithHistory(
+            selector
+        ) { ApproximateSimulationEvents() }
+    }
     result.second.forEachIndexed { index, history ->
         println("${turnToString(history.beforeActionState.turn)}: ${history.action.toShortString()}")
         println(history.beforeActionState.status)

@@ -140,7 +140,7 @@ class LArcActionSelector(
         throw NotImplementedError()
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
         option = when {
             state.turn <= 36 -> domesticOption1
             state.turn <= 43 -> overseasOption1

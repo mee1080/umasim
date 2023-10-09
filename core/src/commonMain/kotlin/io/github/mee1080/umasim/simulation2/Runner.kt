@@ -125,7 +125,7 @@ object Runner {
         StatusType.SKILL to (0.8 to 3600),
     )
 
-    fun runAndEvaluate(
+    suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,
         chara: Chara,
@@ -140,7 +140,7 @@ object Runner {
         return (evaluator.upperSum(0.2, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
 
-    fun run(
+    suspend fun run(
         count: Int,
         scenario: Scenario,
         chara: Chara,

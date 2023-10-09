@@ -12,13 +12,17 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
+import kotlin.system.measureTimeMillis
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-//        lArcRunSimulation()
-        lArcSingleSimulation()
+        val t1 = measureTimeMillis { lArcRunSimulation() }
+        val t2 = measureTimeMillis { lArcRunSimulation() }
+        val t3 = measureTimeMillis { lArcRunSimulation() }
+        println("normal:$t1,$t2,$t3")
+//        lArcSingleSimulation()
     }
 }
 
@@ -78,8 +82,10 @@ fun lArcSingleSimulation() {
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.WISDOM to 3,
     )
-    val result = Simulator(Scenario.LARC, chara, support, factor)
-        .simulateWithHistory(selector) { RandomEvents(it) }
+    val result = runBlocking {
+        Simulator(Scenario.LARC, chara, support, factor)
+            .simulateWithHistory(selector) { RandomEvents(it) }
+    }
     result.second.forEachIndexed { index, history ->
         println()
         println("${index + 1}:")

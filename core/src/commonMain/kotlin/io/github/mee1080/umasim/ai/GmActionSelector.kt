@@ -370,7 +370,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         throw NotImplementedError()
     }
 
-    override fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
         val forceUse = true
         when (val wisdom = state.gmStatus?.waitingWisdom) {
             Founder.Red -> {

@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.LessonClearCalculator
 import io.github.mee1080.umasim.simulation2.LessonProvider
 import io.github.mee1080.umasim.simulation2.Simulator
+import kotlinx.coroutines.runBlocking
 
 fun testLessonClear() {
     val calculator = LessonClearCalculator(
@@ -67,14 +68,16 @@ fun singleGrandLiveSimulation() {
     println(chara)
     println(support)
     val selector = GrandLiveFactorBasedActionSelector.speed2Power1Wisdom2Friend1.generateSelector()
-    val result = Simulator(
-        Scenario.GRAND_LIVE,
-        chara,
-        support,
-        factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 4)
-    ).simulateWithHistory(
-        selector,
-    ) { ApproximateSimulationEvents() }
+    val result = runBlocking {
+        Simulator(
+            Scenario.GRAND_LIVE,
+            chara,
+            support,
+            factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 4)
+        ).simulateWithHistory(
+            selector,
+        ) { ApproximateSimulationEvents() }
+    }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.beforeActionState.status}")
@@ -90,6 +93,7 @@ fun singleGrandLiveSimulation() {
     println(result.first)
     result.second.last().beforeActionState.liveStatus?.learnedLesson?.forEach { println(it.displayName) }
     println(result.first.status)
-    result.second.last().beforeActionState.liveStatus?.learnedLesson?.filter { it is SongLesson }?.map { it.displayName }?.sorted()
+    result.second.last().beforeActionState.liveStatus?.learnedLesson?.filter { it is SongLesson }
+        ?.map { it.displayName }?.sorted()
         ?.forEach { println(it) }
 }

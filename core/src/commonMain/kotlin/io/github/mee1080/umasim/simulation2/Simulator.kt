@@ -73,12 +73,12 @@ class Simulator(
         totalFanBonus = supportCardList.sumOf { it.fan },
     )
 
-    fun simulate(
+    suspend fun simulate(
         selector: ActionSelector,
         eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
     ) = simulateWithHistory(selector, eventsProducer).first
 
-    fun simulateWithHistory(
+    suspend fun simulateWithHistory(
         selector: ActionSelector,
         eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
     ): Pair<Summary, List<SimulationHistoryItem>> {

@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
+import kotlinx.coroutines.runBlocking
 
 
 fun singleSimulation() {
@@ -47,7 +48,9 @@ fun singleSimulation() {
             wisdomFactor = 0.5,
         )
     )
-    val result = Simulator(Scenario.URA, chara, support).simulateWithHistory(selector)
+    val result = runBlocking {
+        Simulator(Scenario.URA, chara, support).simulateWithHistory(selector)
+    }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.action.toShortString()}")
@@ -103,14 +106,16 @@ fun singleClimaxSimulation() {
     println(chara)
     println(support)
     val selector = ClimaxFactorBasedActionSelector.guts4Wisdom2.generateSelector()
-    val result = Simulator(
-        Scenario.CLIMAX,
-        chara,
-        support,
-        factor(StatusType.WISDOM, 3) + factor(StatusType.POWER, 3)
-    ).simulateWithHistory(
-        selector,
-    ) { ApproximateSimulationEvents() }
+    val result = runBlocking {
+        Simulator(
+            Scenario.CLIMAX,
+            chara,
+            support,
+            factor(StatusType.WISDOM, 3) + factor(StatusType.POWER, 3)
+        ).simulateWithHistory(
+            selector,
+        ) { ApproximateSimulationEvents() }
+    }
     result.second.forEachIndexed { index, history ->
         println("${index + 1}:")
         println(" ${history.beforeActionState.status}")
