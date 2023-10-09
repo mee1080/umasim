@@ -17,8 +17,8 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-        lArcRunSimulation()
-//        lArcSingleSimulation()
+//        lArcRunSimulation()
+        lArcSingleSimulation()
     }
 }
 
@@ -90,9 +90,9 @@ fun lArcSingleSimulation() {
             println()
             selection.forEach { action ->
                 println("  ・${action.name}")
-                val scenarioAction = action.scenarioActionParam?.toShortString()
-                if (!scenarioAction.isNullOrEmpty()) {
-                    println("    $scenarioAction")
+                val total = action.candidates.sumOf { it.second } / 100.0
+                action.candidates.forEach {
+                    println("    ${it.second / total}% ${it.first}")
                 }
                 action.infoToString().split("/").forEach {
                     if (it.isNotEmpty()) println("    $it")
@@ -102,7 +102,7 @@ fun lArcSingleSimulation() {
             println("  -> ${selectedAction.action?.name ?: ""}${selectedAction.scenarioAction ?: ""}")
         }
         println()
-        println("  上昇量: ${history.actionResult.toShortString()}")
+        println("  上昇量: ${history.actionResult.toString()}")
         println("  終了時: ${(history.afterTurnState.status).toShortString()}")
 //        history.afterTurnState.member
 //            .sortedByDescending { (it.scenarioState as LArcMemberState).supporterPt }

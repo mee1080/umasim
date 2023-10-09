@@ -114,7 +114,7 @@ class Simulator(
                 state = state.applySelectedScenarioAction(selectedAction.scenarioAction)
                 action = selectedAction.action
             } while (action == null)
-            val result = randomSelect(action.resultCandidate)
+            val result = randomSelect(action.candidates)
             state = state.applyAction(action, result)
             state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)

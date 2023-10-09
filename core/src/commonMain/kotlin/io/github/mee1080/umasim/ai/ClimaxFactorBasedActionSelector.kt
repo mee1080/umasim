@@ -284,13 +284,13 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
-        val total = action.resultCandidate.sumOf { it.second }.toDouble()
+        val total = action.candidates.sumOf { it.second }.toDouble()
         val expected = if (action !is Training || option.expectedStatusFactor <= 0.0) 0.0 else {
             option.expectedStatusFactor * calcExpectedScore(state, action.type)
         }
-        val score = action.resultCandidate.sumOf {
+        val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first) - expected) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first.status) - expected) * it.second / total
         } + calcRelationScore(state, action)
         if (DEBUG) println("total $score")
         return score

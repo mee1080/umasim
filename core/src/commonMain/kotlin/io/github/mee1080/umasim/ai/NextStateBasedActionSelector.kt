@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.min
 
@@ -38,8 +37,8 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
-        val total = action.resultCandidate.sumOf { it.second }.toDouble()
-        val score = action.resultCandidate.sumOf {
+        val total = action.candidates.sumOf { it.second }.toDouble()
+        val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             calcScore(state, action, it.first) * it.second / total
         }
@@ -47,7 +46,7 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
         return score
     }
 
-    private fun calcScore(state: SimulationState, action: Action, result: Status): Double {
+    private fun calcScore(state: SimulationState, action: Action, result: ActionResult): Double {
         val next = state.applyAction(action, result)
         return calcStatusScore(next) + calcRelationScore(next) + calcAoharuScore(next)
     }

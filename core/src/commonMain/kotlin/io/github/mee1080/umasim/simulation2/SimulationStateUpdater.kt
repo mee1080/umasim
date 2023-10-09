@@ -106,17 +106,17 @@ fun EnableItem.onTurnChange(): EnableItem {
     } else EnableItem()
 }
 
-fun SimulationState.applyAction(action: Action, result: Status): SimulationState {
+fun SimulationState.applyAction(action: Action, result: ActionResult): SimulationState {
     // FIXME トレーニング失敗時にもLv上昇など発生
     // ステータス更新
-    val newStatus = status + result
+    val newStatus = status + result.status
     // Action結果反映
     val newState = if (action is Training) {
-        val newTraining = training.map {
+        val newTraining = if (result.success) training.map {
             if (action.type == it.type) {
                 it.applyAction(action, scenario.trainingAutoLevelUp)
             } else it
-        }
+        } else training
         val memberIndices = action.member.map { it.index }
         val trainingHint = selectTrainingHint(action.member)
         val trainingHintIndices = trainingHint.second.map { it.index }
@@ -139,7 +139,7 @@ fun SimulationState.applyAction(action: Action, result: Status): SimulationState
         copy(status = newStatus)
     }
     // シナリオ別結果反映
-    return newState.applyScenarioAction(action)
+    return newState.applyScenarioAction(action, result.scenarioActionParam)
 }
 
 private fun MemberState.applyTraining(
@@ -433,11 +433,11 @@ private fun LiveStatus.applyLive(): LiveStatus {
     )
 }
 
-private fun SimulationState.applyScenarioAction(action: Action): SimulationState {
-    val scenarioAction = action.scenarioActionParam ?: return this
+private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: ScenarioActionParam?): SimulationState {
     return when (scenarioAction) {
         is GmActionParam -> applyGmAction(scenarioAction)
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
+        null -> this
     }
 }
 

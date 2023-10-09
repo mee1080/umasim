@@ -286,10 +286,10 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
-        val total = action.resultCandidate.sumOf { it.second }.toDouble()
-        val score = action.resultCandidate.sumOf {
+        val total = action.candidates.sumOf { it.second }.toDouble()
+        val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first)) * it.second / total
+            (calcScore(calcExpectedHintStatus(action) + it.first.status)) * it.second / total
         } + calcRelationScore(state, action)
         if (DEBUG) println("total $score")
         return score

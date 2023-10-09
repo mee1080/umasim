@@ -114,7 +114,7 @@ fun gmSingleSimulation() {
         }
         println("  ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")
         println("  ${history.beforeActionState.gmStatus?.toShortString()}")
-        println("  ${history.actionResult + history.beforeActionState.status}")
+        println("  ${history.actionResult.status + history.beforeActionState.status}")
         println("  ${history.beforeActionState.member.first { it.card.type == StatusType.GROUP }.supportState?.passionTurn}")
     }
     println(result.first)

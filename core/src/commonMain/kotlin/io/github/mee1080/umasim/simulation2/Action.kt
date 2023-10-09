@@ -22,34 +22,55 @@ import io.github.mee1080.umasim.data.*
 
 sealed interface Action {
     val name: String
-    val resultCandidate: List<Pair<Status, Int>>
-    val scenarioActionParam: ScenarioActionParam?
+    val candidates: List<Pair<ActionResult, Int>>
     fun infoToString() = ""
     fun toShortString() = "$name ${infoToString()}"
-    fun updateCandidate(resultCandidate: List<Pair<Status, Int>>): Action
+
+    fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam): List<Pair<ActionResult, Int>> {
+        return candidates.map { it.first.addScenarioActionParam(scenarioActionParam) to it.second }
+    }
+}
+
+sealed interface ActionResult {
+    val status: Status
+    val scenarioActionParam: ScenarioActionParam?
+    val success: Boolean
+    fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam): ActionResult
+}
+
+class StatusActionResult private constructor(
+    override val status: Status,
+    override val scenarioActionParam: ScenarioActionParam?,
+    override val success: Boolean = true,
+) : ActionResult {
+    constructor(
+        current: Status,
+        status: Status,
+        scenarioActionParam: ScenarioActionParam? = null,
+        success: Boolean = true,
+    ) : this((current + status).adjustRange() - current, scenarioActionParam, success)
+
+    override fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam) = StatusActionResult(
+        status, if (success) scenarioActionParam else null, success
+    )
+
+    override fun toString() =
+        "StatusActionResult(status=${status.toShortString()},scenario=${scenarioActionParam?.toShortString()},success=$success)"
 }
 
 data class Outing(
     val support: MemberState?,
-    override val resultCandidate: List<Pair<Status, Int>>,
-    override val scenarioActionParam: ScenarioActionParam? = null,
+    override val candidates: List<Pair<ActionResult, Int>>,
 ) : Action {
     override val name = "お出かけ"
     override fun infoToString() = support?.let { "(${it.card.name})" } ?: ""
-    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
-        resultCandidate = resultCandidate
-    )
 }
 
 data class Sleep(
-    override val resultCandidate: List<Pair<Status, Int>>,
-    override val scenarioActionParam: ScenarioActionParam? = null,
+    override val candidates: List<Pair<ActionResult, Int>>,
 ) : Action {
     override val name = "お休み"
     override fun toString() = "Sleep"
-    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
-        resultCandidate = resultCandidate
-    )
 }
 
 data class Training(
@@ -57,10 +78,9 @@ data class Training(
     val failureRate: Int,
     val level: Int,
     val member: List<MemberState>,
-    override val resultCandidate: List<Pair<Status, Int>>,
+    override val candidates: List<Pair<ActionResult, Int>>,
     val baseStatus: Status,
     val friendTraining: Boolean,
-    override val scenarioActionParam: ScenarioActionParam? = null,
 ) : Action {
     val support get() = member.filter { !it.guest }
     override val name = "トレーニング(${type.displayName}Lv$level)"
@@ -87,10 +107,6 @@ data class Training(
         }
     }
 
-    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
-        resultCandidate = resultCandidate
-    )
-
     val friendCount by lazy {
         if (!friendTraining) 0 else member.count { it.isFriendTraining(type) }
     }
@@ -100,13 +116,9 @@ data class Race(
     val goal: Boolean,
     val raceName: String,
     val grade: RaceGrade,
-    override val resultCandidate: List<Pair<Status, Int>>,
-    override val scenarioActionParam: ScenarioActionParam? = null,
+    override val candidates: List<Pair<ActionResult, Int>>,
 ) : Action {
     override val name = raceName + if (goal) "(目標)" else ""
-    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
-        resultCandidate = resultCandidate
-    )
 }
 
 sealed interface ScenarioActionParam {
@@ -126,8 +138,7 @@ data class GmActionParam(
 data class SSMatch(
     val isSSSMatch: Boolean,
     val member: Set<MemberState>,
-    override val resultCandidate: List<Pair<Status, Int>>,
-    override val scenarioActionParam: LArcActionParam,
+    override val candidates: List<Pair<ActionResult, Int>>,
 ) : Action {
     override val name = if (isSSSMatch) "SSSマッチ(${member.size}人)" else "SSマッチ(${member.size}人)"
 
@@ -144,10 +155,6 @@ data class SSMatch(
             append(')')
         }
     }
-
-    override fun updateCandidate(resultCandidate: List<Pair<Status, Int>>) = copy(
-        resultCandidate = resultCandidate
-    )
 }
 
 data class LArcActionParam(
@@ -158,8 +165,10 @@ data class LArcActionParam(
     val mayEventChance: Boolean = false,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
+        append("LArc(")
         if (supporterPt > 0) append("sup=$supporterPt,")
-        if (supporterPt > 0) append("apt=$aptitudePt,")
+        if (aptitudePt > 0) append("apt=$aptitudePt,")
+        append(")")
     }
 
     operator fun plus(other: LArcActionParam) = LArcActionParam(

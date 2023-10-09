@@ -232,12 +232,19 @@ class LArcActionSelector(
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
         if (action is SSMatch) return if (action.member.size == 5) option.ssMatchScore else 0.0
-        val total = action.resultCandidate.sumOf { it.second }.toDouble()
+        val total = action.candidates.sumOf { it.second }.toDouble()
         val needHp = state.turn in listOf(35, 36, 58, 59)
-        val score = action.resultCandidate.sumOf {
+        val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first, needHp, state.status)) * it.second / total
-        } + calcRelationScore(state, action) + calcLarcScore(state, action)
+            val result = it.first
+            val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, needHp, state.status)
+            val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
+            val lArcScore = if (result.success) calcLarcScore(
+                state, action,
+                result.scenarioActionParam as? LArcActionParam
+            ) else 0.0
+            (statusScore + relationScore + lArcScore) * it.second / total
+        }
         if (DEBUG) println("total $score")
         return score
     }
@@ -271,9 +278,8 @@ class LArcActionSelector(
         return score
     }
 
-    private fun calcLarcScore(state: SimulationState, action: Action): Double {
-        if (action !is Training || state.lArcStatus == null) return 0.0
-        val param = action.scenarioActionParam as LArcActionParam
+    private fun calcLarcScore(state: SimulationState, action: Action, param: LArcActionParam?): Double {
+        if (param == null || action !is Training || state.lArcStatus == null) return 0.0
         return if (state.isLevelUpTurn) {
             // 海外
             option.aptitudePtFactor * param.aptitudePt + (if (param.mayEventChance) option.aptitudePtFactor * 20.0 else 0.0)

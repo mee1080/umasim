@@ -403,13 +403,17 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
 
     private fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
-        val total = action.resultCandidate.sumOf { it.second }.toDouble()
-        val score = action.resultCandidate.sumOf {
+        val total = action.candidates.sumOf { it.second }.toDouble()
+        val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            (calcScore(calcExpectedHintStatus(action) + it.first)) * it.second / total
-        } + calcRelationScore(state, action) +
-                calcKnowledgeScore(state, action) +
-                calcPassionChallengeScore(state, action)
+            val result = it.first
+            val statusScore = calcScore(calcExpectedHintStatus(action) + result.status)
+            val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
+            val knowledgeScore = calcKnowledgeScore(state, result.scenarioActionParam as? GmActionParam)
+            val passionChallengeScore = if (result.success) calcPassionChallengeScore(state, action) else 0.0
+            (statusScore + relationScore + knowledgeScore + passionChallengeScore) * it.second / total
+        }
+
         if (DEBUG) println("total $score")
         return score
     }
@@ -452,9 +456,9 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         return score
     }
 
-    private fun calcKnowledgeScore(state: SimulationState, action: Action): Double {
+    private fun calcKnowledgeScore(state: SimulationState, param: GmActionParam?): Double {
+        if (param == null) return 0.0
         val gmStatus = state.gmStatus ?: return 0.0
-        val param = action.scenarioActionParam as? GmActionParam ?: return 0.0
         if (gmStatus.knowledgeFragmentCount == 8) return 0.0
         val typeFactor = when (param.knowledgeType) {
             StatusType.SPEED -> option.knowledgeSpeedFactor

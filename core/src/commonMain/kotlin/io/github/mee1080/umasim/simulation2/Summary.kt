@@ -109,7 +109,7 @@ class Summary(
         append(trainingType.joinToString("/") { trainingCount[it]!!.toString() })
         append(", sleepCount=$sleepCount, outingCount=$outingCount, trainingSupportCount=")
         append(trainingSupportCountToString)
-        append(", trainingFriendCount")
+        append(", trainingFriendCount=")
         append(trainingFriendCountToString)
         append(", trainingHintCount=$trainingHintCount, support=")
         append(support.joinToString("/") { it.toShortString() })
