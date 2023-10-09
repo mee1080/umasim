@@ -7,6 +7,7 @@ plugins {
     id("org.jetbrains.compose")
     id("librarian")
     id("librarian-preset")
+    kotlin("plugin.serialization")
 }
 
 group = "io.github.mee1080.umasim"
@@ -19,8 +20,8 @@ repositories {
 dependencies {
     implementation(project(":core"))
     implementation(project(":jvm"))
-    implementation(project(":desktopSupport"))
     implementation(compose.desktop.currentOs)
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
 }
 
 tasks.withType<KotlinCompile>() {

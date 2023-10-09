@@ -53,7 +53,7 @@ object SaveDataLoader {
         model.simulationTurn,
         model.simulationCount,
         model.simulationThread,
-        model.simulationSetting.option,
+//        model.simulationSetting.option,
     )
 
     private fun applyData(model: ViewModel, data: SaveData) {

@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.compose")
     id("librarian")
     id("librarian-preset")
+    kotlin("plugin.serialization")
 }
 
 group = "io.github.mee1080.umasim"
@@ -21,7 +22,6 @@ kotlin {
         val jsMain by getting {
             dependencies {
                 implementation(project(":core"))
-                implementation(project(":webSupport"))
                 implementation(compose.html.core)
                 implementation(compose.runtime)
                 implementation(npm("@material/web", "1.0.0"))

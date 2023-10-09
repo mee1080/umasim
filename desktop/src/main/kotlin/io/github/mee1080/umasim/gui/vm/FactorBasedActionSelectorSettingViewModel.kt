@@ -21,30 +21,30 @@ package io.github.mee1080.umasim.gui.vm
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 
 class FactorBasedActionSelectorSettingViewModel {
 
-    var option by mutableStateOf(FactorBasedActionSelector.Option())
+    var option by mutableStateOf(FactorBasedActionSelector2.Option())
         private set
 
-    fun updateOption(value: FactorBasedActionSelector.Option) {
+    fun updateOption(value: FactorBasedActionSelector2.Option) {
         option = value
     }
 
     val presets = listOf(
-        "スピ3パワ2友人1" to FactorBasedActionSelector.speedPower,
-        "スピ3賢さ2友人1" to FactorBasedActionSelector.speedWisdom,
-        "スピ2賢さ2パワ1友人1" to FactorBasedActionSelector.speedWisdomPower,
-        "スピ3スタ3" to FactorBasedActionSelector.speedStamina,
-        "スピ2根性4" to FactorBasedActionSelector.speedGuts,
-        "パワ3賢さ3" to FactorBasedActionSelector.powerWisdom,
+        "スピ3パワ2友人1" to FactorBasedActionSelector2.speedPower,
+        "スピ3賢さ2友人1" to FactorBasedActionSelector2.speedWisdom,
+        "スピ2賢さ2パワ1友人1" to FactorBasedActionSelector2.speedWisdomPower,
+        "スピ3スタ3" to FactorBasedActionSelector2.speedStamina,
+        "スピ2根性4" to FactorBasedActionSelector2.speedGuts,
+        "パワ3賢さ3" to FactorBasedActionSelector2.powerWisdom,
     )
 
-    var preset by mutableStateOf<FactorBasedActionSelector.Option?>(null)
+    var preset by mutableStateOf<FactorBasedActionSelector2.Option?>(null)
         private set
 
-    fun updatePreset(value: FactorBasedActionSelector.Option?) {
+    fun updatePreset(value: FactorBasedActionSelector2.Option?) {
         preset = value
     }
 

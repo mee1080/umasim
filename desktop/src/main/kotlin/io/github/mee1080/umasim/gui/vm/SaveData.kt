@@ -1,6 +1,6 @@
 package io.github.mee1080.umasim.gui.vm
 
-import io.github.mee1080.umasim.ai.FactorBasedActionSelector
+import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -14,7 +14,7 @@ data class SaveData(
     val simulationTurn: Int,
     val simulationCount: Int,
     val simulationThread: Int,
-    val simulationOption: FactorBasedActionSelector.Option,
+//    val simulationOption: FactorBasedActionSelector2.Option,
     val version: Int = 1,
 ) {
 
@@ -23,4 +23,7 @@ data class SaveData(
     }
 
     fun toJson() = Json.encodeToString(this)
+
+    // FIXME
+    val simulationOption get() = FactorBasedActionSelector2.speedPower
 }
