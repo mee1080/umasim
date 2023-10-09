@@ -181,7 +181,7 @@ data class Status(
     }
 
     fun toShortString() =
-        "Status($speed/$stamina/$power/$guts/$wisdom/$skillPt, HP=$hp/$maxHp/${motivationToString(motivation)})"
+        "Status($speed/$stamina/$power/$guts/$wisdom/$skillPt, HP=$hp/$maxHp/${motivationToString(motivation)}, fan=$fanCount)"
 
     fun countOver(value: Int) = (if (speed >= value) 1 else 0) + (if (stamina >= value) 1 else 0) +
             (if (power >= value) 1 else 0) + (if (guts >= value) 1 else 0) + (if (wisdom >= value) 1 else 0)

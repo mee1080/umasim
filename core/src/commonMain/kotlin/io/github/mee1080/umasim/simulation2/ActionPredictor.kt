@@ -229,7 +229,8 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         RaceGrade.G2 -> raceStatus(1, 8, if (climax) 25 else 35)
         RaceGrade.G1 -> raceStatus(1, 10, if (climax) 35 else 45)
         else -> Status()
-    } + Status(
+    }
+    status += Status(
         hp = if (goal) 0 else if (climax) -20 else -15,
         fanCount = raceFanCount(race.getFan),
     )

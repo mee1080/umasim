@@ -12,17 +12,13 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
-import kotlin.system.measureTimeMillis
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-        val t1 = measureTimeMillis { lArcRunSimulation() }
-        val t2 = measureTimeMillis { lArcRunSimulation() }
-        val t3 = measureTimeMillis { lArcRunSimulation() }
-        println("normal:$t1,$t2,$t3")
-//        lArcSingleSimulation()
+//        lArcRunSimulation()
+        lArcSingleSimulation()
     }
 }
 
