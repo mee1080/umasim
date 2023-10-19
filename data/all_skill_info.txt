@@ -521,6 +521,11 @@ phase>=2&order_rate>=50->is_last_straight==1
 ->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
 「距離割合66～68、順位率60～90（チャンミ5～8/LoH7～10）、掛かり無し」、現在速度2500、先頭から4人[現在速度-500]、持続5.0
 
+メジロラモーヌ固有
+残り1000ｍ地点で前の方にいると速度が上がる
+->remain_distance>=999&remain_distance<=1001&order_rate>=20&order_rate<=50
+「残り距離999～1001、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、持続5.0
+
 アストンマーチャン固有
 残り400mを切って前の方で詰め寄られるとファンの心に残る走りで抜け出しやすくなる
 ->remain_distance<=400&order<=2&overtake_target_time>=1
@@ -1373,6 +1378,11 @@ phase>=2&order_rate>=50->is_last_straight==1
 冷静に走行し終盤突入時に後方付近だとちょっと前に出て、先頭から4人までのウマ娘をほんのちょっと萎縮させる
 ->distance_rate>=66&distance_rate<=68&order_rate>=60&order_rate<=90&temptation_count==0
 「距離割合66～68、順位率60～90（チャンミ5～8/LoH7～10）、掛かり無し」、現在速度500、先頭から4人[現在速度-250]、持続3.0
+
+愛と熔けよただ熔けよ
+残り1000ｍ地点で前の方にいると速度がわずかに上がる
+->remain_distance>=999&remain_distance<=1001&order_rate>=20&order_rate<=50
+「残り距離999～1001、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、持続3.0
 
 Silent letter
 残り400mを切って前の方で詰め寄られるとちょっと抜け出しやすくなる
@@ -5544,6 +5554,11 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->distance_type==2&phase_random==1@distance_type==3&phase_random==1
 「マイル、中盤ランダム」または「中距離、中盤ランダム」、目標速度3500、持続2.4
 
+高嶺の艶笑
+レース中盤にしばらくの間速度が上がる＜マイル/中距離＞
+->distance_type==2&phase_random==1@distance_type==3&phase_random==1
+「マイル、中盤ランダム」または「中距離、中盤ランダム」、目標速度3500、持続4.0
+
 しとやかな足取り
 レース中盤に速度がわずかに上がる＜マイル/中距離＞
 ->distance_type==2&phase_random==1@distance_type==3&phase_random==1
@@ -5759,6 +5774,21 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 レース中盤のコーナーでしばらくの間速度がちょっと上がる
 ->phase_corner_random==1
 「phase_最初のコーナーランダム==1」、目標速度500、持続4.0
+
+十全十美
+最終コーナー前の第3コーナーで前の方にいると前に出る＜マイル/中距離＞
+->distance_type==2&corner_random==3&order_rate<=50@distance_type==3&corner_random==3&order_rate<=50
+「マイル、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」または「中距離、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続3.0
+
+純愛
+最終コーナー前の第3コーナーで前の方にいるとすごく前に出る＜マイル/中距離＞
+->distance_type==2&corner_random==3&order_rate<=50@distance_type==3&corner_random==3&order_rate<=50
+「マイル、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」または「中距離、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度4500、持続3.0
+
+品行方正
+最終コーナー前の第3コーナーで前の方にいるとわずかに前に出る＜マイル/中距離＞
+->distance_type==2&corner_random==3&order_rate<=50@distance_type==3&corner_random==3&order_rate<=50
+「マイル、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」または「中距離、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
