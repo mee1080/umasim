@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ja" prefix="og: http://ogp.me/ns#">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width,initial-scale=1">
+	<meta name="twitter:card" content="summary_large_image"></meta>
+	<meta property="og:url" content="https://mee1080.github.io/umasim/skill/" />
+	<meta property="og:title" content="ウマ娘スキルデータテキスト" />
+	<meta property="og:description" content="ウマ娘スキル情報をテキストで公開しています" />
+	<meta property="og:image" content="https://mee1080.github.io/umasim/skill/ogp.png" />
+
+	<script src="https://cdn.jsdelivr.net/npm/axios@1.1.2/dist/axios.min.js"></script>
+	<style>
+		* {
+			box-sizing: border-box;
+			margin: 0px;
+			padding: 0px;
+		}
+	</style>
+</head>
+<body style="height:100dvh;display:flex;flex-direction:column;overflow-y:hidden;">
+	<div style="font-size:120%;font-weight:bold;">ウマ娘スキルデータテキスト</div>
+	<div>
+		<label><input id="all" type="radio" name="target" value="https://raw.githubusercontent.com/mee1080/umasim/main/data/all_skill_info.txt"/>全てのスキル</label>
+		<label><input id="new" type="radio" name="target" value="https://raw.githubusercontent.com/mee1080/umasim/main/data/new_skill_info.txt"/>新しいスキル</label>
+	</div>
+	<div style="flex-grow:1;">
+		<textarea id="out" style="width:100%;height:100%;" readonly></textarea>
+	</div>
+	<div>
+		※DMM版のダウンロードデータから抽出しています。ご利用は自己責任で。
+	</div>
+	<script>
+		const allRadio = document.getElementById('all');
+		const newRadio = document.getElementById('new');
+		const outArea = document.getElementById('out');
+
+		function load(target) {
+			out.value = '';
+			axios.get(target).then(r => out.value = r.data);
+		}
+
+		const initial = window.location.hash == '#new' ? newRadio : allRadio;
+		initial.checked = true;
+		load(initial.value);
+
+		const onChange = e => {
+			if (e.target.checked) {
+				load(e.target.value);
+			}
+		}
+		allRadio.addEventListener('change', onChange);
+		newRadio.addEventListener('change', onChange);
+	</script>
+</body>
+</html>
