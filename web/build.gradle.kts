@@ -24,7 +24,7 @@ kotlin {
                 implementation(project(":core"))
                 implementation(compose.html.core)
                 implementation(compose.runtime)
-                implementation(npm("@material/web", "1.0.0"))
+                implementation(npm("@material/web", "1.0.1"))
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
             }
         }
