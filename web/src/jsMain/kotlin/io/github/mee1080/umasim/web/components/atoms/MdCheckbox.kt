@@ -24,10 +24,7 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.web.components.lib.addEventListener
 import io.github.mee1080.umasim.web.components.lib.require
 import org.jetbrains.compose.web.attributes.AttrsScope
-import org.jetbrains.compose.web.css.AlignItems
-import org.jetbrains.compose.web.css.DisplayStyle
-import org.jetbrains.compose.web.css.alignItems
-import org.jetbrains.compose.web.css.display
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.AttrBuilderContext
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.TagElement
@@ -51,7 +48,9 @@ fun MdCheckbox(
     Label(attrs = {
         style {
             display(DisplayStyle.LegacyInlineFlex)
+            columnGap(4.px)
             alignItems(AlignItems.Center)
+            cursor("pointer")
         }
         labelAttrs()
     }) {

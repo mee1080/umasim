@@ -44,7 +44,7 @@ fun testLessonClear() {
 
 fun testProvideLesson() {
     val songs = mutableListOf<SongLesson>()
-    for (period in LivePeriod.values()) {
+    for (period in LivePeriod.entries) {
         println(period.name)
         songs.clear()
         for (count in 0 until 40) {

@@ -87,6 +87,7 @@ fun MdRadio(
             display(DisplayStyle.LegacyInlineFlex)
             columnGap(4.px)
             alignItems(AlignItems.Center)
+            cursor("pointer")
         }
         labelAttrs()
     }) {

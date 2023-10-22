@@ -373,7 +373,7 @@ object Calculator {
         info: CalcInfo,
         firstType: PerformanceType,
     ): PerformanceType {
-        val minimumType = info.currentStatus.performance?.minimumType ?: PerformanceType.values().asList()
+        val minimumType = info.currentStatus.performance?.minimumType ?: PerformanceType.entries
         return if (!minimumType.contains(firstType) && Random.nextInt(100) >= 85) {
             minimumType.random()
         } else {

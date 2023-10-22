@@ -49,7 +49,7 @@ class LessonClearCalculator(
     ): Map<Performance, Double> {
         val result = mutableMapOf<Performance, Double>()
         val categoryRate1 = categoryRate[0]
-        for (category1 in TechniqueLessonCategory.values()) {
+        for (category1 in TechniqueLessonCategory.entries) {
             val selections1 = selections[category1] ?: continue
             val rate1 = calcRate(category1, categoryRate1)
             if (rate1 == 0.0) continue
@@ -57,7 +57,7 @@ class LessonClearCalculator(
                 !it.first.single || it.first != category1
             }
             for (selection1 in selections1.rateList) {
-                for (category2 in TechniqueLessonCategory.values()) {
+                for (category2 in TechniqueLessonCategory.entries) {
                     if (category2.single && category2 == category1) continue
                     val selections2 = selections[category2]?.filter { it !== selection1.first } ?: continue
                     val rate2 = calcRate(category2, categoryRate2)
@@ -66,7 +66,7 @@ class LessonClearCalculator(
                         !it.first.single || (it.first != category1 && it.first != category2)
                     }
                     for (selection2 in selections2.rateList) {
-                        for (category3 in TechniqueLessonCategory.values()) {
+                        for (category3 in TechniqueLessonCategory.entries) {
                             if (category3.single && (category3 == category1 || category3 == category2)) continue
                             val selections3 =
                                 selections[category3]?.filter { it !== selection1.first && it !== selection2.first }

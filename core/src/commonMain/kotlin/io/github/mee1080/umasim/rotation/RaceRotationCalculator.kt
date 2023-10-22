@@ -12,8 +12,8 @@ class RaceRotationCalculator(
 ) {
 
     companion object {
-        val displayRankList = Rank.values().map { it.displayName }
-        fun getRank(displayName: String) = Rank.values().first { it.displayName == displayName }
+        val displayRankList = Rank.entries.map { it.displayName }
+        fun getRank(displayName: String) = Rank.entries.first { it.displayName == displayName }
     }
 
     enum class Rank(
@@ -215,16 +215,19 @@ class RaceRotationCalculator(
                     is RaceNameCondition -> {
                         condition.count > condition.raceNames.count { restRaceNames.contains(it) }
                     }
+
                     is RaceNameEndCondition -> {
                         // 同一ターンに複数は無しのため、該当名称数をカウント
                         condition.count > restRaceNames.count { it.endsWith(condition.raceNameEnd) }
                     }
+
                     is RaceCondition -> {
                         val check = condition.condition
                         condition.count > restRace.count { list ->
                             list.any { it.check() }
                         }
                     }
+
                     is AnotherAchievementCondition -> {
                         condition.condition.any { cannotAchieveSet.contains(it) }
                     }

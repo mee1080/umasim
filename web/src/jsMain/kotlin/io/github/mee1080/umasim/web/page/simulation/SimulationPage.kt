@@ -44,7 +44,6 @@ fun SimulationPage(state: State) {
         )
     }
     var running by remember { mutableStateOf(false) }
-    var reset by remember { mutableStateOf(0) }
     Div({
         style {
             height(100.percent)

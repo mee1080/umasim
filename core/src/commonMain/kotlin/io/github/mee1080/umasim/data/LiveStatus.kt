@@ -121,8 +121,8 @@ data class Performance(
     val valid by lazy { dance >= 0 && passion >= 0 && vocal >= 0 && visual >= 0 && mental >= 0 }
 
     val minimumType by lazy {
-        val minimumValue = PerformanceType.values().minOf { it.getValue(this) }
-        PerformanceType.values().filter { it.getValue(this) == minimumValue }
+        val minimumValue = PerformanceType.entries.minOf { it.getValue(this) }
+        PerformanceType.entries.filter { it.getValue(this) == minimumValue }
     }
 }
 
