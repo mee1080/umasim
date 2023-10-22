@@ -21,13 +21,13 @@ package io.github.mee1080.umasim.web.page.simulation
 import androidx.compose.runtime.*
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
-import io.github.mee1080.umasim.web.components.atoms.MdDivider
-import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
-import io.github.mee1080.umasim.web.components.atoms.MdSysTypeScale
-import io.github.mee1080.umasim.web.components.atoms.typeScale
+import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.page.share.StatusTable
+import io.github.mee1080.umasim.web.state.State
+import io.github.mee1080.umasim.web.state.displayName
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
@@ -36,46 +36,15 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-fun SimulationPage() {
-    val selector = remember { ManualActionSelector() }
-    var simulationState by remember { mutableStateOf<SimulationState?>(null) }
-    var selection by remember { mutableStateOf<List<Action>>(emptyList()) }
-    var result by remember { mutableStateOf<Summary?>(null) }
-    val scope = rememberCoroutineScope()
-    var reset by remember { mutableStateOf(0) }
-    DisposableEffect(reset) {
-        val job = scope.launch {
-            launch {
-                selector.selectionChannel.receiveAsFlow().collect {
-                    simulationState = it.first
-                    selection = it.second
-                    result = null
-                }
-            }
-            launch {
-                result = Simulator(
-                    scenario = Scenario.LARC,
-                    chara = Store.getChara("[うららん一等賞♪]ハルウララ", 5, 5),
-                    supportCardList = Store.getSupportByName(
-                        "[大望は飛んでいく]エルコンドルパサー",
-                        "[The frontier]ジャングルポケット",
-                        "[迫る熱に押されて]キタサンブラック",
-                        "[一粒の安らぎ]スーパークリーク",
-                        "[君と見る泡沫]マンハッタンカフェ",
-                        "[L'aubeは迫りて]佐岳メイ",
-                    ),
-                    factorList = listOf(
-                        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-                        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.GUTS to 3,
-                    ),
-                ).simulate(selector)
-                selection = emptyList()
-            }
-        }
-        onDispose {
-            job.cancel()
-        }
+fun SimulationPage(state: State) {
+    val factorList = remember {
+        mutableStateListOf(
+            StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
+            StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.GUTS to 3,
+        )
     }
+    var running by remember { mutableStateOf(false) }
+    var reset by remember { mutableStateOf(0) }
     Div({
         style {
             height(100.percent)
@@ -97,22 +66,89 @@ fun SimulationPage() {
                 Text("手動シミュレーション")
             }
             MdFilledButton("リセット") {
-                onClick { reset++ }
+                onClick { running = false }
             }
         }
-        simulationState?.let { SimulationStateBlock(it) }
-        MdDivider(1.px)
-        if (selection.isNotEmpty()) {
-            SelectionBlock(selection) {
-                scope.launch {
-                    selector.resultChannel.send(it)
+        if (running) {
+            RunningSimulation(state, factorList)
+        } else {
+            Card({
+                style { margin(16.px) }
+            }) {
+                Div { Text("育成ウマ娘：") }
+                Div({ style { marginLeft(32.px) } }) {
+                    Div { Text(state.chara.name) }
+                }
+                Div({ style { marginTop(32.px) } }) { Text("サポートカード：") }
+                Div({ style { marginLeft(32.px) } }) {
+                    state.supportSelectionList.map { it.card }.forEach {
+                        Div { Text(it.displayName()) }
+                    }
+                }
+                Div({ style { marginTop(32.px) } }) { Text("青因子選択（全て☆３）：") }
+                val statusSelection = trainingType.toList()
+                repeat(6) { index ->
+                    Div {
+                        MdRadioGroup(
+                            statusSelection,
+                            factorList[index].first,
+                            itemToLabel = { it.displayName },
+                            onSelect = { factorList[index] = it to factorList[index].second },
+                        )
+                    }
+                }
+            }
+            DivFlexCenter({ style { justifyContent(JustifyContent.Center) } }) {
+                MdFilledButton("シミュレーション開始") {
+                    onClick { running = true }
                 }
             }
         }
-        result?.let {
-            Div { Text("育成終了") }
-            StatusTable(it.status, summary = true)
+    }
+}
+
+@Composable
+fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
+    val scope = rememberCoroutineScope()
+    val selector = remember { ManualActionSelector() }
+    var simulationState by remember { mutableStateOf<SimulationState?>(null) }
+    var selection by remember { mutableStateOf<List<Action>>(emptyList()) }
+    var result by remember { mutableStateOf<Summary?>(null) }
+    DisposableEffect(Unit) {
+        val job = scope.launch {
+            launch {
+                selector.selectionChannel.receiveAsFlow().collect {
+                    simulationState = it.first
+                    selection = it.second
+                    result = null
+                }
+            }
+            launch {
+                result = Simulator(
+                    scenario = Scenario.LARC,
+                    chara = state.chara,
+                    supportCardList = state.supportSelectionList.mapNotNull { it.card },
+                    factorList = factorList,
+                ).simulate(selector)
+                selection = emptyList()
+            }
         }
+        onDispose {
+            job.cancel()
+        }
+    }
+    simulationState?.let { SimulationStateBlock(it) }
+    MdDivider(1.px)
+    if (selection.isNotEmpty()) {
+        SelectionBlock(selection) {
+            scope.launch {
+                selector.resultChannel.send(it)
+            }
+        }
+    }
+    result?.let {
+        Div { Text("育成終了") }
+        StatusTable(it.status, summary = true)
     }
 }
 

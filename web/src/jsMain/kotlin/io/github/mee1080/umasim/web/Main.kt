@@ -66,7 +66,7 @@ fun main() {
                     Page.Top -> RootPage(model, model.state)
                     Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)
                     Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
-                    Page.Simulation -> SimulationPage()
+                    Page.Simulation -> SimulationPage(model.state)
                 }
             }
             Div({

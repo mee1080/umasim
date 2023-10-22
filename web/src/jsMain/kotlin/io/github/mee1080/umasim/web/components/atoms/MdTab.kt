@@ -22,6 +22,7 @@ package io.github.mee1080.umasim.web.components.atoms
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
+import androidx.compose.runtime.remember
 import io.github.mee1080.umasim.web.components.lib.addEventListener
 import io.github.mee1080.umasim.web.components.lib.require
 import io.github.mee1080.umasim.web.components.lib.slot
@@ -50,6 +51,7 @@ fun <T> MdPrimaryTabs(
     tabAttrs: AttrBuilderContext<MdPrimaryTabElement>? = null,
     attrs: AttrBuilderContext<MdTabsElement>? = null,
 ) {
+    val initialItem = remember { selectedItem }
     MdPrimaryTabs({
         onChange {
             selection.getOrNull(it.toInt())?.let(onSelect)
@@ -58,7 +60,7 @@ fun <T> MdPrimaryTabs(
     }) {
         selection.forEach {
             key(it) {
-                MdTab(it == selectedItem, tabAttrs, itemToIcon(it)) { Text(itemToLabel(it)) }
+                MdTab(it == initialItem, tabAttrs, itemToIcon(it)) { Text(itemToLabel(it)) }
             }
         }
     }
@@ -74,6 +76,7 @@ fun <T> MdSecondaryTabs(
     tabAttrs: AttrBuilderContext<MdSecondaryTabElement>? = null,
     attrs: AttrBuilderContext<MdTabsElement>? = null,
 ) {
+    val initialItem = remember { selectedItem }
     MdSecondaryTabs({
         onChange {
             selection.getOrNull(it.toInt())?.let(onSelect)
@@ -82,7 +85,7 @@ fun <T> MdSecondaryTabs(
     }) {
         selection.forEach {
             key(it) {
-                MdTab(it == selectedItem, tabAttrs, itemToIcon(it)) { Text(itemToLabel(it)) }
+                MdTab(it == initialItem, tabAttrs, itemToIcon(it)) { Text(itemToLabel(it)) }
             }
         }
     }
