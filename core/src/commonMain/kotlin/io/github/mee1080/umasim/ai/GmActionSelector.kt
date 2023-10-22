@@ -366,22 +366,18 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         override fun generateSelector() = GmActionSelector(this)
     }
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
-        throw NotImplementedError()
-    }
-
-    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         val forceUse = true
         when (val wisdom = state.gmStatus?.waitingWisdom) {
             Founder.Red -> {
                 if (state.turn !in 20..23 && (forceUse || state.status.hp < 60 || state.status.motivation < 2)) {
-                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                    return GmActivateWisdom(GmActivateWisdomResult(wisdom))
                 }
             }
 
             Founder.Blue -> {
                 if (forceUse || selection.any { it is Training && it.failureRate < 10 && it.member.size >= 3 }) {
-                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                    return GmActivateWisdom(GmActivateWisdomResult(wisdom))
                 }
             }
 
@@ -391,14 +387,13 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
                             !member.isFriendTraining(it.type)
                         } >= 2
                     }) {
-                    return SelectedAction(scenarioAction = GmActivateWisdom(wisdom))
+                    return GmActivateWisdom(GmActivateWisdomResult(wisdom))
                 }
             }
 
             null -> {}
         }
-        val action = selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
-        return SelectedAction(action)
+        return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
@@ -406,7 +401,7 @@ class GmActionSelector(val option: Option = Option()) : ActionSelector {
         val total = action.candidates.sumOf { it.second }.toDouble()
         val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            val result = it.first
+            val result = it.first as? StatusActionResult ?: return@sumOf 0.0
             val statusScore = calcScore(calcExpectedHintStatus(action) + result.status)
             val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
             val knowledgeScore = calcKnowledgeScore(state, result.scenarioActionParam as? GmActionParam)

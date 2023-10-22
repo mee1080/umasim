@@ -136,11 +136,7 @@ class LArcActionSelector(
 
     private var option: Option = domesticOption1
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
-        throw NotImplementedError()
-    }
-
-    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         option = when {
             state.turn <= 36 -> domesticOption1
             state.turn <= 43 -> overseasOption1
@@ -149,14 +145,12 @@ class LArcActionSelector(
         }
         val aptitude = selectAptitude(state, selection)
         if (aptitude != null) {
-            return SelectedAction(scenarioAction = SelectedLArcAction(aptitude))
+            return LArcGetAptitude(aptitude)
         }
-        return SelectedAction(
-            action = selection.maxByOrNull { calcScore(state, it) } ?: selection.first(),
-        )
+        return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
-    private fun selectAptitude(state: SimulationState, selection: List<Action>): LArcAptitude? {
+    private fun selectAptitude(state: SimulationState, selection: List<Action>): LArcGetAptitudeResult? {
         val status = state.lArcStatus ?: return null
         val turn = state.turn
         val aptitudePt = status.aptitudePt
@@ -226,17 +220,18 @@ class LArcActionSelector(
             else -> null
         } ?: return null
         val cost = aptitude.getCost(status)
-        return if (aptitudePt >= cost) aptitude else null
+        return if (aptitudePt >= cost) LArcGetAptitudeResult(aptitude, aptitude.getLevel(status) + 1) else null
     }
 
     private fun calcScore(state: SimulationState, action: Action): Double {
+        if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
         if (action is SSMatch) return if (action.member.size == 5) option.ssMatchScore else 0.0
         val total = action.candidates.sumOf { it.second }.toDouble()
         val needHp = state.turn in listOf(35, 36, 58, 59)
         val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
-            val result = it.first
+            val result = it.first as? StatusActionResult ?: return@sumOf 0.0
             val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, needHp, state.status)
             val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
             val lArcScore = if (result.success) calcLarcScore(

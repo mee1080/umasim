@@ -22,10 +22,12 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.StatusValues
 import io.github.mee1080.umasim.data.motivationToString
 import io.github.mee1080.umasim.web.style.AppStyle
-import org.jetbrains.compose.web.css.*
+import org.jetbrains.compose.web.css.Color
+import org.jetbrains.compose.web.css.backgroundColor
+import org.jetbrains.compose.web.css.color
+import org.jetbrains.compose.web.css.textAlign
 import org.jetbrains.compose.web.dom.AttrBuilderContext
 import org.jetbrains.compose.web.dom.Div
-import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 import org.w3c.dom.HTMLElement
 
@@ -67,7 +69,9 @@ fun StatusTable(
 private fun StatusValue(value: Number, summary: Boolean) {
     Div {
         if (summary) {
-            val intValue = value.toInt()
+            val intValue = value.toInt().let {
+                if (it > 1200) (it - 1200) / 2 + 1200 else it
+            }
             val params = when {
                 intValue > 1200 -> {
                     val rank = when {
@@ -101,10 +105,10 @@ private fun StatusValue(value: Number, summary: Boolean) {
                 intValue >= 50 -> "G+" to Color.gray
                 else -> "G" to Color.gray
             }
-            Span({
+            Div({
                 style {
                     color(params.second)
-                    marginRight(4.px)
+                    textAlign("center")
                     if (intValue >= 1000) {
                         backgroundColor(Color.black)
                     } else {
@@ -114,7 +118,9 @@ private fun StatusValue(value: Number, summary: Boolean) {
             }) {
                 Text(params.first)
             }
+            Div({ style { textAlign("center") } }) { Text(intValue.toString()) }
+        } else {
+            Text(value.toString())
         }
-        Text(value.toString())
     }
 }

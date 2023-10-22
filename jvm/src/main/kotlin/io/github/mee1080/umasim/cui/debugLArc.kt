@@ -2,10 +2,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.LArcActionSelector
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.Evaluator
-import io.github.mee1080.umasim.simulation2.RandomEvents
-import io.github.mee1080.umasim.simulation2.Runner
-import io.github.mee1080.umasim.simulation2.Simulator
+import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.launch
@@ -88,7 +85,7 @@ fun lArcSingleSimulation() {
         println("  開始時: ${history.beforeActionState.status.toShortString()}")
         println("  トレLv: ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")
         println("  LArc: ${history.beforeActionState.lArcStatus?.toShortString()}")
-        history.selections.forEach { (selection, selectedAction) ->
+        history.selections.forEach { (selection, selectedAction, result) ->
             println()
             selection.forEach { action ->
                 println("  ・${action.name}")
@@ -101,10 +98,12 @@ fun lArcSingleSimulation() {
                 }
                 println()
             }
-            println("  -> ${selectedAction.action?.name ?: ""}${selectedAction.scenarioAction ?: ""}")
+            println("  -> ${selectedAction.name}")
+            if (selectedAction is MultipleAction) {
+                println("     結果: $result")
+            }
         }
         println()
-        println("  上昇量: ${history.actionResult.toString()}")
         println("  終了時: ${(history.afterTurnState.status).toShortString()}")
 //        history.afterTurnState.member
 //            .sortedByDescending { (it.scenarioState as LArcMemberState).supporterPt }

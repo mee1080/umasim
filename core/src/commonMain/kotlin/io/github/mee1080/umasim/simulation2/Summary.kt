@@ -97,6 +97,8 @@ class Summary(
                 is SSMatch -> {
                     ssMatchCount++
                 }
+
+                else -> {}
             }
         }
     }

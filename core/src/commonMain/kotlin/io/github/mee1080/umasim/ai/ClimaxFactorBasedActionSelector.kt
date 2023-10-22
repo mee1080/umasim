@@ -197,18 +197,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
         amuletCount = 5
     }
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
-        val race = option.race[state.turn]
-        return if (race == null) {
-            selection
-                .filterNot { it is Race }
-                .maxByOrNull { calcScore(state, it) } ?: selection.first()
-        } else {
-            selection.first { it is Race && it.raceName == race }
-        }
-    }
-
-    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         if (state.turn >= 13 && lastItemCheckedTurn != state.turn) {
             val itemList = (when (state.turn) {
                 13 -> listOf("にんじんBBQセット")
@@ -232,15 +221,20 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 amuletCount -= itemList.count { it == "健康祈願のお守り" }
                 whistleCount -= itemList.count { it == "リセットホイッスル" }
                 val list = itemList.map { Store.Climax.getShopItem(it) }
-                return SelectedAction(
-                    scenarioAction = SelectedClimaxAction(list, list),
-                )
+                return ClimaxBuyUseItem(ClimaxBuyUseItemResult(list, list))
             }
         }
         if (state.possessionItem.isNotEmpty()) {
-            return SelectedAction(scenarioAction = SelectedClimaxAction(useItem = state.possessionItem))
+            return ClimaxBuyUseItem(ClimaxBuyUseItemResult(useItem = state.possessionItem))
         }
-        return SelectedAction(action = select(state, selection))
+        val race = option.race[state.turn]
+        return if (race == null) {
+            selection
+                .filterNot { it is Race }
+                .maxByOrNull { calcScore(state, it) } ?: selection.first()
+        } else {
+            selection.first { it is Race && it.raceName == race }
+        }
     }
 
     private fun selectVitalOrAmulet(state: SimulationState): List<String> {

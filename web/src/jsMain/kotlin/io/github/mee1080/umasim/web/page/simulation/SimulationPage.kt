@@ -112,7 +112,6 @@ fun SimulationPage() {
         result?.let {
             Div { Text("育成終了") }
             StatusTable(it.status, summary = true)
-            Div { Text(it.toString()) }
         }
     }
 }
@@ -121,13 +120,9 @@ class ManualActionSelector : ActionSelector {
 
     val selectionChannel = Channel<Pair<SimulationState, List<Action>>>()
 
-    val resultChannel = Channel<SelectedAction>()
+    val resultChannel = Channel<Action>()
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
-        throw NotImplementedError()
-    }
-
-    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         selectionChannel.send(state to selection)
         return resultChannel.receive()
     }

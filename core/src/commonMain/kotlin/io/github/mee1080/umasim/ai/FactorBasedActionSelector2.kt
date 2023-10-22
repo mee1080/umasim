@@ -310,7 +310,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
         }
     }
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 

@@ -68,6 +68,11 @@ fun SimulationStateBlock(state: SimulationState) {
             }
         }
         StatusTable(state.status, summary = true)
+        state.lArcStatus?.let {
+            Div {
+                Text("サポーターPt=${it.supporterPt}/${it.memberSupporterPt}, 期待度=${it.expectationLevel} 適性Pt=${it.aptitudePt}, SSマッチ=${it.totalSSMatchCount}回, 海外適性=${it.overseasTurfAptitude}/${it.longchampAptitude}/${it.lifeRhythm}/${it.nutritionManagement}/${it.frenchSkill}/${it.overseasExpedition}/${it.strongHeart}/${it.mentalStrength}/${it.hopeOfLArc}/${it.consecutiveVictories})")
+            }
+        }
         HideBlock("サポートカード") {
             state.support.forEach {
                 MemberState(it)

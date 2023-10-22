@@ -24,7 +24,7 @@ interface ActionSelector {
 
     fun init(state: SimulationState) {}
 
-    fun select(state: SimulationState, selection: List<Action>): Action
+    suspend fun select(state: SimulationState, selection: List<Action>): Action
 
     fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
 
@@ -33,36 +33,9 @@ interface ActionSelector {
     fun selectTraining(selection: List<Action>, type: StatusType) =
         selection.first { it is Training && it.type == type } as Training
 
-    suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction =
-        SelectedAction(action = select(state, selection))
-
     fun selectBeforeLiveLesson(state: SimulationState): Lesson? = null
 }
 
 interface ActionSelectorGenerator {
     fun generateSelector(): ActionSelector
 }
-
-data class SelectedAction(
-    val action: Action? = null,
-    val scenarioAction: SelectedScenarioAction? = null,
-)
-
-sealed interface SelectedScenarioAction
-
-data class SelectedClimaxAction(
-    val buyItem: List<ShopItem>? = null,
-    val useItem: List<ShopItem>? = null,
-) : SelectedScenarioAction
-
-data class SelectedLiveAction(
-    val lesson: Lesson,
-) : SelectedScenarioAction
-
-sealed interface SelectedGmAction : SelectedScenarioAction
-
-data class GmActivateWisdom(val founder: Founder) : SelectedGmAction
-
-data class SelectedLArcAction(
-    val aptitude: LArcAptitude,
-) : SelectedScenarioAction

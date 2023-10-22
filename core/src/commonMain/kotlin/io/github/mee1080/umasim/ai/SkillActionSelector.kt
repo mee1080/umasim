@@ -40,7 +40,7 @@ class SkillActionSelector(targetSkills: Array<String>) : ActionSelector {
 
     private val targetSkillSet = targetSkills.toSet()
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         val byRate = selection
             .map { it to calcDeBuffRate(state, it) }
             .filter { it.second > 0.0 }

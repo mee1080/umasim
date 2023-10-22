@@ -107,6 +107,24 @@ fun EnableItem.onTurnChange(): EnableItem {
 }
 
 fun SimulationState.applyAction(action: Action, result: ActionResult): SimulationState {
+    return when (result) {
+        is StatusActionResult -> applyStatusAction(action, result)
+
+        is ClimaxBuyUseItemResult -> applyIfNotNull(result.buyItem) { buyItem(it) }.applyIfNotNull(result.useItem) {
+            applyItem(
+                it
+            )
+        }
+
+        is LiveGetLessonResult -> purchaseLesson(result.lesson)
+
+        is GmActivateWisdomResult -> applySelectedGmAction()
+
+        is LArcGetAptitudeResult -> applySelectedLArcAction(result)
+    }
+}
+
+fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult): SimulationState {
     // FIXME トレーニング失敗時にもLv上昇など発生
     // ステータス更新
     val newStatus = status + result.status
@@ -246,24 +264,6 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     if (skillList.isEmpty()) return Status()
     val target = skillList.random()
     return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
-}
-
-fun SimulationState.applySelectedScenarioAction(action: SelectedScenarioAction?): SimulationState {
-    return when (action) {
-        null -> this
-
-        is SelectedClimaxAction -> applyIfNotNull(action.buyItem) { buyItem(it) }.applyIfNotNull(action.useItem) {
-            applyItem(
-                it
-            )
-        }
-
-        is SelectedLiveAction -> purchaseLesson(action.lesson)
-
-        is SelectedGmAction -> applySelectedGmAction(action)
-
-        is SelectedLArcAction -> applySelectedLArcAction(action)
-    }
 }
 
 fun SimulationState.buyItem(itemList: List<ShopItem>): SimulationState {
@@ -476,14 +476,10 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
     return copy(gmStatus = newGmStatus, member = newMember, status = status + addStatus)
 }
 
-private fun SimulationState.applySelectedGmAction(action: SelectedGmAction): SimulationState {
+private fun SimulationState.applySelectedGmAction(): SimulationState {
     val gmStatus = gmStatus ?: return this
-    return when (action) {
-        is GmActivateWisdom -> {
-            val effect = gmStatus.activateWisdom()
-            copy(gmStatus = effect.first, status = status + effect.second)
-        }
-    }
+    val effect = gmStatus.activateWisdom()
+    return copy(gmStatus = effect.first, status = status + effect.second)
 }
 
 fun SimulationState.updateLArcStatus(update: LArcStatus.() -> LArcStatus): SimulationState {
@@ -589,6 +585,6 @@ fun LArcMemberState.applyTraining(action: Training, isLevelUpTurn: Boolean): LAr
     )
 }
 
-fun SimulationState.applySelectedLArcAction(action: SelectedLArcAction): SimulationState {
-    return updateLArcStatus { addAptitude(action.aptitude) }
+fun SimulationState.applySelectedLArcAction(result: LArcGetAptitudeResult): SimulationState {
+    return updateLArcStatus { addAptitude(result.aptitude) }
 }

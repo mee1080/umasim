@@ -23,27 +23,31 @@ import io.github.mee1080.umasim.data.*
 sealed interface Action {
     val name: String
     val candidates: List<Pair<ActionResult, Int>>
+    val turnChange: Boolean get() = true
     fun infoToString() = ""
     fun toShortString() = "$name ${infoToString()}"
+    fun randomSelectResult(): ActionResult
+}
 
-    fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam): List<Pair<ActionResult, Int>> {
-        return candidates.map { it.first.addScenarioActionParam(scenarioActionParam) to it.second }
-    }
+sealed interface SingleAction : Action {
+    val result: ActionResult
+    override val candidates get() = listOf(result to 1)
+    override fun randomSelectResult() = result
+}
 
+sealed interface MultipleAction : Action {
     val totalRate get() = candidates.sumOf { it.second }
+    override fun randomSelectResult() = randomSelect(candidates)
 }
 
 sealed interface ActionResult {
-    val status: Status
-    val scenarioActionParam: ScenarioActionParam?
-    val success: Boolean
-    fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam): ActionResult
+    val status: Status get() = Status()
 }
 
-class StatusActionResult private constructor(
+data class StatusActionResult(
     override val status: Status,
-    override val scenarioActionParam: ScenarioActionParam?,
-    override val success: Boolean = true,
+    val scenarioActionParam: ScenarioActionParam?,
+    val success: Boolean = true,
 ) : ActionResult {
     constructor(
         current: Status,
@@ -52,10 +56,6 @@ class StatusActionResult private constructor(
         success: Boolean = true,
     ) : this((current + status).adjustRange() - current, scenarioActionParam, success)
 
-    override fun addScenarioActionParam(scenarioActionParam: ScenarioActionParam) = StatusActionResult(
-        status, if (success) scenarioActionParam else null, success
-    )
-
     override fun toString() =
         "StatusActionResult(status=${status.toShortString()},scenario=${scenarioActionParam?.toShortString()},success=$success)"
 }
@@ -63,14 +63,14 @@ class StatusActionResult private constructor(
 data class Outing(
     val support: MemberState?,
     override val candidates: List<Pair<ActionResult, Int>>,
-) : Action {
+) : MultipleAction {
     override val name = "お出かけ"
     override fun infoToString() = support?.let { "(${it.card.name})" } ?: ""
 }
 
 data class Sleep(
     override val candidates: List<Pair<ActionResult, Int>>,
-) : Action {
+) : MultipleAction {
     override val name = "お休み"
     override fun toString() = "Sleep"
 }
@@ -83,7 +83,7 @@ data class Training(
     override val candidates: List<Pair<ActionResult, Int>>,
     val baseStatus: Status,
     val friendTraining: Boolean,
-) : Action {
+) : MultipleAction {
     val support get() = member.filter { !it.guest }
     override val name = "トレーニング(${type.displayName}Lv$level)"
 
@@ -122,8 +122,8 @@ data class Race(
     val goal: Boolean,
     val raceName: String,
     val grade: RaceGrade,
-    override val candidates: List<Pair<ActionResult, Int>>,
-) : Action {
+    override val result: ActionResult,
+) : SingleAction {
     override val name = raceName + if (goal) "(目標)" else ""
 }
 
@@ -144,8 +144,8 @@ data class GmActionParam(
 data class SSMatch(
     val isSSSMatch: Boolean,
     val member: Set<MemberState>,
-    override val candidates: List<Pair<ActionResult, Int>>,
-) : Action {
+    override val result: ActionResult,
+) : SingleAction {
     override val name = if (isSSSMatch) "SSSマッチ(${member.size}人)" else "SSマッチ(${member.size}人)"
 
     fun memberToStrings() = member.map {
@@ -184,4 +184,67 @@ data class LArcActionParam(
         aptitudePt = aptitudePt + other.aptitudePt,
         starGaugeMember = starGaugeMember + other.starGaugeMember,
     )
+}
+
+class ClimaxBuyUseItem(
+    override val result: ClimaxBuyUseItemResult,
+) : SingleAction {
+    override val name get() = result.toString()
+    override val turnChange get() = false
+}
+
+class ClimaxBuyUseItemResult(
+    val buyItem: List<ShopItem>? = null,
+    val useItem: List<ShopItem>? = null,
+) : ActionResult {
+    override fun toString() = buildString {
+        if (!buyItem.isNullOrEmpty()) {
+            append("アイテム購入：")
+            append(buyItem.joinToString { it.name })
+        }
+        if (!useItem.isNullOrEmpty()) {
+            append(" アイテム使用：")
+            append(useItem.joinToString { it.name })
+        }
+    }
+}
+
+class LiveGetLesson(
+    override val result: LiveGetLessonResult,
+) : SingleAction {
+    override val name get() = "レッスン獲得：$result"
+    override val turnChange get() = false
+}
+
+class LiveGetLessonResult(
+    val lesson: Lesson,
+) : ActionResult {
+    override fun toString() = lesson.displayName
+}
+
+data class GmActivateWisdom(
+    override val result: GmActivateWisdomResult,
+) : SingleAction {
+    override val name get() = "叡智獲得：$result"
+    override val turnChange get() = false
+}
+
+class GmActivateWisdomResult(
+    val founder: Founder
+) : ActionResult {
+    override fun toString() = founder.charaName
+}
+
+class LArcGetAptitude(
+    override val result: LArcGetAptitudeResult,
+) : SingleAction {
+    override val name get() = "海外適性獲得：$result"
+    override val turnChange get() = false
+}
+
+class LArcGetAptitudeResult(
+    val aptitude: LArcAptitude,
+    val level: Int,
+) : ActionResult {
+    override fun toString() = "${aptitude.displayName}Lv$level(${aptitude.getCost(level)}Pt)"
 }

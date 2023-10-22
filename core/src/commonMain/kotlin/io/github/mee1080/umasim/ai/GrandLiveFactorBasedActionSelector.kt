@@ -166,13 +166,7 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         waitLesson = false
     }
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
-        return selection
-            .filterNot { it is Race }
-            .maxByOrNull { calcScore(state, it) } ?: selection.first()
-    }
-
-    override suspend fun selectWithItem(state: SimulationState, selection: List<Action>): SelectedAction {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         val liveStatus = state.liveStatus
         if (liveStatus != null) {
             if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${liveStatus.lessonSelection.joinToString { it.displayName }}")
@@ -192,12 +186,14 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
                 if (rest.valid) {
                     if (DEBUG_LESSON) println("${state.turn}: in turn purchase ${lesson.displayName}")
                     reservedLesson = null
-                    return SelectedAction(scenarioAction = SelectedLiveAction(lesson))
+                    return LiveGetLesson(LiveGetLessonResult(lesson))
                 }
                 if (DEBUG_LESSON) println("${state.turn}: reserved ${lesson.displayName} ${state.status.performance}")
             }
         }
-        return SelectedAction(action = select(state, selection))
+        return selection
+            .filterNot { it is Race }
+            .maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
     override fun selectBeforeLiveLesson(state: SimulationState): Lesson? {

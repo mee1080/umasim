@@ -31,7 +31,7 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
         fun generateSelector() = NextStateBasedActionSelector(this)
     }
 
-    override fun select(state: SimulationState, selection: List<Action>): Action {
+    override suspend fun select(state: SimulationState, selection: List<Action>): Action {
         return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 

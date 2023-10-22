@@ -6,19 +6,19 @@ import io.github.mee1080.umasim.web.components.lib.stringValue
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.*
 
-object SysColor {
-    val primary = CSSVar<CSSColorValue>("--md-sys-color-primary")
-    val onPrimary = CSSVar<CSSColorValue>("--md-sys-color-on-primary")
-    val secondary = CSSVar<CSSColorValue>("--md-sys-color-secondary")
-    val onSecondary = CSSVar<CSSColorValue>("--md-sys-color-on-secondary")
+fun StyleScope.primaryToSecondary() {
+    setVar(MdSysColor.primary, MdSysColor.secondary)
+    setVar(MdSysColor.onPrimary, MdSysColor.onSecondary)
 }
 
-fun StyleScope.primaryToSecondary() {
-    setVar(SysColor.primary, SysColor.secondary)
-    setVar(SysColor.onPrimary, SysColor.onSecondary)
+fun StyleScope.primaryToTertiary() {
+    setVar(MdSysColor.primary, MdSysColor.tertiary)
+    setVar(MdSysColor.onPrimary, MdSysColor.onTertiary)
 }
 
 fun AttrsScope<*>.secondary() = style { primaryToSecondary() }
+
+fun AttrsScope<*>.tertiary() = style { primaryToTertiary() }
 
 @Suppress("unused", "ConstPropertyName")
 object MdClass {

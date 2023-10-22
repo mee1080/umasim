@@ -35,47 +35,52 @@ private val baseTrainingFactorMap = (0..200).associateWith {
 }
 
 enum class LArcAptitude(
+    val displayName: String,
     private val level2Cost: Int,
     private val level3Cost: Int,
-    private val getLevel: LArcStatus.() -> Int,
+    val getLevel: LArcStatus.() -> Int,
     val addLevel: LArcStatus.() -> LArcStatus,
 ) {
-    OverseasTurfAptitude(50, 200, { overseasTurfAptitude }, {
+    OverseasTurfAptitude("海外洋芝適性", 50, 200, { overseasTurfAptitude }, {
         copy(overseasTurfAptitude = overseasTurfAptitude + 1)
     }),
-    LongchampAptitude(50, 200, { longchampAptitude }, {
+    LongchampAptitude("ロンシャン適性", 50, 200, { longchampAptitude }, {
         copy(longchampAptitude = longchampAptitude + 1)
     }),
-    LifeRhythm(100, 200, { lifeRhythm }, {
+    LifeRhythm("生活リズム", 100, 200, { lifeRhythm }, {
         copy(lifeRhythm = lifeRhythm + 1)
     }),
-    NutritionManagement(100, 200, { nutritionManagement }, {
+    NutritionManagement("栄養管理", 100, 200, { nutritionManagement }, {
         copy(nutritionManagement = nutritionManagement + 1)
     }),
-    FrenchSkill(100, 200, { frenchSkill }, {
+    FrenchSkill("フランス語力", 100, 200, { frenchSkill }, {
         copy(frenchSkill = frenchSkill + 1)
     }),
-    OverseasExpedition(100, 200, { overseasExpedition }, {
+    OverseasExpedition("海外遠征", 100, 200, { overseasExpedition }, {
         copy(overseasExpedition = overseasExpedition + 1)
     }),
-    StrongHeart(200, 300, { strongHeart }, {
+    StrongHeart("強心臓", 200, 300, { strongHeart }, {
         copy(strongHeart = strongHeart + 1)
     }),
-    MentalStrength(200, 300, { mentalStrength }, {
+    MentalStrength("精神力", 200, 300, { mentalStrength }, {
         copy(mentalStrength = mentalStrength + 1)
     }),
-    HopeOfLArc(200, 0, { hopeOfLArc }, {
+    HopeOfLArc("L’Arcの希望", 200, 0, { hopeOfLArc }, {
         copy(hopeOfLArc = hopeOfLArc + 1)
     }),
-    ConsecutiveVictories(150, 0, { consecutiveVictories }, {
+    ConsecutiveVictories("凱旋門賞連覇の夢", 150, 0, { consecutiveVictories }, {
         copy(consecutiveVictories = consecutiveVictories + 1)
     });
 
-    fun getCost(status: LArcStatus) = when (status.getLevel()) {
-        1 -> level2Cost
-        2 -> level3Cost
+    val maxLevel get() = if (level3Cost == 0) 2 else 3
+
+    fun getCost(level: Int) = when (level) {
+        2 -> level2Cost
+        3 -> level3Cost
         else -> 0
     }
+
+    fun getCost(status: LArcStatus) = getCost(status.getLevel() + 1)
 }
 
 data class LArcStatus(

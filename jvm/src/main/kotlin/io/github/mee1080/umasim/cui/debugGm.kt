@@ -105,13 +105,13 @@ fun gmSingleSimulation() {
     result.second.forEachIndexed { index, history ->
         println()
         println("${index + 1}:")
-        history.selections.forEach { (selection, selectedAction) ->
+        history.selections.forEach { (selection, selectedAction, result) ->
 //            selection.forEach {
 //                println("  ${it.scenarioActionParam?.toShortString()} : ${it.toShortString()}")
 //            }
-            println("  -> ${selectedAction.action?.toShortString() ?: ""}${selectedAction.scenarioAction ?: ""}")
-            (selectedAction.scenarioAction as? GmActivateWisdom)?.let {
-                founders += "${index + 1}: ${it.founder}"
+            println("  -> ${selectedAction.toShortString()}")
+            (selectedAction as? GmActivateWisdom)?.let {
+                founders += "${index + 1}: ${it.result.founder}"
             }
         }
         println("  ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")

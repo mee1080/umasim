@@ -26,8 +26,12 @@ import kotlin.math.min
 import kotlin.random.Random
 
 fun SimulationState.predict(turn: Int): List<Action> {
-    val result = goalRace.find { it.turn == turn }?.let { listOf(predictRace(it)) } ?: predictNormal()
+    val result = goalRace.find { it.turn == turn }?.let { predictGoal(it) } ?: predictNormal()
     return predictScenarioActionParams(result)
+}
+
+fun SimulationState.predictGoal(goal: RaceEntry): List<Action> {
+    return listOf(predictRace(goal)) + (lArcStatus?.predictGetAptitude() ?: emptyList())
 }
 
 fun SimulationState.predictNormal(): List<Action> {
@@ -40,7 +44,7 @@ fun SimulationState.predictNormal(): List<Action> {
         *(training.map {
             calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
         }).toTypedArray(),
-        *(predictSSMatch()),
+        *(predictLArcAction()),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario == Scenario.LARC) emptyArray() else {
@@ -236,7 +240,7 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         fanCount = raceFanCount(race.getFan),
     )
     status = applyScenarioRaceBonus(status)
-    return Race(goal, race.name, race.grade, listOf(StatusActionResult(status) to 1))
+    return Race(goal, race.name, race.grade, StatusActionResult(status))
 }
 
 fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {
@@ -306,10 +310,10 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
     return if (baseActions.size == 1) {
         baseActions.map {
             (it as Race).copy(
-                candidates = it.addScenarioActionParam(
+                result = it.result.addScenarioActionParam(
                     GmActionParam(
                         Founder.entries.random(), trainingTypeOrSkill.random(), predictKnowledgeCount(1.0),
-                    ),
+                    )
                 ),
             )
         }
@@ -362,7 +366,7 @@ fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): Li
                 )
 
                 is Race -> it.copy(
-                    candidates = it.addScenarioActionParam(
+                    result = it.result.addScenarioActionParam(
                         GmActionParam(
                             sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(0.2)
                         ),
@@ -408,7 +412,7 @@ private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Ac
                         else -> 0
                     }
                 }
-                it.copy(candidates = it.addScenarioActionParam(LArcActionParam(supporterPt = supporterPt)))
+                it.copy(result = it.result.addScenarioActionParam(LArcActionParam(supporterPt = supporterPt)))
             }
 
             else -> it
@@ -416,8 +420,12 @@ private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Ac
     }
 }
 
-private fun SimulationState.predictSSMatch(): Array<Action> {
+private fun SimulationState.predictLArcAction(): Array<Action> {
     val lArcStatus = lArcStatus ?: return emptyArray()
+    return predictSSMatch(lArcStatus) + lArcStatus.predictGetAptitude()
+}
+
+private fun SimulationState.predictSSMatch(lArcStatus: LArcStatus): Array<Action> {
     if (isLevelUpTurn) return emptyArray()
     val joinMember = lArcStatus.ssMatchMember
     if (joinMember.isEmpty()) return emptyArray()
@@ -466,7 +474,7 @@ private fun SimulationState.predictSSMatch(): Array<Action> {
         status += Status(15, 15, 15, 15, 15, 25)
         lArcParam += LArcActionParam(supporterPt = lArcParam.supporterPt)
     }
-    return arrayOf(SSMatch(isSSSMatch, joinMember, listOf(StatusActionResult(status, lArcParam) to 1)))
+    return arrayOf(SSMatch(isSSSMatch, joinMember, StatusActionResult(status, lArcParam)))
 }
 
 private fun LArcMemberState.predictSSMatchStatus(type: StatusType, scenarioLink: Boolean): Int {
@@ -477,4 +485,24 @@ private fun LArcMemberState.predictSSMatchStatus(type: StatusType, scenarioLink:
         else -> 4
     }
     return baseValue + typeValue
+}
+
+private fun LArcStatus.predictGetAptitude(): List<Action> {
+    return LArcAptitude.entries.mapNotNull {
+        val level = it.getLevel(this)
+        if (level in 1..<it.maxLevel && it.getCost(this) <= aptitudePt) {
+            LArcGetAptitude(LArcGetAptitudeResult(it, level + 1))
+        } else null
+    }
+}
+
+private fun MultipleAction.addScenarioActionParam(scenarioActionParam: ScenarioActionParam): List<Pair<ActionResult, Int>> {
+    return candidates.map { it.first.addScenarioActionParam(scenarioActionParam) to it.second }
+}
+
+private fun ActionResult.addScenarioActionParam(scenarioActionParam: ScenarioActionParam): ActionResult {
+    return when (this) {
+        is StatusActionResult -> copy(scenarioActionParam = if (success) scenarioActionParam else null)
+        else -> this
+    }
 }

@@ -19,10 +19,12 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.LArcAptitude
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.web.components.atoms.Card
 import io.github.mee1080.umasim.web.components.atoms.MdClass
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
+import io.github.mee1080.umasim.web.components.atoms.tertiary
 import io.github.mee1080.umasim.web.page.share.StatusTable
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -31,7 +33,7 @@ import org.jetbrains.compose.web.dom.Text
 @Composable
 fun SelectionBlock(
     selection: List<Action>,
-    onSelect: (SelectedAction) -> Unit,
+    onSelect: (Action) -> Unit,
 ) {
     Div({
         classes(MdClass.surface, MdClass.onSurfaceText)
@@ -54,7 +56,10 @@ fun SelectionBlock(
                 }
             }) {
                 MdFilledButton(action.name) {
-                    onClick { onSelect(SelectedAction(action)) }
+                    if (!action.turnChange) {
+                        tertiary()
+                    }
+                    onClick { onSelect(action) }
                 }
                 when (action) {
                     is Outing -> {
@@ -83,14 +88,43 @@ fun SelectionBlock(
                         }
                         val totalRate = action.totalRate
                         action.candidates.forEach {
-                            Div {
-                                if (it.first.success) {
+                            val result = it.first as StatusActionResult
+                            if (result.success) {
+                                Div {
                                     Div { Text("失敗率：${100.0 * (totalRate - it.second) / totalRate}%") }
-                                    StatusTable(it.first.status)
+                                    val aptitudePt = (result.scenarioActionParam as? LArcActionParam)?.aptitudePt
+                                    if (aptitudePt != null && aptitudePt > 0) {
+                                        Div { Text("適性Pt：$aptitudePt") }
+                                    }
+                                    StatusTable(result.status)
                                 }
                             }
                         }
                     }
+
+                    is GmActivateWisdom -> {}
+
+                    is ClimaxBuyUseItem -> {
+                        // TODO
+                    }
+
+                    is LArcGetAptitude -> {
+                        val description = when (action.result.aptitude) {
+                            LArcAptitude.OverseasTurfAptitude -> "Lv2:芝適性A / Lv3海外根性トレーニング効果+50%"
+                            LArcAptitude.LongchampAptitude -> "Lv2:中距離適性A / Lv3海外スタミナトレーニング効果+50%"
+                            LArcAptitude.LifeRhythm -> "Lv2:パワー+200 / Lv3海外パワートレーニング効果+50%"
+                            LArcAptitude.NutritionManagement -> "Lv2:スピード+100 / Lv3海外スピードトレーニング効果+50%"
+                            LArcAptitude.FrenchSkill -> "Lv2:賢さ+200 / Lv3海外賢さトレーニング効果+50%"
+                            LArcAptitude.OverseasExpedition -> "Lv2:スタミナ+200 / Lv3トレーニングスキルPt+10"
+                            LArcAptitude.StrongHeart -> "Lv2:スタミナ+200 / Lv3海外トレーニング体力消費軽減20%"
+                            LArcAptitude.MentalStrength -> "Lv2:根性+200 / Lv3友情トレーニング効果+20%"
+                            LArcAptitude.HopeOfLArc -> ""
+                            LArcAptitude.ConsecutiveVictories -> "凱旋門賞獲得アップ"
+                        }
+                        Div { Text(description) }
+                    }
+
+                    is LiveGetLesson -> {}
                 }
             }
         }

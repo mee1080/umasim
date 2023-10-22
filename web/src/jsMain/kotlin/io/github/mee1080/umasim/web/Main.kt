@@ -77,8 +77,8 @@ fun main() {
                 MdElevation(3)
                 MdDivider()
                 MdPrimaryTabs(
-//                    selection = Page.entries,
-                    selection = Page.entries.filter { it != Page.Simulation },
+                    selection = Page.entries,
+//                    selection = Page.entries.filter { it != Page.Simulation },
                     selectedItem = model.state.page,
                     itemToLabel = { it.displayName },
                     itemToIcon = { it.icon },
