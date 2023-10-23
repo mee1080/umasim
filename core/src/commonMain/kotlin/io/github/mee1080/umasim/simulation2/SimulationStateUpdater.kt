@@ -125,7 +125,6 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
 }
 
 fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult): SimulationState {
-    // FIXME トレーニング失敗時にもLv上昇など発生
     // ステータス更新
     val newStatus = status + result.status
     // Action結果反映
@@ -503,6 +502,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                 starLevel = memberState.starLevel + 1,
                 starGauge = if (starGaugeMemberIndex.contains(index)) 3 else 0,
                 nextStarEffect = newNextStarEffect,
+                supporterPt = memberState.supporterPt + random(300, 500),
             )
             copy(scenarioState = newMemberState).addRelation(relation)
         }
@@ -558,6 +558,28 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                     copy(scenarioState = lArcState.copy(starGauge = lArcState.starGauge + 1))
                 }
                 base.copy(member = matchMember)
+            }
+        } else if (action is Race) {
+            val points = when {
+                // 海外では6着以降
+                turn == 41 || turn == 43 || turn == 65 || turn == 67 -> null
+                // 国内では2～4着
+                action.grade == RaceGrade.G1 -> arrayOf(700, 450, 300)
+                action.grade == RaceGrade.G2 -> arrayOf(450, 300, 200)
+                action.grade == RaceGrade.G3 -> arrayOf(300, 200, 100)
+                else -> null
+            }
+            if (points == null) this else {
+                val joinMember = member.filter { !it.outingType }.shuffled().take(3)
+                    .mapIndexed { index, member -> member.index to index }.toMap()
+                val newMember = member.map {
+                    val point = joinMember[it.index]
+                    if (point == null) it else {
+                        val lArcState = it.scenarioState as LArcMemberState
+                        it.copy(scenarioState = lArcState.copy(supporterPt = lArcState.supporterPt + point))
+                    }
+                }
+                copy(member = newMember)
             }
         } else this
         newState.updateLArcStatus {

@@ -21,11 +21,10 @@ package io.github.mee1080.umasim.web.page.share
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.StatusValues
 import io.github.mee1080.umasim.data.motivationToString
+import io.github.mee1080.umasim.web.components.lib.gridTemplateColumns
+import io.github.mee1080.umasim.web.components.lib.repeatGrid
 import io.github.mee1080.umasim.web.style.AppStyle
-import org.jetbrains.compose.web.css.Color
-import org.jetbrains.compose.web.css.backgroundColor
-import org.jetbrains.compose.web.css.color
-import org.jetbrains.compose.web.css.textAlign
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.AttrBuilderContext
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
@@ -38,37 +37,55 @@ fun StatusTable(
     attrs: AttrBuilderContext<HTMLElement>? = null,
 ) {
     Div({
-        classes(AppStyle.statusTable)
+        style {
+            display(DisplayStyle.Flex)
+            flexWrap(FlexWrap.Wrap)
+        }
         attrs?.invoke(this)
     }) {
-        Div { Text("スピ") }
-        Div { Text("スタ") }
-        Div { Text("パワ") }
-        Div { Text("根性") }
-        Div { Text("賢さ") }
-        Div { Text("SP") }
-        Div { Text("体力") }
-        Div { Text("やる気") }
+        Div({
+            classes(AppStyle.statusTable)
+            style {
+                gridTemplateColumns(repeatGrid(5, 64.px))
+            }
+        }) {
+            Div({ style { textAlign("center") } }) { Text("スピ") }
+            Div({ style { textAlign("center") } }) { Text("スタ") }
+            Div({ style { textAlign("center") } }) { Text("パワ") }
+            Div({ style { textAlign("center") } }) { Text("根性") }
+            Div({ style { textAlign("center") } }) { Text("賢さ") }
 
-        StatusValue(status.speed, summary)
-        StatusValue(status.stamina, summary)
-        StatusValue(status.power, summary)
-        StatusValue(status.guts, summary)
-        StatusValue(status.wisdom, summary)
-        Div { Text(status.skillPt.toString()) }
-        Div { Text("${status.hp}") }
-        if (summary) {
-            Div { Text(motivationToString(status.motivation.toInt())) }
-        } else {
-            Div { Text(status.motivation.toString()) }
+            StatusValue(status.speed, summary)
+            StatusValue(status.stamina, summary)
+            StatusValue(status.power, summary)
+            StatusValue(status.guts, summary)
+            StatusValue(status.wisdom, summary)
+        }
+        Div({
+            classes(AppStyle.statusTable)
+            style {
+                gridTemplateColumns(repeatGrid(3, 64.px))
+            }
+        }) {
+            Div({ style { textAlign("center") } }) { Text("SP") }
+            Div({ style { textAlign("center") } }) { Text("体力") }
+            Div({ style { textAlign("center") } }) { Text("やる気") }
+
+            Div({ style { textAlign("right") } }) { Text(status.skillPt.toString()) }
+            Div({ style { textAlign("right") } }) { Text("${status.hp}") }
+            if (summary) {
+                Div({ style { textAlign("right") } }) { Text(motivationToString(status.motivation.toInt())) }
+            } else {
+                Div({ style { textAlign("right") } }) { Text(status.motivation.toString()) }
+            }
         }
     }
 }
 
 @Composable
 private fun StatusValue(value: Number, summary: Boolean) {
-    Div {
-        if (summary) {
+    if (summary) {
+        Div(({ style { textAlign("center") } })) {
             val intValue = value.toInt().let {
                 if (it > 1200) (it - 1200) / 2 + 1200 else it
             }
@@ -118,8 +135,10 @@ private fun StatusValue(value: Number, summary: Boolean) {
             }) {
                 Text(params.first)
             }
-            Div({ style { textAlign("center") } }) { Text(intValue.toString()) }
-        } else {
+            Div { Text(intValue.toString()) }
+        }
+    } else {
+        Div({ style { textAlign("right") } }) {
             Text(value.toString())
         }
     }

@@ -11,12 +11,12 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-fun MemberState(state: MemberState, friend: Boolean = false) {
+fun MemberState(state: MemberState, friend: Boolean = false, training: Boolean = false) {
     DivFlexCenter({
         style {
             margin(4.px, 0.px)
             if (friend) {
-                background("linear-gradient(to right, #e0c00020, #ea433520)")
+                background("linear-gradient(to right, #e0c00040, #ea433540)")
             }
         }
     }) {
@@ -50,7 +50,26 @@ fun MemberState(state: MemberState, friend: Boolean = false) {
         when (val scenarioState = state.scenarioState) {
             is LArcMemberState -> LArcMemberState(scenarioState)
         }
-        Div { Text(state.name) }
+        if (training && state.hint) {
+            Div({
+                style {
+                    color(Color.white)
+                    backgroundColor(rgb(220, 0, 0))
+                    width(24.px)
+                    height(24.px)
+                    textAlign("center")
+                    marginRight(4.px)
+                    fontWeight("bold")
+                    borderRadius(50.percent)
+                }
+            }) { Text("！") }
+        }
+        if (training) {
+            Div { Text(state.charaName) }
+        } else {
+            Div { Text(state.name) }
+
+        }
     }
 }
 

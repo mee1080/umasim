@@ -76,6 +76,8 @@ fun SelectionBlock(
                                 MemberState(it)
                             }
                         }
+                        Div { Text("サポーターPt：${((action.result as StatusActionResult).scenarioActionParam as LArcActionParam).supporterPt}") }
+                        StatusTable(action.result.status)
                     }
 
                     is Sleep -> {}
@@ -83,7 +85,7 @@ fun SelectionBlock(
                     is Training -> {
                         Div {
                             action.member.forEach {
-                                MemberState(it, it.isFriendTraining(action.type))
+                                MemberState(it, it.isFriendTraining(action.type), training = true)
                             }
                         }
                         val totalRate = action.totalRate

@@ -240,7 +240,18 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         fanCount = raceFanCount(race.getFan),
     )
     status = applyScenarioRaceBonus(status)
-    return Race(goal, race.name, race.grade, StatusActionResult(status))
+    val scenarioParam = if (scenario == Scenario.LARC) {
+        when {
+            turn == 43 -> LArcActionParam(supporterPt = 3000)
+            turn == 41 || turn == 65 -> LArcActionParam(supporterPt = 2000)
+            turn == 67 -> null
+            race.grade == RaceGrade.G1 -> LArcActionParam(supporterPt = 1300)
+            race.grade == RaceGrade.G2 -> LArcActionParam(supporterPt = 900)
+            race.grade == RaceGrade.G3 -> LArcActionParam(supporterPt = 700)
+            else -> null
+        }
+    } else null
+    return Race(goal, race.name, race.grade, StatusActionResult(status, scenarioParam))
 }
 
 fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {

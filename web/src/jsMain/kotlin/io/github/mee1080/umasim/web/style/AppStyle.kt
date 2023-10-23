@@ -77,15 +77,9 @@ object AppStyle : StyleSheet() {
 
     val statusTable by style {
         display(DisplayStyle.Grid)
-        gridTemplateColumns(repeatGrid(8, 64.px))
         gap(1.px)
-        self + " > " + nthChild(Nth.Functional(-1, 8)) style {
+        self + " > div" style {
             border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
-            textAlign("center")
-        }
-        self + " > " + nthChild(Nth.Functional(1, 9)) style {
-            border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
-            textAlign("right")
         }
     }
 }
