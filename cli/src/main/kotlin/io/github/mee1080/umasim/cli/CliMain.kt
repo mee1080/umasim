@@ -11,6 +11,7 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.simulation2.Runner
 import io.github.mee1080.umasim.util.replace
+import kotlinx.coroutines.runBlocking
 
 class CliMain : CliktCommand() {
     private val dataDir by option()
@@ -202,11 +203,13 @@ class CliMain : CliktCommand() {
         val evaluateSetting = evaluate.fold(evaluateSettingBase) { acc, setting ->
             acc.replace(StatusType.valueOf(setting.first), setting.second.toDouble() to setting.third.toInt())
         }
-        val result = Runner.runAndEvaluate(
-            count, scenarioValue, charaData, supportList,
-            factor.map { StatusType.valueOf(it.first) to it.second.toInt() },
-            evaluateSetting, selector = selector,
-        )
+        val result = runBlocking {
+            Runner.runAndEvaluate(
+                count, scenarioValue, charaData, supportList,
+                factor.map { StatusType.valueOf(it.first) to it.second.toInt() },
+                evaluateSetting, selector = selector,
+            )
+        }
         println(result.first)
     }
 }
