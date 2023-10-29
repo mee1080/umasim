@@ -107,6 +107,15 @@ object Runner {
         StatusType.SKILL to (1.0 to 3600),
     )
 
+    val lArcMileEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.2 to 2000),
+        StatusType.STAMINA to (1.0 to 750),
+        StatusType.POWER to (1.0 to 1800),
+        StatusType.GUTS to (1.0 to 1200),
+        StatusType.WISDOM to (1.0 to 1300),
+        StatusType.SKILL to (0.8 to 3600),
+    )
+
     val lArcMiddleEvaluateSetting = mapOf(
         StatusType.SPEED to (1.0 to 2000),
         StatusType.STAMINA to (1.0 to 1250),
