@@ -3,6 +3,12 @@
 【ウマ娘】レースでの人気が決まる仕組み
 https://note.com/t_snow/n/n1ebe8a1446e1
 
+# 掲載データについて
+
+以下の表は気が向いたときにしか更新しません。最新情報はこちらを参照してください。
+
+https://mee1080.github.io/umasim/skill/
+
 # スキルごとの人気設定値
 
 popularity_add_param_1/popularity_add_value_1/popularity_add_param_2/popularity_add_value_2 より抽出
