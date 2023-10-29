@@ -14,33 +14,31 @@ import kotlin.math.roundToInt
 fun main() {
     with(Dispatchers.Default.limitedParallelism(10)) {
         StoreLoader.load()
-//        lArcRunSimulation()
-        lArcSingleSimulation()
+        lArcRunSimulation()
+//        lArcSingleSimulation()
     }
 }
 
 context(CoroutineContext)
 fun lArcRunSimulation() {
-    val chara = Store.getChara("[うららん一等賞♪]ハルウララ", 5, 5)
+    val chara = Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5)
     val support = Store.getSupportByName(
         "[大望は飛んでいく]エルコンドルパサー",
         "[The frontier]ジャングルポケット",
-        "[迫る熱に押されて]キタサンブラック",
-        "[一粒の安らぎ]スーパークリーク",
-        "[君と見る泡沫]マンハッタンカフェ",
+        "[うらら～な休日]ハルウララ",
+        "[優しい月]ゴールドシチー",
+        "[燦爛]メジロラモーヌ",
         "[L'aubeは迫りて]佐岳メイ",
     )
     println(chara)
     println(support)
     val factor = listOf(
-        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-        StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.GUTS to 3,
+        StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.POWER to 3,
+        StatusType.POWER to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
     )
     runBlocking {
         repeat(9) { index ->
-//            val selector = { LArcActionSelector(LArcActionSelector.Option(hpFactor = hpFactor)) }
-            val riskFactor = 0.5 * index + 1.0
-            val selector = LArcActionSelector.speed3Stamina1Wisdom1Long
+            val selector = LArcActionSelector.speed2Guts2Wisdom1Mile
             launch(this@CoroutineContext) {
                 val summary = Runner.run(
                     10000,
@@ -52,7 +50,7 @@ fun lArcRunSimulation() {
                 )
                 val evaluator = Evaluator(summary, Runner.lArcLongEvaluateSetting, 0.2)
                 val score = (evaluator.upperSum(0.2, Runner.lArcLongEvaluateSetting) * 1000).roundToInt() / 1000.0
-                println("0,$riskFactor,0,${evaluator.toSummaryString()},$score")
+                println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }
     }

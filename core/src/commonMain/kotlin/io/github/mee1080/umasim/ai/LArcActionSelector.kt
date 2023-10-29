@@ -112,6 +112,43 @@ class LArcActionSelector(
             )
             speed3Power1Wisdom1MiddleOptions = listOf(domestic, overseas, domestic2, overseas2)
         }
+
+        val speed2Guts2Wisdom1Mile = {
+            LArcActionSelector(speed2Guts2Wisdom1MileOptions)
+        }
+
+        val speed2Guts2Wisdom1MileOptions: List<Option>
+
+        init {
+            val domestic = Option(
+                speedFactor = 1.3,
+                staminaFactor = 1.0,
+                powerFactor = 1.2,
+                gutsFactor = 1.2,
+                wisdomFactor = 0.95,
+                skillPtFactor = 0.4,
+                hpFactor = 0.8,
+                motivationFactor = 15.0,
+                relationFactor = 3.5,
+                hpKeepFactor = 0.6,
+                riskFactor = 4.8,
+                starGaugeFactor = 3.6,
+                aptitudePtFactor = 1.4,
+                ssMatchScore = 100.0,
+            )
+            val overseas = domestic.copy(
+                hpFactor = 1.8,
+                hpKeepFactor = 0.6,
+                riskFactor = 4.4,
+            )
+            val domestic2 = domestic.copy(
+                hpKeepFactor = 1.6
+            )
+            val overseas2 = overseas.copy(
+                hpKeepFactor = 0.6
+            )
+            speed2Guts2Wisdom1MileOptions = listOf(domestic, overseas, domestic2, overseas2)
+        }
     }
 
     data class Option(
