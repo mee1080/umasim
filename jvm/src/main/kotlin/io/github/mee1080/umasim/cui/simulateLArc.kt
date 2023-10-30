@@ -129,7 +129,7 @@ private fun speed2Guts2Wisdom1Mile() {
 //        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
 //        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 2),
-        testCount = 100,
+        testCount = 100000,
         selector = LArcActionSelector.speed2Guts2Wisdom1Mile,
         evaluateSetting = Runner.lArcMileEvaluateSetting,
     )
