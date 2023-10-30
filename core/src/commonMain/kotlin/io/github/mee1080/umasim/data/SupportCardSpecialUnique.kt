@@ -59,6 +59,7 @@ data class SupportCardSpecialUnique(
     fun getBaseBonus(
         statusType: StatusType,
         relation: Int,
+        speedSkillCount: Int,
         healSkillCount: Int,
     ): Int {
         return if (type == 101 && relation >= value0) {
@@ -67,6 +68,7 @@ data class SupportCardSpecialUnique(
             }
         } else if (type == 116) {
             val skillCount = when (value0) {
+                1 -> speedSkillCount
                 3 -> healSkillCount
                 // TODO
                 else -> 0
@@ -99,6 +101,7 @@ data class SupportCardSpecialUnique(
         totalRelation: Int,
         trainingSupportCount: Int,
         speedSkillCount: Int,
+        healSkillCount: Int,
     ): Int {
         return if (type == 101 && relation >= value0 && value1 == 8) {
             value2
@@ -121,6 +124,7 @@ data class SupportCardSpecialUnique(
         } else if (type == 116 && value1 == 8) {
             val skillCount = when (value0) {
                 1 -> speedSkillCount
+                3 -> healSkillCount
                 // TODO
                 else -> 0
             }

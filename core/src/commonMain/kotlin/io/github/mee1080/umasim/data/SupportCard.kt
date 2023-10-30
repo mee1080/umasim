@@ -118,6 +118,7 @@ data class SupportCard(
     fun getBaseBonus(
         type: StatusType,
         relation: Int,
+        speedSkillCount: Int,
         healSkillCount: Int,
     ) = when (type) {
         StatusType.SPEED -> status.speedBonus + unique.speedBonus
@@ -127,7 +128,7 @@ data class SupportCard(
         StatusType.WISDOM -> status.wisdomBonus + unique.wisdomBonus
         StatusType.SKILL -> status.skillPtBonus + unique.skillPtBonus
         else -> 0
-    } + specialUnique.sumOf { it.getBaseBonus(type, relation, healSkillCount) }
+    } + specialUnique.sumOf { it.getBaseBonus(type, relation, speedSkillCount, healSkillCount) }
 
     fun trainingFactor(
         trainingType: StatusType,
@@ -140,6 +141,7 @@ data class SupportCard(
         totalRelation: Int,
         trainingSupportCount: Int,
         speedSkillCount: Int,
+        healSkillCount: Int,
     ) = status.training + unique.training + specialUnique.sumOf {
         it.trainingFactor(
             type,
@@ -153,6 +155,7 @@ data class SupportCard(
             totalRelation,
             trainingSupportCount,
             speedSkillCount,
+            healSkillCount,
         )
     }
 

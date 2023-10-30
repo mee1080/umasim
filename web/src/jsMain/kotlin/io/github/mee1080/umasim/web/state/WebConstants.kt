@@ -112,7 +112,8 @@ object WebConstants {
                 Status(maxHp = 100, hp = 100),
                 0,
                 1,
-                0
+                0,
+                0,
             )
         },
         SortOrder("トレ効果（特殊固有あり）") {
@@ -127,14 +128,15 @@ object WebConstants {
                 600,
                 5,
                 5,
+                5,
             )
         },
-        SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0, 0) },
-        SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0, 0) },
-        SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0, 0) },
-        SortOrder("根性ボ") { getBaseBonus(StatusType.GUTS, 0, 0) },
-        SortOrder("賢さボ") { getBaseBonus(StatusType.WISDOM, 0, 0) },
-        SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0, 0) },
+        SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0, 0, 0) },
+        SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0, 0, 0) },
+        SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0, 0, 0) },
+        SortOrder("根性ボ") { getBaseBonus(StatusType.GUTS, 0, 0, 0) },
+        SortOrder("賢さボ") { getBaseBonus(StatusType.WISDOM, 0, 0, 0) },
+        SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0, 0, 0) },
         SortOrder("レスボ") { race },
         SortOrder("ファンボ") { fan },
         SortOrder("得意率") {
