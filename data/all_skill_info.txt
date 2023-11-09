@@ -7454,6 +7454,24 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 ->distance_type==1&phase_laterhalf_random==1&order_rate>=40
 「短距離、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
 
+かっとばせ！
+レース中盤に前の方にいるとしばらくの間速度が少し上がる＜作戦・先行＞
+評価点508、SP180、人気:スピード60
+->running_style==2&phase_random==1&order_rate<=50
+「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続4.0
+
+勝利に向かって
+レース中盤に前の方にいるとしばらくの間速度がちょっと上がる＜作戦・先行＞
+評価点217、SP180、人気:スピード20
+->running_style==2&phase_random==1&order_rate<=50
+「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続4.0
+
+狙いを定めて
+レース終盤始めの方早めに前の方にいると加速力がわずかに上がる＜先行・長距離＞
+評価点217、SP160、人気:パワー20
+->running_style==2&distance_type==4&phase_firstquarter_random==2&order_rate<=50
+「先行、長距離、phase_firstquarter_random==2、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
+
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
 評価点633、SP200、人気:スピード60

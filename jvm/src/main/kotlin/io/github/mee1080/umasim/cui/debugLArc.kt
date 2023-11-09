@@ -25,8 +25,8 @@ fun lArcRunSimulation() {
     val support = Store.getSupportByName(
         "[大望は飛んでいく]エルコンドルパサー",
         "[The frontier]ジャングルポケット",
-        "[うらら～な休日]ハルウララ",
-        "[優しい月]ゴールドシチー",
+        "[迫る熱に押されて]キタサンブラック",
+        "[やったれハロウィンナイト！]タマモクロス",
         "[燦爛]メジロラモーヌ",
         "[L'aubeは迫りて]佐岳メイ",
     )
@@ -38,7 +38,7 @@ fun lArcRunSimulation() {
     )
     runBlocking {
         repeat(9) { index ->
-            val selector = LArcActionSelector.speed2Guts2Wisdom1Mile
+            val selector = LArcActionSelector.speed3Power1Wisdom1Middle
             launch(this@CoroutineContext) {
                 val summary = Runner.run(
                     10000,
@@ -48,8 +48,8 @@ fun lArcRunSimulation() {
                     factor,
                     selector = selector,
                 )
-                val evaluator = Evaluator(summary, Runner.lArcLongEvaluateSetting, 0.2)
-                val score = (evaluator.upperSum(0.2, Runner.lArcLongEvaluateSetting) * 1000).roundToInt() / 1000.0
+                val evaluator = Evaluator(summary, Runner.lArcMiddleEvaluateSetting, 0.2)
+                val score = (evaluator.upperSum(0.2, Runner.lArcMiddleEvaluateSetting) * 1000).roundToInt() / 1000.0
                 println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }

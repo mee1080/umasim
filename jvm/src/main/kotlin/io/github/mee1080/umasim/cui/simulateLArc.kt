@@ -8,8 +8,8 @@ import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLarc() {
 //    speed3Stamina1Wisdom1Long()
-//    speed3Power1Wisdom1Middle()
-    speed2Guts2Wisdom1Mile()
+    speed3Power1Wisdom1Middle()
+//    speed2Guts2Wisdom1Mile()
 }
 
 private fun speed3Stamina1Wisdom1Long() {
@@ -54,56 +54,18 @@ private fun speed3Stamina1Wisdom1Long() {
 }
 
 private fun speed3Power1Wisdom1Middle() {
-//    doSimulation2(
-//        Scenario.LARC,
-//        Store.getChara("[プリンセス・オブ・ピンク]カワカミプリンセス", 5, 5),
-//        Store.getSupportByName(
-//            "[大望は飛んでいく]エルコンドルパサー",
-//            "[The frontier]ジャングルポケット",
-////            "[迫る熱に押されて]キタサンブラック",
-//            "[やったれハロウィンナイト！]タマモクロス",
-//            "[Dear Mr. C.B.]ミスターシービー",
-//            "[L'aubeは迫りて]佐岳メイ",
-//        ).toTypedArray(),
-//        targetStatus = StatusType.SPEED, rarity = 2..3, talent = 0..4,
-////        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
-////        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
-//        factor = factor(StatusType.STAMINA, 4) + factor(StatusType.GUTS, 2),
-//        testCount = 100000,
-//        selector = LArcActionSelector.speed3Power1Wisdom1Middle,
-//        evaluateSetting = Runner.lArcMiddleEvaluateSetting,
-//    )
-//    doSimulation2(
-//        Scenario.LARC,
-//        Store.getChara("[プリンセス・オブ・ピンク]カワカミプリンセス", 5, 5),
-//        Store.getSupportByName(
-//            "[大望は飛んでいく]エルコンドルパサー",
-//            "[The frontier]ジャングルポケット",
-//            "[迫る熱に押されて]キタサンブラック",
-////            "[やったれハロウィンナイト！]タマモクロス",
-//            "[Dear Mr. C.B.]ミスターシービー",
-//            "[L'aubeは迫りて]佐岳メイ",
-//        ).toTypedArray(),
-//        targetStatus = StatusType.POWER, rarity = 2..3, talent = 0..4,
-////        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
-////        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
-//        factor = factor(StatusType.STAMINA, 4) + factor(StatusType.GUTS, 2),
-//        testCount = 100000,
-//        selector = LArcActionSelector.speed3Power1Wisdom1Middle,
-//        evaluateSetting = Runner.lArcMiddleEvaluateSetting,
-//    )
     doSimulation2(
         Scenario.LARC,
-        Store.getChara("[プリンセス・オブ・ピンク]カワカミプリンセス", 5, 5),
+        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
         Store.getSupportByName(
             "[大望は飛んでいく]エルコンドルパサー",
             "[The frontier]ジャングルポケット",
             "[迫る熱に押されて]キタサンブラック",
-            "[やったれハロウィンナイト！]タマモクロス",
-//            "[Dear Mr. C.B.]ミスターシービー",
+//            "[やったれハロウィンナイト！]タマモクロス",
+            "[燦爛]メジロラモーヌ",
             "[L'aubeは迫りて]佐岳メイ",
         ).toTypedArray(),
-        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
+        targetStatus = StatusType.POWER, rarity = 2..3, talent = 0..4,
 //        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
 //        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
         factor = factor(StatusType.STAMINA, 4) + factor(StatusType.GUTS, 2),
@@ -125,8 +87,8 @@ private fun speed2Guts2Wisdom1Mile() {
             "[燦爛]メジロラモーヌ",
             "[L'aubeは迫りて]佐岳メイ",
         ).toTypedArray(),
-        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
+//        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[我が舞、巡りて]キングヘイロー" to it }.toTypedArray())),
 //        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 2),
         testCount = 100000,
