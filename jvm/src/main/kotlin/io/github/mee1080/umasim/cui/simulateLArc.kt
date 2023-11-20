@@ -8,8 +8,8 @@ import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLarc() {
 //    speed3Stamina1Wisdom1Long()
-    speed3Power1Wisdom1Middle()
-//    speed2Guts2Wisdom1Mile()
+//    speed3Power1Wisdom1Middle()
+    speed2Guts2Wisdom1Mile()
 }
 
 private fun speed3Stamina1Wisdom1Long() {
@@ -76,6 +76,25 @@ private fun speed3Power1Wisdom1Middle() {
 }
 
 private fun speed2Guts2Wisdom1Mile() {
+//    doSimulation2(
+//        Scenario.LARC,
+//        Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
+//        Store.getSupportByName(
+//            "[大望は飛んでいく]エルコンドルパサー",
+//            "[The frontier]ジャングルポケット",
+//            "[うらら～な休日]ハルウララ",
+////            "[優しい月]ゴールドシチー",
+//            "[燦爛]メジロラモーヌ",
+//            "[L'aubeは迫りて]佐岳メイ",
+//        ).toTypedArray(),
+////        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[我が舞、巡りて]キングヘイロー" to it }.toTypedArray())),
+////        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
+//        factor = factor(StatusType.SPEED, 2) + factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 2),
+//        testCount = 100000,
+//        selector = LArcActionSelector.speed2Guts2Wisdom1Mile,
+//        evaluateSetting = Runner.lArcMileEvaluateSetting,
+//    )
     doSimulation2(
         Scenario.LARC,
         Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5),
@@ -83,12 +102,12 @@ private fun speed2Guts2Wisdom1Mile() {
             "[大望は飛んでいく]エルコンドルパサー",
             "[The frontier]ジャングルポケット",
             "[うらら～な休日]ハルウララ",
-//            "[優しい月]ゴールドシチー",
-            "[燦爛]メジロラモーヌ",
+            "[優しい月]ゴールドシチー",
+//            "[燦爛]メジロラモーヌ",
             "[L'aubeは迫りて]佐岳メイ",
         ).toTypedArray(),
-//        targetStatus = StatusType.GUTS, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[我が舞、巡りて]キングヘイロー" to it }.toTypedArray())),
+        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[我が舞、巡りて]キングヘイロー" to it }.toTypedArray())),
 //        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.STAMINA, 2) + factor(StatusType.POWER, 2),
         testCount = 100000,
