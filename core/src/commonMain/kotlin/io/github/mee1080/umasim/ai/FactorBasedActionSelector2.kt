@@ -369,6 +369,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         // TODO
                         0,
                         0,
+                        0,
                         state.totalTrainingLevel,
                         state.liveStatus,
                         state.gmStatus,

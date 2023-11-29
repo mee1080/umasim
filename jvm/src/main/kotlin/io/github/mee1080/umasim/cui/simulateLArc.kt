@@ -47,7 +47,7 @@ private fun speed3Stamina1Wisdom1Long() {
 //        Store.getSupportByName(*((0..4).map { "[見習い魔女と長い夜]スイープトウショウ" to it }.toTypedArray())),
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
         factor = factor(StatusType.STAMINA, 6),
-        testCount = 100000,
+        testCount = 100,
         selector = LArcActionSelector.speed3Stamina1Wisdom1Long,
         evaluateSetting = Runner.lArcLongEvaluateSetting,
     )

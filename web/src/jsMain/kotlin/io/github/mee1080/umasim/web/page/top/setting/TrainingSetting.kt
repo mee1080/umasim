@@ -61,6 +61,9 @@ fun TrainingSetting(model: ViewModel, state: State) {
             SliderEntry("回復スキル数：", state.healSkillCount, 0, 3) {
                 model.updateHealSkillCount(it.toInt())
             }
+            SliderEntry("加速スキル数：", state.accelSkillCount, 0, 3) {
+                model.updateAccelSkillCount(it.toInt())
+            }
             SliderEntry("合計トレLv：", state.totalTrainingLevel, 5, 20) {
                 model.updateTotalTrainingLevel(it.toInt())
             }

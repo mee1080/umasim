@@ -37,6 +37,7 @@ object Calculator {
         val totalRelation: Int,
         val speedSkillCount: Int,
         val healSkillCount: Int,
+        val accelSkillCount: Int,
         val totalTrainingLevel: Int,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
@@ -95,7 +96,8 @@ object Calculator {
                 targetType,
                 it.relation,
                 info.speedSkillCount,
-                info.healSkillCount
+                info.healSkillCount,
+                info.accelSkillCount,
             )
         }
         val charaBonus = info.chara.getBonus(targetType) / 100.0

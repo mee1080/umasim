@@ -59,6 +59,7 @@ data class State(
     val totalRelation: Int = 0,
     val speedSkillCount: Int = 0,
     val healSkillCount: Int = 0,
+    val accelSkillCount: Int = 0,
     val totalTrainingLevel: Int = 5,
     val shopItemMegaphone: MegaphoneItem = WebConstants.dummyMegaphoneItem,
     val shopItemWeight: WeightItem = WebConstants.dummyWeightItem,

@@ -306,6 +306,8 @@ val supportEffectName = mapOf(
 
 val skillEffectName = mapOf(
     1 to "速度",
+    // TODO
+    2 to "加速",
     3 to "回復",
 )
 

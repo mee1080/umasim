@@ -61,6 +61,7 @@ data class SupportCardSpecialUnique(
         relation: Int,
         speedSkillCount: Int,
         healSkillCount: Int,
+        accelSkillCount: Int,
     ): Int {
         return if (type == 101 && relation >= value0) {
             listOf(value1 to value2, value3 to value4).sumOf {
@@ -71,7 +72,7 @@ data class SupportCardSpecialUnique(
                 1 -> speedSkillCount
                 3 -> healSkillCount
                 // TODO
-                else -> 0
+                else -> accelSkillCount
             }
             if (statusType == bonusStatus(value1)) {
                 value2 * min(skillCount, value3)

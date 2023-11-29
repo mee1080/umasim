@@ -326,6 +326,7 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 // TODO
                 0,
                 0,
+                0,
                 state.totalTrainingLevel,
                 null,
                 null,

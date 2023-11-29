@@ -222,6 +222,10 @@ class ViewModel(val scope: CoroutineScope) {
         updateState { it.copy(healSkillCount = healSkillCount) }
     }
 
+    fun updateAccelSkillCount(accelSkillCount: Int) {
+        updateState { it.copy(accelSkillCount = accelSkillCount) }
+    }
+
     fun updateTotalTrainingLevel(totalTrainingLevel: Int) {
         updateState { it.copy(totalTrainingLevel = totalTrainingLevel) }
     }
@@ -320,6 +324,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.totalRelation,
             state.speedSkillCount,
             state.healSkillCount,
+            state.accelSkillCount,
             state.totalTrainingLevel,
             state.trainingLiveStateIfEnabled,
             gmStatus,
@@ -354,6 +359,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.totalRelation,
                     state.speedSkillCount,
                     state.healSkillCount,
+                    state.accelSkillCount,
                     state.totalTrainingLevel,
                     state.trainingLiveStateIfEnabled,
                     gmStatus,
@@ -379,6 +385,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalRelation,
                 state.speedSkillCount,
                 state.healSkillCount,
+                state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.trainingLiveStateIfEnabled,
                 gmStatus,
@@ -464,6 +471,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.totalRelation,
                 state.speedSkillCount,
                 state.healSkillCount,
+                state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.trainingLiveStateIfEnabled,
                 state.gmStatusIfEnabled,
