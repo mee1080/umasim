@@ -7,8 +7,8 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLarc() {
-    speed3Stamina1Wisdom1Long()
-//    speed3Power1Wisdom1Middle()
+//    speed3Stamina1Wisdom1Long()
+    speed3Power1Wisdom1Middle()
 //    speed2Guts2Wisdom1Mile()
 }
 
@@ -32,25 +32,25 @@ private fun speed3Stamina1Wisdom1Long() {
 //        selector = LArcActionSelector.speed3Stamina1Wisdom1Long,
 //        evaluateSetting = Runner.lArcLongEvaluateSetting,
 //    )
-    doSimulation2(
-        Scenario.LARC,
-        Store.getChara("[うららん一等賞♪]ハルウララ", 5, 5),
-        Store.getSupportByName(
-            "[大望は飛んでいく]エルコンドルパサー",
-            "[The frontier]ジャングルポケット",
-            "[迫る熱に押されて]キタサンブラック",
-//            "[一粒の安らぎ]スーパークリーク",
-            "[君と見る泡沫]マンハッタンカフェ",
-            "[L'aubeは迫りて]佐岳メイ",
-        ).toTypedArray(),
-        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[見習い魔女と長い夜]スイープトウショウ" to it }.toTypedArray())),
-//        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
-        factor = factor(StatusType.STAMINA, 6),
-        testCount = 100,
-        selector = LArcActionSelector.speed3Stamina1Wisdom1Long,
-        evaluateSetting = Runner.lArcLongEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.LARC,
+//        Store.getChara("[うららん一等賞♪]ハルウララ", 5, 5),
+//        Store.getSupportByName(
+//            "[大望は飛んでいく]エルコンドルパサー",
+//            "[The frontier]ジャングルポケット",
+//            "[迫る熱に押されて]キタサンブラック",
+////            "[一粒の安らぎ]スーパークリーク",
+//            "[君と見る泡沫]マンハッタンカフェ",
+//            "[L'aubeは迫りて]佐岳メイ",
+//        ).toTypedArray(),
+//        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..4,
+////        Store.getSupportByName(*((0..4).map { "[見習い魔女と長い夜]スイープトウショウ" to it }.toTypedArray())),
+////        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+//        factor = factor(StatusType.STAMINA, 6),
+//        testCount = 100,
+//        selector = LArcActionSelector.speed3Stamina1Wisdom1Long,
+//        evaluateSetting = Runner.lArcLongEvaluateSetting,
+//    )
 }
 
 private fun speed3Power1Wisdom1Middle() {
@@ -65,8 +65,8 @@ private fun speed3Power1Wisdom1Middle() {
             "[燦爛]メジロラモーヌ",
             "[L'aubeは迫りて]佐岳メイ",
         ).toTypedArray(),
-        targetStatus = StatusType.POWER, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[ロード・オブ・ウオッカ]ウオッカ" to it }.toTypedArray())),
+//        targetStatus = StatusType.POWER, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[冬溶かす熾火]メジロラモーヌ" to it }.toTypedArray())),
 //        Store.getSupportByName("[ロード・オブ・ウオッカ]ウオッカ" to 4),
         factor = factor(StatusType.STAMINA, 4) + factor(StatusType.GUTS, 2),
         testCount = 100000,
