@@ -725,6 +725,15 @@ Silent letter
 ->remain_distance<=400&order<=2&overtake_target_time>=1
 「残り距離<=400、順位<=2、追い抜き対象時間>=1」、目標速度2500、加速3000、持続5.0
 
+Reversal Illusion
+[黒翠千里行]サトノクラウン 固有
+最終コーナーで中団にいた場合残り400mを切ってから速度が上がる中距離レースで中盤に追い抜いているとすごく上がる
+評価点340、人気:スピード60、確定発動
+change_order_up_middle>=1&is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->distance_type==3&remain_distance<=400
+「中盤追い抜き>=1、最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「中距離、残り距離<=400」、目標速度4500、持続5.0
+is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->remain_distance<=400
+「最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「残り距離<=400」、目標速度3500、持続5.0
+
 幸せの青い光
 [Prism]ケイエスミラクル 固有
 終盤始めのどこかで前方にいると少し前に出る、短距離かマイルレースの場合は効果が増える
@@ -1840,6 +1849,14 @@ Silent letter
 評価点180、SP200、人気:スピード7/パワー7
 ->remain_distance<=400&order<=2&overtake_target_time>=1
 「残り距離<=400、順位<=2、追い抜き対象時間>=1」、目標速度500、加速1000、持続3.0
+
+Reversal Illusion
+最終コーナーで中団にいた場合残り400mを切ってから速度がわずかに上がる、中距離レースで中盤に追い抜いていると少し上がる
+評価点180、SP200、人気:スピード15
+change_order_up_middle>=1&is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->distance_type==3&remain_distance<=400
+「中盤追い抜き>=1、最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「中距離、残り距離<=400」、目標速度2500、持続3.0
+is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->remain_distance<=400
+「最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「残り距離<=400」、目標速度1500、持続3.0
 
 幸せの青い光
 終盤始めのどこかで前方にいるとちょっと前に出る、短距離かマイルレースの場合は効果が増える
@@ -3968,6 +3985,13 @@ K.Speed
 評価点633、人気:スピード60
 ->running_style==3&phase_random==1&order_rate>=40
 「差し、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、体力150、持続2.4
+
+アンビシャスカード
+[黒翠千里行]サトノクラウン 進化
+レース中盤で中団以降にいると速度がすごく上がる＜作戦・差し＞
+評価点633、人気:スピード60
+->running_style==3&phase_random==1&order_rate>=40
+「差し、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度4500、持続2.4
 
 位置取り押し上げ
 レース中盤に中団以降で速度がわずかに上がる＜作戦・差し＞
@@ -6525,6 +6549,15 @@ Smooth Sailing!
 評価点633、人気:パワー60
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=40
 「中距離、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続4.0
+
+ミリオンカード
+[黒翠千里行]サトノクラウン 進化
+レース終盤始めの方で中団以降にいると加速力が上がる、2200m～2400mのレースなら持久力を少し使い終盤始めの方早めにすごく上がる＜中距離＞
+評価点633、人気:パワー60
+->distance_type==3&course_distance>=2200&course_distance<=2400&phase_firstquarter_random==2&order_rate>=40
+「中距離、距離>=2200、距離<=2400、phase_firstquarter_random==2、順位率40以上（チャンミ4～/LoH5～）」、加速5000、体力-200、持続1.8
+->distance_type==3&course_distance<2200&phase_firsthalf_random==2&order_rate>=40@distance_type==3&course_distance>2400&phase_firsthalf_random==2&order_rate>=40
+「中距離、距離<2200、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」または「中距離、距離>2400、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続1.8
 
 ワンチャンス
 レース終盤始めの方で中団以降にいると加速力がわずかに上がる＜中距離＞
