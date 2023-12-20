@@ -734,6 +734,15 @@ change_order_up_middle>=1&is_finalcorner==1&corner!=0&order_rate<=70&order_rate>
 is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->remain_distance<=400
 「最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「残り距離<=400」、目標速度3500、持続5.0
 
+Celeste Oath
+[Grand itinéraire]シュヴァルグラン 固有
+レース中間付近で前の方にいると速度が上がりさらに持久力がわずかに回復する2400ｍ以上のレースだと回復量が増える
+評価点340、人気:スピード30/スタミナ30、確定発動
+->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50&course_distance>=2400
+「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）、距離>=2400」、目標速度3500、体力350、持続5.0
+->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50
+「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、体力150、持続5.0
+
 幸せの青い光
 [Prism]ケイエスミラクル 固有
 終盤始めのどこかで前方にいると少し前に出る、短距離かマイルレースの場合は効果が増える
@@ -1857,6 +1866,14 @@ change_order_up_middle>=1&is_finalcorner==1&corner!=0&order_rate<=70&order_rate>
 「中盤追い抜き>=1、最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「中距離、残り距離<=400」、目標速度2500、持続3.0
 is_finalcorner==1&corner!=0&order_rate<=70&order_rate>=40->remain_distance<=400
 「最終コーナー以降、コーナー、順位率40～70（チャンミ4～6/LoH5～8）」の後「残り距離<=400」、目標速度1500、持続3.0
+
+Celeste Oath
+レース中間付近で前の方にいると速度がわずかに上がりさらに持久力がほんのわずかに回復する、2400m以上のレースだと回復量が増える
+評価点180、SP200、人気:スピード7/スタミナ7
+->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50&course_distance>=2400
+「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）、距離>=2400」、目標速度1500、体力50、持続3.0
+->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50
+「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、体力35、持続3.0
 
 幸せの青い光
 終盤始めのどこかで前方にいるとちょっと前に出る、短距離かマイルレースの場合は効果が増える
@@ -3623,6 +3640,13 @@ I copy!
 
 誇りを懸けて
 [Meisterschaft]エイシンフラッシュ 進化
+ラストスパートの最中に速度がすごく上がる
+評価点633、人気:スピード60
+->is_lastspurt==1&phase_firsthalf_random==3
+「ラストスパート、終盤1/2～3/4ランダム」、目標速度4500、持続2.4
+
+全力投球
+[Grand itinéraire]シュヴァルグラン 進化
 ラストスパートの最中に速度がすごく上がる
 評価点633、人気:スピード60
 ->is_lastspurt==1&phase_firsthalf_random==3
@@ -7108,6 +7132,15 @@ Burn Down
 ->distance_type==3&running_style==2&phase_laterhalf_random==1&distance_diff_top<=10
 「中距離、先行、中盤後半ランダム、先頭とのバ身差<=10」、目標速度2500、加速3000、持続3.0
 
+偉大なる踏破
+[Grand itinéraire]シュヴァルグラン 進化
+終盤が迫ったとき前の方にいると速度が少し上がり、加速力が少し上がる2400mのレースだと速度の効果量が増える＜先行・中距離＞
+評価点633、人気:スピード30/パワー30
+->distance_type==3&running_style==2&phase_laterhalf_random==1&order_rate<=50&course_distance==2400
+「中距離、先行、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）、距離==2400」、目標速度3500、加速3000、持続3.0
+->distance_type==3&running_style==2&phase_laterhalf_random==1&order_rate<=50&course_distance!=2400
+「中距離、先行、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）、距離!=2400」、目標速度2500、加速3000、持続3.0
+
 確かな足取り
 終盤が迫ったとき先頭にいるか先頭から4バ身以内だと速度と加速力がちょっと上がる＜先行・中距離＞
 評価点217、SP170、人気:スピード10/パワー10
@@ -7900,6 +7933,10 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 
 カーニバルボーナス
 レーシングカーニバルで獲得するカーニバルptにボーナスが付く（＋{0}％）このスキルはイベント終了時に消滅する
+評価点0、確定発動
+
+カーニバルボーナス
+レーシングカーニバルで基礎能力+{0}％、さらに{1}％の確率で絶好調になるこのスキルはイベント終了時に消滅する
 評価点0、確定発動
 
 カーニバルボーナス
