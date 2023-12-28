@@ -49,8 +49,8 @@ data class SupportCardSpecialUnique(
         relation: Int,
         friendTraining: Boolean,
     ): Int {
-        return if (type == 101 && relation >= value0 && value1 == 2) {
-            value2
+        return if (type == 101 && relation >= value0) {
+            (if (value1 == 2) value2 else 0) + (if (value3 == 2) value4 else 0)
         } else if (type == 113 && friendTraining && value0 == 2) {
             value1
         } else 0
@@ -104,8 +104,8 @@ data class SupportCardSpecialUnique(
         speedSkillCount: Int,
         healSkillCount: Int,
     ): Int {
-        return if (type == 101 && relation >= value0 && value1 == 8) {
-            value2
+        return if (type == 101 && relation >= value0) {
+            (if (value1 == 8) value2 else 0) + (if (value3 == 8) value4 else 0)
         } else if (type == 102 && relation >= value0 && trainingType != cardType) {
             value1
         } else if (type == 103 && supportTypeCount >= value0) {
@@ -140,8 +140,8 @@ data class SupportCardSpecialUnique(
         friendCount: Int,
         status: Status,
     ): Int {
-        return if (type == 101 && relation >= value0 && value1 == 1) {
-            value2
+        return if (type == 101 && relation >= value0) {
+            (if (value1 == 1) value2 else 0) + (if (value3 == 1) value4 else 0)
         } else if (type == 106 && value1 == 1) {
             min(value0, friendCount) * value2
         } else if (type == 107 && value0 == 1) {
