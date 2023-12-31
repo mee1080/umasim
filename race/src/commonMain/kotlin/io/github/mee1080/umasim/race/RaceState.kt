@@ -31,7 +31,7 @@ data class UmaStatus(
     val power: Int = 1300,
     val guts: Int = 1000,
     val wisdom: Int = 1200,
-    val condition: Int = 2,
+    val condition: Condition = Condition.BEST,
     val style: Style = Style.OI,
     val distanceFit: String = "S",
     val surfaceFit: String = "A",
@@ -72,15 +72,11 @@ data class PassiveBonus(
     }
 }
 
-data class RaceState(
+class RaceState(
     val setting: RaceSetting,
     val simulation: RaceSimulationState,
 ) {
-    fun update(simulation: RaceSimulationState): RaceState {
-        return copy(simulation = simulation)
-    }
-
-    fun getPhase(position: Int): Int {
+    fun getPhase(position: Float): Int {
         return when {
             position < setting.trackDetail.distance / 6.0f -> 0
             position < (setting.trackDetail.distance * 2.0f) / 3 -> 1
@@ -91,7 +87,7 @@ data class RaceState(
 
     val currentPhase get() = getPhase(simulation.position)
 
-    fun getSection(position: Int): Int {
+    fun getSection(position: Float): Int {
         return floor((position * 24.0f) / setting.courseLength).toInt()
     }
 
@@ -103,13 +99,14 @@ data class RaceState(
         get() {
             if (simulation.sp <= 0) return vMin
             if (simulation.currentSpeed < setting.v0) return setting.v0
+            val spurtParameters = simulation.spurtParameters
             var targetSpeed = if (
-                simulation.spurtParameters != null && simulation.position + simulation.spurtParameters.distance > setting.courseLength
-            ) simulation.spurtParameters.speed else {
+                spurtParameters != null && simulation.position + spurtParameters.distance > setting.courseLength
+            ) spurtParameters.speed else {
                 when (currentPhase) {
-                    0, 1 -> setting.baseSpeed * styleSpeedCoef[setting.runningStyle.ordinal]!![currentPhase]!!
+                    0, 1 -> setting.baseSpeed * setting.runningStyle.styleSpeedCoef[currentPhase]!!
                     else -> {
-                        setting.baseSpeed * styleSpeedCoef[setting.runningStyle.ordinal]!![2]!! +
+                        setting.baseSpeed * setting.runningStyle.styleSpeedCoef[2]!! +
                                 sqrt(setting.modifiedSpeed / 500.0f) *
                                 distanceFitSpeedCoef[setting.umaStatus.distanceFit]!! +
                                 (setting.modifiedGuts * 450f).pow(0.597f) * 0.0001f
@@ -141,9 +138,10 @@ data class RaceState(
 
     val acceleration: Float
         get() {
-            var acceleration = if (isInSlopeUp()) 0.0004f else 0.0006f *
-                    sqrt(500f + setting.modifiedPower) *
-                    styleAccelerateCoef[setting.runningStyle.ordinal]!![currentPhase]!! *
+            val c = if (isInSlopeUp()) 0.0004f else 0.0006f
+            var acceleration = c *
+                    sqrt(500f * setting.modifiedPower) *
+                    setting.runningStyle.styleAccelerateCoef[currentPhase]!! *
                     surfaceFitAccelerateCoef[setting.umaStatus.surfaceFit]!! *
                     distanceFitAccelerateCoef[setting.umaStatus.distanceFit]!!
             if (simulation.isStartDash) {
@@ -165,11 +163,11 @@ data class RaceState(
             }
         }
 
-    fun isInSlopeUp(position: Int = simulation.position): Boolean {
+    fun isInSlopeUp(position: Float = simulation.position): Boolean {
         return setting.trackDetail.getSlope(position) >= 1f
     }
 
-    fun isInSlopeDown(position: Int = simulation.position): Boolean {
+    fun isInSlopeDown(position: Float = simulation.position): Boolean {
         return setting.trackDetail.getSlope(position) <= 1f
     }
 }
@@ -253,7 +251,7 @@ data class RaceSetting(
     }
 
     val spMax by lazy {
-        trackDetail.distance + 0.8f * modifiedStamina * styleSpCoef[runningStyle.ordinal]!!
+        trackDetail.distance + 0.8f * modifiedStamina * runningStyle.styleSpCoef
     }
 
     val spurtSpCoef by lazy {
@@ -276,7 +274,7 @@ data class RaceSetting(
     }
 
     val maxSpurtSpeed: Float by lazy {
-        (this.baseSpeed * (styleSpeedCoef[runningStyle.ordinal]!![2]!! + 0.01f) +
+        (this.baseSpeed * (runningStyle.styleSpeedCoef[2]!! + 0.01f) +
                 sqrt(modifiedSpeed / 500f) *
                 distanceFitSpeedCoef[umaStatus.distanceFit]!!) *
                 1.05f +
@@ -290,7 +288,7 @@ data class RaceSetting(
 
     val v1: Float by lazy {
         baseSpeed *
-                (styleSpeedCoef[runningStyle.ordinal]!![0]!! +
+                (runningStyle.styleSpeedCoef[0]!! +
                         (modifiedWisdom * log10(modifiedWisdom / 10f)) /
                         550000f -
                         0.00325f)
@@ -298,7 +296,7 @@ data class RaceSetting(
 
     val v2: Float by lazy {
         baseSpeed *
-                (styleSpeedCoef[runningStyle.ordinal]!![1]!! +
+                (runningStyle.styleSpeedCoef[1]!! +
                         (modifiedWisdom * log10(modifiedWisdom / 10f)) /
                         550000f -
                         0.00325f)
@@ -306,7 +304,7 @@ data class RaceSetting(
 
     val v3: Float by lazy {
         baseSpeed *
-                (styleSpeedCoef[runningStyle.ordinal]!![2]!! +
+                (runningStyle.styleSpeedCoef[2]!! +
                         (modifiedWisdom * log10(modifiedWisdom / 10f)) /
                         550000f -
                         0.00325f) +
@@ -322,7 +320,7 @@ data class RaceSetting(
         24f +
                 0.0006f *
                 sqrt(500f * modifiedPower) *
-                styleAccelerateCoef[runningStyle.ordinal]!![0]!! *
+                runningStyle.styleAccelerateCoef[0]!! *
                 surfaceFitAccelerateCoef[umaStatus.surfaceFit]!! *
                 distanceFitAccelerateCoef[umaStatus.distanceFit]!!
     }
@@ -330,7 +328,7 @@ data class RaceSetting(
     val a1: Float by lazy {
         0.0006f *
                 sqrt(500f * modifiedPower) *
-                styleAccelerateCoef[runningStyle.ordinal]!![0]!! *
+                runningStyle.styleAccelerateCoef[0]!! *
                 surfaceFitAccelerateCoef[umaStatus.surfaceFit]!! *
                 distanceFitAccelerateCoef[umaStatus.distanceFit]!!
     }
@@ -338,7 +336,7 @@ data class RaceSetting(
     val a2: Float by lazy {
         if (this.v2 < this.v1) -0.8f else 0.0006f *
                 sqrt(500f * modifiedPower) *
-                styleAccelerateCoef[runningStyle.ordinal]!![1]!! *
+                runningStyle.styleAccelerateCoef[1]!! *
                 surfaceFitAccelerateCoef[umaStatus.surfaceFit]!! *
                 distanceFitAccelerateCoef[umaStatus.distanceFit]!!
     }
@@ -346,60 +344,81 @@ data class RaceSetting(
     val a3: Float by lazy {
         0.0006f *
                 sqrt(500f * modifiedPower) *
-                styleAccelerateCoef[runningStyle.ordinal]!![2]!! *
+                runningStyle.styleAccelerateCoef[2]!! *
                 surfaceFitAccelerateCoef[umaStatus.surfaceFit]!! *
                 distanceFitAccelerateCoef[umaStatus.distanceFit]!!
     }
+
+    val timeCoef: Float by lazy {
+        trackDetail.distance / 1000f
+    }
 }
 
-data class RaceSimulationState(
-    val frameElapsed: Int = 0,
-    val position: Int = 0,
-    val currentSpeed: Float = startSpeed,
-    val sp: Float = 0f,
-    val operatingSkills: List<OperatingSkill> = emptyList(),
-    val frames: List<Any> = emptyList(),
-    val startDelay: Float = 0f,
-    val isStartDash: Boolean = false,
-    val delayTime: Float = 0f,
-    val spurtParameters: SpurtParameters? = null,
-    val maxSpurt: Boolean = false,
-    val downSlopeModeStart: Any? = null,
-    val temptationSection: Int = -1,
-    val temptationModeStart: Int? = null,
-    val temptationModeEnd: Int? = null,
-    val temptationWaste: Int = 0,
+class RaceSimulationState(
+    var frameElapsed: Int = 0,
+    var position: Float = 0f,
+    var currentSpeed: Float = startSpeed,
+    var sp: Float = 0f,
+    var operatingSkills: List<OperatingSkill> = emptyList(),
+    var frames: List<Any> = emptyList(),
+    var startDelay: Float = 0f,
+    var isStartDash: Boolean = false,
+    var delayTime: Float = 0f,
+    var spurtParameters: SpurtParameters? = null,
+    var maxSpurt: Boolean = false,
+    var downSlopeModeStart: Any? = null,
+    var temptationSection: Int = -1,
+    var temptationModeStart: Int? = null,
+    var temptationModeEnd: Int? = null,
+    var temptationWaste: Float = 0f,
+    var speedDebuff: Float = 0f,
 
-    val invokedSkills: List<SkillEffect> = emptyList(),
-    val coolDownMap: Map<Int, Int> = emptyMap(),
-    val skillTriggerCount: List<Int> = listOf(0, 0, 0, 0, 0),
-    val healTriggerCount: Int = 0,
-    val startDelayCount: Int = 0,
-    val sectionTargetSpeedRandoms: List<Float> = emptyList(),
+    var invokedSkills: List<SkillEffect> = emptyList(),
+    var coolDownMap: Map<Int, Int> = emptyMap(),
+    var skillTriggerCount: List<Int> = listOf(0, 0, 0, 0, 0),
+    var healTriggerCount: Int = 0,
+    var startDelayCount: Int = 0,
+    var sectionTargetSpeedRandoms: List<Float> = emptyList(),
 ) {
     val isInTemptation: Boolean
         get() {
-            if (
-                this.temptationModeStart == null ||
-                this.frameElapsed < this.temptationModeStart
-            ) {
-                return false
-            }
-            if (this.temptationModeEnd == null) {
-                return true
-            }
-            return this.frameElapsed <= this.temptationModeEnd
+            val temptationModeStart = temptationModeStart ?: return false
+            if (frameElapsed < temptationModeStart) return false
+            val temptationModeEnd = temptationModeEnd ?: return true
+            return frameElapsed <= temptationModeEnd
         }
 }
 
 data class SpurtParameters(
-    val distance: Int,
+    val distance: Float,
     val speed: Float,
-    val time: Float,
     val spDiff: Float,
+    val time: Float = 0f,
 )
 
 data class OperatingSkill(
     val data: Skill,
     val startFrame: Int,
+    val durationOverwrite: Float? = null,
+) {
+    val duration: Float? get() = durationOverwrite ?: data.duration
+}
+
+data class RaceFrame(
+    val speed: Float,
+    val sp: Float,
+    val startPosition: Float,
+    val targetSpeed: Float = 0f,
+    val acceleration: Float = 0f,
+    val movement: Float = 0f,
+    val consume: Float = 0f,
+    val skills: List<SkillEffect> = emptyList(),
+    val spurting: Boolean = false,
+)
+
+data class RaceSimulationResult(
+    val raceTime: Float,
+    val raceTimeDelta: Float,
+    val maxSpurt: Boolean,
+    val spDiff: Float,
 )

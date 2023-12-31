@@ -53,7 +53,7 @@ data class TrackDetail(
 ) {
     fun toPosition(distanceLeft: Int) = distance - distanceLeft
 
-    fun getSlope(position: Int): Float {
+    fun getSlope(position: Float): Float {
         for (slope in slopes) {
             if (position >= slope.start && position <= slope.end) {
                 return 0.0001f * slope.slope

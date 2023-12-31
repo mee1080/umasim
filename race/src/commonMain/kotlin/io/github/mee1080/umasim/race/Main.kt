@@ -22,11 +22,20 @@
  */
 package io.github.mee1080.umasim.race
 
-import io.github.mee1080.umasim.race.data.skillData
-
 fun main() {
-    println("テスト")
-    skillData.forEach {
-        println("${it.name} (${it.displayType}) ${it.displayTooltip}")
+    val setting = RaceSetting(
+        track = Track(10001, 10101),
+//        skillActivateAdjustment = 2,
+    )
+    println(setting)
+    println(setting.trackDetail)
+    val calculator = RaceCalculator(setting)
+    repeat(100) {
+        val (result, frames) = calculator.simulate()
+        println("$result")
     }
+//    val (result, frames) = calculator.simulate()
+//    frames.forEach {
+//        println(it)
+//    }
 }
