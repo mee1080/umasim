@@ -27,6 +27,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.*
 import kotlinx.serialization.serializer
 import kotlin.math.round
+import kotlin.random.Random
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonParser = Json {
@@ -43,12 +44,11 @@ val uniqueSkillData by lazy {
 
 val skillData by lazy {
     val skills = mutableListOf<Skill>()
-    val inheritSkills = mutableListOf<Skill>()
 
     for (skill in uniqueSkillData) {
         skills += skill.copy(type = "unique")
         if (skill.noInherit != true) {
-            inheritSkills += skill.toInheritSkill()
+            skills += skill.toInheritSkill()
         }
     }
 
@@ -57,6 +57,12 @@ val skillData by lazy {
     }
     skills
 }
+
+val skillDataMap by lazy {
+    skillData.associateBy { it.name }
+}
+
+fun getSkill(name: String) = skillDataMap[name]!!
 
 private val healInherit = mapOf(
     750 to 350,
@@ -100,6 +106,8 @@ private val accelerationInherit = mapOf(
 )
 
 interface SkillEffect {
+    val conditions: Conditions?
+    val displayType: String
     val heal: Int?
     val targetSpeed: Float?
     val acceleration: Float?
@@ -113,6 +121,10 @@ interface SkillEffect {
     val passiveWisdom: Int?
     val temptationRate: Int?
     val startDelay: Float?
+    val trigger: String?
+    val triggerRate: Float?
+    val coolDownId: String
+    val duration: Float?
 
     fun forEachEffect(action: (effect: String, value: Number) -> Unit) {
         heal?.let { action("heal", it) }
@@ -176,6 +188,19 @@ interface SkillEffect {
         }
         return newType
     }
+
+    fun doTrigger() {
+        val triggers = trigger?.let { mutableListOf(it) } ?: mutableListOf()
+        if (speedWithDecel != null) {
+            triggers += "{ thiz.currentSpeed += speedWithDecel }"
+        }
+        if (fatigue != null) {
+            triggers += "{ thiz.doHeal(-fatigue) }"
+        }
+        triggers.forEach {
+            // TODO
+        }
+    }
 }
 
 @Serializable
@@ -189,16 +214,16 @@ data class Skill(
     val variants: List<Variant>? = null,
     val invokes: List<Invoke>? = null,
     private val type: String? = null,
-    val conditions: Conditions? = null,
+    override val conditions: Conditions? = null,
     val emulatorTypeLimit: List<String>? = null,
     private val tooltip: String? = null,
-    val triggerRate: Float? = null,
-    val duration: Float? = null,
+    override val triggerRate: Float? = null,
+    override val duration: Float? = null,
     val cd: Int = 500,
     // TODO 実装
     val init: String? = null,
     val check: String? = null,
-    val trigger: String? = null,
+    override val trigger: String? = null,
 
     override val heal: Int? = null,
     override val targetSpeed: Float? = null,
@@ -214,6 +239,8 @@ data class Skill(
     override val temptationRate: Int? = null,
     override val startDelay: Float? = null,
 ) : SkillEffect {
+
+    override val coolDownId get() = id.toString()
 
     fun toInheritSkill(): Skill {
         val variant = Variant(
@@ -281,20 +308,7 @@ data class Skill(
         }.joinToString(" | ")
     }
 
-    val displayType by lazy { type ?: skillType() }
-
-    fun doTrigger() {
-        val triggers = trigger?.let { mutableListOf(it) } ?: mutableListOf()
-        if (speedWithDecel != null) {
-            triggers += "{ thiz.currentSpeed += speedWithDecel }"
-        }
-        if (fatigue != null) {
-            triggers += "{ thiz.doHeal(-fatigue) }"
-        }
-        triggers.forEach {
-            // TODO
-        }
-    }
+    override val displayType by lazy { type ?: skillType() }
 }
 
 @Serializable
@@ -306,12 +320,12 @@ data class Variant(
     val rarity: String? = null,
     val type: String? = null,
     val tooltip: String? = null,
-    val duration: Float? = null,
+    override val duration: Float? = null,
     val holder: Int? = null,
-    val conditions: Conditions? = null,
+    override val conditions: Conditions? = null,
     val variants: List<Variant>? = null,
     // TODO 実装
-    val trigger: String? = null,
+    override val trigger: String? = null,
 
     override val heal: Int? = null,
     override val targetSpeed: Float? = null,
@@ -326,13 +340,20 @@ data class Variant(
     override val passiveWisdom: Int? = null,
     override val temptationRate: Int? = null,
     override val startDelay: Float? = null,
-) : SkillEffect
+) : SkillEffect {
+    override val displayType by lazy { type ?: skillType() }
+    override val coolDownId get() = id.toString()
+
+    // TODO
+    override val triggerRate: Float? get() = null
+}
 
 @Serializable
 data class Invoke(
     val invokeNo: Int? = null,
-    val duration: Float? = null,
-    val conditions: Conditions? = null,
+    override val duration: Float? = null,
+    override val conditions: Conditions? = null,
+    override val trigger: String? = null,
 
     override val heal: Int? = null,
     override val targetSpeed: Float? = null,
@@ -347,7 +368,16 @@ data class Invoke(
     override val passiveWisdom: Int? = null,
     override val temptationRate: Int? = null,
     override val startDelay: Float? = null,
-) : SkillEffect
+) : SkillEffect {
+    override val displayType by lazy { skillType() }
+    override val coolDownId by lazy {
+        // FIXME
+        Random.nextFloat().toString() + invokeNo.toString()
+    }
+
+    // TODO
+    override val triggerRate: Float? get() = null
+}
 
 @Serializable
 data class Conditions(
@@ -403,7 +433,6 @@ data class Conditions(
     val is_activate_any_skill: Int? = null,
     val distance_rate_after_random: Int? = null,
     val temptation_count: Int? = null,
-    // TODO 実装
     val hp_per: String? = null,
     @Serializable(with = ArrayToStringSerializer::class)
     val distance_rate: String? = null,

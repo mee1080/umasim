@@ -29,12 +29,12 @@ enum class Distance {
     LONG
 }
 
-enum class Style {
-    NIGE,
-    SEN,
-    SASI,
-    OI,
-    OONIGE
+enum class Style(val value: Int) {
+    NIGE(1),
+    SEN(2),
+    SASI(3),
+    OI(4),
+    OONIGE(1),
 }
 
 enum class Surface {
@@ -42,8 +42,8 @@ enum class Surface {
     DIRT
 }
 
-enum class Condition {
-    BEST, GOOD, NORMAL, BAD, WORST,
+enum class Condition(val value: Int) {
+    BEST(5), GOOD(4), NORMAL(3), BAD(2), WORST(1),
 }
 
 internal val frameLength = 1.0f / 15

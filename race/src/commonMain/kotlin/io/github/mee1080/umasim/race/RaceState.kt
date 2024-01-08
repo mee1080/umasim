@@ -357,10 +357,10 @@ data class RaceSetting(
 class RaceSimulationState(
     var frameElapsed: Int = 0,
     var position: Float = 0f,
+    var startPosition: Float = 0f,
     var currentSpeed: Float = startSpeed,
     var sp: Float = 0f,
-    var operatingSkills: List<OperatingSkill> = emptyList(),
-    var frames: List<Any> = emptyList(),
+    val operatingSkills: MutableList<OperatingSkill> = mutableListOf(),
     var startDelay: Float = 0f,
     var isStartDash: Boolean = false,
     var delayTime: Float = 0f,
@@ -373,12 +373,15 @@ class RaceSimulationState(
     var temptationWaste: Float = 0f,
     var speedDebuff: Float = 0f,
 
-    var invokedSkills: List<SkillEffect> = emptyList(),
-    var coolDownMap: Map<Int, Int> = emptyMap(),
-    var skillTriggerCount: List<Int> = listOf(0, 0, 0, 0, 0),
+    val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
+    val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
+    val skillTriggerCount: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0),
+    var passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
     var sectionTargetSpeedRandoms: List<Float> = emptyList(),
+
+    val frames: MutableList<RaceFrame> = mutableListOf(),
 ) {
     val isInTemptation: Boolean
         get() {
@@ -389,6 +392,14 @@ class RaceSimulationState(
         }
 }
 
+object SkillTriggerCount {
+    val PHASE_0 = 0
+    val PHASE_1 = 1
+    val PHASE_2 = 2
+    val PHASE_3 = 3
+    val YUMENISHIKI = 4
+}
+
 data class SpurtParameters(
     val distance: Float,
     val speed: Float,
@@ -397,7 +408,7 @@ data class SpurtParameters(
 )
 
 data class OperatingSkill(
-    val data: Skill,
+    val data: SkillEffect,
     val startFrame: Int,
     val durationOverwrite: Float? = null,
 ) {
@@ -422,3 +433,13 @@ data class RaceSimulationResult(
     val maxSpurt: Boolean,
     val spDiff: Float,
 )
+
+data class InvokedSkill(
+    val skill: SkillEffect,
+    val check: List<RaceState.() -> Boolean>,
+) : SkillEffect by skill {
+    fun checkAll(state: RaceState): Boolean = check.all { it(state) }
+    fun trigger(state: RaceState) {
+        // TODO
+    }
+}
