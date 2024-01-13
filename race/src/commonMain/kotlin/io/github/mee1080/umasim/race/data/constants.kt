@@ -46,16 +46,16 @@ enum class Condition(val value: Int) {
     BEST(5), GOOD(4), NORMAL(3), BAD(2), WORST(1),
 }
 
-internal val frameLength = 1.0f / 15
-internal val startSpeed = 3.0f
-internal val maxSpeed = 30.0f
+internal val frameLength = 1.0 / 15
+internal val startSpeed = 3.0
+internal val maxSpeed = 30.0
 
 internal val condCoef = mapOf(
-    Condition.BEST to 1.04f,
-    Condition.GOOD to 1.02f,
-    Condition.NORMAL to 1.0f,
-    Condition.BAD to 0.98f,
-    Condition.WORST to 0.96f,
+    Condition.BEST to 1.04,
+    Condition.GOOD to 1.02,
+    Condition.NORMAL to 1.0,
+    Condition.BAD to 0.98,
+    Condition.WORST to 0.96,
 )
 
 internal val surfaceSpeedModify = mapOf(
@@ -93,84 +93,84 @@ internal val surfacePowerModify = mapOf(
 )
 
 internal val styleFitCoef = mapOf(
-    "S" to 1.1f,
-    "A" to 1.0f,
-    "B" to 0.85f,
-    "C" to 0.75f,
-    "D" to 0.6f,
-    "E" to 0.4f,
-    "F" to 0.2f,
-    "G" to 0.1f
+    "S" to 1.1,
+    "A" to 1.0,
+    "B" to 0.85,
+    "C" to 0.75,
+    "D" to 0.6,
+    "E" to 0.4,
+    "F" to 0.2,
+    "G" to 0.1
 )
 
 internal val distanceFitSpeedCoef = mapOf(
-    "S" to 1.05f,
-    "A" to 1.0f,
-    "B" to 0.9f,
-    "C" to 0.8f,
-    "D" to 0.6f,
-    "E" to 0.4f,
-    "F" to 0.2f,
-    "G" to 0.1f
+    "S" to 1.05,
+    "A" to 1.0,
+    "B" to 0.9,
+    "C" to 0.8,
+    "D" to 0.6,
+    "E" to 0.4,
+    "F" to 0.2,
+    "G" to 0.1
 )
 
 internal val distanceFitAccelerateCoef = mapOf(
-    "S" to 1.0f,
-    "A" to 1.0f,
-    "B" to 1.0f,
-    "C" to 1.0f,
-    "D" to 1.0f,
-    "E" to 0.6f,
-    "F" to 0.5f,
-    "G" to 0.4f
+    "S" to 1.0,
+    "A" to 1.0,
+    "B" to 1.0,
+    "C" to 1.0,
+    "D" to 1.0,
+    "E" to 0.6,
+    "F" to 0.5,
+    "G" to 0.4
 )
 
 internal val surfaceFitAccelerateCoef = mapOf(
-    "S" to 1.05f,
-    "A" to 1.0f,
-    "B" to 0.9f,
-    "C" to 0.8f,
-    "D" to 0.7f,
-    "E" to 0.5f,
-    "F" to 0.3f,
-    "G" to 0.1f
+    "S" to 1.05,
+    "A" to 1.0,
+    "B" to 0.9,
+    "C" to 0.8,
+    "D" to 0.7,
+    "E" to 0.5,
+    "F" to 0.3,
+    "G" to 0.1
 )
 
 private val styleSpCoefData = mapOf(
-    Style.NIGE to 0.95f,
-    Style.SEN to 0.89f,
-    Style.SASI to 1.0f,
-    Style.OI to 0.995f,
-    Style.OONIGE to 0.86f
+    Style.NIGE to 0.95,
+    Style.SEN to 0.89,
+    Style.SASI to 1.0,
+    Style.OI to 0.995,
+    Style.OONIGE to 0.86
 )
 
 val Style.styleSpCoef get() = styleSpCoefData[this]!!
 
 private val styleSpeedCoefData = mapOf(
     Style.NIGE to mapOf(
-        0 to 1.0f,
-        1 to 0.98f,
-        2 to 0.962f
+        0 to 1.0,
+        1 to 0.98,
+        2 to 0.962
     ),
     Style.SEN to mapOf(
-        0 to 0.978f,
-        1 to 0.991f,
-        2 to 0.975f,
+        0 to 0.978,
+        1 to 0.991,
+        2 to 0.975,
     ),
     Style.SASI to mapOf(
-        0 to 0.938f,
-        1 to 0.998f,
-        2 to 0.994f
+        0 to 0.938,
+        1 to 0.998,
+        2 to 0.994
     ),
     Style.OI to mapOf(
-        0 to 0.931f,
-        1 to 1.0f,
-        2 to 1.0f
+        0 to 0.931,
+        1 to 1.0,
+        2 to 1.0
     ),
     Style.OONIGE.ordinal to mapOf(
-        0 to 1.063f,
-        1 to 0.962f,
-        2 to 0.95f
+        0 to 1.063,
+        1 to 0.962,
+        2 to 0.95
     )
 )
 
@@ -178,34 +178,34 @@ val Style.styleSpeedCoef get() = styleSpeedCoefData[this]!!
 
 private val styleAccelerateCoefData = mapOf(
     Style.NIGE to mapOf(
-        0 to 1.0f,
-        1 to 1.0f,
-        2 to 0.996f,
-        3 to 0.996f
+        0 to 1.0,
+        1 to 1.0,
+        2 to 0.996,
+        3 to 0.996
     ),
     Style.SEN to mapOf(
-        0 to 0.985f,
-        1 to 1.0f,
-        2 to 0.996f,
-        3 to 0.996f
+        0 to 0.985,
+        1 to 1.0,
+        2 to 0.996,
+        3 to 0.996
     ),
     Style.SASI to mapOf(
-        0 to 0.975f,
-        1 to 1.0f,
-        2 to 1.0f,
-        3 to 1.0f
+        0 to 0.975,
+        1 to 1.0,
+        2 to 1.0,
+        3 to 1.0
     ),
     Style.OI to mapOf(
-        0 to 0.945f,
-        1 to 1.0f,
-        2 to 0.997f,
-        3 to 0.997f
+        0 to 0.945,
+        1 to 1.0,
+        2 to 0.997,
+        3 to 0.997
     ),
     Style.OONIGE.ordinal to mapOf(
-        0 to 1.17f,
-        1 to 0.94f,
-        2 to 0.956f,
-        3 to 0.956f
+        0 to 1.17,
+        1 to 0.94,
+        2 to 0.956,
+        3 to 0.956
     )
 )
 
@@ -213,15 +213,15 @@ val Style.styleAccelerateCoef get() = styleAccelerateCoefData[this]!!
 
 internal val spConsumptionCoef = mapOf(
     1 to mapOf(
-        1 to 1.0f,
-        2 to 1.0f,
-        3 to 1.02f,
-        4 to 1.02f
+        1 to 1.0,
+        2 to 1.0,
+        3 to 1.02,
+        4 to 1.02
     ),
     2 to mapOf(
-        1 to 1.0f,
-        2 to 1.0f,
-        3 to 1.01f,
-        4 to 1.02f
+        1 to 1.0,
+        2 to 1.0,
+        3 to 1.01,
+        4 to 1.02
     )
 )

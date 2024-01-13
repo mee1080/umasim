@@ -15,7 +15,7 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
     }
     if (condition.hp_per != null) {
         val operator = condition.hp_per.substring(0, 2)
-        val value = condition.hp_per.substring(2).toInt() * 0.01f
+        val value = condition.hp_per.substring(2).toInt() * 0.01
         when (operator) {
             ">=" -> result += { simulation.sp >= value * setting.spMax }
             "<=" -> result += { simulation.sp <= value * setting.spMax }
@@ -50,30 +50,30 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
     if (condition.remain_distance != null) {
         val values = condition.remain_distance.split(",")
         if (values.size >= 2) {
-            val start = setting.toPosition(values[0].toFloat())
-            val end = setting.toPosition(values[1].toFloat())
+            val start = setting.toPosition(values[0].toDouble())
+            val end = setting.toPosition(values[1].toDouble())
             result += { simulation.startPosition in start..end }
         } else {
             if (condition.remain_distance.startsWith(">=")) {
-                val value = setting.toPosition(condition.remain_distance.substring(2).toFloat())
+                val value = setting.toPosition(condition.remain_distance.substring(2).toDouble())
                 result += { simulation.startPosition >= value }
             } else if (condition.remain_distance.startsWith("<=")) {
-                val value = setting.toPosition(condition.remain_distance.substring(2).toFloat())
+                val value = setting.toPosition(condition.remain_distance.substring(2).toDouble())
                 result += { simulation.startPosition <= value }
             } else {
-                val value = setting.toPosition(condition.remain_distance.toFloat())
+                val value = setting.toPosition(condition.remain_distance.toDouble())
                 result += { value in simulation.startPosition..simulation.position }
             }
         }
     }
     if (condition.distance_rate_after_random != null) {
-        val randoms = setting.initIntervalRandom(condition.distance_rate_after_random * 0.01f, 1f)
+        val randoms = setting.initIntervalRandom(condition.distance_rate_after_random * 0.01, 1.0)
         result += { isInRandom(randoms) }
     }
     if (condition.distance_rate_random != null) {
         val randoms = setting.initIntervalRandom(
-            condition.distance_rate_random[0] * 0.01f,
-            condition.distance_rate_random[1] * 0.01f
+            condition.distance_rate_random[0] * 0.01,
+            condition.distance_rate_random[1] * 0.01
         )
         result += { isInRandom(randoms) }
     }
@@ -132,7 +132,7 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
             values = listOf(">=${values[0]}", "<=${values[1]}")
         }
         values.forEach {
-            val value = it.substring(2).toFloat() * 0.01f * setting.courseLength
+            val value = it.substring(2).toDouble() * 0.01 * setting.courseLength
             if (it.startsWith(">=")) {
                 result += { simulation.position >= value }
             } else if (it.startsWith("<=")) {
@@ -145,15 +145,15 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
         result += { isInRandom(randoms) }
     }
     if (condition.phase_firsthalf_random != null) {
-        val randoms = setting.initPhaseRandom(condition.phase_firsthalf_random, 0f to 0.5f)
+        val randoms = setting.initPhaseRandom(condition.phase_firsthalf_random, 0.0 to 0.5)
         result += { isInRandom(randoms) }
     }
     if (condition.phase_firstquarter_random != null) {
-        val randoms = setting.initPhaseRandom(condition.phase_firstquarter_random, 0f to 0.25f)
+        val randoms = setting.initPhaseRandom(condition.phase_firstquarter_random, 0.0 to 0.25)
         result += { isInRandom(randoms) }
     }
     if (condition.phase_laterhalf_random != null) {
-        val randoms = setting.initPhaseRandom(condition.phase_laterhalf_random, 0.5f to 1f)
+        val randoms = setting.initPhaseRandom(condition.phase_laterhalf_random, 0.5 to 1.0)
         result += { isInRandom(randoms) }
     }
     if (condition.phase_corner_random != null) {
@@ -182,7 +182,7 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
         result += { isInFinalStraight() && isInFinalCorner() }
     }
     if (condition.is_finalcorner_laterhalf != null) {
-        result += { isInFinalStraight() && isInFinalCorner(0.5f to 1f) }
+        result += { isInFinalStraight() && isInFinalCorner(0.5 to 1.0) }
     }
     if (condition.corner != null) {
         when (condition.corner) {
@@ -240,7 +240,7 @@ fun checkCondition(skill: SkillEffect, setting: RaceSetting): List<RaceState.() 
  * 1: In front of stand
  * 2: Opposite of stand
  */
-private fun RaceState.getStraightFrontType(position: Float = simulation.position): Int {
+private fun RaceState.getStraightFrontType(position: Double = simulation.position): Int {
     setting.trackDetail.straights.reversed().forEachIndexed { index, straight ->
         if (position >= straight.start && position <= straight.end) {
             return if (index % 2 == 0) 1 else 2
@@ -249,24 +249,24 @@ private fun RaceState.getStraightFrontType(position: Float = simulation.position
     return 0
 }
 
-private fun RaceSetting.toPosition(distanceLeft: Float): Float {
+private fun RaceSetting.toPosition(distanceLeft: Double): Double {
     return trackDetail.distance - distanceLeft
 }
 
-private class RandomEntry(start: Float, end: Float) : ClosedFloatingPointRange<Float> by start..end
+private class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange<Double> by start..end
 
-private fun RaceSetting.chooseRandom(zoneStart: Float, zoneEnd: Float): RandomEntry {
+private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): RandomEntry {
     val rate = when (randomPosition) {
-        0 -> Random.nextFloat()
-        1 -> 0f
-        2 -> 0.25f
-        3 -> 0.5f
-        4 -> 0.75f
-        else -> 0.98f
+        0 -> Random.nextDouble()
+        1 -> 0.0
+        2 -> 0.25
+        3 -> 0.5
+        4 -> 0.75
+        else -> 0.98
     }
 
     val start = rate * (zoneEnd - zoneStart) + zoneStart
-    val end = min(start + 10f, zoneEnd)
+    val end = min(start + 10.0, zoneEnd)
     return RandomEntry(start, end)
 }
 
@@ -308,10 +308,10 @@ private fun RaceSetting.initAllCornerRandom(): List<RandomEntry> {
     return triggers
 }
 
-private fun logTrigger(min: Float, max: Float): RandomEntry {
-    val actualMax = max(min, max - 10f)
-    val start = min + Random.nextFloat() * (actualMax - min)
-    val end = start + 10f
+private fun logTrigger(min: Double, max: Double): RandomEntry {
+    val actualMax = max(min, max - 10.0)
+    val start = min + Random.nextDouble() * (actualMax - min)
+    val end = start + 10.0
     return RandomEntry(start, end)
 }
 
@@ -333,19 +333,19 @@ private fun RaceSetting.initSlopeRandom(up: Boolean): List<RandomEntry> {
     return listOf(chooseRandom(slope.start, slope.start + slope.length))
 }
 
-private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Float, Float> = 0f to 1f): List<RandomEntry> {
+private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double> = 0.0 to 1.0): List<RandomEntry> {
     val (startRate, endRate) = options
     val (zoneStart, zoneEnd) = getPhaseStartEnd(phase)
     val zoneLength = zoneEnd - zoneStart
     return listOf(chooseRandom(zoneStart + zoneLength * startRate, zoneEnd - zoneLength * (1 - endRate)))
 }
 
-private fun RaceSetting.getPhaseStartEnd(phase: Int): Pair<Float, Float> {
+private fun RaceSetting.getPhaseStartEnd(phase: Int): Pair<Double, Double> {
     return when (phase) {
-        0 -> 0f to courseLength / 6.0f
-        1 -> courseLength / 6.0f to (courseLength * 2.0f) / 3.0f
-        2 -> (courseLength * 2.0f) / 3.0f to (courseLength * 5.0f) / 6.0f
-        3 -> (courseLength * 5.0f) / 6.0f to courseLength.toFloat()
+        0 -> 0.0 to courseLength / 6.0
+        1 -> courseLength / 6.0 to (courseLength * 2.0) / 3.0
+        2 -> (courseLength * 2.0) / 3.0 to (courseLength * 5.0) / 6.0
+        3 -> (courseLength * 5.0) / 6.0 to courseLength.toDouble()
         else -> throw IllegalArgumentException()
     }
 }
@@ -369,10 +369,10 @@ private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {
 
 private fun RaceSetting.initFinalStraightRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
-    return listOf(chooseRandom(finalCorner.end, courseLength.toFloat()))
+    return listOf(chooseRandom(finalCorner.end, courseLength.toDouble()))
 }
 
-private fun RaceSetting.initIntervalRandom(startRate: Float, endRate: Float): List<RandomEntry> {
+private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): List<RandomEntry> {
     return listOf(chooseRandom(courseLength * startRate, courseLength * endRate))
 }
 
@@ -380,7 +380,7 @@ private fun RaceState.isInRandom(randoms: List<RandomEntry>): Boolean {
     return randoms.any { simulation.position in it }
 }
 
-private fun RaceState.isInFinalCorner(interval: Pair<Float, Float> = 0f to 1f): Boolean {
+private fun RaceState.isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
     val (startRate, endRate) = interval
     val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
     val start = finalCorner.start + startRate * finalCorner.length
@@ -435,10 +435,10 @@ fun RaceState.triggerSkill(skill: SkillEffect) {
     simulation.coolDownMap[skill.coolDownId] = simulation.frameElapsed
 }
 
-fun RaceState.doHeal(value: Int): Pair<Float, Float> {
-    val heal = (setting.spMax * value) / 10000.0f
+fun RaceState.doHeal(value: Int): Pair<Double, Double> {
+    val heal = (setting.spMax * value) / 10000.0
     simulation.sp += heal
-    val waste = max(0f, simulation.sp - setting.spMax)
+    val waste = max(0.0, simulation.sp - setting.spMax)
     simulation.sp -= waste
     if (value > 0) {
         simulation.healTriggerCount++

@@ -42,13 +42,13 @@ class RaceCalculator(private val setting: RaceSetting) {
         state.invokeSkills()
         val simulation = state.simulation
         if (!state.setting.fixRandom) {
-            simulation.startDelay = Random.nextFloat() * 0.1f
+            simulation.startDelay = Random.nextDouble() * 0.1
         }
 
         state.triggerStartSkills()
 
         // initTemptation
-        if (Random.nextFloat() * 100f < state.setting.temptationRate) {
+        if (Random.nextDouble() * 100.0 < state.setting.temptationRate) {
             simulation.temptationSection = 1 + Random.nextInt(8)
         }
         simulation.isStartDash = true
@@ -63,15 +63,15 @@ class RaceCalculator(private val setting: RaceSetting) {
 private fun RaceState.invokeSkills() {
     setting.hasSkills.forEach { skill ->
         val invokeRate = if (setting.skillActivateAdjustment > 0) {
-            100f
+            100.0
         } else when (skill.displayType) {
-            "fatigue", "decel" -> 90f
-            "passive", "unique" -> 100f
-            else -> maxOf(100f - 9000f / setting.umaStatus.wisdom, 20f)
+            "fatigue", "decel" -> 90.0
+            "passive", "unique" -> 100.0
+            else -> maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
         }
         val invokes = skill.invokes ?: listOf(skill)
         for (invoke in invokes) {
-            if (Random.nextFloat() * 100 < invokeRate) {
+            if (Random.nextDouble() * 100 < invokeRate) {
                 // TODO init
                 simulation.invokedSkills += InvokedSkill(invoke, checkCondition(invoke, setting))
             }
@@ -84,7 +84,7 @@ private fun RaceState.triggerStartSkills() {
     simulation.invokedSkills.removeAll { skill ->
         when (skill.displayType) {
             "passive" -> {
-                if (skill.checkAll(this) && (skill.triggerRate == null || Random.nextFloat() < skill.triggerRate)) {
+                if (skill.checkAll(this) && (skill.triggerRate == null || Random.nextDouble() < skill.triggerRate)) {
                     skill.trigger(this)
                     simulation.skillTriggerCount[0]++
                     simulation.passiveTriggered++
@@ -94,7 +94,7 @@ private fun RaceState.triggerStartSkills() {
             }
 
             "gate" -> {
-                simulation.startDelay *= skill.startDelay ?: 1f
+                simulation.startDelay *= skill.startDelay ?: 1.0
                 skill.trigger(this)
                 simulation.skillTriggerCount[0]++
                 skills += skill
@@ -105,21 +105,21 @@ private fun RaceState.triggerStartSkills() {
         }
     }
     simulation.frames += RaceFrame(
-        speed = 0f,
+        speed = 0.0,
         sp = setting.spMax,
-        startPosition = 0f,
+        startPosition = 0.0,
         skills = skills,
     )
 }
 
-private fun RaceState.initSectionTargetSpeedRandoms(): List<Float> {
+private fun RaceState.initSectionTargetSpeedRandoms(): List<Double> {
     return (0..24).map {
-        val max = (setting.modifiedWisdom / 5500.0f) *
-                log10(setting.modifiedWisdom * 0.1f) * 0.01f
+        val max = (setting.modifiedWisdom / 5500.0) *
+                log10(setting.modifiedWisdom * 0.1) * 0.01
         if (setting.fixRandom) {
-            max - 0.00325f
+            max - 0.00325
         } else {
-            max + Random.nextFloat() * -0.0065f
+            max + Random.nextDouble() * -0.0065
         }
     }
 }
@@ -146,11 +146,11 @@ private fun RaceState.progressRace(): RaceSimulationResult {
                 ).toInt()
             ) {
                 if (simulation.downSlopeModeStart == null) {
-                    if (Random.nextFloat() < setting.modifiedWisdom * 0.0004) {
+                    if (Random.nextDouble() < setting.modifiedWisdom * 0.0004) {
                         simulation.downSlopeModeStart = simulation.frameElapsed
                     }
                 } else {
-                    if (Random.nextFloat() < 0.2f) {
+                    if (Random.nextDouble() < 0.2) {
                         simulation.downSlopeModeStart = null
                     }
                 }
@@ -169,7 +169,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             repeat(3) {
                 val j = it * 3 + 3
                 if (prevTemptationDuration < j && temptationDuration >= j) {
-                    if (Random.nextFloat() < 0.55f) {
+                    if (Random.nextDouble() < 0.55) {
                         simulation.temptationModeEnd = simulation.frameElapsed
                     }
                 }
@@ -213,7 +213,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
 
         // Remove overtime skills
         simulation.operatingSkills.removeAll { operatingSkill ->
-            val duration = operatingSkill.duration ?: 0f
+            val duration = operatingSkill.duration ?: 0.0
             (simulation.frameElapsed - operatingSkill.startFrame) * frameLength > duration * setting.timeCoef
         }
 
@@ -223,15 +223,15 @@ private fun RaceState.progressRace(): RaceSimulationResult {
     return goal()
 }
 
-private fun RaceState.move(elapsedTime: Float) {
-    if (simulation.delayTime > 0f) {
+private fun RaceState.move(elapsedTime: Double) {
+    if (simulation.delayTime > 0.0) {
         simulation.delayTime -= elapsedTime
     }
-    if (simulation.delayTime <= 0f) {
+    if (simulation.delayTime <= 0.0) {
         var timeAfterDelay = elapsedTime
-        if (simulation.delayTime < 0f) {
+        if (simulation.delayTime < 0.0) {
             timeAfterDelay = abs(simulation.delayTime)
-            simulation.delayTime = 0f
+            simulation.delayTime = 0.0
         }
 
         updateSelfSpeed(elapsedTime /* NOT timeAfterDelay!! */)
@@ -246,11 +246,11 @@ private fun RaceState.move(elapsedTime: Float) {
             currentPhase
         ) * elapsedTime
         if (simulation.downSlopeModeStart != null) {
-            consume *= 0.4f
+            consume *= 0.4
         }
         if (simulation.isInTemptation) {
-            simulation.temptationWaste += consume * 0.6f
-            consume *= 1.6f
+            simulation.temptationWaste += consume * 0.6
+            consume *= 1.6
         }
         simulation.sp -= consume
 
@@ -258,7 +258,7 @@ private fun RaceState.move(elapsedTime: Float) {
     }
 }
 
-private fun RaceState.updateSelfSpeed(elapsedTime: Float) {
+private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     var newSpeed = if (simulation.currentSpeed < targetSpeed) {
         min(simulation.currentSpeed + elapsedTime * acceleration, targetSpeed)
     } else {
@@ -271,7 +271,7 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Float) {
     newSpeed -= simulation.speedDebuff
     val speedModification = simulation.operatingSkills.sumOf {
         // 減速スキルの現在速度低下分
-        it.data.speed ?: 0f
+        it.data.speed ?: 0.0
     }
     simulation.speedDebuff = speedModification
     newSpeed += speedModification
@@ -289,7 +289,7 @@ fun RaceState.calcSpurtParameter(): SpurtParameters {
     val spurtDistance = calcSpurtDistance(setting.maxSpurtSpeed)
     val totalConsume = calcRequiredSp(setting.maxSpurtSpeed)
     if (spurtDistance >= maxDistance) {
-        if (simulation.position <= (setting.courseLength * 2.0f) / 3 + 5) {
+        if (simulation.position <= (setting.courseLength * 2.0) / 3 + 5) {
             if (simulation.spurtParameters == null) {
                 simulation.maxSpurt = true
             }
@@ -305,13 +305,13 @@ fun RaceState.calcSpurtParameter(): SpurtParameters {
     val excessSp = simulation.sp - totalConsumeV3
     if (excessSp < 0) {
         return SpurtParameters(
-            distance = 0f,
+            distance = 0.0,
             speed = setting.v3,
             spDiff = simulation.spurtParameters?.spDiff ?: (simulation.sp - totalConsume),
         )
     }
     val candidates = ((setting.v3 * 10).toInt()..(setting.maxSpurtSpeed * 10 - 1).toInt()).map {
-        val v = it * 0.1f
+        val v = it * 0.1
         val distanceV = min(maxDistance, calcSpurtDistance(v))
         SpurtParameters(
             distance = distanceV,
@@ -322,12 +322,12 @@ fun RaceState.calcSpurtParameter(): SpurtParameters {
     }.sortedBy { it.time }
     for (candidate in candidates) {
         if (setting.fixRandom) return candidate
-        if (Random.nextFloat() * 100f < 15f + 0.05f * setting.modifiedWisdom) return candidate
+        if (Random.nextDouble() * 100.0 < 15.0 + 0.05 * setting.modifiedWisdom) return candidate
     }
     return candidates.last()
 }
 
-fun RaceState.calcSpurtDistance(v: Float): Float {
+fun RaceState.calcSpurtDistance(v: Double): Double {
     return (
             (simulation.sp -
                     ((setting.courseLength - simulation.position - 60) *
@@ -350,7 +350,7 @@ fun RaceState.calcSpurtDistance(v: Float): Float {
             )
 }
 
-fun RaceState.calcRequiredSp(v: Float): Float {
+fun RaceState.calcRequiredSp(v: Double): Double {
     return (
             ((setting.courseLength - simulation.position - 60) *
                     20 *
@@ -372,9 +372,9 @@ fun RaceState.calcRequiredSp(v: Float): Float {
             )
 }
 
-private fun RaceState.consumePerSecond(baseSpeed: Float, v: Float, phase: Int): Float {
+private fun RaceState.consumePerSecond(baseSpeed: Double, v: Double, phase: Int): Double {
     var ret =
-        (20.0f *
+        (20.0 *
                 spConsumptionCoef[setting.trackDetail.surface]!![
                     setting.track.surfaceCondition
                 ]!! *
@@ -389,11 +389,11 @@ private fun RaceState.consumePerSecond(baseSpeed: Float, v: Float, phase: Int): 
 private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
     val raceTime = simulation.frameElapsed * frameLength - excessTime
-    val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18f
+    val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
     return RaceSimulationResult(
         raceTime = raceTime,
         raceTimeDelta = raceTimeDelta,
         maxSpurt = simulation.maxSpurt,
-        spDiff = simulation.spurtParameters?.spDiff ?: 0f,
+        spDiff = simulation.spurtParameters?.spDiff ?: 0.0,
     )
 }

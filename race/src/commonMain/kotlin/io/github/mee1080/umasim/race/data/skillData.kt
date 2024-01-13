@@ -74,45 +74,45 @@ private val healInherit = mapOf(
 )
 
 private val targetSpeedInherit = mapOf(
-    0.55f to 0.15f,
-    0.45f to 0.25f,
-    0.4f to 0.2f,
-    0.385f to 0.15f,
-    0.35f to 0.15f,
-    0.3f to 0.075f,
-    0.25f to 0.05f,
-    0.15f to 0.035f,
-    -0.05f to -0.05f,
+    0.55 to 0.15,
+    0.45 to 0.25,
+    0.4 to 0.2,
+    0.385 to 0.15,
+    0.35 to 0.15,
+    0.3 to 0.075,
+    0.25 to 0.05,
+    0.15 to 0.035,
+    -0.05 to -0.05,
 )
 
 private val speedWithDecelInherit = mapOf(
-    0.55f to 0.15f,
-    0.45f to 0.25f,
-    0.4f to 0.2f,
-    0.385f to 0.15f,
-    0.35f to 0.15f,
-    0.3f to 0.075f,
-    0.25f to 0.05f,
-    0.15f to 0.035f,
-    -0.05f to -0.05f,
+    0.55 to 0.15,
+    0.45 to 0.25,
+    0.4 to 0.2,
+    0.385 to 0.15,
+    0.35 to 0.15,
+    0.3 to 0.075,
+    0.25 to 0.05,
+    0.15 to 0.035,
+    -0.05 to -0.05,
 )
 
 private val accelerationInherit = mapOf(
-    0.5f to 0.3f,
-    0.4f to 0.2f,
-    0.3f to 0.1f,
-    0.2f to 0.05f,
-    0.1f to 0.05f,
+    0.5 to 0.3,
+    0.4 to 0.2,
+    0.3 to 0.1,
+    0.2 to 0.05,
+    0.1 to 0.05,
 )
 
 interface SkillEffect {
     val conditions: Conditions?
     val displayType: String
     val heal: Int?
-    val targetSpeed: Float?
-    val acceleration: Float?
-    val speed: Float?
-    val speedWithDecel: Float?
+    val targetSpeed: Double?
+    val acceleration: Double?
+    val speed: Double?
+    val speedWithDecel: Double?
     val fatigue: Int?
     val passiveSpeed: Int?
     val passiveStamina: Int?
@@ -120,11 +120,11 @@ interface SkillEffect {
     val passiveGuts: Int?
     val passiveWisdom: Int?
     val temptationRate: Int?
-    val startDelay: Float?
+    val startDelay: Double?
     val trigger: String?
-    val triggerRate: Float?
+    val triggerRate: Double?
     val coolDownId: String
-    val duration: Float?
+    val duration: Double?
 
     fun forEachEffect(action: (effect: String, value: Number) -> Unit) {
         heal?.let { action("heal", it) }
@@ -172,7 +172,7 @@ interface SkillEffect {
             if (hasEffect) return "composite"
             hasEffect = true
         }
-        if ((speed ?: 0.0f) < 0.0f) {
+        if ((speed ?: 0.0) < 0.0) {
             newType = "decel"
             if (hasEffect) return "composite"
             hasEffect = true
@@ -217,8 +217,8 @@ data class Skill(
     override val conditions: Conditions? = null,
     val emulatorTypeLimit: List<String>? = null,
     private val tooltip: String? = null,
-    override val triggerRate: Float? = null,
-    override val duration: Float? = null,
+    override val triggerRate: Double? = null,
+    override val duration: Double? = null,
     val cd: Int = 500,
     // TODO 実装
     val init: String? = null,
@@ -226,10 +226,10 @@ data class Skill(
     override val trigger: String? = null,
 
     override val heal: Int? = null,
-    override val targetSpeed: Float? = null,
-    override val acceleration: Float? = null,
-    override val speed: Float? = null,
-    override val speedWithDecel: Float? = null,
+    override val targetSpeed: Double? = null,
+    override val acceleration: Double? = null,
+    override val speed: Double? = null,
+    override val speedWithDecel: Double? = null,
     override val fatigue: Int? = null,
     override val passiveSpeed: Int? = null,
     override val passiveStamina: Int? = null,
@@ -237,7 +237,7 @@ data class Skill(
     override val passiveGuts: Int? = null,
     override val passiveWisdom: Int? = null,
     override val temptationRate: Int? = null,
-    override val startDelay: Float? = null,
+    override val startDelay: Double? = null,
 ) : SkillEffect {
 
     override val coolDownId get() = id.toString()
@@ -247,7 +247,7 @@ data class Skill(
             id = (id ?: 0) + 800000,
             name = name,
             rarity = "inherit",
-            duration = duration?.let { it * 0.6f },
+            duration = duration?.let { it * 0.6 },
             heal = heal?.let { healInherit[it] },
             targetSpeed = targetSpeed?.let { targetSpeedInherit[it] },
             speedWithDecel = speedWithDecel?.let { speedWithDecelInherit[it] },
@@ -303,7 +303,7 @@ data class Skill(
             tooltip?.let { add(it) }
             duration?.let { add("${round(duration * 10) / 10}s") }
             forEachEffect { effect, value ->
-                add("${effect}: ${round(value.toFloat() * 100) / 100}")
+                add("${effect}: ${round(value.toDouble() * 100) / 100}")
             }
         }.joinToString(" | ")
     }
@@ -320,7 +320,7 @@ data class Variant(
     val rarity: String? = null,
     val type: String? = null,
     val tooltip: String? = null,
-    override val duration: Float? = null,
+    override val duration: Double? = null,
     val holder: Int? = null,
     override val conditions: Conditions? = null,
     val variants: List<Variant>? = null,
@@ -328,10 +328,10 @@ data class Variant(
     override val trigger: String? = null,
 
     override val heal: Int? = null,
-    override val targetSpeed: Float? = null,
-    override val acceleration: Float? = null,
-    override val speed: Float? = null,
-    override val speedWithDecel: Float? = null,
+    override val targetSpeed: Double? = null,
+    override val acceleration: Double? = null,
+    override val speed: Double? = null,
+    override val speedWithDecel: Double? = null,
     override val fatigue: Int? = null,
     override val passiveSpeed: Int? = null,
     override val passiveStamina: Int? = null,
@@ -339,27 +339,27 @@ data class Variant(
     override val passiveGuts: Int? = null,
     override val passiveWisdom: Int? = null,
     override val temptationRate: Int? = null,
-    override val startDelay: Float? = null,
+    override val startDelay: Double? = null,
 ) : SkillEffect {
     override val displayType by lazy { type ?: skillType() }
     override val coolDownId get() = id.toString()
 
     // TODO
-    override val triggerRate: Float? get() = null
+    override val triggerRate: Double? get() = null
 }
 
 @Serializable
 data class Invoke(
     val invokeNo: Int? = null,
-    override val duration: Float? = null,
+    override val duration: Double? = null,
     override val conditions: Conditions? = null,
     override val trigger: String? = null,
 
     override val heal: Int? = null,
-    override val targetSpeed: Float? = null,
-    override val acceleration: Float? = null,
-    override val speed: Float? = null,
-    override val speedWithDecel: Float? = null,
+    override val targetSpeed: Double? = null,
+    override val acceleration: Double? = null,
+    override val speed: Double? = null,
+    override val speedWithDecel: Double? = null,
     override val fatigue: Int? = null,
     override val passiveSpeed: Int? = null,
     override val passiveStamina: Int? = null,
@@ -367,16 +367,16 @@ data class Invoke(
     override val passiveGuts: Int? = null,
     override val passiveWisdom: Int? = null,
     override val temptationRate: Int? = null,
-    override val startDelay: Float? = null,
+    override val startDelay: Double? = null,
 ) : SkillEffect {
     override val displayType by lazy { skillType() }
     override val coolDownId by lazy {
         // FIXME
-        Random.nextFloat().toString() + invokeNo.toString()
+        Random.nextDouble().toString() + invokeNo.toString()
     }
 
     // TODO
-    override val triggerRate: Float? get() = null
+    override val triggerRate: Double? get() = null
 }
 
 @Serializable

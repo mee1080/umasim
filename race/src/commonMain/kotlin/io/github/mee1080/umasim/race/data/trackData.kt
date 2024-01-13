@@ -45,43 +45,43 @@ data class TrackDetail(
     val turn: Int,
     val courseSetStatus: List<Int>,
     val laneMax: Int,
-    val finishTimeMin: Float,
-    val finishTimeMax: Float,
+    val finishTimeMin: Double,
+    val finishTimeMax: Double,
     val corners: List<Corner>,
     val straights: List<Straight>,
     val slopes: List<Slope>,
 ) {
     fun toPosition(distanceLeft: Int) = distance - distanceLeft
 
-    fun getSlope(position: Float): Float {
+    fun getSlope(position: Double): Double {
         for (slope in slopes) {
             if (position >= slope.start && position <= slope.end) {
-                return 0.0001f * slope.slope
+                return 0.0001 * slope.slope
             }
         }
-        return 0f
+        return 0.0
     }
 }
 
 @Serializable
 data class Corner(
-    val start: Float,
-    val length: Float,
+    val start: Double,
+    val length: Double,
 ) {
     val end = start + length
 }
 
 @Serializable
 data class Straight(
-    val start: Float,
-    val end: Float,
+    val start: Double,
+    val end: Double,
 )
 
 @Serializable
 data class Slope(
-    val start: Float,
-    val length: Float,
-    val slope: Float,
+    val start: Double,
+    val length: Double,
+    val slope: Double,
 ) {
     val end = start + length
 }
