@@ -7,6 +7,9 @@ pluginManagement {
     }
 
 }
+plugins {
+    id("org.gradle.toolchains.foojay-resolver-convention") version "0.5.0"
+}
 rootProject.name = "umasim"
 include("jvm")
 include("core")
@@ -15,3 +18,4 @@ include("web")
 include("desktop")
 include("cli")
 include("race")
+include("wasm")
