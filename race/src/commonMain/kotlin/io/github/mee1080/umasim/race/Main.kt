@@ -23,8 +23,15 @@
 package io.github.mee1080.umasim.race
 
 import io.github.mee1080.umasim.race.data.getSkill
+import io.github.mee1080.umasim.race.data.skillData
 
 fun main() {
+    skillData.forEach {
+        println("${it.implemented} : ${it.rarity} ${it.displayType} ${it.name}")
+    }
+}
+
+private fun testRace() {
     val setting = RaceSetting(
         track = Track(10001, 10101),
         skillActivateAdjustment = 2,

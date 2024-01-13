@@ -46,7 +46,7 @@ val skillData by lazy {
     val skills = mutableListOf<Skill>()
 
     for (skill in uniqueSkillData) {
-        skills += skill.copy(type = "unique")
+        skills += skill.copy(type = "unique", rarity = "unique")
         if (skill.noInherit != true) {
             skills += skill.toInheritSkill()
         }
@@ -245,7 +245,7 @@ data class Skill(
     fun toInheritSkill(): Skill {
         val variant = Variant(
             id = (id ?: 0) + 800000,
-            name = name,
+            name = "$name(継承)",
             rarity = "inherit",
             duration = duration?.let { it * 0.6 },
             heal = heal?.let { healInherit[it] },
@@ -264,7 +264,9 @@ data class Skill(
             }
         )
         return copy(
-            variants = listOf(variant)
+            name = "$name(継承)",
+            rarity = "inherit",
+            variants = listOf(variant),
         )
     }
 
@@ -309,6 +311,8 @@ data class Skill(
     }
 
     override val displayType by lazy { type ?: skillType() }
+
+    val implemented by lazy { trigger == null && init == null && check == null && name != "大逃げ" }
 }
 
 @Serializable
