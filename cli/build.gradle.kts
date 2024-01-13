@@ -1,5 +1,5 @@
 plugins {
-    kotlin("jvm")
+    alias(libs.plugins.kotlin.jvm)
 }
 
 version = "unspecified"
@@ -12,8 +12,8 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":jvm"))
     implementation(kotlin("stdlib"))
-    implementation("com.github.ajalt.clikt:clikt:3.4.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation(libs.clikt)
+    implementation(libs.kotlinx.coroutinesCore)
 }
 
 val jar by tasks.getting(Jar::class) {

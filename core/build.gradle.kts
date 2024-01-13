@@ -1,8 +1,6 @@
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("librarian")
-    id("librarian-preset")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.mee1080.umasim"
@@ -12,11 +10,11 @@ kotlin {
 
     jvm("desktop") {
         compilations.all {
-            kotlinOptions.jvmTarget = "16"
+            kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
         }
     }
 
-    js("web",IR) {
+    js("web", IR) {
         useCommonJs()
         browser()
     }
@@ -24,38 +22,14 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib-common"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.5.0")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+                implementation(libs.kotlinx.serializationJson)
+                implementation(libs.kotlinx.coroutinesCore)
             }
         }
         val commonTest by getting {
             dependencies {
                 implementation(kotlin("test-common"))
                 implementation(kotlin("test-annotations-common"))
-            }
-        }
-    }
-}
-
-librarian {
-    failOnGeneratePageWhenFoundPlaceholder = false
-    pages {
-        create("UmasimCore") {
-            title = "Using Libraries"
-            description = "Umasim is using these libraries."
-            configurations {
-                contain {
-                    value = mutableListOf(
-                        "commonMainImplementationDependenciesMetadata",
-                        "desktopDefault",
-                        "desktopMainApiDependenciesMetadata",
-                        "desktopRuntimeClasspath",
-                        "webDefault",
-                        "webMainApiDependenciesMetadata",
-                        "webRuntimeClasspath",
-                    )
-                }
             }
         }
     }

@@ -1,13 +1,10 @@
-import org.jetbrains.compose.compose
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    kotlin("jvm")
-    id("org.jetbrains.compose")
-    id("librarian")
-    id("librarian-preset")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.mee1080.umasim"
@@ -21,11 +18,11 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":jvm"))
     implementation(compose.desktop.currentOs)
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+    implementation(libs.kotlinx.serializationJson)
 }
 
-tasks.withType<KotlinCompile>() {
-    kotlinOptions.jvmTarget = "16"
+tasks.withType<KotlinCompile> {
+    kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
 }
 
 compose.desktop {
@@ -35,31 +32,6 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "umasim"
             packageVersion = "1.0.0"
-        }
-    }
-}
-
-librarian {
-    failOnGeneratePageWhenFoundPlaceholder = false
-    ignoreArtifacts = mutableListOf(
-        "io.github.mee1080.umasim:core",
-        "io.github.mee1080.umasim:jvm",
-        "io.github.mee1080.umasim:desktopSupport",
-    )
-    pages {
-        create("UmasimDesktop") {
-            title = "Using Libraries"
-            description = "Umasim is using these libraries."
-            configurations {
-                contain {
-                    value = mutableListOf(
-                        "apiDependenciesMetadata",
-                        "default",
-                        "implementationDependenciesMetadata",
-                        "runtimeClasspath",
-                    )
-                }
-            }
         }
     }
 }

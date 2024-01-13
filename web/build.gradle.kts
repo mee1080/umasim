@@ -1,9 +1,7 @@
 plugins {
-    kotlin("multiplatform")
-    id("org.jetbrains.compose")
-    id("librarian")
-    id("librarian-preset")
-    kotlin("plugin.serialization")
+    alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.compose)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.mee1080.umasim"
@@ -25,7 +23,7 @@ kotlin {
                 implementation(compose.html.core)
                 implementation(compose.runtime)
                 implementation(npm("@material/web", "1.0.1"))
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.2")
+                implementation(libs.kotlinx.serializationJson)
             }
         }
     }
@@ -34,29 +32,5 @@ kotlin {
 afterEvaluate {
     rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
         versions.webpackCli.version = "4.9.0"
-    }
-}
-
-librarian {
-    failOnGeneratePageWhenFoundPlaceholder = false
-    ignoreArtifacts = mutableListOf(
-        "io.github.mee1080.umasim:core",
-        "io.github.mee1080.umasim:webSupport",
-    )
-    pages {
-        create("UmasimWeb") {
-            title = "Using Libraries"
-            description = "Umasim is using these libraries."
-            configurations {
-                contain {
-                    value = mutableListOf(
-                        "commonMainApiDependenciesMetadata",
-                        "jsDefault",
-                        "jsMainImplementationDependenciesMetadata",
-                        "jsRuntimeClasspath",
-                    )
-                }
-            }
-        }
     }
 }

@@ -1,10 +1,10 @@
 plugins {
-    kotlin("multiplatform") version "1.9.10" apply false
-    kotlin("jvm") version "1.9.10" apply false
-    kotlin("js") version "1.9.10" apply false
-    kotlin("kapt") version "1.9.10" apply false
-    kotlin("plugin.serialization") version "1.9.10" apply false
-    id("org.jetbrains.compose") version "1.5.2" apply false
+    alias(libs.plugins.compose) apply false
+    alias(libs.plugins.kotlin.js) apply false
+    alias(libs.plugins.kotlin.jvm) apply false
+    alias(libs.plugins.kotlin.kapt) apply false
+    alias(libs.plugins.kotlin.multiplatform) apply false
+    alias(libs.plugins.kotlin.serialization) apply false
 }
 
 buildscript {
@@ -22,7 +22,6 @@ buildscript {
 
 allprojects {
     repositories {
-        gradlePluginPortal()
         mavenCentral()
         google()
         maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
