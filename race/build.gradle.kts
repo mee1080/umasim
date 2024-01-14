@@ -21,8 +21,8 @@ kotlin {
         browser()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs()
+//    @OptIn(ExperimentalWasmDsl::class)
+//    wasmJs()
 
     sourceSets {
         val commonMain by getting {
