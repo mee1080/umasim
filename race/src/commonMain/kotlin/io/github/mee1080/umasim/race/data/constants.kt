@@ -29,12 +29,12 @@ enum class Distance {
     LONG
 }
 
-enum class Style(val value: Int) {
-    NIGE(1),
-    SEN(2),
-    SASI(3),
-    OI(4),
-    OONIGE(1),
+enum class Style(val value: Int, val text: String) {
+    NIGE(1, "逃げ"),
+    SEN(2, "先行"),
+    SASI(3, "差し"),
+    OI(4, "追込"),
+    OONIGE(1, "大逃げ"),
 }
 
 enum class Surface {

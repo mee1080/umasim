@@ -1,33 +1,40 @@
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.LocalTextStyle
-import androidx.compose.material.ProvideTextStyle
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.ExperimentalComposeUiApi
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.platform.Font
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.CanvasBasedWindow
+import io.github.mee1080.umasim.ui.App
+import org.jetbrains.compose.resources.ExperimentalResourceApi
+import org.jetbrains.compose.resources.resource
 
-@OptIn(ExperimentalComposeUiApi::class)
+@OptIn(ExperimentalComposeUiApi::class, ExperimentalResourceApi::class)
 fun main() {
-    CanvasBasedWindow("WasmTest") {
-        androidx.compose.material.MaterialTheme(
-//            colorScheme = androidx.compose.material3.MaterialTheme.colorScheme.copy(
-//                background = Color(0xFFFFFFFF),
-//                onBackground = Color(0xFF19191C),
-//            )
-        ) {
-            ProvideTextStyle(LocalTextStyle.current.copy(letterSpacing = 0.sp)) {
-                Surface(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Column {
-                        Text("Hello, Wasm!")
-                    }
-                }
+    CanvasBasedWindow("ウマ娘レースエミュレータ") {
+        var fontFamily by remember { mutableStateOf<FontFamily?>(null) }
+        LaunchedEffect(Unit) {
+            runCatching {
+                resource("NotoSansJP-Regular.ttf").readBytes()
+            }.onSuccess {
+                fontFamily = FontFamily(
+                    Font(
+                        identity = "NotoSansJP-Regular",
+                        data = it,
+                    )
+                )
             }
         }
+        fontFamily?.let {
+            MaterialTheme(
+                typography = Typography(
+                    defaultFontFamily = it
+                )
+            ) {
+                ProvideTextStyle(LocalTextStyle.current.copy(letterSpacing = 0.sp)) {
+                    App()
+                }
+            }
+        } ?: Text("Loading...")
     }
 }
