@@ -22,12 +22,18 @@
  */
 package io.github.mee1080.umasim.race
 
+import io.github.mee1080.umasim.race.calc.RaceCalculator
+import io.github.mee1080.umasim.race.calc.RaceSetting
+import io.github.mee1080.umasim.race.calc.Track
 import io.github.mee1080.umasim.race.data.getSkill
-import io.github.mee1080.umasim.race.data.skillData
+import io.github.mee1080.umasim.race.data2.skillData2
 
 fun main() {
-    skillData.forEach {
-        println("${it.implemented} : ${it.rarity} ${it.displayType} ${it.name}")
+//    skillData.forEach {
+//        println("${it.implemented} : ${it.rarity} ${it.displayType} ${it.name}")
+//    }
+    skillData2.forEach {
+        println(it)
     }
 }
 
