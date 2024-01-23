@@ -124,6 +124,7 @@ object Calculator {
                     support.size,
                     info.speedSkillCount,
                     info.healSkillCount,
+                    friendTraining,
                 )
             } / 100.0
         val count = 1 + info.member.size * 0.05

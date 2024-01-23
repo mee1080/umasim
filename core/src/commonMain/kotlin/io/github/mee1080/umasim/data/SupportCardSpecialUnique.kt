@@ -103,6 +103,7 @@ data class SupportCardSpecialUnique(
         trainingSupportCount: Int,
         speedSkillCount: Int,
         healSkillCount: Int,
+        friendTraining: Boolean,
     ): Int {
         return if (type == 101 && relation >= value0) {
             (if (value1 == 8) value2 else 0) + (if (value3 == 8) value4 else 0)
@@ -120,6 +121,8 @@ data class SupportCardSpecialUnique(
             trainingSupportCount * value1
         } else if (type == 111 && value0 == 8) {
             min(5, trainingLevel) * value1
+        } else if (type == 113 && value0 == 8 && friendTraining) {
+            value1
         } else if (type == 114 && value0 == 8) {
             value2 - max(0, (100 - status.hp) / value1)
         } else if (type == 116 && value1 == 8) {

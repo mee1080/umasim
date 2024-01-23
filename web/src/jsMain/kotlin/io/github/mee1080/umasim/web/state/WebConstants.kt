@@ -114,6 +114,7 @@ object WebConstants {
                 1,
                 0,
                 0,
+                false,
             )
         },
         SortOrder("トレ効果（特殊固有あり）") {
@@ -129,6 +130,7 @@ object WebConstants {
                 5,
                 5,
                 5,
+                true,
             )
         },
         SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0, 0, 0, 0) },
