@@ -131,9 +131,9 @@ class RaceState(
             }
 
             simulation.operatingSkills.forEach { skill ->
-                targetSpeed += skill.data.targetSpeed ?: 0.0
-                targetSpeed += skill.data.speedWithDecel ?: 0.0
-                targetSpeed += skill.data.speed ?: 0.0
+                targetSpeed += skill.data.invoke.targetSpeed
+                targetSpeed += skill.data.invoke.speedWithDecel
+                targetSpeed += skill.data.invoke.speed
             }
 
             return targetSpeed
@@ -156,7 +156,7 @@ class RaceState(
                 acceleration += 24.0
             }
             simulation.operatingSkills.forEach {
-                acceleration += it.data.acceleration ?: 0.0
+                acceleration += it.data.invoke.acceleration
             }
 
             return acceleration
@@ -171,13 +171,34 @@ class RaceState(
             }
         }
 
+    fun getSlope(position: Double = simulation.position): Double {
+        return setting.trackDetail.getSlope(position)
+    }
+
+    fun getSlopeInt(position: Double = simulation.position): Int {
+        val slope = getSlope()
+        return when {
+            slope >= 0.1 -> 1
+            slope <= -0.1 -> 2
+            else -> 0
+        }
+    }
+
     fun isInSlopeUp(position: Double = simulation.position): Boolean {
-        return setting.trackDetail.getSlope(position) >= 1.0
+        return getSlope(position) >= 1.0
     }
 
     fun isInSlopeDown(position: Double = simulation.position): Boolean {
-        return setting.trackDetail.getSlope(position) <= 1.0
+        return getSlope(position) <= 1.0
     }
+
+    val cornerNumber: Int
+        get() {
+            val corners = setting.trackDetail.corners
+            val cornerIndex = corners.indexOfFirst { simulation.position in it.start..it.end }
+            if (cornerIndex < 0) return 0
+            return (4 + cornerIndex - corners.size) % 4 + 1
+        }
 }
 
 data class RaceSetting(
@@ -416,11 +437,11 @@ data class SpurtParameters(
 )
 
 data class OperatingSkill(
-    val data: Invoke,
+    val data: InvokedSkill,
     val startFrame: Int,
     val durationOverwrite: Double? = null,
 ) {
-    val duration: Double? get() = durationOverwrite ?: data.duration
+    val duration: Double? get() = durationOverwrite ?: data.invoke.duration
 }
 
 data class RaceFrame(
@@ -445,9 +466,8 @@ data class RaceSimulationResult(
 class InvokedSkill(
     val skill: SkillData,
     val invoke: Invoke,
-    val check: List<RaceState.() -> Boolean>,
+    val check: RaceState.() -> Boolean,
 ) {
-    fun checkAll(state: RaceState): Boolean = check.all { it(state) }
     fun trigger(state: RaceState) {
         // TODO
     }

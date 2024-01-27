@@ -22,7 +22,6 @@
  */
 package io.github.mee1080.umasim.race.calc2
 
-import io.github.mee1080.umasim.race.data.SkillEffect
 import io.github.mee1080.umasim.race.data.frameLength
 import io.github.mee1080.umasim.race.data.maxSpeed
 import io.github.mee1080.umasim.race.data.spConsumptionCoef
@@ -70,7 +69,7 @@ private fun RaceState.invokeSkills() {
             }
             if (Random.nextDouble() * 100 < invokeRate) {
                 // TODO init
-                simulation.invokedSkills += InvokedSkill(skill, invoke, checkCondition(invoke, setting))
+                simulation.invokedSkills += InvokedSkill(skill, invoke, checkCondition(invoke.conditions, setting))
             }
         }
     }
@@ -79,27 +78,27 @@ private fun RaceState.invokeSkills() {
 private fun RaceState.triggerStartSkills() {
     val skills = mutableListOf<InvokedSkill>()
     simulation.invokedSkills.removeAll { skill ->
-        when (skill.displayType) {
-            "passive" -> {
-                if (skill.checkAll(this) && (skill.triggerRate == null || Random.nextDouble() < skill.triggerRate)) {
-                    skill.trigger(this)
-                    simulation.skillTriggerCount[0]++
-                    simulation.passiveTriggered++
-                    skills += skill
-                }
-                true
-            }
-
-            "gate" -> {
-                simulation.startDelay *= skill.startDelay ?: 1.0
+        var remove = false
+        if (skill.invoke.isPassive) {
+            if (skill.check(this)) {
                 skill.trigger(this)
                 simulation.skillTriggerCount[0]++
+                simulation.passiveTriggered++
                 skills += skill
-                true
             }
-
-            else -> false
+            remove = true
         }
+        if (skill.invoke.isStart) {
+            if (skill.invoke.startMultiply > 0.0) {
+                simulation.startDelay *= skill.invoke.startMultiply
+            }
+            simulation.startDelay += skill.invoke.startAdd
+            skill.trigger(this)
+            simulation.skillTriggerCount[0]++
+            skills += skill
+            remove = true
+        }
+        remove
     }
     simulation.frames += RaceFrame(
         speed = 0.0,
@@ -268,7 +267,7 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     newSpeed -= simulation.speedDebuff
     val speedModification = simulation.operatingSkills.sumOf {
         // 減速スキルの現在速度低下分
-        it.data.speed ?: 0.0
+        it.data.invoke.speed
     }
     simulation.speedDebuff = speedModification
     newSpeed += speedModification

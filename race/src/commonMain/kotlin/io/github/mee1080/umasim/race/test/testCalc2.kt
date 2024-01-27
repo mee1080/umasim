@@ -1,0 +1,40 @@
+package io.github.mee1080.umasim.race.test
+
+import io.github.mee1080.umasim.race.calc2.RaceCalculator
+import io.github.mee1080.umasim.race.calc2.RaceSetting
+import io.github.mee1080.umasim.race.calc2.Track
+import io.github.mee1080.umasim.race.data2.getSkill
+import io.github.mee1080.umasim.race.data2.getSkills
+import io.github.mee1080.umasim.race.data2.skillData2
+
+fun testCalc2() {
+    val skills = listOf(
+        getSkill("右回り◎"),
+        getSkill("弧線のプロフェッサー"),
+        getSkill("好転一息"),
+        getSkill("鋼の意志"),
+        getSkills("レッツ・アナボリック！").first { it.rarity == "unique" },
+//            getSkill("追込ためらい"),
+    )
+//    val skills = skillData2
+    val setting = RaceSetting(
+        track = Track(10001, 10101),
+        skillActivateAdjustment = 2,
+        randomPosition = 3,
+        hasSkills = skills,
+    )
+    println(setting)
+    println(setting.trackDetail)
+    setting.hasSkills.forEach { println("${it.name} ${it.messages}") }
+    val calculator = RaceCalculator(setting)
+//    repeat(10) {
+//        val (result, state) = calculator.simulate()
+//        println("$result")
+//        state.simulation.invokedSkills.forEach { println(it.skill) }
+//    }
+    val (result, state) = calculator.simulate()
+    println(result)
+//    state.simulation.frames.forEachIndexed { index, raceFrame ->
+//        println("$index : $raceFrame")
+//    }
+}
