@@ -9,16 +9,17 @@ import io.github.mee1080.umasim.race.data2.skillData2
 
 fun testCalc2() {
     val skills = listOf(
-        getSkill("右回り◎"),
-        getSkill("弧線のプロフェッサー"),
-        getSkill("好転一息"),
-        getSkill("鋼の意志"),
-        getSkills("レッツ・アナボリック！").first { it.rarity == "unique" },
+//        getSkill("右回り◎"),
+//        getSkill("弧線のプロフェッサー"),
+        getSkill("スリップストリーム"),
+//        getSkill("好転一息"),
+//        getSkill("昂る鼓動"),
+//        getSkills("レッツ・アナボリック！").first { it.rarity == "unique" },
 //            getSkill("追込ためらい"),
     )
 //    val skills = skillData2
     val setting = RaceSetting(
-        track = Track(10001, 10101),
+        track = Track(10005, 10507),
         skillActivateAdjustment = 2,
         randomPosition = 3,
         hasSkills = skills,
@@ -27,14 +28,16 @@ fun testCalc2() {
     println(setting.trackDetail)
     setting.hasSkills.forEach { println("${it.name} ${it.messages}") }
     val calculator = RaceCalculator(setting)
-//    repeat(10) {
-//        val (result, state) = calculator.simulate()
-//        println("$result")
-//        state.simulation.invokedSkills.forEach { println(it.skill) }
-//    }
+    repeat(10) {
+        val (result, state) = calculator.simulate()
+        println("$result")
+        state.simulation.invokedSkills.forEach { println(it.skill) }
+    }
     val (result, state) = calculator.simulate()
     println(result)
-//    state.simulation.frames.forEachIndexed { index, raceFrame ->
-//        println("$index : $raceFrame")
-//    }
+    state.simulation.frames.forEachIndexed { index, raceFrame ->
+        if (raceFrame.skills.isNotEmpty()) {
+            println("$index : ${raceFrame.skills.map { it.skill.name }}")
+        }
+    }
 }

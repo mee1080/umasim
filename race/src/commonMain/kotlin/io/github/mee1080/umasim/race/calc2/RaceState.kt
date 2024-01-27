@@ -38,9 +38,7 @@ data class UmaStatus(
     val distanceFit: String = "S",
     val surfaceFit: String = "A",
     val styleFit: String = "A",
-    val oonige: Boolean = false,
 ) {
-    val runningStyle get() = if (oonige) Style.OONIGE else style
     val basicRunningStyle get() = style
 }
 
@@ -70,12 +68,12 @@ data class PassiveBonus(
 
     fun add(skill: Invoke): PassiveBonus {
         return if (skill.isPassive) copy(
-            speed = skill.passiveSpeed ?: 0,
-            stamina = skill.passiveStamina ?: 0,
-            power = skill.passivePower ?: 0,
-            guts = skill.passiveGuts ?: 0,
-            wisdom = skill.passiveWisdom ?: 0,
-            temptationRate = skill.temptationRate ?: 0
+            speed = skill.passiveSpeed,
+            stamina = skill.passiveStamina,
+            power = skill.passivePower,
+            guts = skill.passiveGuts,
+            wisdom = skill.passiveWisdom,
+            temptationRate = skill.temptationRate
         ) else this
     }
 }
@@ -133,7 +131,7 @@ class RaceState(
             simulation.operatingSkills.forEach { skill ->
                 targetSpeed += skill.data.invoke.targetSpeed
                 targetSpeed += skill.data.invoke.speedWithDecel
-                targetSpeed += skill.data.invoke.speed
+                targetSpeed += skill.data.invoke.currentSpeed
             }
 
             return targetSpeed
@@ -216,7 +214,7 @@ data class RaceSetting(
     val badStart: Boolean = false,
 ) {
     val fixRandom get() = skillActivateAdjustment == 2
-    val runningStyle get() = umaStatus.runningStyle
+    val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
     val basicRunningStyle get() = umaStatus.basicRunningStyle
     val locationName by lazy { trackData[track.location]?.name ?: "" }
     val trackDetail by lazy {
@@ -226,7 +224,10 @@ data class RaceSetting(
 
     val courseLength by lazy { trackDetail.distance }
 
+    val coolDownBaseFrames by lazy { courseLength / 1000.0 * 15.0 }
+
     val passiveBonus: PassiveBonus by lazy {
+        // FIXME 発動条件判定
         hasSkills.fold(PassiveBonus()) { acc, skill -> acc.add(skill) }
     }
 
@@ -381,6 +382,10 @@ data class RaceSetting(
     val timeCoef: Double by lazy {
         trackDetail.distance / 1000.0
     }
+
+    val oonige by lazy {
+        umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
+    }
 }
 
 class RaceSimulationState(
@@ -467,8 +472,4 @@ class InvokedSkill(
     val skill: SkillData,
     val invoke: Invoke,
     val check: RaceState.() -> Boolean,
-) {
-    fun trigger(state: RaceState) {
-        // TODO
-    }
-}
+)

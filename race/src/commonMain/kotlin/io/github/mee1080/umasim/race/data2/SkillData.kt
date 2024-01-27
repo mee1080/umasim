@@ -3,12 +3,6 @@ package io.github.mee1080.umasim.race.data2
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.random.Random
-
-// FIXME
-// condition type=weather: 実装
-// condition type=post_number: 実装
-// condition type=popularity: 人気あり/なしの両パターンのスキルを実装
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonParser = Json { allowTrailingComma = true }
@@ -35,7 +29,6 @@ val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
     "time" to "ナイター条件は無視",
     "season" to "季節条件は無視",
-    "weather" to "天候条件は無視",
     "post_number" to "枠条件は無視",
     "is_dirtgrade" to "交流重賞条件は無視",
     "popularity" to "人気条件は満たしている前提、満たさない場合は未実装",
@@ -108,7 +101,7 @@ val ignoreConditions = mapOf(
 
 @Serializable
 data class SkillData(
-    val id: Int,
+    val id: String,
     val name: String,
     val rarity: String,
     val type: String,
@@ -118,11 +111,15 @@ data class SkillData(
     val invokes: List<Invoke> = emptyList(),
     val description: List<String> = emptyList(),
 ) {
-    val messages = (description + invokes.flatMap { it.messages }).distinct()
+    val messages by lazy {
+        (description + invokes.flatMap { it.messages }).distinct()
+    }
 }
 
 @Serializable
 data class Invoke(
+    val skillId: String,
+    val index: Int,
     val conditions: List<List<SkillCondition>> = emptyList(),
     val preConditions: List<List<SkillCondition>> = emptyList(),
     val effects: List<SkillEffect> = emptyList(),
@@ -143,9 +140,7 @@ data class Invoke(
         }
     }
 
-    val coolDownId by lazy {
-        Random.nextInt().toString()
-    }
+    val coolDownId = "$skillId-$index"
 
     val isPassive by lazy {
         passiveSpeed > 0 || passiveStamina > 0 || passivePower > 0 || passiveGuts > 0 || passiveWisdom > 0 || temptationRate > 0
@@ -175,36 +170,44 @@ data class Invoke(
         effects.filter { it.type == "passiveWisdom" || it.type == "passiveAll" }.sumOf { it.value } / 10000
     }
 
-    val temptationRate by lazy {
-        effects.filter { it.type == "temptationRate" }.sumOf { it.value } / 10000
+    val oonige by lazy {
+        effects.any { it.type == "oonige" }
     }
 
-    val targetSpeed by lazy {
-        effects.filter { it.type == "targetSpeed" }.sumOf { it.value } / 10000.0
-    }
-
-    val speedWithDecel by lazy {
-        effects.filter { it.type == "speedWithDecel" }.sumOf { it.value } / 10000.0
-    }
-
-    val speed by lazy {
-        effects.filter { it.type == "currentSpeed" }.sumOf { it.value } / 10000.0
-    }
-
-    val acceleration by lazy {
-        effects.filter { it.type == "acceleration" }.sumOf { it.value } / 10000.0
-    }
-
-    val startAdd by lazy {
-        effects.filter { it.type == "startAdd" }.sumOf { it.value } / 10000.0
+    val heal by lazy {
+        effects.filter { it.type == "heal" }.sumOf { it.value }
     }
 
     val startMultiply by lazy {
         effects.filter { it.type == "startMultiply" }.sumOf { it.value } / 10000.0
     }
 
-    val heal by lazy {
-        effects.filter { it.type == "heal" }.sumOf { it.value }
+    val startAdd by lazy {
+        effects.filter { it.type == "startAdd" }.sumOf { it.value } / 10000.0
+    }
+
+    val currentSpeed by lazy {
+        effects.filter { it.type == "currentSpeed" }.sumOf { it.value } / 10000.0
+    }
+
+    val speedWithDecel by lazy {
+        effects.filter { it.type == "speedWithDecel" }.sumOf { it.value } / 10000.0
+    }
+
+    val targetSpeed by lazy {
+        effects.filter { it.type == "targetSpeed" }.sumOf { it.value } / 10000.0
+    }
+
+    val temptationRate by lazy {
+        effects.filter { it.type == "temptationRate" }.sumOf { it.value } / 10000
+    }
+
+    val acceleration by lazy {
+        effects.filter { it.type == "acceleration" }.sumOf { it.value } / 10000.0
+    }
+
+    val rareSkill by lazy {
+        effects.filter { it.type == "rareSkill" }.sumOf { it.value } / 10000.0
     }
 }
 

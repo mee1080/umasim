@@ -81,7 +81,7 @@ private fun RaceState.triggerStartSkills() {
         var remove = false
         if (skill.invoke.isPassive) {
             if (skill.check(this)) {
-                skill.trigger(this)
+                triggerSkill(skill)
                 simulation.skillTriggerCount[0]++
                 simulation.passiveTriggered++
                 skills += skill
@@ -93,7 +93,7 @@ private fun RaceState.triggerStartSkills() {
                 simulation.startDelay *= skill.invoke.startMultiply
             }
             simulation.startDelay += skill.invoke.startAdd
-            skill.trigger(this)
+            triggerSkill(skill)
             simulation.skillTriggerCount[0]++
             skills += skill
             remove = true
@@ -267,7 +267,7 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     newSpeed -= simulation.speedDebuff
     val speedModification = simulation.operatingSkills.sumOf {
         // 減速スキルの現在速度低下分
-        it.data.invoke.speed
+        it.data.invoke.currentSpeed
     }
     simulation.speedDebuff = speedModification
     newSpeed += speedModification

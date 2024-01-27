@@ -7,13 +7,14 @@ import io.github.mee1080.umasim.race.data.getSkill
 
 fun testCalc() {
     val setting = RaceSetting(
-        track = Track(10001, 10101),
+        track = Track(10001, 10104),
         skillActivateAdjustment = 2,
         randomPosition = 3,
         hasSkills = listOf(
             getSkill("右回り◎"),
-            getSkill("弧線のプロフェッサー"),
+//            getSkill("弧線のプロフェッサー"),
             getSkill("好転一息"),
+            getSkill("昂る鼓動"),
             getSkill("レッツ・アナボリック！"),
 //            getSkill("追込ためらい"),
         )
@@ -27,8 +28,8 @@ fun testCalc() {
         println("$result")
         state.simulation.invokedSkills.forEach { println(it.skill) }
     }
-//    val (result, state) = calculator.simulate()
-//    println(result)
+    val (result, state) = calculator.simulate()
+    println(result)
 //    state.simulation.frames.forEachIndexed { index, raceFrame ->
 //        println("$index : $raceFrame")
 //    }

@@ -142,6 +142,8 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
             { isInFinalStraight() && !isInFinalStraight(simulation.startPosition) }
         }
 
+        "weather" -> condition.preChecked(setting.weather)
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
@@ -334,11 +336,21 @@ private fun RaceState.isInSpurt(): Boolean {
 
 fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
     val skillTriggered = mutableListOf<InvokedSkill>()
+    val coolDownMap = simulation.coolDownMap
     simulation.invokedSkills.forEach {
-        if (!simulation.coolDownMap.containsKey(it.invoke.coolDownId) && it.check(this)) {
-            // TODO chainTriggered
-            triggerSkill(it)
-            skillTriggered += it
+        val coolDownStart = coolDownMap[it.invoke.coolDownId]
+        if (coolDownStart == null) {
+            if (it.check(this)) {
+                triggerSkill(it)
+                skillTriggered += it
+            }
+        } else if (it.invoke.cd > 0.0) {
+            if (simulation.frameElapsed - coolDownStart > it.invoke.cd * setting.coolDownBaseFrames) {
+                if (it.check(this)) {
+                    triggerSkill(it)
+                    skillTriggered += it
+                }
+            }
         }
     }
     return skillTriggered
@@ -352,6 +364,9 @@ fun RaceState.triggerSkill(skill: InvokedSkill) {
     }
     if (skill.invoke.duration > 0.0) {
         simulation.operatingSkills += OperatingSkill(skill, simulation.frameElapsed)
+    }
+    if (skill.invoke.speedWithDecel > 0.0) {
+        simulation.currentSpeed += skill.invoke.speedWithDecel
     }
     simulation.skillTriggerCount[currentPhase]++
     // 特殊スキル誘発カウント
