@@ -12,6 +12,6 @@ fun main() = application {
         title = "ウマ娘レースエミュレータ移植版",
         state = rememberWindowState(width = 900.dp, height = 900.dp)
     ) {
-        App()
+        App("LINESeedJP_A_TTF_Rg.ttf")
     }
 }

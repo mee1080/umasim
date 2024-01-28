@@ -18,13 +18,11 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.FontResource
 
-private const val FONT = "LINESeedJP_OTF_Rg.woff2"
-
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AppTheme(
+    fontResource: String,
     darkTheme: Boolean = isSystemInDarkTheme(),
-    fontResource: String = FONT,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

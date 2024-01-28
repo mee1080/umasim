@@ -7,6 +7,6 @@ import io.github.mee1080.umasim.compose.App
 @OptIn(ExperimentalComposeUiApi::class)
 fun main() {
     CanvasBasedWindow("ウマ娘レースエミュレータ移植版") {
-        App()
+        App("LINESeedJP_OTF_Rg.woff2")
     }
 }
