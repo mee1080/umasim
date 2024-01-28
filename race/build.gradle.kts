@@ -19,10 +19,14 @@ kotlin {
     js("web", IR) {
         useCommonJs()
         browser()
+        binaries.executable()
     }
 
-//    @OptIn(ExperimentalWasmDsl::class)
-//    wasmJs()
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
+        browser()
+        binaries.executable()
+    }
 
     sourceSets {
         val commonMain by getting {

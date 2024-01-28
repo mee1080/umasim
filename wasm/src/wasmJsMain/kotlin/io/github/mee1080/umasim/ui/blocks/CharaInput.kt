@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.mee1080.umasim.race.UmaStatus
+import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher

@@ -11,7 +11,8 @@ version = "1.0"
 
 kotlin {
 
-    js(IR) {
+    @OptIn(ExperimentalWasmDsl::class)
+    wasmJs {
         moduleName = "wasm"
         browser {
             commonWebpackConfig {
@@ -21,27 +22,11 @@ kotlin {
         binaries.executable()
     }
 
-    @OptIn(ExperimentalWasmDsl::class)
-    wasmJs {
-        moduleName = "wasm"
-        browser {
-            commonWebpackConfig {
-                devServer = (devServer ?: KotlinWebpackConfig.DevServer()).copy(
-                    open = mapOf(
-                        "app" to mapOf(
-                            "name" to "google chrome",
-                        )
-                    ),
-                )
-            }
-        }
-        binaries.executable()
-    }
-
     sourceSets {
         val wasmJsMain by getting {
             dependencies {
                 implementation(project(":race"))
+                implementation(project(":compose"))
                 implementation(compose.runtime)
                 implementation(compose.ui)
                 implementation(compose.foundation)
