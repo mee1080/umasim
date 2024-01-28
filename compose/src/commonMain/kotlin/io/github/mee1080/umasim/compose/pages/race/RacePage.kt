@@ -17,6 +17,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
     ) {
         Header()
         CharaInput(state, dispatch)
+        CourseInput(state, dispatch)
         Footer()
     }
 }

@@ -35,22 +35,20 @@ data class UmaStatus(
     val wisdom: Int = 1200,
     val condition: Condition = Condition.BEST,
     val style: Style = Style.OI,
-    val distanceFit: String = "S",
-    val surfaceFit: String = "A",
-    val styleFit: String = "A",
+    val distanceFit: FitRank = FitRank.S,
+    val surfaceFit: FitRank = FitRank.A,
+    val styleFit: FitRank = FitRank.A,
 ) {
     val basicRunningStyle get() = style
 }
 
-enum class FitRank {
-    S, A, B, C, D, E, F, G,
-}
-
 data class Track(
-    val location: Int = 0,
-    val course: Int = 0,
-    val surfaceCondition: Int = 1,
-)
+    val location: Int = 10009,
+    val course: Int = 10902,
+    val condition: CourseCondition = CourseCondition.GOOD,
+) {
+    val surfaceCondition: Int = condition.value
+}
 
 data class PassiveBonus(
     val speed: Int = 0,

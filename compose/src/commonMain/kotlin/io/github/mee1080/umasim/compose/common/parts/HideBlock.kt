@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 fun HideBlock(
     header: String,
     modifier: Modifier = Modifier,
+    initialOpen: Boolean = false,
     headerClosed: String = header,
     headerBackground: Color = MaterialTheme.colorScheme.secondaryContainer,
     headerContentColor: Color = MaterialTheme.colorScheme.contentColorFor(headerBackground),
@@ -30,7 +31,7 @@ fun HideBlock(
     contentContentColor: Color = MaterialTheme.colorScheme.contentColorFor(contentBackGround),
     content: @Composable BoxScope.() -> Unit,
 ) {
-    var open by remember { mutableStateOf(false) }
+    var open by remember { mutableStateOf(initialOpen) }
     HideBlock(
         open = open,
         onToggle = { open = !open },
@@ -49,6 +50,7 @@ fun HideBlock(
 fun HideBlock(
     header: @Composable RowScope.() -> Unit,
     modifier: Modifier = Modifier,
+    initialOpen: Boolean = false,
     headerClosed: @Composable RowScope.() -> Unit = header,
     headerBackground: Color = MaterialTheme.colorScheme.secondaryContainer,
     headerContentColor: Color = MaterialTheme.colorScheme.contentColorFor(headerBackground),
@@ -56,7 +58,7 @@ fun HideBlock(
     contentContentColor: Color = MaterialTheme.colorScheme.contentColorFor(contentBackGround),
     content: @Composable BoxScope.() -> Unit,
 ) {
-    var open by remember { mutableStateOf(false) }
+    var open by remember { mutableStateOf(initialOpen) }
     HideBlock(
         open = open,
         onToggle = { open = !open },

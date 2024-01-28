@@ -22,7 +22,6 @@
  */
 package io.github.mee1080.umasim.race
 
-import io.github.mee1080.umasim.race.test.testCalc
 import io.github.mee1080.umasim.race.test.testCalc2
 
 fun main() {

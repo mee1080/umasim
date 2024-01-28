@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,8 +17,11 @@ fun Header() {
 
 @Composable
 fun Footer() {
-    Row { Text("注意事項", style = MaterialTheme.typography.headlineSmall) }
-    """
+    Divider()
+
+    Column {
+        Row { Text("注意事項", style = MaterialTheme.typography.headlineSmall) }
+        """
         あくまで目安。適当実装＆データの正確性が低いので参考までに。
         ポジションキープを始めとした他ウマ娘が絡む要素は未実装。
         他ウマ娘が絡む発動条件を無視しているため、該当スキルは実際より強く見えます。特に鋼の意志、スリスト等。
@@ -25,28 +29,36 @@ fun Footer() {
         適性は直接ステータスを修正するものではないので、下の補正後ステータスには反映されません。
         各種別情報は大いに参考させて頂きました。
     """.trimIndent().split("\n").forEachIndexed { index, c ->
-        Row { Text("${index + 1}: ${c.trim()}") }
+            Row { Text("${index + 1}: ${c.trim()}") }
+        }
     }
 
-    Row { Text("その他", style = MaterialTheme.typography.headlineSmall) }
-    Row {
-        Text("本プログラムは、砂井裏鍵さん（X: ")
-        TextLink("https://twitter.com/urakagi", "@urakagi")
-        Text("）作のレースエミュレータを、mee1080（X: ")
-        TextLink("https://twitter.com/mee10801", "@mee10801")
-        Text("）がKotlinに移植しました")
-    }
-    Row {
-        Text("オリジナル版：")
-        TextLink("http://race.wf-calc.net/")
-    }
+    Divider()
 
     Column {
+        Row { Text("本プログラムについて", style = MaterialTheme.typography.headlineSmall) }
         Row {
-            Text("画面表示には、「LINE Seed JP」フォント（")
-            TextLink("https://seed.line.me/index_jp.html")
-            Text("）を使用しています。")
+            Text("本プログラムは、砂井裏鍵さん（X: ")
+            TextLink("https://twitter.com/urakagi", "@urakagi")
+            Text("）作のレースエミュレータを、")
         }
+        Row {
+            Text("mee1080（X: ")
+            TextLink("https://twitter.com/mee10801", "@mee10801")
+            Text("）がKotlinに移植しました")
+        }
+        Row {
+            Text("オリジナル版：")
+            TextLink("http://race.wf-calc.net/")
+        }
+    }
+
+    Divider()
+
+    Column {
+        Row { Text("オープンソースライセンス", style = MaterialTheme.typography.headlineSmall) }
+        Text("画面表示には、「LINE Seed JP」フォントを使用しています。")
         Text("\"LINE Seed JP\" is licensed under the SIL Open Font License 1.1 (c) LY Corporation")
+        TextLink("https://seed.line.me/index_jp.html")
     }
 }

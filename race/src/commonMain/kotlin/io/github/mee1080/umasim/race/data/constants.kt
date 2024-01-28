@@ -42,8 +42,23 @@ enum class Surface {
     DIRT
 }
 
-enum class Condition(val value: Int) {
-    BEST(5), GOOD(4), NORMAL(3), BAD(2), WORST(1),
+enum class Condition(val value: Int, val label: String) {
+    BEST(5, "絶好調"),
+    GOOD(4, "好調"),
+    NORMAL(3, "普通"),
+    BAD(2, "不調"),
+    WORST(1, "絶不調"),
+}
+
+enum class FitRank {
+    S, A, B, C, D, E, F, G,
+}
+
+enum class CourseCondition(val value: Int, val label: String) {
+    GOOD(1, "良"),
+    YAYAOMO(2, "稍重"),
+    OMO(3, "重"),
+    BAD(4, "不良"),
 }
 
 internal val frameLength = 1.0 / 15
@@ -93,47 +108,47 @@ internal val surfacePowerModify = mapOf(
 )
 
 internal val styleFitCoef = mapOf(
-    "S" to 1.1,
-    "A" to 1.0,
-    "B" to 0.85,
-    "C" to 0.75,
-    "D" to 0.6,
-    "E" to 0.4,
-    "F" to 0.2,
-    "G" to 0.1
+    FitRank.S to 1.1,
+    FitRank.A to 1.0,
+    FitRank.B to 0.85,
+    FitRank.C to 0.75,
+    FitRank.D to 0.6,
+    FitRank.E to 0.4,
+    FitRank.F to 0.2,
+    FitRank.G to 0.1,
 )
 
 internal val distanceFitSpeedCoef = mapOf(
-    "S" to 1.05,
-    "A" to 1.0,
-    "B" to 0.9,
-    "C" to 0.8,
-    "D" to 0.6,
-    "E" to 0.4,
-    "F" to 0.2,
-    "G" to 0.1
+    FitRank.S to 1.05,
+    FitRank.A to 1.0,
+    FitRank.B to 0.9,
+    FitRank.C to 0.8,
+    FitRank.D to 0.6,
+    FitRank.E to 0.4,
+    FitRank.F to 0.2,
+    FitRank.G to 0.1,
 )
 
 internal val distanceFitAccelerateCoef = mapOf(
-    "S" to 1.0,
-    "A" to 1.0,
-    "B" to 1.0,
-    "C" to 1.0,
-    "D" to 1.0,
-    "E" to 0.6,
-    "F" to 0.5,
-    "G" to 0.4
+    FitRank.S to 1.0,
+    FitRank.A to 1.0,
+    FitRank.B to 1.0,
+    FitRank.C to 1.0,
+    FitRank.D to 1.0,
+    FitRank.E to 0.6,
+    FitRank.F to 0.5,
+    FitRank.G to 0.4,
 )
 
 internal val surfaceFitAccelerateCoef = mapOf(
-    "S" to 1.05,
-    "A" to 1.0,
-    "B" to 0.9,
-    "C" to 0.8,
-    "D" to 0.7,
-    "E" to 0.5,
-    "F" to 0.3,
-    "G" to 0.1
+    FitRank.S to 1.05,
+    FitRank.A to 1.0,
+    FitRank.B to 0.9,
+    FitRank.C to 0.8,
+    FitRank.D to 0.7,
+    FitRank.E to 0.5,
+    FitRank.F to 0.3,
+    FitRank.G to 0.1,
 )
 
 private val styleSpCoefData = mapOf(

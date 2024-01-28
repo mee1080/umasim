@@ -1,12 +1,14 @@
 package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.calc2.UmaStatus
+import io.github.mee1080.umasim.race.data.Condition
+import io.github.mee1080.umasim.race.data.FitRank
 import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.DirectOperation
 
 private fun AppState.updateUmaStatus(action: (UmaStatus) -> UmaStatus): AppState {
-    return copy(setting = setting.copy(umaStatus = action(setting.umaStatus)))
+    return updateSetting { it.copy(umaStatus = action(it.umaStatus)) }
 }
 
 fun setStatus(
@@ -29,4 +31,22 @@ fun setStatus(
 
 fun setStyle(style: Style) = DirectOperation<AppState> { state ->
     state.updateUmaStatus { it.copy(style = style) }
+}
+
+fun setFit(
+    surface: FitRank? = null,
+    distance: FitRank? = null,
+    style: FitRank? = null,
+) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus {
+        it.copy(
+            surfaceFit = surface ?: it.surfaceFit,
+            distanceFit = distance ?: it.distanceFit,
+            styleFit = style ?: it.styleFit,
+        )
+    }
+}
+
+fun setCondition(condition: Condition) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus { it.copy(condition = condition) }
 }
