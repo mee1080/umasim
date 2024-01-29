@@ -200,6 +200,7 @@ class RaceState(
 data class RaceSetting(
     val umaStatus: UmaStatus = UmaStatus(),
     val hasSkills: List<SkillData> = emptyList(),
+    val uniqueLevel: Int = 6,
     val passiveTriggered: Int = 0,
     val track: Track = Track(),
 

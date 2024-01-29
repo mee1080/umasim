@@ -127,7 +127,7 @@ data class Invoke(
     val duration: Double = 0.0,
 ) {
     val messages by lazy {
-        toMessages(preConditions) + toMessages(conditions)
+        effects.map { "${it.type} ${it.value}" } + toMessages(preConditions) + toMessages(conditions)
     }
 
     private fun toMessages(target: List<List<SkillCondition>>): Set<String> {
