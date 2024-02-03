@@ -23,6 +23,7 @@
 package io.github.mee1080.umasim.race.calc2
 
 import io.github.mee1080.umasim.race.data.Corner
+import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data2.SkillCondition
 import io.github.mee1080.umasim.race.data2.ignoreConditions
 import kotlin.math.max
@@ -80,7 +81,7 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "ground_condition" -> condition.preChecked(setting.track.surfaceCondition)
         "distance_type" -> condition.preChecked(setting.trackDetail.distanceType)
         "track_id" -> condition.preChecked(setting.trackDetail.raceTrackId)
-        "is_basis_distance" -> condition.preChecked(if (setting.trackDetail.distance % 400 == 0) 1 else 0)
+        "is_basis_distance" -> condition.preChecked(setting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position / setting.courseLength).toInt() }
         "phase_random" -> checkInRandom(setting.initPhaseRandom(condition.value))
         "phase_firsthalf_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.5))
@@ -207,12 +208,12 @@ private class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange
 
 private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): RandomEntry {
     val rate = when (randomPosition) {
-        0 -> Random.nextDouble()
-        1 -> 0.0
-        2 -> 0.25
-        3 -> 0.5
-        4 -> 0.75
-        else -> 0.98
+        RandomPosition.RANDOM -> Random.nextDouble()
+        RandomPosition.FASTEST -> 0.0
+        RandomPosition.FAST -> 0.25
+        RandomPosition.MIDDLE -> 0.5
+        RandomPosition.SLOW -> 0.75
+        RandomPosition.SLOWEST -> 0.98
     }
 
     val start = rate * (zoneEnd - zoneStart) + zoneStart

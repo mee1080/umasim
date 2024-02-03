@@ -11,7 +11,8 @@ import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.compose.common.parts.HideBlock
 import io.github.mee1080.umasim.compose.common.parts.NumberInput
-import io.github.mee1080.umasim.compose.common.parts.WithTooltip
+import io.github.mee1080.umasim.compose.common.parts.WithPersistentTooltip
+import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.AppState
@@ -36,33 +37,34 @@ fun SkillInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 @Composable
 private fun SkillSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     val skillIdSet = state.skillIdSet
+    val setting = state.setting
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        UniqueSkillSetting(state.charaName, state.setting.uniqueLevel, skillIdSet, dispatch)
+        UniqueSkillSetting(state.charaName, setting.uniqueLevel, skillIdSet, dispatch)
         val passiveSkills = groupedSkills["passive"]
         if (passiveSkills != null) {
-            TypeSkillSetting("パッシブ", passiveSkills, skillIdSet, dispatch)
+            TypeSkillSetting("パッシブ", passiveSkills, skillIdSet, setting, dispatch)
         }
         val healSkills = groupedSkills["heal"]
         if (healSkills != null) {
-            TypeSkillSetting("回復", healSkills, skillIdSet, dispatch)
+            TypeSkillSetting("回復", healSkills, skillIdSet, setting, dispatch)
         }
         val speedSkills = groupedSkills["speed"]
         if (speedSkills != null) {
-            TypeSkillSetting("速度", speedSkills, skillIdSet, dispatch)
+            TypeSkillSetting("速度", speedSkills, skillIdSet, setting, dispatch)
         }
         val accelerationSkills = groupedSkills["acceleration"]
         if (accelerationSkills != null) {
-            TypeSkillSetting("加速", accelerationSkills, skillIdSet, dispatch)
+            TypeSkillSetting("加速", accelerationSkills, skillIdSet, setting, dispatch)
         }
         val multiSkill = groupedSkills["multi"]
         if (multiSkill != null) {
-            TypeSkillSetting("複合", multiSkill, skillIdSet, dispatch)
+            TypeSkillSetting("複合", multiSkill, skillIdSet, setting, dispatch)
         }
         val gateSkills = groupedSkills["gate"]
         if (gateSkills != null) {
-            TypeSkillSetting("ゲート", gateSkills, skillIdSet, dispatch)
+            TypeSkillSetting("ゲート", gateSkills, skillIdSet, setting, dispatch)
         }
     }
 }
@@ -70,8 +72,8 @@ private fun SkillSetting(state: AppState, dispatch: OperationDispatcher<AppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SkillChip(skill: SkillData, selected: Boolean, dispatch: OperationDispatcher<AppState>) {
-    WithTooltip(
-        tooltip = {
+    WithPersistentTooltip(
+        text = {
             Column {
                 skill.messages.forEach { Text(it) }
             }
@@ -154,6 +156,7 @@ private fun TypeSkillSetting(
     title: String,
     skills: Map<String, List<SkillData>>,
     skillIdSet: Set<String>,
+    setting: RaceSetting,
     dispatch: OperationDispatcher<AppState>
 ) {
     HideBlock(
@@ -163,21 +166,37 @@ private fun TypeSkillSetting(
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val rareSkills = skills["rare"]
+            val rareSkills = skills["rare"]?.filterBySetting(setting)
             if (!rareSkills.isNullOrEmpty()) {
                 SkillFlowRow("レア", rareSkills, skillIdSet, dispatch)
             }
-            val normalSkills = skills["normal"]
+            val normalSkills = skills["normal"]?.filterBySetting(setting)
             if (!normalSkills.isNullOrEmpty()) {
                 SkillFlowRow("通常", normalSkills, skillIdSet, dispatch)
             }
-            val specialSkills = skills["special"]
+            val specialSkills = skills["special"]?.filterBySetting(setting)
             if (!specialSkills.isNullOrEmpty()) {
                 SkillFlowRow("特殊", specialSkills, skillIdSet, dispatch)
             }
         }
     }
 }
+
+private fun List<SkillData>.filterBySetting(setting: RaceSetting): List<SkillData> {
+    val track = setting.trackDetail
+    return filter { skill ->
+        skill.invokes.any {
+            it.targetRunningStyle.emptyOrContains(setting.basicRunningStyle.value)
+                    && it.targetRotation.emptyOrContains(track.turn)
+                    && it.targetGroundType.emptyOrContains(track.surface)
+                    && it.targetDistanceType.emptyOrContains(track.distanceType)
+                    && it.targetTrackId.emptyOrContains(track.raceTrackId)
+                    && it.targetBasisDistance.emptyOrContains(track.isBasisDistance)
+        }
+    }
+}
+
+private fun Set<Int>.emptyOrContains(value: Int) = isEmpty() || contains(value)
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable

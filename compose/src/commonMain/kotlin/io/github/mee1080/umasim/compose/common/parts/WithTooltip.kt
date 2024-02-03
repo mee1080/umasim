@@ -4,14 +4,8 @@ import androidx.compose.foundation.hoverable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsHoveredAsState
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.PlainTooltipBox
-import androidx.compose.material3.PlainTooltipState
-import androidx.compose.material3.TooltipBoxScope
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import io.github.mee1080.umasim.compose.common.lib.asComposable
 import kotlinx.coroutines.delay
@@ -49,6 +43,47 @@ fun WithTooltip(
         PlainTooltipBox(
             tooltip = tooltip,
             tooltipState = tooltipState,
+        ) {
+            WithTooltipScopeImpl(this, interactionSource).content()
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun WithPersistentTooltip(
+    text: @Composable () -> Unit,
+    modifier: Modifier = Modifier,
+    title: @Composable () -> Unit = {},
+    action: @Composable () -> Unit = {},
+    delayTime: Long = 0L,
+    content: @Composable WithTooltipScope.() -> Unit,
+) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val tooltipState = remember { RichTooltipState() }
+    val hovered by interactionSource.collectIsHoveredAsState()
+    LaunchedEffect(hovered) {
+        if (hovered) {
+            if (delayTime > 0L) delay(delayTime)
+            tooltipState.show()
+        } else {
+            tooltipState.dismiss()
+        }
+    }
+    Box(modifier) {
+        val localContentColor = LocalContentColor.current
+        val localTextStyle = LocalTextStyle.current
+        RichTooltipBox(
+            text = text,
+            tooltipState = tooltipState,
+            title = title,
+            action = {
+                CompositionLocalProvider(
+                    LocalContentColor provides localContentColor,
+                    LocalTextStyle provides localTextStyle,
+                    content = action,
+                )
+            },
         ) {
             WithTooltipScopeImpl(this, interactionSource).content()
         }

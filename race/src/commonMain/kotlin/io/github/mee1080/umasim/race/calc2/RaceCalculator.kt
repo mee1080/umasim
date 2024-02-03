@@ -22,6 +22,7 @@
  */
 package io.github.mee1080.umasim.race.calc2
 
+import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
 import io.github.mee1080.umasim.race.data.frameLength
 import io.github.mee1080.umasim.race.data.maxSpeed
 import io.github.mee1080.umasim.race.data.spConsumptionCoef
@@ -62,11 +63,12 @@ class RaceCalculator(private val setting: RaceSetting) {
 private fun RaceState.invokeSkills() {
     setting.hasSkills.forEach { skill ->
         skill.invokes.forEach { invoke ->
-            val invokeRate = if (setting.skillActivateAdjustment > 0 || skill.activateLot == 0) {
-                100.0
-            } else {
-                maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
-            }
+            val invokeRate =
+                if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE || skill.activateLot == 0) {
+                    100.0
+                } else {
+                    maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
+                }
             if (Random.nextDouble() * 100 < invokeRate) {
                 // TODO init
                 simulation.invokedSkills += InvokedSkill(skill, invoke, checkCondition(invoke.conditions, setting))

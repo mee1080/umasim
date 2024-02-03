@@ -61,6 +61,8 @@ data class TrackDetail(
         }
         return 0.0
     }
+
+    val isBasisDistance by lazy { if (distance % 400 == 0) 1 else 0 }
 }
 
 @Serializable

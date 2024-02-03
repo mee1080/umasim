@@ -204,15 +204,14 @@ data class RaceSetting(
     val passiveTriggered: Int = 0,
     val track: Track = Track(),
 
-    val skillActivateAdjustment: Int = 0,
-    val randomPosition: Int = 0,
+    val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
+    val randomPosition: RandomPosition = RandomPosition.RANDOM,
 
-    val maxEpoch: Int = 0,
     val season: Int = 0,
     val weather: Int = 0,
     val badStart: Boolean = false,
 ) {
-    val fixRandom get() = skillActivateAdjustment == 2
+    val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
     val basicRunningStyle get() = umaStatus.basicRunningStyle
     val locationName by lazy { trackData[track.location]?.name ?: "" }
@@ -384,6 +383,10 @@ data class RaceSetting(
 
     val oonige by lazy {
         umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
+    }
+
+    fun equalStamina(heal: Int): Double {
+        return spMax * heal / 10000.0 / 0.8 / runningStyle.styleSpCoef
     }
 }
 

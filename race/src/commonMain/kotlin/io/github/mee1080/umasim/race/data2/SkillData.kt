@@ -140,6 +140,30 @@ data class Invoke(
         }
     }
 
+    val targetRunningStyle by lazy { createConditionValuesSet("running_style") }
+
+    val targetRotation by lazy { createConditionValuesSet("rotation") }
+
+    val targetGroundType by lazy { createConditionValuesSet("ground_type") }
+
+    val targetDistanceType by lazy { createConditionValuesSet("distance_type") }
+
+    val targetTrackId by lazy { createConditionValuesSet("track_id") }
+
+    val targetBasisDistance by lazy { createConditionValuesSet("is_basis_distance") }
+
+    private fun createConditionValuesSet(type: String): Set<Int> {
+        return buildSet {
+            conditions.forEach { list ->
+                list.forEach {
+                    if (it.type == type) {
+                        add(it.value)
+                    }
+                }
+            }
+        }
+    }
+
     val coolDownId = "$skillId-$index"
 
     val isPassive by lazy {

@@ -61,6 +61,21 @@ enum class CourseCondition(val value: Int, val label: String) {
     BAD(4, "不良"),
 }
 
+enum class SkillActivateAdjustment(val value: Int, val label: String) {
+    NONE(0, "無"),
+    YES(1, "確定発動"),
+    ALL(2, "全乱数固定"),
+}
+
+enum class RandomPosition(val value: Int, val label: String) {
+    RANDOM(0, "ランダム"),
+    FASTEST(1, "最速"),
+    FAST(2, "1/4"),
+    MIDDLE(3, "中間"),
+    SLOW(4, "3/4"),
+    SLOWEST(5, "最遅"),
+}
+
 internal val frameLength = 1.0 / 15
 internal val startSpeed = 3.0
 internal val maxSpeed = 30.0
