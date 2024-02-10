@@ -388,6 +388,22 @@ data class RaceSetting(
     fun equalStamina(heal: Int): Double {
         return spMax * heal / 10000.0 / 0.8 / runningStyle.styleSpCoef
     }
+
+    val phase1Start by lazy { courseLength / 6.0 }
+
+    val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
+
+    val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
+
+    fun getPhaseStartEnd(phase: Int): Pair<Double, Double> {
+        return when (phase) {
+            0 -> 0.0 to phase1Start
+            1 -> phase1Start to phase2Start
+            2 -> phase2Start to phase3Start
+            3 -> phase3Start to courseLength.toDouble()
+            else -> throw IllegalArgumentException()
+        }
+    }
 }
 
 class RaceSimulationState(
@@ -448,7 +464,7 @@ data class OperatingSkill(
     val startFrame: Int,
     val durationOverwrite: Double? = null,
 ) {
-    val duration: Double? get() = durationOverwrite ?: data.invoke.duration
+    val duration: Double get() = durationOverwrite ?: data.invoke.duration
 }
 
 data class RaceFrame(
@@ -460,6 +476,7 @@ data class RaceFrame(
     val movement: Double = 0.0,
     val consume: Double = 0.0,
     val skills: List<InvokedSkill> = emptyList(),
+    val endedSkills: List<OperatingSkill> = emptyList(),
     val spurting: Boolean = false,
 )
 

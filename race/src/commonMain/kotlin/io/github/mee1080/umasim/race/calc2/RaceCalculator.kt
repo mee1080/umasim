@@ -204,17 +204,19 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         val spurtParameters = simulation.spurtParameters
         val spurting =
             spurtParameters != null && simulation.position + spurtParameters.distance >= setting.courseLength
-        frame = frame.copy(
-            skills = skillTriggered,
-            spurting = spurting,
-        )
 
         // Remove overtime skills
-        simulation.operatingSkills.removeAll { operatingSkill ->
-            val duration = operatingSkill.duration ?: 0.0
+        val endedSkills = simulation.operatingSkills.filter { operatingSkill ->
+            val duration = operatingSkill.duration
             (simulation.frameElapsed - operatingSkill.startFrame) * frameLength > duration * setting.timeCoef
         }
+        simulation.operatingSkills.removeAll(endedSkills)
 
+        frame = frame.copy(
+            skills = skillTriggered,
+            endedSkills = endedSkills,
+            spurting = spurting,
+        )
         simulation.frames += frame
     }
 

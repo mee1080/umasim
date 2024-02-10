@@ -281,16 +281,6 @@ private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double
     return chooseRandom(zoneStart + zoneLength * startRate, zoneEnd - zoneLength * (1 - endRate))
 }
 
-private fun RaceSetting.getPhaseStartEnd(phase: Int): Pair<Double, Double> {
-    return when (phase) {
-        0 -> 0.0 to courseLength / 6.0
-        1 -> courseLength / 6.0 to (courseLength * 2.0) / 3.0
-        2 -> (courseLength * 2.0) / 3.0 to (courseLength * 5.0) / 6.0
-        3 -> (courseLength * 5.0) / 6.0 to courseLength.toDouble()
-        else -> throw IllegalArgumentException()
-    }
-}
-
 private fun RaceSetting.initFinalCornerRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
     return listOf(chooseRandom(finalCorner.start, finalCorner.end))
