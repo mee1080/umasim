@@ -21,7 +21,7 @@ fun Double.roundString(position: Int = 0, unit: String = ""): String {
         val minus = if (this < 0) "-" else ""
         val factor = 10.0.pow(position).roundToInt()
         val intValue = (abs(this) * factor).roundToInt()
-        return "$minus${intValue / factor}.${intValue % factor}$unit"
+        return "$minus${intValue / factor}.${(intValue % factor).zeroPad(position)}$unit"
     }
 }
 

@@ -25,17 +25,17 @@ package io.github.mee1080.umasim.race.calc2
 import io.github.mee1080.umasim.race.data.Corner
 import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data2.SkillCondition
+import io.github.mee1080.umasim.race.data2.approximateRate
 import io.github.mee1080.umasim.race.data2.ignoreConditions
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.random.Random
 
 fun checkCondition(conditions: List<List<SkillCondition>>, setting: RaceSetting): RaceState.() -> Boolean {
     val checks = conditions.map { andConditions ->
         andConditions.mapNotNull { checkCondition(it, setting) }
     }
-    println(conditions)
-    println(checks)
     if (checks.isEmpty()) return { true }
     return {
         checks.any { andConditions ->
@@ -153,6 +153,9 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "weather" -> condition.preChecked(setting.weather)
 
         else -> {
+            if (approximateRate.containsKey(condition.type)) {
+                return condition.checkInEveryFrameRandom()
+            }
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
             }
@@ -195,6 +198,12 @@ private fun checkInRandom(area: RandomEntry?): RaceState.() -> Boolean {
 
 private fun checkInRandom(areas: List<RandomEntry>): RaceState.() -> Boolean {
     return { areas.any { simulation.position in it } }
+}
+
+private fun SkillCondition.checkInEveryFrameRandom(): RaceState.() -> Boolean {
+    val base = approximateRate[type]?.first ?: return { false }
+    val value = base / 2.0.pow(value - 1)
+    return { value >= Random.nextDouble() }
 }
 
 /**
