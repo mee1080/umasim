@@ -70,8 +70,12 @@ private fun RaceState.invokeSkills() {
                     maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
                 }
             if (Random.nextDouble() * 100 < invokeRate) {
-                // TODO init
-                simulation.invokedSkills += InvokedSkill(skill, invoke, checkCondition(invoke.conditions, setting))
+                simulation.invokedSkills += InvokedSkill(
+                    skill,
+                    invoke,
+                    checkCondition(invoke.preConditions, setting),
+                    checkCondition(invoke.conditions, setting),
+                )
             }
         }
     }
@@ -84,7 +88,7 @@ private fun RaceState.triggerStartSkills() {
         if (skill.invoke.isPassive) {
             if (skill.check(this)) {
                 triggerSkill(skill)
-                simulation.skillTriggerCount[0]++
+                simulation.skillTriggerCount.increment(this)
                 simulation.passiveTriggered++
                 skills += skill
             }
@@ -96,7 +100,7 @@ private fun RaceState.triggerStartSkills() {
             }
             simulation.startDelay += skill.invoke.startAdd
             triggerSkill(skill)
-            simulation.skillTriggerCount[0]++
+            simulation.skillTriggerCount.increment(this)
             skills += skill
             remove = true
         }

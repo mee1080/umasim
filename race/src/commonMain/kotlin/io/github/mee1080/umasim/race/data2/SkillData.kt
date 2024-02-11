@@ -33,10 +33,7 @@ val ignoreConditions = mapOf(
     "is_dirtgrade" to "交流重賞条件は無視",
     "popularity" to "人気条件は満たしている前提、満たさない場合は未実装",
 
-    "activate_count_later_half" to "他スキル発動条件は未実装",
-    "activate_count_middle" to "他スキル発動条件は未実装",
-    "activate_count_end_after" to "他スキル発動条件は未実装",
-    "is_activate_other_skill_detail" to "他スキル発動条件は未実装",
+    "is_activate_other_skill_detail" to "一段目が発動しなくても二段目が発動",
     "is_used_skill_id" to "他スキル発動条件は未実装",
 
     "order" to "順位条件は無視",
@@ -164,7 +161,13 @@ data class Invoke(
         }
     }
 
-    val coolDownId = "$skillId-$index"
+    val coolDownId by lazy {
+        if (conditions.any { list -> list.any { it.type == "is_activate_other_skill_detail" } }) {
+            "$skillId-$index"
+        } else {
+            skillId
+        }
+    }
 
     val isPassive by lazy {
         passiveSpeed > 0 || passiveStamina > 0 || passivePower > 0 || passiveGuts > 0 || passiveWisdom > 0 || temptationRate > 0

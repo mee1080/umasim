@@ -34,6 +34,9 @@ fun checkCondition(conditions: List<List<SkillCondition>>, setting: RaceSetting)
     val checks = conditions.map { andConditions ->
         andConditions.mapNotNull { checkCondition(it, setting) }
     }
+    println(conditions)
+    println(checks)
+    if (checks.isEmpty()) return { true }
     return {
         checks.any { andConditions ->
             andConditions.all { it.invoke(this) }
@@ -46,8 +49,12 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "motivation" -> condition.preChecked(setting.umaStatus.condition.value)
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
         "activate_count_heal" -> condition.checkInRace { simulation.healTriggerCount }
-        "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.sum() }
-        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount[0] }
+        "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.total }
+        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[0] }
+        "activate_count_later_half" -> condition.checkInRace { simulation.skillTriggerCount.inLaterHalf }
+        "activate_count_middle" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[1] }
+        "activate_count_end_after" -> condition.checkInRace { simulation.skillTriggerCount.inAfterPhase2 }
+
         "accumulatetime" -> condition.checkInRace { simulation.frameElapsed / 15 }
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
@@ -82,7 +89,7 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "distance_type" -> condition.preChecked(setting.trackDetail.distanceType)
         "track_id" -> condition.preChecked(setting.trackDetail.raceTrackId)
         "is_basis_distance" -> condition.preChecked(setting.trackDetail.isBasisDistance)
-        "distance_rate" -> condition.checkInRace { (simulation.position / setting.courseLength).toInt() }
+        "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / setting.courseLength).toInt() }
         "phase_random" -> checkInRandom(setting.initPhaseRandom(condition.value))
         "phase_firsthalf_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.5))
         "phase_firstquarter_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.25))
@@ -307,14 +314,6 @@ private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): 
     return chooseRandom(courseLength * startRate, courseLength * endRate)
 }
 
-private fun RaceState.isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
-    val (startRate, endRate) = interval
-    val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
-    val start = finalCorner.start + startRate * finalCorner.length
-    val end = finalCorner.start + endRate * finalCorner.length
-    return simulation.position in start..end
-}
-
 private fun RaceState.isInFinalStraight(position: Double = simulation.position): Boolean {
     val lastStraight = setting.trackDetail.straights.lastOrNull() ?: return false
     return position >= lastStraight.start
@@ -329,6 +328,12 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
     val skillTriggered = mutableListOf<InvokedSkill>()
     val coolDownMap = simulation.coolDownMap
     simulation.invokedSkills.forEach {
+        if (!it.preChecked) {
+            it.preChecked = it.preCheck(this)
+            if (!it.preChecked) {
+                return@forEach
+            }
+        }
         val coolDownStart = coolDownMap[it.invoke.coolDownId]
         if (coolDownStart == null) {
             if (it.check(this)) {
@@ -348,8 +353,6 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
 }
 
 fun RaceState.triggerSkill(skill: InvokedSkill) {
-    // TODO
-    // skill.trigger
     if (skill.invoke.heal > 0) {
         doHeal(skill.invoke.heal)
     }
@@ -359,11 +362,7 @@ fun RaceState.triggerSkill(skill: InvokedSkill) {
     if (skill.invoke.speedWithDecel > 0.0) {
         simulation.currentSpeed += skill.invoke.speedWithDecel
     }
-    simulation.skillTriggerCount[currentPhase]++
-    // 特殊スキル誘発カウント
-    if (isInFinalCorner() && currentPhase >= 2) {
-        simulation.skillTriggerCount[SkillTriggerCount.YUMENISHIKI]++
-    }
+    simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed
 }
 

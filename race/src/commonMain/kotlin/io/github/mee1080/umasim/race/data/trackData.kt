@@ -51,8 +51,6 @@ data class TrackDetail(
     val straights: List<Straight>,
     val slopes: List<Slope>,
 ) {
-    fun toPosition(distanceLeft: Int) = distance - distanceLeft
-
     fun getSlope(position: Double): Double {
         for (slope in slopes) {
             if (position >= slope.start && position <= slope.end) {

@@ -91,6 +91,16 @@ class RaceState(
 
     val currentPhase get() = getPhase(simulation.position)
 
+    val isLaterHalf get() = simulation.position > setting.trackDetail.distance / 2
+
+    fun isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
+        val (startRate, endRate) = interval
+        val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
+        val start = finalCorner.start + startRate * finalCorner.length
+        val end = finalCorner.start + endRate * finalCorner.length
+        return simulation.position in start..end
+    }
+
     fun getSection(position: Double): Int {
         return floor((position * 24.0) / setting.courseLength).toInt()
     }
@@ -427,7 +437,7 @@ class RaceSimulationState(
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
-    val skillTriggerCount: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0),
+    val skillTriggerCount: SkillTriggerCount = SkillTriggerCount(),
     var passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
@@ -444,12 +454,20 @@ class RaceSimulationState(
         }
 }
 
-object SkillTriggerCount {
-    val PHASE_0 = 0
-    val PHASE_1 = 1
-    val PHASE_2 = 2
-    val PHASE_3 = 3
-    val YUMENISHIKI = 4
+class SkillTriggerCount {
+    var inPhase = arrayOf(0, 0, 0, 0)
+    var inLaterHalf = 0
+
+    val total get() = inPhase.sum()
+    val inAfterPhase2 get() = inPhase[2] + inPhase[3]
+
+    fun increment(state: RaceState) {
+        val phase = state.currentPhase
+        inPhase[phase]++
+        if (state.isLaterHalf) {
+            inLaterHalf++
+        }
+    }
 }
 
 data class SpurtParameters(
@@ -490,5 +508,7 @@ data class RaceSimulationResult(
 class InvokedSkill(
     val skill: SkillData,
     val invoke: Invoke,
+    val preCheck: RaceState.() -> Boolean,
     val check: RaceState.() -> Boolean,
+    var preChecked: Boolean = false,
 )
