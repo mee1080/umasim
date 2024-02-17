@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.compose.common.parts.HideBlock
 import io.github.mee1080.umasim.compose.common.parts.NumberInput
-import io.github.mee1080.umasim.compose.common.parts.WithPersistentTooltip
+import io.github.mee1080.umasim.compose.common.parts.WithTooltip
 import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
@@ -72,20 +72,18 @@ private fun SkillSetting(state: AppState, dispatch: OperationDispatcher<AppState
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun SkillChip(skill: SkillData, selected: Boolean, dispatch: OperationDispatcher<AppState>) {
-    WithPersistentTooltip(
-        text = {
+    WithTooltip(
+        tooltip = {
             Column {
                 skill.messages.forEach { Text(it) }
             }
         },
-        delayTime = 500L,
     ) {
         FilterChip(
             selected = selected,
             onClick = { dispatch(toggleSkill(skill)) },
             label = { Text(skill.name) },
             leadingIcon = { if (selected) Icon(Icons.Default.Check, "Selected") },
-            modifier = Modifier.applyTooltip(),
         )
     }
 }

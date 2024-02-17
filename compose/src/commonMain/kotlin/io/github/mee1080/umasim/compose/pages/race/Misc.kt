@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.compose.pages.race
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -17,7 +18,7 @@ fun Header() {
 
 @Composable
 fun Footer() {
-    Divider()
+    HorizontalDivider()
 
     Column {
         Row { Text("注意事項", style = MaterialTheme.typography.headlineSmall) }
@@ -34,7 +35,7 @@ fun Footer() {
         }
     }
 
-    Divider()
+    HorizontalDivider()
 
     Column {
         Row { Text("本プログラムについて", style = MaterialTheme.typography.headlineSmall) }
@@ -54,7 +55,7 @@ fun Footer() {
         }
     }
 
-    Divider()
+    HorizontalDivider()
 
     Column {
         Row { Text("オープンソースライセンス", style = MaterialTheme.typography.headlineSmall) }

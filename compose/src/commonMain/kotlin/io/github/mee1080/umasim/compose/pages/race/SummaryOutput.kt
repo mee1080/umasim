@@ -78,18 +78,17 @@ private fun SummaryTable(summary: SimulationSummary) {
     LinedTable(
         rowCount = 4, columnCount = 7,
         modifier = Modifier.fillMaxWidth(),
+        cellBackground = MaterialTheme.colorScheme.surface,
+        cellPadding = 4.dp,
     ) { row, column ->
-        val modifier = (if (column == 0) Modifier.width(192.dp) else Modifier.weight(1f))
-            .background(MaterialTheme.colorScheme.surface)
-            .padding(4.dp)
         Column(
+            modifier = Modifier.fillMaxWidth(),
             horizontalAlignment = when {
                 row == 0 -> Alignment.CenterHorizontally
                 column == 0 -> Alignment.Start
                 else -> Alignment.End
             },
             verticalArrangement = Arrangement.Center,
-            modifier = modifier,
         ) {
             Text(tableData[row][column])
         }

@@ -1,7 +1,7 @@
 package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,7 +24,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         CourseInput(state, dispatch)
         SkillInput(state, dispatch)
         SettingInput(state, dispatch)
-        Divider()
+        HorizontalDivider()
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -36,7 +36,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
             }
             if (state.simulationCount > 0 && state.simulationProgress > 0) {
                 LinearProgressIndicator(
-                    progress = state.simulationProgress.toFloat() / state.simulationCount,
+                    progress = { state.simulationProgress.toFloat() / state.simulationCount },
                     modifier = Modifier.fillMaxWidth(),
                 )
             }
