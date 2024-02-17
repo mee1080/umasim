@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.store
 
 import androidx.compose.runtime.Stable
+import io.github.mee1080.umasim.race.calc2.RaceFrame
 import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.store.framework.State
@@ -15,10 +16,12 @@ data class AppState(
     val simulationCount: Int = 100,
     val simulationProgress: Int = 0,
     val simulationSummary: SimulationSummary? = null,
+    val graphData: GraphData? = null,
 ) : State
 
 @Stable
 data class SimulationSummary(
+    val setting: RaceSetting,
     val allSummary: SimulationSummaryEntry,
     val spurtSummary: SimulationSummaryEntry,
     val notSpurtSummary: SimulationSummaryEntry,
@@ -79,12 +82,25 @@ data class SimulationSkillSummary(
     val averageStartFrame1: Double,
     val doubleTriggerRate: Double,
     val averageStartFrame2: Double,
-    val phase0TriggeredRate:Double,
+    val phase0TriggeredRate: Double,
     val phase1ConnectionRate: Double,
     val averagePhase1ConnectionFrame: Double,
-    val phase1TriggeredRate:Double,
+    val phase1TriggeredRate: Double,
     val phase2ConnectionRate: Double,
     val averagePhase2ConnectionFrame: Double,
-    val phase2TriggeredRate:Double,
+    val phase2TriggeredRate: Double,
     val averagePhase2DelayFrame: Double,
+)
+
+@Stable
+data class GraphData(
+    val frameList: List<RaceFrame>,
+    val speedData: List<Pair<Float, Float>>,
+    val staminaData: List<Pair<Float, Float>>,
+    val staminaOverData: List<Pair<Float, Float>>,
+    val straightData: List<Pair<Float, Float>>,
+    val cornerData: List<Pair<Float, Float>>,
+    val upSlopeData: List<Pair<Float, Float>>,
+    val downSlopeData: List<Pair<Float, Float>>,
+    val skillData: List<Pair<Float, String>>,
 )

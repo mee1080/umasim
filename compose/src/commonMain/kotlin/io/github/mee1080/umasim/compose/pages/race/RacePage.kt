@@ -34,6 +34,12 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
             ) {
                 Text("エミュレート開始")
             }
+            MyButton(
+                onClick = { dispatch(runSimulation(1)) },
+                enabled = state.simulationProgress == 0,
+            ) {
+                Text("1回のみ")
+            }
             if (state.simulationCount > 0 && state.simulationProgress > 0) {
                 LinearProgressIndicator(
                     progress = { state.simulationProgress.toFloat() / state.simulationCount },
@@ -42,6 +48,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
             }
         }
         SummaryOutput(state)
+        GraphOutput(state)
         Footer()
     }
 }

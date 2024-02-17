@@ -1,9 +1,7 @@
 package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.averageOf
-import io.github.mee1080.umasim.race.calc2.RaceCalculator
-import io.github.mee1080.umasim.race.calc2.RaceSimulationResult
-import io.github.mee1080.umasim.race.calc2.RaceState
+import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.AsyncOperation
@@ -15,25 +13,32 @@ private val simulationPolicy = OnRunning.Ignore(simulationTag)
 
 private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
 
-fun runSimulation() = AsyncOperation<AppState>({ state ->
-    if (state.simulationCount <= 0) return@AsyncOperation
+fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
+    val simulationCount = overrideCount ?: state.simulationCount
+    if (simulationCount <= 0) return@AsyncOperation
     emit { it.copy(simulationSummary = null) }
     val calculator = RaceCalculator(state.setting)
     val results = mutableListOf<RaceSimulationResult>()
     val skillSummaries = state.setting.hasSkills.associateWith {
         mutableListOf<SimulationSkillInfo>()
     }
-    repeat(state.simulationCount) { count ->
-        emit { it.copy(simulationProgress = count + 1) }
+    var raceFrameList: List<RaceFrame>? = null
+    repeat(simulationCount) { count ->
+        if (count % 10 == 0) {
+            emit { it.copy(simulationProgress = count + 1) }
+        }
         val result = calculator.simulate()
         results += result.first
         createSkillMap(result.second).forEach {
             skillSummaries[it.key]?.add(it.value)
         }
+        raceFrameList = result.second.simulation.frames
     }
+    val graphData = toGraphData(state.setting, raceFrameList)
     val spurtResults = results.filter { it.maxSpurt }
     val notSpurtResult = results.filter { !it.maxSpurt }
     val summary = SimulationSummary(
+        setting = state.setting,
         allSummary = toSummary(results),
         spurtSummary = toSummary(spurtResults),
         notSpurtSummary = toSummary(notSpurtResult),
@@ -44,6 +49,7 @@ fun runSimulation() = AsyncOperation<AppState>({ state ->
         it.copy(
             simulationProgress = 0,
             simulationSummary = summary,
+            graphData = graphData,
         )
     }
 }, simulationPolicy)
@@ -132,6 +138,77 @@ private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
         },
         averagePhase2DelayFrame = triggeredList.mapNotNull { it.phase2DelayFrame }.average(),
     )
+}
+
+private const val speedMin = 15f
+private const val speedMax = 27f
+
+private const val staminaMin = -200f
+
+private const val areaHeight = 0.1f
+
+private fun adjustRange(value: Double, min: Float, max: Float) = (value.toFloat() - min) / (max - min)
+
+private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): GraphData? {
+    if (frameList.isNullOrEmpty()) return null
+    val staminaMax = frameList[0].sp.toFloat()
+    val trackDetail = setting.trackDetail
+    return GraphData(
+        frameList = frameList,
+        speedData = frameList.mapIndexed { index, raceFrame ->
+            index / 15f to adjustRange(raceFrame.speed, speedMin, speedMax)
+        },
+        staminaData = frameList.mapIndexed { index, raceFrame ->
+            index / 15f to adjustRange(raceFrame.sp, staminaMin, staminaMax)
+        },
+        staminaOverData = frameList.mapIndexedNotNull { index, raceFrame ->
+            if (raceFrame.sp >= 0) null else {
+                index / 15f to adjustRange(raceFrame.sp, staminaMin, staminaMax)
+            }
+        },
+        straightData = toGraphData(trackDetail.straights.map { it.start to it.end }, frameList),
+        cornerData = toGraphData(trackDetail.corners.map { it.start to it.end }, frameList),
+        upSlopeData = toGraphData(trackDetail.slopes.filter { it.slope > 0f }.map { it.start to it.end }, frameList),
+        downSlopeData = toGraphData(trackDetail.slopes.filter { it.slope < 0f }.map { it.start to it.end }, frameList),
+        skillData = buildList {
+            frameList.forEachIndexed { index, raceFrame ->
+                raceFrame.skills.forEach {
+                    add(index / 15f to it.skill.name)
+                }
+            }
+        }.sortedBy { it.first }
+    )
+}
+
+private fun toGraphData(
+    areas: List<Pair<Double, Double>>,
+    frameList: List<RaceFrame>,
+): List<Pair<Float, Float>> {
+    return buildList {
+        var areaIndex = 0
+        var inArea = false
+        frameList.forEachIndexed { index, raceFrame ->
+            val area = areas.getOrNull(areaIndex) ?: return@buildList
+            if (inArea) {
+                if (raceFrame.startPosition >= area.second) {
+                    inArea = false
+                    add(index / 15f to areaHeight)
+                    add(index / 15f to 0f)
+                    areaIndex++
+                }
+            } else {
+                if (raceFrame.startPosition >= area.first) {
+                    inArea = true
+                    add(index / 15f to 0f)
+                    add(index / 15f to areaHeight)
+                }
+            }
+        }
+        if (areas.getOrNull(areaIndex) != null) {
+            add((frameList.size - 1) / 15f to areaHeight)
+            add((frameList.size - 1) / 15f to 0f)
+        }
+    }
 }
 
 fun cancelSimulation() = AsyncOperation<AppState>({ state ->

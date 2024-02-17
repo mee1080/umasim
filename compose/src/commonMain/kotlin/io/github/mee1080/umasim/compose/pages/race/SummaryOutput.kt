@@ -5,9 +5,6 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -24,7 +21,7 @@ import kotlin.math.roundToInt
 @Composable
 fun SummaryOutput(state: AppState) {
     val summary = state.simulationSummary ?: return
-    val setting = state.setting
+    val setting = summary.setting
     Column {
         Text("結果", style = MaterialTheme.typography.headlineSmall)
         Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
@@ -55,25 +52,21 @@ fun SummaryOutput(state: AppState) {
 
 @Composable
 private fun SummaryTable(summary: SimulationSummary) {
-    val tableData by remember {
-        derivedStateOf {
-            buildList {
-                add(
-                    listOf(
-                        "",
-                        "平均タイム",
-                        "最速タイム",
-                        "最遅タイム",
-                        "平均余剰耐力",
-                        "最大余剰耐力",
-                        "最小余剰耐力"
-                    )
-                )
-                add(toTableData("全体", summary.allSummary))
-                add(toTableData("最大スパート", summary.spurtSummary))
-                add(toTableData("非最大スパート", summary.notSpurtSummary))
-            }
-        }
+    val tableData = buildList {
+        add(
+            listOf(
+                "",
+                "平均タイム",
+                "最速タイム",
+                "最遅タイム",
+                "平均余剰耐力",
+                "最大余剰耐力",
+                "最小余剰耐力"
+            )
+        )
+        add(toTableData("全体", summary.allSummary))
+        add(toTableData("最大スパート", summary.spurtSummary))
+        add(toTableData("非最大スパート", summary.notSpurtSummary))
     }
     LinedTable(
         rowCount = 4, columnCount = 7,
@@ -111,29 +104,25 @@ private fun toTableData(label: String, entry: SimulationSummaryEntry): List<Stri
 private fun SkillTable(summary: SimulationSummary) {
     val summaries = summary.skillSummaries
     if (summaries.isEmpty()) return
-    val tableData by remember {
-        derivedStateOf {
-            buildList {
-                add(
-                    listOf(
-                        "発動数",
-                        "発動率",
-                        "平均発動位置1",
-                        "2回発動率",
-                        "平均発動位置2",
-                        "序盤発動率",
-                        "中盤接続率",
-                        "平均中盤接続時間",
-                        "中盤発動率",
-                        "終盤接続率",
-                        "平均終盤接続時間",
-                        "終盤発動率",
-                        "平均終盤遅延",
-                    )
-                )
-                summaries.forEach { add(toTableData(it.second)) }
-            }
-        }
+    val tableData = buildList {
+        add(
+            listOf(
+                "発動数",
+                "発動率",
+                "平均発動位置1",
+                "2回発動率",
+                "平均発動位置2",
+                "序盤発動率",
+                "中盤接続率",
+                "平均中盤接続時間",
+                "中盤発動率",
+                "終盤接続率",
+                "平均終盤接続時間",
+                "終盤発動率",
+                "平均終盤遅延",
+            )
+        )
+        summaries.forEach { add(toTableData(it.second)) }
     }
     Text("スキル情報", modifier = Modifier.padding(top = 8.dp))
     Row {
