@@ -34,8 +34,8 @@ fun SupportCard.toMemberState(
         Scenario.CLIMAX -> ClimaxMemberState
         Scenario.GRAND_LIVE -> GrandLiveMemberState
         Scenario.GM -> GmMemberState
-        // TODO LArc
         Scenario.LARC -> LArcMemberState()
+        Scenario.UAF -> UafMemberState
     }
 )
 
@@ -61,6 +61,7 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
         Scenario.GRAND_LIVE -> GrandLiveMemberState
         Scenario.GM -> GmMemberState
         Scenario.LARC -> LArcMemberState()
+        Scenario.UAF -> UafMemberState
     },
 )
 

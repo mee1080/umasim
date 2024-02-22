@@ -92,6 +92,7 @@ class Simulator(
             Scenario.GRAND_LIVE -> GrandLiveScenarioEvents()
             Scenario.GM -> GmScenarioEvents()
             Scenario.LARC -> LArcScenarioEvents()
+            Scenario.UAF -> UafScenarioEvents()
         }
         val events = eventsProducer(state)
         state = scenarioEvents.beforeSimulation(state)

@@ -293,6 +293,8 @@ object Calculator {
         Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
         Scenario.GM -> calcGmStatus(info, base)
         Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
+        // TODO UAF
+        Scenario.UAF -> Status()
     }
 
     private fun calcAoharuStatus(

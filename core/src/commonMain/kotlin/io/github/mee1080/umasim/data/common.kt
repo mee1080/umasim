@@ -128,7 +128,9 @@ enum class Scenario(
         guestMember = true,
         turn = 67,
         levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
-    )
+    ),
+    // TODO UAF
+    UAF("U.A.F.（未実装）"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -139,6 +141,7 @@ fun toScenario(value: Int) = when (value) {
     3 -> Scenario.GRAND_LIVE
     5 -> Scenario.GM
     6 -> Scenario.LARC
+    7 -> Scenario.UAF
     else -> Scenario.URA
 }
 
