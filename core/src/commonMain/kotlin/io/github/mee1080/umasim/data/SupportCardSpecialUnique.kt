@@ -70,9 +70,9 @@ data class SupportCardSpecialUnique(
         } else if (type == 116) {
             val skillCount = when (value0) {
                 1 -> speedSkillCount
+                2 -> accelSkillCount
                 3 -> healSkillCount
-                // TODO
-                else -> accelSkillCount
+                else -> 0
             }
             if (statusType == bonusStatus(value1)) {
                 value2 * min(skillCount, value3)
@@ -91,50 +91,39 @@ data class SupportCardSpecialUnique(
     }
 
     fun trainingFactor(
-        cardType: StatusType,
-        trainingType: StatusType,
-        trainingLevel: Int,
-        totalTrainingLevel: Int,
-        relation: Int,
-        supportTypeCount: Int,
-        fanCount: Int,
-        status: Status,
-        totalRelation: Int,
-        trainingSupportCount: Int,
-        speedSkillCount: Int,
-        healSkillCount: Int,
-        friendTraining: Boolean,
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
     ): Int {
-        return if (type == 101 && relation >= value0) {
+        return if (type == 101 && condition.relation >= value0) {
             (if (value1 == 8) value2 else 0) + (if (value3 == 8) value4 else 0)
-        } else if (type == 102 && relation >= value0 && trainingType != cardType) {
+        } else if (type == 102 && condition.relation >= value0 && condition.trainingType != card.type) {
             value1
-        } else if (type == 103 && supportTypeCount >= value0) {
+        } else if (type == 103 && condition.supportTypeCount >= value0) {
             value1
         } else if (type == 104) {
-            min(value1, fanCount / value0)
+            min(value1, condition.fanCount / value0)
         } else if (type == 108 && value0 == 8) {
-            min(value4, ((status.maxHp - value1) * value2 / 100.0 + value3).toInt())
+            min(value4, ((condition.status.maxHp - value1) * value2 / 100.0 + value3).toInt())
         } else if (type == 109 && value0 == 8) {
-            totalRelation / value1
+            condition.totalRelation / value1
         } else if (type == 110 && value0 == 8) {
-            trainingSupportCount * value1
+            condition.trainingSupportCount * value1
         } else if (type == 111 && value0 == 8) {
-            min(5, trainingLevel) * value1
-        } else if (type == 113 && value0 == 8 && friendTraining) {
+            min(5, condition.trainingLevel) * value1
+        } else if (type == 113 && value0 == 8 && condition.friendTraining) {
             value1
         } else if (type == 114 && value0 == 8) {
-            value2 - max(0, (100 - status.hp) / value1)
+            value2 - max(0, (100 - condition.status.hp) / value1)
         } else if (type == 116 && value1 == 8) {
             val skillCount = when (value0) {
-                1 -> speedSkillCount
-                3 -> healSkillCount
-                // TODO
+                1 -> condition.speedSkillCount
+                2 -> condition.accelSkillCount
+                3 -> condition.healSkillCount
                 else -> 0
             }
             value2 * min(skillCount, value3)
         } else if (type == 117 && value0 == 8) {
-            min(value2, totalTrainingLevel)
+            min(value2, condition.totalTrainingLevel)
         } else 0
     }
 

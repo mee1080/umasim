@@ -90,6 +90,40 @@ object WebConstants {
         }
     }
 
+    private val SupportCard.noSpecialUniqueCondition
+        get() = SpecialUniqueCondition(
+            type,
+            1,
+            5,
+            0,
+            0,
+            0,
+            Status(maxHp = 100, hp = 100),
+            0,
+            1,
+            0,
+            0,
+            0,
+            false,
+        )
+
+    private val SupportCard.withSpecialUniqueCondition
+        get() = SpecialUniqueCondition(
+            type,
+            5,
+            20,
+            100,
+            6,
+            1000000,
+            Status(maxHp = 120, hp = 30),
+            600,
+            5,
+            5,
+            5,
+            5,
+            true,
+        )
+
     val supportSortOrder = listOf(
         SortOrder("デフォルト", descending = false, noInfo = true) { type.ordinal * 10000000 - rarity * 1000000 + id },
         SortOrder("ID（ほぼ新しい順）", noInfo = true) { id },
@@ -101,38 +135,8 @@ object WebConstants {
         SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
         SortOrder("やる気ボナ（特殊固有なし）") { motivationFactor(0, false) },
         SortOrder("やる気ボナ（特殊固有あり）") { motivationFactor(100, true) },
-        SortOrder("トレ効果（特殊固有なし）") {
-            trainingFactor(
-                type,
-                1,
-                5,
-                0,
-                0,
-                0,
-                Status(maxHp = 100, hp = 100),
-                0,
-                1,
-                0,
-                0,
-                false,
-            )
-        },
-        SortOrder("トレ効果（特殊固有あり）") {
-            trainingFactor(
-                type,
-                5,
-                20,
-                100,
-                6,
-                1000000,
-                Status(maxHp = 120, hp = 30),
-                600,
-                5,
-                5,
-                5,
-                true,
-            )
-        },
+        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(noSpecialUniqueCondition) },
+        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(withSpecialUniqueCondition) },
         SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0, 0, 0, 0) },
         SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0, 0, 0, 0) },
         SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0, 0, 0, 0) },

@@ -132,34 +132,9 @@ data class SupportCard(
     } + specialUnique.sumOf { it.getBaseBonus(type, relation, speedSkillCount, healSkillCount, accelSkillCount) }
 
     fun trainingFactor(
-        trainingType: StatusType,
-        trainingLevel: Int,
-        totalTrainingLevel: Int,
-        relation: Int,
-        supportTypeCount: Int,
-        fanCount: Int,
-        currentStatus: Status,
-        totalRelation: Int,
-        trainingSupportCount: Int,
-        speedSkillCount: Int,
-        healSkillCount: Int,
-        friendTraining: Boolean,
+        condition: SpecialUniqueCondition,
     ) = status.training + unique.training + specialUnique.sumOf {
-        it.trainingFactor(
-            type,
-            trainingType,
-            trainingLevel,
-            totalTrainingLevel,
-            relation,
-            supportTypeCount,
-            fanCount,
-            currentStatus,
-            totalRelation,
-            trainingSupportCount,
-            speedSkillCount,
-            healSkillCount,
-            friendTraining,
-        )
+        it.trainingFactor(this, condition)
     }
 
     fun hpCost(

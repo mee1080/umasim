@@ -54,6 +54,26 @@ object Calculator {
         val support by lazy { member.filter { !it.guest } }
 
         val allFriend get() = gmStatus?.allFriend == true
+
+        fun specialUniqueCondition(
+            relation: Int,
+            trainingSupportCount: Int,
+            friendTraining: Boolean,
+        ) = SpecialUniqueCondition(
+            trainingType = training.type,
+            trainingLevel = training.level,
+            totalTrainingLevel = totalTrainingLevel,
+            relation = relation,
+            supportTypeCount = supportTypeCount,
+            fanCount = fanCount,
+            status = currentStatus,
+            totalRelation = totalRelation,
+            trainingSupportCount = trainingSupportCount,
+            speedSkillCount = speedSkillCount,
+            healSkillCount = healSkillCount,
+            accelSkillCount = accelSkillCount,
+            friendTraining = friendTraining,
+        )
     }
 
     fun calcTrainingSuccessStatus(
@@ -114,18 +134,11 @@ object Calculator {
         val trainingBonus =
             1 + support.sumOf {
                 it.card.trainingFactor(
-                    info.training.type,
-                    info.training.level,
-                    info.totalTrainingLevel,
-                    it.relation,
-                    info.supportTypeCount,
-                    info.fanCount,
-                    info.currentStatus,
-                    info.totalRelation,
-                    support.size,
-                    info.speedSkillCount,
-                    info.healSkillCount,
-                    friendTraining,
+                    info.specialUniqueCondition(
+                        relation = it.relation,
+                        trainingSupportCount = support.size,
+                        friendTraining = friendTraining,
+                    )
                 )
             } / 100.0
         val count = 1 + info.member.size * 0.05
