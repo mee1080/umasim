@@ -129,8 +129,9 @@ enum class Scenario(
         turn = 67,
         levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
     ),
+
     // TODO UAF
-    UAF("U.A.F.（未実装）"),
+    UAF("U.A.F.（未実装）", trainingAutoLevelUp = false),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)

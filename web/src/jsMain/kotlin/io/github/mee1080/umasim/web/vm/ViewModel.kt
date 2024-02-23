@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.web.vm
 
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -28,12 +29,10 @@ import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.web.state.*
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
-import kotlinx.serialization.ExperimentalSerializationApi
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
-@OptIn(ExperimentalSerializationApi::class)
+@Stable
 class ViewModel(val scope: CoroutineScope) {
 
     companion object {
@@ -305,6 +304,7 @@ class ViewModel(val scope: CoroutineScope) {
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
         val lArcStatus = state.lArcStatusIfEnabled
+        val uafStatus = state.uafStatusIfEnabled
         val trainingLevel = if (
             gmStatus?.trainingLevelUp == true
             || (state.scenario == Scenario.LARC && state.lArcState.overseas)
@@ -329,6 +329,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.trainingLiveStateIfEnabled,
             gmStatus,
             lArcStatus,
+            uafStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -364,6 +365,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.trainingLiveStateIfEnabled,
                     gmStatus,
                     lArcStatus,
+                    uafStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
@@ -390,6 +392,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.trainingLiveStateIfEnabled,
                 gmStatus,
                 lArcStatus,
+                uafStatus,
             ),
             state.teamJoinCount,
         )
@@ -476,6 +479,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.trainingLiveStateIfEnabled,
                 state.gmStatusIfEnabled,
                 state.lArcStatusIfEnabled,
+                state.uafStatusIfEnabled,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
@@ -704,5 +708,9 @@ class ViewModel(val scope: CoroutineScope) {
                 hopeOfLArc = value,
             )
         }
+    }
+
+    fun updateUaf(update: UafState.() -> UafState) {
+        update { copy(uafState = uafState.update()) }
     }
 }

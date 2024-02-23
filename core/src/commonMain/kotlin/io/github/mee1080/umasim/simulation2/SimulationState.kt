@@ -39,6 +39,7 @@ data class SimulationState(
     val liveStatus: LiveStatus? = null,
     val gmStatus: GmStatus? = null,
     val lArcStatus: LArcStatus? = null,
+    val uafStatus: UafStatus? = null,
 ) {
     val itemAvailable get() = scenario == Scenario.CLIMAX
 

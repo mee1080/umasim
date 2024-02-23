@@ -84,6 +84,7 @@ data class State(
     val expectedState: ExpectedState = ExpectedState(),
     val gmState: GmState = GmState(),
     val lArcState: LArcState = LArcState(),
+    val uafState: UafState = UafState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -134,6 +135,8 @@ data class State(
     val gmStatusIfEnabled get() = if (scenario == Scenario.GM) gmState.toGmStatus() else null
 
     val lArcStatusIfEnabled get() = if (scenario == Scenario.LARC) lArcState.toLArcStatus() else null
+
+    val uafStatusIfEnabled get() = if (scenario == Scenario.UAF) uafState.toUafStatus() else null
 }
 
 data class SupportSelection(
@@ -482,4 +485,67 @@ data class LArcState(
         mentalStrength = mentalStrength,
         hopeOfLArc = hopeOfLArc,
     )
+}
+
+data class UafState(
+    val trainingGenre: UafGenre = UafGenre.Blue,
+    val selectedTrainingType: StatusType = StatusType.SPEED,
+    val speedAthleticLevel: Int = 0,
+    val staminaAthleticLevel: Int = 0,
+    val powerAthleticLevel: Int = 0,
+    val gutsAthleticLevel: Int = 0,
+    val wisdomAthleticLevel: Int = 0,
+    val linkSpeed: Boolean = false,
+    val linkStamina: Boolean = false,
+    val linkPower: Boolean = false,
+    val linkGuts: Boolean = false,
+    val linkWisdom: Boolean = false,
+    val blueFestivalBonus: Int = 0,
+    val redFestivalBonus: Int = 0,
+    val yellowFestivalBonus: Int = 0,
+    val heatUpBlue: Boolean = false,
+    val heatUpRed: Boolean = false,
+    val heatUpYellow: Boolean = false,
+) {
+    val trainingName get() = UafAthletic.byStatusType[selectedTrainingType]!!.first { it.genre == trainingGenre }.longDisplayName
+
+    fun toUafStatus(): UafStatus {
+        val athletics = trainingType.associateWith { type ->
+            if (checkJoin(type)) {
+                UafAthletic.byStatusType[type]!!.first { it.genre == trainingGenre }
+            } else {
+                UafAthletic.byStatusType[type]!!.first { it.genre != trainingGenre }
+            }
+        }
+        val athleticsLevel = mapOf(
+            athletics[StatusType.SPEED]!! to speedAthleticLevel,
+            athletics[StatusType.STAMINA]!! to staminaAthleticLevel,
+            athletics[StatusType.POWER]!! to powerAthleticLevel,
+            athletics[StatusType.GUTS]!! to gutsAthleticLevel,
+            athletics[StatusType.WISDOM]!! to wisdomAthleticLevel,
+        )
+        val heatUp = mapOf(
+            UafGenre.Blue to if (heatUpBlue) 2 else 0,
+            UafGenre.Red to if (heatUpRed) 2 else 0,
+            UafGenre.Yellow to if (heatUpYellow) 2 else 0,
+        )
+        val festivalBonus = blueFestivalBonus + redFestivalBonus + yellowFestivalBonus
+        return UafStatus(
+            athleticsLevel = athleticsLevel,
+            trainingAthletics = athletics,
+            heatUp = heatUp,
+            festivalBonus = festivalBonus,
+        )
+    }
+
+    private fun checkJoin(type: StatusType): Boolean {
+        return type == selectedTrainingType || when (type) {
+            StatusType.SPEED -> linkSpeed
+            StatusType.STAMINA -> linkStamina
+            StatusType.POWER -> linkPower
+            StatusType.GUTS -> linkGuts
+            StatusType.WISDOM -> linkWisdom
+            else -> false
+        }
+    }
 }

@@ -208,6 +208,17 @@ object WebConstants {
         "蹄鉄ハンマー・匠" to 1.2,
         "蹄鉄ハンマー・極" to 1.35,
     )
+
+    val uafFestivalBonusValue = mapOf(
+        0 to "0",
+        1 to "1～4",
+        3 to "5～9",
+        7 to "10～14",
+        12 to "15～19",
+        17 to "20～25",
+    )
+
+    val uafFestivalBonus = listOf(0, 1, 3, 7, 12, 17)
 }
 
 fun SupportCard?.displayName(): String {

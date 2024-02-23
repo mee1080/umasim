@@ -42,6 +42,7 @@ object Calculator {
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
         val lArcStatus: LArcStatus?,
+        val uafStatus: UafStatus?,
     ) {
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(

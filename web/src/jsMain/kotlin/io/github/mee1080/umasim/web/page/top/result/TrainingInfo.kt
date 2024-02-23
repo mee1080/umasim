@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.UafGenre
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.onChange
@@ -33,6 +34,7 @@ import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.css.fontWeight
 import org.jetbrains.compose.web.css.marginTop
 import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.css.width
@@ -42,22 +44,46 @@ import kotlin.math.roundToInt
 @Composable
 fun TrainingInfo(model: ViewModel, state: State) {
     HideBlock("トレーニング上昇量", true) {
-        DivFlexCenter {
-            Text("種別　：")
-            MdRadioGroup(
-                trainingTypeList,
-                state.selectedTrainingType,
-                onSelect = model::updateTrainingType,
-                itemToLabel = { it.displayName },
-            )
-        }
-        DivFlexCenter {
-            Text("レベル：")
-            MdRadioGroup(
-                listOf(1, 2, 3, 4, 5),
-                state.trainingLevel,
-                onSelect = model::updateTrainingLevel,
-            )
+        if (state.scenario == Scenario.UAF) {
+            DivFlexCenter {
+                Text("種別　：")
+                MdRadioGroup(
+                    trainingTypeList,
+                    state.uafState.selectedTrainingType,
+                    onSelect = { model.updateUaf { copy(selectedTrainingType = it) } },
+                    itemToLabel = { it.displayName },
+                )
+            }
+            DivFlexCenter {
+                Text("ジャンル　：")
+                MdRadioGroup(
+                    UafGenre.entries,
+                    state.uafState.trainingGenre,
+                    onSelect = { model.updateUaf { copy(trainingGenre = it) } },
+                    itemToLabel = { it.longDisplayName },
+                )
+            }
+            DivFlexCenter({ style { fontWeight("bold") } }) {
+                Text(state.uafState.trainingName)
+            }
+        } else {
+            DivFlexCenter {
+                Text("種別　：")
+                MdRadioGroup(
+                    trainingTypeList,
+                    state.selectedTrainingType,
+                    onSelect = model::updateTrainingType,
+                    itemToLabel = { it.displayName },
+                )
+            }
+            DivFlexCenter {
+                Text("レベル：")
+                MdRadioGroup(
+                    listOf(1, 2, 3, 4, 5),
+                    state.trainingLevel,
+                    onSelect = model::updateTrainingLevel,
+                )
+            }
         }
         DivFlexCenter {
             Text("やる気：")

@@ -298,9 +298,16 @@ internal val scenarioLinkData = mapOf(
         "シリウスシンボリ",
         "ナカヤマフェスタ",
         "タップダンスシチー",
+        "オルフェーブル",
     ),
-    // TODO UAF
-    Scenario.UAF to emptySet(),
+    Scenario.UAF to setOf(
+        "メジロライアン",
+        "ウイニングチケット",
+        "トーセンジョーダン",
+        "ヤエノムテキ",
+        "ナリタトップロード",
+        "都留岐涼花",
+    ),
 )
 
 val supportEffectName = mapOf(
