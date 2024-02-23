@@ -91,6 +91,16 @@ class RaceState(
 
     val currentPhase get() = getPhase(simulation.position)
 
+    val isLaterHalf get() = simulation.position > setting.trackDetail.distance / 2
+
+    fun isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
+        val (startRate, endRate) = interval
+        val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
+        val start = finalCorner.start + startRate * finalCorner.length
+        val end = finalCorner.start + endRate * finalCorner.length
+        return simulation.position in start..end
+    }
+
     fun getSection(position: Double): Int {
         return floor((position * 24.0) / setting.courseLength).toInt()
     }
@@ -200,18 +210,18 @@ class RaceState(
 data class RaceSetting(
     val umaStatus: UmaStatus = UmaStatus(),
     val hasSkills: List<SkillData> = emptyList(),
+    val uniqueLevel: Int = 6,
     val passiveTriggered: Int = 0,
     val track: Track = Track(),
 
-    val skillActivateAdjustment: Int = 0,
-    val randomPosition: Int = 0,
+    val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
+    val randomPosition: RandomPosition = RandomPosition.RANDOM,
 
-    val maxEpoch: Int = 0,
     val season: Int = 0,
     val weather: Int = 0,
     val badStart: Boolean = false,
 ) {
-    val fixRandom get() = skillActivateAdjustment == 2
+    val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
     val basicRunningStyle get() = umaStatus.basicRunningStyle
     val locationName by lazy { trackData[track.location]?.name ?: "" }
@@ -384,6 +394,26 @@ data class RaceSetting(
     val oonige by lazy {
         umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
     }
+
+    fun equalStamina(heal: Int): Double {
+        return spMax * heal / 10000.0 / 0.8 / runningStyle.styleSpCoef
+    }
+
+    val phase1Start by lazy { courseLength / 6.0 }
+
+    val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
+
+    val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
+
+    fun getPhaseStartEnd(phase: Int): Pair<Double, Double> {
+        return when (phase) {
+            0 -> 0.0 to phase1Start
+            1 -> phase1Start to phase2Start
+            2 -> phase2Start to phase3Start
+            3 -> phase3Start to courseLength.toDouble()
+            else -> throw IllegalArgumentException()
+        }
+    }
 }
 
 class RaceSimulationState(
@@ -407,7 +437,7 @@ class RaceSimulationState(
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
-    val skillTriggerCount: MutableList<Int> = mutableListOf(0, 0, 0, 0, 0),
+    val skillTriggerCount: SkillTriggerCount = SkillTriggerCount(),
     var passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
@@ -424,12 +454,20 @@ class RaceSimulationState(
         }
 }
 
-object SkillTriggerCount {
-    val PHASE_0 = 0
-    val PHASE_1 = 1
-    val PHASE_2 = 2
-    val PHASE_3 = 3
-    val YUMENISHIKI = 4
+class SkillTriggerCount {
+    var inPhase = arrayOf(0, 0, 0, 0)
+    var inLaterHalf = 0
+
+    val total get() = inPhase.sum()
+    val inAfterPhase2 get() = inPhase[2] + inPhase[3]
+
+    fun increment(state: RaceState) {
+        val phase = state.currentPhase
+        inPhase[phase]++
+        if (state.isLaterHalf) {
+            inLaterHalf++
+        }
+    }
 }
 
 data class SpurtParameters(
@@ -444,7 +482,7 @@ data class OperatingSkill(
     val startFrame: Int,
     val durationOverwrite: Double? = null,
 ) {
-    val duration: Double? get() = durationOverwrite ?: data.invoke.duration
+    val duration: Double get() = durationOverwrite ?: data.invoke.duration
 }
 
 data class RaceFrame(
@@ -456,6 +494,7 @@ data class RaceFrame(
     val movement: Double = 0.0,
     val consume: Double = 0.0,
     val skills: List<InvokedSkill> = emptyList(),
+    val endedSkills: List<OperatingSkill> = emptyList(),
     val spurting: Boolean = false,
 )
 
@@ -469,5 +508,7 @@ data class RaceSimulationResult(
 class InvokedSkill(
     val skill: SkillData,
     val invoke: Invoke,
+    val preCheck: RaceState.() -> Boolean,
     val check: RaceState.() -> Boolean,
+    var preChecked: Boolean = false,
 )

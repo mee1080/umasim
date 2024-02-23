@@ -3,6 +3,9 @@ package io.github.mee1080.umasim.race.data2
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.math.abs
+import kotlin.math.pow
+import kotlin.math.roundToInt
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonParser = Json { allowTrailingComma = true }
@@ -25,6 +28,40 @@ fun getSkill(name: String): SkillData {
     return skills.first()
 }
 
+val approximateRate = mapOf(
+    "is_move_lane" to (0.01 to "横移動"),
+    "change_order_onetime" to (0.005 to "追い抜き/追い抜かれ"),
+    "is_overtake" to (0.02 to "追い抜きモード"),
+    "overtake_target_time" to (0.015 to "詰め寄られ"),
+    "compete_fight_count" to (0.03 to "追い比べ"),
+    "blocked_front" to (0.005 to "前方ブロック"),
+    "blocked_front_continuetime" to (0.001 to "前方ブロック"),
+    "blocked_side_continuetime" to (0.005 to "横ブロック"),
+    "infront_near_lane_time" to (0.01 to "前にウマ娘条件"),
+    "behind_near_lane_time" to (0.01 to "後にウマ娘条件"),
+    "behind_near_lane_time_set1" to (0.015 to "後にウマ娘条件"),
+    "near_count" to (0.01 to "近くにウマ娘条件"),
+    "is_surrounded" to (0.003 to "囲まれ条件"),
+    "temptation_opponent_count_behind" to (0.005 to "後ろのウマ娘掛かり"),
+)
+
+fun approximateRateString(info: Pair<Double, String>, value: Int): String {
+    val rate = info.first / 2.0.pow(value)
+    val rateString = (rate * 100).roundString(1)
+    val secondRate = 1.0 - (1.0 - rate).pow(15)
+    val secondRateString = (secondRate * 100).roundString(1)
+    return "${info.second}は毎フレーム${rateString}%の確率で発動するものとする（1秒以内発動率${secondRateString}%）"
+}
+
+private fun Double.roundString(position: Int = 0): String {
+    return if (isNaN()) "-" else if (position == 0) roundToInt().toString() else {
+        val minus = if (this < 0) "-" else ""
+        val factor = 10.0.pow(position).roundToInt()
+        val intValue = (abs(this) * factor).roundToInt()
+        return "$minus${intValue / factor}.${intValue % factor}"
+    }
+}
+
 val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
     "time" to "ナイター条件は無視",
@@ -33,10 +70,7 @@ val ignoreConditions = mapOf(
     "is_dirtgrade" to "交流重賞条件は無視",
     "popularity" to "人気条件は満たしている前提、満たさない場合は未実装",
 
-    "activate_count_later_half" to "他スキル発動条件は未実装",
-    "activate_count_middle" to "他スキル発動条件は未実装",
-    "activate_count_end_after" to "他スキル発動条件は未実装",
-    "is_activate_other_skill_detail" to "他スキル発動条件は未実装",
+    "is_activate_other_skill_detail" to "一段目が発動しなくても二段目が発動",
     "is_used_skill_id" to "他スキル発動条件は未実装",
 
     "order" to "順位条件は無視",
@@ -62,13 +96,8 @@ val ignoreConditions = mapOf(
 
     "distance_diff_rate" to "相対位置条件は無視",
 
-    "is_move_lane" to "横移動条件は無視",
-
-    "change_order_up_finalcorner_after" to "追い抜き条件は無視",
-    "change_order_onetime" to "追い抜き/追い抜かれ条件は無視",
-    "is_overtake" to "追い抜き条件は無視",
-    "change_order_up_end_after" to "追い抜き条件は無視",
-    "overtake_target_time" to "追い抜かれ条件は無視",
+    "change_order_up_finalcorner_after" to "最終コーナー以降追い抜き条件は無視",
+    "change_order_up_end_after" to "終盤追い抜き条件は無視",
 
     "bashin_diff_infront" to "他のウマ娘との距離条件は無視",
     "bashin_diff_behind" to "他のウマ娘との距離条件は無視",
@@ -84,17 +113,7 @@ val ignoreConditions = mapOf(
     "running_style_count_same" to "他のウマ娘の作戦条件は無視",
     "running_style_count_same_rate" to "他のウマ娘の作戦条件は無視",
 
-    "compete_fight_count" to "他のウマ娘が関わる条件は無視",
-    "blocked_front" to "他のウマ娘が関わる条件は無視",
-    "blocked_front_continuetime" to "他のウマ娘が関わる条件は無視",
-    "blocked_side_continuetime" to "他のウマ娘が関わる条件は無視",
-    "infront_near_lane_time" to "他のウマ娘が関わる条件は無視",
-    "behind_near_lane_time" to "他のウマ娘が関わる条件は無視",
-    "behind_near_lane_time_set1" to "他のウマ娘が関わる条件は無視",
-    "near_count" to "他のウマ娘が関わる条件は無視",
-    "is_surrounded" to "他のウマ娘が関わる条件は無視",
-    "temptation_opponent_count_behind" to "他のウマ娘が関わる条件は無視",
-    "visiblehorse" to "他のウマ娘が関わる条件は無視",
+    "visiblehorse" to "視界内のウマ娘条件は満たしている前提",
 
     "activate_count_all_team" to "チームのスキル発動数条件は無視",
 )
@@ -127,20 +146,51 @@ data class Invoke(
     val duration: Double = 0.0,
 ) {
     val messages by lazy {
-        toMessages(preConditions) + toMessages(conditions)
+        effects.map { "${it.type} ${it.value}" } + toMessages(preConditions) + toMessages(conditions)
     }
 
     private fun toMessages(target: List<List<SkillCondition>>): Set<String> {
         return buildSet {
             target.forEach { andConditions ->
                 andConditions.forEach { condition ->
+                    approximateRate[condition.type]?.let { add(approximateRateString(it, condition.value)) }
                     ignoreConditions[condition.type]?.let { add(it) }
                 }
             }
         }
     }
 
-    val coolDownId = "$skillId-$index"
+    val targetRunningStyle by lazy { createConditionValuesSet("running_style") }
+
+    val targetRotation by lazy { createConditionValuesSet("rotation") }
+
+    val targetGroundType by lazy { createConditionValuesSet("ground_type") }
+
+    val targetDistanceType by lazy { createConditionValuesSet("distance_type") }
+
+    val targetTrackId by lazy { createConditionValuesSet("track_id") }
+
+    val targetBasisDistance by lazy { createConditionValuesSet("is_basis_distance") }
+
+    private fun createConditionValuesSet(type: String): Set<Int> {
+        return buildSet {
+            conditions.forEach { list ->
+                list.forEach {
+                    if (it.type == type) {
+                        add(it.value)
+                    }
+                }
+            }
+        }
+    }
+
+    val coolDownId by lazy {
+        if (conditions.any { list -> list.any { it.type == "is_activate_other_skill_detail" } }) {
+            "$skillId-$index"
+        } else {
+            skillId
+        }
+    }
 
     val isPassive by lazy {
         passiveSpeed > 0 || passiveStamina > 0 || passivePower > 0 || passiveGuts > 0 || passiveWisdom > 0 || temptationRate > 0

@@ -22,6 +22,7 @@
  */
 package io.github.mee1080.umasim.race.calc2
 
+import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
 import io.github.mee1080.umasim.race.data.frameLength
 import io.github.mee1080.umasim.race.data.maxSpeed
 import io.github.mee1080.umasim.race.data.spConsumptionCoef
@@ -62,14 +63,19 @@ class RaceCalculator(private val setting: RaceSetting) {
 private fun RaceState.invokeSkills() {
     setting.hasSkills.forEach { skill ->
         skill.invokes.forEach { invoke ->
-            val invokeRate = if (setting.skillActivateAdjustment > 0 || skill.activateLot == 0) {
-                100.0
-            } else {
-                maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
-            }
+            val invokeRate =
+                if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE || skill.activateLot == 0) {
+                    100.0
+                } else {
+                    maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
+                }
             if (Random.nextDouble() * 100 < invokeRate) {
-                // TODO init
-                simulation.invokedSkills += InvokedSkill(skill, invoke, checkCondition(invoke.conditions, setting))
+                simulation.invokedSkills += InvokedSkill(
+                    skill,
+                    invoke,
+                    checkCondition(invoke.preConditions, setting),
+                    checkCondition(invoke.conditions, setting),
+                )
             }
         }
     }
@@ -82,7 +88,7 @@ private fun RaceState.triggerStartSkills() {
         if (skill.invoke.isPassive) {
             if (skill.check(this)) {
                 triggerSkill(skill)
-                simulation.skillTriggerCount[0]++
+                simulation.skillTriggerCount.increment(this)
                 simulation.passiveTriggered++
                 skills += skill
             }
@@ -94,7 +100,7 @@ private fun RaceState.triggerStartSkills() {
             }
             simulation.startDelay += skill.invoke.startAdd
             triggerSkill(skill)
-            simulation.skillTriggerCount[0]++
+            simulation.skillTriggerCount.increment(this)
             skills += skill
             remove = true
         }
@@ -202,17 +208,19 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         val spurtParameters = simulation.spurtParameters
         val spurting =
             spurtParameters != null && simulation.position + spurtParameters.distance >= setting.courseLength
-        frame = frame.copy(
-            skills = skillTriggered,
-            spurting = spurting,
-        )
 
         // Remove overtime skills
-        simulation.operatingSkills.removeAll { operatingSkill ->
-            val duration = operatingSkill.duration ?: 0.0
+        val endedSkills = simulation.operatingSkills.filter { operatingSkill ->
+            val duration = operatingSkill.duration
             (simulation.frameElapsed - operatingSkill.startFrame) * frameLength > duration * setting.timeCoef
         }
+        simulation.operatingSkills.removeAll(endedSkills)
 
+        frame = frame.copy(
+            skills = skillTriggered,
+            endedSkills = endedSkills,
+            spurting = spurting,
+        )
         simulation.frames += frame
     }
 

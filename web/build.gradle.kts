@@ -24,6 +24,7 @@ kotlin {
                 implementation(compose.runtime)
                 implementation(npm("@material/web", "1.0.1"))
                 implementation(libs.kotlinx.serializationJson)
+                implementation(libs.kotlinx.coroutinesCore)
             }
         }
     }

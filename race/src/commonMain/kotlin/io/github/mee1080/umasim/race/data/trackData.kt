@@ -51,8 +51,6 @@ data class TrackDetail(
     val straights: List<Straight>,
     val slopes: List<Slope>,
 ) {
-    fun toPosition(distanceLeft: Int) = distance - distanceLeft
-
     fun getSlope(position: Double): Double {
         for (slope in slopes) {
             if (position >= slope.start && position <= slope.end) {
@@ -61,6 +59,8 @@ data class TrackDetail(
         }
         return 0.0
     }
+
+    val isBasisDistance by lazy { if (distance % 400 == 0) 1 else 0 }
 }
 
 @Serializable

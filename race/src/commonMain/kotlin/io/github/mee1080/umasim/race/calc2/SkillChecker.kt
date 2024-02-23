@@ -23,16 +23,20 @@
 package io.github.mee1080.umasim.race.calc2
 
 import io.github.mee1080.umasim.race.data.Corner
+import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data2.SkillCondition
+import io.github.mee1080.umasim.race.data2.approximateRate
 import io.github.mee1080.umasim.race.data2.ignoreConditions
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.pow
 import kotlin.random.Random
 
 fun checkCondition(conditions: List<List<SkillCondition>>, setting: RaceSetting): RaceState.() -> Boolean {
     val checks = conditions.map { andConditions ->
         andConditions.mapNotNull { checkCondition(it, setting) }
     }
+    if (checks.isEmpty()) return { true }
     return {
         checks.any { andConditions ->
             andConditions.all { it.invoke(this) }
@@ -45,8 +49,12 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "motivation" -> condition.preChecked(setting.umaStatus.condition.value)
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
         "activate_count_heal" -> condition.checkInRace { simulation.healTriggerCount }
-        "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.sum() }
-        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount[0] }
+        "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.total }
+        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[0] }
+        "activate_count_later_half" -> condition.checkInRace { simulation.skillTriggerCount.inLaterHalf }
+        "activate_count_middle" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[1] }
+        "activate_count_end_after" -> condition.checkInRace { simulation.skillTriggerCount.inAfterPhase2 }
+
         "accumulatetime" -> condition.checkInRace { simulation.frameElapsed / 15 }
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
@@ -80,8 +88,8 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "ground_condition" -> condition.preChecked(setting.track.surfaceCondition)
         "distance_type" -> condition.preChecked(setting.trackDetail.distanceType)
         "track_id" -> condition.preChecked(setting.trackDetail.raceTrackId)
-        "is_basis_distance" -> condition.preChecked(if (setting.trackDetail.distance % 400 == 0) 1 else 0)
-        "distance_rate" -> condition.checkInRace { (simulation.position / setting.courseLength).toInt() }
+        "is_basis_distance" -> condition.preChecked(setting.trackDetail.isBasisDistance)
+        "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / setting.courseLength).toInt() }
         "phase_random" -> checkInRandom(setting.initPhaseRandom(condition.value))
         "phase_firsthalf_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.5))
         "phase_firstquarter_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.25))
@@ -145,6 +153,9 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "weather" -> condition.preChecked(setting.weather)
 
         else -> {
+            if (approximateRate.containsKey(condition.type)) {
+                return condition.checkInEveryFrameRandom()
+            }
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
             }
@@ -189,6 +200,12 @@ private fun checkInRandom(areas: List<RandomEntry>): RaceState.() -> Boolean {
     return { areas.any { simulation.position in it } }
 }
 
+private fun SkillCondition.checkInEveryFrameRandom(): RaceState.() -> Boolean {
+    val base = approximateRate[type]?.first ?: return { false }
+    val value = base / 2.0.pow(value - 1)
+    return { value >= Random.nextDouble() }
+}
+
 /**
  * 0: Not in straight
  * 1: In front of stand
@@ -207,12 +224,12 @@ private class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange
 
 private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): RandomEntry {
     val rate = when (randomPosition) {
-        0 -> Random.nextDouble()
-        1 -> 0.0
-        2 -> 0.25
-        3 -> 0.5
-        4 -> 0.75
-        else -> 0.98
+        RandomPosition.RANDOM -> Random.nextDouble()
+        RandomPosition.FASTEST -> 0.0
+        RandomPosition.FAST -> 0.25
+        RandomPosition.MIDDLE -> 0.5
+        RandomPosition.SLOW -> 0.75
+        RandomPosition.SLOWEST -> 0.98
     }
 
     val start = rate * (zoneEnd - zoneStart) + zoneStart
@@ -280,16 +297,6 @@ private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double
     return chooseRandom(zoneStart + zoneLength * startRate, zoneEnd - zoneLength * (1 - endRate))
 }
 
-private fun RaceSetting.getPhaseStartEnd(phase: Int): Pair<Double, Double> {
-    return when (phase) {
-        0 -> 0.0 to courseLength / 6.0
-        1 -> courseLength / 6.0 to (courseLength * 2.0) / 3.0
-        2 -> (courseLength * 2.0) / 3.0 to (courseLength * 5.0) / 6.0
-        3 -> (courseLength * 5.0) / 6.0 to courseLength.toDouble()
-        else -> throw IllegalArgumentException()
-    }
-}
-
 private fun RaceSetting.initFinalCornerRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
     return listOf(chooseRandom(finalCorner.start, finalCorner.end))
@@ -316,14 +323,6 @@ private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): 
     return chooseRandom(courseLength * startRate, courseLength * endRate)
 }
 
-private fun RaceState.isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
-    val (startRate, endRate) = interval
-    val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
-    val start = finalCorner.start + startRate * finalCorner.length
-    val end = finalCorner.start + endRate * finalCorner.length
-    return simulation.position in start..end
-}
-
 private fun RaceState.isInFinalStraight(position: Double = simulation.position): Boolean {
     val lastStraight = setting.trackDetail.straights.lastOrNull() ?: return false
     return position >= lastStraight.start
@@ -338,6 +337,12 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
     val skillTriggered = mutableListOf<InvokedSkill>()
     val coolDownMap = simulation.coolDownMap
     simulation.invokedSkills.forEach {
+        if (!it.preChecked) {
+            it.preChecked = it.preCheck(this)
+            if (!it.preChecked) {
+                return@forEach
+            }
+        }
         val coolDownStart = coolDownMap[it.invoke.coolDownId]
         if (coolDownStart == null) {
             if (it.check(this)) {
@@ -357,8 +362,6 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
 }
 
 fun RaceState.triggerSkill(skill: InvokedSkill) {
-    // TODO
-    // skill.trigger
     if (skill.invoke.heal > 0) {
         doHeal(skill.invoke.heal)
     }
@@ -368,11 +371,7 @@ fun RaceState.triggerSkill(skill: InvokedSkill) {
     if (skill.invoke.speedWithDecel > 0.0) {
         simulation.currentSpeed += skill.invoke.speedWithDecel
     }
-    simulation.skillTriggerCount[currentPhase]++
-    // 特殊スキル誘発カウント
-    if (isInFinalCorner() && currentPhase >= 2) {
-        simulation.skillTriggerCount[SkillTriggerCount.YUMENISHIKI]++
-    }
+    simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed
 }
 

@@ -7,3 +7,7 @@ package io.github.mee1080.umasim.race
 //    }
 //    return sum
 //}
+
+fun <T> List<T>.averageOf(
+    selector: (T) -> Double,
+) = map(selector).average()
