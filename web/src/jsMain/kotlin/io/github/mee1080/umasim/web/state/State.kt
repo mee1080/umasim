@@ -146,6 +146,7 @@ data class SupportSelection(
     val relation: Int = 0,
     val passion: Boolean = false,
     val friendCount: Int = 0,
+    val specialtyRate: Double = 0.0,
 ) {
     companion object {
         fun fromSaveInfo(info: SaveDataConverter.SupportInfo) = SupportSelection(
@@ -179,10 +180,10 @@ data class SupportSelection(
             (80 - initialRelation - 1) / 7 + 1
         }
 
-    val specialtyRate
-        get() = card?.let { card ->
-            calcRate(card.type, *Calculator.calcCardPositionSelection(card, 0))
-        } ?: 0.0
+//    val specialtyRate
+//        get() = card?.let { card ->
+//            calcRate(card.type, *Calculator.calcCardPositionSelection(card, 0))
+//        } ?: 0.0
 
     val hintRate
         get() = card?.let { card ->

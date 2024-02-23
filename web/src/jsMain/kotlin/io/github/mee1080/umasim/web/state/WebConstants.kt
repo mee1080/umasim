@@ -20,8 +20,6 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.Calculator
-import kotlin.math.roundToInt
 
 object WebConstants {
 
@@ -105,11 +103,12 @@ object WebConstants {
             0,
             0,
             false,
+            0,
         )
 
     private val SupportCard.withSpecialUniqueCondition
         get() = SpecialUniqueCondition(
-            type,
+            StatusType.NONE,
             5,
             20,
             100,
@@ -118,10 +117,11 @@ object WebConstants {
             Status(maxHp = 120, hp = 30),
             600,
             5,
-            5,
-            5,
-            5,
+            10,
+            10,
+            10,
             true,
+            10,
         )
 
     val supportSortOrder = listOf(
@@ -132,28 +132,32 @@ object WebConstants {
         SortOrder("初期絆") { initialRelation },
         // TODO 特殊固有対応
         SortOrder("初期ステ合計") { initialStatus(emptyList()).statusTotal },
-        SortOrder("友情ボナ") { friendFactor(0, 0, Status(maxHp = 100, hp = 100)) },
-        SortOrder("やる気ボナ（特殊固有なし）") { motivationFactor(0, false) },
-        SortOrder("やる気ボナ（特殊固有あり）") { motivationFactor(100, true) },
-        SortOrder("トレ効果（特殊固有なし）") { trainingFactor(noSpecialUniqueCondition) },
-        SortOrder("トレ効果（特殊固有あり）") { trainingFactor(withSpecialUniqueCondition) },
-        SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, 0, 0, 0, 0) },
-        SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, 0, 0, 0, 0) },
-        SortOrder("パワボ") { getBaseBonus(StatusType.POWER, 0, 0, 0, 0) },
-        SortOrder("根性ボ") { getBaseBonus(StatusType.GUTS, 0, 0, 0, 0) },
-        SortOrder("賢さボ") { getBaseBonus(StatusType.WISDOM, 0, 0, 0, 0) },
-        SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, 0, 0, 0, 0) },
+        SortOrder("友情ボナ") { friendFactor(noSpecialUniqueCondition) },
+        SortOrder("友情ボナ（特殊固有）") { friendFactor(withSpecialUniqueCondition) },
+        SortOrder("やる気ボナ") { motivationFactor(noSpecialUniqueCondition) },
+        SortOrder("やる気ボナ（特殊固有）") { motivationFactor(withSpecialUniqueCondition) },
+        SortOrder("トレ効果") { trainingFactor(noSpecialUniqueCondition) },
+        SortOrder("トレ効果（特殊固有）") { trainingFactor(withSpecialUniqueCondition) },
+        SortOrder("スピボ") { getBaseBonus(StatusType.SPEED, noSpecialUniqueCondition) },
+        SortOrder("スピボ（特殊固有）") { getBaseBonus(StatusType.SPEED, withSpecialUniqueCondition) },
+        SortOrder("スタボ") { getBaseBonus(StatusType.STAMINA, noSpecialUniqueCondition) },
+        SortOrder("スタボ（特殊固有）") { getBaseBonus(StatusType.STAMINA, withSpecialUniqueCondition) },
+        SortOrder("パワボ") { getBaseBonus(StatusType.POWER, noSpecialUniqueCondition) },
+        SortOrder("パワボ（特殊固有）") { getBaseBonus(StatusType.POWER, withSpecialUniqueCondition) },
+        SortOrder("根性ボ") { getBaseBonus(StatusType.GUTS, noSpecialUniqueCondition) },
+        SortOrder("根性ボ（特殊固有）") { getBaseBonus(StatusType.GUTS, withSpecialUniqueCondition) },
+        SortOrder("賢さボ") { getBaseBonus(StatusType.WISDOM, noSpecialUniqueCondition) },
+        SortOrder("賢さボ（特殊固有）") { getBaseBonus(StatusType.WISDOM, withSpecialUniqueCondition) },
+        SortOrder("スキボ") { getBaseBonus(StatusType.SKILL, noSpecialUniqueCondition) },
+        SortOrder("スキボ（特殊固有）") { getBaseBonus(StatusType.SKILL, withSpecialUniqueCondition) },
         SortOrder("レスボ") { race },
         SortOrder("ファンボ") { fan },
-        SortOrder("得意率") {
-            (calcRate(
-                type,
-                *Calculator.calcCardPositionSelection(this, 0)
-            ) * 1000.0).roundToInt() / 10.0
-        },
+        SortOrder("得意率") { specialtyRate(0, noSpecialUniqueCondition) / 100.0 },
+        SortOrder("得意率（特殊固有）") { specialtyRate(0, withSpecialUniqueCondition) / 100.0 },
         SortOrder("ヒントLv") { hintLevel },
         SortOrder("ヒント率") { hintFrequency },
-        SortOrder("賢さ友情回復") { wisdomFriendRecovery },
+        SortOrder("賢さ友情回復") { wisdomFriendRecovery(noSpecialUniqueCondition) },
+        SortOrder("賢さ友情回復（特殊固有）") { wisdomFriendRecovery(withSpecialUniqueCondition) },
     )
 
     val trainingTypeList = trainingType.toList()

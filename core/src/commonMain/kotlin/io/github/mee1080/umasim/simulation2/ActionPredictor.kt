@@ -65,27 +65,9 @@ private fun SimulationState.calcTrainingResult(
 ): Action {
     val failureRate = calcTrainingFailureRate(training.current, support)
     val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(
-        Calculator.CalcInfo(
-            chara,
-            training.current,
-            status.motivation,
-            support,
-            scenario,
-            supportTypeCount,
-            status.fanCount,
-            status,
-            totalRelation,
-            // TODO スキルPt160ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
-            min(5, status.skillPt / 160),
-            // TODO スキルPt160ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
-            min(3, status.skillPt / 160),
-            // TODO スキルPt160ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
-            min(3, status.skillPt / 160),
-            totalTrainingLevel,
-            liveStatus,
-            gmStatus,
-            lArcStatus,
-            uafStatus,
+        baseCalcInfo.copy(
+            training = training.current,
+            member = support,
         )
     )
     val successStatus = if (itemAvailable) {

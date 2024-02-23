@@ -50,7 +50,7 @@ class ExpectedCalculator(
         uafStatus: UafStatus?,
     ) {
 
-        private val baseCalcInfo = Calculator.CalcInfo(
+        internal val baseCalcInfo = Calculator.CalcInfo(
             chara = chara,
             training = training[StatusType.SPEED]!!,
             motivation = motivation,
@@ -90,7 +90,7 @@ class ExpectedCalculator(
         private val cardType = factor.card.type
 
         private val positionSelection =
-            Calculator.calcCardPositionSelection(factor.card, (info.liveStatus?.specialityRateUp ?: 0))
+            Calculator.calcCardPositionSelection(info.baseCalcInfo, factor, (info.liveStatus?.specialityRateUp ?: 0))
 
         private val specialityRate = calcRate(cardType, *positionSelection)
 

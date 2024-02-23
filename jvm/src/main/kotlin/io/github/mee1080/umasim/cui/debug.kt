@@ -20,9 +20,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
-import io.github.mee1080.umasim.data.Scenario
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking
@@ -128,3 +126,52 @@ fun singleClimaxSimulation() {
     println(result.first.status)
     println(result.second.flatMap { it.useItem }.groupBy { it.name }.mapValues { it.value.count() })
 }
+
+fun checkSpecialUnique() {
+    Store.supportList.forEach { card ->
+        card.specialUnique.forEach { unique ->
+//            val old1 = unique.hpCost(card, card.noSpecialUniqueCondition)
+//            val new1 = unique.hpCost2(card, card.noSpecialUniqueCondition)
+//            if (old1 != new1) println("${card.name} ${unique.type} noUnique old=$old1 new=$new1")
+//            val old = unique.hpCost(card, card.withSpecialUniqueCondition)
+//            val new = unique.hpCost2(card, card.withSpecialUniqueCondition)
+//            if (old != new) println("${card.name} ${unique.type} withUnique old=$old new=$new")
+        }
+    }
+}
+
+private val SupportCard.noSpecialUniqueCondition
+    get() = SpecialUniqueCondition(
+        type,
+        1,
+        5,
+        0,
+        0,
+        0,
+        Status(maxHp = 100, hp = 100),
+        0,
+        1,
+        0,
+        0,
+        0,
+        false,
+        0,
+    )
+
+private val SupportCard.withSpecialUniqueCondition
+    get() = SpecialUniqueCondition(
+        StatusType.NONE,
+        5,
+        20,
+        100,
+        6,
+        1000000,
+        Status(maxHp = 120, hp = 30),
+        600,
+        5,
+        10,
+        10,
+        10,
+        true,
+        10,
+    )

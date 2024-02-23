@@ -14,4 +14,5 @@ data class SpecialUniqueCondition(
     val healSkillCount: Int,
     val accelSkillCount: Int,
     val friendTraining: Boolean,
+    val friendCount: Int,
 )

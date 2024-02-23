@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import kotlin.math.min
 
 data class SimulationState(
     val scenario: Scenario,
@@ -99,6 +100,31 @@ data class SimulationState(
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
 
     val supportEventEffect = gmStatus?.wisdomSupportEventEffect
+
+    val baseCalcInfo = Calculator.CalcInfo(
+        chara = chara,
+        // 必要に応じて利用側で変更する
+        training = training[0].current,
+        motivation = status.motivation,
+        // 必要に応じて利用側で変更する
+        member = support,
+        scenario = scenario,
+        supportTypeCount = supportTypeCount,
+        fanCount = status.fanCount,
+        currentStatus = status,
+        totalRelation = totalRelation,
+        // TODO スキルPt160ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
+        speedSkillCount = min(5, status.skillPt / 160),
+        // TODO スキルPt160ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
+        healSkillCount = min(3, status.skillPt / 160),
+        // TODO スキルPt160ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
+        accelSkillCount = min(3, status.skillPt / 160),
+        totalTrainingLevel = totalTrainingLevel,
+        liveStatus = liveStatus,
+        gmStatus = gmStatus,
+        lArcStatus = lArcStatus,
+        uafStatus = uafStatus,
+    )
 }
 
 data class MemberState(
@@ -127,13 +153,6 @@ data class MemberState(
         friendTrainingEnabled && type == card.type
     }
 
-    fun getFriendBonus(type: StatusType, currentStatus: Status) =
-        if (isFriendTraining(type)) card.friendFactor(relation, friendCount, currentStatus) else 1.0
-
-    fun getFriendBonusAll(currentStatus: Status) =
-        if (card.type == StatusType.FRIEND) 1.0 else card.friendFactor(relation, friendCount, currentStatus)
-
-    val wisdomFriendRecovery get() = if (isFriendTraining(StatusType.WISDOM)) card.wisdomFriendRecovery else 0
     val hint = supportState?.hintIcon == true
     fun getTrainingRelation(charm: Boolean, hint: Boolean) = getTrainingRelation(if (charm) 2 else 0, hint)
     private fun getTrainingRelation(charmValue: Int, hint: Boolean) = card.trainingRelation + charmValue + if (hint) {

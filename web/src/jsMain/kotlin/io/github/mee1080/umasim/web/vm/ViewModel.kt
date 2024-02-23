@@ -433,15 +433,34 @@ class ViewModel(val scope: CoroutineScope) {
             acc * if (type.outingType || !memberState.friendTrainingEnabled) 1.0 else {
                 1.0 - calcRate(
                     type,
-                    *Calculator.calcCardPositionSelection(memberState.card, state.trainingLiveState.specialityRateUp)
+                    *Calculator.calcCardPositionSelection(
+                        trainingCalcInfo,
+                        memberState,
+                        state.trainingLiveState.specialityRateUp,
+                    )
                 )
             }
+        }
+        val supportSelectionList = state.supportSelectionList.toMutableList()
+        supportList.forEach { memberState ->
+            val specialtyRate = calcRate(
+                memberState.card.type,
+                *Calculator.calcCardPositionSelection(
+                    trainingCalcInfo,
+                    memberState,
+                    state.trainingLiveState.specialityRateUp,
+                )
+            )
+            supportSelectionList[memberState.index] = supportSelectionList[memberState.index].copy(
+                specialtyRate = specialtyRate,
+            )
         }
 
         localStorage.setItem(
             KEY_SUPPORT_LIST, SaveDataConverter.supportListToString(state.supportSelectionList.map { it.toSaveInfo() })
         )
         return state.copy(
+            supportSelectionList = supportSelectionList,
             trainingResult = trainingResult.first,
             trainingItemBonus = trainingItemBonus,
             trainingPerformanceValue = trainingPerformanceValue,

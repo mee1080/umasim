@@ -99,28 +99,18 @@ data class SupportCard(
     val initialRelationAll = specialUnique.sumOf { it.initialRelationAll }
 
     fun friendFactor(
-        relation: Int,
-        friendCount: Int,
-        currentStatus: Status,
+        condition: SpecialUniqueCondition,
     ) = (100 + status.friend) * (100 + unique.friend) * (100 + specialUnique.sumOf {
-        it.friendFactor(
-            relation,
-            friendCount,
-            currentStatus
-        )
+        it.friendFactor(this, condition)
     }) / 1000000.0
 
     fun motivationFactor(
-        relation: Int,
-        friendTraining: Boolean,
-    ) = status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(relation, friendTraining) }
+        condition: SpecialUniqueCondition,
+    ) = status.motivation + unique.motivation + specialUnique.sumOf { it.getMotivation(this, condition) }
 
     fun getBaseBonus(
         type: StatusType,
-        relation: Int,
-        speedSkillCount: Int,
-        healSkillCount: Int,
-        accelSkillCount: Int,
+        condition: SpecialUniqueCondition,
     ) = when (type) {
         StatusType.SPEED -> status.speedBonus + unique.speedBonus
         StatusType.STAMINA -> status.staminaBonus + unique.staminaBonus
@@ -129,7 +119,7 @@ data class SupportCard(
         StatusType.WISDOM -> status.wisdomBonus + unique.wisdomBonus
         StatusType.SKILL -> status.skillPtBonus + unique.skillPtBonus
         else -> 0
-    } + specialUnique.sumOf { it.getBaseBonus(type, relation, speedSkillCount, healSkillCount, accelSkillCount) }
+    } + specialUnique.sumOf { it.getBaseBonus(type, this, condition) }
 
     fun trainingFactor(
         condition: SpecialUniqueCondition,
@@ -138,11 +128,9 @@ data class SupportCard(
     }
 
     fun hpCost(
-        friendTraining: Boolean,
+        condition: SpecialUniqueCondition,
     ) = status.hpCost + unique.hpCost + specialUnique.sumOf {
-        it.hpCost(
-            friendTraining
-        )
+        it.hpCost(this, condition)
     }
 
     fun failureRate() =
@@ -151,9 +139,18 @@ data class SupportCard(
     val hintLevel = status.hintLevel + unique.hintLevel
 
     // ボーナスはカード数値に加算
-    fun specialtyRate(bonus: Int) = (100 + status.specialtyRate + bonus) * (100 + unique.specialtyRate)
+    fun specialtyRate(
+        bonus: Int,
+        condition: SpecialUniqueCondition,
+    ) = (100 + status.specialtyRate + bonus) * (100 + unique.specialtyRate) * (100 + specialUnique.sumOf {
+        it.specialityRate(this, condition)
+    }) / 100
 
-    val wisdomFriendRecovery = status.wisdomFriendRecovery + unique.wisdomFriendRecovery
+    fun wisdomFriendRecovery(
+        condition: SpecialUniqueCondition,
+    ) = status.wisdomFriendRecovery + unique.wisdomFriendRecovery + specialUnique.sumOf {
+        it.wisdomFriendRecovery(this, condition)
+    }
 
     // 2.5+5*(1+ヒント発生率)*(1+固有ヒント発生率)
     val hintFrequency = 0.025 + 0.05 * (100 + status.hintFrequency) * (100 + unique.hintFrequency) / 10000.0

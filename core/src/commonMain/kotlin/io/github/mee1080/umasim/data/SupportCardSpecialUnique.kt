@@ -45,101 +45,133 @@ data class SupportCardSpecialUnique(
 
     val needCheckFriendCount = type == 106
 
-    fun getMotivation(
-        relation: Int,
-        friendTraining: Boolean,
+    /*
+     * TODO
+     * 9 to "初期スピードアップ"（サポートタイプ数依存のみ実装済）
+     * 10 to "初期スタミナアップ"（サポートタイプ数依存のみ実装済）
+     * 11 to "初期パワーアップ"（サポートタイプ数依存のみ実装済）
+     * 12 to "初期根性アップ"（サポートタイプ数依存のみ実装済）
+     * 13 to "初期賢さアップ"（サポートタイプ数依存のみ実装済）
+     * 14 to "初期絆ゲージアップ"（全員の初期絆アップのみ実装済）
+     * 15 to "レースボーナス"
+     * 16 to "ファン数ボーナス"
+     * 17 to "ヒントLvアップ"
+     * 18 to "ヒント発生率アップ"
+     * 25 to "イベント回復量アップ"
+     * 26 to "イベント効果アップ"
+     * 27 to "失敗率ダウン"（確率で0のみ実装済）
+     */
+
+    /**
+     * 1 to "友情ボーナス"
+     */
+    fun friendFactor(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
     ): Int {
-        return if (type == 101 && relation >= value0) {
-            (if (value1 == 2) value2 else 0) + (if (value3 == 2) value4 else 0)
-        } else if (type == 113 && friendTraining && value0 == 2) {
-            value1
-        } else 0
+        return when (type) {
+            107 -> if (value0 == 1) {
+                // TODO データ解釈
+                15 - ((max(30, condition.status.hp) - 30) * 15 / 100.0).toInt()
+            } else 0
+
+            else -> getValue(card, condition, 1)
+        }
     }
 
+    /**
+     * 2 to "やる気効果アップ"
+     */
+    fun getMotivation(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
+    ): Int {
+        return getValue(card, condition, 2)
+    }
+
+    /**
+     * 3 to "スピードボーナス"
+     * 4 to "スタミナボーナス"
+     * 5 to "パワーボーナス"
+     * 6 to "根性ボーナス"
+     * 7 to "賢さボーナス"
+     * 30 to "スキルPtボーナス"
+     * 41 to "全ステータスボーナス"
+     */
     fun getBaseBonus(
         statusType: StatusType,
-        relation: Int,
-        speedSkillCount: Int,
-        healSkillCount: Int,
-        accelSkillCount: Int,
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
     ): Int {
-        return if (type == 101 && relation >= value0) {
-            listOf(value1 to value2, value3 to value4).sumOf {
-                if ((it.first == 41 && statusType != StatusType.SKILL) || statusType == bonusStatus(it.first)) it.second else 0
-            }
-        } else if (type == 116) {
-            val skillCount = when (value0) {
-                1 -> speedSkillCount
-                2 -> accelSkillCount
-                3 -> healSkillCount
-                else -> 0
-            }
-            if (statusType == bonusStatus(value1)) {
-                value2 * min(skillCount, value3)
-            } else 0
+        val target = when (statusType) {
+            StatusType.SPEED -> 3
+            StatusType.STAMINA -> 4
+            StatusType.POWER -> 5
+            StatusType.GUTS -> 6
+            StatusType.WISDOM -> 7
+            StatusType.SKILL -> 30
+            else -> 0
+        }
+        if (target == 0) {
+            println("${card.name} : 特殊固有未実装 $description")
+            return 0
+        }
+        val allBonus = if (type == 101 && condition.relation >= value0 && statusType != StatusType.SKILL) {
+            (if (value1 == 41) value2 else 0) + (if (value3 == 41) value4 else 0)
         } else 0
+        return allBonus + getValue(card, condition, target)
     }
 
-    private fun bonusStatus(value: Int) = when (value) {
-        3 -> StatusType.SPEED
-        4 -> StatusType.STAMINA
-        5 -> StatusType.POWER
-        6 -> StatusType.GUTS
-        7 -> StatusType.WISDOM
-        30 -> StatusType.SKILL
-        else -> null
-    }
-
+    /**
+     * 8 to "トレーニング効果アップ"
+     */
     fun trainingFactor(
         card: SupportCard,
         condition: SpecialUniqueCondition,
     ): Int {
-        return if (type == 101 && condition.relation >= value0) {
-            (if (value1 == 8) value2 else 0) + (if (value3 == 8) value4 else 0)
-        } else if (type == 102 && condition.relation >= value0 && condition.trainingType != card.type) {
-            value1
-        } else if (type == 103 && condition.supportTypeCount >= value0) {
-            value1
-        } else if (type == 104) {
-            min(value1, condition.fanCount / value0)
-        } else if (type == 108 && value0 == 8) {
-            min(value4, ((condition.status.maxHp - value1) * value2 / 100.0 + value3).toInt())
-        } else if (type == 109 && value0 == 8) {
-            condition.totalRelation / value1
-        } else if (type == 110 && value0 == 8) {
-            condition.trainingSupportCount * value1
-        } else if (type == 111 && value0 == 8) {
-            min(5, condition.trainingLevel) * value1
-        } else if (type == 113 && value0 == 8 && condition.friendTraining) {
-            value1
-        } else if (type == 114 && value0 == 8) {
-            value2 - max(0, (100 - condition.status.hp) / value1)
-        } else if (type == 116 && value1 == 8) {
-            val skillCount = when (value0) {
-                1 -> condition.speedSkillCount
-                2 -> condition.accelSkillCount
-                3 -> condition.healSkillCount
-                else -> 0
-            }
-            value2 * min(skillCount, value3)
-        } else if (type == 117 && value0 == 8) {
-            min(value2, condition.totalTrainingLevel)
-        } else 0
+        return when (type) {
+            102 -> if (condition.relation >= value0 && condition.trainingType != card.type) {
+                value1
+            } else 0
+
+            103 -> if (condition.supportTypeCount >= value0) {
+                value1
+            } else 0
+
+            104 -> min(value1, condition.fanCount / value0)
+
+            117 -> if (value0 == 8) {
+                // TODO value1の解釈
+                min(value2, condition.totalTrainingLevel)
+            } else 0
+
+            else -> getValue(card, condition, 8)
+        }
     }
 
-    fun friendFactor(
-        relation: Int,
-        friendCount: Int,
-        status: Status,
-    ): Int {
-        return if (type == 101 && relation >= value0) {
-            (if (value1 == 1) value2 else 0) + (if (value3 == 1) value4 else 0)
-        } else if (type == 106 && value1 == 1) {
-            min(value0, friendCount) * value2
-        } else if (type == 107 && value0 == 1) {
-            15 - ((max(30, status.hp) - 30) * 15 / 100.0).toInt()
-        } else 0
-    }
+    /**
+     * 19 to "得意率アップ"
+     */
+    fun specialityRate(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
+    ) = getValue(card, condition, 19)
+
+    /**
+     * 28 to "体力消費ダウン"
+     */
+    fun hpCost(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
+    ) = getValue(card, condition, 28)
+
+    /**
+     * 31 to "賢さ友情回復量アップ"
+     */
+    fun wisdomFriendRecovery(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
+    ) = getValue(card, condition, 31)
 
     fun initialStatus(supportType: List<StatusType>): Status {
         return if (type == 105) {
@@ -152,6 +184,8 @@ data class SupportCardSpecialUnique(
         } else Status()
     }
 
+    val initialRelationAll = if (type == 115 && value0 == 14) value1 else 0
+
     fun failureRate(
     ): Int {
         return if (type == 112) {
@@ -159,15 +193,58 @@ data class SupportCardSpecialUnique(
         } else 1
     }
 
-    fun hpCost(
-        friendTraining: Boolean,
+    fun hasSecondPosition(relation: Int) = type == 118 && relation >= value1
+
+    private fun getValue(
+        card: SupportCard,
+        condition: SpecialUniqueCondition,
+        target: Int,
     ): Int {
-        return if (type == 113 && friendTraining && value0 == 28) {
-            value1
-        } else 0
+        return when (type) {
+            101 -> if (condition.relation >= value0) {
+                (if (value1 == target) value2 else 0) + (if (value3 == target) value4 else 0)
+            } else 0
+
+            106 -> if (value1 == target) {
+                min(value0, condition.friendCount) * value2
+            } else 0
+
+            108 -> if (value0 == target) {
+                min(value4, ((condition.status.maxHp - value1) * value2 / 100.0 + value3).toInt())
+            } else 0
+
+            109 -> if (value0 == target) {
+                condition.totalRelation / value1
+            } else 0
+
+            110 -> if (value0 == target) {
+                condition.trainingSupportCount * value1
+            } else 0
+
+            111 -> if (value0 == target) {
+                min(5, condition.trainingLevel) * value1
+            } else 0
+
+            113 -> if (value0 == target && condition.friendTraining) {
+                value1
+            } else 0
+
+            114 -> if (value0 == target) {
+                value2 - max(0, (100 - condition.status.hp) / value1)
+            } else 0
+
+            116 -> if (value1 == target) {
+                value2 * min(condition.getSkillCount(value0), value3)
+            } else 0
+
+            else -> 0
+        }
     }
 
-    val initialRelationAll = if (type == 115) 5 else 0
-
-    fun hasSecondPosition(relation: Int) = type == 118 && relation >= value1
+    private fun SpecialUniqueCondition.getSkillCount(type: Int) = when (type) {
+        1 -> speedSkillCount
+        2 -> accelSkillCount
+        3 -> healSkillCount
+        else -> 0
+    }
 }

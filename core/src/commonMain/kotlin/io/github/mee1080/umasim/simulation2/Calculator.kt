@@ -55,15 +55,14 @@ object Calculator {
 
         val allFriend get() = gmStatus?.allFriend == true
 
-        fun specialUniqueCondition(
-            relation: Int,
+        fun baseSpecialUniqueCondition(
             trainingSupportCount: Int,
             friendTraining: Boolean,
         ) = SpecialUniqueCondition(
             trainingType = training.type,
             trainingLevel = training.level,
             totalTrainingLevel = totalTrainingLevel,
-            relation = relation,
+            relation = 0,
             supportTypeCount = supportTypeCount,
             fanCount = fanCount,
             status = currentStatus,
@@ -73,6 +72,7 @@ object Calculator {
             healSkillCount = healSkillCount,
             accelSkillCount = accelSkillCount,
             friendTraining = friendTraining,
+            friendCount = 0,
         )
     }
 
@@ -99,10 +99,15 @@ object Calculator {
             guts = calcTrainingStatus(info, StatusType.GUTS, friendTraining),
             wisdom = calcTrainingStatus(info, StatusType.WISDOM, friendTraining),
             skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining),
-            hp = calcTrainingHp(info.training, info.member, friendTraining),
+            hp = calcTrainingHp(info, friendTraining),
         )
         return Triple(base, calcScenarioStatus(info, base, friendTraining), friendTraining)
     }
+
+    private fun SpecialUniqueCondition.applyMember(member: MemberState) = copy(
+        relation = member.relation,
+        friendCount = member.friendCount,
+    )
 
     private fun calcTrainingStatus(
         info: CalcInfo,
@@ -112,34 +117,26 @@ object Calculator {
         val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0
         val support = info.support
+        val baseCondition = info.baseSpecialUniqueCondition(
+            trainingSupportCount = support.size,
+            friendTraining = friendTraining,
+        )
         val base = baseStatus + support.sumOf {
-            it.card.getBaseBonus(
-                targetType,
-                it.relation,
-                info.speedSkillCount,
-                info.healSkillCount,
-                info.accelSkillCount,
-            )
+            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
         }
         val charaBonus = info.chara.getBonus(targetType) / 100.0
-        val friend = if (info.allFriend) {
-            support.map { it.getFriendBonusAll(info.currentStatus) }
-        } else {
-            support.map { it.getFriendBonus(info.training.type, info.currentStatus) }
+        val friend = support.map {
+            if (info.allFriend || it.isFriendTraining(info.training.type)) {
+                it.card.friendFactor(baseCondition.applyMember(it))
+            } else 1.0
         }.fold(1.0) { acc, d -> acc * d }
         val motivationBonus =
             1 + info.motivation / 10.0 * (1 + support.sumOf {
-                it.card.motivationFactor(it.relation, friendTraining)
+                it.card.motivationFactor(baseCondition.applyMember(it))
             } / 100.0)
         val trainingBonus =
             1 + support.sumOf {
-                it.card.trainingFactor(
-                    info.specialUniqueCondition(
-                        relation = it.relation,
-                        trainingSupportCount = support.size,
-                        friendTraining = friendTraining,
-                    )
-                )
+                it.card.trainingFactor(baseCondition.applyMember(it))
             } / 100.0
         val count = 1 + info.member.size * 0.05
 //        println("$type $base * $charaBonus * $friend * motivationBonus * $trainingBonus * $count")
@@ -147,26 +144,35 @@ object Calculator {
     }
 
     private fun calcTrainingHp(
-        training: TrainingBase,
-        support: List<MemberState>,
+        info: CalcInfo,
         friendTraining: Boolean,
     ): Int {
-        val baseHp = training.status.hp
+        val baseHp = info.training.status.hp
+        val baseCondition = info.baseSpecialUniqueCondition(
+            trainingSupportCount = info.support.size,
+            friendTraining = friendTraining,
+        )
         return when {
             baseHp == 0 -> 0
-            training.type == StatusType.WISDOM -> {
-                baseHp + support.sumOf { it.wisdomFriendRecovery }
+
+            info.training.type == StatusType.WISDOM && baseHp > 0 -> {
+                baseHp + info.support.sumOf {
+                    if (it.isFriendTraining(StatusType.WISDOM)) {
+                        it.card.wisdomFriendRecovery(baseCondition.applyMember(it))
+                    } else 0
+                }
             }
 
             else -> {
-                baseHp - (baseHp * support.sumOf {
-                    it.card.hpCost(friendTraining)
+                baseHp - (baseHp * info.support.sumOf {
+                    it.card.hpCost(baseCondition.applyMember(it))
                 } / 100.0).toInt()
             }
         }
     }
 
-    fun calcCardPositionSelection(card: SupportCard, bonus: Int): Array<Pair<StatusType, Int>> {
+    fun calcCardPositionSelection(info: CalcInfo, member: MemberState, bonus: Int): Array<Pair<StatusType, Int>> {
+        val card = member.card
         if (card.type.outingType) {
             return arrayOf(
                 StatusType.SPEED to 1,
@@ -177,7 +183,7 @@ object Calculator {
                 StatusType.NONE to 1,
             )
         }
-        val mainRate = card.specialtyRate(bonus)
+        val mainRate = card.specialtyRate(bonus, info.baseSpecialUniqueCondition(0, false).applyMember(member))
         val otherRate = 10000
         val noneRate = 5000
         return arrayOf(
@@ -253,7 +259,7 @@ object Calculator {
         } else {
             val specialityRateBonus = info.liveStatus?.specialityRateUp ?: 0
             val joinRate = info.member.map {
-                calcRate(info.training.type, *calcCardPositionSelection(it.card, specialityRateBonus))
+                calcRate(info.training.type, *calcCardPositionSelection(info, it, specialityRateBonus))
             }
             val allJoinRate = if (info.member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
             var patterns = mutableListOf(arrayOf(true), arrayOf(false))

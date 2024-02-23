@@ -68,9 +68,21 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     var position: StatusType
     var secondPosition: StatusType
     do {
-        position = randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
+        position = randomSelect(
+            *Calculator.calcCardPositionSelection(
+                state.baseCalcInfo,
+                this,
+                state.liveStatus?.specialityRateUp ?: 0,
+            )
+        )
         secondPosition = if (card.hasSecondPosition(relation)) {
-            randomSelect(*Calculator.calcCardPositionSelection(card, state.liveStatus?.specialityRateUp ?: 0))
+            randomSelect(
+                *Calculator.calcCardPositionSelection(
+                    state.baseCalcInfo,
+                    this,
+                    state.liveStatus?.specialityRateUp ?: 0,
+                )
+            )
         } else StatusType.NONE
     } while (position == secondPosition && position != StatusType.NONE)
 
