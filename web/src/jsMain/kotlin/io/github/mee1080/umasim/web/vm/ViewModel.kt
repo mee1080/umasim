@@ -299,16 +299,22 @@ class ViewModel(val scope: CoroutineScope) {
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
-        val trainingType = state.selectedTrainingType
+        val trainingType = if (state.scenario == Scenario.UAF) {
+            state.uafState.selectedTrainingType
+        } else {
+            state.selectedTrainingType
+        }
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
         val lArcStatus = state.lArcStatusIfEnabled
         val uafStatus = state.uafStatusIfEnabled
-        val trainingLevel = if (
-            gmStatus?.trainingLevelUp == true
-            || (state.scenario == Scenario.LARC && state.lArcState.overseas)
-        ) 6 else state.trainingLevel
+        val trainingLevel = if (state.scenario == Scenario.UAF) {
+            (state.uafState.trainingGenre.ordinal + 1) * 10 + state.uafState.selectedTrainingLevel
+        } else if (gmStatus?.trainingLevelUp == true || (state.scenario == Scenario.LARC && state.lArcState.overseas)) {
+            6
+        } else state.trainingLevel
+
         val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
             it.type == trainingType && it.level == trainingLevel
         }

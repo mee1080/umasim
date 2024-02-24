@@ -208,7 +208,11 @@ data class AoharuMemberState(
 data object AoharuNotMemberState : ScenarioMemberState
 
 data class TrainingState(
-    val type: StatusType, val base: List<TrainingBase>, val level: Int, val count: Int, val levelOverride: Int?
+    val type: StatusType,
+    val base: List<TrainingBase>,
+    val level: Int,
+    val count: Int,
+    val levelOverride: Int?,
 ) {
     val currentLevel get() = levelOverride ?: level
     val current get() = base[currentLevel - 1]

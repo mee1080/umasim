@@ -20,7 +20,6 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
-import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.util.replace
@@ -39,7 +38,7 @@ data class State(
     val lessonState: LessonState = LessonState(),
 
     val divideMode: Boolean = false,
-    val scenario: Scenario = Scenario.LARC,
+    val scenario: Scenario = Scenario.UAF,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),
@@ -509,6 +508,25 @@ data class UafState(
     val heatUpYellow: Boolean = false,
 ) {
     val trainingName get() = UafAthletic.byStatusType[selectedTrainingType]!!.first { it.genre == trainingGenre }.longDisplayName
+
+    val selectedTrainingLevel: Int
+        get() {
+            val athleticLevel = when (selectedTrainingType) {
+                StatusType.SPEED -> speedAthleticLevel
+                StatusType.STAMINA -> staminaAthleticLevel
+                StatusType.POWER -> powerAthleticLevel
+                StatusType.GUTS -> gutsAthleticLevel
+                StatusType.WISDOM -> wisdomAthleticLevel
+                else -> 0
+            }
+            return when {
+                athleticLevel >= 80 -> 5
+                athleticLevel >= 60 -> 4
+                athleticLevel >= 40 -> 3
+                athleticLevel >= 20 -> 2
+                else -> 1
+            }
+        }
 
     fun toUafStatus(): UafStatus {
         val athletics = trainingType.associateWith { type ->

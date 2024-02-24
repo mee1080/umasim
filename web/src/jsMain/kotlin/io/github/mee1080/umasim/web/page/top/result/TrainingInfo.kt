@@ -20,9 +20,11 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.UafGenre
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
+import io.github.mee1080.umasim.web.components.atoms.disabled
 import io.github.mee1080.umasim.web.components.atoms.onChange
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
@@ -45,11 +47,12 @@ import kotlin.math.roundToInt
 fun TrainingInfo(model: ViewModel, state: State) {
     HideBlock("トレーニング上昇量", true) {
         if (state.scenario == Scenario.UAF) {
+            val uafState = state.uafState
             DivFlexCenter {
                 Text("種別　：")
                 MdRadioGroup(
                     trainingTypeList,
-                    state.uafState.selectedTrainingType,
+                    uafState.selectedTrainingType,
                     onSelect = { model.updateUaf { copy(selectedTrainingType = it) } },
                     itemToLabel = { it.displayName },
                 )
@@ -58,13 +61,63 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 Text("ジャンル　：")
                 MdRadioGroup(
                     UafGenre.entries,
-                    state.uafState.trainingGenre,
+                    uafState.trainingGenre,
                     onSelect = { model.updateUaf { copy(trainingGenre = it) } },
                     itemToLabel = { it.longDisplayName },
                 )
             }
             DivFlexCenter({ style { fontWeight("bold") } }) {
-                Text(state.uafState.trainingName)
+                Text(uafState.trainingName)
+            }
+            DivFlexCenter {
+                MdCheckbox(uafState.linkSpeed || uafState.selectedTrainingType == StatusType.SPEED) {
+                    if (uafState.selectedTrainingType == StatusType.SPEED) disabled()
+                    onChange { model.updateUaf { copy(linkSpeed = it) } }
+                }
+                Text("スピード：")
+                SliderEntry("競技Lv", uafState.speedAthleticLevel, 0, 100) {
+                    model.updateUaf { copy(speedAthleticLevel = it.toInt()) }
+                }
+            }
+            DivFlexCenter {
+                MdCheckbox(uafState.linkStamina || uafState.selectedTrainingType == StatusType.STAMINA) {
+                    if (uafState.selectedTrainingType == StatusType.STAMINA) disabled()
+                    onChange { model.updateUaf { copy(linkStamina = it) } }
+                }
+                Text("スタミナ：")
+                SliderEntry("競技Lv", uafState.staminaAthleticLevel, 0, 100) {
+                    model.updateUaf { copy(staminaAthleticLevel = it.toInt()) }
+                }
+            }
+            DivFlexCenter {
+                MdCheckbox(uafState.linkPower || uafState.selectedTrainingType == StatusType.POWER) {
+                    if (uafState.selectedTrainingType == StatusType.POWER) disabled()
+                    onChange { model.updateUaf { copy(linkPower = it) } }
+                }
+                Text("パワー：")
+                SliderEntry("競技Lv", uafState.powerAthleticLevel, 0, 100) {
+                    model.updateUaf { copy(powerAthleticLevel = it.toInt()) }
+                }
+            }
+            DivFlexCenter {
+                MdCheckbox(uafState.linkGuts || uafState.selectedTrainingType == StatusType.GUTS) {
+                    if (uafState.selectedTrainingType == StatusType.GUTS) disabled()
+                    onChange { model.updateUaf { copy(linkGuts = it) } }
+                }
+                Text("根性：")
+                SliderEntry("競技Lv", uafState.gutsAthleticLevel, 0, 100) {
+                    model.updateUaf { copy(gutsAthleticLevel = it.toInt()) }
+                }
+            }
+            DivFlexCenter {
+                MdCheckbox(uafState.linkWisdom || uafState.selectedTrainingType == StatusType.WISDOM) {
+                    if (uafState.selectedTrainingType == StatusType.WISDOM) disabled()
+                    onChange { model.updateUaf { copy(linkWisdom = it) } }
+                }
+                Text("賢さ：")
+                SliderEntry("競技Lv", uafState.wisdomAthleticLevel, 0, 100) {
+                    model.updateUaf { copy(wisdomAthleticLevel = it.toInt()) }
+                }
             }
         } else {
             DivFlexCenter {

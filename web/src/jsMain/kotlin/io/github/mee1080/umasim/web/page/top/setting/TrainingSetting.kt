@@ -264,47 +264,6 @@ fun KnowledgeTable(model: ViewModel, index: Int, knowledge: Knowledge?) {
 @Composable
 fun UafTrainingSetting(model: ViewModel, state: UafState) {
     NestedHideBlock(Scenario.UAF.displayName) {
-        H4 { Text("競技トレーニング") }
-        DivFlexCenter {
-            MdCheckbox("スピード：", state.linkSpeed) {
-                onChange { model.updateUaf { copy(linkSpeed = it) } }
-            }
-            SliderEntry("競技Lv", state.speedAthleticLevel, 0, 100) {
-                model.updateUaf { copy(speedAthleticLevel = it.toInt()) }
-            }
-        }
-        DivFlexCenter {
-            MdCheckbox("スタミナ：", state.linkStamina) {
-                onChange { model.updateUaf { copy(linkStamina = it) } }
-            }
-            SliderEntry("競技Lv", state.staminaAthleticLevel, 0, 100) {
-                model.updateUaf { copy(staminaAthleticLevel = it.toInt()) }
-            }
-        }
-        DivFlexCenter {
-            MdCheckbox("パワー：", state.linkPower) {
-                onChange { model.updateUaf { copy(linkPower = it) } }
-            }
-            SliderEntry("競技Lv", state.powerAthleticLevel, 0, 100) {
-                model.updateUaf { copy(powerAthleticLevel = it.toInt()) }
-            }
-        }
-        DivFlexCenter {
-            MdCheckbox("根性：", state.linkGuts) {
-                onChange { model.updateUaf { copy(linkGuts = it) } }
-            }
-            SliderEntry("競技Lv", state.gutsAthleticLevel, 0, 100) {
-                model.updateUaf { copy(gutsAthleticLevel = it.toInt()) }
-            }
-        }
-        DivFlexCenter {
-            MdCheckbox("賢さ：", state.linkWisdom) {
-                onChange { model.updateUaf { copy(linkWisdom = it) } }
-            }
-            SliderEntry("競技Lv", state.wisdomAthleticLevel, 0, 100) {
-                model.updateUaf { copy(wisdomAthleticLevel = it.toInt()) }
-            }
-        }
         H4 { Text("大会ボーナス") }
         DivFlexCenter {
             Text(UafGenre.Blue.longDisplayName)
