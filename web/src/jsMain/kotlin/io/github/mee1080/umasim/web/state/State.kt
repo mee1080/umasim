@@ -520,9 +520,9 @@ data class UafState(
                 else -> 0
             }
             return when {
-                athleticLevel >= 80 -> 5
-                athleticLevel >= 60 -> 4
-                athleticLevel >= 40 -> 3
+                athleticLevel >= 50 -> 5
+                athleticLevel >= 40 -> 4
+                athleticLevel >= 30 -> 3
                 athleticLevel >= 20 -> 2
                 else -> 1
             }
