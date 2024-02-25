@@ -584,6 +584,12 @@ object Calculator {
             guts = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.GUTS, raw.guts),
             wisdom = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.WISDOM, raw.wisdom),
             skillPt = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.SKILL, raw.skillPt),
+            hp = when (linkAthletics.size) {
+                4 -> -3
+                3, 2 -> -2
+                1 -> -1
+                else -> 0
+            }
         )
     }
 
