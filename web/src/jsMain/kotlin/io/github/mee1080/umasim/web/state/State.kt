@@ -89,6 +89,13 @@ data class State(
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
 
+    val selectedTrainingTypeForScenario
+        get() = if (scenario == Scenario.UAF) {
+            uafState.selectedTrainingType
+        } else {
+            selectedTrainingType
+        }
+
     fun getSupportSelection(position: Int): List<Pair<Int, SupportCard?>> {
         val selection = supportSelectionList.getOrNull(position) ?: return emptyList()
         return if (appliedSupportFilter.isEmpty()) filteredSupportList else {
@@ -104,7 +111,7 @@ data class State(
 
     fun isFriendTraining(position: Int): Boolean {
         val selection = supportSelectionList.getOrNull(position) ?: return false
-        return selection.friend && selection.join && selectedTrainingType == selection.card?.type
+        return selection.friend && selection.join && selectedTrainingTypeForScenario == selection.card?.type
     }
 
     val friendTraining: Boolean by lazy { (0..6).any { isFriendTraining(it) } }

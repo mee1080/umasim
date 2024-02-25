@@ -299,11 +299,7 @@ class ViewModel(val scope: CoroutineScope) {
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
-        val trainingType = if (state.scenario == Scenario.UAF) {
-            state.uafState.selectedTrainingType
-        } else {
-            state.selectedTrainingType
-        }
+        val trainingType = state.selectedTrainingTypeForScenario
         val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
