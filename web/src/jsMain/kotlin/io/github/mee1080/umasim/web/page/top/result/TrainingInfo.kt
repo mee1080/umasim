@@ -22,10 +22,7 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.UafGenre
-import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
-import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
-import io.github.mee1080.umasim.web.components.atoms.disabled
-import io.github.mee1080.umasim.web.components.atoms.onChange
+import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
@@ -37,10 +34,7 @@ import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.css.fontWeight
-import org.jetbrains.compose.web.css.marginTop
-import org.jetbrains.compose.web.css.px
-import org.jetbrains.compose.web.css.width
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
@@ -76,8 +70,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     onChange { model.updateUaf { copy(linkSpeed = it) } }
                 }
                 Text("スピード：")
-                SliderEntry("競技Lv", uafState.speedAthleticLevel, 0, 100) {
+                SliderEntry("競技Lv", uafState.speedAthleticLevel, 1, 100) {
                     model.updateUaf { copy(speedAthleticLevel = it.toInt()) }
+                }
+                Div({ style { marginLeft(8.px) } }) { Text("上昇量") }
+                MdOutlinedIntTextField(uafState.speedAthleticLevelUp) {
+                    onInput { value -> value?.let { model.updateUaf { copy(speedAthleticLevelUp = it) } } }
                 }
             }
             DivFlexCenter {
@@ -86,8 +84,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     onChange { model.updateUaf { copy(linkStamina = it) } }
                 }
                 Text("スタミナ：")
-                SliderEntry("競技Lv", uafState.staminaAthleticLevel, 0, 100) {
+                SliderEntry("競技Lv", uafState.staminaAthleticLevel, 1, 100) {
                     model.updateUaf { copy(staminaAthleticLevel = it.toInt()) }
+                }
+                Div({ style { marginLeft(8.px) } }) { Text("上昇量") }
+                MdOutlinedIntTextField(uafState.staminaAthleticLevelUp) {
+                    onInput { value -> value?.let { model.updateUaf { copy(staminaAthleticLevelUp = it) } } }
                 }
             }
             DivFlexCenter {
@@ -96,8 +98,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     onChange { model.updateUaf { copy(linkPower = it) } }
                 }
                 Text("パワー：")
-                SliderEntry("競技Lv", uafState.powerAthleticLevel, 0, 100) {
+                SliderEntry("競技Lv", uafState.powerAthleticLevel, 1, 100) {
                     model.updateUaf { copy(powerAthleticLevel = it.toInt()) }
+                }
+                Div({ style { marginLeft(8.px) } }) { Text("上昇量") }
+                MdOutlinedIntTextField(uafState.powerAthleticLevelUp) {
+                    onInput { value -> value?.let { model.updateUaf { copy(powerAthleticLevelUp = it) } } }
                 }
             }
             DivFlexCenter {
@@ -106,8 +112,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     onChange { model.updateUaf { copy(linkGuts = it) } }
                 }
                 Text("根性：")
-                SliderEntry("競技Lv", uafState.gutsAthleticLevel, 0, 100) {
+                SliderEntry("競技Lv", uafState.gutsAthleticLevel, 1, 100) {
                     model.updateUaf { copy(gutsAthleticLevel = it.toInt()) }
+                }
+                Div({ style { marginLeft(8.px) } }) { Text("上昇量") }
+                MdOutlinedIntTextField(uafState.gutsAthleticLevelUp) {
+                    onInput { value -> value?.let { model.updateUaf { copy(gutsAthleticLevelUp = it) } } }
                 }
             }
             DivFlexCenter {
@@ -116,8 +126,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     onChange { model.updateUaf { copy(linkWisdom = it) } }
                 }
                 Text("賢さ：")
-                SliderEntry("競技Lv", uafState.wisdomAthleticLevel, 0, 100) {
+                SliderEntry("競技Lv", uafState.wisdomAthleticLevel, 1, 100) {
                     model.updateUaf { copy(wisdomAthleticLevel = it.toInt()) }
+                }
+                Div({ style { marginLeft(8.px) } }) { Text("上昇量") }
+                MdOutlinedIntTextField(uafState.wisdomAthleticLevelUp) {
+                    onInput { value -> value?.let { model.updateUaf { copy(wisdomAthleticLevelUp = it) } } }
                 }
             }
         } else {

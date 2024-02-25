@@ -498,11 +498,16 @@ data class LArcState(
 data class UafState(
     val trainingGenre: UafGenre = UafGenre.Blue,
     val selectedTrainingType: StatusType = StatusType.SPEED,
-    val speedAthleticLevel: Int = 0,
-    val staminaAthleticLevel: Int = 0,
-    val powerAthleticLevel: Int = 0,
-    val gutsAthleticLevel: Int = 0,
-    val wisdomAthleticLevel: Int = 0,
+    val speedAthleticLevel: Int = 1,
+    val staminaAthleticLevel: Int = 1,
+    val powerAthleticLevel: Int = 1,
+    val gutsAthleticLevel: Int = 1,
+    val wisdomAthleticLevel: Int = 1,
+    val speedAthleticLevelUp: Int = 3,
+    val staminaAthleticLevelUp: Int = 3,
+    val powerAthleticLevelUp: Int = 3,
+    val gutsAthleticLevelUp: Int = 3,
+    val wisdomAthleticLevelUp: Int = 3,
     val linkSpeed: Boolean = false,
     val linkStamina: Boolean = false,
     val linkPower: Boolean = false,
@@ -557,11 +562,19 @@ data class UafState(
             UafGenre.Yellow to if (heatUpYellow) 2 else 0,
         )
         val festivalBonus = blueFestivalBonus + redFestivalBonus + yellowFestivalBonus
+        val athleticLevelUp = mapOf(
+            StatusType.SPEED to speedAthleticLevelUp,
+            StatusType.STAMINA to staminaAthleticLevelUp,
+            StatusType.POWER to powerAthleticLevelUp,
+            StatusType.GUTS to gutsAthleticLevelUp,
+            StatusType.WISDOM to wisdomAthleticLevelUp,
+        )
         return UafStatus(
             athleticsLevel = athleticsLevel,
             trainingAthletics = athletics,
             heatUp = heatUp,
             festivalBonus = festivalBonus,
+            athleticsLevelUp = athleticLevelUp,
         )
     }
 

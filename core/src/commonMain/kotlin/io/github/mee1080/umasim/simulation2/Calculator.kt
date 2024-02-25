@@ -597,6 +597,22 @@ object Calculator {
         var total = baseValue
         val baseInt = baseValue.toInt()
         val targetLink = linkAthletics[target]
+        // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
+        if (target == trainingType || target == StatusType.SKILL || targetLink != null) {
+            val baseFactor = when (linkAthletics.size) {
+                4 -> 0.3
+                3 -> 0.25
+                2 -> 0.2
+                1 -> 0.1
+                else -> 0.0
+            }
+            val typeFactor = when (target) {
+                trainingType -> 1.0
+                StatusType.SKILL -> 1.0 / 3.0
+                else -> 2.0 / 3.0
+            }
+            total *= (baseFactor * typeFactor) + 1.0
+        }
         // リンク先のステ上昇：各リンク先について、FLOOR((リンク先トレLv+1)/2)？
         val linkBonus = when (target) {
             trainingType -> 0
@@ -606,18 +622,26 @@ object Calculator {
             } ?: 0
         }
         total += linkBonus
-        // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
-        if (target == trainingType || targetLink != null) {
-            val factor = when (linkAthletics.size) {
-                4 -> 1.3
-                3 -> 1.25
-                2 -> 1.2
-                1 -> 1.1
+        // ヒートアップ効果
+        if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
+            total += if (target == StatusType.SKILL) {
+                // スキルPt：20
+                20
+            } else {
+                // 5ステ：対応する箇所のトレーニングの競技Lv上昇量÷2+1（切り捨て）
+                uafStatus.athleticsLevelUp[target]!! / 2 + 1
+            }
+        }
+        if (uafStatus.heatUp[UafGenre.Red]!! > 0 && target == trainingType) {
+            val heatUpRedFactor = when (linkAthletics.size) {
+                4 -> 1.6
+                3 -> 1.54
+                2 -> 1.45
+                1 -> 1.3
                 else -> 1.0
             }
-            total *= factor
+            total *= heatUpRedFactor
         }
-        // TODO ヒートアップ効果
         // 大会ボーナス
         val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
         total *= festivalFactor

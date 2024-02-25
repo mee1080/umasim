@@ -27,6 +27,7 @@ data class UafStatus(
     val trainingAthletics: Map<StatusType, UafAthletic> = emptyMap(),
     val heatUp: Map<UafGenre, Int> = UafGenre.entries.associateWith { 0 },
     val festivalBonus: Int = 0,
+    val athleticsLevelUp: Map<StatusType, Int> = trainingType.associateWith { 3 },
 ) {
     val genreLevel by lazy {
         athleticsLevel.entries.groupBy {
