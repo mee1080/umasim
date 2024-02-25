@@ -19,6 +19,8 @@
 package io.github.mee1080.umasim.data
 
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
+import kotlin.math.max
+import kotlin.math.min
 
 data class UafStatus(
     val athleticsLevel: Map<UafAthletic, Int> = UafAthletic.entries.associateWith { 1 },
@@ -33,6 +35,8 @@ data class UafStatus(
             values.sumOf { it.value }
         }
     }
+
+    fun trainingLevel(athletic: UafAthletic) = min(5, max(1, athleticsLevel[athletic]!! / 10))
 
     fun randomizeTraining(): UafStatus {
         return copy(

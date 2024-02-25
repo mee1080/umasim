@@ -117,10 +117,11 @@ enum class Scenario(
     val guestMember: Boolean = false,
     val turn: Int = 78,
     val levelUpTurns: List<Int> = listOf(37, 38, 39, 40, 61, 62, 63, 64),
+    val hasSecondTrainingStatus: Boolean = true,
 ) {
-    URA("URA"),
+    URA("URA", hasSecondTrainingStatus = false),
     AOHARU("アオハル", trainingAutoLevelUp = false, guestMember = true),
-    CLIMAX("クライマックス"),
+    CLIMAX("クライマックス", hasSecondTrainingStatus = false),
     GRAND_LIVE("グランドライブ", guestMember = true),
     GM("グランドマスターズ", trainingAutoLevelUp = false),
     LARC(
@@ -129,8 +130,6 @@ enum class Scenario(
         turn = 67,
         levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
     ),
-
-    // TODO UAF
     UAF("U.A.F.（未実装）", trainingAutoLevelUp = false),
 }
 

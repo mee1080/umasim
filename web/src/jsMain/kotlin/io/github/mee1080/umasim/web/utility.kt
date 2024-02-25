@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.web
 
 import org.jetbrains.compose.web.attributes.AttrsScope
+import kotlin.math.pow
 import kotlin.math.roundToInt
 
 fun AttrsScope<*>.unsetWidth() {
@@ -27,4 +28,7 @@ fun AttrsScope<*>.unsetWidth() {
     }
 }
 
-fun Double.round() = (this * 100).roundToInt() / 100.0
+fun Double.round(length: Int = 2): Double {
+    val factor = 10.0.pow(length)
+    return (this * factor).roundToInt() / factor
+}

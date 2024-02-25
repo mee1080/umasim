@@ -78,30 +78,40 @@ object Calculator {
 
     fun calcTrainingSuccessStatus(
         info: CalcInfo,
-    ): Status = calcTrainingSuccessStatusSeparated(info).let { it.first + it.second }
+    ): Status = calcTrainingSuccessStatusSeparated(info).let { it.first.first + it.second }
 
     fun calcTrainingSuccessStatusAndFriendEnabled(
         info: CalcInfo,
-    ): Pair<Status, Boolean> = calcTrainingSuccessStatusSeparated(info).let { it.first + it.second to it.third }
+    ): Pair<Status, Boolean> = calcTrainingSuccessStatusSeparated(info).let { it.first.first + it.second to it.third }
 
     fun calcTrainingSuccessStatusSeparated(
         info: CalcInfo,
-    ): Triple<Status, Status, Boolean> {
+    ): Triple<Pair<Status, ExpectedStatus>, Status, Boolean> {
         val friendTraining = if (info.allFriend) {
             info.support.any { it.card.type != StatusType.FRIEND }
         } else {
             info.support.any { it.isFriendTraining(info.training.type) }
         }
-        val base = Status(
+        val hp = calcTrainingHp(info, friendTraining)
+        val raw = ExpectedStatus(
             speed = calcTrainingStatus(info, StatusType.SPEED, friendTraining),
             stamina = calcTrainingStatus(info, StatusType.STAMINA, friendTraining),
             power = calcTrainingStatus(info, StatusType.POWER, friendTraining),
             guts = calcTrainingStatus(info, StatusType.GUTS, friendTraining),
             wisdom = calcTrainingStatus(info, StatusType.WISDOM, friendTraining),
             skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining),
-            hp = calcTrainingHp(info, friendTraining),
+            hp = hp.toDouble(),
         )
-        return Triple(base, calcScenarioStatus(info, base, friendTraining), friendTraining)
+        val base = Status(
+            speed = raw.speed.toInt(),
+            stamina = raw.stamina.toInt(),
+            power = raw.power.toInt(),
+            guts = raw.guts.toInt(),
+            wisdom = raw.wisdom.toInt(),
+            skillPt = raw.skillPt.toInt(),
+            hp = hp,
+        )
+        return Triple(base to raw, calcScenarioStatus(info, base, raw, friendTraining), friendTraining)
     }
 
     private fun SpecialUniqueCondition.applyMember(member: MemberState) = copy(
@@ -113,9 +123,9 @@ object Calculator {
         info: CalcInfo,
         targetType: StatusType,
         friendTraining: Boolean,
-    ): Int {
+    ): Double {
         val baseStatus = info.training.status.get(targetType)
-        if (baseStatus == 0) return 0
+        if (baseStatus == 0) return 0.0
         val support = info.support
         val baseCondition = info.baseSpecialUniqueCondition(
             trainingSupportCount = support.size,
@@ -139,8 +149,8 @@ object Calculator {
                 it.card.trainingFactor(baseCondition.applyMember(it))
             } / 100.0
         val count = 1 + info.member.size * 0.05
-        println("$targetType $baseStatus $base * $charaBonus * $friend * $motivationBonus * $trainingBonus * $count")
-        return min(100, (base * charaBonus * friend * motivationBonus * trainingBonus * count).toInt())
+        println("$targetType $baseStatus ${base * charaBonus * friend * motivationBonus * trainingBonus * count} $base * $charaBonus * $friend * $motivationBonus * $trainingBonus * $count")
+        return min(100.0, base * charaBonus * friend * motivationBonus * trainingBonus * count)
     }
 
     private fun calcTrainingHp(
@@ -155,7 +165,7 @@ object Calculator {
         return when {
             baseHp == 0 -> 0
 
-            info.training.type == StatusType.WISDOM && baseHp > 0 -> {
+            info.training.type == StatusType.WISDOM -> {
                 baseHp + info.support.sumOf {
                     if (it.isFriendTraining(StatusType.WISDOM)) {
                         it.card.wisdomFriendRecovery(baseCondition.applyMember(it))
@@ -305,6 +315,7 @@ object Calculator {
     private fun calcScenarioStatus(
         info: CalcInfo,
         base: Status,
+        raw: ExpectedStatus,
         friendTraining: Boolean,
     ) = when (info.scenario) {
         Scenario.URA -> Status()
@@ -313,8 +324,7 @@ object Calculator {
         Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
         Scenario.GM -> calcGmStatus(info, base)
         Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
-        // TODO UAF
-        Scenario.UAF -> Status()
+        Scenario.UAF -> calcUafStatus(info, raw)
     }
 
     private fun calcAoharuStatus(
@@ -555,5 +565,62 @@ object Calculator {
             (baseValue + bonus + factor) * lArcStatus.friendFactor / 100.0
         } else 0.0
         return bonus + (factor + friend).toInt()
+    }
+
+    private fun calcUafStatus(
+        info: CalcInfo,
+        raw: ExpectedStatus,
+    ): Status {
+        val uafStatus = info.uafStatus ?: return Status()
+        val trainingType = info.training.type
+        val targetAthletic = uafStatus.trainingAthletics[trainingType]!!
+        val linkAthletics = uafStatus.trainingAthletics.filter {
+            it.key != trainingType && it.value.genre == targetAthletic.genre
+        }
+        return Status(
+            speed = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.SPEED, raw.speed),
+            stamina = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.STAMINA, raw.stamina),
+            power = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.POWER, raw.power),
+            guts = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.GUTS, raw.guts),
+            wisdom = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.WISDOM, raw.wisdom),
+            skillPt = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.SKILL, raw.skillPt),
+        )
+    }
+
+    private fun calcUafStatusSingle(
+        uafStatus: UafStatus,
+        trainingType: StatusType,
+        linkAthletics: Map<StatusType, UafAthletic>,
+        target: StatusType,
+        baseValue: Double,
+    ): Int {
+        var total = baseValue
+        val baseInt = baseValue.toInt()
+        val targetLink = linkAthletics[target]
+        // リンク先のステ上昇：各リンク先について、FLOOR((リンク先トレLv+1)/2)？
+        val linkBonus = when (target) {
+            trainingType -> 0
+            StatusType.SKILL -> linkAthletics.size
+            else -> targetLink?.let {
+                (uafStatus.trainingLevel(it) + 1) / 2
+            } ?: 0
+        }
+        total += linkBonus
+        // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
+        if (target == trainingType || targetLink != null) {
+            val factor = when (linkAthletics.size) {
+                4 -> 1.3
+                3 -> 1.25
+                2 -> 1.2
+                1 -> 1.1
+                else -> 1.0
+            }
+            total *= factor
+        }
+        // TODO ヒートアップ効果
+        // 大会ボーナス
+        val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
+        total *= festivalFactor
+        return (total - baseInt).toInt()
     }
 }

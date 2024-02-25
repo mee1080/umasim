@@ -30,6 +30,7 @@ import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
+import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
@@ -249,6 +250,27 @@ fun TrainingInfo(model: ViewModel, state: State) {
                             Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
                         }
                     }
+                }
+            }
+        }
+        Div({ style { marginTop(16.px) } }) {
+            H3 { Text("切り捨て前") }
+            Table({ classes(AppStyle.table) }) {
+                Tr {
+                    Th { Text("スピード") }
+                    Th { Text("スタミナ") }
+                    Th { Text("パワー") }
+                    Th { Text("根性") }
+                    Th { Text("賢さ") }
+                    Th { Text("スキルPt") }
+                }
+                Tr {
+                    Td { Text(state.rawTrainingResult.speed.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.stamina.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.power.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.guts.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.wisdom.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.skillPt.round(4).toString()) }
                 }
             }
         }

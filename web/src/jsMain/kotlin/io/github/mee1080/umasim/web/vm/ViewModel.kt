@@ -338,6 +338,7 @@ class ViewModel(val scope: CoroutineScope) {
             uafStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
+        println(trainingResult.first)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
             Calculator.calcPerformanceValue(trainingCalcInfo)
         } else 0
@@ -346,9 +347,9 @@ class ViewModel(val scope: CoroutineScope) {
             if (state.shopItemMegaphone == WebConstants.dummyMegaphoneItem) null else state.shopItemMegaphone,
             if (state.shopItemWeight == WebConstants.dummyWeightItem) null else state.shopItemWeight,
         )
-        val trainingItemBonus = when (state.scenario) {
-            Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first, itemList)
-            Scenario.AOHARU, Scenario.GRAND_LIVE, Scenario.GM, Scenario.LARC -> trainingResult.second
+        val trainingItemBonus = when {
+            state.scenario.hasSecondTrainingStatus -> trainingResult.second
+            state.scenario == Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first.first, itemList)
             else -> Status()
         }
 
@@ -374,7 +375,7 @@ class ViewModel(val scope: CoroutineScope) {
                     uafStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
-            target.name to trainingResult.first + trainingResult.second - notJoinResult.first - notJoinResult.second
+            target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
         }
 
         val supportList = state.supportSelectionList.mapIndexedNotNull { index, support ->
@@ -402,7 +403,7 @@ class ViewModel(val scope: CoroutineScope) {
             ),
             state.teamJoinCount,
         )
-        val total = trainingResult.first.statusTotal
+        val total = trainingResult.first.first.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 
@@ -467,9 +468,10 @@ class ViewModel(val scope: CoroutineScope) {
         )
         return state.copy(
             supportSelectionList = supportSelectionList,
-            trainingResult = trainingResult.first,
+            trainingResult = trainingResult.first.first,
             trainingItemBonus = trainingItemBonus,
             trainingPerformanceValue = trainingPerformanceValue,
+            rawTrainingResult = trainingResult.first.second,
             trainingImpact = trainingImpact,
             expectedResult = expectedResult.first,
             upperRate = upperRate,
