@@ -633,6 +633,9 @@ object Calculator {
             }
             total *= (baseFactor * typeFactor) + 1.0
         }
+        // 大会ボーナス
+        val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
+        total *= festivalFactor
         // ヒートアップ効果
         if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
             total += if (target == StatusType.SKILL) {
@@ -653,9 +656,6 @@ object Calculator {
             }
             total *= heatUpRedFactor
         }
-        // 大会ボーナス
-        val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
-        total *= festivalFactor
         return (total - baseInt).toInt()
     }
 }
