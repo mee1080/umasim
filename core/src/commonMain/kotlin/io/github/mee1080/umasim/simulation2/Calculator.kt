@@ -123,6 +123,7 @@ object Calculator {
         info: CalcInfo,
         targetType: StatusType,
         friendTraining: Boolean,
+        ignoreBaseBonus: Boolean = false,
     ): Double {
         val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0.0
@@ -131,7 +132,7 @@ object Calculator {
             trainingSupportCount = support.size,
             friendTraining = friendTraining,
         )
-        val base = baseStatus + support.sumOf {
+        val base = baseStatus + if (ignoreBaseBonus) 0 else support.sumOf {
             it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
         }
         val charaBonus = info.chara.getBonus(targetType) / 100.0
@@ -324,7 +325,7 @@ object Calculator {
         Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
         Scenario.GM -> calcGmStatus(info, base)
         Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
-        Scenario.UAF -> calcUafStatus(info, raw)
+        Scenario.UAF -> calcUafStatus(info, raw, friendTraining)
     }
 
     private fun calcAoharuStatus(
@@ -570,6 +571,7 @@ object Calculator {
     private fun calcUafStatus(
         info: CalcInfo,
         raw: ExpectedStatus,
+        isFriendTraining: Boolean,
     ): Status {
         val uafStatus = info.uafStatus ?: return Status()
         val trainingType = info.training.type
@@ -578,12 +580,12 @@ object Calculator {
             it.key != trainingType && it.value.genre == targetAthletic.genre
         }
         return Status(
-            speed = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.SPEED, raw.speed),
-            stamina = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.STAMINA, raw.stamina),
-            power = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.POWER, raw.power),
-            guts = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.GUTS, raw.guts),
-            wisdom = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.WISDOM, raw.wisdom),
-            skillPt = calcUafStatusSingle(uafStatus, trainingType, linkAthletics, StatusType.SKILL, raw.skillPt),
+            speed = calcUafStatusSingle(info, linkAthletics, StatusType.SPEED, raw.speed, isFriendTraining),
+            stamina = calcUafStatusSingle(info, linkAthletics, StatusType.STAMINA, raw.stamina, isFriendTraining),
+            power = calcUafStatusSingle(info, linkAthletics, StatusType.POWER, raw.power, isFriendTraining),
+            guts = calcUafStatusSingle(info, linkAthletics, StatusType.GUTS, raw.guts, isFriendTraining),
+            wisdom = calcUafStatusSingle(info, linkAthletics, StatusType.WISDOM, raw.wisdom, isFriendTraining),
+            skillPt = calcUafStatusSingle(info, linkAthletics, StatusType.SKILL, raw.skillPt, isFriendTraining),
             hp = when (linkAthletics.size) {
                 4 -> -3
                 3, 2 -> -2
@@ -594,17 +596,29 @@ object Calculator {
     }
 
     private fun calcUafStatusSingle(
-        uafStatus: UafStatus,
-        trainingType: StatusType,
+        info: CalcInfo,
         linkAthletics: Map<StatusType, UafAthletic>,
         target: StatusType,
         baseValue: Double,
+        isFriendTraining: Boolean,
     ): Int {
-        var total = baseValue
-        val baseInt = baseValue.toInt()
+        val uafStatus = info.uafStatus ?: return 0
+        val trainingType = info.training.type
         val targetLink = linkAthletics[target]
+        // リンク先の基本値上昇：各リンク先について、FLOOR((リンク先トレLv+1)/2)？
+        val linkBonus = when (target) {
+            trainingType -> 0
+            StatusType.SKILL -> linkAthletics.size
+            else -> targetLink?.let {
+                (uafStatus.trainingLevel(it) + 1) / 2
+            } ?: 0
+        }
+        val training = info.training.copy(status = info.training.status.add(target to linkBonus))
+        val scenarioInfo = info.copy(training = training)
+        var total = calcTrainingStatus(scenarioInfo, target, isFriendTraining, baseValue == 0.0)
+        val baseInt = baseValue.toInt()
         // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
-        if (target == trainingType || target == StatusType.SKILL || targetLink != null) {
+        if (target == trainingType) {
             val baseFactor = when (linkAthletics.size) {
                 4 -> 0.3
                 3 -> 0.25
@@ -619,15 +633,6 @@ object Calculator {
             }
             total *= (baseFactor * typeFactor) + 1.0
         }
-        // リンク先のステ上昇：各リンク先について、FLOOR((リンク先トレLv+1)/2)？
-        val linkBonus = when (target) {
-            trainingType -> 0
-            StatusType.SKILL -> linkAthletics.size
-            else -> targetLink?.let {
-                (uafStatus.trainingLevel(it) + 1) / 2
-            } ?: 0
-        }
-        total += linkBonus
         // ヒートアップ効果
         if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
             total += if (target == StatusType.SKILL) {
