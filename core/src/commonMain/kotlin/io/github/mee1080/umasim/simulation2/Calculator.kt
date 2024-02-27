@@ -618,8 +618,8 @@ object Calculator {
         }
         val training = info.training.copy(status = info.training.status.add(target to linkBonus))
         val scenarioInfo = info.copy(training = training)
-        var total = calcTrainingStatus(scenarioInfo, target, isFriendTraining, baseValue == 0.0)
         val baseInt = baseValue.toInt()
+        var total = calcTrainingStatus(scenarioInfo, target, isFriendTraining, baseInt == 0)
         // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
         if (target == trainingType && linkAthletics.isNotEmpty()) {
             val baseFactor = when (linkAthletics.size) {
@@ -634,15 +634,6 @@ object Calculator {
         val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
         total *= festivalFactor
         // ヒートアップ効果
-        if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
-            total += if (target == StatusType.SKILL) {
-                // スキルPt：20
-                20
-            } else {
-                // 5ステ：対応する箇所のトレーニングの競技Lv上昇量÷2+1（切り捨て）
-                uafStatus.athleticsLevelUp[target]!! / 2 + 1
-            }
-        }
         if (uafStatus.heatUp[UafGenre.Red]!! > 0 && target == trainingType) {
             val heatUpRedFactor = when (linkAthletics.size) {
                 4 -> 1.6
@@ -652,6 +643,15 @@ object Calculator {
                 else -> 1.0
             }
             total *= heatUpRedFactor
+        }
+        if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
+            total += if (target == StatusType.SKILL) {
+                // スキルPt：20
+                20
+            } else {
+                // 5ステ：対応する箇所のトレーニングの競技Lv上昇量÷2+1（切り捨て）
+                uafStatus.athleticsLevelUp[target]!! / 2 + 1
+            }
         }
         return (total - baseInt).toInt()
     }
