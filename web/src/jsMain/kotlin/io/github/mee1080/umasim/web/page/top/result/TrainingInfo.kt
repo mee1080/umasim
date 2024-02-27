@@ -162,6 +162,11 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 itemToLabel = { WebConstants.motivationMap[it] ?: "" },
             )
         }
+        DivFlexCenter {
+            MdCheckbox("夏合宿", state.isLevelUpTurn) {
+                onChange { model.update { copy(isLevelUpTurn = it) } }
+            }
+        }
         if (state.scenario == Scenario.URA) {
             DivFlexCenter {
                 Text("ハッピーミーク：")

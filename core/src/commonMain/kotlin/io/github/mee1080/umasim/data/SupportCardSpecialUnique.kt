@@ -32,6 +32,8 @@ data class SupportCardSpecialUnique(
             116 -> "${supportEffectName[value1]}が${skillEffectName[value0] ?: "($value0)"}スキル所持数×${value2}（最大${value3}個）"
             117 -> "${supportEffectName[value0]}が合計トレーニングLv×1（最大${value2}）"
             118 -> "絆${value1}以上でトレーニング最大2箇所に配置"
+            119 -> "絆${value2}以上でサポカ配置率アップ"
+            120 -> "絆${value1}以上で編成サポカに応じたステータス/スキルボーナス（各最大${value3}）"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -39,7 +41,8 @@ data class SupportCardSpecialUnique(
 
     val targetRelation = when (type) {
         101, 102 -> value0
-        118 -> value1
+        118, 120 -> value1
+        119 -> value2
         else -> null
     }
 
@@ -103,6 +106,9 @@ data class SupportCardSpecialUnique(
         card: SupportCard,
         condition: SpecialUniqueCondition,
     ): Int {
+        if (type == 120) {
+            return min(2, condition.supportCount.getOrElse(statusType) { 0 })
+        }
         val target = when (statusType) {
             StatusType.SPEED -> 3
             StatusType.STAMINA -> 4

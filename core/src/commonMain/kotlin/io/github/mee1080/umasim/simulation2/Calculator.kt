@@ -31,7 +31,7 @@ object Calculator {
         val motivation: Int,
         val member: List<MemberState>,
         val scenario: Scenario,
-        val supportTypeCount: Int,
+        val supportCount: Map<StatusType, Int>,
         val fanCount: Int,
         val currentStatus: Status,
         val totalRelation: Int,
@@ -39,6 +39,7 @@ object Calculator {
         val healSkillCount: Int,
         val accelSkillCount: Int,
         val totalTrainingLevel: Int,
+        val isLevelUpTurn: Boolean,
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
         val lArcStatus: LArcStatus?,
@@ -55,6 +56,8 @@ object Calculator {
 
         val allFriend get() = gmStatus?.allFriend == true
 
+        val supportTypeCount = supportCount.size
+
         fun baseSpecialUniqueCondition(
             trainingSupportCount: Int,
             friendTraining: Boolean,
@@ -63,7 +66,7 @@ object Calculator {
             trainingLevel = training.level,
             totalTrainingLevel = totalTrainingLevel,
             relation = 0,
-            supportTypeCount = supportTypeCount,
+            supportCount = supportCount,
             fanCount = fanCount,
             status = currentStatus,
             totalRelation = totalRelation,
@@ -618,20 +621,14 @@ object Calculator {
         var total = calcTrainingStatus(scenarioInfo, target, isFriendTraining, baseValue == 0.0)
         val baseInt = baseValue.toInt()
         // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
-        if (target == trainingType) {
+        if (target == trainingType && linkAthletics.isNotEmpty()) {
             val baseFactor = when (linkAthletics.size) {
-                4 -> 0.3
-                3 -> 0.25
-                2 -> 0.2
-                1 -> 0.1
-                else -> 0.0
+                4 -> 1.3
+                3 -> 1.25
+                2 -> 1.2
+                else -> 1.1
             }
-            val typeFactor = when (target) {
-                trainingType -> 1.0
-                StatusType.SKILL -> 1.0 / 3.0
-                else -> 2.0 / 3.0
-            }
-            total *= (baseFactor * typeFactor) + 1.0
+            total *= baseFactor + if (info.isLevelUpTurn) 0.1 else 0.0
         }
         // 大会ボーナス
         val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0

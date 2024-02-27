@@ -52,6 +52,7 @@ data class State(
     val selectedTrainingType: StatusType = StatusType.SPEED,
     val trainingLevel: Int = 1,
     val motivation: Int = 2,
+    val isLevelUpTurn: Boolean = false,
     val fanCount: Int = 0,
     val hp: Int = 50,
     val maxHp: Int = 100,

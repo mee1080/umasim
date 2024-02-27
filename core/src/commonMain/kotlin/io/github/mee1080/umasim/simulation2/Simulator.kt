@@ -68,7 +68,7 @@ class Simulator(
         ) + chara.initialStatus + supportCardList
             .map { target -> target.initialStatus(supportCardList.map { it.type }) }
             .reduce { acc, status -> acc + status },
-        supportTypeCount = supportCardList.map { it.type }.distinct().count(),
+        supportCount = supportCardList.groupBy { it.type }.mapValues { it.value.size },
         totalRaceBonus = supportCardList.sumOf { it.race },
         totalFanBonus = supportCardList.sumOf { it.fan },
     )

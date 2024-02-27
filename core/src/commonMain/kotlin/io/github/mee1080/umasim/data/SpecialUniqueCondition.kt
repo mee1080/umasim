@@ -5,7 +5,7 @@ data class SpecialUniqueCondition(
     val trainingLevel: Int,
     val totalTrainingLevel: Int,
     val relation: Int,
-    val supportTypeCount: Int,
+    val supportCount: Map<StatusType, Int>,
     val fanCount: Int,
     val status: Status,
     val totalRelation: Int,
@@ -15,4 +15,6 @@ data class SpecialUniqueCondition(
     val accelSkillCount: Int,
     val friendTraining: Boolean,
     val friendCount: Int,
-)
+) {
+    val supportTypeCount = supportCount.size
+}

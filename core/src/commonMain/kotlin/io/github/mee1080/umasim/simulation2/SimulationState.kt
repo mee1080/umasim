@@ -31,7 +31,7 @@ data class SimulationState(
     val turn: Int = 0,
     val status: Status,
     val condition: List<String> = emptyList(),
-    val supportTypeCount: Int,
+    val supportCount: Map<StatusType, Int>,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
     val shopCoin: Int = 0,
@@ -42,6 +42,8 @@ data class SimulationState(
     val lArcStatus: LArcStatus? = null,
     val uafStatus: UafStatus? = null,
 ) {
+    val supportTypeCount = supportCount.size
+
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
     val liveAvailable get() = liveStatus != null
@@ -109,7 +111,7 @@ data class SimulationState(
         // 必要に応じて利用側で変更する
         member = support,
         scenario = scenario,
-        supportTypeCount = supportTypeCount,
+        supportCount = supportCount,
         fanCount = status.fanCount,
         currentStatus = status,
         totalRelation = totalRelation,
@@ -120,6 +122,7 @@ data class SimulationState(
         // TODO スキルPt160ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
         accelSkillCount = min(3, status.skillPt / 160),
         totalTrainingLevel = totalTrainingLevel,
+        isLevelUpTurn = isLevelUpTurn,
         liveStatus = liveStatus,
         gmStatus = gmStatus,
         lArcStatus = lArcStatus,

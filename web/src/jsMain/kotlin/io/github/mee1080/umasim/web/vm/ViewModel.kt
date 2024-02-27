@@ -300,16 +300,19 @@ class ViewModel(val scope: CoroutineScope) {
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
         val trainingType = state.selectedTrainingTypeForScenario
-        val supportTypeCount = state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size
+        val supportCount =
+            state.supportSelectionList.mapNotNull { it.card?.type }.groupBy { it }.mapValues { it.value.size }
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
         val lArcStatus = state.lArcStatusIfEnabled
         val uafStatus = state.uafStatusIfEnabled
         val trainingLevel = if (state.scenario == Scenario.UAF) {
-            (state.uafState.trainingGenre.ordinal + 1) * 10 + state.uafState.selectedTrainingLevel
+            (state.uafState.trainingGenre.ordinal + 1) * 10 + if (state.isLevelUpTurn) 5 else {
+                state.uafState.selectedTrainingLevel
+            }
         } else if (gmStatus?.trainingLevelUp == true || (state.scenario == Scenario.LARC && state.lArcState.overseas)) {
             6
-        } else state.trainingLevel
+        } else if (state.isLevelUpTurn) 5 else state.trainingLevel
 
         val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
             it.type == trainingType && it.level == trainingLevel
@@ -320,7 +323,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.motivation,
             joinSupportList,
             state.scenario,
-            supportTypeCount,
+            supportCount,
             fanCount,
             Status(maxHp = state.maxHp, hp = state.hp),
             state.totalRelation,
@@ -328,6 +331,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.healSkillCount,
             state.accelSkillCount,
             state.totalTrainingLevel,
+            state.isLevelUpTurn,
             state.trainingLiveStateIfEnabled,
             gmStatus,
             lArcStatus,
@@ -345,7 +349,12 @@ class ViewModel(val scope: CoroutineScope) {
         )
         val trainingItemBonus = when {
             state.scenario.hasSecondTrainingStatus -> trainingResult.second
-            state.scenario == Scenario.CLIMAX -> Calculator.calcItemBonus(trainingType, trainingResult.first.first, itemList)
+            state.scenario == Scenario.CLIMAX -> Calculator.calcItemBonus(
+                trainingType,
+                trainingResult.first.first,
+                itemList
+            )
+
             else -> Status()
         }
 
@@ -357,7 +366,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.motivation,
                     joinSupportList.filterIndexed { index, _ -> index != targetIndex },
                     state.scenario,
-                    supportTypeCount,
+                    supportCount,
                     fanCount,
                     Status(maxHp = state.maxHp, hp = state.hp),
                     state.totalRelation,
@@ -365,6 +374,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.healSkillCount,
                     state.accelSkillCount,
                     state.totalTrainingLevel,
+                    state.isLevelUpTurn,
                     state.trainingLiveStateIfEnabled,
                     gmStatus,
                     lArcStatus,
@@ -384,7 +394,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.motivation,
                 supportList,
                 state.scenario,
-                supportTypeCount,
+                supportCount,
                 fanCount,
                 Status(maxHp = state.maxHp, hp = state.hp),
                 state.totalRelation,
@@ -392,6 +402,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.healSkillCount,
                 state.accelSkillCount,
                 state.totalTrainingLevel,
+                state.isLevelUpTurn,
                 state.trainingLiveStateIfEnabled,
                 gmStatus,
                 lArcStatus,
@@ -499,6 +510,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.healSkillCount,
                 state.accelSkillCount,
                 state.totalTrainingLevel,
+                state.isLevelUpTurn,
                 state.trainingLiveStateIfEnabled,
                 state.gmStatusIfEnabled,
                 state.lArcStatusIfEnabled,
