@@ -38,7 +38,6 @@ object BinarySearcher {
         while (diff > limit) {
             val value = min + diff / 2.0
             val result = calc(value)
-            println("$min,$max - $diff : $value -> $result / $target")
             if (result == target) return value
             if (result * direction > target * direction) {
                 max = value

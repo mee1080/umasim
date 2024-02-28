@@ -338,7 +338,6 @@ class ViewModel(val scope: CoroutineScope) {
             uafStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
-        println(trainingResult.first)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
             Calculator.calcPerformanceValue(trainingCalcInfo)
         } else 0

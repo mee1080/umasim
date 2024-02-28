@@ -153,7 +153,6 @@ object Calculator {
                 it.card.trainingFactor(baseCondition.applyMember(it))
             } / 100.0
         val count = 1 + info.member.size * 0.05
-        println("$targetType $baseStatus ${base * charaBonus * friend * motivationBonus * trainingBonus * count} $base * $charaBonus * $friend * $motivationBonus * $trainingBonus * $count")
         return min(100.0, base * charaBonus * friend * motivationBonus * trainingBonus * count)
     }
 
