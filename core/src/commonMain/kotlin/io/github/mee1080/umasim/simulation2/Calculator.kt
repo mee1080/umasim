@@ -138,7 +138,7 @@ object Calculator {
         val base = baseStatus + if (ignoreBaseBonus) 0 else support.sumOf {
             it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
         }
-        val charaBonus = info.chara.getBonus(targetType) / 100.0
+        val charaBonus = if (ignoreBaseBonus) 1.0 else info.chara.getBonus(targetType) / 100.0
         val friend = support.map {
             if (info.allFriend || it.isFriendTraining(info.training.type)) {
                 it.card.friendFactor(baseCondition.applyMember(it))
@@ -653,6 +653,6 @@ object Calculator {
                 uafStatus.athleticsLevelUp[target]!! / 2 + 1
             }
         }
-        return (total - baseInt).toInt()
+        return min(100, (total - baseInt).toInt())
     }
 }
