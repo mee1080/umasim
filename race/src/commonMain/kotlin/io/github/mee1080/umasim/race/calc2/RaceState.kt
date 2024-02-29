@@ -44,7 +44,7 @@ data class UmaStatus(
 
 data class Track(
     val location: Int = 10009,
-    val course: Int = 10902,
+    val course: Int = 10903,
     val condition: CourseCondition = CourseCondition.GOOD,
 ) {
     val surfaceCondition: Int = condition.value

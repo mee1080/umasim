@@ -3,8 +3,10 @@ package io.github.mee1080.umasim.race.test
 import io.github.mee1080.umasim.race.calc2.RaceCalculator
 import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.calc2.Track
+import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
+import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.race.data2.getSkill
 import io.github.mee1080.umasim.race.data2.getSkills
 
@@ -16,12 +18,14 @@ fun testCalc2() {
         getSkill("好転一息"),
 //        getSkill("昂る鼓動"),
         getSkills("レッツ・アナボリック！").first { it.rarity == "unique" },
+        getSkill("大逃げ")
 //            getSkill("追込ためらい"),
     )
 //    val skills = skillData2
     val setting = RaceSetting(
 //        track = Track(10001, 10101), // 札幌芝1200
 //        track = Track(10001, 10105), // 札幌芝2600
+        umaStatus = UmaStatus(style = Style.NIGE),
         track = Track(10005, 10507), // 中山芝3600
         skillActivateAdjustment = SkillActivateAdjustment.ALL,
         randomPosition = RandomPosition.MIDDLE,

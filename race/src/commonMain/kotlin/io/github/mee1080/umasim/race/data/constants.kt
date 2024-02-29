@@ -197,7 +197,7 @@ private val styleSpeedCoefData = mapOf(
         1 to 1.0,
         2 to 1.0
     ),
-    Style.OONIGE.ordinal to mapOf(
+    Style.OONIGE to mapOf(
         0 to 1.063,
         1 to 0.962,
         2 to 0.95
@@ -231,7 +231,7 @@ private val styleAccelerateCoefData = mapOf(
         2 to 0.997,
         3 to 0.997
     ),
-    Style.OONIGE.ordinal to mapOf(
+    Style.OONIGE to mapOf(
         0 to 1.17,
         1 to 0.94,
         2 to 0.956,
