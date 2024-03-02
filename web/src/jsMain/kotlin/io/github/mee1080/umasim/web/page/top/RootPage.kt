@@ -88,7 +88,7 @@ private fun RootPageContent(model: ViewModel, state: State) {
     TrainingInfo(model, state)
     ExpectedStatusDisplay(model, state)
     RaceBonus(model, state)
-    SupportInfo(state)
+    SupportInfo(model, state)
     SupportCardInfo(state)
     if (state.scenario == Scenario.URA) {
         UraSimulation(model, state)

@@ -221,7 +221,7 @@ object Calculator {
         ),
     )
 
-    data class ExpectedStatusKey(
+    private data class ExpectedStatusKey(
         val charaId: Int,
         val trainingType: StatusType,
         val trainingLevel: Int,
@@ -233,6 +233,7 @@ object Calculator {
         val liveStatus: TrainingLiveStatus?,
         val gmStatus: GmStatus?,
         val lArcStatus: LArcStatus?,
+        val uafStatus: UafStatus?,
     )
 
     @ThreadLocal
@@ -255,6 +256,7 @@ object Calculator {
             info.liveStatus,
             info.gmStatus,
             info.lArcStatus,
+            info.uafStatus,
         )
         val cached = expectedStatusCache[key]
         if (cached != null) {

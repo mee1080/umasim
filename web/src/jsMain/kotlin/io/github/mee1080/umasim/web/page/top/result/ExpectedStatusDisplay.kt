@@ -38,7 +38,7 @@ fun ExpectedStatusDisplay(model: ViewModel, state: State) {
     HideBlock("トレーニング期待値") {
         val expectedState = state.expectedState
         val status = expectedState.status
-        if (state.scenario == Scenario.AOHARU || state.scenario == Scenario.GRAND_LIVE) {
+        if (state.scenario.guestMember) {
             Div {
                 H3 { Text("サポカ外加入人数") }
                 Div {

@@ -19,16 +19,63 @@
 package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
+import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
+import io.github.mee1080.umasim.web.components.atoms.disabled
+import io.github.mee1080.umasim.web.components.atoms.onChange
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
+import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
+import io.github.mee1080.umasim.web.vm.ViewModel
+import org.jetbrains.compose.web.css.marginBottom
+import org.jetbrains.compose.web.css.marginLeft
+import org.jetbrains.compose.web.css.px
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
 @Composable
-fun SupportInfo(state: State) {
+fun SupportInfo(model: ViewModel, state: State) {
     HideBlock("編成情報") {
+        if (state.scenario == Scenario.UAF) {
+            H3 { Text("競技レベルアップ期待値") }
+            DivFlexCenter({ style { marginBottom(8.px) } }) {
+                MdFilledButton("計算") {
+                    if (state.uafState.athleticsLevelUpCalculating) disabled()
+                    onClick { model.calcUafAthleticsLevel() }
+                }
+                MdCheckbox("お休み/お出かけ/レース後", state.uafState.athleticsLevelUpBonus) {
+                    style { marginLeft(8.px) }
+                    onChange { model.updateUaf { copy(athleticsLevelUpBonus = it) } }
+                }
+            }
+            if (state.uafState.athleticsLevelUpRate.isNotEmpty()) {
+                Div {
+                    Text("期待値：${state.uafState.expectedAthleticsLevelUp.round(3)}")
+                }
+                Table({ classes(AppStyle.table) }) {
+                    Tr {
+                        Th { Text("上昇値") }
+                        Th { Text("確率") }
+                    }
+                    state.uafState.athleticsLevelUpRate.forEach { (level, rate) ->
+                        Tr {
+                            Td { Text(level.toString()) }
+                            Td { Text("${(rate * 100).round(4)}%") }
+                        }
+                    }
+                }
+            }
+            Ul {
+                Li { Text("競技レベルが最も大きく上がるトレーニングを押す場合の期待値です") }
+                Li { Text("計算時間がかかるため、計算ボタンを押すまで更新されません") }
+                Li { Text("友人/グループは、1箇所に1人のみの制限が入っていないため、複数編成の場合正確ではありません") }
+                Li { Text("つるぎとメイの固有には未対応です") }
+            }
+        }
         H3 { Text("レースボーナス合計：${state.totalRaceBonus}") }
         H3 { Text("ファンボーナス合計：${state.totalFanBonus}") }
         H3 { Text("初期ステータスアップ") }

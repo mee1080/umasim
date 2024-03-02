@@ -747,4 +747,64 @@ class ViewModel(val scope: CoroutineScope) {
     fun updateUaf(update: UafState.() -> UafState) {
         update { copy(uafState = uafState.update()) }
     }
+
+    fun calcUafAthleticsLevel() {
+        updateUaf { copy(athleticsLevelUpRate = emptyList(), athleticsLevelUpCalculating = true) }
+        scope.launch(Dispatchers.Default) {
+            val state = state
+            val joinSupportList = state.supportSelectionList.filter { it.card != null }
+                .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
+
+            val trainingType = state.selectedTrainingTypeForScenario
+            val supportCount =
+                state.supportSelectionList.mapNotNull { it.card?.type }.groupBy { it }.mapValues { it.value.size }
+            val fanCount = state.fanCount
+            val uafStatus = state.uafStatusIfEnabled
+            val trainingLevel = (state.uafState.trainingGenre.ordinal + 1) * 10 + if (state.isLevelUpTurn) 5 else {
+                state.uafState.selectedTrainingLevel
+            }
+
+            val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
+                it.type == trainingType && it.level == trainingLevel
+            }
+            val trainingCalcInfo = Calculator.CalcInfo(
+                state.chara,
+                trainingBase,
+                state.motivation,
+                joinSupportList,
+                state.scenario,
+                supportCount,
+                fanCount,
+                Status(maxHp = state.maxHp, hp = state.hp),
+                state.totalRelation,
+                state.speedSkillCount,
+                state.healSkillCount,
+                state.accelSkillCount,
+                state.totalTrainingLevel,
+                state.isLevelUpTurn,
+                liveStatus = null,
+                gmStatus = null,
+                lArcStatus = null,
+                uafStatus,
+            )
+            val result = UafAthleticsLevelCalculator.calc(trainingCalcInfo, state.uafState.athleticsLevelUpBonus)
+            var expected = 0.0
+            val rateList = mutableListOf<Pair<Int, Double>>()
+            result.forEachIndexed { index, rate ->
+                if (rate > 0.0) {
+                    rateList.add(index to rate)
+                    expected += index * rate
+                }
+            }
+            withContext(Dispatchers.Main) {
+                updateUaf {
+                    copy(
+                        athleticsLevelUpRate = rateList,
+                        expectedAthleticsLevelUp = expected,
+                        athleticsLevelUpCalculating = false,
+                    )
+                }
+            }
+        }
+    }
 }

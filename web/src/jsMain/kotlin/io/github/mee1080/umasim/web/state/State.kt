@@ -520,6 +520,10 @@ data class UafState(
     val heatUpBlue: Boolean = false,
     val heatUpRed: Boolean = false,
     val heatUpYellow: Boolean = false,
+    val athleticsLevelUpBonus: Boolean = false,
+    val athleticsLevelUpRate: List<Pair<Int, Double>> = emptyList(),
+    val expectedAthleticsLevelUp: Double = 0.0,
+    val athleticsLevelUpCalculating: Boolean = false,
 ) {
     val trainingName get() = UafAthletic.byStatusType[selectedTrainingType]!!.first { it.genre == trainingGenre }.longDisplayName
 
