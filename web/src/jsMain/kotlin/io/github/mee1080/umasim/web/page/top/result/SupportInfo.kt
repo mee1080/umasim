@@ -31,9 +31,7 @@ import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.css.marginBottom
-import org.jetbrains.compose.web.css.marginLeft
-import org.jetbrains.compose.web.css.px
+import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
 
@@ -60,11 +58,26 @@ fun SupportInfo(model: ViewModel, state: State) {
                     Tr {
                         Th { Text("上昇値") }
                         Th { Text("確率") }
+                        Th({
+                            style {
+                                width(200.px)
+                                property("border", "unset")
+                            }
+                        })
                     }
                     state.uafState.athleticsLevelUpRate.forEach { (level, rate) ->
                         Tr {
                             Td { Text(level.toString()) }
                             Td { Text("${(rate * 100).round(4)}%") }
+                            Td({ style { property("border", "unset") } }) {
+                                Div({
+                                    style {
+                                        width((rate * 1000).px)
+                                        height(16.px)
+                                    }
+                                    classes("tertiary")
+                                })
+                            }
                         }
                     }
                 }
