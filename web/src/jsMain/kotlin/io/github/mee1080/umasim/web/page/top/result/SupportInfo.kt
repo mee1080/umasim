@@ -39,7 +39,7 @@ import kotlin.math.roundToInt
 
 @Composable
 fun SupportInfo(model: ViewModel, state: State) {
-    HideBlock("編成情報") {
+    HideBlock("編成情報", initialOpen = true) {
         if (state.scenario == Scenario.UAF) {
             H3 { Text("競技レベルアップ期待値") }
             DivFlexCenter({ style { marginBottom(8.px) } }) {
