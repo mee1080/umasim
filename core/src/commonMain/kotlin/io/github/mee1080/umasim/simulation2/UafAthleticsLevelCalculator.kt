@@ -44,7 +44,6 @@ object UafAthleticsLevelCalculator {
         } + if (info.member.any { it.charaName == "都留岐涼花" }) emptyList() else listOf(
             ColorFactor(5, link = false, friend = false, 1.0 / 6.0, 1.0 / 6.0),
         )
-        factors.forEach { println(it) }
         return calc(factors, bonus)
     }
 

@@ -107,7 +107,12 @@ data class SupportCardSpecialUnique(
         condition: SpecialUniqueCondition,
     ): Int {
         if (type == 120) {
-            return min(2, condition.supportCount.getOrElse(statusType) { 0 })
+            val value = if (statusType == StatusType.SKILL) {
+                condition.supportCount.getOrElse(StatusType.FRIEND) { 0 } + condition.supportCount.getOrElse(StatusType.GROUP) { 0 }
+            } else {
+                condition.supportCount.getOrElse(statusType) { 0 }
+            }
+            return min(2, value)
         }
         val target = when (statusType) {
             StatusType.SPEED -> 3

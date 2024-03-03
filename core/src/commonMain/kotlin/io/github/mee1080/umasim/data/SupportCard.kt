@@ -170,7 +170,7 @@ data class SupportCard(
     }
 
     val targetRelation =
-        (listOf(0) + if (type == StatusType.FRIEND) emptyList() else listOf(80) + specialUnique.mapNotNull { it.targetRelation })
+        (listOf(0) + (if (type == StatusType.FRIEND) emptyList() else listOf(80)) + specialUnique.mapNotNull { it.targetRelation })
             .sorted().distinct()
 
     val requiredRelation = targetRelation.maxOrNull() ?: 80
