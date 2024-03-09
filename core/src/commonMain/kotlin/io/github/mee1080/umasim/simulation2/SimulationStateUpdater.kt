@@ -168,7 +168,7 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
             member = newMember,
             training = newTraining,
             status = newStatus + trainingHint.first + selectAoharuTrainingHint(action.member),
-        )
+        ).applyFriendEvent(action)
     } else if (action is Race && itemAvailable && action.grade != RaceGrade.FINALS) {
         copy(
             status = newStatus,
@@ -213,6 +213,46 @@ private fun MemberState.applyTraining(
     return copy(
         supportState = supportState,
         scenarioState = scenarioState,
+    )
+}
+
+private fun SimulationState.applyFriendEvent(action: Training): SimulationState {
+    return action.member.filter { !it.guest && it.outingType }.fold(this) { state, support ->
+        val isFirst = !supportFirstEventChara.contains(support.charaName)
+        when (support.charaName) {
+            "都留岐涼花" -> {
+                if (isFirst) {
+                    applyFriendEvent(support, Status(speed = 5, wisdom = 5, motivation = 1), 10)
+                } else if (Random.nextDouble() < 0.4) {
+                    applyFriendEvent(support, Status(hp = 7), 5)
+                } else state
+            }
+
+            // TODO 他の友人のイベント
+            else -> state
+        }.applyIf(isFirst) {
+            copy(supportFirstEventChara = supportFirstEventChara + support.charaName)
+        }
+    }
+}
+
+private fun SimulationState.applyFriendEvent(support: MemberState, statusUp: Status, relation: Int): SimulationState {
+    val newMember = member.mapIf({ it.index == support.index }) {
+        copy(supportState = supportState?.copy(relation = min(100, relation + 5)))
+    }
+    val eventEffect = support.card.eventEffect
+    val eventRecovery = support.card.eventRecovery
+    val eventStatus = statusUp.copy(
+        speed = (statusUp.speed * eventEffect).toInt(),
+        stamina = (statusUp.stamina * eventEffect).toInt(),
+        power = (statusUp.power * eventEffect).toInt(),
+        guts = (statusUp.guts * eventEffect).toInt(),
+        wisdom = (statusUp.wisdom * eventEffect).toInt(),
+        hp = (statusUp.hp * eventRecovery).toInt(),
+    )
+    return copy(
+        member = newMember,
+        status = status + eventStatus,
     )
 }
 

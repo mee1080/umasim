@@ -31,6 +31,7 @@ data class SimulationState(
     val turn: Int = 0,
     val status: Status,
     val condition: List<String> = emptyList(),
+    val supportFirstEventChara: Set<String> = emptySet(),
     val supportCount: Map<StatusType, Int>,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,

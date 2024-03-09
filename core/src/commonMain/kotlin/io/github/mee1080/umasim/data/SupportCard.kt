@@ -161,6 +161,10 @@ data class SupportCard(
         return !type.outingType && Random.nextDouble() < frequency
     }
 
+    val eventRecovery = (100 + status.eventRecovery) * (100 + unique.eventRecovery) / 10000.0
+
+    val eventEffect = (100 + status.eventEffect) * (100 + unique.eventEffect) / 10000.0
+
     val hintStatus = if (id == 30098) Status(stamina = 4, power = 12, skillPt = 2) else baseHintStatus
 
     val trainingRelation = type.trainingRelation
