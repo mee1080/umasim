@@ -25,7 +25,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
-fun SimulationState.predict(turn: Int): List<Action> {
+fun SimulationState.predict(): List<Action> {
     val result = goalRace.find { it.turn == turn }?.let { predictGoal(it) } ?: predictNormal()
     return predictScenarioActionParams(result)
 }
@@ -44,7 +44,7 @@ fun SimulationState.predictNormal(): List<Action> {
         *(training.map {
             calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
         }).toTypedArray(),
-        *(predictLArcAction()),
+        *(predictScenarioAction()),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario == Scenario.LARC) emptyArray() else {
@@ -63,10 +63,11 @@ private fun SimulationState.calcTrainingResult(
     training: TrainingState,
     support: List<MemberState>,
 ): Action {
-    val failureRate = calcTrainingFailureRate(training.current, support)
+    val currentTraining = uafStatus?.getTraining(training.type, isLevelUpTurn) ?: training.current
+    val failureRate = calcTrainingFailureRate(currentTraining, support)
     val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(
         baseCalcInfo.copy(
-            training = training.current,
+            training = currentTraining,
             member = support,
         )
     )
@@ -118,7 +119,7 @@ private fun SimulationState.calcTrainingResult(
     return Training(
         training.type,
         failureRate,
-        training.currentLevel,
+        currentTraining.level,
         support,
         successCandidate + failureCandidate,
         baseStatus,
@@ -283,6 +284,7 @@ fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List
     return when (scenario) {
         Scenario.GM -> predictGmScenarioActionParams(baseActions)
         Scenario.LARC -> predictLArcScenarioActionParams(baseActions)
+        Scenario.UAF -> predictUafScenarioActionParams(baseActions)
         else -> baseActions
     }
 }
@@ -416,6 +418,14 @@ private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Ac
     }
 }
 
+private fun SimulationState.predictScenarioAction(): Array<Action> {
+    return when (scenario) {
+        Scenario.LARC -> predictLArcAction()
+        Scenario.UAF -> predictUafAction()
+        else -> emptyArray()
+    }
+}
+
 private fun SimulationState.predictLArcAction(): Array<Action> {
     val lArcStatus = lArcStatus ?: return emptyArray()
     return predictSSMatch(lArcStatus) + lArcStatus.predictGetAptitude()
@@ -500,5 +510,47 @@ private fun ActionResult.addScenarioActionParam(scenarioActionParam: ScenarioAct
     return when (this) {
         is StatusActionResult -> copy(scenarioActionParam = if (success) scenarioActionParam else null)
         else -> this
+    }
+}
+
+private fun SimulationState.predictUafAction(): Array<Action> {
+    val uafStatus = uafStatus ?: return emptyArray()
+    if (uafStatus.consultCount == 0) return emptyArray()
+    return buildList {
+        UafGenre.entries.forEach { genre ->
+            if (uafStatus.trainingAthletics.any { it.value.genre == genre }) {
+                addAll(UafConsult.instance[genre]!!)
+            }
+        }
+    }.toTypedArray()
+}
+
+
+private fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): List<Action> {
+    val uafStatus = uafStatus ?: return baseActions
+    return baseActions.map {
+        when (it) {
+            is Training -> {
+                val genre = uafStatus.trainingAthletics[it.type]!!.genre
+                val levelUp = uafStatus.athleticsLevelUp.mapValues { (key, value) ->
+                    if (uafStatus.trainingAthletics[key]!!.genre == genre) value else 0
+                }
+                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(athleticsLevelUp = levelUp)))
+            }
+
+            is Sleep -> {
+                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
+            }
+
+            is Outing -> {
+                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
+            }
+
+            is Race -> {
+                it.copy(result = it.result.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
+            }
+
+            else -> it
+        }
     }
 }

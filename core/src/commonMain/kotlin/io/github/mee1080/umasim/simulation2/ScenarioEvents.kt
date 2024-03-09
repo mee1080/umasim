@@ -24,6 +24,7 @@ interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
     fun initialStatus(status: Status): Status = status
     fun beforeAction(state: SimulationState): SimulationState = state
+    fun beforePredict(state: SimulationState): SimulationState = state
     fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState = state
     fun onTurnEnd(state: SimulationState): SimulationState = state
     fun afterSimulation(state: SimulationState): SimulationState = state

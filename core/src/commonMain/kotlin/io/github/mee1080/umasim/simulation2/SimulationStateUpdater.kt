@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.util.applyIfNotNull
 import io.github.mee1080.umasim.util.mapIf
+import io.github.mee1080.umasim.util.sumMapOf
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -59,6 +60,13 @@ fun SimulationState.shuffleMember(): SimulationState {
 fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status).adjustRange())
 
 fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
+
+fun SimulationState.addAllStatus(status: Int, skillPt: Int = 0, skillHint: Map<String, Int> = emptyMap()) = addStatus(
+    Status(
+        speed = status, stamina = status, power = status, guts = status, wisdom = status,
+        skillPt = skillPt, skillHint = skillHint,
+    )
+)
 
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
     // シナリオ友人不在判定
@@ -133,6 +141,8 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
         is GmActivateWisdomResult -> applySelectedGmAction()
 
         is LArcGetAptitudeResult -> applySelectedLArcAction(result)
+
+        is UafConsultResult -> applySelectedUafAction(result)
     }
 }
 
@@ -448,6 +458,7 @@ private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: 
     return when (scenarioAction) {
         is GmActionParam -> applyGmAction(scenarioAction)
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
+        is UafScenarioActionParam -> applyUafAction(scenarioAction)
         null -> this
     }
 }
@@ -495,6 +506,10 @@ private fun SimulationState.applySelectedGmAction(): SimulationState {
 
 fun SimulationState.updateLArcStatus(update: LArcStatus.() -> LArcStatus): SimulationState {
     return copy(lArcStatus = lArcStatus?.update())
+}
+
+fun SimulationState.updateUafStatus(update: UafStatus.() -> UafStatus): SimulationState {
+    return copy(uafStatus = uafStatus?.update())
 }
 
 private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActionParam): SimulationState {
@@ -621,4 +636,22 @@ fun LArcMemberState.applyTraining(action: Training, isLevelUpTurn: Boolean): LAr
 
 fun SimulationState.applySelectedLArcAction(result: LArcGetAptitudeResult): SimulationState {
     return updateLArcStatus { addAptitude(result.aptitude) }
+}
+
+fun SimulationState.applySelectedUafAction(result: UafConsultResult): SimulationState {
+    return updateUafStatus { consult(result.from, result.to) }
+}
+
+private fun SimulationState.applyUafAction(uafAction: UafScenarioActionParam): SimulationState {
+    val uafStatus = uafStatus ?: return this
+    val newLevel = sumMapOf(uafStatus.athleticsLevel, uafAction.athleticsLevelUp.mapKeys {
+        uafStatus.trainingAthletics[it.key]!!
+    })
+    val newUafStatus = uafStatus.copy(
+        athleticsLevel = newLevel,
+        levelUpBonus = uafAction.notTraining,
+    ).applyIf(!uafAction.notTraining) {
+        copy(heatUp = heatUp.mapValues { max(0, it.value - 1) })
+    }
+    return copy(uafStatus = newUafStatus.applyHeatUpFrom(uafStatus))
 }

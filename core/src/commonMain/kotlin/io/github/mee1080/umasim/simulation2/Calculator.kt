@@ -190,7 +190,6 @@ object Calculator {
 
     fun calcCardPositionSelection(info: CalcInfo, member: MemberState, bonus: Int): Array<Pair<StatusType, Int>> {
         val rateUp = info.positionRateUp
-        println(rateUp)
         val card = member.card
         if (card.type.outingType) {
             return arrayOf(

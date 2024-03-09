@@ -26,9 +26,31 @@ data class UafStatus(
     val athleticsLevel: Map<UafAthletic, Int> = UafAthletic.entries.associateWith { 1 },
     val trainingAthletics: Map<StatusType, UafAthletic> = emptyMap(),
     val heatUp: Map<UafGenre, Int> = UafGenre.entries.associateWith { 0 },
+    val festivalWinCount: Map<UafGenre, Int> = UafGenre.entries.associateWith { 0 },
     val festivalBonus: Int = 0,
     val athleticsLevelUp: Map<StatusType, Int> = trainingType.associateWith { 3 },
+    val levelUpBonus: Boolean = false,
+    val consultCount: Int = 3,
 ) {
+    companion object {
+        private val trainingData = Store.getTrainingList(Scenario.UAF)
+            .groupBy { it.type }
+            .mapValues { it.value.associateBy { it.level } }
+    }
+
+    fun toShortString() = buildString {
+        append("UafStatus(festivalBonus=")
+        append(festivalBonus)
+        append(", consultCount=")
+        append(consultCount)
+        append(", levelUpBonus=")
+        append(levelUpBonus)
+        append(", athleticsLevel=")
+        append(UafAthletic.entries.joinToString("/") { athleticsLevel[it].toString() })
+        append(", heatUp=")
+        append(UafGenre.entries.joinToString("/") { heatUp[it].toString() })
+    }
+
     val genreLevel by lazy {
         athleticsLevel.entries.groupBy {
             it.key.genre
@@ -39,9 +61,15 @@ data class UafStatus(
 
     fun trainingLevel(athletic: UafAthletic) = min(5, max(1, athleticsLevel[athletic]!! / 10))
 
+    fun getTraining(statusType: StatusType, levelUpTurn: Boolean): TrainingBase {
+        val athletic = trainingAthletics[statusType]!!
+        val level = if (levelUpTurn) 5 else trainingLevel(athletic)
+        return trainingData[statusType]!![(athletic.genre.ordinal + 1) * 10 + level]!!
+    }
+
     fun randomizeTraining(): UafStatus {
         return copy(
-            trainingAthletics = StatusType.entries.associateWith {
+            trainingAthletics = trainingType.associateWith {
                 UafAthletic.byStatusType[it]!!.random()
             }
         )
@@ -53,23 +81,9 @@ data class UafStatus(
                 if (athletic.genre == from) {
                     UafAthletic.byStatusType[type]!!.first { it.genre == to }
                 } else athletic
-            }
+            },
+            consultCount = consultCount - 1,
         )
-    }
-
-    fun applyFestivalBonus(): UafStatus {
-        val bonus = UafGenre.entries.sumOf {
-            val level = genreLevel[it] ?: 0
-            when {
-                level >= 20 -> 17
-                level >= 15 -> 12
-                level >= 10 -> 7
-                level >= 5 -> 3
-                level >= 1 -> 1
-                else -> 0
-            }.toInt()
-        }
-        return copy(festivalBonus = bonus)
     }
 
     fun applyHeatUpFrom(oldStatus: UafStatus): UafStatus {
@@ -81,7 +95,7 @@ data class UafStatus(
     private fun checkHeatUp(oldStatus: UafStatus, genre: UafGenre): Int {
         val oldRank = (oldStatus.genreLevel[genre] ?: 0) % 50
         val newRank = (genreLevel[genre] ?: 0) % 50
-        return if (newRank > oldRank) 2 else heatUp[genre] ?: 0
+        return heatUp[genre]!! + if (newRank > oldRank) 2 else 0
     }
 }
 

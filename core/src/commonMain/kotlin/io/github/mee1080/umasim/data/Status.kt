@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.util.diffIntMap
+import io.github.mee1080.umasim.util.sumMapOf
 import kotlin.math.max
 import kotlin.math.min
 
@@ -67,7 +69,7 @@ data class Status(
         hp + other.hp,
         motivation + other.motivation,
         maxHp + other.maxHp,
-        mergeIntMap(skillHint, other.skillHint, 0, 5),
+        sumMapOf(skillHint, other.skillHint, max = 5),
         fanCount + other.fanCount,
         performance?.plus(other.performance) ?: other.performance,
     )
@@ -86,35 +88,6 @@ data class Status(
         fanCount - other.fanCount,
         performance?.minus(other.performance),
     )
-
-    private fun <K> mergeIntMap(first: Map<K, Int>, second: Map<K, Int>, defaultValue: Int, max: Int): Map<K, Int> {
-        return mergeMap(first, second, defaultValue) { a, b -> min(max, a + b) }
-    }
-
-    private fun <K, V> mergeMap(first: Map<K, V>, second: Map<K, V>, defaultValue: V, merge: (V, V) -> V): Map<K, V> {
-        if (second.isEmpty()) return first
-        val result = mutableMapOf<K, V>()
-        result.putAll(first)
-        second.entries.forEach {
-            result[it.key] = merge.invoke(result[it.key] ?: defaultValue, it.value)
-        }
-        return result
-    }
-
-    private fun <K> diffIntMap(first: Map<K, Int>, second: Map<K, Int>): Map<K, Int> {
-        return diffMap(first, second, 0) { a, b -> a - b }
-    }
-
-    private fun <K, V> diffMap(first: Map<K, V>, second: Map<K, V>, defaultValue: V, diff: (V, V) -> V): Map<K, V> {
-        val result = mutableMapOf<K, V>()
-        first.entries.forEach {
-            val value = second[it.key]
-            if (value != it.value) {
-                result[it.key] = diff(it.value, value ?: defaultValue)
-            }
-        }
-        return result
-    }
 
     private fun diffSkillHint(first: Map<String, Int>, second: Map<String, Int>): Map<String, Int> {
         val result = mutableMapOf<String, Int>()

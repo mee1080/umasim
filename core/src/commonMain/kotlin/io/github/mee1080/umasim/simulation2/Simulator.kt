@@ -108,7 +108,8 @@ class Simulator(
             val beforeActionState = state
             val selections = mutableListOf<Triple<List<Action>, Action, ActionResult>>()
             do {
-                val selection = state.predict(state.turn)
+                state = scenarioEvents.beforePredict(state)
+                val selection = state.predict()
                 val action = selector.select(state, selection)
                 val result = action.randomSelectResult()
                 selections += Triple(selection, action, result)

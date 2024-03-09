@@ -55,6 +55,22 @@ object UafAthleticsLevelCalculator {
         return calcExpected(colorPatterns, positionPatterns)
     }
 
+    fun calcLevelUp(
+        members: List<MemberState>,
+        bonus: Boolean,
+    ): Map<StatusType, Int> {
+        val factors = mutableListOf<ColorFactor>()
+        val positions = IntArray(members.size) { 0 }
+        members.forEachIndexed { index, member ->
+            val link = member.isScenarioLink
+            val typeInt = member.card.type.ordinal
+            factors.add(ColorFactor(typeInt, link, member.friendTrainingEnabled, 0.0, 0.0, 0.0))
+            positions[index] = member.position.ordinal
+        }
+        val list = calcLevelUp(factors, positions, if (bonus) 3 else 0)!!
+        return list.mapIndexed { index, i -> StatusType.entries[index] to i }.associate { it }
+    }
+
     private class CalcEntry(
         val data: List<Int>,
         val rate: Double,

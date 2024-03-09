@@ -248,3 +248,39 @@ class LArcGetAptitudeResult(
 ) : ActionResult {
     override fun toString() = "${aptitude.displayName}Lv$level(${aptitude.getCost(level)}Pt)"
 }
+
+class UafConsult(
+    override val result: UafConsultResult,
+) : SingleAction {
+    override val name get() = "相談：$result"
+    override val turnChange get() = false
+
+    companion object {
+        val instance = mapOf(
+            UafGenre.Blue to listOf(UafGenre.Red, UafGenre.Yellow),
+            UafGenre.Red to listOf(UafGenre.Blue, UafGenre.Yellow),
+            UafGenre.Yellow to listOf(UafGenre.Blue, UafGenre.Red),
+        ).mapValues { entry ->
+            entry.value.map { UafConsult(UafConsultResult(entry.key, it)) }
+        }
+    }
+}
+
+class UafConsultResult(
+    val from: UafGenre,
+    val to: UafGenre,
+) : ActionResult {
+    override fun toString() = "${from.longDisplayName}->${to.longDisplayName}"
+}
+
+class UafScenarioActionParam(
+    val athleticsLevelUp: Map<StatusType, Int> = emptyMap(),
+    val notTraining: Boolean = false,
+) : ScenarioActionParam {
+    override fun toShortString() = buildString {
+        append("Uaf(")
+        if (athleticsLevelUp.isNotEmpty()) append(athleticsLevelUp.toString())
+        if (notTraining) append("Not Training")
+        append(")")
+    }
+}
