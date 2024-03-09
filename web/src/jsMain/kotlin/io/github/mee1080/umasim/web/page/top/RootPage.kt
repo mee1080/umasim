@@ -86,7 +86,9 @@ private fun RootPageContent(model: ViewModel, state: State) {
     SupportSelect(model, state)
     TrainingSetting(model, state)
     TrainingInfo(model, state)
-    ExpectedStatusDisplay(model, state)
+    if (state.scenario != Scenario.UAF) {
+        ExpectedStatusDisplay(model, state)
+    }
     RaceBonus(model, state)
     SupportInfo(model, state)
     SupportCardInfo(state)

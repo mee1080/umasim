@@ -214,6 +214,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Th { Text("スキルPt") }
                     Th { Text("体力") }
                     Th { Text("5ステ合計") }
+                    Th { Text("5ステ+SP") }
                     if (state.scenario == Scenario.GRAND_LIVE) {
                         Th({ style { width(120.px) } }) { Text("パフォーマンス") }
                     }
@@ -230,6 +231,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Td { Text(state.trainingResult.skillPt.toString()) }
                     Td { Text(state.trainingResult.hp.toString()) }
                     Td { Text(state.trainingResult.statusTotal.toString()) }
+                    Td { Text(state.trainingResult.totalPlusSkillPt.toString()) }
                     if (state.scenario == Scenario.GRAND_LIVE) {
                         Td { Text(state.trainingPerformanceValue.toString()) }
                     }
@@ -250,6 +252,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Td { Text(state.trainingItemBonus.skillPt.toString()) }
                         Td { Text(state.trainingItemBonus.hp.toString()) }
                         Td { Text(state.trainingItemBonus.statusTotal.toString()) }
+                        Td { Text(state.trainingItemBonus.totalPlusSkillPt.toString()) }
                         if (state.scenario == Scenario.GRAND_LIVE) {
                             Td { Text(if (state.friendTraining) "×2" else "-") }
                         }
@@ -265,6 +268,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Td { Text(totalStatus.skillPt.toString()) }
                         Td { Text(totalStatus.hp.toString()) }
                         Td { Text(totalStatus.statusTotal.toString()) }
+                        Td { Text(totalStatus.totalPlusSkillPt.toString()) }
                         if (state.scenario == Scenario.GRAND_LIVE) {
                             Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
                         }
@@ -315,6 +319,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                             Th { Text("スキルPt") }
                             Th { Text("体力") }
                             Th { Text("5ステ合計") }
+                            Th { Text("5ステ+SP") }
                         }
                         state.trainingImpact.forEach { (name, status) ->
                             Tr {
@@ -329,6 +334,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                 Td { Text(status.skillPt.toString()) }
                                 Td { Text(status.hp.toString()) }
                                 Td { Text(status.statusTotal.toString()) }
+                                Td { Text(status.totalPlusSkillPt.toString()) }
                             }
                         }
                     }
@@ -349,6 +355,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Th { Text("スキルPt") }
                         Th { Text("体力") }
                         Th { Text("5ステ合計") }
+                        Th { Text("5ステ+SP") }
                     }
                     Tr {
                         Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
@@ -359,6 +366,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
                         Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
                         Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+                        Td { Text(((state.expectedResult.totalPlusSkillPt * 100).roundToInt() / 100.0).toString()) }
                     }
                 }
                 Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }

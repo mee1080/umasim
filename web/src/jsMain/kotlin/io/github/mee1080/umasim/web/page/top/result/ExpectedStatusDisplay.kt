@@ -200,7 +200,7 @@ private fun ExpectedStatusTable(
                     Th { Text("パフォ") }
                 }
                 Th { Text("5ステ合計") }
-                Th { Text("+スキルPt") }
+                Th { Text("5ステ+SP") }
                 if (scenario == Scenario.GRAND_LIVE) {
                     Th({ style { width(90.px) } }) { Text("+パフォ/2") }
                 }
