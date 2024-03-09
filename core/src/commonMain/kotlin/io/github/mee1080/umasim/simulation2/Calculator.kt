@@ -77,6 +77,10 @@ object Calculator {
             friendTraining = friendTraining,
             friendCount = 0,
         )
+
+        val positionRateUp by lazy {
+            support.any { it.card.positionRateUp(it.relation) }
+        }
     }
 
     fun calcTrainingSuccessStatus(
@@ -185,20 +189,22 @@ object Calculator {
     }
 
     fun calcCardPositionSelection(info: CalcInfo, member: MemberState, bonus: Int): Array<Pair<StatusType, Int>> {
+        val rateUp = info.positionRateUp
+        println(rateUp)
         val card = member.card
         if (card.type.outingType) {
             return arrayOf(
-                StatusType.SPEED to 1,
-                StatusType.STAMINA to 1,
-                StatusType.POWER to 1,
-                StatusType.GUTS to 1,
-                StatusType.WISDOM to 1,
-                StatusType.NONE to 1,
+                StatusType.SPEED to 2,
+                StatusType.STAMINA to 2,
+                StatusType.POWER to 2,
+                StatusType.GUTS to 2,
+                StatusType.WISDOM to 2,
+                StatusType.NONE to if (rateUp) 1 else 2,
             )
         }
         val mainRate = card.specialtyRate(bonus, info.baseSpecialUniqueCondition(0, false).applyMember(member))
         val otherRate = 10000
-        val noneRate = 5000
+        val noneRate = if (rateUp) 2500 else 5000
         return arrayOf(
             StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
             StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,

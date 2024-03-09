@@ -206,6 +206,8 @@ data class SupportCardSpecialUnique(
 
     fun hasSecondPosition(relation: Int) = type == 118 && relation >= value1
 
+    fun positionRateUp(relation: Int) = type == 119 && relation >= value2
+
     private fun getValue(
         card: SupportCard,
         condition: SpecialUniqueCondition,

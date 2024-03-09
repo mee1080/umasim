@@ -296,6 +296,8 @@ class ViewModel(val scope: CoroutineScope) {
 //    }
 
     private fun calculate(state: State): State {
+        val allSupportList = state.supportSelectionList.filter { it.card != null }
+            .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
 
@@ -455,11 +457,13 @@ class ViewModel(val scope: CoroutineScope) {
             }
         }
         val supportSelectionList = state.supportSelectionList.toMutableList()
+        println(trainingCalcInfo.member)
         supportList.forEach { memberState ->
+            println(memberState.name)
             val specialtyRate = calcRate(
                 memberState.card.type,
                 *Calculator.calcCardPositionSelection(
-                    trainingCalcInfo,
+                    trainingCalcInfo.copy(member = allSupportList),
                     memberState,
                     state.trainingLiveState.specialityRateUp,
                 )
