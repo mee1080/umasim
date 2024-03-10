@@ -86,11 +86,11 @@ class ApproximateSimulationEvents(
  * 　　FIXME イベント確率アップは考慮しない
  *
  * 　上昇量
- * 　　連続1/非連続：得意ステ5、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆5
- * 　　連続2：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆5
- * 　　連続3：得意ステ15、ランダムステ10(各1/7)orSP20(2/7)、絆5
+ * 　　連続1/非連続：得意ステ5、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
+ * 　　連続2：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
+ * 　　連続3：得意ステ15、ランダムステ10(各1/7)orSP20(2/7)、絆7
  * 　　編成外：ランダムステ5、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)
- * 　　ウマ娘ランダム：各ステ+15（勝負服と通常ランダム平均したらこれぐらい？）
+ * 　　ウマ娘ランダム：各ステ+15or体力10（勝負服と通常ランダム平均したらこれぐらい？）
  * 　　FIXME スキルヒントは考慮しない
  */
 class RandomEvents(
@@ -125,6 +125,7 @@ class RandomEvents(
         trainingType.forEach {
             eventQueue += EventEntry.Chara(it)
         }
+        eventQueue += EventEntry.Chara(null)
         eventQueue.shuffle()
     }
 
@@ -136,7 +137,7 @@ class RandomEvents(
             state.copy(
                 status = (state.status + event.calcStatus(state.supportEventEffect, continuousEventCount)).adjustRange()
             ).applyIf(event.relationTarget >= 0) {
-                copy(member = state.member.replace(event.relationTarget) { addRelation(5) })
+                copy(member = state.member.replace(event.relationTarget) { addRelation(7) })
             }
         } else state
     }
@@ -173,15 +174,15 @@ class RandomEvents(
             }
         }
 
-        object Outside : EventEntry(true) {
+        data object Outside : EventEntry(true) {
             override fun baseStatus(continuousEventCount: IntArray): Status {
                 return randomStatus.random().add(trainingType.random() to 5)
             }
         }
 
-        class Chara(val type: StatusType) : EventEntry(false) {
+        class Chara(val type: StatusType?) : EventEntry(false) {
             override fun baseStatus(continuousEventCount: IntArray): Status {
-                return Status().add(type to 15)
+                return if (type == null) Status(hp = 10) else Status().add(type to 15)
             }
         }
 
