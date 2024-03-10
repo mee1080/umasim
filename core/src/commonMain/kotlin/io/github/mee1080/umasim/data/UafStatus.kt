@@ -59,6 +59,8 @@ data class UafStatus(
         }
     }
 
+    val forceHint by lazy { heatUp[UafGenre.Yellow]!! > 0 }
+
     fun trainingLevel(athletic: UafAthletic) = min(5, max(1, athleticsLevel[athletic]!! / 10))
 
     fun getTraining(statusType: StatusType, levelUpTurn: Boolean): TrainingBase {

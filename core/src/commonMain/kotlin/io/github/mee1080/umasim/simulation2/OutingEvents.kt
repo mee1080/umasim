@@ -35,10 +35,11 @@ fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
 }
 
 private fun SimulationState.uafAthleticsLevelUp(): SimulationState {
+    val uafStatus = uafStatus ?: return this
     return copy(
-        uafStatus = uafStatus?.copy(
+        uafStatus = uafStatus.copy(
             athleticsLevel = uafStatus.athleticsLevel.mapValues { it.value + 1 }
-        )
+        ).applyHeatUpFrom(uafStatus)
     )
 }
 

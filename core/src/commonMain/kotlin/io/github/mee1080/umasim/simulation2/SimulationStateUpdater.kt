@@ -117,7 +117,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     }
     // ヒントアイコン表示、情熱ゾーン減少
     val supportState = supportState?.copy(
-        hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp),
+        hintIcon = !outingType && (state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp))),
         passionTurn = max(0, supportState.passionTurn - 1),
     )
     return copy(
@@ -278,10 +278,7 @@ fun SimulationState.applyFriendEvent(
         wisdom = (statusUp.wisdom * eventEffect).toInt(),
         hp = (statusUp.hp * eventRecovery).toInt(),
     )
-    return copy(
-        member = newMember,
-        status = status + eventStatus,
-    )
+    return copy(member = newMember).addStatus(eventStatus)
 }
 
 private fun AoharuMemberState.applyTraining(action: Training, chara: Chara): AoharuMemberState {
@@ -331,12 +328,16 @@ private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair
         val hintSupportList = support.filter { it.hint }
         if (hintSupportList.isEmpty()) return Status() to emptyList()
         val hintSupport = hintSupportList.random()
-        val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
-        if (hintSkill.isEmpty()) {
-            hintSupport.card.hintStatus
-        } else {
-            Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
-        } to listOf(hintSupport)
+        var status = Status()
+        repeat(if (uafStatus?.forceHint == true) 2 else 1) {
+            val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
+            status += if (hintSkill.isEmpty()) {
+                hintSupport.card.hintStatus
+            } else {
+                Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
+            }
+        }
+        status to listOf(hintSupport)
     }
 }
 

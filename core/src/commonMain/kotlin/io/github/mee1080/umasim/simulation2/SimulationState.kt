@@ -101,6 +101,8 @@ data class SimulationState(
 
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
 
+    val forceHint = uafStatus?.forceHint ?: false
+
     val supportEventEffect = gmStatus?.wisdomSupportEventEffect
 
     val baseCalcInfo = Calculator.CalcInfo(
