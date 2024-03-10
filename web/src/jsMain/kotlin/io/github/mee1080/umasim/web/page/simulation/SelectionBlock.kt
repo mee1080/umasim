@@ -32,6 +32,7 @@ import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun SelectionBlock(
+    state: SimulationState,
     selection: List<Action>,
     onSelect: (Action) -> Unit,
 ) {
@@ -48,14 +49,26 @@ fun SelectionBlock(
         }
     }) {
         selection.forEach { action ->
+            val uafStatus = state.uafStatus
+            val (actionName, uafAthletic, uafAthleticLevel) = if (uafStatus != null && action is Training) {
+                val athletic = uafStatus.trainingAthletics[action.type]!!
+                val level = uafStatus.athleticsLevel[athletic]!!
+                Triple("トレーニング(${action.type.displayName}/${athletic.longDisplayName}Lv$level)", athletic, level)
+            } else Triple(action.name, null, 0)
             Card({
                 style {
                     display(DisplayStyle.Flex)
                     flexDirection(FlexDirection.Column)
                     rowGap(4.px)
+                    if (uafAthletic != null) {
+                        background(uafAthletic.genre.colorCode)
+                    }
+                    if (action is UafConsult) {
+                        background("linear-gradient(to right, ${action.result.from.colorCode} 0 50%, ${action.result.to.colorCode} 0 50%)")
+                    }
                 }
             }) {
-                MdFilledButton(action.name) {
+                MdFilledButton(actionName) {
                     if (!action.turnChange) {
                         tertiary()
                     }
@@ -83,6 +96,16 @@ fun SelectionBlock(
                     is Sleep -> {}
 
                     is Training -> {
+                        if (uafStatus != null && uafAthletic != null) {
+                            val actionResult = action.candidates[0].first as? StatusActionResult
+                            val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
+                            val levelUp = param!!.athleticsLevelUp[action.type]!!
+                            val levelUpTotal = param.athleticsLevelUp.values.sum()
+                            val rest = 50 - (uafStatus.genreLevel[uafAthletic.genre]!! % 50)
+                            Div {
+                                Text("競技レベル：$uafAthleticLevel + $levelUp (あと${rest} + $levelUpTotal)")
+                            }
+                        }
                         Div {
                             action.member.forEach {
                                 MemberState(it, it.isFriendTraining(action.type), training = true)
@@ -127,6 +150,8 @@ fun SelectionBlock(
                     }
 
                     is LiveGetLesson -> {}
+
+                    is UafConsult -> {}
                 }
             }
         }

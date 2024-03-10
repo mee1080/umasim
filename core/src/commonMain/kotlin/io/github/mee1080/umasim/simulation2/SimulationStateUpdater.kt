@@ -238,7 +238,7 @@ private fun SimulationState.applyFriendEvent(action: Training): SimulationState 
 
 private fun SimulationState.applyFriendEvent(support: MemberState, statusUp: Status, relation: Int): SimulationState {
     val newMember = member.mapIf({ it.index == support.index }) {
-        copy(supportState = supportState?.copy(relation = min(100, relation + 5)))
+        copy(supportState = supportState?.let { it.copy(relation = min(100, it.relation + 5)) })
     }
     val eventEffect = support.card.eventEffect
     val eventRecovery = support.card.eventRecovery

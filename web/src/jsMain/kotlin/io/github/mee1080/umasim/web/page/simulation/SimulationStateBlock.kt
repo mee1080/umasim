@@ -19,6 +19,8 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.UafAthletic
+import io.github.mee1080.umasim.data.UafGenre
 import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.web.components.atoms.MdClass
@@ -28,7 +30,10 @@ import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.page.share.StatusTable
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
+import kotlin.math.max
+import kotlin.math.min
 
 @Composable
 fun SimulationStateBlock(state: SimulationState) {
@@ -71,6 +76,30 @@ fun SimulationStateBlock(state: SimulationState) {
         state.lArcStatus?.let {
             Div {
                 Text("サポーターPt=${it.supporterPt}/${it.memberSupporterPt}, 期待度=${it.expectationLevel} 適性Pt=${it.aptitudePt}, SSマッチ=${it.totalSSMatchCount}回, 海外適性=${it.overseasTurfAptitude}/${it.longchampAptitude}/${it.lifeRhythm}/${it.nutritionManagement}/${it.frenchSkill}/${it.overseasExpedition}/${it.strongHeart}/${it.mentalStrength}/${it.hopeOfLArc}/${it.consecutiveVictories})")
+            }
+        }
+        state.uafStatus?.let { uafStatus ->
+            val goalLevel = max(10, min(50, ((state.turn - 1) / 12) * 10))
+            Div { Text("残り相談回数：${uafStatus.consultCount}") }
+            UafGenre.entries.forEach { genre ->
+                Div {
+                    Text("${genre.colorName}： 競技Lv${uafStatus.genreLevel[genre]}(")
+                    UafAthletic.byGenre[genre]?.forEachIndexed { index, uafAthletic ->
+                        if (index > 0) Text("/")
+                        val level = uafStatus.athleticsLevel[uafAthletic]!!
+                        Span({
+                            if (level >= goalLevel) {
+                                style { fontWeight("bold") }
+                            }
+                        }) { Text(level.toString()) }
+                    }
+                    Text(")")
+                    if (uafStatus.heatUp[genre]!! > 0) {
+                        Span({style { fontWeight("bold") }}) {
+                            Text(" 【ヒートアップ ${uafStatus.heatUp[genre]}ターン】")
+                        }
+                    }
+                }
             }
         }
         HideBlock("サポートカード") {

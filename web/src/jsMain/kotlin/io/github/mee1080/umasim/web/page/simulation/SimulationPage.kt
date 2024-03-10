@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.*
-import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
@@ -74,6 +73,10 @@ fun SimulationPage(state: State) {
             Card({
                 style { margin(16.px) }
             }) {
+                Div { Text("シナリオ：") }
+                Div({ style { marginLeft(32.px) } }) {
+                    Div { Text(state.scenario.displayName) }
+                }
                 Div { Text("育成ウマ娘：") }
                 Div({ style { marginLeft(32.px) } }) {
                     Div { Text(state.chara.name) }
@@ -124,7 +127,7 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
             }
             launch {
                 result = Simulator(
-                    scenario = Scenario.LARC,
+                    scenario = state.scenario,
                     chara = state.chara,
                     supportCardList = state.supportSelectionList.mapNotNull { it.card },
                     factorList = factorList,
@@ -136,12 +139,14 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
             job.cancel()
         }
     }
-    simulationState?.let { SimulationStateBlock(it) }
-    MdDivider(1.px)
-    if (selection.isNotEmpty()) {
-        SelectionBlock(selection) {
-            scope.launch {
-                selector.resultChannel.send(it)
+    simulationState?.let { simulationStateNonNull ->
+        SimulationStateBlock(simulationStateNonNull)
+        MdDivider(1.px)
+        if (selection.isNotEmpty()) {
+            SelectionBlock(simulationStateNonNull, selection) {
+                scope.launch {
+                    selector.resultChannel.send(it)
+                }
             }
         }
     }

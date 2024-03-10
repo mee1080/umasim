@@ -93,8 +93,8 @@ data class UafStatus(
     }
 
     private fun checkHeatUp(oldStatus: UafStatus, genre: UafGenre): Int {
-        val oldRank = (oldStatus.genreLevel[genre] ?: 0) % 50
-        val newRank = (genreLevel[genre] ?: 0) % 50
+        val oldRank = (oldStatus.genreLevel[genre] ?: 0) / 50
+        val newRank = (genreLevel[genre] ?: 0) / 50
         return heatUp[genre]!! + if (newRank > oldRank) 2 else 0
     }
 }
@@ -106,10 +106,11 @@ object UafMemberState : ScenarioMemberState {
 enum class UafGenre(
     val displayName: String,
     val colorName: String,
+    val colorCode: String,
 ) {
-    Blue("スフィア", "青"),
-    Red("ファイト", "赤"),
-    Yellow("フリー", "黄");
+    Blue("スフィア", "青", "#0000FF20"),
+    Red("ファイト", "赤", "#FF000020"),
+    Yellow("フリー", "黄", "#FFFF0020");
 
     val longDisplayName by lazy { "$displayName($colorName)" }
 }
@@ -139,5 +140,6 @@ enum class UafAthletic(
 
     companion object {
         val byStatusType = entries.groupBy { it.type }
+        val byGenre = entries.groupBy { it.genre }.mapValues { list -> list.value.sortedBy { it.type } }
     }
 }

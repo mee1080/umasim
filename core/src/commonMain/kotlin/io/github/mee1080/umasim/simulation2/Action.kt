@@ -280,7 +280,7 @@ class UafScenarioActionParam(
     override fun toShortString() = buildString {
         append("Uaf(")
         if (athleticsLevelUp.isNotEmpty()) append(athleticsLevelUp.toString())
-        if (notTraining) append("Not Training")
+        if (notTraining) append("次ターン競技Lv上昇量アップ")
         append(")")
     }
 }
