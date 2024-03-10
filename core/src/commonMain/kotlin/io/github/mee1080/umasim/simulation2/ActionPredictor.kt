@@ -177,7 +177,10 @@ fun SimulationState.predictSleep(): Array<Action> {
             ).map {
                 StatusActionResult(it.first) to it.second
             }
-        )
+        ),
+        *(support.filter { (it.supportState?.outingStep ?: 0) in 2..6 }.map {
+            Outing(it, listOf(StatusActionResult(Status()) to 1))
+        }.toTypedArray())
     )
 }
 

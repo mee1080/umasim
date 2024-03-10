@@ -104,6 +104,7 @@ class Simulator(
             state = state.onTurnChange()
             state = scenarioEvents.beforeAction(state)
             state = events.beforeAction(state)
+            if (state.turn == 25) state.applyOutingNewYearEvent()
             state = state.shuffleMember()
             val beforeActionState = state
             val selections = mutableListOf<Triple<List<Action>, Action, ActionResult>>()
@@ -119,6 +120,7 @@ class Simulator(
             state = scenarioEvents.onTurnEnd(state)
             history.add(SimulationHistoryItem(beforeActionState, state, selections))
         }
+        state = state.applyOutingFinalEvent()
         state = scenarioEvents.afterSimulation(state)
         return Summary(state.status, history, state.member) to history
     }

@@ -75,13 +75,9 @@ fun SelectionBlock(
                     onClick { onSelect(action) }
                 }
                 when (action) {
-                    is Outing -> {
-                        Div { Text(action.support?.charaName ?: "育成キャラ") }
-                    }
+                    is Outing -> {}
 
-                    is Race -> {
-                        Div { Text(action.raceName) }
-                    }
+                    is Race -> {}
 
                     is SSMatch -> {
                         Div {

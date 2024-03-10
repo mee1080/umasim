@@ -17,7 +17,7 @@ fun SupportCard.toMemberState(
         hintIcon = false,
         passionTurn = passionTurn,
         friendCount = friendCount,
-        outingEnabled = false,
+        outingStep = 0,
     ),
     scenarioState = when (scenario) {
         Scenario.URA -> UraMemberState

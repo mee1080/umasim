@@ -64,8 +64,9 @@ data class Outing(
     val support: MemberState?,
     override val candidates: List<Pair<ActionResult, Int>>,
 ) : MultipleAction {
-    override val name = "お出かけ"
-    override fun infoToString() = support?.let { "(${it.card.name})" } ?: ""
+    override val name = "お出かけ " + infoToString()
+    override fun infoToString() =
+        support?.let { "(${it.card.name} ${(it.supportState?.outingStep ?: 0) - 1}回目)" } ?: "(育成ウマ娘)"
 }
 
 data class Sleep(

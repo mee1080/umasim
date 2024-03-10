@@ -31,7 +31,6 @@ data class SimulationState(
     val turn: Int = 0,
     val status: Status,
     val condition: List<String> = emptyList(),
-    val supportFirstEventChara: Set<String> = emptySet(),
     val supportCount: Map<StatusType, Int>,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
@@ -171,9 +170,10 @@ data class SupportState(
     val hintIcon: Boolean,
     val passionTurn: Int,
     val friendCount: Int,
-    val outingEnabled: Boolean,
+    val outingStep: Int = 0,
 ) {
     val passion get() = passionTurn > 0
+    val outingEnabled = outingStep >= 2
 }
 
 interface ScenarioMemberState {

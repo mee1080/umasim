@@ -37,7 +37,20 @@ fun SimulationState.onTurnChange(): SimulationState {
         status = status.adjustRange(),
         training = training.map { it.copy(levelOverride = levelOverride) },
         enableItem = enableItem.onTurnChange(),
-    )
+    ).updateOutingStep()
+}
+
+fun SimulationState.updateOutingStep(): SimulationState {
+    val targets = mutableSetOf<MemberState>()
+    member.filter { it.outingType && it.supportState?.outingStep == 1 }.forEach {
+        val rate = if (it.relation >= 60) 0.25 else 0.05
+        if (Random.nextDouble() < rate) {
+            targets.add(it)
+        }
+    }
+    return targets.fold(this) { state, target ->
+        state.applyOutingEvent(target)
+    }
 }
 
 fun SimulationState.shuffleMember(): SimulationState {
@@ -106,8 +119,6 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     val supportState = supportState?.copy(
         hintIcon = !scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp),
         passionTurn = max(0, supportState.passionTurn - 1),
-        // TODO 13ターン目以降お出かけ可能と仮定
-        outingEnabled = card.type.outingType && turn > 12,
     )
     return copy(
         position = position,
@@ -127,6 +138,11 @@ fun EnableItem.onTurnChange(): EnableItem {
 }
 
 fun SimulationState.applyAction(action: Action, result: ActionResult): SimulationState {
+    if (action is Outing && action.support != null) {
+        return applyOutingEvent(action.support).applyIfNotNull((result as? StatusActionResult)?.scenarioActionParam) {
+            applyScenarioAction(action, it)
+        }
+    }
     return when (result) {
         is StatusActionResult -> applyStatusAction(action, result)
 
@@ -218,27 +234,39 @@ private fun MemberState.applyTraining(
 
 private fun SimulationState.applyFriendEvent(action: Training): SimulationState {
     return action.member.filter { !it.guest && it.outingType }.fold(this) { state, support ->
-        val isFirst = !supportFirstEventChara.contains(support.charaName)
+        val isFirst = support.supportState?.outingStep == 0
         when (support.charaName) {
             "都留岐涼花" -> {
                 if (isFirst) {
-                    applyFriendEvent(support, Status(speed = 5, wisdom = 5, motivation = 1), 10)
+                    applyFriendEvent(support, Status(speed = 5, wisdom = 5, motivation = 1), 10, 1)
                 } else if (Random.nextDouble() < 0.4) {
-                    applyFriendEvent(support, Status(hp = 7), 5)
+                    if (Random.nextDouble() < 0.1) {
+                        applyFriendEvent(support, Status(hp = 7, motivation = 1), 5)
+                    } else {
+                        applyFriendEvent(support, Status(hp = 7), 5)
+                    }
                 } else state
             }
 
             // TODO 他の友人のイベント
             else -> state
-        }.applyIf(isFirst) {
-            copy(supportFirstEventChara = supportFirstEventChara + support.charaName)
         }
     }
 }
 
-private fun SimulationState.applyFriendEvent(support: MemberState, statusUp: Status, relation: Int): SimulationState {
+fun SimulationState.applyFriendEvent(
+    support: MemberState,
+    statusUp: Status,
+    relation: Int,
+    outingStep: Int = 0,
+): SimulationState {
     val newMember = member.mapIf({ it.index == support.index }) {
-        copy(supportState = supportState?.let { it.copy(relation = min(100, it.relation + 5)) })
+        copy(supportState = supportState?.let {
+            it.copy(
+                relation = min(100, it.relation + relation),
+                outingStep = max(outingStep, it.outingStep),
+            )
+        })
     }
     val eventEffect = support.card.eventEffect
     val eventRecovery = support.card.eventRecovery
