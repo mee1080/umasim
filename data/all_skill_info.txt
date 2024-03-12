@@ -716,6 +716,15 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50」、加速1000、持続8.0
 
+Info: Acquired
+[ZOKU-ZOKU GIZMO]トランセンド 固有
+レース後半まで前方をキープしていてライバルのウマ娘が加速スキルを発動すると少し前に出る、URAのダートレースならさらに速度がわずかに上がる
+評価点340、人気:スピード30/パワー30、確定発動
+distance_rate>=50&order_rate_in20_continue==1&track_id>=10001&track_id<=10010&ground_type==2->is_other_character_activate_advantage_skill==31
+「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）、レース場>=10001、レース場<=10010、ダート」の後「is_other_character_activate_advantage_skill==31」、現在速度2500、目標速度1500、持続5.0
+distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
+「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」の後「is_other_character_activate_advantage_skill==31」、現在速度2500、持続5.0
+
 Mission: Triumph
 [Onyx Soldier]シンボリクリスエス 固有
 レース中間付近以降の直線で中団にいると速度を上げる、さらにそこが下り坂なら上げ続ける
@@ -1930,6 +1939,12 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50、順位==2」、加速700、持続4.8
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50」、加速500、持続4.8
+
+Info: Acquired
+レース後半まで前方をキープしていてライバルのウマ娘が加速スキルを発動するとちょっと前に出る
+評価点180、SP200、人気:パワー15
+distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
+「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）（チャンミ～2/LoH～3）」の後「is_other_character_activate_advantage_skill==31」、現在速度500、持続3.0
 
 Mission: Triumph
 レース中間付近以降の直線で中団にいるとわずかに速度を上げる、さらにそこが下り坂ならわずかに上げ続ける
@@ -6347,6 +6362,15 @@ Lose Myself
 ->activate_count_start>=3
 「序盤スキル発動回数>=3」、加速4000、持続3.0
 
+情報強者
+[ZOKU-ZOKU GIZMO]トランセンド 進化
+レース序盤にスキルを多く発動すると加速力が上がる、マイルか中距離レースの場合は効果が増える
+評価点633、人気:パワー60
+->distance_type==2&activate_count_start>=3@distance_type==3&activate_count_start>=3
+「マイル、序盤スキル発動回数>=3」または「中距離、序盤スキル発動回数>=3」、加速5000、持続3.0
+->distance_type==1&activate_count_start>=3@distance_type==4&activate_count_start>=3
+「短距離、序盤スキル発動回数>=3」または「長距離、序盤スキル発動回数>=3」、加速4000、持続3.0
+
 地固め
 レース序盤にスキルを多く発動すると加速力がわずかに上がる
 評価点217、SP100、人気:パワー20
@@ -8186,6 +8210,25 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 評価点217、SP160、人気:スピード20
 ->distance_type==3&running_style==4&phase_random==1&order_rate>=50
 「中距離、追込、中盤ランダム、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、前方のウマ娘（5人）[現在速度-350]、持続1.8
+
+砂の開拓者
+レース中盤が迫ったとき前方にいると速度が上がる＜ダート＞
+評価点508、SP160、人気:スピード60
+->ground_type==2&phase_laterhalf_random==0&order_rate<=50
+「ダート、序盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続3.0
+
+『未知』を求めて
+[ZOKU-ZOKU GIZMO]トランセンド 進化
+レース中盤が迫ったとき前方にいると速度がすごく上がる＜ダート＞
+評価点633、人気:スピード60
+->ground_type==2&phase_laterhalf_random==0&order_rate<=50
+「ダート、序盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続3.0
+
+パイオニア
+レース中盤が迫ったとき前方にいると速度がわずかに上がる＜ダート＞
+評価点217、SP160、人気:スピード20
+->ground_type==2&phase_laterhalf_random==0&order_rate<=50
+「ダート、序盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
