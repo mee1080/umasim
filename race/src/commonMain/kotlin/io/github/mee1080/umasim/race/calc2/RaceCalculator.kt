@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
 import io.github.mee1080.umasim.race.data.frameLength
 import io.github.mee1080.umasim.race.data.maxSpeed
 import io.github.mee1080.umasim.race.data.spConsumptionCoef
+import io.github.mee1080.umasim.race.data2.approximateConditions
 import kotlin.math.*
 import kotlin.random.Random
 
@@ -139,14 +140,15 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             sp = simulation.sp,
             startPosition = simulation.startPosition,
         )
+        // 1秒おき判定
+        val changeSecond = floor(simulation.frameElapsed * frameLength).toInt() != floor(
+            (simulation.frameElapsed + 1) * frameLength
+        ).toInt()
 
         // 下り坂モードに入るか・終わるかどうかの判定
         if (isInSlopeDown() && !setting.fixRandom) {
             // 1秒置きなので、このフレームは整数秒を含むかどうかのチェック
-            if (floor(simulation.frameElapsed * frameLength).toInt() != floor(
-                    (simulation.frameElapsed + 1) * frameLength
-                ).toInt()
-            ) {
+            if (changeSecond) {
                 if (simulation.downSlopeModeStart == null) {
                     if (Random.nextDouble() < setting.modifiedWisdom * 0.0004) {
                         simulation.downSlopeModeStart = simulation.frameElapsed
@@ -203,6 +205,14 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         if (simulation.position >= setting.courseLength) {
             break
         }
+
+        // スキル条件近似
+        if (changeSecond) {
+            approximateConditions.forEach { entry ->
+                simulation.specialState[entry.key] = entry.value.update(this, simulation.specialState[entry.key] ?: 0)
+            }
+        }
+
         // Calculate target speed of next frame and do heal/fatigue
         val skillTriggered = checkSkillTrigger()
         val spurtParameters = simulation.spurtParameters

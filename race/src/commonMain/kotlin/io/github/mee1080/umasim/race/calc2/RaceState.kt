@@ -25,6 +25,7 @@ package io.github.mee1080.umasim.race.calc2
 import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.umasim.race.data2.Invoke
 import io.github.mee1080.umasim.race.data2.SkillData
+import io.github.mee1080.umasim.race.data2.approximateConditions
 import kotlin.math.*
 
 data class UmaStatus(
@@ -93,13 +94,17 @@ class RaceState(
 
     val isLaterHalf get() = simulation.position > setting.trackDetail.distance / 2
 
+    val finalCorner get() = setting.trackDetail.corners.lastOrNull()
+
     fun isInFinalCorner(interval: Pair<Double, Double> = 0.0 to 1.0): Boolean {
         val (startRate, endRate) = interval
-        val finalCorner = setting.trackDetail.corners.lastOrNull() ?: return false
+        val finalCorner = finalCorner ?: return false
         val start = finalCorner.start + startRate * finalCorner.length
         val end = finalCorner.start + endRate * finalCorner.length
         return simulation.position in start..end
     }
+
+    val isAfterFinalCorner get() = simulation.position >= (finalCorner?.start ?: Double.MAX_VALUE)
 
     fun getSection(position: Double): Int {
         return floor((position * 24.0) / setting.courseLength).toInt()
@@ -401,6 +406,8 @@ data class RaceSetting(
 
     val phase1Start by lazy { courseLength / 6.0 }
 
+    val phase1Half by lazy { phase1Start + (phase2Start - phase1Start) / 2.0 }
+
     val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
 
     val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
@@ -434,6 +441,7 @@ class RaceSimulationState(
     var temptationModeEnd: Int? = null,
     var temptationWaste: Double = 0.0,
     var speedDebuff: Double = 0.0,
+    val specialState: MutableMap<String, Int> = approximateConditions.mapValues { 0 }.toMutableMap(),
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),

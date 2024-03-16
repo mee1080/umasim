@@ -1,11 +1,13 @@
 package io.github.mee1080.umasim.race.data2
 
+import io.github.mee1080.umasim.race.calc2.RaceState
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.math.abs
 import kotlin.math.pow
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonParser = Json { allowTrailingComma = true }
@@ -28,30 +30,138 @@ fun getSkill(name: String): SkillData {
     return skills.first()
 }
 
-val approximateRate = mapOf(
-    "is_move_lane" to (0.01 to "横移動"),
-    "change_order_onetime" to (0.005 to "追い抜き/追い抜かれ"),
-    "is_overtake" to (0.02 to "追い抜きモード"),
-    "overtake_target_time" to (0.015 to "詰め寄られ"),
-    "compete_fight_count" to (0.03 to "追い比べ"),
-    "blocked_front" to (0.005 to "前方ブロック"),
-    "blocked_front_continuetime" to (0.001 to "前方ブロック"),
-    "blocked_side_continuetime" to (0.005 to "横ブロック"),
-    "infront_near_lane_time" to (0.01 to "前にウマ娘条件"),
-    "behind_near_lane_time" to (0.01 to "後にウマ娘条件"),
-    "behind_near_lane_time_set1" to (0.015 to "後にウマ娘条件"),
-    "near_count" to (0.01 to "近くにウマ娘条件"),
-    "is_surrounded" to (0.003 to "囲まれ条件"),
-    "temptation_opponent_count_behind" to (0.005 to "後ろのウマ娘掛かり"),
-)
-
-fun approximateRateString(info: Pair<Double, String>, value: Int): String {
-    val rate = info.first / 2.0.pow(value)
-    val rateString = (rate * 100).roundString(1)
-    val secondRate = 1.0 - (1.0 - rate).pow(15)
-    val secondRateString = (secondRate * 100).roundString(1)
-    return "${info.second}は毎フレーム${rateString}%の確率で発動するものとする（1秒以内発動率${secondRateString}%）"
+interface ApproximateCondition {
+    fun update(state: RaceState, value: Int): Int
+    val displayName: String
+    val description: String
 }
+
+class ApproximateMultiCondition(
+    override val displayName: String,
+    val conditions: List<Pair<ApproximateCondition, ((RaceState) -> Boolean)?>>,
+) : ApproximateCondition {
+    override fun update(state: RaceState, value: Int): Int {
+        for (condition in conditions) {
+            if (condition.second?.invoke(state) != false) {
+                return condition.first.update(state, value)
+            }
+        }
+        throw IllegalArgumentException()
+    }
+
+    override val description = conditions.joinToString("\n") { it.first.description }
+}
+
+class ApproximateStartContinue(
+    override val displayName: String,
+    val start: Double,
+    val continuation: Double,
+) : ApproximateCondition {
+    override fun update(state: RaceState, value: Int): Int {
+        return if (value == 0) {
+            if (Random.nextDouble() < start) 1 else 0
+        } else {
+            if (Random.nextDouble() < continuation) value + 1 else 0
+        }
+    }
+
+    override val description = buildString {
+        append(start.roundPercentString(1))
+        append("%の確率で開始、")
+        append(continuation.roundPercentString(1))
+        append("%の確率で継続")
+    }
+}
+
+class ApproximateRandomRates(
+    override val displayName: String,
+    val rates: List<Pair<Int, Double>>,
+) : ApproximateCondition {
+    override fun update(state: RaceState, value: Int): Int {
+        val check = Random.nextDouble()
+        var total = 0.0
+        for (rate in rates) {
+            total += rate.second
+            if (check < total) return rate.first
+        }
+        return 0
+    }
+
+    override val description = buildString {
+        rates.forEach {
+            append(it.second.roundPercentString(1))
+            append("%の確率で")
+            append(it.first)
+            append("、")
+        }
+        append("残りは0")
+    }
+}
+
+val approximateConditions = mapOf(
+    "move_lane" to ApproximateStartContinue("横移動(軽やかステップなど)", 0.1, 0.1),
+    "change_order_onetime" to ApproximateRandomRates(
+        "追い抜き/追い抜かれ(アガッてきたなど多数)",
+        listOf(-1 to 0.2, 1 to 0.2)
+    ),
+    "overtake" to ApproximateStartContinue("追い抜きモード(電光石火など多数)", 0.20, 0.50),
+    "overtaken" to ApproximateStartContinue("詰め寄られ(勝利への執念など)", 0.15, 0.50),
+    "compete_fight" to ApproximateStartContinue(
+        "追い比べ(通常イナリ/ウインディ固有など、追い比べ自体の効果は未実装)",
+        0.40,
+        1.00
+    ),
+    "blocked_front" to ApproximateStartContinue("前方ブロック(鋼の意志など)", 0.07, 0.50),
+    "blocked_side" to ApproximateStartContinue("横ブロック(つぼみなど)", 0.07, 0.50),
+    "infront_near_lane" to ApproximateMultiCondition(
+        "前にウマ娘(ノンストなど)",
+        listOf(
+            ApproximateStartContinue("序盤", 0.05, 0.50) to {
+                it.currentPhase == 0
+            },
+            ApproximateStartContinue("中盤", 0.10, 0.50) to {
+                it.currentPhase == 1
+            },
+            ApproximateStartContinue("終盤最終コーナー前", 0.20, 0.30) to {
+                !it.isAfterFinalCorner
+            },
+            ApproximateStartContinue("終盤最終コーナー後", 0.07, 0.40) to null,
+        ),
+    ),
+    "behind_near_lane" to ApproximateStartContinue("後にウマ娘(お先など)", 0.15, 0.50),
+    "near_count" to ApproximateMultiCondition(
+        "近くにウマ娘(ウマ好み/ワクワククライマックスなど)",
+        listOf(
+            ApproximateRandomRates("序盤", listOf(1 to 0.1, 2 to 0.2, 3 to 0.3, 4 to 0.2, 5 to 0.1)) to {
+                it.currentPhase == 0
+            },
+            ApproximateRandomRates("中盤", listOf(1 to 0.3, 2 to 0.2, 3 to 0.1)) to {
+                it.currentPhase == 1
+            },
+            ApproximateRandomRates("終盤", listOf(1 to 0.3, 2 to 0.3, 3 to 0.2)) to null,
+        ),
+    ),
+    "is_surrounded" to ApproximateStartContinue("周囲にウマ娘(どこ吹く風など)", 0.05, 0.40),
+    "temptation_opponent_count_behind" to ApproximateStartContinue(
+        "後ろのウマ娘掛かり(トリック&トリートなど、自身への効果のみ反映)",
+        0.07, 0.20,
+    ),
+    "is_other_character_activate_advantage_skill31" to ApproximateMultiCondition(
+        "他のウマ娘が加速スキル発動(トランセンド固有)",
+        listOf(
+            ApproximateRandomRates("序盤", listOf(1 to 0.9)) to {
+                it.currentPhase == 0
+            },
+            ApproximateRandomRates("中盤前半", listOf(1 to 0.01)) to {
+                it.simulation.position in it.setting.phase1Start..it.setting.phase1Half
+            },
+            ApproximateRandomRates("中盤後半", listOf(1 to 0.05)) to {
+                it.currentPhase == 1
+            },
+            ApproximateRandomRates("終盤", listOf(1 to 0.9)) to null,
+        )
+    )
+)
 
 private fun Double.roundString(position: Int = 0): String {
     return if (isNaN()) "-" else if (position == 0) roundToInt().toString() else {
@@ -61,6 +171,8 @@ private fun Double.roundString(position: Int = 0): String {
         return "$minus${intValue / factor}.${intValue % factor}"
     }
 }
+
+private fun Double.roundPercentString(position: Int = 0) = (this * 100).roundString(position)
 
 val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
@@ -153,7 +265,6 @@ data class Invoke(
         return buildSet {
             target.forEach { andConditions ->
                 andConditions.forEach { condition ->
-                    approximateRate[condition.type]?.let { add(approximateRateString(it, condition.value)) }
                     ignoreConditions[condition.type]?.let { add(it) }
                 }
             }
