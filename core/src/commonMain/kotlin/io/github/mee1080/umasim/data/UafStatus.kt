@@ -143,5 +143,15 @@ enum class UafAthletic(
     companion object {
         val byStatusType = entries.groupBy { it.type }
         val byGenre = entries.groupBy { it.genre }.mapValues { list -> list.value.sortedBy { it.type } }
+        fun get(genre: UafGenre, type: StatusType) = byGenre[genre]!!.first { it.type == type }
     }
+}
+
+fun uafNeedWinCount(turn: Int) = when {
+    turn > 72 -> 0
+    turn > 60 -> 50
+    turn > 48 -> 40
+    turn > 36 -> 30
+    turn > 24 -> 20
+    else -> 10
 }

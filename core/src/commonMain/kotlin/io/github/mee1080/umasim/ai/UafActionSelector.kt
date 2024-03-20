@@ -18,10 +18,7 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlin.math.max
@@ -68,14 +65,15 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         val gutsFactor: Double = 0.8,
         val wisdomFactor: Double = 1.0,
         val skillPtFactor: Double = 1.0,
-        val hpFactor: Double = 1.2,
-        val motivationFactor: Double = 15.0,
+        val hpFactor: Double = 1.0,
+        val motivationFactor: Double = 10.0,
         val relationFactor: Double = 8.0,
         val hpKeepFactor: Double = 0.3,
         val riskFactor: Double = 2.0,
         val athleticBaseFactor: Double = 2.5,
         val athleticRequiredFactor: Double = 2.0,
-        val athleticBonusFactor: Double = 50.0,
+        val athleticBonusFactor: Double = 40.0,
+        val consultMinScore: Double = 25.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = UafActionSelector(listOf(this))
     }
@@ -88,14 +86,18 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
 
     override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
         option = options[0]
-        // TODO 相談
         val expectedScore = calcExpectedScores(state)
         val selectionWithScore = selection.map { it to calcScore(state, it, expectedScore) }
+        val actionScores = selectionWithScore.map { it.second }
+        val consultMax = selectionWithScore.filter { it.first is UafConsult }.maxByOrNull { it.second }
+        if (consultMax != null && consultMax.second >= option.consultMinScore) {
+            return consultMax.first to actionScores
+        }
         var selected = selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
         if (selected is Sleep) {
             selected = selection.firstOrNull { it is Outing && it.support != null } ?: selected
         }
-        return selected to selectionWithScore.map { it.second }
+        return selected to actionScores
     }
 
     private fun calcExpectedScores(state: SimulationState) = buildMap {
@@ -113,6 +115,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     }
 
     private fun calcScore(state: SimulationState, action: Action, expectedScore: Map<StatusType, Double>): Double {
+        if (action is UafConsult) return calcConsultScore(state, action)
         if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
@@ -121,7 +124,8 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
             val result = it.first as? StatusActionResult ?: return@sumOf 0.0
             val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, state.status)
             val expectedStatusScore = when (action) {
-                is Training -> expectedScore[action.type]!!
+//                is Training -> expectedScore[action.type]!!
+                is Training -> expectedScore[StatusType.SKILL]!!
                 is Race -> expectedScore[StatusType.SKILL]!!
                 else -> 0.0
             }
@@ -131,6 +135,34 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         }
         if (DEBUG) println("total $score")
         return score
+    }
+
+    private fun calcConsultScore(state: SimulationState, action: UafConsult): Double {
+        // TODO 赤ヒートアップ
+        // TODO 残相談回数を考慮
+        val uafStatus = state.uafStatus ?: return 0.0
+        if (uafStatus.consultCount == 0) return 0.0
+        val consultResult = calcConsultResult(state, action.result.from, action.result.to)
+        val noConsultResult = calcConsultResult(state, action.result.from, action.result.from)
+        val reverseResult = calcConsultResult(state, action.result.to, action.result.from)
+        val baseScore = min(consultResult.first, reverseResult.first) * option.athleticBaseFactor
+        val requiredScore = consultResult.second - noConsultResult.second * option.athleticRequiredFactor
+        return baseScore + requiredScore
+    }
+
+    private fun calcConsultResult(state: SimulationState, from: UafGenre, to: UafGenre): Pair<Int, Int> {
+        val uafStatus = state.uafStatus ?: return 0 to 0
+        val needWinCount = uafNeedWinCount(state.turn)
+        val levelUp = uafStatus.athleticsLevelUp.filter {
+            uafStatus.trainingAthletics[it.key]!!.genre == from
+        }
+        val total = levelUp.entries.sumOf { (_, value) -> value }
+        val required = levelUp.entries.sumOf { (type, value) ->
+            val athletic = UafAthletic.get(to, type)
+            val level = uafStatus.athleticsLevel[athletic]!!
+            min(value, max(0, needWinCount - level))
+        }
+        return total to required
     }
 
     private fun calcExpectedHintStatus(action: Action): ExpectedStatus {
@@ -166,18 +198,14 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         val uafStatus = state.uafStatus ?: return 0.0
         val scenarioActionParam = result.scenarioActionParam as? UafScenarioActionParam ?: return 0.0
         val score = if (action is Training) {
-            val needWinCount = when {
-                state.turn > 72 -> 0
-                state.turn > 60 -> 50
-                state.turn > 48 -> 40
-                state.turn > 36 -> 30
-                state.turn > 24 -> 20
-                else -> 10
-            }
+            val needWinCount = uafNeedWinCount(state.turn)
             scenarioActionParam.athleticsLevelUp.map { (type, value) ->
                 val athletic = uafStatus.trainingAthletics[type]!!
                 val level = uafStatus.athleticsLevel[athletic]!!
-                value * option.athleticBaseFactor + max(0, needWinCount - level) * option.athleticRequiredFactor
+                value * option.athleticBaseFactor + min(
+                    value,
+                    max(0, needWinCount - level)
+                ) * option.athleticRequiredFactor
             }.sum()
         } else if (!uafStatus.levelUpBonus && scenarioActionParam.notTraining) {
             option.athleticBonusFactor
