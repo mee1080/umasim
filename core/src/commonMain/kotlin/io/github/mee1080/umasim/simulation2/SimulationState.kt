@@ -44,6 +44,8 @@ data class SimulationState(
 ) {
     val supportTypeCount = supportCount.size
 
+    val nextGoalRace get() = goalRace.firstOrNull { it.turn >= turn }
+
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
     val liveAvailable get() = liveStatus != null

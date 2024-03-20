@@ -59,14 +59,14 @@ fun debugUafSingleSimulation() {
     val support = Store.getSupportByName(
         "[血脈の胎動]ドゥラメンテ",
         "[大望は飛んでいく]エルコンドルパサー",
-        "[大地と我らのアンサンブル]サウンズオブアース",
+        "[冬溶かす熾火]メジロラモーヌ",
         "[只、君臨す。]オルフェーヴル",
         "[かっとばせー！ですわ！？]メジロマックイーン",
         "[共に描くキラメキ]都留岐涼花",
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = UafActionSelector.speed3Stamina1Wisdom1Long()
+    val selector = UafActionSelector.speed2Power1Guts1Wisdom1Long()
     val factor = listOf(
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
         StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,

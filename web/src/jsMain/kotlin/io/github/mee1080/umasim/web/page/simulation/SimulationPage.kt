@@ -19,6 +19,8 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.*
+import io.github.mee1080.umasim.ai.UafActionSelector
+import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
@@ -113,16 +115,30 @@ fun SimulationPage(state: State) {
 fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
     val scope = rememberCoroutineScope()
     val selector = remember { ManualActionSelector() }
+    val aiSelector = remember(state.scenario) {
+        when (state.scenario) {
+            Scenario.UAF -> UafActionSelector.speed2Power1Guts1Wisdom1Long()
+            else -> null
+        }
+    }
+    var aiScore: List<Double> by remember { mutableStateOf(emptyList()) }
+    var aiSelection by remember { mutableStateOf(-1) }
     var simulationState by remember { mutableStateOf<SimulationState?>(null) }
     var selection by remember { mutableStateOf<List<Action>>(emptyList()) }
     var result by remember { mutableStateOf<Summary?>(null) }
     DisposableEffect(Unit) {
         val job = scope.launch {
             launch {
-                selector.selectionChannel.receiveAsFlow().collect {
-                    simulationState = it.first
-                    selection = it.second
+                selector.selectionChannel.receiveAsFlow().collect { entry ->
+                    simulationState = entry.first
+                    selection = entry.second
                     result = null
+                    aiSelector?.let { aiSelectorNonNull ->
+                        aiScore = emptyList()
+                        aiSelection = -1
+                        aiSelection = entry.second.indexOf(aiSelectorNonNull.select(entry.first, entry.second))
+                        aiScore = entry.second.map { aiSelectorNonNull.calcScore(entry.first, it) }
+                    }
                 }
             }
             launch {
@@ -143,7 +159,7 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
         SimulationStateBlock(simulationStateNonNull)
         MdDivider(1.px)
         if (selection.isNotEmpty()) {
-            SelectionBlock(simulationStateNonNull, selection) {
+            SelectionBlock(simulationStateNonNull, selection, aiSelection, aiScore) {
                 scope.launch {
                     selector.resultChannel.send(it)
                 }

@@ -46,7 +46,14 @@ fun SimulationStateBlock(state: SimulationState) {
             rowGap(8.px)
         }
     }) {
-        Div { Text(turnToString(state.turn)) }
+        Div {
+            if (state.turn > 12) {
+                Text(turnToString(state.turn))
+            }
+            state.nextGoalRace?.let {
+                Text(" 目標まであと ${it.turn - state.turn} ターン [${it.name}]")
+            }
+        }
         DivFlexCenter {
             Text("体力：")
             Div({
@@ -79,11 +86,11 @@ fun SimulationStateBlock(state: SimulationState) {
             }
         }
         state.uafStatus?.let { uafStatus ->
-            val goalLevel = max(10, min(50, ((state.turn - 1) / 12) * 10))
-            Div { Text("残り相談回数：${uafStatus.consultCount}") }
-            UafGenre.entries.forEach { genre ->
-                Div {
-                    Text("${genre.colorName}： 競技Lv${uafStatus.genreLevel[genre]}(")
+            Div {
+                val goalLevel = max(10, min(50, ((state.turn - 1) / 12) * 10))
+                Text("相談 ${uafStatus.consultCount}")
+                UafGenre.entries.forEach { genre ->
+                    Text(" | ${genre.colorName}Lv${uafStatus.genreLevel[genre]}(")
                     UafAthletic.byGenre[genre]?.forEachIndexed { index, uafAthletic ->
                         if (index > 0) Text("/")
                         val level = uafStatus.athleticsLevel[uafAthletic]!!
@@ -95,8 +102,8 @@ fun SimulationStateBlock(state: SimulationState) {
                     }
                     Text(")")
                     if (uafStatus.heatUp[genre]!! > 0) {
-                        Span({style { fontWeight("bold") }}) {
-                            Text(" 【ヒートアップ ${uafStatus.heatUp[genre]}ターン】")
+                        Span({ style { fontWeight("bold") } }) {
+                            Text("【ヒートアップ ${uafStatus.heatUp[genre]}ターン】")
                         }
                     }
                 }

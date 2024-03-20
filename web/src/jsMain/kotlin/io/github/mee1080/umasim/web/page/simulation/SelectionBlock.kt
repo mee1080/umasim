@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.web.components.atoms.MdClass
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.tertiary
 import io.github.mee1080.umasim.web.page.share.StatusTable
+import io.github.mee1080.umasim.web.round
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
@@ -34,6 +35,8 @@ import org.jetbrains.compose.web.dom.Text
 fun SelectionBlock(
     state: SimulationState,
     selection: List<Action>,
+    aiSelection: Int,
+    aiScore: List<Double>,
     onSelect: (Action) -> Unit,
 ) {
     Div({
@@ -48,7 +51,7 @@ fun SelectionBlock(
             rowGap(8.px)
         }
     }) {
-        selection.forEach { action ->
+        selection.forEachIndexed { index, action ->
             val uafStatus = state.uafStatus
             val (actionName, uafAthletic, uafAthleticLevel) = if (uafStatus != null && action is Training) {
                 val athletic = uafStatus.trainingAthletics[action.type]!!
@@ -57,6 +60,7 @@ fun SelectionBlock(
             } else Triple(action.name, null, 0)
             Card({
                 style {
+                    position(Position.Relative)
                     display(DisplayStyle.Flex)
                     flexDirection(FlexDirection.Column)
                     rowGap(4.px)
@@ -148,6 +152,26 @@ fun SelectionBlock(
                     is LiveGetLesson -> {}
 
                     is UafConsult -> {}
+                }
+                val targetAiScore = aiScore.getOrNull(index)
+                if (aiSelection == index || targetAiScore != null) {
+                    Div({
+                        classes(MdClass.surfaceContainerHigh, MdClass.onSurfaceText)
+                        style {
+                            position(Position.Absolute)
+                            padding(4.px)
+                            borderRadius(4.px)
+                            right(8.px)
+                            top(8.px)
+                        }
+                    }) {
+                        if (targetAiScore != null) {
+                            Text("AIスコア：${targetAiScore.round(2)}")
+                        }
+                        if (aiSelection == index) {
+                            Text("[推奨]")
+                        }
+                    }
                 }
             }
         }
