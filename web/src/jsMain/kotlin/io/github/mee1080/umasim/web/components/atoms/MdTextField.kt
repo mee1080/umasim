@@ -37,25 +37,6 @@ private val initializer = object {
         require("@material/web/textfield/outlined-text-field.js")
     }
 }
-//
-//enum class MdTextFieldType(val attrValue: String) {
-//    Email("email"),
-//    Number("number"),
-//    Password("password"),
-//    Search("search"),
-//    Tel("tel"),
-//    Text("text"),
-//    Url("url"),
-//    TextArea("textarea"),
-//
-////    Color("color"),
-////    Date("date"),
-////    DateTimeLocal("datetime-local"),
-////    File("file"),
-////    Month("month"),
-////    Time("time"),
-////    Week("week"),
-//}
 
 @Composable
 fun MdFilledNumberTextField(

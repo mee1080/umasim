@@ -18,13 +18,17 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Lesson
+import io.github.mee1080.umasim.data.StatusType
 
 interface ActionSelector {
 
     fun init(state: SimulationState) {}
 
     suspend fun select(state: SimulationState, selection: List<Action>): Action
+
+    suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> =
+        select(state, selection) to emptyList()
 
     fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
 

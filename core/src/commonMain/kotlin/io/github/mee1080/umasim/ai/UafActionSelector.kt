@@ -20,7 +20,10 @@ package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
+import kotlinx.serialization.Serializable
 import kotlin.math.max
 import kotlin.math.min
 
@@ -28,7 +31,7 @@ import kotlin.math.min
 class UafActionSelector(private val options: List<Option>) : ActionSelector {
 
     companion object {
-        private const val DEBUG = false
+        private const val DEBUG = true
 
         val speed2Power1Guts1Wisdom1Long = {
             UafActionSelector(speed2Power1Guts1Wisdom1LongOptions)
@@ -41,31 +44,38 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
                 speedFactor = 1.0,
                 staminaFactor = 1.0,
                 powerFactor = 1.0,
-                gutsFactor = 1.0,
+                gutsFactor = 0.8,
                 wisdomFactor = 1.0,
                 skillPtFactor = 1.0,
-                hpFactor = 1.1,
+                hpFactor = 0.5,
                 motivationFactor = 15.0,
-                relationFactor = 5.0,
+                relationFactor = 8.0,
                 hpKeepFactor = 0.4,
-                riskFactor = 1.6,
+                riskFactor = 1.4,
+                athleticBaseFactor = 3.0,
+                athleticRequiredFactor = 3.0,
+                athleticBonusFactor = 20.0,
             )
             speed2Power1Guts1Wisdom1LongOptions = listOf(option)
         }
     }
 
+    @Serializable
     data class Option(
         val speedFactor: Double = 1.0,
         val staminaFactor: Double = 1.0,
         val powerFactor: Double = 1.0,
-        val gutsFactor: Double = 1.0,
+        val gutsFactor: Double = 0.8,
         val wisdomFactor: Double = 1.0,
         val skillPtFactor: Double = 1.0,
-        val hpFactor: Double = 1.6,
+        val hpFactor: Double = 1.2,
         val motivationFactor: Double = 15.0,
-        val relationFactor: Double = 10.0,
-        val hpKeepFactor: Double = 1.0,
+        val relationFactor: Double = 8.0,
+        val hpKeepFactor: Double = 0.3,
         val riskFactor: Double = 2.0,
+        val athleticBaseFactor: Double = 2.5,
+        val athleticRequiredFactor: Double = 2.0,
+        val athleticBonusFactor: Double = 50.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = UafActionSelector(listOf(this))
     }
@@ -73,26 +83,51 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     private var option: Option = options[0]
 
     override suspend fun select(state: SimulationState, selection: List<Action>): Action {
+        return selectWithScore(state, selection).first
+    }
+
+    override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
         option = options[0]
         // TODO 相談
-        var selected = selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
+        val expectedScore = calcExpectedScores(state)
+        val selectionWithScore = selection.map { it to calcScore(state, it, expectedScore) }
+        var selected = selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
         if (selected is Sleep) {
             selected = selection.firstOrNull { it is Outing && it.support != null } ?: selected
         }
-        return selected
+        return selected to selectionWithScore.map { it.second }
     }
 
-    fun calcScore(state: SimulationState, action: Action): Double {
+    private fun calcExpectedScores(state: SimulationState) = buildMap {
+        val uafStatus = state.uafStatus ?: return@buildMap
+        val scores = mutableListOf<Double>()
+        trainingType.forEach {
+            val expectedStatus = Calculator.calcExpectedTrainingStatus(
+                state.baseCalcInfo.copy(training = uafStatus.getTraining(it, state.isLevelUpTurn))
+            ).first
+            val score = calcScore(expectedStatus, state.status)
+            scores += score
+            put(it, score)
+        }
+        put(StatusType.SKILL, scores.max())
+    }
+
+    private fun calcScore(state: SimulationState, action: Action, expectedScore: Map<StatusType, Double>): Double {
         if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
-        val needHp = state.turn in listOf(35, 36, 58, 59)
         val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             val result = it.first as? StatusActionResult ?: return@sumOf 0.0
-            val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, needHp, state.status)
+            val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, state.status)
+            val expectedStatusScore = when (action) {
+                is Training -> expectedScore[action.type]!!
+                is Race -> expectedScore[StatusType.SKILL]!!
+                else -> 0.0
+            }
             val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
-            (statusScore + relationScore) * it.second / total
+            val athleticScore = if (result.success) calcAthleticScore(state, action, result) else 0.0
+            (statusScore - expectedStatusScore + relationScore + athleticScore) * it.second / total
         }
         if (DEBUG) println("total $score")
         return score
@@ -106,14 +141,14 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
     }
 
-    private fun calcScore(status: ExpectedStatus, needHp: Boolean, currentStatus: Status): Double {
+    private fun calcScore(status: ExpectedStatus, currentStatus: Status): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
                 status.power * option.powerFactor +
                 status.guts * option.gutsFactor +
                 status.wisdom * option.wisdomFactor +
                 status.skillPt * option.skillPtFactor +
-                status.hp * (if (needHp) option.hpFactor * 10 else option.hpFactor) +
+                status.hp * option.hpFactor +
                 status.motivation * option.motivationFactor +
                 min(0.0, max(-20.0, currentStatus.hp + status.hp - 70.0)) * option.hpKeepFactor
         if (DEBUG) println("  $score $status")
@@ -124,6 +159,30 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         if (action !is Training) return 0.0
         val score = option.relationFactor * action.support.count { it.relation < it.card.requiredRelation }
         if (DEBUG) println("  relation $score")
+        return score
+    }
+
+    private fun calcAthleticScore(state: SimulationState, action: Action, result: StatusActionResult): Double {
+        val uafStatus = state.uafStatus ?: return 0.0
+        val scenarioActionParam = result.scenarioActionParam as? UafScenarioActionParam ?: return 0.0
+        val score = if (action is Training) {
+            val needWinCount = when {
+                state.turn > 72 -> 0
+                state.turn > 60 -> 50
+                state.turn > 48 -> 40
+                state.turn > 36 -> 30
+                state.turn > 24 -> 20
+                else -> 10
+            }
+            scenarioActionParam.athleticsLevelUp.map { (type, value) ->
+                val athletic = uafStatus.trainingAthletics[type]!!
+                val level = uafStatus.athleticsLevel[athletic]!!
+                value * option.athleticBaseFactor + max(0, needWinCount - level) * option.athleticRequiredFactor
+            }.sum()
+        } else if (!uafStatus.levelUpBonus && scenarioActionParam.notTraining) {
+            option.athleticBonusFactor
+        } else 0.0
+        if (DEBUG) println("  athletic $score")
         return score
     }
 

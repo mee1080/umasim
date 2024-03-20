@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.web.page.share.StatusTable
 import io.github.mee1080.umasim.web.round
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
+import org.jetbrains.compose.web.dom.Span
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
@@ -169,7 +170,7 @@ fun SelectionBlock(
                             Text("AIスコア：${targetAiScore.round(2)}")
                         }
                         if (aiSelection == index) {
-                            Text("[推奨]")
+                            Span({ style { fontWeight("bold") } }) { Text("[選択]") }
                         }
                     }
                 }

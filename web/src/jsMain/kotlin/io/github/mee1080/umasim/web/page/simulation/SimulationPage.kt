@@ -45,6 +45,22 @@ fun SimulationPage(state: State) {
         )
     }
     var running by remember { mutableStateOf(false) }
+    var aiSelectorOption by remember {
+        mutableStateOf(
+            when (state.scenario) {
+                Scenario.UAF -> UafActionSelector.Option()
+                else -> null
+            }
+        )
+    }
+    val aiSelector = remember(aiSelectorOption) { aiSelectorOption?.generateSelector() }
+    var optionEdit by remember { mutableStateOf(false) }
+    aiSelectorOption?.let { option ->
+        OptionEditDialog(optionEdit, option) {
+            optionEdit = false
+            if (it != null) aiSelectorOption = it
+        }
+    }
     Div({
         style {
             height(100.percent)
@@ -65,12 +81,20 @@ fun SimulationPage(state: State) {
             }) {
                 Text("手動シミュレーション")
             }
-            MdFilledButton("リセット") {
-                onClick { running = false }
+            Div {
+                if (aiSelectorOption != null) {
+                    MdFilledButton("AI設定") {
+                        onClick { optionEdit = true }
+                        style { marginRight(8.px) }
+                    }
+                }
+                MdFilledButton("リセット") {
+                    onClick { running = false }
+                }
             }
         }
         if (running) {
-            RunningSimulation(state, factorList)
+            RunningSimulation(state, factorList, aiSelector)
         } else {
             Card({
                 style { margin(16.px) }
@@ -112,17 +136,10 @@ fun SimulationPage(state: State) {
 }
 
 @Composable
-fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
+fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: UafActionSelector?) {
     val scope = rememberCoroutineScope()
     val selector = remember { ManualActionSelector() }
-    val aiSelector = remember(state.scenario) {
-        when (state.scenario) {
-            Scenario.UAF -> UafActionSelector.speed2Power1Guts1Wisdom1Long()
-            else -> null
-        }
-    }
-    var aiScore: List<Double> by remember { mutableStateOf(emptyList()) }
-    var aiSelection by remember { mutableStateOf(-1) }
+    var aiResult by remember { mutableStateOf(-1 to emptyList<Double>()) }
     var simulationState by remember { mutableStateOf<SimulationState?>(null) }
     var selection by remember { mutableStateOf<List<Action>>(emptyList()) }
     var result by remember { mutableStateOf<Summary?>(null) }
@@ -134,10 +151,9 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
                     selection = entry.second
                     result = null
                     aiSelector?.let { aiSelectorNonNull ->
-                        aiScore = emptyList()
-                        aiSelection = -1
-                        aiSelection = entry.second.indexOf(aiSelectorNonNull.select(entry.first, entry.second))
-                        aiScore = entry.second.map { aiSelectorNonNull.calcScore(entry.first, it) }
+                        aiResult = -1 to emptyList()
+                        val aiOutput = aiSelectorNonNull.selectWithScore(entry.first, entry.second)
+                        aiResult = entry.second.indexOf(aiOutput.first) to aiOutput.second
                     }
                 }
             }
@@ -155,11 +171,19 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>) {
             job.cancel()
         }
     }
+    LaunchedEffect(aiSelector) {
+        val simulationStateNonNull = simulationState ?: return@LaunchedEffect
+        aiSelector?.let { aiSelectorNonNull ->
+            aiResult = -1 to emptyList()
+            val aiOutput = aiSelectorNonNull.selectWithScore(simulationStateNonNull, selection)
+            aiResult = selection.indexOf(aiOutput.first) to aiOutput.second
+        }
+    }
     simulationState?.let { simulationStateNonNull ->
         SimulationStateBlock(simulationStateNonNull)
         MdDivider(1.px)
         if (selection.isNotEmpty()) {
-            SelectionBlock(simulationStateNonNull, selection, aiSelection, aiScore) {
+            SelectionBlock(simulationStateNonNull, selection, aiResult.first, aiResult.second) {
                 scope.launch {
                     selector.resultChannel.send(it)
                 }
