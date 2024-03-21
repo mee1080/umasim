@@ -868,6 +868,15 @@ Billions of stars
 ->phase>=2&is_activate_other_skill_detail==1&is_finalcorner==1&corner!=0&is_overtake==1
 「終盤、上記効果発動後、最終コーナー以降、コーナー、追い抜きモード」、現在速度1500、持続3.0
 
+繋ぐ・繋がる×夢・未来
+[Dream Successor]ラインクラフト 固有
+レース前半のコーナーで中団にいると速度を少し上げる、短距離かマイルレースの場合は少し上げ続ける
+評価点340、人気:スピード60、確定発動
+->distance_type==1&distance_rate<=50&corner!=0&order>=3&order_rate<=70@distance_type==2&distance_rate<=50&corner!=0&order>=3&order_rate<=70
+「短距離、距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」または「マイル、距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」、目標速度2500、持続6.0
+->distance_rate<=50&corner!=0&order>=3&order_rate<=70
+「距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」、目標速度2500、持続5.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復しさらに速度が少し上がる
@@ -2067,6 +2076,14 @@ Billions of stars
 「距離割合50～51、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、持続3.0
 ->phase>=2&is_activate_other_skill_detail==1&is_finalcorner==1&corner!=0&is_overtake==1
 「終盤、上記効果発動後、最終コーナー以降、コーナー、追い抜きモード」、現在速度350、持続1.8
+
+繋ぐ・繋がる×夢・未来
+レース前半のコーナーで中団にいると速度をちょっと上げる、短距離かマイルレースの場合はちょっと上げ続ける
+評価点180、SP200、人気:スピード15
+->distance_type==1&distance_rate<=50&corner!=0&order>=3&order_rate<=70@distance_type==2&distance_rate<=50&corner!=0&order>=3&order_rate<=70
+「短距離、距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」または「マイル、距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」、目標速度500、持続3.6
+->distance_rate<=50&corner!=0&order>=3&order_rate<=70
+「距離割合<=50、コーナー、順位>=3、順位率70以下（チャンミ～6/LoH～8）」、目標速度500、持続3.0
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復しさらに速度がちょっと上がる
@@ -6661,6 +6678,15 @@ Smooth Sailing!
 ->is_activate_other_skill_detail==1&remain_distance<=201&remain_distance>=199
 「上記効果発動後、残り距離199～201」、目標速度1500、持続3.0
 
+ぜーったい負けられない！
+[Dream Successor]ラインクラフト 進化
+レース終盤始めの方で前方にいると加速力が上がり、その後残り200m地点で速度がわずかに上がる＜作戦・先行＞
+評価点633、人気:パワー60
+->running_style==2&phase_firsthalf_random==2&order_rate<=50
+「先行、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+->is_activate_other_skill_detail==1&remain_distance<=201&remain_distance>=199
+「上記効果発動後、残り距離199～201」、目標速度1500、持続3.0
+
 真っ向勝負
 レース終盤始めの方で前方にいると加速力がわずかに上がる＜作戦・先行＞
 評価点217、SP180、人気:パワー20
@@ -7650,6 +7676,13 @@ distance_rate>=66&order_rate_out50_continue==1&temptation_count==0->running_styl
 評価点633、人気:スピード60
 ->distance_type==2&phase_laterhalf_random==1&order_rate<=50
 「マイル、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続4.0
+
+未来を拓け！
+[Dream Successor]ラインクラフト 進化
+レース終盤が迫ったとき前方にいると速度がすごく上がる＜マイル＞
+評価点633、人気:スピード60
+->distance_type==2&phase_laterhalf_random==1&order_rate<=50
+「マイル、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続2.4
 
 向こう見ず
 レース終盤が迫ったとき前方にいると速度がわずかに上がる＜マイル＞
