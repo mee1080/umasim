@@ -41,9 +41,7 @@ fun SimulationState.predictNormal(): List<Action> {
         if (it.secondPosition != StatusType.NONE) supportPosition[it.secondPosition]!!.add(it)
     }
     return mutableListOf(
-        *(training.map {
-            calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
-        }).toTypedArray(),
+        *(predictTrainingResult(supportPosition)),
         *(predictScenarioAction()),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
@@ -59,15 +57,28 @@ private fun SimulationState.StatusActionResult(
     success: Boolean = true,
 ) = StatusActionResult(this.status, status, scenarioActionParam, success)
 
+private fun SimulationState.predictTrainingResult(supportPosition: Map<StatusType, List<MemberState>>): Array<Action> {
+    return training.map {
+        calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
+    }.toTypedArray()
+}
+
 private fun SimulationState.calcTrainingResult(
     training: TrainingState,
     support: List<MemberState>,
 ): Action {
     val currentTraining = uafStatus?.getTraining(training.type, isLevelUpTurn) ?: training.current
-    val failureRate = calcTrainingFailureRate(currentTraining, support)
+    return calcTrainingResult(currentTraining, support)
+}
+
+fun SimulationState.calcTrainingResult(
+    training: TrainingBase,
+    support: List<MemberState>,
+): Action {
+    val failureRate = calcTrainingFailureRate(training, support)
     val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(
         baseCalcInfo.copy(
-            training = currentTraining,
+            training = training,
             member = support,
         )
     )
@@ -119,7 +130,7 @@ private fun SimulationState.calcTrainingResult(
     return Training(
         training.type,
         failureRate,
-        currentTraining.level,
+        training.level,
         support,
         successCandidate + failureCandidate,
         baseStatus,
@@ -529,7 +540,7 @@ private fun SimulationState.predictUafAction(): Array<Action> {
 }
 
 
-private fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): List<Action> {
+fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): List<Action> {
     val uafStatus = uafStatus ?: return baseActions
     return baseActions.map {
         when (it) {

@@ -28,7 +28,7 @@ import kotlin.math.min
 class UafActionSelector(private val options: List<Option>) : ActionSelector {
 
     companion object {
-        private const val DEBUG = true
+        private const val DEBUG = false
 
         val speed2Power1Guts1Wisdom1Long = {
             UafActionSelector(speed2Power1Guts1Wisdom1LongOptions)
@@ -74,6 +74,8 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         val athleticRequiredFactor: Double = 2.0,
         val athleticBonusFactor: Double = 40.0,
         val consultMinScore: Double = 25.0,
+        val consultAthleticRequiredFactor: Double = 0.5,
+        val consultHeatUpStatusFactor: Double = 0.5,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = UafActionSelector(listOf(this))
     }
@@ -85,12 +87,22 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     }
 
     override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
-        option = options[0]
+        option = when {
+            state.turn <= 24 -> options[0]
+            state.turn <= 48 -> options.getOrElse(1) { options[0] }
+            else -> options.getOrElse(2) { options[0] }
+        }
         val expectedScore = calcExpectedScores(state)
-        val selectionWithScore = selection.map { it to calcScore(state, it, expectedScore) }
+        val noConsultScore = selection.map { it to calcScore(state, it, expectedScore) }
+        val consultScore = calcConsultScore(state, selection, expectedScore, noConsultScore)
+        val selectionWithScore = noConsultScore.map {
+            if (it.first is UafConsult) it.first to consultScore[it.first]!! else it
+        }
         val actionScores = selectionWithScore.map { it.second }
         val consultMax = selectionWithScore.filter { it.first is UafConsult }.maxByOrNull { it.second }
-        if (consultMax != null && consultMax.second >= option.consultMinScore) {
+        // 半年の最終ターンでは相談を選ぶ
+        val consultMinScore = if (state.turn % 12 == 0) 0.0 else option.consultMinScore
+        if (consultMax != null && consultMax.second >= consultMinScore) {
             return consultMax.first to actionScores
         }
         var selected = selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
@@ -115,7 +127,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     }
 
     private fun calcScore(state: SimulationState, action: Action, expectedScore: Map<StatusType, Double>): Double {
-        if (action is UafConsult) return calcConsultScore(state, action)
+        if (action is UafConsult) return 0.0
         if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
@@ -137,17 +149,55 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         return score
     }
 
-    private fun calcConsultScore(state: SimulationState, action: UafConsult): Double {
-        // TODO 赤ヒートアップ
-        // TODO 残相談回数を考慮
-        val uafStatus = state.uafStatus ?: return 0.0
-        if (uafStatus.consultCount == 0) return 0.0
-        val consultResult = calcConsultResult(state, action.result.from, action.result.to)
-        val noConsultResult = calcConsultResult(state, action.result.from, action.result.from)
-        val reverseResult = calcConsultResult(state, action.result.to, action.result.from)
-        val baseScore = min(consultResult.first, reverseResult.first) * option.athleticBaseFactor
-        val requiredScore = consultResult.second - noConsultResult.second * option.athleticRequiredFactor
-        return baseScore + requiredScore
+    private fun calcConsultScore(
+        state: SimulationState,
+        selection: List<Action>,
+        expectedScore: Map<StatusType, Double>,
+        selectionWithScore: List<Pair<Action, Double>>,
+    ): Map<UafConsult, Double> {
+        val uafStatus = state.uafStatus ?: return emptyMap()
+        val consultList = selection.filterIsInstance<UafConsult>()
+        if (consultList.isEmpty()) return emptyMap()
+
+        val consultResults = buildMap {
+            UafGenre.entries.forEach { from ->
+                UafGenre.entries.forEach { to ->
+                    put(from to to, calcConsultResult(state, from, to))
+                }
+            }
+        }
+        val heatUpRed = uafStatus.heatUp[UafGenre.Red]!! > 0
+        val trainingScores = if (heatUpRed) {
+            selectionWithScore.filter { it.first is Training }
+                .associateBy { (it.first as Training).type }
+        } else emptyMap()
+        val maxTrainingScore = if (heatUpRed) {
+            trainingScores.maxOf { it.value.second }
+        } else 0.0
+
+        return consultList.associateWith { action ->
+            val consultResult = consultResults[action.result.from to action.result.to]!!
+            val noConsultResult = consultResults[action.result.from to action.result.from]!!
+            val reverseResult = consultResults[action.result.to to action.result.from]!!
+            // 基本競技Lvスコア：相談による競技Lv上昇量（色が逆のパターンと比較して小さい方）×係数
+            val baseScore = min(consultResult.first, reverseResult.first) * option.athleticBaseFactor
+            // 必要競技Lvスコア：相談によって得られる次回大会までの不足分（相談しないパターンとの差）×係数
+            val requiredScore = (consultResult.second - noConsultResult.second) * option.consultAthleticRequiredFactor
+            // 赤ヒートアップステータススコア
+            val statusScore = if (heatUpRed) {
+                val newState = state.applySelectedUafAction(action.result)
+                trainingType.maxOf { type ->
+                    val newTraining = newState.uafStatus!!.getTraining(type, newState.isLevelUpTurn)
+                    val currentTraining = trainingScores[type]!!.first as Training
+                    val newAction = newState.predictUafScenarioActionParams(
+                        listOf(newState.calcTrainingResult(newTraining, currentTraining.member))
+                    ).first()
+                    val newScore = calcScore(newState, newAction, expectedScore)
+                    newScore - maxTrainingScore
+                } * option.consultHeatUpStatusFactor
+            } else 0.0
+            baseScore + requiredScore + statusScore
+        }
     }
 
     private fun calcConsultResult(state: SimulationState, from: UafGenre, to: UafGenre): Pair<Int, Int> {
@@ -156,7 +206,9 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         val levelUp = uafStatus.athleticsLevelUp.filter {
             uafStatus.trainingAthletics[it.key]!!.genre == from
         }
+        // 相談による競技Lv上昇量合計
         val total = levelUp.entries.sumOf { (_, value) -> value }
+        // 上昇量のうち次回大会までの不足分
         val required = levelUp.entries.sumOf { (type, value) ->
             val athletic = UafAthletic.get(to, type)
             val level = uafStatus.athleticsLevel[athletic]!!

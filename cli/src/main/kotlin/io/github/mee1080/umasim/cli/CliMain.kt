@@ -57,6 +57,12 @@ class CliMain : CliktCommand() {
     private val starGauge by option().double().multiple()
     private val aptitudePt by option().double().multiple()
     private val ssMatch by option().double().multiple()
+    private val athleticBase by option().double().multiple()
+    private val athleticRequired by option().double().multiple()
+    private val athleticBonus by option().double().multiple()
+    private val consultMin by option().double().multiple()
+    private val consultAthleticRequired by option().double().multiple()
+    private val consultHeatUpStatus by option().double().multiple()
 
     private val evaluate by option().triple().multiple()
 
@@ -88,6 +94,33 @@ class CliMain : CliktCommand() {
         }
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
+
+            Scenario.UAF -> {
+                {
+                    val options = (0..2).map {
+                        UafActionSelector.Option(
+                            speedFactor = speed.getOrElse(it) { 1.0 },
+                            staminaFactor = stamina.getOrElse(it) { 1.0 },
+                            powerFactor = power.getOrElse(it) { 1.0 },
+                            gutsFactor = guts.getOrElse(it) { 1.0 },
+                            wisdomFactor = wisdom.getOrElse(it) { 1.0 },
+                            skillPtFactor = skillPt.getOrElse(it) { 1.0 },
+                            hpFactor = hp.getOrElse(it) { 1.0 },
+                            motivationFactor = motivation.getOrElse(it) { 1.0 },
+                            relationFactor = relationFactor(StatusType.NONE, 0, 0),
+                            hpKeepFactor = hpKeep.getOrElse(it) { 1.0 },
+                            riskFactor = risk.getOrElse(it) { 2.0 },
+                            athleticBaseFactor = athleticBase.getOrElse(it) { 1.0 },
+                            athleticRequiredFactor = athleticRequired.getOrElse(it) { 1.0 },
+                            athleticBonusFactor = athleticBonus.getOrElse(it) { 1.0 },
+                            consultMinScore = consultMin.getOrElse(it) { 1.0 },
+                            consultAthleticRequiredFactor = consultAthleticRequired.getOrElse(it) { 1.0 },
+                            consultHeatUpStatusFactor = consultHeatUpStatus.getOrElse(it) { 1.0 },
+                        )
+                    }
+                    UafActionSelector(options)
+                }
+            }
 
             Scenario.LARC -> {
                 {
