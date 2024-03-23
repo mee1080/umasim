@@ -30,30 +30,49 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     companion object {
         private const val DEBUG = false
 
-        val speed2Power1Guts1Wisdom1Long = {
-            UafActionSelector(speed2Power1Guts1Wisdom1LongOptions)
+        val speed2Power1Guts1Wisdom1Mile = {
+            UafActionSelector(speed2Power1Guts1Wisdom1MileOptions)
         }
 
-        val speed2Power1Guts1Wisdom1LongOptions: List<Option>
+        val speed2Power1Guts1Wisdom1MileOptions: List<Option>
 
         init {
-            val option = Option(
+            val option1 = Option(
                 speedFactor = 1.0,
                 staminaFactor = 1.0,
                 powerFactor = 1.0,
-                gutsFactor = 0.8,
-                wisdomFactor = 1.0,
+                gutsFactor = 1.2,
+                wisdomFactor = 1.4,
                 skillPtFactor = 1.0,
-                hpFactor = 0.5,
-                motivationFactor = 15.0,
-                relationFactor = 8.0,
-                hpKeepFactor = 0.4,
-                riskFactor = 1.4,
-                athleticBaseFactor = 3.0,
-                athleticRequiredFactor = 3.0,
+                hpFactor = 0.6,
+                motivationFactor = 17.0,
+                relationFactor = 6.0,
+                hpKeepFactor = 0.3,
+                riskFactor = 8.2,
+                athleticBaseFactor = 2.8,
+                athleticRequiredFactor = 1.4,
+                athleticBonusFactor = 40.0,
+                consultMinScore = 36.0,
+                consultAthleticRequiredFactor = 2.0,
+                consultHeatUpStatusFactor = 0.2,
+            )
+            val option2 = option1.copy(
+                hpFactor = 1.5,
+                hpKeepFactor = 1.1,
+                riskFactor = 7.4,
+                athleticBaseFactor = 3.2,
+                athleticRequiredFactor = 4.0,
                 athleticBonusFactor = 20.0,
             )
-            speed2Power1Guts1Wisdom1LongOptions = listOf(option)
+            val option3 = option1.copy(
+                hpFactor = 0.5,
+                hpKeepFactor = 1.2,
+                riskFactor = 3.2,
+                athleticBaseFactor = 3.6,
+                athleticRequiredFactor = 3.6,
+                athleticBonusFactor = 40.0,
+            )
+            speed2Power1Guts1Wisdom1MileOptions = listOf(option1, option2, option3)
         }
     }
 
@@ -93,6 +112,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
             else -> options.getOrElse(2) { options[0] }
         }
         val expectedScore = calcExpectedScores(state)
+//        val expectedScore = mapOf(StatusType.SKILL to 0.0)
         val noConsultScore = selection.map { it to calcScore(state, it, expectedScore) }
         val consultScore = calcConsultScore(state, selection, expectedScore, noConsultScore)
         val selectionWithScore = noConsultScore.map {
@@ -112,21 +132,28 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         return selected to actionScores
     }
 
-    private fun calcExpectedScores(state: SimulationState) = buildMap {
-        val uafStatus = state.uafStatus ?: return@buildMap
-        val scores = mutableListOf<Double>()
-        trainingType.forEach {
-            val expectedStatus = Calculator.calcExpectedTrainingStatus(
-                state.baseCalcInfo.copy(training = uafStatus.getTraining(it, state.isLevelUpTurn))
-            ).first
-            val score = calcScore(expectedStatus, state.status)
-            scores += score
-            put(it, score)
+    private var expectedStatusCache: Pair<Int, Double>? = null
+
+    private fun calcExpectedScores(state: SimulationState): Double {
+        val uafStatus = state.uafStatus ?: return 0.0
+        val expectedStatusCacheNonNull = expectedStatusCache
+        if (expectedStatusCacheNonNull != null) {
+            if ((state.turn - 1) / 12 == expectedStatusCacheNonNull.first) {
+                return expectedStatusCacheNonNull.second
+            }
         }
-        put(StatusType.SKILL, scores.max())
+        val max = trainingType.maxOf {
+            val expectedStatus = Calculator.calcExpectedTrainingStatus(
+                state.baseCalcInfo.copy(training = uafStatus.getTraining(it, state.isLevelUpTurn)),
+                noCache = true,
+            ).first
+            calcScore(expectedStatus, state.status)
+        }
+        expectedStatusCache = ((state.turn - 1) / 12) to max
+        return max
     }
 
-    private fun calcScore(state: SimulationState, action: Action, expectedScore: Map<StatusType, Double>): Double {
+    private fun calcScore(state: SimulationState, action: Action, expectedScore: Double): Double {
         if (action is UafConsult) return 0.0
         if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
@@ -136,9 +163,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
             val result = it.first as? StatusActionResult ?: return@sumOf 0.0
             val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, state.status)
             val expectedStatusScore = when (action) {
-//                is Training -> expectedScore[action.type]!!
-                is Training -> expectedScore[StatusType.SKILL]!!
-                is Race -> expectedScore[StatusType.SKILL]!!
+                is Training, is Race -> expectedScore
                 else -> 0.0
             }
             val relationScore = if (result.success) calcRelationScore(state, action) else 0.0
@@ -152,7 +177,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
     private fun calcConsultScore(
         state: SimulationState,
         selection: List<Action>,
-        expectedScore: Map<StatusType, Double>,
+        expectedScore: Double,
         selectionWithScore: List<Pair<Action, Double>>,
     ): Map<UafConsult, Double> {
         val uafStatus = state.uafStatus ?: return emptyMap()

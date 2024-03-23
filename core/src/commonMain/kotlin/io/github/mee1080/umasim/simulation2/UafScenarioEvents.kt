@@ -10,7 +10,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
         val newMember = if (base.member.any { it.charaName == "都留岐涼花" }) base.member else {
             base.member + MemberState(
                 index = base.member.size,
-                card = Store.getSupportByName("都留岐涼花", 0),
+                card = Store.getSupportByName("[プロデューサー]都留岐涼花", 0),
                 StatusType.NONE,
                 null,
                 UafMemberState,

@@ -247,25 +247,29 @@ object Calculator {
 
     fun calcExpectedTrainingStatus(
         info: CalcInfo,
+        noCache: Boolean = false,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
-        val key = ExpectedStatusKey(
-            info.chara.id, info.training.type, info.training.level, info.motivation,
-            info.member.map {
-                Triple(
-                    it.card.id,
-                    it.card.talent,
-                    it.card.targetRelation.last { target -> target <= it.relation }
-                )
-            },
-            info.scenario, info.supportTypeCount, info.fanCount / 10000,
-            info.liveStatus,
-            info.gmStatus,
-            info.lArcStatus,
-            info.uafStatus,
-        )
-        val cached = expectedStatusCache[key]
-        if (cached != null) {
-            return cached
+        var key: ExpectedStatusKey? = null
+        if (!noCache) {
+            key = ExpectedStatusKey(
+                info.chara.id, info.training.type, info.training.level, info.motivation,
+                info.member.map {
+                    Triple(
+                        it.card.id,
+                        it.card.talent,
+                        it.card.targetRelation.last { target -> target <= it.relation }
+                    )
+                },
+                info.scenario, info.supportTypeCount, info.fanCount / 10000,
+                info.liveStatus,
+                info.gmStatus,
+                info.lArcStatus,
+                info.uafStatus,
+            )
+            val cached = expectedStatusCache[key]
+            if (cached != null) {
+                return cached
+            }
         }
         var status = ExpectedStatus()
         val detail = mutableListOf<Pair<Double, Status>>()
@@ -308,7 +312,9 @@ object Calculator {
             }
         }
         val result = status to detail
-        expectedStatusCache[key] = result
+        if (key != null) {
+            expectedStatusCache[key] = result
+        }
         return result
     }
 

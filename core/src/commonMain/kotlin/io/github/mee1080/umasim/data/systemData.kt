@@ -342,7 +342,7 @@ internal val scenarioLinkData = mapOf(
         "シリウスシンボリ",
         "ナカヤマフェスタ",
         "タップダンスシチー",
-        "オルフェーブル",
+        "オルフェーヴル",
     ),
     Scenario.UAF to setOf(
         "メジロライアン",

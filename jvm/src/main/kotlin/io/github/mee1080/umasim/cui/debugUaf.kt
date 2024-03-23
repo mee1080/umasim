@@ -9,45 +9,48 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import kotlin.coroutines.CoroutineContext
 import kotlin.math.roundToInt
 import kotlin.system.measureTimeMillis
+import kotlin.time.measureTime
 
 fun debugUaf() {
-    debugUafSingleSimulation()
+    val time = measureTime {
+//    debugUafSingleSimulation()
+        debugUafRunSimulation()
+    }
+    println("time: $time")
 }
 
-context(CoroutineContext)
 fun debugUafRunSimulation() {
-    val chara = Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5)
+    val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5)
     val support = Store.getSupportByName(
+        "[血脈の胎動]ドゥラメンテ",
         "[大望は飛んでいく]エルコンドルパサー",
-        "[The frontier]ジャングルポケット",
-        "[迫る熱に押されて]キタサンブラック",
-        "[やったれハロウィンナイト！]タマモクロス",
-        "[燦爛]メジロラモーヌ",
-        "[L'aubeは迫りて]佐岳メイ",
+        "[冬溶かす熾火]メジロラモーヌ",
+        "[只、君臨す。]オルフェーヴル",
+        "[かっとばせー！ですわ！？]メジロマックイーン",
+        "[共に描くキラメキ]都留岐涼花",
     )
     println(chara)
     println(support)
     val factor = listOf(
-        StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.POWER to 3,
-        StatusType.POWER to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
+        StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
+        StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
     runBlocking {
-        repeat(9) { index ->
-            val selector = LArcActionSelector.speed3Power1Wisdom1Middle
-            launch(this@CoroutineContext) {
+        repeat(8) { index ->
+            val selector = UafActionSelector.speed2Power1Guts1Wisdom1Mile
+            launch(context) {
                 val summary = Runner.run(
-                    10000,
-                    Scenario.LARC,
+                    1000,
+                    Scenario.UAF,
                     chara,
                     support,
                     factor,
                     selector = selector,
                 )
-                val evaluator = Evaluator(summary, Runner.lArcMiddleEvaluateSetting, 0.2)
-                val score = (evaluator.upperSum(0.2, Runner.lArcMiddleEvaluateSetting) * 1000).roundToInt() / 1000.0
+                val evaluator = Evaluator(summary, Runner.uafMileEvaluateSetting, 0.2)
+                val score = (evaluator.upperSum(1.0, Runner.uafMileEvaluateSetting) * 1000).roundToInt() / 1000.0
                 println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }
@@ -66,7 +69,7 @@ fun debugUafSingleSimulation() {
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = UafActionSelector.speed2Power1Guts1Wisdom1Long()
+    val selector = UafActionSelector.speed2Power1Guts1Wisdom1Mile()
     val factor = listOf(
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
         StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,

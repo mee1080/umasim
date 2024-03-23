@@ -116,64 +116,52 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun averageRaceCount() = summaries.map { it.raceCount }.average()
 
+    private val skillHints by lazy {
+        results.value.map { it.skillHint.values.sum() }
+    }
+
+    private val averageSkillHint by lazy { skillHints.average() }
+
     fun toSummaryString(): String {
         val skillFactor = 1.0
         return arrayOf(
+            // ステータス
             average(StatusType.SPEED),
             average(StatusType.STAMINA),
             average(StatusType.POWER),
             average(StatusType.GUTS),
             average(StatusType.WISDOM),
             average(StatusType.SKILL),
-            upper(StatusType.SPEED, 0.2),
-            upper(StatusType.STAMINA, 0.2),
-            upper(StatusType.POWER, 0.2),
-            upper(StatusType.GUTS, 0.2),
-            upper(StatusType.WISDOM, 0.2),
-            upper(StatusType.SKILL, 0.2),
-            upper(StatusType.SPEED, 0.05),
-            upper(StatusType.STAMINA, 0.05),
-            upper(StatusType.POWER, 0.05),
-            upper(StatusType.GUTS, 0.05),
-            upper(StatusType.WISDOM, 0.05),
-            upper(StatusType.SKILL, 0.05),
+            averageSkillHint,
+
+            // トレーニング
             trainingType.joinToString(",") { type ->
                 val averageTrainingCount = averageTrainingCount(type)
                 val friendTrainingCount = averageFriendTrainingCount(type)
                 "$averageTrainingCount,${friendTrainingCount.joinToString(",")}"
             },
+
+            // スピード評価
             averageSum(StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.2, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.05, StatusType.SPEED to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
+
+            // スタミナ評価
             averageSum(StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.2, StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.05, StatusType.STAMINA to 1.0, StatusType.GUTS to 1.0, StatusType.SKILL to skillFactor),
+
+            // パワー評価
             averageSum(StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.2, StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.05, StatusType.STAMINA to 1.0, StatusType.POWER to 1.0, StatusType.SKILL to skillFactor),
+
+            // 根性評価
             averageSum(
                 StatusType.SPEED to 1.0,
                 StatusType.POWER to 1.0,
                 StatusType.GUTS to 1.0,
                 StatusType.SKILL to skillFactor
             ),
-            upperSum(
-                0.2,
-                StatusType.SPEED to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.GUTS to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.05,
-                StatusType.SPEED to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.GUTS to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
+
+            // 賢さ評価
             averageSum(StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.2, StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
-            upperSum(0.05, StatusType.SPEED to 1.0, StatusType.WISDOM to 1.0, StatusType.SKILL to skillFactor),
+
+            // 全合計
             averageSum(
                 StatusType.SPEED to 1.0,
                 StatusType.STAMINA to 1.0,
@@ -182,24 +170,8 @@ class Evaluator(val summaries: List<Summary>) {
                 StatusType.WISDOM to 1.0,
                 StatusType.SKILL to skillFactor
             ),
-            upperSum(
-                0.2,
-                StatusType.SPEED to 1.0,
-                StatusType.STAMINA to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.GUTS to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
-            upperSum(
-                0.05,
-                StatusType.SPEED to 1.0,
-                StatusType.STAMINA to 1.0,
-                StatusType.POWER to 1.0,
-                StatusType.GUTS to 1.0,
-                StatusType.WISDOM to 1.0,
-                StatusType.SKILL to skillFactor
-            ),
+
+            // お休み・お出かけ・レース
             averageSleepCount(),
             averageOutingCount(),
             averageRaceCount(),

@@ -134,6 +134,15 @@ object Runner {
         StatusType.SKILL to (0.8 to 3600),
     )
 
+    val uafMileEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.1 to 2200),
+        StatusType.STAMINA to (1.2 to 900),
+        StatusType.POWER to (1.1 to 1800),
+        StatusType.GUTS to (1.2 to 1200),
+        StatusType.WISDOM to (1.1 to 1400),
+        StatusType.SKILL to (0.8 to 4000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,
