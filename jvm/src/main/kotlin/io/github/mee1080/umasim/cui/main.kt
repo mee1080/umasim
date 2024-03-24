@@ -23,7 +23,7 @@ import kotlinx.coroutines.ExecutorCoroutineDispatcher
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors
 
-const val THREAD_COUNT = 8
+const val THREAD_COUNT = 5
 lateinit var context: ExecutorCoroutineDispatcher
 
 fun main(args: Array<String>) {
