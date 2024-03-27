@@ -63,6 +63,8 @@ data class UafStatus(
 
     fun trainingLevel(athletic: UafAthletic) = min(5, max(1, athleticsLevel[athletic]!! / 10))
 
+    val totalTrainingLevel by lazy { trainingAthletics.values.sumOf { trainingLevel(it) } }
+
     fun getTraining(statusType: StatusType, levelUpTurn: Boolean): TrainingBase {
         val athletic = trainingAthletics[statusType]!!
         val level = if (levelUpTurn) 5 else trainingLevel(athletic)

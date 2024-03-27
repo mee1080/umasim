@@ -99,7 +99,9 @@ data class SimulationState(
 
     val totalRelation by lazy { member.sumOf { it.relation } }
 
-    val totalTrainingLevel by lazy { training.sumOf { it.currentLevel } }
+    val totalTrainingLevel by lazy {
+        uafStatus?.totalTrainingLevel ?: training.sumOf { it.currentLevel }
+    }
 
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
 

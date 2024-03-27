@@ -63,7 +63,7 @@ object Calculator {
             friendTraining: Boolean,
         ) = SpecialUniqueCondition(
             trainingType = training.type,
-            trainingLevel = training.level,
+            trainingLevel = training.displayLevel,
             totalTrainingLevel = totalTrainingLevel,
             relation = 0,
             supportCount = supportCount,
@@ -412,7 +412,7 @@ object Calculator {
     ): Int {
         val base = if (info.training.type == StatusType.WISDOM) 5 else 9
         val link = 2 * info.member.count { !it.guest && Store.isScenarioLink(info.scenario, it.charaName) }
-        return (base + info.training.level) * when (info.member.size) {
+        return (base + info.training.displayLevel) * when (info.member.size) {
             1 -> 11
             2 -> 13
             3 -> 15

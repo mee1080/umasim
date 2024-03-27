@@ -24,4 +24,10 @@ data class TrainingBase(
     val level: Int,
     val failureRate: Int,
     val status: Status,
-)
+) {
+    val displayLevel = when {
+        level > 10 -> level % 10
+        level > 5 -> 5
+        else -> level
+    }
+}
