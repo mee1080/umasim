@@ -2,12 +2,12 @@ package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.compose.common.atoms.TextLink
+import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun Header() {
@@ -39,28 +39,23 @@ fun Footer() {
 
     Column {
         Row { Text("本プログラムについて", style = MaterialTheme.typography.headlineSmall) }
-        Row {
-            Text("本プログラムは、砂井裏鍵さん（X: ")
-            TextLink("https://twitter.com/urakagi", "@urakagi")
-            Text("）作のレースエミュレータを、")
-        }
-        Row {
-            Text("mee1080（X: ")
-            TextLink("https://twitter.com/mee10801", "@mee10801")
-            Text("）がKotlinに移植しました")
-        }
-        Row {
-            Text("オリジナル版：")
-            TextLink("http://race.wf-calc.net/")
-        }
+        TextWithLink(
+            persistentListOf(
+                "本プログラムは、砂井裏鍵さん（X: " to null,
+                "@urakagi" to "https://twitter.com/urakagi",
+                "）作のレースエミュレータを、mee1080（X: " to null,
+                "@mee10801" to "https://twitter.com/mee10801",
+                "）がKotlinに移植しました" to null,
+            )
+        )
+        TextWithLink("オリジナル版：http://race.wf-calc.net/")
     }
 
     HorizontalDivider()
 
     Column {
         Row { Text("オープンソースライセンス", style = MaterialTheme.typography.headlineSmall) }
-        Text("画面表示には、「LINE Seed JP」フォントを使用しています。")
-        Text("\"LINE Seed JP\" is licensed under the SIL Open Font License 1.1 (c) LY Corporation")
-        TextLink("https://seed.line.me/index_jp.html")
+        TextWithLink("画面表示には、「LINE Seed JP」フォント（https://seed.line.me/index_jp.html）を使用しています。")
+        Text("\"LINE Seed JP\" is licensed under the SIL Open Font License 1.1 (c) LY Corporation.")
     }
 }

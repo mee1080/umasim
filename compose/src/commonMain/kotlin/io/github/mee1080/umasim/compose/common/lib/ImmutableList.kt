@@ -1,16 +1,44 @@
 package io.github.mee1080.umasim.compose.common.lib
 
-import androidx.compose.runtime.Immutable
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.PersistentList
+import kotlinx.collections.immutable.persistentListOf
 
-@Immutable
-class ImmutableList<out T>(
-    val data: List<T>,
-) : List<T> by data {
-    override fun toString() = data.toString()
+inline fun <reified T> buildPersistentList(builderAction: PersistentList.Builder<T>.() -> Unit): PersistentList<T> {
+    return persistentListOf<T>().builder().apply(builderAction).build()
 }
 
-fun <T> List<T>.toImmutable() = ImmutableList(this)
+inline fun <reified T> PersistentList(size: Int, init: (index: Int) -> T): PersistentList<T> {
+    return buildPersistentList {
+        repeat(size) {
+            add(init(it))
+        }
+    }
+}
 
-fun <T> Array<T>.toImmutable() = ImmutableList(this.asList())
+inline fun <T, reified R> Iterable<T>.mapImmutable(transform: (T) -> R): ImmutableList<R> {
+    return buildPersistentList {
+        for (item in this@mapImmutable) {
+            add(transform(item))
+        }
+    }
+}
 
-fun <T> immutableListOf(vararg data: T) = data.toImmutable()
+inline fun <T, reified R> Iterable<T>.mapIndexedImmutable(transform: (index: Int, T) -> R): ImmutableList<R> {
+    return buildPersistentList {
+        for ((index, item) in this@mapIndexedImmutable.withIndex()) {
+            add(transform(index, item))
+        }
+    }
+}
+
+inline fun <reified T> ImmutableList<T>.addImmutable(element: T): ImmutableList<T> {
+    return buildPersistentList<T> {
+        addAll(this@addImmutable)
+        add(element)
+    }
+}
+
+inline fun <reified T> Array<T>.toImmutableList(): ImmutableList<T> {
+    return buildPersistentList { addAll(this@toImmutableList) }
+}
