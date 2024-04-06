@@ -267,26 +267,28 @@ data class RaceSetting(
             (calcExceedStatus(umaStatus.speed) * statusCheckModifier * condCoef[umaStatus.condition]!!).toInt()
         val surfaceSpeed = surfaceSpeedModify[trackDetail.surface]!![track.surfaceCondition]!!
         val ret = baseStatus + surfaceSpeed + passiveBonus.speed
-        return@lazy max(0, ret)
+        return@lazy ret.coerceIn(0, 2000)
     }
 
     val modifiedStamina by lazy {
-        calcExceedStatus(umaStatus.stamina) * condCoef[umaStatus.condition]!! + passiveBonus.stamina
+        (calcExceedStatus(umaStatus.stamina) * condCoef[umaStatus.condition]!! + passiveBonus.stamina).toInt()
+            .coerceIn(0, 2000)
     }
 
     val modifiedPower by lazy {
-        calcExceedStatus(umaStatus.power) * condCoef[umaStatus.condition]!! +
+        (calcExceedStatus(umaStatus.power) * condCoef[umaStatus.condition]!! +
                 surfacePowerModify[trackDetail.surface]!![track.surfaceCondition]!! +
-                passiveBonus.power
+                passiveBonus.power).toInt().coerceIn(0, 2000)
     }
 
     val modifiedGuts by lazy {
-        calcExceedStatus(umaStatus.guts) * condCoef[umaStatus.condition]!! + passiveBonus.guts
+        (calcExceedStatus(umaStatus.guts) * condCoef[umaStatus.condition]!! + passiveBonus.guts).toInt()
+            .coerceIn(0, 2000)
     }
 
     val modifiedWisdom by lazy {
-        calcExceedStatus(umaStatus.wisdom) * condCoef[umaStatus.condition]!! * styleFitCoef[umaStatus.styleFit]!! +
-                passiveBonus.wisdom
+        (calcExceedStatus(umaStatus.wisdom) * condCoef[umaStatus.condition]!! * styleFitCoef[umaStatus.styleFit]!! +
+                passiveBonus.wisdom).toInt().coerceIn(0, 2000)
     }
 
     private fun calcExceedStatus(status: Int): Int {
@@ -298,7 +300,7 @@ data class RaceSetting(
     }
 
     val spurtSpCoef by lazy {
-        1 + 200 / sqrt(600 * modifiedGuts)
+        1 + 200 / sqrt(600.0 * modifiedGuts)
     }
 
     val skillActivateRate by lazy {
@@ -324,7 +326,7 @@ data class RaceSetting(
                 sqrt(500.0 * modifiedSpeed) *
                 distanceFitSpeedCoef[umaStatus.distanceFit]!! *
                 0.002 +
-                (450 * modifiedGuts).pow(0.597) * 0.0001
+                (450.0 * modifiedGuts).pow(0.597) * 0.0001
     }
 
     val v0: Double by lazy { 0.85 * this.baseSpeed }
@@ -356,7 +358,7 @@ data class RaceSetting(
     }
 
     val vMinBase: Double by lazy {
-        0.85 * baseSpeed + 0.001 * sqrt(modifiedGuts * 200)
+        0.85 * baseSpeed + 0.001 * sqrt(modifiedGuts * 200.0)
     }
 
     val a0: Double by lazy {
