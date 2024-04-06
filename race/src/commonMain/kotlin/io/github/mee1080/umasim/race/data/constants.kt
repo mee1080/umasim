@@ -76,7 +76,8 @@ enum class RandomPosition(val value: Int, val label: String) {
     SLOWEST(5, "最遅"),
 }
 
-internal val frameLength = 1.0 / 15
+internal val framePerTime = 15
+internal val timePerFrame = 1.0 / framePerTime
 internal val startSpeed = 3.0
 internal val maxSpeed = 30.0
 
@@ -90,14 +91,12 @@ internal val condCoef = mapOf(
 
 internal val surfaceSpeedModify = mapOf(
     1 to mapOf(
-        0 to 0,
         1 to 0,
         2 to 0,
         3 to 0,
         4 to -50
     ),
     2 to mapOf(
-        0 to 0,
         1 to 0,
         2 to 0,
         3 to 0,
@@ -107,14 +106,12 @@ internal val surfaceSpeedModify = mapOf(
 
 internal val surfacePowerModify = mapOf(
     1 to mapOf(
-        0 to 0,
         1 to 0,
         2 to -50,
         3 to -50,
         4 to -50
     ),
     2 to mapOf(
-        0 to -100,
         1 to -100,
         2 to -50,
         3 to -100,
@@ -255,3 +252,7 @@ internal val spConsumptionCoef = mapOf(
         4 to 1.02
     )
 )
+
+internal val skillLevelValueDefault = listOf(1.0, 1.0, 1.02, 1.04, 1.06, 1.08, 1.1)
+
+internal val skillLevelValueSpeed = listOf(1.0, 1.0, 1.01, 1.04, 1.07, 1.1, 1.13)

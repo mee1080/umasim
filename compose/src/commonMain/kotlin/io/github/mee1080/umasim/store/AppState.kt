@@ -26,7 +26,7 @@ data class SimulationSummary(
     val spurtSummary: SimulationSummaryEntry,
     val notSpurtSummary: SimulationSummaryEntry,
     val spurtRate: Double,
-    val skillSummaries: List<Pair<SkillData, SimulationSkillSummary>>,
+    val skillSummaries: List<Pair<String, SimulationSkillSummary>>,
 )
 
 data class SimulationSummaryEntry(

@@ -22,15 +22,15 @@
  */
 package io.github.mee1080.umasim.race.calc2
 
-import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
-import io.github.mee1080.umasim.race.data.frameLength
-import io.github.mee1080.umasim.race.data.maxSpeed
-import io.github.mee1080.umasim.race.data.spConsumptionCoef
+import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import kotlin.math.*
 import kotlin.random.Random
 
-class RaceCalculator(private val setting: RaceSetting) {
+class RaceCalculator(
+    private val setting: RaceSetting,
+    private val system: SystemSetting = SystemSetting(),
+) {
 
     fun simulate(): Pair<RaceSimulationResult, RaceState> {
         val state = initializeState()
@@ -39,7 +39,7 @@ class RaceCalculator(private val setting: RaceSetting) {
     }
 
     private fun initializeState(): RaceState {
-        val state = RaceState(setting, RaceSimulationState())
+        val state = RaceState(setting, RaceSimulationState(), system)
         state.invokeSkills()
         val simulation = state.simulation
         if (!state.setting.fixRandom) {
@@ -62,7 +62,11 @@ class RaceCalculator(private val setting: RaceSetting) {
 }
 
 private fun RaceState.invokeSkills() {
-    setting.hasSkills.forEach { skill ->
+    setting.hasSkills.map {
+        if (it.rarity == "unique") {
+            it.applyLevel(setting.uniqueLevel)
+        } else it
+    }.forEach { skill ->
         skill.invokes.forEach { invoke ->
             val invokeRate =
                 if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE || skill.activateLot == 0) {
@@ -139,10 +143,14 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             speed = simulation.currentSpeed,
             sp = simulation.sp,
             startPosition = simulation.startPosition,
+            paceDownMode = paceDownMode,
+            downSlopeMode = simulation.downSlopeModeStart != null,
+            leadCompetition = inLeadCompetition,
+            competeFight = simulation.competeFight,
         )
         // 1秒おき判定
-        val changeSecond = floor(simulation.frameElapsed * frameLength).toInt() != floor(
-            (simulation.frameElapsed + 1) * frameLength
+        val changeSecond = floor(simulation.frameElapsed * timePerFrame).toInt() != floor(
+            (simulation.frameElapsed + 1) * timePerFrame
         ).toInt()
 
         // 下り坂モードに入るか・終わるかどうかの判定
@@ -167,9 +175,9 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         if (simulation.isInTemptation) {
             // 掛かり終了判定
             val temptationDuration =
-                (simulation.frameElapsed - simulation.temptationModeStart!!) * frameLength
+                (simulation.frameElapsed - simulation.temptationModeStart!!) * timePerFrame
             val prevTemptationDuration =
-                (simulation.frameElapsed - 1 - simulation.temptationModeStart!!) * frameLength
+                (simulation.frameElapsed - 1 - simulation.temptationModeStart!!) * timePerFrame
             repeat(3) {
                 val j = it * 3 + 3
                 if (prevTemptationDuration < j && temptationDuration >= j) {
@@ -188,7 +196,25 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             simulation.temptationSection = -1
         }
 
-        move(frameLength)
+        // 位置取り争い
+        if (simulation.leadCompetitionStart == null && setting.basicRunningStyle == Style.NIGE && simulation.position >= system.leadCompetitionPosition) {
+            simulation.leadCompetitionStart = simulation.frameElapsed
+        }
+
+        // 追い比べ
+        if (simulation.competeFight) {
+            // HP5%以下で終了
+            if (simulation.sp <= 0.05 * setting.spMax) {
+                simulation.competeFight = false
+            }
+        } else {
+            // 最終直線でHP15%以上で発動可能、1秒ごとに一定確率で発動するよう近似
+            if (changeSecond && isInFinalStraight() && simulation.sp >= 0.15 * setting.spMax && Random.nextDouble() < system.competeFightRate) {
+                simulation.competeFight = true
+            }
+        }
+
+        move(timePerFrame)
         frame = frame.copy(
             movement = simulation.position - simulation.startPosition,
             consume = simulation.sp - startSp,
@@ -222,7 +248,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         // Remove overtime skills
         val endedSkills = simulation.operatingSkills.filter { operatingSkill ->
             val duration = operatingSkill.duration
-            (simulation.frameElapsed - operatingSkill.startFrame) * frameLength > duration * setting.timeCoef
+            (simulation.frameElapsed - operatingSkill.startFrame) * timePerFrame > duration * setting.timeCoef
         }
         simulation.operatingSkills.removeAll(endedSkills)
 
@@ -262,9 +288,17 @@ private fun RaceState.move(elapsedTime: Double) {
         if (simulation.downSlopeModeStart != null) {
             consume *= 0.4
         }
-        if (simulation.isInTemptation) {
-            simulation.temptationWaste += consume * 0.6
-            consume *= 1.6
+        if (inLeadCompetition) {
+            consume *= if (simulation.isInTemptation) {
+                if (setting.oonige) 7.7 else 3.6
+            } else {
+                if (setting.oonige) 3.5 else 1.4
+            }
+        } else {
+            if (simulation.isInTemptation) {
+                simulation.temptationWaste += consume * 0.6
+                consume *= 1.6
+            }
         }
         simulation.sp -= consume
 
@@ -282,6 +316,10 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
         newSpeed = setting.v0
     }
     newSpeed = max(min(newSpeed, maxSpeed), vMin)
+
+    // TODO ブロック
+    // newSpeed = 前のウマ娘の0.988倍(0m)～1.0倍(2m)
+
     newSpeed -= simulation.speedDebuff
     val speedModification = simulation.operatingSkills.sumOf {
         // 減速スキルの現在速度低下分
@@ -402,7 +440,7 @@ private fun RaceState.consumePerSecond(baseSpeed: Double, v: Double, phase: Int)
 
 private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
-    val raceTime = simulation.frameElapsed * frameLength - excessTime
+    val raceTime = simulation.frameElapsed * timePerFrame - excessTime
     val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
     return RaceSimulationResult(
         raceTime = raceTime,

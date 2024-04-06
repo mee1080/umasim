@@ -33,6 +33,7 @@ kotlin {
             dependencies {
                 implementation(libs.kotlinx.coroutinesCore)
                 implementation(libs.kotlinx.serializationJson)
+                implementation(libs.kotlinx.collections.immutable)
             }
         }
     }

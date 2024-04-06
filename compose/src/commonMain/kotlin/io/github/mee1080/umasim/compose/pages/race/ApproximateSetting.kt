@@ -1,7 +1,7 @@
 package io.github.mee1080.umasim.compose.pages.race
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -9,25 +9,79 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.race.calc2.SystemSetting
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
+import io.github.mee1080.umasim.race.roundPercentString
 
 @Composable
 fun ApproximateSetting() {
     HorizontalDivider()
 
-    Column {
-        Row { Text("近似条件", style = MaterialTheme.typography.headlineSmall) }
-        Text("他のウマ娘が関わるスキル発動条件は、1秒ごとに、以下の判定を行っています")
-        Text("(適当に設定してるので実態とかけ離れてるとかの意見は歓迎です)", style = MaterialTheme.typography.bodySmall)
-        approximateConditions.forEach { (key, condition) ->
-            Text(condition.displayName, modifier = Modifier.padding(top = 8.dp))
-            if (condition is ApproximateMultiCondition) {
-                condition.conditions.forEach {
-                    Text("${it.first.displayName} : ${it.first.description}", modifier = Modifier.padding(start = 8.dp))
+    Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        // TODO 編集
+        val systemSetting = SystemSetting()
+        Column {
+            Text("近似条件", style = MaterialTheme.typography.headlineSmall)
+            Text("以下の項目は、シミュレーションが難しいため、近似処理を行っています。")
+            Text("（いずれ変更できるようにしたい）", style = MaterialTheme.typography.bodySmall)
+        }
+
+        Column {
+            Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
+            Text("以下のセクションで、ペースダウンモードに入ります。逃げの各モード、およびペースアップモードは実装していません。")
+            Text(
+                "先行：${
+                    systemSetting.positionKeepSectionSen.mapIndexed { index, value -> index to value }
+                        .filter { it.second }
+                        .joinToString { (it.first + 1).toString() }
+                }"
+            )
+            Text(
+                "差し：${
+                    systemSetting.positionKeepSectionSasi.mapIndexed { index, value -> index to value }
+                        .filter { it.second }
+                        .joinToString { (it.first + 1).toString() }
+                }"
+            )
+            Text(
+                "追込：${
+                    systemSetting.positionKeepSectionOi.mapIndexed { index, value -> index to value }
+                        .filter { it.second }
+                        .joinToString { (it.first + 1).toString() }
+                }"
+            )
+        }
+
+        Column {
+            Text("位置取り争い", style = MaterialTheme.typography.titleLarge)
+            Text("逃げの場合に${systemSetting.leadCompetitionPosition}mの位置で固定発動します")
+        }
+
+        Column {
+            Text("追い比べ", style = MaterialTheme.typography.titleLarge)
+            Text("最終直線で1秒毎に、${systemSetting.competeFightRate.roundPercentString()}%の確率で発動します")
+        }
+
+        Column {
+            Text("スキル発動", style = MaterialTheme.typography.titleLarge)
+            Text("他のウマ娘が関わるスキル発動条件は、1秒ごとに、以下の判定を行っています")
+            Text(
+                "(適当に設定してるので実態とかけ離れてるとかの意見は歓迎です)",
+                style = MaterialTheme.typography.bodySmall
+            )
+            approximateConditions.forEach { (key, condition) ->
+                Text(condition.displayName, modifier = Modifier.padding(top = 8.dp))
+                if (condition is ApproximateMultiCondition) {
+                    condition.conditions.forEach {
+                        Text(
+                            "${it.first.displayName} : ${it.first.description}",
+                            modifier = Modifier.padding(start = 8.dp)
+                        )
+                    }
+                } else {
+                    Text(condition.description, modifier = Modifier.padding(start = 8.dp))
                 }
-            } else {
-                Text(condition.description, modifier = Modifier.padding(start = 8.dp))
             }
         }
     }

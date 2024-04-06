@@ -1,12 +1,12 @@
 package io.github.mee1080.umasim.race.data2
 
 import io.github.mee1080.umasim.race.calc2.RaceState
+import io.github.mee1080.umasim.race.data.skillLevelValueDefault
+import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
+import io.github.mee1080.umasim.race.roundPercentString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import kotlin.math.abs
-import kotlin.math.pow
-import kotlin.math.roundToInt
 import kotlin.random.Random
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -106,11 +106,6 @@ val approximateConditions = mapOf(
     ),
     "overtake" to ApproximateStartContinue("追い抜きモード(電光石火など多数)", 0.20, 0.50),
     "overtaken" to ApproximateStartContinue("詰め寄られ(勝利への執念など)", 0.15, 0.50),
-    "compete_fight" to ApproximateStartContinue(
-        "追い比べ(通常イナリ/ウインディ固有など、追い比べ自体の効果は未実装)",
-        0.40,
-        1.00
-    ),
     "blocked_front" to ApproximateStartContinue("前方ブロック(鋼の意志など)", 0.07, 0.50),
     "blocked_side" to ApproximateStartContinue("横ブロック(つぼみなど)", 0.07, 0.50),
     "infront_near_lane" to ApproximateMultiCondition(
@@ -162,17 +157,6 @@ val approximateConditions = mapOf(
         )
     )
 )
-
-private fun Double.roundString(position: Int = 0): String {
-    return if (isNaN()) "-" else if (position == 0) roundToInt().toString() else {
-        val minus = if (this < 0) "-" else ""
-        val factor = 10.0.pow(position).roundToInt()
-        val intValue = (abs(this) * factor).roundToInt()
-        return "$minus${intValue / factor}.${intValue % factor}"
-    }
-}
-
-private fun Double.roundPercentString(position: Int = 0) = (this * 100).roundString(position)
 
 val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
@@ -242,6 +226,12 @@ data class SkillData(
     val invokes: List<Invoke> = emptyList(),
     val description: List<String> = emptyList(),
 ) {
+    fun applyLevel(level: Int): SkillData {
+        return copy(
+            invokes = invokes.map { it.applyLevel(level) },
+        )
+    }
+
     val messages by lazy {
         (description + invokes.flatMap { it.messages }).distinct()
     }
@@ -257,6 +247,13 @@ data class Invoke(
     val cd: Double = 500.0,
     val duration: Double = 0.0,
 ) {
+
+    fun applyLevel(level: Int): Invoke {
+        return copy(
+            effects = effects.map { it.applyLevel(level) },
+        )
+    }
+
     val messages by lazy {
         effects.map { "${it.type} ${it.value}" } + toMessages(preConditions) + toMessages(conditions)
     }
@@ -370,6 +367,10 @@ data class Invoke(
     val rareSkill by lazy {
         effects.filter { it.type == "rareSkill" }.sumOf { it.value } / 10000.0
     }
+
+    val totalSpeed by lazy {
+        targetSpeed + speedWithDecel
+    }
 }
 
 @Serializable
@@ -397,4 +398,9 @@ data class SkillEffect(
     val value: Int,
     val special: String = "",
     val additional: String = "",
-)
+) {
+    fun applyLevel(level: Int): SkillEffect {
+        val values = if (type == "targetSpeed") skillLevelValueSpeed else skillLevelValueDefault
+        return copy(value = (value * values[level]).toInt())
+    }
+}

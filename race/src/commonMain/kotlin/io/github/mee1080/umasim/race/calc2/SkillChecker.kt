@@ -158,7 +158,7 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
 
         "overtake_target_time" -> condition.checkSpecialState("overtaken", -1)
 
-        "compete_fight_count" -> condition.checkSpecialState("compete_fight")
+        "compete_fight_count" -> condition.checkInRaceBool { simulation.competeFight }
 
         "blocked_front" -> condition.checkSpecialState("blocked_front")
 
@@ -347,11 +347,6 @@ private fun RaceSetting.initFinalStraightRandom(): List<RandomEntry> {
 
 private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): RandomEntry {
     return chooseRandom(courseLength * startRate, courseLength * endRate)
-}
-
-private fun RaceState.isInFinalStraight(position: Double = simulation.position): Boolean {
-    val lastStraight = setting.trackDetail.straights.lastOrNull() ?: return false
-    return position >= lastStraight.start
 }
 
 private fun RaceState.isInSpurt(): Boolean {

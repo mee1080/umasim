@@ -19,8 +19,8 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
     emit { it.copy(simulationSummary = null) }
     val calculator = RaceCalculator(state.setting)
     val results = mutableListOf<RaceSimulationResult>()
-    val skillSummaries = state.setting.hasSkills.associateWith {
-        mutableListOf<SimulationSkillInfo>()
+    val skillSummaries = state.setting.hasSkills.associate {
+        it.name to mutableListOf<SimulationSkillInfo>()
     }
     var raceFrameList: List<RaceFrame>? = null
     repeat(simulationCount) { count ->
@@ -66,26 +66,26 @@ private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntr
     )
 }
 
-private fun createSkillMap(state: RaceState): Map<SkillData, SimulationSkillInfo> {
+private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
     val (phase1Start, phase2Start) = getPhaseChangeFrames(state)
-    val skillMap = state.setting.hasSkills.associateWith {
-        SimulationSkillInfo(phase1Start, phase2Start)
+    val skillMap = state.setting.hasSkills.associate {
+        it.name to SimulationSkillInfo(phase1Start, phase2Start)
     }.toMutableMap()
     state.simulation.frames.forEachIndexed { index, frame ->
         frame.skills.forEach {
-            val current = skillMap[it.skill] ?: return@forEach
+            val current = skillMap[it.skill.name] ?: return@forEach
             if (current.startFrame1 < 0) {
-                skillMap[it.skill] = current.copy(startFrame1 = index)
+                skillMap[it.skill.name] = current.copy(startFrame1 = index)
             } else {
-                skillMap[it.skill] = current.copy(startFrame2 = index)
+                skillMap[it.skill.name] = current.copy(startFrame2 = index)
             }
         }
         frame.endedSkills.forEach {
-            val current = skillMap[it.data.skill] ?: return@forEach
+            val current = skillMap[it.data.skill.name] ?: return@forEach
             if (current.endFrame1 < 0) {
-                skillMap[it.data.skill] = current.copy(endFrame1 = index)
+                skillMap[it.data.skill.name] = current.copy(endFrame1 = index)
             } else {
-                skillMap[it.data.skill] = current.copy(endFrame2 = index)
+                skillMap[it.data.skill.name] = current.copy(endFrame2 = index)
             }
         }
     }

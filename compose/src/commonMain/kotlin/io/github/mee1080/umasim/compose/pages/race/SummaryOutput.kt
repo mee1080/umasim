@@ -129,7 +129,7 @@ private fun SkillTable(summary: SimulationSummary) {
         Column {
             Text("", Modifier.padding(4.dp))
             summaries.forEach {
-                Text(it.first.name, Modifier.padding(4.dp))
+                Text(it.first, Modifier.padding(4.dp))
             }
         }
         Column(

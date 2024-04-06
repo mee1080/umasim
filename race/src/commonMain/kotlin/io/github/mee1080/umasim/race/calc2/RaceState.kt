@@ -80,6 +80,7 @@ data class PassiveBonus(
 class RaceState(
     val setting: RaceSetting,
     val simulation: RaceSimulationState,
+    val system: SystemSetting,
 ) {
     fun getPhase(position: Double): Int {
         return when {
@@ -106,6 +107,11 @@ class RaceState(
 
     val isAfterFinalCorner get() = simulation.position >= (finalCorner?.start ?: Double.MAX_VALUE)
 
+    fun isInFinalStraight(position: Double = simulation.position): Boolean {
+        val lastStraight = setting.trackDetail.straights.lastOrNull() ?: return false
+        return position >= lastStraight.start
+    }
+
     fun getSection(position: Double): Int {
         return floor((position * 24.0) / setting.courseLength).toInt()
     }
@@ -114,14 +120,34 @@ class RaceState(
 
     val currentSlope get() = setting.trackDetail.getSlope(simulation.position)
 
+    val paceDownModeSetting
+        get() = when (setting.runningStyle) {
+            Style.SEN -> system.positionKeepSectionSen
+            Style.SASI -> system.positionKeepSectionSasi
+            Style.OI -> system.positionKeepSectionOi
+            else -> emptyList()
+        }
+
+    val paceDownMode get() = paceDownModeSetting.getOrElse(currentSection) { false }
+
+    val inLeadCompetition: Boolean
+        get() {
+            val start = simulation.leadCompetitionStart ?: return false
+            return simulation.frameElapsed < start + setting.leadCompetitionFrame
+        }
+
     val targetSpeed: Double
         get() {
             if (simulation.sp <= 0) return vMin
             if (simulation.currentSpeed < setting.v0) return setting.v0
             val spurtParameters = simulation.spurtParameters
-            var targetSpeed = if (
+            val baseSpeed = if (
                 spurtParameters != null && simulation.position + spurtParameters.distance > setting.courseLength
-            ) spurtParameters.speed else {
+            ) {
+                // LastSpurtSpeed
+                spurtParameters.speed
+            } else {
+                // BaseTargetSpeed
                 when (currentPhase) {
                     0, 1 -> setting.baseSpeed * setting.runningStyle.styleSpeedCoef[currentPhase]!!
                     else -> {
@@ -133,21 +159,37 @@ class RaceState(
                 } + setting.baseSpeed * simulation.sectionTargetSpeedRandoms[currentSection]
             }
 
-            // TODO? 根性補正
+            // TODO Force-in
+            // 序盤で内が空いている場合に速度上昇
+            // 乱数値はレース開始時に決定
+            // val forceInModifier = Random(0.1)+StrategyModifier[m/s]
+            // 逃げ 0.02m/s 先行 0.01m/s 差し 0.01m/s 追込 0.03m/s
 
-            if (isInSlopeUp()) {
-                targetSpeed -= (abs(currentSlope) * 200.0) / setting.modifiedPower
-            } else if (isInSlopeDown()) {
-                targetSpeed += abs(currentSlope) / 10.0 * 0.3
+            val skillModifier = simulation.operatingSkills.sumOf {
+                it.data.invoke.totalSpeed
             }
 
-            simulation.operatingSkills.forEach { skill ->
-                targetSpeed += skill.data.invoke.targetSpeed
-                targetSpeed += skill.data.invoke.speedWithDecel
-                targetSpeed += skill.data.invoke.currentSpeed
+            // ポジションキープ
+            val positionKeepCoef = if (skillModifier == 0.0 && paceDownMode) {
+                if (currentPhase == 1) 0.945 else 0.915
+            } else 1.0
+
+            val slopeModifier = if (isInSlopeUp()) {
+                -(abs(currentSlope) * 200.0) / setting.modifiedPower
+            } else if (simulation.downSlopeModeStart != null) {
+                abs(currentSlope) / 10.0 + 0.3
+            } else {
+                0.0
             }
 
-            return targetSpeed
+            // TODO 横移動スキル中のレーン移動
+            // moveLaneModifier = (0.0002 * setting.modifiedPower).pow(0.5)
+
+            val leadCompetitionModifier = if (inLeadCompetition) setting.leadCompetitionSpeed else 0.0
+
+            val competitionModifier = if (simulation.competeFight) setting.competeFightSpeed else 0.0
+
+            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier
         }
 
     val vMin: Double
@@ -169,13 +211,20 @@ class RaceState(
             simulation.operatingSkills.forEach {
                 acceleration += it.data.invoke.acceleration
             }
+            if (simulation.competeFight) {
+                acceleration += setting.competeFightAcceleration
+            }
 
             return acceleration
         }
 
     val deceleration: Double
         get() {
-            return if (simulation.sp <= 0) -1.2 else when (currentPhase) {
+            return if (simulation.sp <= 0) {
+                -1.2
+            } else if (paceDownMode) {
+                -0.5
+            } else when (currentPhase) {
                 0 -> -1.2
                 1 -> -0.8
                 else -> -1.0
@@ -200,7 +249,7 @@ class RaceState(
     }
 
     fun isInSlopeDown(position: Double = simulation.position): Boolean {
-        return getSlope(position) <= 1.0
+        return getSlope(position) <= -1.0
     }
 
     val cornerNumber: Int
@@ -423,6 +472,24 @@ data class RaceSetting(
             else -> throw IllegalArgumentException()
         }
     }
+
+    val leadCompetitionSpeed by lazy {
+        (500.0 * modifiedGuts).pow(0.6) * 0.0001
+    }
+
+    val leadCompetitionTime by lazy {
+        (700.0 * modifiedGuts).pow(0.5) * 0.012
+    }
+
+    val leadCompetitionFrame by lazy { leadCompetitionTime * framePerTime }
+
+    val competeFightSpeed by lazy {
+        (200.0 * modifiedGuts).pow(0.708) * 0.0001
+    }
+
+    val competeFightAcceleration by lazy {
+        (160.0 * modifiedGuts).pow(0.59) * 0.0001
+    }
 }
 
 class RaceSimulationState(
@@ -444,6 +511,8 @@ class RaceSimulationState(
     var temptationWaste: Double = 0.0,
     var speedDebuff: Double = 0.0,
     val specialState: MutableMap<String, Int> = approximateConditions.mapValues { 0 }.toMutableMap(),
+    var leadCompetitionStart: Int? = null,
+    var competeFight: Boolean = false,
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -506,6 +575,10 @@ data class RaceFrame(
     val skills: List<InvokedSkill> = emptyList(),
     val endedSkills: List<OperatingSkill> = emptyList(),
     val spurting: Boolean = false,
+    val paceDownMode: Boolean = false,
+    val downSlopeMode: Boolean = false,
+    val leadCompetition: Boolean = false,
+    val competeFight: Boolean = false,
 )
 
 data class RaceSimulationResult(
@@ -521,4 +594,12 @@ class InvokedSkill(
     val preCheck: RaceState.() -> Boolean,
     val check: RaceState.() -> Boolean,
     var preChecked: Boolean = false,
+)
+
+data class SystemSetting(
+    val positionKeepSectionSen: List<Boolean> = List(10) { it == 1 },
+    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 1 || it == 5 },
+    val positionKeepSectionOi: List<Boolean> = List(10) { it == 1 || it == 3 || it == 6 },
+    val leadCompetitionPosition: Int = 200,
+    val competeFightRate: Double = 0.4,
 )
