@@ -71,6 +71,11 @@ fun ApproximateSetting() {
         }
 
         Column {
+            Text("位置取り調整/持久力温存", style = MaterialTheme.typography.titleLarge)
+            Text("発生率100%固定で、体力が足りていれば位置取り調整、足りていなければ持久力温存になります")
+        }
+
+        Column {
             Text("スキル発動", style = MaterialTheme.typography.titleLarge)
             Text("他のウマ娘が関わるスキル発動条件は、1秒ごとに、以下の判定を行っています")
             Text(

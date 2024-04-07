@@ -339,3 +339,38 @@ internal val conservePowerTimeCoef = mapOf(
     Distance.MIDDLE to 0.875,
     Distance.LONG to 0.8,
 )
+
+/**
+ * 脚質->位置取り調整速度補正倍率
+ */
+internal val positionCompetitionSpeedCoef = mapOf(
+    Style.OONIGE to 0.2,
+    Style.NIGE to 0.8,
+    Style.SEN to 1.0,
+    Style.SASI to 1.0,
+    Style.OI to 1.0,
+)
+
+/**
+ * 脚質->位置取り調整体力消費補正倍率
+ */
+internal val positionCompetitionStaminaCoef = mapOf(
+    Style.OONIGE to 1.5,
+    Style.NIGE to 1.2,
+    Style.SEN to 1.0,
+    Style.SASI to 1.0,
+    Style.OI to 1.0,
+)
+
+/**
+ * 距離->位置取り調整体力消費補正倍率
+ */
+internal fun positionCompetitionDistanceCoef(distance: Int) = when {
+    distance < 1401 -> 0.3
+    distance < 1801 -> 0.3
+    distance < 2101 -> 0.5
+    distance < 2201 -> 0.8
+    distance < 2401 -> 1.0
+    distance < 2601 -> 1.1
+    else -> 1.2
+}

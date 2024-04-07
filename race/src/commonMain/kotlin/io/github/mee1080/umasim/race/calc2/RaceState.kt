@@ -176,7 +176,7 @@ class RaceState(
 
             val slopeModifier = if (isInSlopeUp()) {
                 -(abs(currentSlope) * 200.0) / setting.modifiedPower
-            } else if (simulation.downSlopeModeStart != null) {
+            } else if (simulation.isInDownSlopeMode) {
                 abs(currentSlope) / 10.0 + 0.3
             } else {
                 0.0
@@ -189,7 +189,10 @@ class RaceState(
 
             val competitionModifier = if (simulation.competeFight) setting.competeFightSpeed else 0.0
 
-            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier
+            val positionCompetitionModifier =
+                if (simulation.positionCompetition) setting.positionCompetitionSpeed else 0.0
+
+            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier + positionCompetitionModifier
         }
 
     val vMin: Double
@@ -268,6 +271,57 @@ class RaceState(
             val start = simulation.conservePowerStart ?: return false
             return simulation.frameElapsed < start + setting.conservePowerFrame
         }
+
+    fun calcConsumePerSecond(
+        currentSpeed: Double = simulation.currentSpeed,
+        spurtPhase: Boolean = currentPhase >= 2,
+        applyStatusModifier: Boolean = true,
+    ): Double {
+        val baseSpeed: Double = if (simulation.isStartDash) simulation.currentSpeed else setting.baseSpeed
+        val groundCoef = setting.spConsumptionGroundCoef
+        var consume = 20.0 * (currentSpeed - baseSpeed + 12.0).pow(2) / 144.0 * groundCoef
+        if (spurtPhase) {
+            consume *= setting.spurtSpCoef
+        }
+        if (applyStatusModifier) {
+            if (simulation.isInDownSlopeMode) {
+                consume *= 0.4
+            }
+            if (inLeadCompetition) {
+                consume *= if (simulation.isInTemptation) {
+                    if (setting.oonige) 7.7 else 3.6
+                } else {
+                    if (setting.oonige) 3.5 else 1.4
+                }
+            } else {
+                if (simulation.isInTemptation) {
+                    simulation.temptationWaste += consume * 0.6
+                    consume *= 1.6
+                }
+            }
+            if (paceDownMode) {
+                consume *= 0.6
+            }
+            if (simulation.positionCompetition) {
+                consume += setting.positionCompetitionStamina
+            }
+        }
+        return consume
+    }
+
+    fun calcRequiredSp(
+        v: Double,
+        length: Double = setting.courseLength - simulation.position - 60,
+        spurtPhase: Boolean = true,
+    ): Double {
+        return length / v * calcConsumePerSecond(currentSpeed = v, spurtPhase = spurtPhase, applyStatusModifier = false)
+    }
+
+    fun calcRequiredSpInPhase2(): Double {
+        val phase2Length = setting.courseLength * 2.0 / 3.0 - simulation.position
+        val phase3Length = setting.courseLength / 3.0
+        return calcRequiredSp(setting.v2, phase2Length, false) + calcRequiredSp(setting.maxSpurtSpeed, phase3Length)
+    }
 }
 
 data class RaceSetting(
@@ -510,6 +564,19 @@ data class RaceSetting(
     val conservePowerFrame by lazy {
         conservePowerBaseFrame * conservePowerTimeCoef[trackDetail.distanceCategory]!!
     }
+
+    val positionCompetitionSpeed by lazy {
+        ((modifiedPower / 1500.0).pow(0.5) * 2.0 + (modifiedGuts / 3000.0).pow(0.2)) * 0.1 * positionCompetitionSpeedCoef[runningStyle]!!
+    }
+
+    val positionCompetitionStamina by lazy {
+        // TODO 近距離に他のウマ娘がいることで発動した場合、係数+0.5
+        20 * (positionCompetitionStaminaCoef[runningStyle]!! * positionCompetitionDistanceCoef(trackDetail.distance))
+    }
+
+    val spConsumptionGroundCoef by lazy {
+        spConsumptionCoef[trackDetail.surface]!![track.surfaceCondition]!!
+    }
 }
 
 class RaceSimulationState(
@@ -524,7 +591,7 @@ class RaceSimulationState(
     var delayTime: Double = 0.0,
     var spurtParameters: SpurtParameters? = null,
     var maxSpurt: Boolean = false,
-    var downSlopeModeStart: Any? = null,
+    var downSlopeModeStart: Int? = null,
     var temptationSection: Int = -1,
     var temptationModeStart: Int? = null,
     var temptationModeEnd: Int? = null,
@@ -535,6 +602,9 @@ class RaceSimulationState(
     var competeFight: Boolean = false,
     var conservePowerStart: Int? = null,
     var conservePowerAcceleration: Double? = null,
+    var positionCompetition: Boolean = false,
+    var staminaKeep: Boolean = false,
+    var positionCompetitionNextFrame: Int = 0,
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -553,6 +623,8 @@ class RaceSimulationState(
             val temptationModeEnd = temptationModeEnd ?: return true
             return frameElapsed <= temptationModeEnd
         }
+
+    val isInDownSlopeMode get() = downSlopeModeStart != null
 
     val hasTemptation get() = temptationModeStart != null
 
@@ -606,6 +678,8 @@ data class RaceFrame(
     val leadCompetition: Boolean = false,
     val competeFight: Boolean = false,
     val conservePower: Boolean = false,
+    val positionCompetition: Boolean = false,
+    val staminaKeep: Boolean = false,
 )
 
 data class RaceSimulationResult(

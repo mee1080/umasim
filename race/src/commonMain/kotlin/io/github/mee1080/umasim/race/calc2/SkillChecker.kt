@@ -407,5 +407,8 @@ fun RaceState.doHeal(value: Int): Pair<Double, Double> {
     if (this.currentPhase >= 2) {
         simulation.spurtParameters = calcSpurtParameter()
     }
+    if (simulation.staminaKeep) {
+        applyPositionCompetition()
+    }
     return heal to waste
 }

@@ -145,15 +145,15 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             sp = simulation.sp,
             startPosition = simulation.startPosition,
             paceDownMode = paceDownMode,
-            downSlopeMode = simulation.downSlopeModeStart != null,
+            downSlopeMode = simulation.isInDownSlopeMode,
             leadCompetition = inLeadCompetition,
             competeFight = simulation.competeFight,
             conservePower = isInConservePower,
+            positionCompetition = simulation.positionCompetition,
+            staminaKeep = simulation.staminaKeep,
         )
         // 1秒おき判定
-        val changeSecond = floor(simulation.frameElapsed * secondPerFrame).toInt() != floor(
-            (simulation.frameElapsed + 1) * secondPerFrame
-        ).toInt()
+        val changeSecond = simulation.frameElapsed % framePerSecond == framePerSecond - 1
 
         // 下り坂モードに入るか・終わるかどうかの判定
         if (isInSlopeDown() && !setting.fixRandom) {
@@ -216,6 +216,19 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             }
         }
 
+        // 位置取り調整/持久力温存
+        if (currentSection in 11..15) {
+            if (simulation.frameElapsed >= simulation.positionCompetitionNextFrame) {
+                if (simulation.positionCompetition) {
+                    // 位置取り調整終了後は1秒のクールタイム
+                    simulation.positionCompetition = false
+                    simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond
+                } else if (!simulation.staminaKeep) {
+                    applyPositionCompetition()
+                }
+            }
+        }
+
         move(secondPerFrame)
         frame = frame.copy(
             movement = simulation.position - simulation.startPosition,
@@ -231,7 +244,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             simulation.spurtParameters = calcSpurtParameter()
 
             // 脚色十分
-            calcConservePower()
+            applyConservePower()
         }
 
         if (simulation.position >= setting.courseLength) {
@@ -285,34 +298,14 @@ private fun RaceState.move(elapsedTime: Double) {
 
         // 移動距離及び耐力消耗を算出
         simulation.position += actualSpeed * timeAfterDelay
-        val baseSpeed = if (simulation.isStartDash) simulation.currentSpeed else setting.baseSpeed
-        var consume = consumePerSecond(
-            baseSpeed,
-            simulation.currentSpeed,
-            currentPhase
-        ) * elapsedTime
-        if (simulation.downSlopeModeStart != null) {
-            consume *= 0.4
-        }
-        if (inLeadCompetition) {
-            consume *= if (simulation.isInTemptation) {
-                if (setting.oonige) 7.7 else 3.6
-            } else {
-                if (setting.oonige) 3.5 else 1.4
-            }
-        } else {
-            if (simulation.isInTemptation) {
-                simulation.temptationWaste += consume * 0.6
-                consume *= 1.6
-            }
-        }
-        simulation.sp -= consume
+        simulation.sp -= calcConsumePerSecond() * elapsedTime
 
         this.updateStartDash()
     }
 }
 
 private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
+    val targetSpeed = targetSpeed
     var newSpeed = if (simulation.currentSpeed < targetSpeed) {
         min(simulation.currentSpeed + elapsedTime * acceleration, targetSpeed)
     } else {
@@ -408,42 +401,6 @@ fun RaceState.calcSpurtDistance(v: Double): Double {
             )
 }
 
-fun RaceState.calcRequiredSp(v: Double): Double {
-    return (
-            ((setting.courseLength - simulation.position - 60) *
-                    20 *
-                    spConsumptionCoef[setting.trackDetail.surface]!![
-                        setting.track.surfaceCondition
-                    ]!! *
-                    setting.spurtSpCoef *
-                    (setting.v3 - setting.baseSpeed + 12).pow(2)) /
-                    144 /
-                    setting.v3 +
-                    (setting.courseLength - simulation.position - 60) *
-                    (20 *
-                            spConsumptionCoef[setting.trackDetail.surface]!![
-                                setting.track.surfaceCondition
-                            ]!! *
-                            setting.spurtSpCoef *
-                            ((v - setting.baseSpeed + 12).pow(2) / 144 / v -
-                                    (setting.v3 - setting.baseSpeed + 12).pow(2) / 144 / setting.v3))
-            )
-}
-
-private fun RaceState.consumePerSecond(baseSpeed: Double, v: Double, phase: Int): Double {
-    var ret =
-        (20.0 *
-                spConsumptionCoef[setting.trackDetail.surface]!![
-                    setting.track.surfaceCondition
-                ]!! *
-                (v - baseSpeed + 12).pow(2)) /
-                144
-    if (phase >= 2) {
-        ret *= setting.spurtSpCoef
-    }
-    return ret
-}
-
 private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
     val raceTime = simulation.frameElapsed * secondPerFrame - excessTime
@@ -456,7 +413,7 @@ private fun RaceState.goal(): RaceSimulationResult {
     )
 }
 
-private fun RaceState.calcConservePower() {
+private fun RaceState.applyConservePower() {
     val base = setting.conservePowerAccelerationBase
     if (base == 0.0) return
     val activityCoef = when {
@@ -466,4 +423,16 @@ private fun RaceState.calcConservePower() {
     }
     simulation.conservePowerAcceleration = base * activityCoef
     simulation.conservePowerStart = simulation.frameElapsed
+}
+
+fun RaceState.applyPositionCompetition() {
+    val requiredSp = calcRequiredSpInPhase2()
+    if (simulation.sp < requiredSp * Random.nextDouble(1.035, 1.04)) {
+        // 持久力温存
+        simulation.staminaKeep = true
+    } else {
+        // 2秒間位置取り調整
+        simulation.positionCompetition = true
+        simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+    }
 }
