@@ -60,7 +60,15 @@ data class TrackDetail(
         return 0.0
     }
 
-    val isBasisDistance by lazy { if (distance % 400 == 0) 1 else 0 }
+    val isBasisDistance = if (distance % 400 == 0) 1 else 0
+
+    val distanceCategory = when (distanceType) {
+        1 -> Distance.SHORT
+        2 -> Distance.MILE
+        3 -> Distance.MIDDLE
+        4 -> Distance.LONG
+        else -> throw RuntimeException("unknown distance type: $distanceType")
+    }
 }
 
 @Serializable

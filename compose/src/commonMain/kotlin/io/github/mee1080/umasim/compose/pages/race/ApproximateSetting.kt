@@ -23,13 +23,14 @@ fun ApproximateSetting() {
         val systemSetting = SystemSetting()
         Column {
             Text("近似条件", style = MaterialTheme.typography.headlineSmall)
-            Text("以下の項目は、シミュレーションが難しいため、近似処理を行っています。")
+            Text("以下の項目は、シミュレーションが難しいため、近似処理を行っています")
             Text("（いずれ変更できるようにしたい）", style = MaterialTheme.typography.bodySmall)
         }
 
         Column {
             Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
-            Text("以下のセクションで、ペースダウンモードに入ります。逃げの各モード、およびペースアップモードは実装していません。")
+            Text("以下のセクションで、ペースダウンモードに入ります")
+            Text("逃げの各モード、およびペースアップモードは実装していません")
             Text(
                 "先行：${
                     systemSetting.positionKeepSectionSen.mapIndexed { index, value -> index to value }
@@ -61,6 +62,12 @@ fun ApproximateSetting() {
         Column {
             Text("追い比べ", style = MaterialTheme.typography.titleLarge)
             Text("最終直線で1秒毎に、${systemSetting.competeFightRate.roundPercentString()}%の確率で発動します")
+        }
+
+        Column {
+            Text("脚色十分", style = MaterialTheme.typography.titleLarge)
+            Text("持続時間は3秒×距離係数(0.45/1.0/0.875/0.8)で固定です")
+            Text("脚ためは実装していません（そもそも解析されてない認識）")
         }
 
         Column {

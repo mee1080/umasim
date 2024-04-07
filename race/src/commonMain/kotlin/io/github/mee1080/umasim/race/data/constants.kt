@@ -76,11 +76,14 @@ enum class RandomPosition(val value: Int, val label: String) {
     SLOWEST(5, "最遅"),
 }
 
-internal val framePerTime = 15
-internal val timePerFrame = 1.0 / framePerTime
-internal val startSpeed = 3.0
-internal val maxSpeed = 30.0
+internal const val framePerSecond = 15
+internal const val secondPerFrame = 1.0 / framePerSecond
+internal const val startSpeed = 3.0
+internal const val maxSpeed = 30.0
 
+/**
+ * やる気->ステータス補正倍率
+ */
 internal val condCoef = mapOf(
     Condition.BEST to 1.04,
     Condition.GOOD to 1.02,
@@ -89,6 +92,9 @@ internal val condCoef = mapOf(
     Condition.WORST to 0.96,
 )
 
+/**
+ * バ場->バ場状態->スピード補正値
+ */
 internal val surfaceSpeedModify = mapOf(
     1 to mapOf(
         1 to 0,
@@ -104,6 +110,9 @@ internal val surfaceSpeedModify = mapOf(
     )
 )
 
+/**
+ * バ場->バ場状態->パワー補正値
+ */
 internal val surfacePowerModify = mapOf(
     1 to mapOf(
         1 to 0,
@@ -119,6 +128,9 @@ internal val surfacePowerModify = mapOf(
     )
 )
 
+/**
+ * 脚質適性->賢さ補正倍率
+ */
 internal val styleFitCoef = mapOf(
     FitRank.S to 1.1,
     FitRank.A to 1.0,
@@ -130,6 +142,9 @@ internal val styleFitCoef = mapOf(
     FitRank.G to 0.1,
 )
 
+/**
+ * 距離適性->スパート速度補正倍率
+ */
 internal val distanceFitSpeedCoef = mapOf(
     FitRank.S to 1.05,
     FitRank.A to 1.0,
@@ -141,6 +156,9 @@ internal val distanceFitSpeedCoef = mapOf(
     FitRank.G to 0.1,
 )
 
+/**
+ * 距離適性->加速度補正倍率
+ */
 internal val distanceFitAccelerateCoef = mapOf(
     FitRank.S to 1.0,
     FitRank.A to 1.0,
@@ -152,6 +170,9 @@ internal val distanceFitAccelerateCoef = mapOf(
     FitRank.G to 0.4,
 )
 
+/**
+ * バ場適性->加速度補正倍率
+ */
 internal val surfaceFitAccelerateCoef = mapOf(
     FitRank.S to 1.05,
     FitRank.A to 1.0,
@@ -163,6 +184,9 @@ internal val surfaceFitAccelerateCoef = mapOf(
     FitRank.G to 0.1,
 )
 
+/**
+ * 脚質->最大体力補正倍率
+ */
 private val styleSpCoefData = mapOf(
     Style.NIGE to 0.95,
     Style.SEN to 0.89,
@@ -173,36 +197,47 @@ private val styleSpCoefData = mapOf(
 
 val Style.styleSpCoef get() = styleSpCoefData[this]!!
 
+/**
+ * 脚質->フェーズ->目標速度補正倍率
+ */
 private val styleSpeedCoefData = mapOf(
     Style.NIGE to mapOf(
         0 to 1.0,
         1 to 0.98,
-        2 to 0.962
+        2 to 0.962,
+        3 to 0.962,
     ),
     Style.SEN to mapOf(
         0 to 0.978,
         1 to 0.991,
         2 to 0.975,
+        3 to 0.975,
     ),
     Style.SASI to mapOf(
         0 to 0.938,
         1 to 0.998,
-        2 to 0.994
+        2 to 0.994,
+        3 to 0.994,
     ),
     Style.OI to mapOf(
         0 to 0.931,
         1 to 1.0,
-        2 to 1.0
+        2 to 1.0,
+        3 to 1.0,
     ),
     Style.OONIGE to mapOf(
         0 to 1.063,
         1 to 0.962,
-        2 to 0.95
+        2 to 0.95,
+        3 to 0.95,
     )
 )
 
 val Style.styleSpeedCoef get() = styleSpeedCoefData[this]!!
 
+/**
+ * 脚質->フェーズ->加速度補正倍率
+ */
 private val styleAccelerateCoefData = mapOf(
     Style.NIGE to mapOf(
         0 to 1.0,
@@ -238,6 +273,9 @@ private val styleAccelerateCoefData = mapOf(
 
 val Style.styleAccelerateCoef get() = styleAccelerateCoefData[this]!!
 
+/**
+ * バ場->バ場状態->体力消費補正値
+ */
 internal val spConsumptionCoef = mapOf(
     1 to mapOf(
         1 to 1.0,
@@ -256,3 +294,48 @@ internal val spConsumptionCoef = mapOf(
 internal val skillLevelValueDefault = listOf(1.0, 1.0, 1.02, 1.04, 1.06, 1.08, 1.1)
 
 internal val skillLevelValueSpeed = listOf(1.0, 1.0, 1.01, 1.04, 1.07, 1.1, 1.13)
+
+/**
+ * ベース脚質->距離->脚色十分加速度補正倍率
+ */
+internal val conservePowerAccelerationCoef = mapOf(
+    Style.NIGE to mapOf(
+        Distance.SHORT to 1.0,
+        Distance.MILE to 1.0,
+        Distance.MIDDLE to 1.0,
+        Distance.LONG to 1.0,
+    ),
+    Style.SEN to mapOf(
+        Distance.SHORT to 0.7,
+        Distance.MILE to 0.8,
+        Distance.MIDDLE to 0.9,
+        Distance.LONG to 0.9,
+    ),
+    Style.SASI to mapOf(
+        Distance.SHORT to 0.75,
+        Distance.MILE to 0.7,
+        Distance.MIDDLE to 0.875,
+        Distance.LONG to 1.0,
+    ),
+    Style.OI to mapOf(
+        Distance.SHORT to 0.7,
+        Distance.MILE to 0.75,
+        Distance.MIDDLE to 0.86,
+        Distance.LONG to 0.9,
+    ),
+)
+
+/**
+ * 脚色十分持続時間
+ */
+internal const val conservePowerBaseFrame = framePerSecond * 3
+
+/**
+ * 距離->脚色十分時間補正倍率
+ */
+internal val conservePowerTimeCoef = mapOf(
+    Distance.SHORT to 0.45,
+    Distance.MILE to 1.0,
+    Distance.MIDDLE to 0.875,
+    Distance.LONG to 0.8,
+)

@@ -56,7 +56,7 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "accumulatetime" -> condition.checkInRace { simulation.frameElapsed / 15 }
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
-        "temptation_count" -> condition.checkInRace { if (simulation.temptationSection < 0) 0 else 1 }
+        "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
         "remain_distance" -> condition.checkInRace { setting.courseLength - simulation.startPosition.toInt() }
         "distance_rate_after_random" -> condition.withAssert("==") {
             checkInRandom(setting.initIntervalRandom(value * 0.01, 1.0))

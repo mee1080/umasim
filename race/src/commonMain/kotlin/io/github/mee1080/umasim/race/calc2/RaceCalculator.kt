@@ -49,6 +49,7 @@ class RaceCalculator(
         state.triggerStartSkills()
 
         // initTemptation
+        // FIXME 自制心
         if (Random.nextDouble() * 100.0 < state.setting.temptationRate) {
             simulation.temptationSection = 1 + Random.nextInt(8)
         }
@@ -147,10 +148,11 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             downSlopeMode = simulation.downSlopeModeStart != null,
             leadCompetition = inLeadCompetition,
             competeFight = simulation.competeFight,
+            conservePower = isInConservePower,
         )
         // 1秒おき判定
-        val changeSecond = floor(simulation.frameElapsed * timePerFrame).toInt() != floor(
-            (simulation.frameElapsed + 1) * timePerFrame
+        val changeSecond = floor(simulation.frameElapsed * secondPerFrame).toInt() != floor(
+            (simulation.frameElapsed + 1) * secondPerFrame
         ).toInt()
 
         // 下り坂モードに入るか・終わるかどうかの判定
@@ -175,9 +177,9 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         if (simulation.isInTemptation) {
             // 掛かり終了判定
             val temptationDuration =
-                (simulation.frameElapsed - simulation.temptationModeStart!!) * timePerFrame
+                (simulation.frameElapsed - simulation.temptationModeStart!!) * secondPerFrame
             val prevTemptationDuration =
-                (simulation.frameElapsed - 1 - simulation.temptationModeStart!!) * timePerFrame
+                (simulation.frameElapsed - 1 - simulation.temptationModeStart!!) * secondPerFrame
             repeat(3) {
                 val j = it * 3 + 3
                 if (prevTemptationDuration < j && temptationDuration >= j) {
@@ -214,7 +216,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             }
         }
 
-        move(timePerFrame)
+        move(secondPerFrame)
         frame = frame.copy(
             movement = simulation.position - simulation.startPosition,
             consume = simulation.sp - startSp,
@@ -223,9 +225,13 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         )
         simulation.frameElapsed++
 
-        // 終盤入り・ラストスパート計算
+        // 終盤入り
         if (startPhase == 1 && currentPhase == 2) {
+            // ラストスパート計算
             simulation.spurtParameters = calcSpurtParameter()
+
+            // 脚色十分
+            calcConservePower()
         }
 
         if (simulation.position >= setting.courseLength) {
@@ -248,7 +254,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         // Remove overtime skills
         val endedSkills = simulation.operatingSkills.filter { operatingSkill ->
             val duration = operatingSkill.duration
-            (simulation.frameElapsed - operatingSkill.startFrame) * timePerFrame > duration * setting.timeCoef
+            (simulation.frameElapsed - operatingSkill.startFrame) * secondPerFrame > duration * setting.timeCoef
         }
         simulation.operatingSkills.removeAll(endedSkills)
 
@@ -440,7 +446,7 @@ private fun RaceState.consumePerSecond(baseSpeed: Double, v: Double, phase: Int)
 
 private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
-    val raceTime = simulation.frameElapsed * timePerFrame - excessTime
+    val raceTime = simulation.frameElapsed * secondPerFrame - excessTime
     val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
     return RaceSimulationResult(
         raceTime = raceTime,
@@ -448,4 +454,16 @@ private fun RaceState.goal(): RaceSimulationResult {
         maxSpurt = simulation.maxSpurt,
         spDiff = simulation.spurtParameters?.spDiff ?: 0.0,
     )
+}
+
+private fun RaceState.calcConservePower() {
+    val base = setting.conservePowerAccelerationBase
+    if (base == 0.0) return
+    val activityCoef = when {
+        simulation.hasTemptation -> 0.8
+        simulation.hasLeadCompetition -> 0.98
+        else -> 1.0
+    }
+    simulation.conservePowerAcceleration = base * activityCoef
+    simulation.conservePowerStart = simulation.frameElapsed
 }

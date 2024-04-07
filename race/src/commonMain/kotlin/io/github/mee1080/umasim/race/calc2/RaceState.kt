@@ -148,10 +148,10 @@ class RaceState(
                 spurtParameters.speed
             } else {
                 // BaseTargetSpeed
-                when (currentPhase) {
+                when (val currentPhase = currentPhase) {
                     0, 1 -> setting.baseSpeed * setting.runningStyle.styleSpeedCoef[currentPhase]!!
                     else -> {
-                        setting.baseSpeed * setting.runningStyle.styleSpeedCoef[2]!! +
+                        setting.baseSpeed * setting.runningStyle.styleSpeedCoef[currentPhase]!! +
                                 sqrt(setting.modifiedSpeed / 500.0) *
                                 distanceFitSpeedCoef[setting.umaStatus.distanceFit]!! +
                                 (setting.modifiedGuts * 450.0).pow(0.597) * 0.0001
@@ -214,6 +214,9 @@ class RaceState(
             if (simulation.competeFight) {
                 acceleration += setting.competeFightAcceleration
             }
+            if (isInConservePower) {
+                acceleration += simulation.conservePowerAcceleration ?: 0.0
+            }
 
             return acceleration
         }
@@ -258,6 +261,12 @@ class RaceState(
             val cornerIndex = corners.indexOfFirst { simulation.position in it.start..it.end }
             if (cornerIndex < 0) return 0
             return (4 + cornerIndex - corners.size) % 4 + 1
+        }
+
+    val isInConservePower: Boolean
+        get() {
+            val start = simulation.conservePowerStart ?: return false
+            return simulation.frameElapsed < start + setting.conservePowerFrame
         }
 }
 
@@ -481,7 +490,7 @@ data class RaceSetting(
         (700.0 * modifiedGuts).pow(0.5) * 0.012
     }
 
-    val leadCompetitionFrame by lazy { leadCompetitionTime * framePerTime }
+    val leadCompetitionFrame by lazy { leadCompetitionTime * framePerSecond }
 
     val competeFightSpeed by lazy {
         (200.0 * modifiedGuts).pow(0.708) * 0.0001
@@ -489,6 +498,17 @@ data class RaceSetting(
 
     val competeFightAcceleration by lazy {
         (160.0 * modifiedGuts).pow(0.59) * 0.0001
+    }
+
+    val conservePowerAccelerationBase by lazy {
+        val status = umaStatus.power + passiveBonus.power
+        if (status <= 1200) return@lazy 0.0
+        val coef = conservePowerAccelerationCoef[basicRunningStyle]!![trackDetail.distanceCategory]!!
+        sqrt((status - 1200) * 130.0) * 0.001 * coef
+    }
+
+    val conservePowerFrame by lazy {
+        conservePowerBaseFrame * conservePowerTimeCoef[trackDetail.distanceCategory]!!
     }
 }
 
@@ -513,6 +533,8 @@ class RaceSimulationState(
     val specialState: MutableMap<String, Int> = approximateConditions.mapValues { 0 }.toMutableMap(),
     var leadCompetitionStart: Int? = null,
     var competeFight: Boolean = false,
+    var conservePowerStart: Int? = null,
+    var conservePowerAcceleration: Double? = null,
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -531,6 +553,10 @@ class RaceSimulationState(
             val temptationModeEnd = temptationModeEnd ?: return true
             return frameElapsed <= temptationModeEnd
         }
+
+    val hasTemptation get() = temptationModeStart != null
+
+    val hasLeadCompetition get() = leadCompetitionStart != null
 }
 
 class SkillTriggerCount {
@@ -579,6 +605,7 @@ data class RaceFrame(
     val downSlopeMode: Boolean = false,
     val leadCompetition: Boolean = false,
     val competeFight: Boolean = false,
+    val conservePower: Boolean = false,
 )
 
 data class RaceSimulationResult(
@@ -597,9 +624,9 @@ class InvokedSkill(
 )
 
 data class SystemSetting(
-    val positionKeepSectionSen: List<Boolean> = List(10) { it == 1 },
-    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 1 || it == 5 },
-    val positionKeepSectionOi: List<Boolean> = List(10) { it == 1 || it == 3 || it == 6 },
+    val positionKeepSectionSen: List<Boolean> = List(10) { it == 0 },
+    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 0 || it == 3 },
+    val positionKeepSectionOi: List<Boolean> = List(10) { it == 0 || it == 2 || it == 7 },
     val leadCompetitionPosition: Int = 200,
     val competeFightRate: Double = 0.4,
 )
