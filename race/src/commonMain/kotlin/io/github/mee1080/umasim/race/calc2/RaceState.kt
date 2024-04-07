@@ -174,27 +174,38 @@ class RaceState(
                 if (currentPhase == 1) 0.945 else 0.915
             } else 1.0
 
-            val slopeModifier = if (isInSlopeUp()) {
-                -(abs(currentSlope) * 200.0) / setting.modifiedPower
+            var result = baseSpeed * positionKeepCoef + skillModifier
+
+            if (isInSlopeUp()) {
+                result -= (abs(currentSlope) * 200.0) / setting.modifiedPower
             } else if (simulation.isInDownSlopeMode) {
-                abs(currentSlope) / 10.0 + 0.3
-            } else {
-                0.0
+                result += abs(currentSlope) / 10.0 + 0.3
             }
 
             // TODO 横移動スキル中のレーン移動
-            // moveLaneModifier = (0.0002 * setting.modifiedPower).pow(0.5)
+            // (0.0002 * setting.modifiedPower).pow(0.5)
 
-            val leadCompetitionModifier = if (inLeadCompetition) setting.leadCompetitionSpeed else 0.0
+            if (inLeadCompetition) {
+                result += setting.leadCompetitionSpeed
+            }
 
-            val competitionModifier = if (simulation.competeFight) setting.competeFightSpeed else 0.0
+            if (simulation.competeFight) {
+                result += setting.competeFightSpeed
+            }
 
-            val positionCompetitionModifier =
-                if (simulation.positionCompetition) setting.positionCompetitionSpeed else 0.0
+            if (simulation.positionCompetition) {
+                result += setting.positionCompetitionSpeed
+            }
 
-            val secureLeadModifier = if (simulation.secureLead) setting.secureLeadSpeed else 0.0
+            if (simulation.secureLead) {
+                result += setting.secureLeadSpeed
+            }
 
-            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier + positionCompetitionModifier + secureLeadModifier
+            if (simulation.staminaLimitBreak) {
+                result += setting.staminaLimitBreakSpeed
+            }
+
+            return result
         }
 
     val vMin: Double
@@ -590,6 +601,13 @@ data class RaceSetting(
     val secureLeadStamina by lazy {
         20 * (secureLeadStaminaCoef[runningStyle]!! * secureLeadDistanceCoef(trackDetail.distance))
     }
+
+    val staminaLimitBreakSpeed by lazy {
+        // TODO パワー依存のランダム係数は詳細不明
+        val status = umaStatus.stamina + passiveBonus.stamina
+        if (status <= 1200) return@lazy 0.0
+        sqrt(status - 1200.0) * 0.0085 * staminaLimitBreakDistanceCoef(trackDetail.distance)
+    }
 }
 
 class RaceSimulationState(
@@ -620,6 +638,7 @@ class RaceSimulationState(
     var positionCompetitionNextFrame: Int = 0,
     var secureLead: Boolean = false,
     var secureLeadNextFrame: Int = 0,
+    var staminaLimitBreak: Boolean = false,
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -696,6 +715,7 @@ data class RaceFrame(
     val positionCompetition: Boolean = false,
     val staminaKeep: Boolean = false,
     val secureLead: Boolean = false,
+    val staminaLimitBreak: Boolean = false,
 )
 
 data class RaceSimulationResult(

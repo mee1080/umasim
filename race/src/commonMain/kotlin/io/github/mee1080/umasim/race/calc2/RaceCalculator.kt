@@ -152,6 +152,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             positionCompetition = simulation.positionCompetition,
             staminaKeep = simulation.staminaKeep,
             secureLead = simulation.secureLead,
+            staminaLimitBreak = simulation.staminaLimitBreak,
         )
         // 1秒おき判定
         val changeSecond = simulation.frameElapsed % framePerSecond == framePerSecond - 1
@@ -245,6 +246,13 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             simulation.positionCompetition = false
             simulation.staminaKeep = false
             simulation.secureLead = false
+        }
+
+        // スタミナ勝負
+        if (setting.courseLength > 2100 && !simulation.staminaLimitBreak) {
+            if (simulation.currentSpeed >= setting.maxSpurtSpeed) {
+                simulation.staminaLimitBreak = true
+            }
         }
 
         move(secondPerFrame)

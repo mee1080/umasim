@@ -409,3 +409,14 @@ internal fun secureLeadDistanceCoef(distance: Int) = when {
     distance < 2601 -> 1.1
     else -> 1.2
 }
+
+/**
+ * 距離->スタミナ勝負補正倍率
+ */
+internal fun staminaLimitBreakDistanceCoef(distance: Int) = when {
+    distance < 2101 -> 0.0
+    distance < 2201 -> 0.5
+    distance < 2401 -> 1.0
+    distance < 2601 -> 1.2
+    else -> 1.5
+}

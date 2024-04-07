@@ -81,6 +81,11 @@ fun ApproximateSetting() {
         }
 
         Column {
+            Text("スタミナ勝負", style = MaterialTheme.typography.titleLarge)
+            Text("ランダムで0.95～1.02の倍率がかかるようですが1.0倍固定です")
+        }
+
+        Column {
             Text("スキル発動", style = MaterialTheme.typography.titleLarge)
             Text("他のウマ娘が関わるスキル発動条件は、1秒ごとに、以下の判定を行っています")
             Text(
