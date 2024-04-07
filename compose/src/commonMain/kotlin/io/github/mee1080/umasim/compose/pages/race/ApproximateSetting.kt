@@ -76,6 +76,11 @@ fun ApproximateSetting() {
         }
 
         Column {
+            Text("リード確保", style = MaterialTheme.typography.titleLarge)
+            Text("発生率100%固定です")
+        }
+
+        Column {
             Text("スキル発動", style = MaterialTheme.typography.titleLarge)
             Text("他のウマ娘が関わるスキル発動条件は、1秒ごとに、以下の判定を行っています")
             Text(

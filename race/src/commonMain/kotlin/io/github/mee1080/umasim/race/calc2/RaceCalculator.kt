@@ -151,9 +151,11 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             conservePower = isInConservePower,
             positionCompetition = simulation.positionCompetition,
             staminaKeep = simulation.staminaKeep,
+            secureLead = simulation.secureLead,
         )
         // 1秒おき判定
         val changeSecond = simulation.frameElapsed % framePerSecond == framePerSecond - 1
+        val currentSection = currentSection
 
         // 下り坂モードに入るか・終わるかどうかの判定
         if (isInSlopeDown() && !setting.fixRandom) {
@@ -216,8 +218,8 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             }
         }
 
-        // 位置取り調整/持久力温存
         if (currentSection in 11..15) {
+            // 位置取り調整/持久力温存
             if (simulation.frameElapsed >= simulation.positionCompetitionNextFrame) {
                 if (simulation.positionCompetition) {
                     // 位置取り調整終了後は1秒のクールタイム
@@ -227,6 +229,22 @@ private fun RaceState.progressRace(): RaceSimulationResult {
                     applyPositionCompetition()
                 }
             }
+
+            // リード確保
+            if (simulation.frameElapsed >= simulation.secureLeadNextFrame) {
+                if (simulation.secureLead) {
+                    // リード確保終了後は1秒のクールタイム
+                    simulation.secureLead = false
+                    simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond
+                } else if (setting.runningStyle != Style.OI) {
+                    simulation.secureLead = true
+                    simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond * 2
+                }
+            }
+        } else if (currentSection == 16) {
+            simulation.positionCompetition = false
+            simulation.staminaKeep = false
+            simulation.secureLead = false
         }
 
         move(secondPerFrame)

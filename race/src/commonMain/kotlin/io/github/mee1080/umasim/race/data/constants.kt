@@ -374,3 +374,38 @@ internal fun positionCompetitionDistanceCoef(distance: Int) = when {
     distance < 2601 -> 1.1
     else -> 1.2
 }
+
+/**
+ * 脚質->リード確保速度補正倍率
+ */
+internal val secureLeadSpeedCoef = mapOf(
+    Style.OONIGE to 0.2,
+    Style.NIGE to 1.0,
+    Style.SEN to 1.0,
+    Style.SASI to 0.8,
+    Style.OI to 0.0,
+)
+
+/**
+ * 脚質->リード確保体力消費補正倍率
+ */
+internal val secureLeadStaminaCoef = mapOf(
+    Style.OONIGE to 1.2,
+    Style.NIGE to 1.0,
+    Style.SEN to 0.8,
+    Style.SASI to 0.8,
+    Style.OI to 0.0,
+)
+
+/**
+ * 距離->リード確保体力消費補正倍率
+ */
+internal fun secureLeadDistanceCoef(distance: Int) = when {
+    distance < 1401 -> 0.3
+    distance < 1801 -> 0.3
+    distance < 2101 -> 0.5
+    distance < 2201 -> 0.8
+    distance < 2401 -> 1.0
+    distance < 2601 -> 1.1
+    else -> 1.2
+}

@@ -192,7 +192,9 @@ class RaceState(
             val positionCompetitionModifier =
                 if (simulation.positionCompetition) setting.positionCompetitionSpeed else 0.0
 
-            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier + positionCompetitionModifier
+            val secureLeadModifier = if (simulation.secureLead) setting.secureLeadSpeed else 0.0
+
+            return baseSpeed * positionKeepCoef + skillModifier + slopeModifier + leadCompetitionModifier + competitionModifier + positionCompetitionModifier + secureLeadModifier
         }
 
     val vMin: Double
@@ -304,6 +306,9 @@ class RaceState(
             }
             if (simulation.positionCompetition) {
                 consume += setting.positionCompetitionStamina
+            }
+            if (simulation.secureLead) {
+                consume += setting.secureLeadStamina
             }
         }
         return consume
@@ -577,6 +582,14 @@ data class RaceSetting(
     val spConsumptionGroundCoef by lazy {
         spConsumptionCoef[trackDetail.surface]!![track.surfaceCondition]!!
     }
+
+    val secureLeadSpeed by lazy {
+        (modifiedGuts / 2000.0).pow(0.5) * 0.3 * secureLeadSpeedCoef[runningStyle]!!
+    }
+
+    val secureLeadStamina by lazy {
+        20 * (secureLeadStaminaCoef[runningStyle]!! * secureLeadDistanceCoef(trackDetail.distance))
+    }
 }
 
 class RaceSimulationState(
@@ -605,6 +618,8 @@ class RaceSimulationState(
     var positionCompetition: Boolean = false,
     var staminaKeep: Boolean = false,
     var positionCompetitionNextFrame: Int = 0,
+    var secureLead: Boolean = false,
+    var secureLeadNextFrame: Int = 0,
 
     val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -680,6 +695,7 @@ data class RaceFrame(
     val conservePower: Boolean = false,
     val positionCompetition: Boolean = false,
     val staminaKeep: Boolean = false,
+    val secureLead: Boolean = false,
 )
 
 data class RaceSimulationResult(
