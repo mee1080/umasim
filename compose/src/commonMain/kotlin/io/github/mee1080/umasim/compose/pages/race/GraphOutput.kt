@@ -33,8 +33,9 @@ private fun GraphArea(graphData: GraphData) {
     val frameList = graphData.frameList
     Column {
         Text("直近レース詳細", style = MaterialTheme.typography.headlineSmall)
+        val xMax = (frameList.size - 1) / 15f
         XYGraph(
-            xAxisModel = rememberLinearAxisModel(0f..(frameList.size - 1) / 15f),
+            xAxisModel = rememberLinearAxisModel(0f..xMax),
             yAxisModel = rememberLinearAxisModel(0f..1f),
             yAxisLabels = { "" },
             modifier = Modifier.height(400.dp),
@@ -59,6 +60,9 @@ private fun GraphArea(graphData: GraphData) {
                 areaBaseline = AreaBaseline.ConstantLine(0.1f),
                 areaStyle = AreaStyle(SolidColor(Color(255, 255, 0)), 0.15f),
             )
+            VerticalLineAnnotation(graphData.phase1Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
+            VerticalLineAnnotation(graphData.phase2Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
+            HorizontalLineAnnotation(graphData.staminaZero, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
             LinePlot(
                 data = graphData.speedData.map { Point(it.first, it.second) },
                 lineStyle = LineStyle(SolidColor(Color.Blue), 2.dp),
@@ -72,12 +76,12 @@ private fun GraphArea(graphData: GraphData) {
                 lineStyle = LineStyle(SolidColor(Color.Red), 2.dp),
             )
             XYAnnotation(Point(0f, 0.05f), AnchorPoint.LeftMiddle) {
-                TooltipSurface {
+                TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
                     Text("直線(青)/コーナー(紫)")
                 }
             }
             XYAnnotation(Point(0f, 0.15f), AnchorPoint.LeftMiddle) {
-                TooltipSurface {
+                TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
                     Text("上り坂(緑)/下り坂(黄)")
                 }
             }
@@ -85,7 +89,7 @@ private fun GraphArea(graphData: GraphData) {
                 val skillMargin = min(0.1f, 0.8f / graphData.skillData.size)
                 graphData.skillData.forEachIndexed { index, (position, name) ->
                     XYAnnotation(Point(position, 1f - skillMargin * index), AnchorPoint.TopLeft) {
-                        TooltipSurface {
+                        TooltipSurface(containerColor = Color(0, 0, 0, 176)) {
                             Text(name)
                         }
                     }

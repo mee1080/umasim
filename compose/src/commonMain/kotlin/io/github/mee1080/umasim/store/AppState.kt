@@ -3,7 +3,6 @@ package io.github.mee1080.umasim.store
 import androidx.compose.runtime.Stable
 import io.github.mee1080.umasim.race.calc2.RaceFrame
 import io.github.mee1080.umasim.race.calc2.RaceSetting
-import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.store.framework.State
 
 const val NOT_SELECTED = "(未選択)"
@@ -98,6 +97,9 @@ data class GraphData(
     val speedData: List<Pair<Float, Float>>,
     val staminaData: List<Pair<Float, Float>>,
     val staminaOverData: List<Pair<Float, Float>>,
+    val staminaZero: Float,
+    val phase1Start: Float,
+    val phase2Start: Float,
     val straightData: List<Pair<Float, Float>>,
     val cornerData: List<Pair<Float, Float>>,
     val upSlopeData: List<Pair<Float, Float>>,

@@ -2,7 +2,6 @@ package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.averageOf
 import io.github.mee1080.umasim.race.calc2.*
-import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
@@ -140,8 +139,8 @@ private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
     )
 }
 
-private const val speedMin = 15f
-private const val speedMax = 27f
+private const val speedMin = 13f
+private const val speedMax = 28f
 
 private const val staminaMin = -200f
 
@@ -161,23 +160,50 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
         staminaData = frameList.mapIndexed { index, raceFrame ->
             index / 15f to adjustRange(raceFrame.sp, staminaMin, staminaMax)
         },
+        staminaZero = adjustRange(0.0, staminaMin, staminaMax),
         staminaOverData = frameList.mapIndexedNotNull { index, raceFrame ->
             if (raceFrame.sp >= 0) null else {
                 index / 15f to adjustRange(raceFrame.sp, staminaMin, staminaMax)
             }
         },
+        phase1Start = frameList.indexOfFirst { it.startPosition >= setting.phase1Start } / 15f,
+        phase2Start = frameList.indexOfFirst { it.startPosition >= setting.phase2Start } / 15f,
         straightData = toGraphData(trackDetail.straights.map { it.start to it.end }, frameList),
         cornerData = toGraphData(trackDetail.corners.map { it.start to it.end }, frameList),
         upSlopeData = toGraphData(trackDetail.slopes.filter { it.slope > 0f }.map { it.start to it.end }, frameList),
         downSlopeData = toGraphData(trackDetail.slopes.filter { it.slope < 0f }.map { it.start to it.end }, frameList),
         skillData = buildList {
+            var last = frameList[0]
             frameList.forEachIndexed { index, raceFrame ->
                 raceFrame.skills.forEach {
                     add(index / 15f to it.skill.name)
                 }
+//                add(index, raceFrame, last, "スパート開始") { it.spurting }
+//                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
+//                add(index, raceFrame, last, "下り坂モード") { it.downSlopeMode }
+//                add(index, raceFrame, last, "位置取り争い") { it.leadCompetition }
+                add(index, raceFrame, last, "追い比べ") { it.competeFight }
+//                add(index, raceFrame, last, "脚色十分") { it.conservePower }
+//                add(index, raceFrame, last, "位置取り調整") { it.positionCompetition }
+                add(index, raceFrame, last, "持久力温存") { it.staminaKeep }
+//                add(index, raceFrame, last, "リード確保") { it.secureLead }
+                add(index, raceFrame, last, "スタミナ勝負") { it.staminaLimitBreak }
+                last = raceFrame
             }
         }.sortedBy { it.first }
     )
+}
+
+private fun MutableList<Pair<Float, String>>.add(
+    frame: Int,
+    raceFrame: RaceFrame,
+    last: RaceFrame,
+    label: String,
+    check: (RaceFrame) -> Boolean,
+) {
+    if (check(raceFrame) && !check(last)) {
+        add(frame / 15f to label)
+    }
 }
 
 private fun toGraphData(
