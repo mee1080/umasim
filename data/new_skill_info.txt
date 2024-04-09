@@ -1,107 +1,34 @@
-ノッてけ、マッシュアップ！
-[Joyful Jamboree!]ダイタクヘリオス 固有
-レース序盤に前方で競り合ったとき速度を上げる、マイルレースなら持久力を使って速度をすごく上げる
+GO! Full-send
+[Glorious Coat]ウイニングチケット 固有
+レース中盤に中団で追い抜くと第3コーナーで少しの間速度が上がる2400ｍのレースで人気が高いと上げ続ける
 評価点340、人気:スピード60、確定発動
-->distance_type==2&blocked_side_continuetime>=2&order_rate<=50&phase==0&accumulatetime>=5
-「マイル、横ブロック継続>=2、順位率50以下（チャンミ～5/LoH～6）、序盤、経過時間>=5」、目標速度4500、体力-300、持続5.0
-->blocked_side_continuetime>=2&order_rate<=50&phase==0&accumulatetime>=5
-「横ブロック継続>=2、順位率50以下（チャンミ～5/LoH～6）、序盤、経過時間>=5」、目標速度3500、持続5.0
+phase==1&change_order_onetime<0&order_rate>=40&order_rate<=80->corner==3&course_distance==2400&popularity<=3
+「中盤、追い抜き、順位率40～80（チャンミ4～7/LoH5～9）」の後「第3コーナー、距離==2400、人気<=3」、目標速度3500、持続6.0
+phase==1&change_order_onetime<0&order_rate>=40&order_rate<=80->corner==3
+「中盤、追い抜き、順位率40～80（チャンミ4～7/LoH5～9）」の後「第3コーナー」、目標速度3500、持続4.0
 
-蒼炎
-[Flowing Blue]ダイイチルビー 固有
-レース中間付近で中団にいると速度が少し上がるマイルレースなら効果と時間が増える
-評価点340、人気:スピード60、確定発動
-->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40&distance_type==2
-「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）、マイル」、目標速度3500、持続6.0
-->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40
-「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）」、目標速度2500、持続5.0
-
-ノッてけ、マッシュアップ！
-レース序盤に前方で競り合ったとき速度をわずかに上げる、マイルレースなら持久力を使って速度を少し上げる
+GO! Full-send
+レース中盤に中団で追い抜くと第3コーナーで少しの間速度がわずかに上がる、2400ｍのレースで人気が高いとわずかに上げ続ける
 評価点180、SP200、人気:スピード15
-->distance_type==2&blocked_side_continuetime>=2&order_rate<=50&phase==0&accumulatetime>=5
-「マイル、横ブロック継続>=2、順位率50以下（チャンミ～5/LoH～6）、序盤、経過時間>=5」、目標速度2500、体力-300、持続3.0
-->blocked_side_continuetime>=2&order_rate<=50&phase==0&accumulatetime>=5
-「横ブロック継続>=2、順位率50以下（チャンミ～5/LoH～6）、序盤、経過時間>=5」、目標速度1500、持続3.0
+phase==1&change_order_onetime<0&order_rate>=40&order_rate<=80->corner==3&course_distance==2400&popularity<=3
+「中盤、追い抜き、順位率40～80（チャンミ4～7/LoH5～9）」の後「第3コーナー、距離==2400、人気<=3」、目標速度1500、持続3.6
+phase==1&change_order_onetime<0&order_rate>=40&order_rate<=80->corner==3
+「中盤、追い抜き、順位率40～80（チャンミ4～7/LoH5～9）」の後「第3コーナー」、目標速度1500、持続2.4
 
-蒼炎
-レース中間付近で中団にいると速度がちょっと上がるマイルレースなら効果と時間が増える
-評価点180、SP200、人気:スピード15
-->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40&distance_type==2
-「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）、マイル」、目標速度1500、持続3.6
-->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40
-「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）」、目標速度500、持続3.0
-
-トレンド先取り☆
-[Joyful Jamboree!]ダイタクヘリオス 進化
-スタート時に加速力がすごく上がる＜作戦・逃げ＞
-評価点394、人気:パワー60
-->running_style==1&phase==0
-「逃げ、序盤」、加速5000、持続1.2
-
-マイル神、爆☆誕
-[Joyful Jamboree!]ダイタクヘリオス 進化
-レース中盤が迫ったとき前方にいると速度がすごく上がる＜マイル＞
+全・力・ワク・ワク！！
+[Glorious Coat]ウイニングチケット 進化
+レース終盤が迫ったとき4番手以降だと速度が上がる、東京レース場の2400ｍのレースならすごく上がる＜中距離＞
 評価点633、人気:スピード60
-->distance_type==2&phase_laterhalf_random==0&order_rate<=50
-「マイル、序盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続3.0
+->distance_type==3&phase_laterhalf_random==1&order>=4&track_id==10006&course_distance==2400
+「中距離、中盤後半ランダム、順位>=4、レース場==10006、距離==2400」、目標速度4500、持続2.4
+->distance_type==3&phase_laterhalf_random==1&order>=4
+「中距離、中盤後半ランダム、順位>=4」、目標速度3500、持続2.4
 
-コンドル跳躍術
-[ククルカン・モンク]エルコンドルパサー 進化
-レース終盤にしばらくの間前に出る＜マイル＞
-評価点633、人気:パワー60
-->distance_type==2&phase_random==2
-「マイル、終盤前半？ランダム」、現在速度3500、持続4.0
-
-決意の根性娘
-[めんこいめんこいむつのはな]ユキノビジン 進化
-下り坂で加速力が少し上がるその後残り300mを切っているとき速度がわずかに上がる＜作戦・先行＞
-評価点394、人気:パワー40
-->running_style==2&down_slope_random==1
-「先行、下り坂ランダム」、加速3000、持続3.0
-->is_activate_other_skill_detail==1&remain_distance<=300
-「上記効果発動後、残り距離<=300」、目標速度1500、持続3.0
-
-理想へ向かう覚悟
-[Titania]ファインモーション 進化
-レース終盤始めの方で前方にいると加速力が上がるその後残り300mを切っているとき速度がわずかに上がる＜作戦・先行＞
-評価点633、人気:パワー60
-->running_style==2&phase_firsthalf_random==2&order_rate<=50
-「先行、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
-->is_activate_other_skill_detail==1&remain_distance<=300
-「上記効果発動後、残り距離<=300」、目標速度1500、持続3.0
-
-自信持って踏み出して
-[バカンス・サフィール]メジロドーベル 進化
-レース後半にすごく前に出る＜作戦・差し＞
-評価点633、人気:パワー60
-->running_style==3&distance_rate_after_random==50
-「差し、距離50%以降」、現在速度4500、持続2.4
-
-霹靂閃電
-[Flowing Blue]ダイイチルビー 進化
-レース終盤始めに追い抜こうとするときまたはレース終盤始めの方で加速力が上がる＜差し・マイル＞
-評価点633、人気:パワー60
-->running_style==3&distance_type==2&phase>=2&is_overtake==1&distance_rate<=75@running_style==3&distance_type==2&phase_firsthalf_random==2
-「差し、マイル、終盤、追い抜きモード、距離割合<=75」または「差し、マイル、終盤前1/4ランダム」、加速4000、持続2.0
-
-熱情
-レース終盤が迫ったとき中団以降にいると速度が上がる＜マイル＞
-評価点508、SP180、人気:スピード60
-->distance_type==2&phase_laterhalf_random==1&order_rate>=40
-「マイル、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続2.4
-
-灰と化すまで
-[Flowing Blue]ダイイチルビー 進化
-レース終盤が迫ったとき中団以降にいるとしばらくの間速度が上がる＜マイル＞
+Dreamer's Path
+[Glorious Coat]ウイニングチケット 進化
+レース中盤に中団にいるとしばらくの間速度が上がる＜作戦・差し＞
 評価点633、人気:スピード60
-->distance_type==2&phase_laterhalf_random==1&order_rate>=40
-「マイル、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続4.0
-
-滾る想い
-レース終盤が迫ったとき中団以降にいると速度がわずかに上がる＜マイル＞
-評価点217、SP180、人気:スピード20
-->distance_type==2&phase_laterhalf_random==1&order_rate>=40
-「マイル、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
+->running_style==3&phase_random==1&order_rate>=40&order_rate<=90
+「差し、中盤ランダム、順位率40～90（チャンミ4～8/LoH5～10）」、目標速度3500、持続4.0
 
 
