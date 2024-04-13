@@ -144,6 +144,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             speed = simulation.currentSpeed,
             sp = simulation.sp,
             startPosition = simulation.startPosition,
+            temptation = simulation.isInTemptation,
             paceDownMode = paceDownMode,
             downSlopeMode = simulation.isInDownSlopeMode,
             leadCompetition = inLeadCompetition,

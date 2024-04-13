@@ -178,6 +178,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 raceFrame.skills.forEach {
                     add(index / 15f to it.skill.name)
                 }
+                add(index, raceFrame, last, "掛かり") { it.temptation }
 //                add(index, raceFrame, last, "スパート開始") { it.spurting }
 //                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
 //                add(index, raceFrame, last, "下り坂モード") { it.downSlopeMode }

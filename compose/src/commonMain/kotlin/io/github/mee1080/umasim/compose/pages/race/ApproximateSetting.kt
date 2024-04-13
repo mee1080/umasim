@@ -30,6 +30,7 @@ fun ApproximateSetting() {
         Column {
             Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
             Text("以下のセクションで、ペースダウンモードに入ります")
+            Text("掛かり状態でも発動します（位置固定のため）")
             Text("逃げの各モード、およびペースアップモードは実装していません")
             Text(
                 "先行：${

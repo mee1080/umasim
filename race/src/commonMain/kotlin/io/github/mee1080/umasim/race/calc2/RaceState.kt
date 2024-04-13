@@ -700,6 +700,7 @@ data class RaceFrame(
     val consume: Double = 0.0,
     val skills: List<InvokedSkill> = emptyList(),
     val endedSkills: List<OperatingSkill> = emptyList(),
+    val temptation: Boolean = false,
     val spurting: Boolean = false,
     val paceDownMode: Boolean = false,
     val downSlopeMode: Boolean = false,
