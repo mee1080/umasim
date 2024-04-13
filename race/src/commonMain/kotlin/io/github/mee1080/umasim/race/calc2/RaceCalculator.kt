@@ -63,24 +63,24 @@ class RaceCalculator(
 }
 
 private fun RaceState.invokeSkills() {
+    val invokeRate = if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE) {
+        100.0
+    } else {
+        maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
+    }
     setting.hasSkills.map {
         if (it.rarity == "unique") {
             it.applyLevel(setting.uniqueLevel)
         } else it
     }.forEach { skill ->
-        skill.invokes.forEach { invoke ->
-            val invokeRate =
-                if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE || skill.activateLot == 0) {
-                    100.0
-                } else {
-                    maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
-                }
-            if (Random.nextDouble() * 100 < invokeRate) {
+        val calculatedAreas = mutableMapOf<String, List<RandomEntry>>()
+        if (skill.activateLot == 0 || Random.nextDouble() * 100 < invokeRate) {
+            skill.invokes.forEach { invoke ->
                 simulation.invokedSkills += InvokedSkill(
                     skill,
                     invoke,
-                    checkCondition(invoke.preConditions, setting),
-                    checkCondition(invoke.conditions, setting),
+                    checkCondition(skill, invoke.preConditions, setting, calculatedAreas),
+                    checkCondition(skill, invoke.conditions, setting, calculatedAreas),
                 )
             }
         }

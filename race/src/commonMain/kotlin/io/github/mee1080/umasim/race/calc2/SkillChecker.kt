@@ -25,14 +25,20 @@ package io.github.mee1080.umasim.race.calc2
 import io.github.mee1080.umasim.race.data.Corner
 import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data2.SkillCondition
+import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.ignoreConditions
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
-fun checkCondition(conditions: List<List<SkillCondition>>, setting: RaceSetting): RaceState.() -> Boolean {
+fun checkCondition(
+    skill: SkillData,
+    conditions: List<List<SkillCondition>>,
+    setting: RaceSetting,
+    calculatedAreas: MutableMap<String, List<RandomEntry>>,
+): RaceState.() -> Boolean {
     val checks = conditions.map { andConditions ->
-        andConditions.mapNotNull { checkCondition(it, setting) }
+        andConditions.mapNotNull { checkCondition(skill, it, setting, calculatedAreas) }
     }
     if (checks.isEmpty()) return { true }
     return {
@@ -42,7 +48,12 @@ fun checkCondition(conditions: List<List<SkillCondition>>, setting: RaceSetting)
     }
 }
 
-private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (RaceState.() -> Boolean)? {
+private fun checkCondition(
+    skill: SkillData,
+    condition: SkillCondition,
+    setting: RaceSetting,
+    calculatedAreas: MutableMap<String, List<RandomEntry>>,
+): (RaceState.() -> Boolean)? {
     return when (condition.type) {
         "motivation" -> condition.preChecked(setting.umaStatus.condition.value)
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
@@ -59,25 +70,25 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
         "remain_distance" -> condition.checkInRace { setting.courseLength - simulation.startPosition.toInt() }
         "distance_rate_after_random" -> condition.withAssert("==") {
-            checkInRandom(setting.initIntervalRandom(value * 0.01, 1.0))
+            checkInRandom(calculatedAreas, condition.type) { setting.initIntervalRandom(value * 0.01, 1.0) }
         }
 
         "corner_random" -> condition.withAssert("==") {
-            checkInRandom(setting.initCornerRandom(value))
+            checkInRandom(calculatedAreas, condition.type) { setting.initCornerRandom(value) }
         }
 
         "all_corner_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initAllCornerRandom())
+            checkInRandom(calculatedAreas, condition.type) { setting.initAllCornerRandom() }
         }
 
         "slope" -> condition.checkInRace { getSlopeInt() }
 
         "up_slope_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initSlopeRandom(up = true))
+            checkInRandom(calculatedAreas, condition.type) { setting.initSlopeRandom(up = true) }
         }
 
         "down_slope_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initSlopeRandom(up = false))
+            checkInRandom(calculatedAreas, condition.type) { setting.initSlopeRandom(up = false) }
         }
 
         "running_style" -> condition.preChecked(setting.basicRunningStyle.value)
@@ -88,22 +99,34 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
         "track_id" -> condition.preChecked(setting.trackDetail.raceTrackId)
         "is_basis_distance" -> condition.preChecked(setting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / setting.courseLength).toInt() }
-        "phase_random" -> checkInRandom(setting.initPhaseRandom(condition.value))
-        "phase_firsthalf_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.5))
-        "phase_firstquarter_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.0 to 0.25))
-        "phase_laterhalf_random" -> checkInRandom(setting.initPhaseRandom(condition.value, 0.5 to 1.0))
-        "phase_corner_random" -> checkInRandom(setting.initPhaseCornerRandom(condition.value))
+        "phase_random" -> checkInRandom(calculatedAreas, condition.type) { setting.initPhaseRandom(condition.value) }
+        "phase_firsthalf_random" -> checkInRandom(
+            calculatedAreas,
+            condition.type
+        ) { setting.initPhaseRandom(condition.value, 0.0 to 0.5) }
+
+        "phase_firstquarter_random" -> checkInRandom(calculatedAreas, condition.type) {
+            setting.initPhaseRandom(condition.value, 0.0 to 0.25)
+        }
+
+        "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type) {
+            setting.initPhaseRandom(condition.value, 0.5 to 1.0)
+        }
+
+        "phase_corner_random" -> checkInRandom(calculatedAreas, condition.type) {
+            setting.initPhaseCornerRandom(condition.value)
+        }
 
         "is_finalcorner_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initFinalCornerRandom())
+            checkInRandom(calculatedAreas, condition.type) { setting.initFinalCornerRandom() }
         }
 
         "is_finalstraight_random", "last_straight_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initFinalStraightRandom())
+            checkInRandom(calculatedAreas, condition.type) { setting.initFinalStraightRandom() }
         }
 
         "straight_random" -> condition.withAssert("==", 1) {
-            checkInRandom(setting.initStraightRandom())
+            checkInRandom(calculatedAreas, condition.type) { setting.initStraightRandom() }
         }
 
         "is_last_straight" -> condition.withAssert("==", 1) {
@@ -183,6 +206,10 @@ private fun checkCondition(condition: SkillCondition, setting: RaceSetting): (Ra
             { (simulation.specialState[key] ?: 0) > 0 }
         }
 
+        "is_activate_other_skill_detail" -> condition.withAssert("==", 1) {
+            { simulation.coolDownMap.containsKey(skill.id) }
+        }
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
@@ -216,15 +243,25 @@ private fun SkillCondition.checkInRace(target: RaceState.() -> Int): RaceState.(
     return { check(target()) }
 }
 
-private fun checkInRandom(area: RandomEntry?): RaceState.() -> Boolean {
-    return if (area == null) {
-        { false }
-    } else {
-        { simulation.position in area }
-    }
-}
+//private inline fun checkInRandom(
+//    calculated: MutableMap<String, List<RandomEntry>>,
+//    key: String,
+//    calcArea: () -> RandomEntry?,
+//): RaceState.() -> Boolean {
+//    val area = calculated.getOrPut(key) { calcArea()?.let { listOf(it) } ?: emptyList() }
+//    return if (area.isEmpty()) {
+//        { false }
+//    } else {
+//        { simulation.position in area[0] }
+//    }
+//}
 
-private fun checkInRandom(areas: List<RandomEntry>): RaceState.() -> Boolean {
+private inline fun checkInRandom(
+    calculated: MutableMap<String, List<RandomEntry>>,
+    key: String,
+    calcAreas: () -> List<RandomEntry>,
+): RaceState.() -> Boolean {
+    val areas = calculated.getOrPut(key, calcAreas)
     return { areas.any { simulation.position in it } }
 }
 
@@ -246,9 +283,9 @@ private fun RaceState.getStraightFrontType(position: Double = simulation.positio
     return 0
 }
 
-private class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange<Double> by start..end
+class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange<Double> by start..end
 
-private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): RandomEntry {
+private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): List<RandomEntry> {
     val rate = when (randomPosition) {
         RandomPosition.RANDOM -> Random.nextDouble()
         RandomPosition.FASTEST -> 0.0
@@ -260,15 +297,15 @@ private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): Random
 
     val start = rate * (zoneEnd - zoneStart) + zoneStart
     val end = min(start + 10.0, zoneEnd)
-    return RandomEntry(start, end)
+    return listOf(RandomEntry(start, end))
 }
 
-private fun RaceSetting.initCornerRandom(value: Int): RandomEntry? {
+private fun RaceSetting.initCornerRandom(value: Int): List<RandomEntry> {
     val corners: MutableList<Corner?> = trackDetail.corners.takeLast(4).toMutableList()
     repeat(4 - corners.size) {
         corners.add(0, null)
     }
-    val corner = corners.getOrNull(value - 1) ?: return null
+    val corner = corners.getOrNull(value - 1) ?: return emptyList()
     return chooseRandom(corner.start, corner.end)
 }
 
@@ -305,18 +342,18 @@ private fun logTrigger(min: Double, max: Double): RandomEntry {
 private fun RaceSetting.initStraightRandom(): List<RandomEntry> {
     val straights = trackDetail.straights
     val straight = straights[Random.nextInt(straights.size)]
-    return listOf(chooseRandom(straight.start, straight.end))
+    return chooseRandom(straight.start, straight.end)
 }
 
-private fun RaceSetting.initSlopeRandom(up: Boolean): RandomEntry? {
+private fun RaceSetting.initSlopeRandom(up: Boolean): List<RandomEntry> {
     val slopes = trackDetail.slopes.filter { slope ->
         (slope.slope > 0 && up) || (slope.slope < 0 && !up)
     }
-    val slope = slopes.randomOrNull() ?: return null
+    val slope = slopes.randomOrNull() ?: return emptyList()
     return chooseRandom(slope.start, slope.start + slope.length)
 }
 
-private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double> = 0.0 to 1.0): RandomEntry {
+private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double> = 0.0 to 1.0): List<RandomEntry> {
     val (startRate, endRate) = options
     val (zoneStart, zoneEnd) = getPhaseStartEnd(phase)
     val zoneLength = zoneEnd - zoneStart
@@ -325,7 +362,7 @@ private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double
 
 private fun RaceSetting.initFinalCornerRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
-    return listOf(chooseRandom(finalCorner.start, finalCorner.end))
+    return chooseRandom(finalCorner.start, finalCorner.end)
 }
 
 private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {
@@ -337,15 +374,15 @@ private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {
     }
     if (candidates.isEmpty()) return emptyList()
     val chosen = candidates.random()
-    return listOf(chooseRandom(chosen.first, chosen.second))
+    return chooseRandom(chosen.first, chosen.second)
 }
 
 private fun RaceSetting.initFinalStraightRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
-    return listOf(chooseRandom(finalCorner.end, courseLength.toDouble()))
+    return chooseRandom(finalCorner.end, courseLength.toDouble())
 }
 
-private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): RandomEntry {
+private fun RaceSetting.initIntervalRandom(startRate: Double, endRate: Double): List<RandomEntry> {
     return chooseRandom(courseLength * startRate, courseLength * endRate)
 }
 
