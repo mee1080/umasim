@@ -238,8 +238,15 @@ private fun RaceState.progressRace(): RaceSimulationResult {
                     simulation.secureLead = false
                     simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond
                 } else if (setting.runningStyle != Style.OI) {
-                    simulation.secureLead = true
-                    simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond * 2
+                    if (Random.nextDouble() < system.secureLeadRate) {
+                        // リード確保発生時は2秒後に終了
+                        simulation.secureLead = true
+                        simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond * 2
+                        simulation.sp -= setting.secureLeadStamina
+                    } else {
+                        // 非発生時は2秒後に再判定
+                        simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond * 2
+                    }
                 }
             }
         } else if (currentSection == 16) {
@@ -453,12 +460,18 @@ private fun RaceState.applyConservePower() {
 
 fun RaceState.applyPositionCompetition() {
     val requiredSp = calcRequiredSpInPhase2()
-    if (simulation.sp < requiredSp * Random.nextDouble(1.035, 1.04)) {
+    if (simulation.sp < requiredSp * Random.nextDouble(1.035, 1.04) && Random.nextDouble() < system.staminaKeepRate) {
         // 持久力温存
         simulation.staminaKeep = true
-    } else {
+        simulation.positionCompetitionNextFrame = Int.MAX_VALUE
+    } else if (Random.nextDouble() < system.positionCompetitionRate) {
         // 2秒間位置取り調整
         simulation.positionCompetition = true
+        simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+        simulation.sp -= setting.positionCompetitionStamina
+    } else {
+        // 2秒後に再判定
+        simulation.positionCompetition = false
         simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
     }
 }

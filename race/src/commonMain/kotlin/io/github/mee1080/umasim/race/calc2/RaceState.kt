@@ -315,12 +315,6 @@ class RaceState(
             if (paceDownMode) {
                 consume *= 0.6
             }
-            if (simulation.positionCompetition) {
-                consume += setting.positionCompetitionStamina
-            }
-            if (simulation.secureLead) {
-                consume += setting.secureLeadStamina
-            }
         }
         return consume
     }
@@ -739,4 +733,7 @@ data class SystemSetting(
     val positionKeepSectionOi: List<Boolean> = List(10) { it == 0 || it == 2 || it == 7 },
     val leadCompetitionPosition: Int = 200,
     val competeFightRate: Double = 0.4,
+    val positionCompetitionRate: Double = 0.8,
+    val staminaKeepRate: Double = 0.9,
+    val secureLeadRate: Double = 0.3,
 )

@@ -71,13 +71,18 @@ fun ApproximateSetting() {
         }
 
         Column {
-            Text("位置取り調整/持久力温存", style = MaterialTheme.typography.titleLarge)
-            Text("発生率100%固定で、体力が足りていれば位置取り調整、足りていなければ持久力温存になります")
+            Text("持久力温存", style = MaterialTheme.typography.titleLarge)
+            Text("体力が足りていなければ、${systemSetting.staminaKeepRate.roundPercentString()}%の確率で発動します")
+        }
+
+        Column {
+            Text("位置取り調整", style = MaterialTheme.typography.titleLarge)
+            Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.roundPercentString()}%の確率で発動します")
         }
 
         Column {
             Text("リード確保", style = MaterialTheme.typography.titleLarge)
-            Text("発生率100%固定です")
+            Text("追込以外で、${systemSetting.secureLeadRate.roundPercentString()}%の確率で発動します")
         }
 
         Column {
