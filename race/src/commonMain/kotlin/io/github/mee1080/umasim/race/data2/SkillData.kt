@@ -224,6 +224,7 @@ data class SkillData(
     val activateLot: Int = 1,
     val holder: String? = null,
     val invokes: List<Invoke> = emptyList(),
+    val info: List<String> = emptyList(),
     val description: List<String> = emptyList(),
 ) {
     fun applyLevel(level: Int): SkillData {
@@ -233,7 +234,7 @@ data class SkillData(
     }
 
     val messages by lazy {
-        (description + invokes.flatMap { it.messages }).distinct()
+        (info + description + invokes.flatMap { it.messages }).distinct()
     }
 }
 
@@ -255,7 +256,7 @@ data class Invoke(
     }
 
     val messages by lazy {
-        effects.map { "${it.type} ${it.value}" } + toMessages(preConditions) + toMessages(conditions)
+        toMessages(preConditions) + toMessages(conditions)
     }
 
     private fun toMessages(target: List<List<SkillCondition>>): Set<String> {
