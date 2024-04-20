@@ -160,6 +160,10 @@ private fun TypeSkillSetting(
     HideBlock(
         header = { Text(title) },
         headerBackground = MaterialTheme.colorScheme.tertiaryContainer,
+        headerClosed = {
+            val hasSkills = skills.values.flatten().filter { skillIdSet.contains(it.id) }
+            Text("$title：${hasSkills.joinToString(", ") { it.name }}")
+        }
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
