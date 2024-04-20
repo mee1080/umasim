@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.store.operation
 
+import io.github.mee1080.umasim.race.calc2.Track
 import io.github.mee1080.umasim.race.data.CourseCondition
 import io.github.mee1080.umasim.race.data.trackData
 import io.github.mee1080.umasim.store.AppState
@@ -29,6 +30,12 @@ fun setCourse(course: Int) = DirectOperation<AppState> { state ->
 fun setCourseCondition(condition: CourseCondition) = DirectOperation<AppState> { state ->
     state.updateSetting { setting ->
         val track = setting.track.copy(condition = condition)
+        setting.copy(track = track)
+    }
+}
+
+fun setTrack(track: Track) = DirectOperation<AppState> { state ->
+    state.updateSetting { setting ->
         setting.copy(track = track)
     }
 }

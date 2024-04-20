@@ -22,11 +22,28 @@
  */
 package io.github.mee1080.umasim.race.data
 
+import io.github.mee1080.umasim.race.calc2.Track
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
 val trackData by lazy {
     Json.decodeFromString<Map<Int, RaceTrack>>(rawCourseData)
+}
+
+val recentEventTrackList by lazy {
+    listOf(
+        Triple("京都", "芝3200", CourseCondition.GOOD),
+        Triple("京都", "芝3200", CourseCondition.YAYAOMO),
+        Triple("京都", "芝3200", CourseCondition.OMO),
+        Triple("京都", "芝3200", CourseCondition.BAD),
+
+        Triple("東京", "芝2400", CourseCondition.OMO),
+    ).mapNotNull { target ->
+        val course = trackData.entries.firstOrNull { it.value.name == target.first } ?: return@mapNotNull null
+        val track = course.value.courses.entries.firstOrNull { it.value.name.startsWith(target.second) }
+            ?: return@mapNotNull null
+        Track(course.key, track.key, target.third)
+    }
 }
 
 @Serializable

@@ -44,8 +44,8 @@ data class UmaStatus(
 }
 
 data class Track(
-    val location: Int = 10009,
-    val course: Int = 10903,
+    val location: Int = 10001,
+    val course: Int = 10101,
     val condition: CourseCondition = CourseCondition.GOOD,
 ) {
     val surfaceCondition: Int = condition.value
@@ -339,7 +339,7 @@ data class RaceSetting(
     val hasSkills: List<SkillData> = emptyList(),
     val uniqueLevel: Int = 6,
     val passiveTriggered: Int = 0,
-    val track: Track = Track(),
+    val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
 
     val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
     val randomPosition: RandomPosition = RandomPosition.RANDOM,

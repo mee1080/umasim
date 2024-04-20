@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.AssistChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,12 +10,14 @@ import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.compose.common.parts.HideBlock
 import io.github.mee1080.umasim.race.calc2.Track
 import io.github.mee1080.umasim.race.data.CourseCondition
+import io.github.mee1080.umasim.race.data.recentEventTrackList
 import io.github.mee1080.umasim.race.data.trackData
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.setCourse
 import io.github.mee1080.umasim.store.operation.setCourseCondition
 import io.github.mee1080.umasim.store.operation.setLocation
+import io.github.mee1080.umasim.store.operation.setTrack
 
 @Composable
 fun CourseInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -38,6 +41,18 @@ private fun CourseSetting(track: Track, dispatch: OperationDispatcher<AppState>)
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        val selection = recentEventTrackList
+        if (selection.isNotEmpty()) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                selection.forEach {
+                    val location = trackData[it.location] ?: return@forEach
+                    val course = location.courses[it.course] ?: return@forEach
+                    AssistChip({ dispatch(setTrack(it)) }, {
+                        Text("${location.name} ${course.name} ${it.condition.label}")
+                    })
+                }
+            }
+        }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
