@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.MyButton
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.compose.common.parts.HideBlock
 import io.github.mee1080.umasim.compose.common.parts.NumberInput
@@ -41,6 +42,7 @@ private fun SkillSetting(state: AppState, dispatch: OperationDispatcher<AppState
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        MyButton({ dispatch(clearSkill()) }) { Text("すべてのスキルを削除") }
         UniqueSkillSetting(state.charaName, setting.uniqueLevel, skillIdSet, dispatch)
         val passiveSkills = groupedSkills["passive"]
         if (passiveSkills != null) {

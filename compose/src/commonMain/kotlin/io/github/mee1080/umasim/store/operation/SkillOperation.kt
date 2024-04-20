@@ -40,3 +40,7 @@ fun toggleSkill(skillData: SkillData) = DirectOperation<AppState> { state ->
         }
     }
 }
+
+fun clearSkill() = DirectOperation<AppState> { state ->
+    state.copy(skillIdSet = emptySet()).updateSetting { it.copy(hasSkills = emptyList()) }
+}
