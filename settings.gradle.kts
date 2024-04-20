@@ -13,11 +13,8 @@ plugins {
 rootProject.name = "umasim"
 include("jvm")
 include("core")
-include("core")
 include("web")
 include("desktop")
 include("cli")
 include("race")
-include("wasm")
 include("compose")
-include("desktop2")

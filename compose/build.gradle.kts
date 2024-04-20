@@ -9,11 +9,20 @@ group = "io.github.mee1080.umasim"
 version = "1.0"
 
 kotlin {
-    jvm()
+    jvm {
+        compilations.all {
+            kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
+        }
+    }
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        browser()
+        moduleName = "wasm"
+        browser {
+            commonWebpackConfig {
+                outputFileName = "wasm.js"
+            }
+        }
         binaries.executable()
     }
 
@@ -39,4 +48,14 @@ kotlin {
             }
         }
     }
+}
+
+compose.desktop {
+    application {
+        mainClass = "MainKt"
+    }
+}
+
+compose.experimental {
+    web.application {}
 }

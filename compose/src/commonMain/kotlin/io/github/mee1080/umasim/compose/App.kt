@@ -23,7 +23,7 @@ import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.framework.StateHolder
 
 @Composable
-fun App(fontName: String) {
+fun App() {
     val stateHolder = remember {
         StateHolder(AppContextImpl(), mainDispatcher, asyncDispatcher, AppState())
     }
@@ -31,7 +31,7 @@ fun App(fontName: String) {
     val dispatch = remember { OperationDispatcher(stateHolder, coroutineScope) }
     val state = stateHolder.state.collectAsState().value
 
-    AppTheme(fontResource = fontName) {
+    AppTheme {
         val scrollState = rememberScrollState()
         Row(Modifier.fillMaxSize()) {
             Column(

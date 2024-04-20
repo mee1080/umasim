@@ -18,3 +18,5 @@ actual fun jumpToUrl(url: String) {
 actual val mainDispatcher = Dispatchers.Default.limitedParallelism(1)
 
 actual val asyncDispatcher = Dispatchers.Default
+
+actual val defaultFontResource = "LINESeedJP_A_TTF_Rg.ttf"

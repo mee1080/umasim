@@ -7,3 +7,5 @@ expect fun jumpToUrl(url: String)
 expect val mainDispatcher: CoroutineDispatcher
 
 expect val asyncDispatcher: CoroutineDispatcher
+
+expect val defaultFontResource: String

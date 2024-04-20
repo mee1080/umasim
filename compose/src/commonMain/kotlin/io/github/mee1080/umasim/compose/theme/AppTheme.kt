@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.LoadedFont
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.lib.defaultFontResource
 import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.FontResource
@@ -21,7 +22,7 @@ import org.jetbrains.compose.resources.FontResource
 @OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AppTheme(
-    fontResource: String,
+    fontResource: String = defaultFontResource,
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
