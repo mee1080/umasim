@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import io.github.mee1080.umasim.compose.common.lib.roundString
-import io.github.mee1080.umasim.compose.common.lib.toPercentString
-import io.github.mee1080.umasim.compose.common.lib.toTimeString
 import io.github.mee1080.umasim.compose.common.parts.LinedTable
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationSkillSummary
 import io.github.mee1080.umasim.store.SimulationSummary
 import io.github.mee1080.umasim.store.SimulationSummaryEntry
+import io.github.mee1080.utility.roundToString
+import io.github.mee1080.utility.secondToTimeString
+import io.github.mee1080.utility.toPercentString
 import kotlin.math.roundToInt
 
 @Composable
@@ -33,19 +33,19 @@ fun SummaryOutput(state: AppState) {
             }スタミナ/白回復≒${
                 setting.equalStamina(150).roundToInt()
             }スタミナ/終盤耐力消耗係数：${
-                setting.spurtSpCoef.roundString(3)
+                setting.spurtSpCoef.roundToString(3)
             }"
         )
         Text(
-            "スキル発動率：${setting.skillActivateRate.roundString(1)}%/掛かり率：${
-                setting.temptationRate.roundString(1)
+            "スキル発動率：${setting.skillActivateRate.roundToString(1)}%/掛かり率：${
+                setting.temptationRate.roundToString(1)
             }%"
         )
-        Text("スタート　目標速度：${setting.v0.roundString(2)} 加速度：${setting.a0.roundString(2)}")
-        Text("序盤　目標速度：${setting.v1.roundString(2)} 加速度：${setting.a1.roundString(2)}")
-        Text("中盤　目標速度：${setting.v2.roundString(2)} 加速度：${setting.a2.roundString(2)}")
-        Text("終盤　目標速度：${setting.v3.roundString(2)} 加速度：${setting.a3.roundString(2)}")
-        Text("最高スパート速度：${setting.maxSpurtSpeed.roundString(2)}")
+        Text("スタート　目標速度：${setting.v0.roundToString(2)} 加速度：${setting.a0.roundToString(2)}")
+        Text("序盤　目標速度：${setting.v1.roundToString(2)} 加速度：${setting.a1.roundToString(2)}")
+        Text("中盤　目標速度：${setting.v2.roundToString(2)} 加速度：${setting.a2.roundToString(2)}")
+        Text("終盤　目標速度：${setting.v3.roundToString(2)} 加速度：${setting.a3.roundToString(2)}")
+        Text("最高スパート速度：${setting.maxSpurtSpeed.roundToString(2)}")
         SkillTable(summary)
     }
 }
@@ -101,15 +101,15 @@ private fun toTableData(label: String, entry: SimulationSummaryEntry): List<Stri
     } else {
         listOf(
             label,
-            entry.averageTime.toTimeString(),
-            entry.bestTime.toTimeString(),
-            entry.worstTime.toTimeString(),
-            entry.averageSp.roundString(1),
-            entry.bestSp.roundString(1),
-            entry.worstSp.roundString(1),
-            entry.positionCompetitionCount.roundString(2),
-            entry.staminaKeepRate.toPercentString(2),
-            entry.staminaKeepDistance.roundString(1),
+            entry.averageTime.secondToTimeString(),
+            entry.bestTime.secondToTimeString(),
+            entry.worstTime.secondToTimeString(),
+            entry.averageSp.roundToString(1),
+            entry.bestSp.roundToString(1),
+            entry.worstSp.roundToString(1),
+            entry.positionCompetitionCount.roundToString(2),
+            entry.staminaKeepRate.toPercentString(1),
+            entry.staminaKeepDistance.roundToString(1),
         )
     }
 }
@@ -181,17 +181,17 @@ private fun toTableData(entry: SimulationSkillSummary): List<String> {
         listOf(
             entry.count.toString(),
             entry.triggerRate.toPercentString(1),
-            (entry.averageStartFrame1 / 15.0).roundString(2, "s"),
+            (entry.averageStartFrame1 / 15.0).roundToString(2, "s"),
             entry.doubleTriggerRate.toPercentString(1),
-            (entry.averageStartFrame2 / 15.0).roundString(2, "s"),
+            (entry.averageStartFrame2 / 15.0).roundToString(2, "s"),
             entry.phase0TriggeredRate.toPercentString(1),
             entry.phase1ConnectionRate.toPercentString(1),
-            (entry.averagePhase1ConnectionFrame / 15.0).roundString(2, "s"),
+            (entry.averagePhase1ConnectionFrame / 15.0).roundToString(2, "s"),
             entry.phase1TriggeredRate.toPercentString(1),
             entry.phase2ConnectionRate.toPercentString(1),
-            (entry.averagePhase2ConnectionFrame / 15.0).roundString(2, "s"),
+            (entry.averagePhase2ConnectionFrame / 15.0).roundToString(2, "s"),
             entry.phase2TriggeredRate.toPercentString(1),
-            (entry.averagePhase2DelayFrame / 15.0).roundString(2, "s"),
+            (entry.averagePhase2DelayFrame / 15.0).roundToString(2, "s"),
         )
     }
 }

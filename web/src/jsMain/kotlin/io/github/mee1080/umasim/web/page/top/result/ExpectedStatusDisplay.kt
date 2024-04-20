@@ -25,10 +25,11 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.parts.HideBlock
-import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
+import io.github.mee1080.utility.roundToString
+import io.github.mee1080.utility.toPercentString
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -184,7 +185,9 @@ private fun ExpectedStatusTable(
 ) {
     Div({ style { marginTop(16.px) } }) {
         Div {
-            Text("トレーニング選択割合 " + typeRateList.joinToString(", ") { "${it.first.displayName}: ${(it.second * 100).round()}%" })
+            Text("トレーニング選択割合 " + typeRateList.joinToString(", ") {
+                "${it.first.displayName}: ${it.second.toPercentString(2)}"
+            })
         }
         Table({ classes(AppStyle.table) }) {
             Tr {
@@ -208,42 +211,42 @@ private fun ExpectedStatusTable(
             }
             Tr {
                 Th { Text("期待値") }
-                Td { Text(status.speed.round().toString()) }
-                Td { Text(status.stamina.round().toString()) }
-                Td { Text(status.power.round().toString()) }
-                Td { Text(status.guts.round().toString()) }
-                Td { Text(status.wisdom.round().toString()) }
-                Td { Text(status.skillPt.round().toString()) }
-                Td { Text(status.hp.round().toString()) }
+                Td { Text(status.speed.roundToString(2)) }
+                Td { Text(status.stamina.roundToString(2)) }
+                Td { Text(status.power.roundToString(2)) }
+                Td { Text(status.guts.roundToString(2)) }
+                Td { Text(status.wisdom.roundToString(2)) }
+                Td { Text(status.skillPt.roundToString(2)) }
+                Td { Text(status.hp.roundToString(2)) }
                 if (scenario == Scenario.GRAND_LIVE) {
-                    Td { Text(status.performance?.totalValue?.round().toString()) }
+                    Td { Text(status.performance?.totalValue?.roundToString(2) ?: "0.00") }
                 }
-                Td { Text(status.statusTotal.round().toString()) }
-                Td { Text((status.totalPlusSkillPt).round().toString()) }
+                Td { Text(status.statusTotal.roundToString(2)) }
+                Td { Text((status.totalPlusSkillPt).roundToString(2)) }
                 if (scenario == Scenario.GRAND_LIVE) {
-                    Td { Text(status.totalPlusSkillPtPerformance.round().toString()) }
+                    Td { Text(status.totalPlusSkillPtPerformance.roundToString(2)) }
                 }
-                Td { Text(evaluate(status).round().toString()) }
+                Td { Text(evaluate(status).roundToString(2)) }
             }
             Tr {
                 val sleep = status.hpToSleep()
                 Th { Text("+お休み") }
-                Td { Text(sleep.speed.round().toString()) }
-                Td { Text(sleep.stamina.round().toString()) }
-                Td { Text(sleep.power.round().toString()) }
-                Td { Text(sleep.guts.round().toString()) }
-                Td { Text(sleep.wisdom.round().toString()) }
-                Td { Text(sleep.skillPt.round().toString()) }
-                Td { Text(sleep.hp.round().toString()) }
+                Td { Text(sleep.speed.roundToString(2)) }
+                Td { Text(sleep.stamina.roundToString(2)) }
+                Td { Text(sleep.power.roundToString(2)) }
+                Td { Text(sleep.guts.roundToString(2)) }
+                Td { Text(sleep.wisdom.roundToString(2)) }
+                Td { Text(sleep.skillPt.roundToString(2)) }
+                Td { Text(sleep.hp.roundToString(2)) }
                 if (scenario == Scenario.GRAND_LIVE) {
-                    Td { Text(sleep.performance?.totalValue?.round().toString()) }
+                    Td { Text(sleep.performance?.totalValue?.roundToString(2) ?: "0.00") }
                 }
-                Td { Text(sleep.statusTotal.round().toString()) }
-                Td { Text((sleep.totalPlusSkillPt).round().toString()) }
+                Td { Text(sleep.statusTotal.roundToString(2)) }
+                Td { Text((sleep.totalPlusSkillPt).roundToString(2)) }
                 if (scenario == Scenario.GRAND_LIVE) {
-                    Td { Text(sleep.totalPlusSkillPtPerformance.round().toString()) }
+                    Td { Text(sleep.totalPlusSkillPtPerformance.roundToString(2)) }
                 }
-                Td { Text(evaluate(sleep).round().toString()) }
+                Td { Text(evaluate(sleep).roundToString(2)) }
             }
         }
     }

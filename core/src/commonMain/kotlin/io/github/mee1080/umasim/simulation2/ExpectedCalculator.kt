@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.util.applyIf
+import io.github.mee1080.utility.applyIf
 import kotlin.math.min
 import kotlin.math.pow
 
@@ -44,7 +44,7 @@ class ExpectedCalculator(
         healSkillCount: Int,
         accelSkillCount: Int,
         totalTrainingLevel: Int,
-        isLevelUpTurn:Boolean,
+        isLevelUpTurn: Boolean,
         val liveStatus: TrainingLiveStatus?,
         gmStatus: GmStatus?,
         lArcStatus: LArcStatus?,

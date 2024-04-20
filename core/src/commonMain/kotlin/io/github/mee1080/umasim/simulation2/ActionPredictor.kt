@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.util.applyIf
+import io.github.mee1080.utility.applyIf
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min

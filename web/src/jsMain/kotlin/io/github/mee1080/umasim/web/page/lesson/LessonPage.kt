@@ -24,9 +24,9 @@ import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.MdSlider
 import io.github.mee1080.umasim.web.components.atoms.onInput
 import io.github.mee1080.umasim.web.onClickOrTouch
-import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.LessonState
 import io.github.mee1080.umasim.web.vm.LessonViewModel
+import io.github.mee1080.utility.toPercentString
 import org.jetbrains.compose.web.attributes.ATarget
 import org.jetbrains.compose.web.attributes.size
 import org.jetbrains.compose.web.attributes.target
@@ -104,7 +104,7 @@ fun LessonPage(model: LessonViewModel, state: LessonState) {
         Div { Text(message) }
     }
     state.result.forEachIndexed { index, value ->
-        Div { Text("${index + 1}回: ${(value * 100).round()}%") }
+        Div { Text("${index + 1}回: ${value.toPercentString(2)}%") }
     }
     Div({ style { margin(32.px) } }) {
         Ul {

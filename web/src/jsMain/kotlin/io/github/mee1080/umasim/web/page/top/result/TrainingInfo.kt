@@ -27,13 +27,13 @@ import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
-import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
+import io.github.mee1080.utility.roundToString
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
@@ -288,12 +288,12 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     Th { Text("スキルPt") }
                 }
                 Tr {
-                    Td { Text(state.rawTrainingResult.speed.round(4).toString()) }
-                    Td { Text(state.rawTrainingResult.stamina.round(4).toString()) }
-                    Td { Text(state.rawTrainingResult.power.round(4).toString()) }
-                    Td { Text(state.rawTrainingResult.guts.round(4).toString()) }
-                    Td { Text(state.rawTrainingResult.wisdom.round(4).toString()) }
-                    Td { Text(state.rawTrainingResult.skillPt.round(4).toString()) }
+                    Td { Text(state.rawTrainingResult.speed.roundToString(4)) }
+                    Td { Text(state.rawTrainingResult.stamina.roundToString(4)) }
+                    Td { Text(state.rawTrainingResult.power.roundToString(4)) }
+                    Td { Text(state.rawTrainingResult.guts.roundToString(4)) }
+                    Td { Text(state.rawTrainingResult.wisdom.roundToString(4)) }
+                    Td { Text(state.rawTrainingResult.skillPt.roundToString(4)) }
                 }
             }
         }

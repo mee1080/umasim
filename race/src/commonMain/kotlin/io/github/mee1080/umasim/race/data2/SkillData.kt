@@ -3,7 +3,7 @@ package io.github.mee1080.umasim.race.data2
 import io.github.mee1080.umasim.race.calc2.RaceState
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
-import io.github.mee1080.umasim.race.roundPercentString
+import io.github.mee1080.utility.toPercentString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -66,9 +66,9 @@ class ApproximateStartContinue(
     }
 
     override val description = buildString {
-        append(start.roundPercentString(1))
+        append(start.toPercentString(1))
         append("%の確率で開始、")
-        append(continuation.roundPercentString(1))
+        append(continuation.toPercentString(1))
         append("%の確率で継続")
     }
 }
@@ -89,7 +89,7 @@ class ApproximateRandomRates(
 
     override val description = buildString {
         rates.forEach {
-            append(it.second.roundPercentString(1))
+            append(it.second.toPercentString(1))
             append("%の確率で")
             append(it.first)
             append("、")

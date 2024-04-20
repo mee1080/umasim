@@ -1,7 +1,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.util.sumMapOf
+import io.github.mee1080.utility.sumMapOf
 
 class UafScenarioEvents : CommonScenarioEvents() {
 

@@ -18,8 +18,8 @@
  */
 package io.github.mee1080.umasim.data
 
-import io.github.mee1080.umasim.util.diffIntMap
-import io.github.mee1080.umasim.util.sumMapOf
+import io.github.mee1080.utility.diffIntMap
+import io.github.mee1080.utility.sumMapOf
 import kotlin.math.max
 import kotlin.math.min
 

@@ -22,6 +22,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                implementation(project(":utility"))
                 implementation(libs.kotlinx.serializationJson)
                 implementation(libs.kotlinx.coroutinesCore)
             }

@@ -2,22 +2,12 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
-    alias(libs.plugins.kotlin.serialization)
 }
 
-group = "io.github.mee1080.umasim"
-version = "1.0"
-
 kotlin {
+    jvm()
 
-    jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
-        }
-    }
-
-    js("web", IR) {
-        useCommonJs()
+    js(IR) {
         browser()
         binaries.executable()
     }
@@ -31,10 +21,20 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(project(":utility"))
-                implementation(libs.kotlinx.coroutinesCore)
-                implementation(libs.kotlinx.serializationJson)
                 implementation(libs.kotlinx.collections.immutable)
+            }
+        }
+
+        val commonTest by getting {
+            dependencies {
+                implementation(libs.test.common)
+                implementation(libs.test.annotations)
+            }
+        }
+
+        val jvmTest by getting {
+            dependencies {
+                implementation(libs.test.junit)
             }
         }
     }

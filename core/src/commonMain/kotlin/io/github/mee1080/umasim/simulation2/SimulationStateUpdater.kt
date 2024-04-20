@@ -19,10 +19,10 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.util.applyIf
-import io.github.mee1080.umasim.util.applyIfNotNull
-import io.github.mee1080.umasim.util.mapIf
-import io.github.mee1080.umasim.util.sumMapOf
+import io.github.mee1080.utility.applyIf
+import io.github.mee1080.utility.applyIfNotNull
+import io.github.mee1080.utility.mapIf
+import io.github.mee1080.utility.sumMapOf
 import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
@@ -260,8 +260,8 @@ fun SimulationState.applyFriendEvent(
     relation: Int,
     outingStep: Int = 0,
 ): SimulationState {
-    val newMember = member.mapIf({ it.index == support.index }) {
-        copy(supportState = supportState?.let {
+    val newMember = member.mapIf({ it.index == support.index }) { member ->
+        member.copy(supportState = member.supportState?.let {
             it.copy(
                 relation = min(100, it.relation + relation),
                 outingStep = max(outingStep, it.outingStep),
@@ -541,7 +541,8 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
         .applyIf(action.knowledgeCount == 2) {
             addKnowledge(Knowledge(action.knowledgeFounder, action.knowledgeType))
         }.applyIf(action.knowledgeEventRate > Random.nextDouble()) {
-            newMember = member.mapIf({ it.card.chara == "ダーレーアラビアン" }) {
+            newMember = member.mapIf({ it.card.chara == "ダーレーアラビアン" }) { oldMember ->
+                val supportState = oldMember.supportState
                 val newSupportState = supportState?.copy(
                     passionTurn = if (!supportState.outingEnabled || supportState.passion) supportState.passionTurn else {
                         randomSelect(
@@ -553,7 +554,7 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
                     },
                     relation = min(100, supportState.relation + 5),
                 )
-                copy(supportState = newSupportState)
+                oldMember.copy(supportState = newSupportState)
             }
             // FIXME 色選択
             val founder = Founder.entries.random()
@@ -586,8 +587,8 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
         val ssMatchMemberIndex = action.member.map { it.index }
         val starGaugeMemberIndex = lArcAction.starGaugeMember.map { it.index }
         val relation = if (condition.contains("愛嬌○")) 9 else 7
-        val newMember = member.mapIf({ ssMatchMemberIndex.contains(it.index) }) {
-            val memberState = scenarioState as LArcMemberState
+        val newMember = member.mapIf({ ssMatchMemberIndex.contains(it.index) }) { oldMemver ->
+            val memberState = oldMemver.scenarioState as LArcMemberState
             val next = when (memberState.starLevel % 3) {
                 1 -> StarEffect.SkillHint
                 2 -> randomSelect(StarEffect.Status to 1, memberState.specialStarEffect to 1)
@@ -596,11 +597,11 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
             val newNextStarEffect = memberState.nextStarEffect.takeLast(2) + next
             val newMemberState = memberState.copy(
                 starLevel = memberState.starLevel + 1,
-                starGauge = if (starGaugeMemberIndex.contains(index)) 3 else 0,
+                starGauge = if (starGaugeMemberIndex.contains(oldMemver.index)) 3 else 0,
                 nextStarEffect = newNextStarEffect,
                 supporterPt = memberState.supporterPt + random(300, 500),
             )
-            copy(scenarioState = newMemberState).addRelation(relation)
+            oldMemver.copy(scenarioState = newMemberState).addRelation(relation)
         }
         updateLArcStatus {
             val newTotalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size
@@ -628,7 +629,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
     } else {
         val newState = if (lArcAction.mayEventChance && Random.nextDouble() < 0.4) {
             val newMember = member.mapIf({ it.charaName == "佐岳メイ" }) {
-                addRelation(if (condition.contains("愛嬌○")) 7 else 5)
+                it.addRelation(if (condition.contains("愛嬌○")) 7 else 5)
             }
             val addStatus = Status(guts = 3, skillPt = 3, motivation = if (Random.nextDouble() < 0.5) 1 else 0)
             val base = copy(
@@ -650,8 +651,8 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                     }.shuffled().take(5 - joinTargets.size).map { it.index }
                 val targets = joinTargets + notJoinTargets
                 val matchMember = base.member.mapIf({ targets.contains(it.index) }) {
-                    val lArcState = scenarioState as LArcMemberState
-                    copy(scenarioState = lArcState.copy(starGauge = lArcState.starGauge + 1))
+                    val lArcState = it.scenarioState as LArcMemberState
+                    it.copy(scenarioState = lArcState.copy(starGauge = lArcState.starGauge + 1))
                 }
                 base.copy(member = matchMember)
             }

@@ -25,8 +25,8 @@ import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
-import io.github.mee1080.umasim.util.applyIf
 import io.github.mee1080.umasim.web.state.*
+import io.github.mee1080.utility.applyIf
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString

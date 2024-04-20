@@ -26,7 +26,7 @@ import io.github.mee1080.umasim.web.components.atoms.MdClass
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.tertiary
 import io.github.mee1080.umasim.web.page.share.StatusTable
-import io.github.mee1080.umasim.web.round
+import io.github.mee1080.utility.roundToString
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Span
@@ -167,7 +167,7 @@ fun SelectionBlock(
                         }
                     }) {
                         if (targetAiScore != null) {
-                            Text("AIスコア：${targetAiScore.round(2)}")
+                            Text("AIスコア：${targetAiScore.roundToString(2)}")
                         }
                         if (aiSelection == index) {
                             Span({ style { fontWeight("bold") } }) { Text("[選択]") }

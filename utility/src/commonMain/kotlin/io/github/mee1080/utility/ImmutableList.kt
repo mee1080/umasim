@@ -1,4 +1,4 @@
-package io.github.mee1080.umasim.compose.common.lib
+package io.github.mee1080.utility
 
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.PersistentList

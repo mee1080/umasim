@@ -29,7 +29,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(kotlin("stdlib"))
+                implementation(project(":utility"))
                 implementation(project(":race"))
                 implementation(compose.runtime)
                 implementation(compose.material3)

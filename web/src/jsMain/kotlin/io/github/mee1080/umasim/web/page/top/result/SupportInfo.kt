@@ -26,11 +26,12 @@ import io.github.mee1080.umasim.web.components.atoms.disabled
 import io.github.mee1080.umasim.web.components.atoms.onChange
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
-import io.github.mee1080.umasim.web.round
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
+import io.github.mee1080.utility.roundToString
+import io.github.mee1080.utility.toPercentString
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
@@ -52,7 +53,7 @@ fun SupportInfo(model: ViewModel, state: State) {
             }
             if (state.uafState.athleticsLevelUpRate.isNotEmpty()) {
                 Div {
-                    Text("期待値：${state.uafState.expectedAthleticsLevelUp.round(3)}")
+                    Text("期待値：${state.uafState.expectedAthleticsLevelUp.roundToString(3)}")
                 }
                 Table({ classes(AppStyle.table) }) {
                     Tr {
@@ -68,7 +69,7 @@ fun SupportInfo(model: ViewModel, state: State) {
                     state.uafState.athleticsLevelUpRate.forEach { (level, rate) ->
                         Tr {
                             Td { Text(level.toString()) }
-                            Td { Text("${(rate * 100).round(4)}%") }
+                            Td { Text(rate.toPercentString(4)) }
                             Td({ style { property("border", "unset") } }) {
                                 Div({
                                     style {

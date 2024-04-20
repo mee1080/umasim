@@ -20,7 +20,8 @@ package io.github.mee1080.umasim.data
 
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
-import io.github.mee1080.umasim.util.replace
+import io.github.mee1080.utility.replaceItem
+import io.github.mee1080.utility.replaced
 
 private val baseTrainingFactorMap = (0..200).associateWith {
     when {
@@ -215,8 +216,8 @@ data class LArcMemberState(
             StarEffect.SkillHint
         ).shuffled()
         val nextStarEffect = when (charaName) {
-            "ゴールドシップ" -> nextStarEffectBase.replace(0) { StarEffect.Aikyou }
-            "エルコンドルパサー" -> nextStarEffectBase.replace(StarEffect.Status, StarEffect.GoodTraining)
+            "ゴールドシップ" -> nextStarEffectBase.replaced(0) { StarEffect.Aikyou }
+            "エルコンドルパサー" -> nextStarEffectBase.replaceItem(StarEffect.Status, StarEffect.GoodTraining)
             else -> nextStarEffectBase
         }
         return copy(

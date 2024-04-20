@@ -1,10 +1,10 @@
 package io.github.mee1080.umasim.store.operation
 
-import io.github.mee1080.umasim.race.averageOf
 import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
+import io.github.mee1080.utility.averageOf
 
 private val simulationTag = OnRunning.Tag()
 

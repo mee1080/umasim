@@ -1,7 +1,7 @@
 package io.github.mee1080.umasim.data
 
-import io.github.mee1080.umasim.util.mapValuesIf
-import io.github.mee1080.umasim.util.replace
+import io.github.mee1080.utility.mapValuesIf
+import io.github.mee1080.utility.replaced
 
 enum class Founder(val charaName: String, val colorName: String) {
     Red("ダーレーアラビアン", "赤"),
@@ -55,7 +55,7 @@ data class GmStatus(
 
     fun addKnowledge(knowledge: Knowledge): GmStatus {
         if (waitingWisdom != null) return this
-        val newFragmentCount = fragmentCount.replace(knowledge.type) { it + 1 }
+        val newFragmentCount = fragmentCount.replaced(knowledge.type) { it + 1 }
         val newKnowledgeTable1 = knowledgeTable1 + knowledge
         var newKnowledgeTable2 = knowledgeTable2
         var newKnowledgeTable3 = knowledgeTable3

@@ -22,7 +22,7 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
-import io.github.mee1080.umasim.util.replace
+import io.github.mee1080.utility.replaced
 
 // https://fonts.google.com/icons
 enum class Page(val displayName: String, val icon: String) {
@@ -450,13 +450,13 @@ data class GmState(
             val bonus = knowledgeTable[index]?.bonus ?: if (index >= 8) 2 else 1
             Knowledge(Founder.Red, value, bonus)
         }
-        return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
+        return copy(knowledgeTable = knowledgeTable.replaced(index) { knowledge })
     }
 
     fun updateBonus(index: Int, value: Int): GmState {
         val type = knowledgeTable[index]?.type ?: return this
         val knowledge = Knowledge(Founder.Red, type, value)
-        return copy(knowledgeTable = knowledgeTable.replace(index) { knowledge })
+        return copy(knowledgeTable = knowledgeTable.replaced(index) { knowledge })
     }
 
     fun clearKnowledge(): GmState {
