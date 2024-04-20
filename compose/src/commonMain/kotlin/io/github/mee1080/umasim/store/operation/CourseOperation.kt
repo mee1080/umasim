@@ -6,8 +6,6 @@ import io.github.mee1080.umasim.race.data.trackData
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.DirectOperation
 
-val trackNameToId = trackData.entries.associate { it.value.name to it.key }
-
 fun setLocation(location: Int) = DirectOperation<AppState> { state ->
     state.updateSetting { setting ->
         if (location == setting.track.location) {

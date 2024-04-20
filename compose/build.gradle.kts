@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
 plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.multiplatform)
+    alias(libs.plugins.kotlin.serialization)
 }
 
 group = "io.github.mee1080.umasim"
@@ -36,8 +37,10 @@ kotlin {
                 implementation(compose.materialIconsExtended)
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
+                implementation(libs.kotlinx.serializationJson)
                 implementation(libs.kotlinx.collections.immutable)
                 implementation(libs.kotlinx.coroutinesCore)
+                implementation(libs.multiplatform.settings)
                 implementation(libs.koalaplot.core)
             }
         }

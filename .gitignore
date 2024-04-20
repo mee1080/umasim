@@ -1,5 +1,6 @@
 /result/
 /settings.json*
+settings.conf
 
 .gradle
 .idea

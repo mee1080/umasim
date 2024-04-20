@@ -21,11 +21,12 @@ import io.github.mee1080.umasim.store.AppContextImpl
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.framework.StateHolder
+import io.github.mee1080.umasim.store.loadSetting
 
 @Composable
 fun App() {
     val stateHolder = remember {
-        StateHolder(AppContextImpl(), mainDispatcher, asyncDispatcher, AppState())
+        StateHolder(AppContextImpl(), mainDispatcher, asyncDispatcher, AppState().loadSetting())
     }
     val coroutineScope = rememberCoroutineScope()
     val dispatch = remember { OperationDispatcher(stateHolder, coroutineScope) }

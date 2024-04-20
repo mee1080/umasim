@@ -4,9 +4,10 @@ import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.DirectOperation
+import io.github.mee1080.umasim.store.saveSetting
 
 fun setSimulationCount(value: Int) = DirectOperation<AppState> { state ->
-    state.copy(simulationCount = value)
+    state.copy(simulationCount = value).also { it.saveSetting() }
 }
 
 fun setSkillActivateAdjustment(value: SkillActivateAdjustment) = DirectOperation<AppState> { state ->

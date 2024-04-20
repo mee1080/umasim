@@ -12,6 +12,7 @@ kotlin = "1.9.23"
 kotlinx-collections-immutable = "0.3.7"
 kotlinx-coroutines = "1.8.0"
 kotlinx-serializationJson = "1.6.3"
+multiplatform-settings = "1.1.1"
 ktor = "2.3.7"
 slf4j = "2.0.13"
 sqlite-jdbc = "3.45.3.0"
@@ -32,6 +33,7 @@ kotlinx-coroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-co
 kotlinx-coroutinesTest = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinx-coroutines" }
 kotlinx-serializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serializationJson" }
 ktor-clientCio = { module = "io.ktor:ktor-client-cio", version.ref = "ktor" }
+multiplatform-settings = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatform-settings" }
 slf4j-nop = { module = "org.slf4j:slf4j-nop", version.ref = "slf4j" }
 sqlite-jdbc = { module = "org.xerial:sqlite-jdbc", version.ref = "sqlite-jdbc" }
 test-common = { module = "org.jetbrains.kotlin:kotlin-test-common", version.ref = "kotlin" }

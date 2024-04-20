@@ -26,8 +26,11 @@ import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.umasim.race.data2.Invoke
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.approximateConditions
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlin.math.*
 
+@Serializable
 data class UmaStatus(
     val speed: Int = 1700,
     val stamina: Int = 1300,
@@ -43,6 +46,7 @@ data class UmaStatus(
     val basicRunningStyle get() = style
 }
 
+@Serializable
 data class Track(
     val location: Int = 10001,
     val course: Int = 10101,
@@ -334,8 +338,10 @@ class RaceState(
     }
 }
 
+@Serializable
 data class RaceSetting(
     val umaStatus: UmaStatus = UmaStatus(),
+    @Transient
     val hasSkills: List<SkillData> = emptyList(),
     val uniqueLevel: Int = 6,
     val passiveTriggered: Int = 0,

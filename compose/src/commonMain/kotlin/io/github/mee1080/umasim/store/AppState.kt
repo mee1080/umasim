@@ -3,18 +3,46 @@ package io.github.mee1080.umasim.store
 import androidx.compose.runtime.Stable
 import io.github.mee1080.umasim.race.calc2.RaceFrame
 import io.github.mee1080.umasim.race.calc2.RaceSetting
+import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.framework.State
+import io.github.mee1080.umasim.store.operation.updateSetting
+import io.github.mee1080.utility.decodeFromStringOrNull
+import io.github.mee1080.utility.encodeToString
+import io.github.mee1080.utility.persistentSettings
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 const val NOT_SELECTED = "(未選択)"
 
+private const val KEY_APP_STATE_AUTO_SAVE = "race.appStateAutoSave"
+
+fun AppState.loadSetting(): AppState {
+    val savedSetting = persistentSettings.getStringOrNull(KEY_APP_STATE_AUTO_SAVE)?.let {
+        decodeFromStringOrNull<AppState>(it)
+    }?.let { base ->
+        base.updateSetting { setting ->
+            setting.copy(hasSkills = skillData2.filter { base.skillIdSet.contains(it.id) })
+        }
+    }
+    return savedSetting ?: this
+}
+
+fun AppState.saveSetting() {
+    persistentSettings.putString(KEY_APP_STATE_AUTO_SAVE, encodeToString(this))
+}
+
 @Stable
+@Serializable
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
     val charaName: String = NOT_SELECTED,
     val skillIdSet: Set<String> = emptySet(),
     val simulationCount: Int = 100,
+    @Transient
     val simulationProgress: Int = 0,
+    @Transient
     val simulationSummary: SimulationSummary? = null,
+    @Transient
     val graphData: GraphData? = null,
 ) : State
 
