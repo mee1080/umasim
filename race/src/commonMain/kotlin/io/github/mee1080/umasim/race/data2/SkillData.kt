@@ -67,9 +67,9 @@ class ApproximateStartContinue(
 
     override val description = buildString {
         append(start.toPercentString(1))
-        append("%の確率で開始、")
+        append("の確率で開始、")
         append(continuation.toPercentString(1))
-        append("%の確率で継続")
+        append("の確率で継続")
     }
 }
 
@@ -90,7 +90,7 @@ class ApproximateRandomRates(
     override val description = buildString {
         rates.forEach {
             append(it.second.toPercentString(1))
-            append("%の確率で")
+            append("の確率で")
             append(it.first)
             append("、")
         }

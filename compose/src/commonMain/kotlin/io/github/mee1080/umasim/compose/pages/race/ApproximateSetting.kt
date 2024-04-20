@@ -62,7 +62,7 @@ fun ApproximateSetting() {
 
         Column {
             Text("追い比べ", style = MaterialTheme.typography.titleLarge)
-            Text("最終直線で1秒毎に、${systemSetting.competeFightRate.toPercentString()}%の確率で発動します")
+            Text("最終直線で1秒毎に、${systemSetting.competeFightRate.toPercentString()}の確率で発動します")
         }
 
         Column {
@@ -73,17 +73,17 @@ fun ApproximateSetting() {
 
         Column {
             Text("持久力温存", style = MaterialTheme.typography.titleLarge)
-            Text("体力が足りていなければ、${systemSetting.staminaKeepRate.toPercentString()}%の確率で発動します")
+            Text("体力が足りていなければ、${systemSetting.staminaKeepRate.toPercentString()}の確率で発動します")
         }
 
         Column {
             Text("位置取り調整", style = MaterialTheme.typography.titleLarge)
-            Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.toPercentString()}%の確率で発動します")
+            Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.toPercentString()}の確率で発動します")
         }
 
         Column {
             Text("リード確保", style = MaterialTheme.typography.titleLarge)
-            Text("追込以外で、${systemSetting.secureLeadRate.toPercentString()}%の確率で発動します")
+            Text("追込以外で、${systemSetting.secureLeadRate.toPercentString()}の確率で発動します")
         }
 
         Column {
