@@ -50,52 +50,66 @@ fun SummaryOutput(state: AppState) {
     }
 }
 
+private val tableHeader = listOf(
+    "",
+    "平均タイム",
+    "最速タイム",
+    "最遅タイム",
+    "平均余剰耐力",
+    "最大余剰耐力",
+    "最小余剰耐力",
+    "位置取り調整回数",
+    "持久力温存発生率",
+    "持久力温存平均距離",
+)
+
 @Composable
 private fun SummaryTable(summary: SimulationSummary) {
-    val tableData = buildList {
-        add(
-            listOf(
-                "",
-                "平均タイム",
-                "最速タイム",
-                "最遅タイム",
-                "平均余剰耐力",
-                "最大余剰耐力",
-                "最小余剰耐力"
-            )
-        )
-        add(toTableData("全体", summary.allSummary))
-        add(toTableData("最大スパート", summary.spurtSummary))
-        add(toTableData("非最大スパート", summary.notSpurtSummary))
-    }
-    LinedTable(
-        rowCount = 4, columnCount = 7,
-        modifier = Modifier.fillMaxWidth(),
-        cellBackground = MaterialTheme.colorScheme.surface,
-        cellPadding = 4.dp,
-    ) { row, column ->
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = when {
-                row == 0 -> Alignment.CenterHorizontally
-                column == 0 -> Alignment.Start
-                else -> Alignment.End
-            },
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(tableData[row][column])
+    Column {
+        val scrollState = rememberScrollState()
+        val tableData = buildList {
+            add(tableHeader)
+            add(toTableData("全体", summary.allSummary))
+            add(toTableData("最大スパート", summary.spurtSummary))
+            add(toTableData("非最大スパート", summary.notSpurtSummary))
         }
+        LinedTable(
+            rowCount = 4, columnCount = 10,
+            modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
+            cellBackground = MaterialTheme.colorScheme.surface,
+            cellPadding = 4.dp,
+        ) { row, column ->
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = when {
+                    row == 0 -> Alignment.CenterHorizontally
+                    column == 0 -> Alignment.Start
+                    else -> Alignment.End
+                },
+                verticalArrangement = Arrangement.Center,
+            ) {
+                Text(tableData[row][column])
+            }
+        }
+        HorizontalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.fillMaxWidth())
     }
 }
 
 private fun toTableData(label: String, entry: SimulationSummaryEntry): List<String> {
     return if (entry.count == 0) {
-        listOf(label, "-", "-", "-", "-", "-", "-")
+        listOf(label, "-", "-", "-", "-", "-", "-", "-", "-", "-")
     } else {
         listOf(
             label,
-            entry.averageTime.toTimeString(), entry.bestTime.toTimeString(), entry.worstTime.toTimeString(),
-            entry.averageSp.roundString(1), entry.bestSp.roundString(1), entry.worstSp.roundString(1),
+            entry.averageTime.toTimeString(),
+            entry.bestTime.toTimeString(),
+            entry.worstTime.toTimeString(),
+            entry.averageSp.roundString(1),
+            entry.bestSp.roundString(1),
+            entry.worstSp.roundString(1),
+            entry.positionCompetitionCount.roundString(2),
+            entry.staminaKeepRate.toPercentString(2),
+            entry.staminaKeepDistance.roundString(1),
         )
     }
 }

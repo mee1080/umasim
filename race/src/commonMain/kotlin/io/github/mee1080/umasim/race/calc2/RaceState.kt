@@ -642,6 +642,9 @@ class RaceSimulationState(
     var startDelayCount: Int = 0,
     var sectionTargetSpeedRandoms: List<Double> = emptyList(),
 
+    var positionCompetitionCount: Int = 0,
+    var staminaKeepStart: Double = 0.0,
+    var staminaKeepDistance: Double = 0.0,
     val frames: MutableList<RaceFrame> = mutableListOf(),
 ) {
     val isInTemptation: Boolean
@@ -718,6 +721,8 @@ data class RaceSimulationResult(
     val raceTimeDelta: Double,
     val maxSpurt: Boolean,
     val spDiff: Double,
+    val positionCompetitionCount: Int,
+    val staminaKeepDistance: Double,
 )
 
 class InvokedSkill(

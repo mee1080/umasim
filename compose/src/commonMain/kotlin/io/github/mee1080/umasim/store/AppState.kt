@@ -36,6 +36,9 @@ data class SimulationSummaryEntry(
     val averageSp: Double = 0.0,
     val bestSp: Double = 0.0,
     val worstSp: Double = 0.0,
+    val positionCompetitionCount: Double = 0.0,
+    val staminaKeepRate: Double = 0.0,
+    val staminaKeepDistance: Double = 0.0,
 )
 
 data class SimulationSkillInfo(

@@ -252,7 +252,10 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             }
         } else if (currentSection == 16) {
             simulation.positionCompetition = false
-            simulation.staminaKeep = false
+            if (simulation.staminaKeep) {
+                simulation.staminaKeepDistance += simulation.position - simulation.staminaKeepStart
+                simulation.staminaKeep = false
+            }
             simulation.secureLead = false
         }
 
@@ -444,6 +447,8 @@ private fun RaceState.goal(): RaceSimulationResult {
         raceTimeDelta = raceTimeDelta,
         maxSpurt = simulation.maxSpurt,
         spDiff = simulation.spurtParameters?.spDiff ?: 0.0,
+        positionCompetitionCount = simulation.positionCompetitionCount,
+        staminaKeepDistance = simulation.staminaKeepDistance,
     )
 }
 
@@ -464,15 +469,23 @@ fun RaceState.applyPositionCompetition() {
     if (simulation.sp < requiredSp * Random.nextDouble(1.035, 1.04) && Random.nextDouble() < system.staminaKeepRate) {
         // 持久力温存
         simulation.staminaKeep = true
+        simulation.staminaKeepStart = simulation.position
         simulation.positionCompetitionNextFrame = Int.MAX_VALUE
-    } else if (Random.nextDouble() < system.positionCompetitionRate) {
-        // 2秒間位置取り調整
-        simulation.positionCompetition = true
-        simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
-        simulation.sp -= setting.positionCompetitionStamina
     } else {
-        // 2秒後に再判定
-        simulation.positionCompetition = false
-        simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+        if (simulation.staminaKeep) {
+            simulation.staminaKeepDistance += simulation.position - simulation.staminaKeepStart
+            simulation.staminaKeep = false
+        }
+        if (Random.nextDouble() < system.positionCompetitionRate) {
+            // 2秒間位置取り調整
+            simulation.positionCompetition = true
+            simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+            simulation.sp -= setting.positionCompetitionStamina
+            simulation.positionCompetitionCount++
+        } else {
+            // 2秒後に再判定
+            simulation.positionCompetition = false
+            simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+        }
     }
 }

@@ -62,6 +62,9 @@ private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntr
         averageSp = result.averageOf { it.spDiff },
         bestSp = result.maxOf { it.spDiff },
         worstSp = result.minOf { it.spDiff },
+        positionCompetitionCount = result.averageOf { it.positionCompetitionCount.toDouble() },
+        staminaKeepRate = result.count { it.staminaKeepDistance > 0.0 } / result.size.toDouble(),
+        staminaKeepDistance = result.averageOf { it.staminaKeepDistance },
     )
 }
 
