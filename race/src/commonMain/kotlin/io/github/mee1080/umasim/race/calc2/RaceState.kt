@@ -29,10 +29,10 @@ import io.github.mee1080.umasim.race.data2.approximateConditions
 import kotlin.math.*
 
 data class UmaStatus(
-    val speed: Int = 1600,
-    val stamina: Int = 1000,
+    val speed: Int = 1700,
+    val stamina: Int = 1300,
     val power: Int = 1300,
-    val guts: Int = 1000,
+    val guts: Int = 1200,
     val wisdom: Int = 1200,
     val condition: Condition = Condition.BEST,
     val style: Style = Style.OI,
