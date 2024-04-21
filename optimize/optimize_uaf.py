@@ -36,6 +36,7 @@ def objective(trial):
     consultAthleticRequired = trial.suggest_float ('consultAthleticRequired', 0.0, 5.0, step=0.2)
     consultHeatUpStatus = trial.suggest_float ('consultHeatUpStatus', 0.0, 5.0, step=0.2)
 
+    """
     cmd = f'java -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count 50000 --scenario UAF'\
           f' --chara "[プラタナス・ウィッチ]スイープトウショウ" 5 5'\
@@ -72,6 +73,44 @@ def objective(trial):
           f' --athletic-bonus {athleticBonus3} --consult-min {consultMin}'\
           f' --consult-athletic-required {consultAthleticRequired} --consult-heat-up-status {consultHeatUpStatus}'\
           f''
+    """
+
+    cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
+          f' --count 50000 --scenario UAF'\
+          f' --chara "サクラローレル" 5 5'\
+          f' --support "[血脈の胎動]ドゥラメンテ" 4'\
+          f' --support "[大望は飛んでいく]エルコンドルパサー" 4'\
+          f' --support "[大地と我らのアンサンブル]サウンズオブアース" 4'\
+          f' --support "[只、君臨す。]オルフェーヴル" 4'\
+          f' --support "[君と見る泡沫]マンハッタンカフェ" 4'\
+          f' --support "[共に描くキラメキ]都留岐涼花" 4'\
+          f' --factor POWER 3 --factor POWER 3 --factor POWER 3'\
+          f' --factor POWER 3 --factor POWER 3 --factor POWER 3'\
+          f' --evaluate SPEED 1.1 2200'\
+          f' --evaluate STAMINA 1.1 1500'\
+          f' --evaluate POWER 1.1 1500'\
+          f' --evaluate GUTS 1.2 1200'\
+          f' --evaluate WISDOM 1.1 1400'\
+          f' --relation NONE 0 {relation}'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp1} --motivation {motivation}'\
+          f' --hp-keep {hpKeep1} --risk {risk1}'\
+          f' --athletic-base {athleticBase1} --athletic-required {athleticRequired1}'\
+          f' --athletic-bonus {athleticBonus1} --consult-min {consultMin}'\
+          f' --consult-athletic-required {consultAthleticRequired} --consult-heat-up-status {consultHeatUpStatus}'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp2} --motivation {motivation}'\
+          f' --hp-keep {hpKeep2} --risk {risk2}'\
+          f' --athletic-base {athleticBase2} --athletic-required {athleticRequired2}'\
+          f' --athletic-bonus {athleticBonus2} --consult-min {consultMin}'\
+          f' --consult-athletic-required {consultAthleticRequired} --consult-heat-up-status {consultHeatUpStatus}'\
+          f' --speed {speed} --stamina {stamina} --power {power} --guts {guts}'\
+          f' --wisdom {wisdom} --skill-pt {skillPt} --hp {hp1} --motivation {motivation}'\
+          f' --hp-keep {hpKeep3} --risk {risk3}'\
+          f' --athletic-base {athleticBase3} --athletic-required {athleticRequired3}'\
+          f' --athletic-bonus {athleticBonus3} --consult-min {consultMin}'\
+          f' --consult-athletic-required {consultAthleticRequired} --consult-heat-up-status {consultHeatUpStatus}'\
+          f''
 
     print(cmd)
     score = subprocess.Popen(cmd, stdout=subprocess.PIPE, shell=True).communicate()[0]
@@ -79,7 +118,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='uaf_s2p1g1w1_1',
+    study_name='uaf_s2h1g1w1_1',
     storage='sqlite:///optuna_study_uaf.db',
     load_if_exists=True,
     direction='maximize'

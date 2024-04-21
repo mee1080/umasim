@@ -10,7 +10,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.simulation2.Runner
-import io.github.mee1080.umasim.util.replace
+import io.github.mee1080.utility.replaced
 import kotlinx.coroutines.runBlocking
 
 class CliMain : CliktCommand() {
@@ -234,7 +234,7 @@ class CliMain : CliktCommand() {
             else -> Runner.lArcFlatEvaluateSetting
         }
         val evaluateSetting = evaluate.fold(evaluateSettingBase) { acc, setting ->
-            acc.replace(StatusType.valueOf(setting.first), setting.second.toDouble() to setting.third.toInt())
+            acc.replaced(StatusType.valueOf(setting.first), setting.second.toDouble() to setting.third.toInt())
         }
         val result = runBlocking {
             Runner.runAndEvaluate(

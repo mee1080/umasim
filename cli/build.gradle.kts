@@ -9,6 +9,7 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":utility"))
     implementation(project(":core"))
     implementation(project(":jvm"))
     implementation(kotlin("stdlib"))
