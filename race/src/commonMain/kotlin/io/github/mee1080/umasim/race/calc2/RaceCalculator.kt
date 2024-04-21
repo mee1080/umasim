@@ -106,8 +106,10 @@ private fun RaceSetting.applyPassive(system: SystemSetting, invokedSkills: List<
 private fun RaceState.triggerStartSkills() {
     val skills = mutableListOf<InvokedSkill>()
     setting.passiveBonus.skills.forEach { skill ->
-        triggerSkill(skill)
-        skills += skill
+        if (!skill.invoke.isStart) {
+            triggerSkill(skill)
+            skills += skill
+        }
     }
     simulation.invokedSkills.forEach { skill ->
         if (skill.invoke.isStart) {
