@@ -282,6 +282,7 @@ data class Invoke(
     val effects: List<SkillEffect> = emptyList(),
     val cd: Double = 500.0,
     val duration: Double = 0.0,
+    val durationSpecial: Int = 1,
 ) {
 
     fun applyLevel(level: Int): Invoke {
@@ -291,7 +292,7 @@ data class Invoke(
     }
 
     val messages by lazy {
-        toMessages(preConditions) + toMessages(conditions) + effects.flatMap { it.messages }
+        toMessages(preConditions) + toMessages(conditions) + durationMessage + effects.flatMap { it.messages }
     }
 
     private fun toMessages(target: List<List<SkillCondition>>): Set<String> {
@@ -438,6 +439,68 @@ data class Invoke(
     fun totalSpeed(state: RaceState): Double {
         return targetSpeed(state) + speedWithDecel(state)
     }
+
+    private val durationMessage by lazy {
+        buildList {
+            when (durationSpecial) {
+                2 -> add("先頭との距離は最大（1.6倍）固定")
+                4 -> add("発動直後に2回追い抜く条件で近似")
+            }
+        }
+    }
+
+    fun calcDuration(state: RaceState): Double {
+        return when (durationSpecial) {
+            1 -> duration
+
+            2 -> {
+                // 先頭から離されているとその距離が遠いほど（113転び114起き）
+                // min(0.8+戦闘からの距離 / 62.5m, 1.6)
+                duration * 1.6
+            }
+
+            3 -> {
+                // 残りの持久力
+                val sp = state.simulation.sp
+                duration * when {
+                    sp < 2000 -> 1.0
+                    sp < 2400 -> 1.5
+                    sp < 2600 -> 2.0
+                    sp < 2800 -> 2.2
+                    sp < 3000 -> 2.5
+                    sp < 3200 -> 3.0
+                    sp < 3500 -> 3.5
+                    else -> 4.0
+                }
+            }
+
+            4 -> {
+                // 効果中に追い抜くと3回まで効果と時間が増える
+                // 1回あたり+1
+                duration + 2.0
+            }
+
+            5 -> {
+                // レース中盤に連続して競り合い続けた時間が長いほど（CHERRY☆スクランブル）
+                // <2：1.0、<4：2.0、<6：3.0、>=6：4.0
+                duration * 3.0
+            }
+
+            7 -> {
+                // 残りの持久力（ごろりん！？パワードライブ）
+                val sp = state.simulation.sp
+                duration * when {
+                    sp < 1500 -> 1.0
+                    sp < 1800 -> 1.5
+                    sp < 2000 -> 2.0
+                    sp < 2100 -> 2.5
+                    else -> 3.0
+                }
+            }
+
+            else -> duration
+        }
+    }
 }
 
 @Serializable
@@ -481,7 +544,7 @@ data class SkillEffect(
                 19 -> add("先頭から離れている条件は満たす前提")
                 20 -> add("中盤連続競り合いは4～6秒（3.0倍）固定")
                 24 -> add("海外適性Lv合計は最大値前提")
-                25 -> add("終盤開始までに取ったリードの距離は10m～25m（1.4倍）固定")
+                25 -> add("終盤開始までに取ったリードの距離は最大（1.8倍）固定")
                 26 -> add("UAFは全勝前提")
             }
         }
@@ -597,7 +660,7 @@ data class SkillEffect(
             25 -> {
                 // 終盤開始までに取ったリードの距離に応じて効果が増える（Billions of stars）
                 // <10：1.0、<25：1.4、>=25：1.8
-                value * 1.4
+                value * 1.8
             }
 
             26 -> {

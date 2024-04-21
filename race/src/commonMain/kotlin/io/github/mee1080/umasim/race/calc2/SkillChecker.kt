@@ -440,6 +440,7 @@ fun RaceState.triggerSkill(skill: InvokedSkill) {
             skill.invoke.totalSpeed(this),
             skill.invoke.currentSpeed(this),
             skill.invoke.acceleration(this),
+            skill.invoke.calcDuration(this),
         )
     }
     if (skill.invoke.isSpeedWithDecel) {

@@ -733,10 +733,8 @@ data class OperatingSkill(
     val totalSpeed: Double,
     val currentSpeed: Double,
     val acceleration: Double,
-    val durationOverwrite: Double? = null,
-) {
-    val duration: Double get() = durationOverwrite ?: data.invoke.duration
-}
+    val duration: Double,
+)
 
 data class RaceFrame(
     val speed: Double,
