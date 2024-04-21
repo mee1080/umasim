@@ -7,6 +7,7 @@ import io.github.mee1080.utility.toPercentString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
+import kotlin.math.min
 import kotlin.random.Random
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -255,7 +256,7 @@ data class Invoke(
     }
 
     val messages by lazy {
-        toMessages(preConditions) + toMessages(conditions)
+        toMessages(preConditions) + toMessages(conditions) + effects.flatMap { it.messages }
     }
 
     private fun toMessages(target: List<List<SkillCondition>>): Set<String> {
@@ -300,76 +301,107 @@ data class Invoke(
         }
     }
 
+    private val effectsByTypeMap by lazy {
+        effects.groupBy { it.type }
+    }
+
+    private fun effectsByType(type: String): List<SkillEffect> {
+        return effectsByTypeMap.getOrElse(type) { emptyList() }
+    }
+
+    private fun totalEffect(state: RaceState, type: String): Double {
+        return effectsByType(type).sumOf { it.calcValue(state) }
+    }
+
     val isPassive by lazy {
-        passiveSpeed > 0 || passiveStamina > 0 || passivePower > 0 || passiveGuts > 0 || passiveWisdom > 0 || temptationRate > 0
+        effectsByTypeMap.containsKey("passiveAll")
+                || effectsByTypeMap.containsKey("passiveSpeed")
+                || effectsByTypeMap.containsKey("passiveStamina")
+                || effectsByTypeMap.containsKey("passivePower")
+                || effectsByTypeMap.containsKey("passiveGuts")
+                || effectsByTypeMap.containsKey("passiveWisdom")
+                || effectsByTypeMap.containsKey("temptationRate")
     }
 
     val isStart by lazy {
-        startAdd > 0.0 || startMultiply > 0.0
+        effectsByTypeMap.containsKey("startAdd")
+                || effectsByTypeMap.containsKey("startMultiply")
     }
 
-    val passiveSpeed by lazy {
-        effects.filter { it.type == "passiveSpeed" || it.type == "passiveAll" }.sumOf { it.value } / 10000
+    private fun passiveAll(state: RaceState): Double {
+        return totalEffect(state, "passiveAll") / 10000.0
     }
 
-    val passiveStamina by lazy {
-        effects.filter { it.type == "passiveStamina" || it.type == "passiveAll" }.sumOf { it.value } / 10000
+    fun passiveSpeed(state: RaceState): Double {
+        return passiveAll(state) + totalEffect(state, "passiveSpeed") / 10000.0
     }
 
-    val passivePower by lazy {
-        effects.filter { it.type == "passivePower" || it.type == "passiveAll" }.sumOf { it.value } / 10000
+    fun passiveStamina(state: RaceState): Double {
+        return passiveAll(state) + totalEffect(state, "passiveStamina") / 10000.0
     }
 
-    val passiveGuts by lazy {
-        effects.filter { it.type == "passiveGuts" || it.type == "passiveAll" }.sumOf { it.value } / 10000
+    fun passivePower(state: RaceState): Double {
+        return passiveAll(state) + totalEffect(state, "passivePower") / 10000.0
     }
 
-    val passiveWisdom by lazy {
-        effects.filter { it.type == "passiveWisdom" || it.type == "passiveAll" }.sumOf { it.value } / 10000
+    fun passiveGuts(state: RaceState): Double {
+        return passiveAll(state) + totalEffect(state, "passiveGuts") / 10000.0
+    }
+
+    fun passiveWisdom(state: RaceState): Double {
+        return passiveAll(state) + totalEffect(state, "passiveWisdom") / 10000.0
     }
 
     val oonige by lazy {
-        effects.any { it.type == "oonige" }
+        effectsByTypeMap.containsKey("oonige")
     }
 
-    val heal by lazy {
-        effects.filter { it.type == "heal" }.sumOf { it.value }
+    val isHeal by lazy {
+        effectsByTypeMap.containsKey("heal")
     }
 
-    val startMultiply by lazy {
-        effects.filter { it.type == "startMultiply" }.sumOf { it.value } / 10000.0
+    fun heal(state: RaceState): Double {
+        return totalEffect(state, "heal")
     }
 
-    val startAdd by lazy {
-        effects.filter { it.type == "startAdd" }.sumOf { it.value } / 10000.0
+    fun startMultiply(state: RaceState): Double {
+        return totalEffect(state, "startMultiply") / 10000.0
     }
 
-    val currentSpeed by lazy {
-        effects.filter { it.type == "currentSpeed" }.sumOf { it.value } / 10000.0
+    fun startAdd(state: RaceState): Double {
+        return totalEffect(state, "startAdd") / 10000.0
     }
 
-    val speedWithDecel by lazy {
-        effects.filter { it.type == "speedWithDecel" }.sumOf { it.value } / 10000.0
+    fun currentSpeed(state: RaceState): Double {
+        return totalEffect(state, "currentSpeed") / 10000.0
     }
 
-    val targetSpeed by lazy {
-        effects.filter { it.type == "targetSpeed" }.sumOf { it.value } / 10000.0
+    val isSpeedWithDecel by lazy {
+        effectsByTypeMap.containsKey("speedWithDecel")
     }
 
-    val temptationRate by lazy {
-        effects.filter { it.type == "temptationRate" }.sumOf { it.value } / 10000
+    fun speedWithDecel(state: RaceState): Double {
+        return totalEffect(state, "speedWithDecel") / 10000.0
     }
 
-    val acceleration by lazy {
-        effects.filter { it.type == "acceleration" }.sumOf { it.value } / 10000.0
+    fun targetSpeed(state: RaceState): Double {
+        return totalEffect(state, "targetSpeed") / 10000.0
     }
 
-    val rareSkill by lazy {
-        effects.filter { it.type == "rareSkill" }.sumOf { it.value } / 10000.0
+    fun temptationRate(state: RaceState): Double {
+        return totalEffect(state, "temptationRate") / 10000.0
     }
 
-    val totalSpeed by lazy {
-        targetSpeed + speedWithDecel
+    fun acceleration(state: RaceState): Double {
+        return totalEffect(state, "acceleration") / 10000.0
+    }
+
+    fun rareSkill(state: RaceState): Double {
+        return totalEffect(state, "rareSkill") / 10000.0
+    }
+
+    fun totalSpeed(state: RaceState): Double {
+        return targetSpeed(state) + speedWithDecel(state)
     }
 }
 
@@ -395,12 +427,150 @@ data class SkillCondition(
 @Serializable
 data class SkillEffect(
     val type: String,
-    val value: Int,
-    val special: String = "",
-    val additional: String = "",
+    private val value: Int,
+    val special: Int = 1,
+    val additional: Int = 0,
 ) {
     fun applyLevel(level: Int): SkillEffect {
         val values = if (type == "targetSpeed") skillLevelValueSpeed else skillLevelValueDefault
         return copy(value = (value * values[level]).toInt())
+    }
+
+    val messages: List<String> by lazy {
+        buildList {
+            when (special) {
+                3, 4, 5, 6, 7 -> add("チームメンバーのステータス合計条件は最大値前提")
+                10 -> add("勝利数条件は最大値前提")
+                11 -> add("追い抜き回数は2回（1.1倍）固定")
+                12 -> add("ファン数条件は最大値前提")
+                19 -> add("先頭から離れている条件は満たす前提")
+                20 -> add("中盤連続競り合いは4～6秒（3.0倍）固定")
+                24 -> add("海外適性Lv合計は最大値前提")
+                25 -> add("終盤開始までに取ったリードの距離は10m～25m（1.4倍）固定")
+                26 -> add("UAFは全勝前提")
+            }
+        }
+    }
+
+    fun calcValue(state: RaceState): Double {
+        return when (special) {
+            1 -> value.toDouble()
+
+            2 -> {
+                // 獲得したスキルの数に応じて効果が高まる（叡智/加護）
+                value * min(1.2, 1 + 0.01 * state.setting.hasSkills.size)
+            }
+
+            3, 4, 5, 6, 7 -> {
+                // チームメンバーの〇〇合計が高いほど～（アオハル各種）
+                value * 1.2
+            }
+
+            8, 9 -> {
+                // ランダム（あやしげな作戦）
+                val random = Random.nextDouble()
+                value * when {
+                    random < 0.6 -> 0.0
+                    random < 0.9 -> 0.02
+                    else -> 0.04
+                }
+            }
+
+            10 -> {
+                // 勝利の数だけ効果が高まる（一番星）
+                value * 1.2
+            }
+
+            11 -> {
+                // 終盤のコーナーで追い抜いた回数に応じて効果が増える（灯穂）
+                // 2回：1.1、3回：1.2、4回：1.25
+                value * 1.1
+            }
+
+            12 -> {
+                // ファンが多いほど効果が高まる（キミと勝ちたい
+                value * 1.2
+            }
+
+            13 -> {
+                // 基礎能力の高さに応じて効果が高まる（限界の先へ）
+                val maxStatus = maxOf(
+                    state.setting.umaStatus.speed,
+                    state.setting.umaStatus.stamina,
+                    state.setting.umaStatus.power,
+                    state.setting.umaStatus.guts,
+                    state.setting.umaStatus.wisdom,
+                )
+                value * when {
+                    maxStatus < 600 -> 0.8
+                    maxStatus < 800 -> 0.9
+                    maxStatus < 1000 -> 1.0
+                    maxStatus < 1100 -> 1.1
+                    else -> 1.2
+                }
+            }
+
+            14 -> {
+                // 能力を引き出すスキルの発動数に応じて（理運開かりて翔る）
+                val count = state.simulation.passiveTriggered
+                value * when {
+                    count <= 2 -> 0.0
+                    count <= 4 -> 1.0
+                    count <= 5 -> 2.0
+                    else -> 3.0
+                }
+            }
+
+            19 -> {
+                // 先頭から離れていると効果が増える（叙情、旅路の果てに）
+                value + 1000.0
+            }
+
+            20 -> {
+                // レース中盤に連続して競り合い続けた時間が長いほど（CHERRY☆スクランブル）
+                // <2：1.0、<4：2.0、<6：3.0、>=6：4.0
+                value * 3.0
+            }
+
+            22 -> {
+                // スピードの能力に応じて（夏空ハレーション）
+                val status = state.setting.modifiedSpeed
+                value * when {
+                    status < 1700 -> 0.0
+                    status < 1800 -> 1.0
+                    status < 1900 -> 2.0
+                    status < 2000 -> 3.0
+                    else -> 4.0
+                }
+            }
+
+            23 -> {
+                // スピードの能力に応じて（眩耀のルクシオン）
+                val status = state.setting.modifiedSpeed
+                value * when {
+                    status < 1400 -> 1.0
+                    status < 1600 -> 2.0
+                    else -> 3.0
+                }
+            }
+
+            24 -> {
+                // 海外適性Lvの合計が高いほど効果が高まる（最高峰の夢）
+                value * 1.2
+            }
+
+            25 -> {
+                // 終盤開始までに取ったリードの距離に応じて効果が増える（Billions of stars）
+                // <10：1.0、<25：1.4、>=25：1.8
+                value * 1.4
+            }
+
+            26 -> {
+                // U.A.F.決勝大会の優勝数に応じて効果が高まる（爆熱のキラメキ！）
+                value * 1.2
+            }
+
+            else -> value.toDouble()
+        }
     }
 }

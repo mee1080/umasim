@@ -21,7 +21,7 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
     val skillSummaries = state.setting.hasSkills.associate {
         it.name to mutableListOf<SimulationSkillInfo>()
     }
-    var raceFrameList: List<RaceFrame>? = null
+    var lastRaceState: RaceState? = null
     repeat(simulationCount) { count ->
         if (count % 10 == 0) {
             emit { it.copy(simulationProgress = count + 1) }
@@ -31,9 +31,9 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
         createSkillMap(result.second).forEach {
             skillSummaries[it.key]?.add(it.value)
         }
-        raceFrameList = result.second.simulation.frames
+        lastRaceState = result.second
     }
-    val graphData = toGraphData(state.setting, raceFrameList)
+    val graphData = toGraphData(state.setting, lastRaceState?.simulation?.frames)
     val spurtResults = results.filter { it.maxSpurt }
     val notSpurtResult = results.filter { !it.maxSpurt }
     val summary = SimulationSummary(
@@ -48,6 +48,7 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
         it.copy(
             simulationProgress = 0,
             simulationSummary = summary,
+            lastSimulationSettingWithPassive = lastRaceState?.setting,
             graphData = graphData,
         )
     }

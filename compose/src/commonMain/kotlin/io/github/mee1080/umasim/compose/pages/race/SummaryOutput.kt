@@ -21,14 +21,14 @@ import kotlin.math.roundToInt
 @Composable
 fun SummaryOutput(state: AppState) {
     val summary = state.simulationSummary ?: return
-    val setting = summary.setting
+    val setting = state.lastSimulationSettingWithPassive ?: return
     Column {
         Text("結果", style = MaterialTheme.typography.headlineSmall)
         Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
         SummaryTable(summary)
         Text("補正後ステータス：${setting.modifiedSpeed}/${setting.modifiedStamina}/${setting.modifiedPower}/${setting.modifiedGuts}/${setting.modifiedWisdom}")
         Text(
-            "初期耐力：${setting.spMax}/金回復≒${
+            "初期耐力：${setting.spMax.roundToString(2)}/金回復≒${
                 setting.equalStamina(550).roundToInt()
             }スタミナ/白回復≒${
                 setting.equalStamina(150).roundToInt()

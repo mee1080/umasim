@@ -51,11 +51,11 @@ fun checkCondition(
 private fun checkCondition(
     skill: SkillData,
     condition: SkillCondition,
-    setting: RaceSetting,
+    baseSetting: RaceSetting,
     calculatedAreas: MutableMap<String, List<RandomEntry>>,
 ): (RaceState.() -> Boolean)? {
     return when (condition.type) {
-        "motivation" -> condition.preChecked(setting.umaStatus.condition.value)
+        "motivation" -> condition.preChecked(baseSetting.umaStatus.condition.value)
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
         "activate_count_heal" -> condition.checkInRace { simulation.healTriggerCount }
         "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.total }
@@ -68,65 +68,65 @@ private fun checkCondition(
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
-        "remain_distance" -> condition.checkInRace { setting.courseLength - simulation.startPosition.toInt() }
+        "remain_distance" -> condition.checkInRace { baseSetting.courseLength - simulation.startPosition.toInt() }
         "distance_rate_after_random" -> condition.withAssert("==") {
-            checkInRandom(calculatedAreas, condition.type) { setting.initIntervalRandom(value * 0.01, 1.0) }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initIntervalRandom(value * 0.01, 1.0) }
         }
 
         "corner_random" -> condition.withAssert("==") {
-            checkInRandom(calculatedAreas, condition.type) { setting.initCornerRandom(value) }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initCornerRandom(value) }
         }
 
         "all_corner_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initAllCornerRandom() }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initAllCornerRandom() }
         }
 
         "slope" -> condition.checkInRace { getSlopeInt() }
 
         "up_slope_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initSlopeRandom(up = true) }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandom(up = true) }
         }
 
         "down_slope_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initSlopeRandom(up = false) }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandom(up = false) }
         }
 
-        "running_style" -> condition.preChecked(setting.basicRunningStyle.value)
-        "rotation" -> condition.preChecked(setting.trackDetail.turn)
-        "ground_type" -> condition.preChecked(setting.trackDetail.surface)
-        "ground_condition" -> condition.preChecked(setting.track.surfaceCondition)
-        "distance_type" -> condition.preChecked(setting.trackDetail.distanceType)
-        "track_id" -> condition.preChecked(setting.trackDetail.raceTrackId)
-        "is_basis_distance" -> condition.preChecked(setting.trackDetail.isBasisDistance)
-        "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / setting.courseLength).toInt() }
-        "phase_random" -> checkInRandom(calculatedAreas, condition.type) { setting.initPhaseRandom(condition.value) }
+        "running_style" -> condition.preChecked(baseSetting.basicRunningStyle.value)
+        "rotation" -> condition.preChecked(baseSetting.trackDetail.turn)
+        "ground_type" -> condition.preChecked(baseSetting.trackDetail.surface)
+        "ground_condition" -> condition.preChecked(baseSetting.track.surfaceCondition)
+        "distance_type" -> condition.preChecked(baseSetting.trackDetail.distanceType)
+        "track_id" -> condition.preChecked(baseSetting.trackDetail.raceTrackId)
+        "is_basis_distance" -> condition.preChecked(baseSetting.trackDetail.isBasisDistance)
+        "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / baseSetting.courseLength).toInt() }
+        "phase_random" -> checkInRandom(calculatedAreas, condition.type) { baseSetting.initPhaseRandom(condition.value) }
         "phase_firsthalf_random" -> checkInRandom(
             calculatedAreas,
             condition.type
-        ) { setting.initPhaseRandom(condition.value, 0.0 to 0.5) }
+        ) { baseSetting.initPhaseRandom(condition.value, 0.0 to 0.5) }
 
         "phase_firstquarter_random" -> checkInRandom(calculatedAreas, condition.type) {
-            setting.initPhaseRandom(condition.value, 0.0 to 0.25)
+            baseSetting.initPhaseRandom(condition.value, 0.0 to 0.25)
         }
 
         "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type) {
-            setting.initPhaseRandom(condition.value, 0.5 to 1.0)
+            baseSetting.initPhaseRandom(condition.value, 0.5 to 1.0)
         }
 
         "phase_corner_random" -> checkInRandom(calculatedAreas, condition.type) {
-            setting.initPhaseCornerRandom(condition.value)
+            baseSetting.initPhaseCornerRandom(condition.value)
         }
 
         "is_finalcorner_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initFinalCornerRandom() }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initFinalCornerRandom() }
         }
 
         "is_finalstraight_random", "last_straight_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initFinalStraightRandom() }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initFinalStraightRandom() }
         }
 
         "straight_random" -> condition.withAssert("==", 1) {
-            checkInRandom(calculatedAreas, condition.type) { setting.initStraightRandom() }
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initStraightRandom() }
         }
 
         "is_last_straight" -> condition.withAssert("==", 1) {
@@ -153,15 +153,15 @@ private fun checkCondition(
             { isInSpurt() && simulation.spurtParameters!!.speed == setting.maxSpurtSpeed }
         }
 
-        "base_speed" -> condition.preChecked(setting.umaStatus.speed)
-        "base_stamina" -> condition.preChecked(setting.umaStatus.stamina)
-        "base_power" -> condition.preChecked(setting.umaStatus.power)
-        "base_guts" -> condition.preChecked(setting.umaStatus.guts)
-        "base_wiz" -> condition.preChecked(setting.umaStatus.wisdom)
-        "course_distance" -> condition.preChecked(setting.courseLength)
+        "base_speed" -> condition.preChecked(baseSetting.umaStatus.speed)
+        "base_stamina" -> condition.preChecked(baseSetting.umaStatus.stamina)
+        "base_power" -> condition.preChecked(baseSetting.umaStatus.power)
+        "base_guts" -> condition.preChecked(baseSetting.umaStatus.guts)
+        "base_wiz" -> condition.preChecked(baseSetting.umaStatus.wisdom)
+        "course_distance" -> condition.preChecked(baseSetting.courseLength)
 
         "random_lot" -> condition.withAssert("==") {
-            val result = if (setting.fixRandom) true else value > Random.nextInt(100)
+            val result = if (baseSetting.fixRandom) true else value > Random.nextInt(100)
             return@withAssert { result }
         }
 
@@ -171,7 +171,7 @@ private fun checkCondition(
             { isInFinalStraight() && !isInFinalStraight(simulation.startPosition) }
         }
 
-        "weather" -> condition.preChecked(setting.weather)
+        "weather" -> condition.preChecked(baseSetting.weather)
 
         "is_move_lane" -> condition.checkSpecialState("move_lane")
 
@@ -420,20 +420,26 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
 }
 
 fun RaceState.triggerSkill(skill: InvokedSkill) {
-    if (skill.invoke.heal > 0) {
-        doHeal(skill.invoke.heal)
+    if (skill.invoke.isHeal) {
+        doHeal(skill.invoke.heal(this))
     }
     if (skill.invoke.duration > 0.0) {
-        simulation.operatingSkills += OperatingSkill(skill, simulation.frameElapsed)
+        simulation.operatingSkills += OperatingSkill(
+            skill,
+            simulation.frameElapsed,
+            skill.invoke.totalSpeed(this),
+            skill.invoke.currentSpeed(this),
+            skill.invoke.acceleration(this),
+        )
     }
-    if (skill.invoke.speedWithDecel > 0.0) {
-        simulation.currentSpeed += skill.invoke.speedWithDecel
+    if (skill.invoke.isSpeedWithDecel) {
+        simulation.currentSpeed += skill.invoke.speedWithDecel(this)
     }
     simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed
 }
 
-fun RaceState.doHeal(value: Int): Pair<Double, Double> {
+fun RaceState.doHeal(value: Double): Pair<Double, Double> {
     val heal = (setting.spMax * value) / 10000.0
     simulation.sp += heal
     val waste = max(0.0, simulation.sp - setting.spMax)

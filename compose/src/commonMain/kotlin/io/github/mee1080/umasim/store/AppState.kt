@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.store
 import androidx.compose.runtime.Stable
 import io.github.mee1080.umasim.race.calc2.RaceFrame
 import io.github.mee1080.umasim.race.calc2.RaceSetting
+import io.github.mee1080.umasim.race.calc2.RaceSettingWithPassive
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.framework.State
 import io.github.mee1080.umasim.store.operation.updateSetting
@@ -42,6 +43,8 @@ data class AppState(
     val simulationProgress: Int = 0,
     @Transient
     val simulationSummary: SimulationSummary? = null,
+    @Transient
+    val lastSimulationSettingWithPassive: RaceSettingWithPassive? = null,
     @Transient
     val graphData: GraphData? = null,
 ) : State

@@ -39,8 +39,14 @@ class RaceCalculator(
     }
 
     private fun initializeState(): RaceState {
-        val state = RaceState(setting, RaceSimulationState(), system)
-        state.invokeSkills()
+        val invokedSkills = setting.invokeSkills()
+        val settingWithPassive = setting.applyPassive(system, invokedSkills)
+        val passiveTriggered = settingWithPassive.passiveBonus.skills.size
+        val simulationState = RaceSimulationState(
+            invokedSkills = invokedSkills,
+            passiveTriggered = passiveTriggered,
+        )
+        val state = RaceState(settingWithPassive, simulationState, system)
         val simulation = state.simulation
         if (!state.setting.fixRandom) {
             simulation.startDelay = Random.nextDouble() * 0.1
@@ -49,7 +55,6 @@ class RaceCalculator(
         state.triggerStartSkills()
 
         // initTemptation
-        // FIXME 自制心
         if (Random.nextDouble() * 100.0 < state.setting.temptationRate) {
             simulation.temptationSection = 1 + Random.nextInt(8)
         }
@@ -62,55 +67,55 @@ class RaceCalculator(
 
 }
 
-private fun RaceState.invokeSkills() {
-    val invokeRate = if (setting.skillActivateAdjustment != SkillActivateAdjustment.NONE) {
-        100.0
-    } else {
-        maxOf(100.0 - 9000.0 / setting.umaStatus.wisdom, 20.0)
-    }
-    setting.hasSkills.map {
-        if (it.rarity == "unique") {
-            it.applyLevel(setting.uniqueLevel)
-        } else it
-    }.forEach { skill ->
-        val calculatedAreas = mutableMapOf<String, List<RandomEntry>>()
-        if (skill.activateLot == 0 || Random.nextDouble() * 100 < invokeRate) {
-            skill.invokes.forEach { invoke ->
-                simulation.invokedSkills += InvokedSkill(
-                    skill,
-                    invoke,
-                    checkCondition(skill, invoke.preConditions, setting, calculatedAreas),
-                    checkCondition(skill, invoke.conditions, setting, calculatedAreas),
-                )
+private fun RaceSetting.invokeSkills(): List<InvokedSkill> {
+    val invokeRate = if (skillActivateAdjustment != SkillActivateAdjustment.NONE) 100.0 else skillActivateRate
+    return buildList {
+        hasSkills.map {
+            if (it.rarity == "unique") {
+                it.applyLevel(uniqueLevel)
+            } else it
+        }.forEach { skill ->
+            val calculatedAreas = mutableMapOf<String, List<RandomEntry>>()
+            if (skill.activateLot == 0 || Random.nextDouble() * 100 < invokeRate) {
+                skill.invokes.forEach { invoke ->
+                    add(
+                        InvokedSkill(
+                            skill,
+                            invoke,
+                            checkCondition(skill, invoke.preConditions, this@invokeSkills, calculatedAreas),
+                            checkCondition(skill, invoke.conditions, this@invokeSkills, calculatedAreas),
+                        )
+                    )
+                }
             }
         }
     }
 }
 
+private fun RaceSetting.applyPassive(system: SystemSetting, invokedSkills: List<InvokedSkill>): RaceSettingWithPassive {
+    var passiveBonus = PassiveBonus()
+    val stateForCheck = RaceState(RaceSettingWithPassive(this, passiveBonus), RaceSimulationState(), system)
+    invokedSkills.forEach { skill ->
+        if (skill.invoke.isPassive && skill.check(stateForCheck)) {
+            passiveBonus = passiveBonus.add(stateForCheck, skill)
+        }
+    }
+    return RaceSettingWithPassive(this, passiveBonus)
+}
+
 private fun RaceState.triggerStartSkills() {
     val skills = mutableListOf<InvokedSkill>()
-    simulation.invokedSkills.removeAll { skill ->
-        var remove = false
-        if (skill.invoke.isPassive) {
-            if (skill.check(this)) {
-                triggerSkill(skill)
-                simulation.skillTriggerCount.increment(this)
-                simulation.passiveTriggered++
-                skills += skill
-            }
-            remove = true
-        }
+    setting.passiveBonus.skills.forEach { skill ->
+        triggerSkill(skill)
+        skills += skill
+    }
+    simulation.invokedSkills.forEach { skill ->
         if (skill.invoke.isStart) {
-            if (skill.invoke.startMultiply > 0.0) {
-                simulation.startDelay *= skill.invoke.startMultiply
-            }
-            simulation.startDelay += skill.invoke.startAdd
+            simulation.startDelay *= skill.invoke.startMultiply(this)
+            simulation.startDelay += skill.invoke.startAdd(this)
             triggerSkill(skill)
-            simulation.skillTriggerCount.increment(this)
             skills += skill
-            remove = true
         }
-        remove
     }
     simulation.frames += RaceFrame(
         speed = 0.0,
@@ -359,7 +364,7 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     newSpeed -= simulation.speedDebuff
     val speedModification = simulation.operatingSkills.sumOf {
         // 減速スキルの現在速度低下分
-        it.data.invoke.currentSpeed
+        it.currentSpeed
     }
     simulation.speedDebuff = speedModification
     newSpeed += speedModification

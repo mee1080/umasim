@@ -56,6 +56,7 @@ data class Track(
 }
 
 data class PassiveBonus(
+    val skills: List<InvokedSkill> = emptyList(),
     val speed: Int = 0,
     val stamina: Int = 0,
     val power: Int = 0,
@@ -63,26 +64,28 @@ data class PassiveBonus(
     val wisdom: Int = 0,
     val temptationRate: Int = 0,
 ) {
-    fun add(skill: SkillData): PassiveBonus {
-        return skill.invokes.fold(this) { acc, invoke ->
-            acc.add(invoke)
-        }
-    }
+//    fun add(skill: SkillData): PassiveBonus {
+//        return skill.invokes.fold(this) { acc, invoke ->
+//            acc.add(invoke)
+//        }
+//    }
 
-    fun add(skill: Invoke): PassiveBonus {
-        return if (skill.isPassive) copy(
-            speed = skill.passiveSpeed,
-            stamina = skill.passiveStamina,
-            power = skill.passivePower,
-            guts = skill.passiveGuts,
-            wisdom = skill.passiveWisdom,
-            temptationRate = skill.temptationRate
-        ) else this
+    fun add(state: RaceState, skill: InvokedSkill): PassiveBonus {
+        val invoke = skill.invoke
+        return copy(
+            skills = skills + skill,
+            speed = invoke.passiveSpeed(state).toInt(),
+            stamina = invoke.passiveStamina(state).toInt(),
+            power = invoke.passivePower(state).toInt(),
+            guts = invoke.passiveGuts(state).toInt(),
+            wisdom = invoke.passiveWisdom(state).toInt(),
+            temptationRate = invoke.temptationRate(state).toInt()
+        )
     }
 }
 
 class RaceState(
-    val setting: RaceSetting,
+    val setting: RaceSettingWithPassive,
     val simulation: RaceSimulationState,
     val system: SystemSetting,
 ) {
@@ -169,9 +172,7 @@ class RaceState(
             // val forceInModifier = Random(0.1)+StrategyModifier[m/s]
             // 逃げ 0.02m/s 先行 0.01m/s 差し 0.01m/s 追込 0.03m/s
 
-            val skillModifier = simulation.operatingSkills.sumOf {
-                it.data.invoke.totalSpeed
-            }
+            val skillModifier = simulation.operatingSkills.sumOf { it.totalSpeed }
 
             // ポジションキープ
             val positionKeepCoef = if (skillModifier == 0.0 && paceDownMode) {
@@ -229,7 +230,7 @@ class RaceState(
                 acceleration += 24.0
             }
             simulation.operatingSkills.forEach {
-                acceleration += it.data.invoke.acceleration
+                acceleration += it.acceleration
             }
             if (simulation.competeFight) {
                 acceleration += setting.competeFightAcceleration
@@ -338,40 +339,102 @@ class RaceState(
     }
 }
 
+interface IRaceSetting {
+    val umaStatus: UmaStatus
+    val hasSkills: List<SkillData>
+    val uniqueLevel: Int
+    val track: Track
+    val skillActivateAdjustment: SkillActivateAdjustment
+    val randomPosition: RandomPosition
+    val season: Int
+    val weather: Int
+    val badStart: Boolean
+    val fixRandom: Boolean
+    val runningStyle: Style
+    val basicRunningStyle: Style
+    val locationName: String
+    val trackDetail: TrackDetail
+    val courseLength: Int
+    val coolDownBaseFrames: Double
+    val skillActivateRate: Double
+    val timeCoef: Double
+    val oonige: Boolean
+    val phase1Start: Double
+    val phase1Half: Double
+    val phase2Start: Double
+    val phase3Start: Double
+    fun getPhaseStartEnd(phase: Int): Pair<Double, Double>
+}
+
 @Serializable
 data class RaceSetting(
-    val umaStatus: UmaStatus = UmaStatus(),
+    override val umaStatus: UmaStatus = UmaStatus(),
     @Transient
-    val hasSkills: List<SkillData> = emptyList(),
-    val uniqueLevel: Int = 6,
-    val passiveTriggered: Int = 0,
-    val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
+    override val hasSkills: List<SkillData> = emptyList(),
+    override val uniqueLevel: Int = 6,
+    override val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
 
-    val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
-    val randomPosition: RandomPosition = RandomPosition.RANDOM,
+    override val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
+    override val randomPosition: RandomPosition = RandomPosition.RANDOM,
 
-    val season: Int = 0,
-    val weather: Int = 0,
-    val badStart: Boolean = false,
-) {
-    val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
-    val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
-    val basicRunningStyle get() = umaStatus.basicRunningStyle
-    val locationName by lazy { trackData[track.location]?.name ?: "" }
-    val trackDetail by lazy {
+    override val season: Int = 0,
+    override val weather: Int = 0,
+    override val badStart: Boolean = false,
+) : IRaceSetting {
+    override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
+    override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
+    override val basicRunningStyle get() = umaStatus.basicRunningStyle
+    override val locationName by lazy { trackData[track.location]?.name ?: "" }
+    override val trackDetail by lazy {
         val trackLocation = trackData[track.location] ?: trackData[trackData.keys.first()]!!
         trackLocation.courses[track.course] ?: trackLocation.courses[trackLocation.courses.keys.first()]!!
     }
 
-    val courseLength by lazy { trackDetail.distance }
+    override val courseLength by lazy { trackDetail.distance }
 
-    val coolDownBaseFrames by lazy { courseLength / 1000.0 * 15.0 }
+    override val coolDownBaseFrames by lazy { courseLength / 1000.0 * 15.0 }
 
-    val passiveBonus: PassiveBonus by lazy {
-        // FIXME 発動条件判定
-        hasSkills.fold(PassiveBonus()) { acc, skill -> acc.add(skill) }
+//    val passiveBonus: PassiveBonus by lazy {
+//        // FIXME 発動条件判定
+//        hasSkills.fold(PassiveBonus()) { acc, skill -> acc.add(skill) }
+//    }
+
+    override val skillActivateRate by lazy {
+        maxOf(100.0 - 9000.0 / umaStatus.wisdom, 20.0)
     }
 
+    override val timeCoef: Double by lazy {
+        trackDetail.distance / 1000.0
+    }
+
+    override val oonige by lazy {
+        umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
+    }
+
+    override val phase1Start by lazy { courseLength / 6.0 }
+
+    override val phase1Half by lazy { phase1Start + (phase2Start - phase1Start) / 2.0 }
+
+    override val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
+
+    override val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
+
+    override fun getPhaseStartEnd(phase: Int): Pair<Double, Double> {
+        return when (phase) {
+            0 -> 0.0 to phase1Start
+            1 -> phase1Start to phase2Start
+            2 -> phase2Start to phase3Start
+            3 -> phase3Start to courseLength.toDouble()
+            else -> throw IllegalArgumentException()
+        }
+    }
+
+}
+
+class RaceSettingWithPassive(
+    val base: RaceSetting,
+    val passiveBonus: PassiveBonus,
+) : IRaceSetting by base {
     val modifiedSpeed by lazy {
         var statusCheckModifier = 1.0
         val check = this.trackDetail.courseSetStatus
@@ -427,12 +490,12 @@ data class RaceSetting(
         trackDetail.distance + 0.8 * modifiedStamina * runningStyle.styleSpCoef
     }
 
-    val spurtSpCoef by lazy {
-        1 + 200 / sqrt(600.0 * modifiedGuts)
+    fun equalStamina(heal: Int): Double {
+        return spMax * heal / 10000.0 / 0.8 / runningStyle.styleSpCoef
     }
 
-    val skillActivateRate by lazy {
-        100 - 9000.0 / umaStatus.wisdom
+    val spurtSpCoef by lazy {
+        1 + 200 / sqrt(600.0 * modifiedGuts)
     }
 
     val temptationRate by lazy {
@@ -520,36 +583,6 @@ data class RaceSetting(
                 runningStyle.styleAccelerateCoef[2]!! *
                 surfaceFitAccelerateCoef[umaStatus.surfaceFit]!! *
                 distanceFitAccelerateCoef[umaStatus.distanceFit]!!
-    }
-
-    val timeCoef: Double by lazy {
-        trackDetail.distance / 1000.0
-    }
-
-    val oonige by lazy {
-        umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
-    }
-
-    fun equalStamina(heal: Int): Double {
-        return spMax * heal / 10000.0 / 0.8 / runningStyle.styleSpCoef
-    }
-
-    val phase1Start by lazy { courseLength / 6.0 }
-
-    val phase1Half by lazy { phase1Start + (phase2Start - phase1Start) / 2.0 }
-
-    val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
-
-    val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
-
-    fun getPhaseStartEnd(phase: Int): Pair<Double, Double> {
-        return when (phase) {
-            0 -> 0.0 to phase1Start
-            1 -> phase1Start to phase2Start
-            2 -> phase2Start to phase3Start
-            3 -> phase3Start to courseLength.toDouble()
-            else -> throw IllegalArgumentException()
-        }
     }
 
     val leadCompetitionSpeed by lazy {
@@ -640,10 +673,10 @@ class RaceSimulationState(
     var secureLeadNextFrame: Int = 0,
     var staminaLimitBreak: Boolean = false,
 
-    val invokedSkills: MutableList<InvokedSkill> = mutableListOf(),
+    val invokedSkills: List<InvokedSkill> = emptyList(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
     val skillTriggerCount: SkillTriggerCount = SkillTriggerCount(),
-    var passiveTriggered: Int = 0,
+    val passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
     var sectionTargetSpeedRandoms: List<Double> = emptyList(),
@@ -694,6 +727,9 @@ data class SpurtParameters(
 data class OperatingSkill(
     val data: InvokedSkill,
     val startFrame: Int,
+    val totalSpeed: Double,
+    val currentSpeed: Double,
+    val acceleration: Double,
     val durationOverwrite: Double? = null,
 ) {
     val duration: Double get() = durationOverwrite ?: data.invoke.duration
