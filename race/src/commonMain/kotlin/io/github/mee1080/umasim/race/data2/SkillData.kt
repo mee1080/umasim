@@ -547,11 +547,15 @@ data class SkillEffect(
                 25 -> add("終盤開始までに取ったリードの距離は最大（1.8倍）固定")
                 26 -> add("UAFは全勝前提")
             }
+            when (additional) {
+                2 -> add("同時に別のスキルを2つ発動する条件で近似")
+                3 -> add("同時に別のスキルを1つ発動する条件で近似")
+            }
         }
     }
 
     fun calcValue(state: RaceState): Double {
-        return when (special) {
+        val specialValue = when (special) {
             1 -> value.toDouble()
 
             2 -> {
@@ -669,6 +673,28 @@ data class SkillEffect(
             }
 
             else -> value.toDouble()
+        }
+        // FIXME 最速発動で近似しているが、本来はスキル効果中に計算が必要
+        return when (additional) {
+            0 -> specialValue
+
+            1 -> {
+                // 効果中に追い抜くと3回まで効果と時間が増える
+                // 1回あたり+1
+                specialValue * 2.0
+            }
+
+            2 -> {
+                // スキル発動（最大3回）
+                specialValue * 2.0
+            }
+
+            3 -> {
+                // スキル発動（最大2回）
+                specialValue * 1.0
+            }
+
+            else -> specialValue
         }
     }
 }
