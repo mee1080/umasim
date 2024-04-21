@@ -99,7 +99,11 @@ private fun checkCondition(
         "track_id" -> condition.preChecked(baseSetting.trackDetail.raceTrackId)
         "is_basis_distance" -> condition.preChecked(baseSetting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / baseSetting.courseLength).toInt() }
-        "phase_random" -> checkInRandom(calculatedAreas, condition.type) { baseSetting.initPhaseRandom(condition.value) }
+        "phase_random" -> checkInRandom(
+            calculatedAreas,
+            condition.type
+        ) { baseSetting.initPhaseRandom(condition.value) }
+
         "phase_firsthalf_random" -> checkInRandom(
             calculatedAreas,
             condition.type
@@ -205,6 +209,10 @@ private fun checkCondition(
             val key = "is_other_character_activate_advantage_skill${condition.value}"
             { (simulation.specialState[key] ?: 0) > 0 }
         }
+
+        "change_order_up_end_after" -> condition.checkSpecialState("change_order_up_end_after")
+
+        "change_order_up_finalcorner_after" -> condition.checkSpecialState("change_order_up_finalcorner_after")
 
         "is_activate_other_skill_detail" -> condition.withAssert("==", 1) {
             { simulation.coolDownMap.containsKey(skill.id) }

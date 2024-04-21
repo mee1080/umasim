@@ -99,6 +99,27 @@ class ApproximateRandomRates(
     }
 }
 
+class ApproximateCountUp(
+    override val displayName: String,
+    val rate: Double,
+) : ApproximateCondition {
+    override fun update(state: RaceState, value: Int): Int {
+        return value + if (Random.nextDouble() < rate) 1 else 0
+    }
+
+    override val description = buildString {
+        append(rate.toPercentString(1))
+        append("の確率で+1")
+    }
+}
+
+class ApproximateNone(
+    override val displayName: String,
+) : ApproximateCondition {
+    override fun update(state: RaceState, value: Int) = 0
+    override val description = "なし"
+}
+
 val approximateConditions = mapOf(
     "move_lane" to ApproximateStartContinue("横移動(軽やかステップなど)", 0.1, 0.1),
     "change_order_onetime" to ApproximateRandomRates(
@@ -156,7 +177,25 @@ val approximateConditions = mapOf(
             },
             ApproximateRandomRates("終盤", listOf(1 to 0.9)) to null,
         )
-    )
+    ),
+    "change_order_up_end_after" to ApproximateMultiCondition(
+        "終盤追い抜き(ルドルフ固有/デジタル固有など)",
+        listOf(
+            ApproximateCountUp("終盤", 0.15) to {
+                it.currentPhase >= 2
+            },
+            ApproximateNone("その他") to null,
+        )
+    ),
+    "change_order_up_finalcorner_after" to ApproximateMultiCondition(
+        "最終コーナー以降追い抜き(チョコフラッシュ固有)",
+        listOf(
+            ApproximateCountUp("最終コーナー以降", 0.15) to {
+                it.isAfterFinalCorner
+            },
+            ApproximateNone("その他") to null,
+        )
+    ),
 )
 
 val ignoreConditions = mapOf(
@@ -191,9 +230,6 @@ val ignoreConditions = mapOf(
     "order_rate_out90_continue" to "順位条件は無視",
 
     "distance_diff_rate" to "相対位置条件は無視",
-
-    "change_order_up_finalcorner_after" to "最終コーナー以降追い抜き条件は無視",
-    "change_order_up_end_after" to "終盤追い抜き条件は無視",
 
     "bashin_diff_infront" to "他のウマ娘との距離条件は無視",
     "bashin_diff_behind" to "他のウマ娘との距離条件は無視",
