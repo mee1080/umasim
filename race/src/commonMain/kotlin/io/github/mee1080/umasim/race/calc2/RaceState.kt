@@ -64,22 +64,16 @@ data class PassiveBonus(
     val wisdom: Int = 0,
     val temptationRate: Int = 0,
 ) {
-//    fun add(skill: SkillData): PassiveBonus {
-//        return skill.invokes.fold(this) { acc, invoke ->
-//            acc.add(invoke)
-//        }
-//    }
-
     fun add(state: RaceState, skill: InvokedSkill): PassiveBonus {
         val invoke = skill.invoke
         return copy(
             skills = skills + skill,
-            speed = invoke.passiveSpeed(state).toInt(),
-            stamina = invoke.passiveStamina(state).toInt(),
-            power = invoke.passivePower(state).toInt(),
-            guts = invoke.passiveGuts(state).toInt(),
-            wisdom = invoke.passiveWisdom(state).toInt(),
-            temptationRate = invoke.temptationRate(state).toInt()
+            speed = speed + invoke.passiveSpeed(state).toInt(),
+            stamina = stamina + invoke.passiveStamina(state).toInt(),
+            power = power + invoke.passivePower(state).toInt(),
+            guts = guts + invoke.passiveGuts(state).toInt(),
+            wisdom = wisdom + invoke.passiveWisdom(state).toInt(),
+            temptationRate = temptationRate + invoke.temptationRate(state).toInt()
         )
     }
 }
