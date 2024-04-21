@@ -17,3 +17,7 @@ fun setSkillActivateAdjustment(value: SkillActivateAdjustment) = DirectOperation
 fun setRandomPosition(value: RandomPosition) = DirectOperation<AppState> { state ->
     state.updateSetting { it.copy(randomPosition = value) }
 }
+
+fun setPopularity(value: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { it.copy(popularity = value) }
+}

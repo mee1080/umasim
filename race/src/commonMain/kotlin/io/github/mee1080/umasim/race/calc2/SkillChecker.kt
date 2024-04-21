@@ -218,6 +218,8 @@ private fun checkCondition(
             { simulation.coolDownMap.containsKey(skill.id) }
         }
 
+        "popularity" -> condition.preChecked(baseSetting.popularity)
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")

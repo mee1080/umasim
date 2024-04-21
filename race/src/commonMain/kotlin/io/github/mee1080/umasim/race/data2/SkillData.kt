@@ -204,7 +204,6 @@ val ignoreConditions = mapOf(
     "season" to "季節条件は無視",
     "post_number" to "枠条件は無視",
     "is_dirtgrade" to "交流重賞条件は無視",
-    "popularity" to "人気条件は満たしている前提、満たさない場合は未実装",
 
     "is_used_skill_id" to "他スキル発動条件は未実装",
 

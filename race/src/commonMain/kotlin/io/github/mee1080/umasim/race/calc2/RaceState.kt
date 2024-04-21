@@ -343,6 +343,7 @@ interface IRaceSetting {
     val umaStatus: UmaStatus
     val hasSkills: List<SkillData>
     val uniqueLevel: Int
+    val popularity: Int
     val track: Track
     val skillActivateAdjustment: SkillActivateAdjustment
     val randomPosition: RandomPosition
@@ -372,6 +373,8 @@ data class RaceSetting(
     @Transient
     override val hasSkills: List<SkillData> = emptyList(),
     override val uniqueLevel: Int = 6,
+
+    override val popularity: Int = 1,
     override val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
 
     override val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
