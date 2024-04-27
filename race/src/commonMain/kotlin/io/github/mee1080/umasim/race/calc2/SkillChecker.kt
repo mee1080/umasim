@@ -305,9 +305,32 @@ private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): List<R
         RandomPosition.SLOWEST -> 0.98
     }
 
-    val start = rate * (zoneEnd - zoneStart) + zoneStart
+    val start = min(rate * (zoneEnd - zoneStart) + zoneStart, zoneEnd - 2.0)
     val end = min(start + 10.0, zoneEnd)
     return listOf(RandomEntry(start, end))
+}
+
+private fun RaceSetting.chooseRandom(entries: List<Pair<Double, Double>>): List<RandomEntry> {
+    if (entries.isEmpty()) return emptyList()
+    val total = entries.sumOf { it.second - it.first }
+    val rate = when (randomPosition) {
+        RandomPosition.RANDOM -> Random.nextDouble()
+        RandomPosition.FASTEST -> 0.0
+        RandomPosition.FAST -> 0.25
+        RandomPosition.MIDDLE -> 0.5
+        RandomPosition.SLOW -> 0.75
+        RandomPosition.SLOWEST -> 0.98
+    }
+    var startInArea = rate * total
+    for (entry in entries) {
+        if (startInArea < entry.second - entry.first) {
+            val start = min(entry.first + startInArea, entry.second - 2.0)
+            val end = min(start + 10.0, entry.second)
+            return listOf(RandomEntry(start, end))
+        }
+        startInArea -= entry.second - entry.first
+    }
+    return emptyList()
 }
 
 private fun RaceSetting.initCornerRandom(value: Int): List<RandomEntry> {
@@ -382,9 +405,7 @@ private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {
             maxOf(corner.start, phaseStart) to minOf(corner.end, phaseEnd)
         }
     }
-    if (candidates.isEmpty()) return emptyList()
-    val chosen = candidates.random()
-    return chooseRandom(chosen.first, chosen.second)
+    return chooseRandom(candidates)
 }
 
 private fun RaceSetting.initFinalStraightRandom(): List<RandomEntry> {
