@@ -49,6 +49,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         }
         SummaryOutput(state)
         GraphOutput(state)
+        LastSimulationDetailOutput(state)
         ApproximateSetting()
         Footer()
     }

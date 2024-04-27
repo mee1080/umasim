@@ -16,36 +16,14 @@ import io.github.mee1080.umasim.store.SimulationSummaryEntry
 import io.github.mee1080.utility.roundToString
 import io.github.mee1080.utility.secondToTimeString
 import io.github.mee1080.utility.toPercentString
-import kotlin.math.roundToInt
 
 @Composable
 fun SummaryOutput(state: AppState) {
     val summary = state.simulationSummary ?: return
-    val setting = state.lastSimulationSettingWithPassive ?: return
     Column {
         Text("結果", style = MaterialTheme.typography.headlineSmall)
         Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
         SummaryTable(summary)
-        Text("補正後ステータス：${setting.modifiedSpeed}/${setting.modifiedStamina}/${setting.modifiedPower}/${setting.modifiedGuts}/${setting.modifiedWisdom}")
-        Text(
-            "初期耐力：${setting.spMax.roundToString(2)}/金回復≒${
-                setting.equalStamina(550).roundToInt()
-            }スタミナ/白回復≒${
-                setting.equalStamina(150).roundToInt()
-            }スタミナ/終盤耐力消耗係数：${
-                setting.spurtSpCoef.roundToString(3)
-            }"
-        )
-        Text(
-            "スキル発動率：${setting.skillActivateRate.roundToString(1)}%/掛かり率：${
-                setting.temptationRate.roundToString(1)
-            }%"
-        )
-        Text("スタート　目標速度：${setting.v0.roundToString(2)} 加速度：${setting.a0.roundToString(2)}")
-        Text("序盤　目標速度：${setting.v1.roundToString(2)} 加速度：${setting.a1.roundToString(2)}")
-        Text("中盤　目標速度：${setting.v2.roundToString(2)} 加速度：${setting.a2.roundToString(2)}")
-        Text("終盤　目標速度：${setting.v3.roundToString(2)} 加速度：${setting.a3.roundToString(2)}")
-        Text("最高スパート速度：${setting.maxSpurtSpeed.roundToString(2)}")
         SkillTable(summary)
     }
 }
