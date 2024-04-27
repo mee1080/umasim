@@ -35,11 +35,13 @@ interface ApproximateCondition {
     fun update(state: RaceState, value: Int): Int
     val displayName: String
     val description: String
+    val valueOnStart: Int
 }
 
 class ApproximateMultiCondition(
     override val displayName: String,
     val conditions: List<Pair<ApproximateCondition, ((RaceState) -> Boolean)?>>,
+    override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int): Int {
         for (condition in conditions) {
@@ -57,6 +59,7 @@ class ApproximateStartContinue(
     override val displayName: String,
     val start: Double,
     val continuation: Double,
+    override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int): Int {
         return if (value == 0) {
@@ -77,6 +80,7 @@ class ApproximateStartContinue(
 class ApproximateRandomRates(
     override val displayName: String,
     val rates: List<Pair<Int, Double>>,
+    override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int): Int {
         val check = Random.nextDouble()
@@ -102,6 +106,7 @@ class ApproximateRandomRates(
 class ApproximateCountUp(
     override val displayName: String,
     val rate: Double,
+    override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int): Int {
         return value + if (Random.nextDouble() < rate) 1 else 0
@@ -115,6 +120,7 @@ class ApproximateCountUp(
 
 class ApproximateNone(
     override val displayName: String,
+    override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int) = 0
     override val description = "なし"
@@ -129,7 +135,19 @@ val approximateConditions = mapOf(
     "overtake" to ApproximateStartContinue("追い抜きモード(電光石火など多数)", 0.20, 0.50),
     "overtaken" to ApproximateStartContinue("詰め寄られ(勝利への執念など)", 0.15, 0.50),
     "blocked_front" to ApproximateStartContinue("前方ブロック(鋼の意志など)", 0.07, 0.50),
-    "blocked_side" to ApproximateStartContinue("横ブロック(つぼみなど)", 0.07, 0.50),
+    "blocked_side" to ApproximateMultiCondition(
+        "横ブロック(つぼみなど)",
+        listOf(
+            ApproximateStartContinue("序盤", 0.1, 0.75) to {
+                it.currentPhase == 0
+            },
+            ApproximateStartContinue("中盤", 0.08, 0.75) to {
+                it.currentPhase == 1
+            },
+            ApproximateStartContinue("終盤", 0.07, 0.50) to null,
+        ),
+        valueOnStart = 1,
+    ),
     "infront_near_lane" to ApproximateMultiCondition(
         "前にウマ娘(ノンストなど)",
         listOf(

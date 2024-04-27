@@ -62,6 +62,10 @@ class RaceCalculator(
         simulation.delayTime = simulation.startDelay
         simulation.sp = state.setting.spMax
         simulation.sectionTargetSpeedRandoms = state.initSectionTargetSpeedRandoms()
+
+        approximateConditions.forEach { entry ->
+            simulation.specialState[entry.key] = entry.value.valueOnStart
+        }
         return state
     }
 
