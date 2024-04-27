@@ -661,6 +661,8 @@ class RaceSimulationState(
     val specialState: MutableMap<String, Int> = approximateConditions.mapValues { 0 }.toMutableMap(),
     var leadCompetitionStart: Int? = null,
     var competeFight: Boolean = false,
+    var competeFightStart: Int? = null,
+    var competeFightEnd: Int? = null,
     var conservePowerStart: Int? = null,
     var conservePowerAcceleration: Double? = null,
     var positionCompetition: Boolean = false,
@@ -760,6 +762,8 @@ data class RaceSimulationResult(
     val spDiff: Double,
     val positionCompetitionCount: Int,
     val staminaKeepDistance: Double,
+    val competeFightFinished: Boolean,
+    val competeFightTime: Double,
 )
 
 class InvokedSkill(

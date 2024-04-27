@@ -66,6 +66,9 @@ private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntr
         positionCompetitionCount = result.averageOf { it.positionCompetitionCount.toDouble() },
         staminaKeepRate = result.count { it.staminaKeepDistance > 0.0 } / result.size.toDouble(),
         staminaKeepDistance = result.averageOf { it.staminaKeepDistance },
+        competeFightFinishRate = result.count { it.competeFightFinished } /
+                result.count { it.competeFightTime > 0.0 }.toDouble(),
+        competeFightTime = result.averageOf { it.competeFightTime },
     )
 }
 

@@ -39,6 +39,8 @@ private val tableHeader = listOf(
     "位置取り調整回数",
     "持久力温存発生率",
     "持久力温存平均距離",
+    "追い比べ完走率",
+    "追い比べ平均時間",
 )
 
 @Composable
@@ -52,7 +54,7 @@ private fun SummaryTable(summary: SimulationSummary) {
             add(toTableData("非最大スパート", summary.notSpurtSummary))
         }
         LinedTable(
-            rowCount = 4, columnCount = 10,
+            rowCount = 4, columnCount = tableHeader.size,
             modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
             cellBackground = MaterialTheme.colorScheme.surface,
             cellPadding = 4.dp,
@@ -75,7 +77,7 @@ private fun SummaryTable(summary: SimulationSummary) {
 
 private fun toTableData(label: String, entry: SimulationSummaryEntry): List<String> {
     return if (entry.count == 0) {
-        listOf(label, "-", "-", "-", "-", "-", "-", "-", "-", "-")
+        listOf(label, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-")
     } else {
         listOf(
             label,
@@ -88,6 +90,8 @@ private fun toTableData(label: String, entry: SimulationSummaryEntry): List<Stri
             entry.positionCompetitionCount.roundToString(2),
             entry.staminaKeepRate.toPercentString(1),
             entry.staminaKeepDistance.roundToString(1),
+            entry.competeFightFinishRate.toPercentString(1),
+            entry.competeFightTime.roundToString(1),
         )
     }
 }

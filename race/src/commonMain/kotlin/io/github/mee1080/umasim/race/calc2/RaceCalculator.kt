@@ -219,11 +219,13 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             // HP5%以下で終了
             if (simulation.sp <= 0.05 * setting.spMax) {
                 simulation.competeFight = false
+                simulation.competeFightEnd = simulation.frameElapsed
             }
         } else {
             // 最終直線でHP15%以上で発動可能、1秒ごとに一定確率で発動するよう近似
             if (changeSecond && isInFinalStraight() && simulation.sp >= 0.15 * setting.spMax && Random.nextDouble() < system.competeFightRate) {
                 simulation.competeFight = true
+                simulation.competeFightStart = simulation.frameElapsed
             }
         }
 
@@ -449,6 +451,8 @@ private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
     val raceTime = simulation.frameElapsed * secondPerFrame - excessTime
     val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
+    val competeFightFrame = (simulation.competeFightEnd ?: simulation.frameElapsed) -
+            (simulation.competeFightStart ?: simulation.frameElapsed)
     return RaceSimulationResult(
         raceTime = raceTime,
         raceTimeDelta = raceTimeDelta,
@@ -456,6 +460,8 @@ private fun RaceState.goal(): RaceSimulationResult {
         spDiff = simulation.spurtParameters?.spDiff ?: 0.0,
         positionCompetitionCount = simulation.positionCompetitionCount,
         staminaKeepDistance = simulation.staminaKeepDistance,
+        competeFightFinished = simulation.competeFightEnd == null && simulation.competeFightStart != null,
+        competeFightTime = competeFightFrame * secondPerFrame,
     )
 }
 

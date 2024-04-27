@@ -70,6 +70,8 @@ data class SimulationSummaryEntry(
     val positionCompetitionCount: Double = 0.0,
     val staminaKeepRate: Double = 0.0,
     val staminaKeepDistance: Double = 0.0,
+    val competeFightFinishRate: Double = 0.0,
+    val competeFightTime: Double = 0.0,
 )
 
 data class SimulationSkillInfo(
