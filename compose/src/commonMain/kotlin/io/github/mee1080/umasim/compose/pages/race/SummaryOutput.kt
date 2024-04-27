@@ -116,6 +116,7 @@ private fun SkillTable(summary: SimulationSummary) {
                 "平均終盤接続時間",
                 "終盤発動率",
                 "平均終盤遅延",
+                "速度上昇無効割合",
             )
         )
         summaries.forEach { add(toTableData(it.second)) }
@@ -135,7 +136,7 @@ private fun SkillTable(summary: SimulationSummary) {
             Row(
                 modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
             ) {
-                for (col in 0..<13) {
+                for (col in 0..<14) {
                     Column(
                         Modifier
                             .padding(horizontal = 2.dp)
@@ -158,7 +159,7 @@ private fun SkillTable(summary: SimulationSummary) {
 
 private fun toTableData(entry: SimulationSkillSummary): List<String> {
     return if (entry.count == 0) {
-        listOf("0") + List(12) { "-" }
+        listOf("0") + List(13) { "-" }
     } else {
         listOf(
             entry.count.toString(),
@@ -174,6 +175,7 @@ private fun toTableData(entry: SimulationSkillSummary): List<String> {
             (entry.averagePhase2ConnectionFrame / 15.0).roundToString(2, "s"),
             entry.phase2TriggeredRate.toPercentString(1),
             (entry.averagePhase2DelayFrame / 15.0).roundToString(2, "s"),
+            entry.invalidRate.toPercentString(1),
         )
     }
 }

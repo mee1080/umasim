@@ -43,8 +43,8 @@ fun testCalc2() {
     val (result, state) = calculator.simulate()
     println(result)
     state.simulation.frames.forEachIndexed { index, raceFrame ->
-        if (raceFrame.skills.isNotEmpty()) {
-            println("$index : ${raceFrame.skills.map { it.skill.name }}")
+        if (raceFrame.triggeredSkills.isNotEmpty()) {
+            println("$index : ${raceFrame.triggeredSkills.map { it.skill.name }}")
         }
 //        println(raceFrame)
     }

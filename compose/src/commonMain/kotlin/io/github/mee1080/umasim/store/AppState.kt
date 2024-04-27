@@ -81,6 +81,7 @@ data class SimulationSkillInfo(
     val endFrame1: Int = -1,
     val startFrame2: Int = -1,
     val endFrame2: Int = -1,
+    val invalidRate: Double? = null,
 ) {
     val phase1ConnectionFrame by lazy { calcConnectionFrame(phase1StartFrame) }
     val phase2ConnectionFrame by lazy { calcConnectionFrame(phase2StartFrame) }
@@ -125,6 +126,7 @@ data class SimulationSkillSummary(
     val averagePhase2ConnectionFrame: Double,
     val phase2TriggeredRate: Double,
     val averagePhase2DelayFrame: Double,
+    val invalidRate: Double,
 )
 
 @Stable

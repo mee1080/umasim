@@ -72,30 +72,49 @@ private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntr
     )
 }
 
+private class SimulationSkillInfoWork(
+    var info: SimulationSkillInfo,
+    var invalidFrameCount: Int = 0,
+    var totalFrameCount: Int = 0,
+)
+
 private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
     val (phase1Start, phase2Start) = getPhaseChangeFrames(state)
     val skillMap = state.setting.hasSkills.associate {
-        it.name to SimulationSkillInfo(phase1Start, phase2Start)
+        it.name to SimulationSkillInfoWork(SimulationSkillInfo(phase1Start, phase2Start))
     }.toMutableMap()
     state.simulation.frames.forEachIndexed { index, frame ->
-        frame.skills.forEach {
+        val speedDiff = frame.targetSpeed - frame.speed
+        frame.operatingSkills.filter { it.targetSpeed > 0.0 }.forEach {
+            val current = skillMap[it.data.skill.name] ?: return@forEach
+            current.totalFrameCount++
+            if (speedDiff > it.targetSpeed) {
+                current.invalidFrameCount++
+            }
+        }
+        frame.triggeredSkills.forEach {
             val current = skillMap[it.skill.name] ?: return@forEach
-            if (current.startFrame1 < 0) {
-                skillMap[it.skill.name] = current.copy(startFrame1 = index)
+            if (current.info.startFrame1 < 0) {
+                skillMap[it.skill.name]?.info = current.info.copy(startFrame1 = index)
             } else {
-                skillMap[it.skill.name] = current.copy(startFrame2 = index)
+                skillMap[it.skill.name]?.info = current.info.copy(startFrame2 = index)
             }
         }
         frame.endedSkills.forEach {
             val current = skillMap[it.data.skill.name] ?: return@forEach
-            if (current.endFrame1 < 0) {
-                skillMap[it.data.skill.name] = current.copy(endFrame1 = index)
+            if (current.info.endFrame1 < 0) {
+                skillMap[it.data.skill.name]?.info = current.info.copy(endFrame1 = index)
             } else {
-                skillMap[it.data.skill.name] = current.copy(endFrame2 = index)
+                skillMap[it.data.skill.name]?.info = current.info.copy(endFrame2 = index)
             }
         }
     }
-    return skillMap
+    return skillMap.mapValues {
+        val invalidRate = if (it.value.totalFrameCount == 0) null else {
+            it.value.invalidFrameCount.toDouble() / it.value.totalFrameCount
+        }
+        it.value.info.copy(invalidRate = invalidRate)
+    }
 }
 
 private fun getPhaseChangeFrames(state: RaceState): Pair<Int, Int> {
@@ -143,6 +162,9 @@ private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
             triggeredList.count { it.triggeredPhase == 2 }.toDouble() / triggeredList.size
         },
         averagePhase2DelayFrame = triggeredList.mapNotNull { it.phase2DelayFrame }.average(),
+        invalidRate = if (list.isEmpty()) 0.0 else list.filter { it.invalidRate != null }.averageOf {
+            it.invalidRate ?: 0.0
+        },
     )
 }
 
@@ -182,7 +204,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
         skillData = buildList {
             var last = frameList[0]
             frameList.forEachIndexed { index, raceFrame ->
-                raceFrame.skills.forEach {
+                raceFrame.triggeredSkills.forEach {
                     add(index / 15f to it.skill.name)
                 }
                 add(index, raceFrame, last, "掛かり") { it.temptation }

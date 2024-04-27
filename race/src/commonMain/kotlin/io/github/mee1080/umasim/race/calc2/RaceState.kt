@@ -726,11 +726,14 @@ data class SpurtParameters(
 data class OperatingSkill(
     val data: InvokedSkill,
     val startFrame: Int,
-    val totalSpeed: Double,
+    val targetSpeed: Double,
+    val speedWithDecel: Double,
     val currentSpeed: Double,
     val acceleration: Double,
     val duration: Double,
-)
+) {
+    val totalSpeed = targetSpeed + speedWithDecel
+}
 
 data class RaceFrame(
     val speed: Double,
@@ -740,8 +743,9 @@ data class RaceFrame(
     val acceleration: Double = 0.0,
     val movement: Double = 0.0,
     val consume: Double = 0.0,
-    val skills: List<InvokedSkill> = emptyList(),
+    val triggeredSkills: List<InvokedSkill> = emptyList(),
     val endedSkills: List<OperatingSkill> = emptyList(),
+    val operatingSkills: List<OperatingSkill> = emptyList(),
     val temptation: Boolean = false,
     val spurting: Boolean = false,
     val paceDownMode: Boolean = false,

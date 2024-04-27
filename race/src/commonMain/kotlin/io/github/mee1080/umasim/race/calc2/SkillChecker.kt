@@ -148,7 +148,7 @@ private fun checkCondition(
         "corner" -> condition.checkInRace { cornerNumber }
 
         "is_activate_any_skill" -> condition.withAssert("==", 1) {
-            condition.checkInRaceBool { simulation.frames.last().skills.isNotEmpty() }
+            condition.checkInRaceBool { simulation.frames.last().triggeredSkills.isNotEmpty() }
         }
 
         "is_lastspurt" -> condition.checkInRaceBool { isInSpurt() }
@@ -456,12 +456,13 @@ fun RaceState.triggerSkill(skill: InvokedSkill) {
     }
     if (skill.invoke.duration > 0.0) {
         simulation.operatingSkills += OperatingSkill(
-            skill,
-            simulation.frameElapsed,
-            skill.invoke.totalSpeed(this),
-            skill.invoke.currentSpeed(this),
-            skill.invoke.acceleration(this),
-            skill.invoke.calcDuration(this),
+            data = skill,
+            startFrame = simulation.frameElapsed,
+            targetSpeed = skill.invoke.targetSpeed(this),
+            speedWithDecel = skill.invoke.speedWithDecel(this),
+            currentSpeed = skill.invoke.currentSpeed(this),
+            acceleration = skill.invoke.acceleration(this),
+            duration = skill.invoke.calcDuration(this),
         )
     }
     if (skill.invoke.isSpeedWithDecel) {

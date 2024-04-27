@@ -127,7 +127,7 @@ private fun RaceState.triggerStartSkills() {
         speed = 0.0,
         sp = setting.spMax,
         startPosition = 0.0,
-        skills = skills,
+        triggeredSkills = skills,
     )
 }
 
@@ -322,8 +322,9 @@ private fun RaceState.progressRace(): RaceSimulationResult {
         simulation.operatingSkills.removeAll(endedSkills)
 
         frame = frame.copy(
-            skills = skillTriggered,
+            triggeredSkills = skillTriggered,
             endedSkills = endedSkills,
+            operatingSkills = simulation.operatingSkills.toList(),
             spurting = spurting,
         )
         simulation.frames += frame
