@@ -275,7 +275,7 @@ class RaceState(
             val corners = setting.trackDetail.corners
             val cornerIndex = corners.indexOfFirst { simulation.position in it.start..it.end }
             if (cornerIndex < 0) return 0
-            return (4 + cornerIndex - corners.size) % 4 + 1
+            return (16 + cornerIndex - corners.size) % 4 + 1
         }
 
     val isInConservePower: Boolean
