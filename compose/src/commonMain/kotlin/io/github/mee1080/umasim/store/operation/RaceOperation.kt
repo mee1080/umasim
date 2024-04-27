@@ -88,7 +88,7 @@ private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
         frame.operatingSkills.filter { it.targetSpeed > 0.0 }.forEach {
             val current = skillMap[it.data.skill.name] ?: return@forEach
             current.totalFrameCount++
-            if (speedDiff > it.targetSpeed) {
+            if (!frame.paceDownMode && speedDiff > it.targetSpeed) {
                 current.invalidFrameCount++
             }
         }
