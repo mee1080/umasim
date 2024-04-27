@@ -74,6 +74,52 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
             )
             speed2Power1Guts1Wisdom1MileOptions = listOf(option1, option2, option3)
         }
+
+        val speed2Stamina1Guts1Wisdom1Long = {
+            UafActionSelector(speed2Stamina1Guts1Wisdom1LongOptions)
+        }
+
+        val speed2Stamina1Guts1Wisdom1LongOptions: List<Option>
+
+        init {
+            val option1 = Option(
+                speedFactor = 1.0,
+                staminaFactor = 1.2,
+                powerFactor = 1.3,
+                gutsFactor = 0.9,
+                wisdomFactor = 1.1,
+                skillPtFactor = 1.2,
+                hpFactor = 1.1,
+                motivationFactor = 19.0,
+                relationFactor = 8.0,
+                hpKeepFactor = 0.7,
+                riskFactor = 3.4,
+                athleticBaseFactor = 4.4,
+                athleticRequiredFactor = 1.2,
+                athleticBonusFactor = 45.0,
+                consultMinScore = 38.0,
+                consultAthleticRequiredFactor = 1.8,
+                consultHeatUpStatusFactor = 0.2,
+                keepRedHeatUpFactor = 1.1,
+            )
+            val option2 = option1.copy(
+                hpFactor = 0.8,
+                hpKeepFactor = 0.7,
+                riskFactor = 8.8,
+                athleticBaseFactor = 2.6,
+                athleticRequiredFactor = 2.6,
+                athleticBonusFactor = 20.0,
+            )
+            val option3 = option1.copy(
+                hpFactor = 2.0,
+                hpKeepFactor = 0.1,
+                riskFactor = 1.0,
+                athleticBaseFactor = 3.8,
+                athleticRequiredFactor = 1.8,
+                athleticBonusFactor = 25.0,
+            )
+            speed2Stamina1Guts1Wisdom1LongOptions = listOf(option1, option2, option3)
+        }
     }
 
     @Serializable
@@ -95,6 +141,7 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         val consultMinScore: Double = 25.0,
         val consultAthleticRequiredFactor: Double = 0.5,
         val consultHeatUpStatusFactor: Double = 0.5,
+        val keepRedHeatUpFactor: Double = 1.0,
     ) : ActionSelectorGenerator {
         override fun generateSelector() = UafActionSelector(listOf(this))
     }
@@ -158,12 +205,14 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         if (!action.turnChange) return Double.MIN_VALUE
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
+        val heatUpRed = state.uafStatus!!.heatUp[UafGenre.Red]!! > 0
         val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
             val result = it.first as? StatusActionResult ?: return@sumOf 0.0
             val statusScore = calcScore(calcExpectedHintStatus(action) + result.status, state.status)
             val expectedStatusScore = when (action) {
-                is Training, is Race -> expectedScore
+                is Training -> expectedScore * (if (heatUpRed) option.keepRedHeatUpFactor else 1.0)
+                is Race -> expectedScore
                 else -> 0.0
             }
             val relationScore = if (result.success) calcRelationScore(state, action) else 0.0

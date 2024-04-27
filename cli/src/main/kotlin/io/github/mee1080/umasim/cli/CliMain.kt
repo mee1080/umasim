@@ -63,6 +63,7 @@ class CliMain : CliktCommand() {
     private val consultMin by option().double().multiple()
     private val consultAthleticRequired by option().double().multiple()
     private val consultHeatUpStatus by option().double().multiple()
+    private val keepRedHeatUp by option().double().multiple()
 
     private val evaluate by option().triple().multiple()
 
@@ -116,6 +117,7 @@ class CliMain : CliktCommand() {
                             consultMinScore = consultMin.getOrElse(it) { 1.0 },
                             consultAthleticRequiredFactor = consultAthleticRequired.getOrElse(it) { 1.0 },
                             consultHeatUpStatusFactor = consultHeatUpStatus.getOrElse(it) { 1.0 },
+                            keepRedHeatUpFactor = keepRedHeatUp.getOrElse(it) { 1.0 },
                         )
                     }
                     UafActionSelector(options)

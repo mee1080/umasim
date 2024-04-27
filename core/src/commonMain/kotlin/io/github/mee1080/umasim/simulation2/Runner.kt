@@ -143,6 +143,24 @@ object Runner {
         StatusType.SKILL to (0.8 to 4000),
     )
 
+    val uafLongEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.1 to 2200),
+        StatusType.STAMINA to (1.15 to 1600),
+        StatusType.POWER to (1.1 to 1500),
+        StatusType.GUTS to (1.2 to 1200),
+        StatusType.WISDOM to (1.1 to 1400),
+        StatusType.SKILL to (0.8 to 4000),
+    )
+
+    val noLimitSetting = mapOf(
+        StatusType.SPEED to (1.0 to 10000),
+        StatusType.STAMINA to (1.0 to 10000),
+        StatusType.POWER to (1.0 to 10000),
+        StatusType.GUTS to (1.0 to 10000),
+        StatusType.WISDOM to (1.0 to 10000),
+        StatusType.SKILL to (0.8 to 10000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,
@@ -155,7 +173,7 @@ object Runner {
     ): Pair<Double, Evaluator> {
         val summaries = run(count, scenario, chara, supportCardList, factorList, events, selector)
         val evaluator = Evaluator(summaries, evaluateSetting, 0.2)
-        return (evaluator.upperSum(0.2, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
+        return (evaluator.upperSum(1.0, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
 
     suspend fun run(
