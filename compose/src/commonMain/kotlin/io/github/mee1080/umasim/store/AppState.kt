@@ -34,7 +34,8 @@ fun AppState.saveSetting() {
 
 enum class SimulationMode(val label: String) {
     NORMAL("通常"),
-    CONTRIBUTION("スキル貢献度（各スキルを所持していない場合と比較）"),
+    CONTRIBUTION("スキル貢献度（各スキルを所持していない場合の増加タイム）"),
+    CONTRIBUTION2("スキル貢献度（選択スキルのうち1つを獲得した場合の短縮タイム）")
 }
 
 @Stable

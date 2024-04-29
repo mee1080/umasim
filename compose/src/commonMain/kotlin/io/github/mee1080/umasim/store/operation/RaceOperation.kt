@@ -17,7 +17,8 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
     emit { it.clearSimulationResult() }
     when (state.simulationMode) {
         SimulationMode.NORMAL -> runSimulationNormal(state, overrideCount)
-        SimulationMode.CONTRIBUTION -> runSimulationContribution(state)
+        SimulationMode.CONTRIBUTION -> runSimulationContribution(state, false)
+        SimulationMode.CONTRIBUTION2 -> runSimulationContribution(state, true)
     }
 }, simulationPolicy)
 
@@ -287,12 +288,15 @@ fun cancelSimulation() = AsyncOperation<AppState>({ state ->
     emit { it.clearSimulationResult() }
 }, simulationCancelPolicy)
 
-private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState) {
+private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState, selectMode: Boolean) {
     val targets = state.contributionTargets.intersect(state.skillIdSet)
     if (state.simulationCount < 5 || targets.isEmpty()) return
     var progress = 0
     val setCount = targets.size + 1
-    val baseCalculator = RaceCalculator(state.setting)
+    val baseSetting = if (selectMode) {
+        state.setting.copy(hasSkills = state.setting.hasSkills.filterNot { targets.contains(it.id) })
+    } else state.setting
+    val baseCalculator = RaceCalculator(baseSetting)
     val baseTimes = List(state.simulationCount) {
         progress++
         if (progress % 50 == 0) {
@@ -312,7 +316,11 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
     val targetResults = targets.mapNotNull { target ->
         val targetSkill = state.setting.hasSkills.firstOrNull { it.id == target } ?: return@mapNotNull null
         val setting = state.setting.copy(
-            hasSkills = state.setting.hasSkills.filterNot { it.id == target },
+            hasSkills = if (selectMode) {
+                baseSetting.hasSkills + targetSkill
+            } else {
+                state.setting.hasSkills.filterNot { it.id == target }
+            },
         )
         val calculator = RaceCalculator(setting)
         val times = List(state.simulationCount) {
@@ -334,7 +342,7 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
             lowerTime = lowerTime,
             lowerDiff = lowerTime - baseResult.lowerTime,
         )
-    }.sortedBy { -it.averageDiff }
+    }.sortedBy { if (selectMode) it.averageDiff else -it.averageDiff }
     emit {
         it.copy(
             simulationProgress = 0,

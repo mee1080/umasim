@@ -24,7 +24,7 @@ fun ModeInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
             label = { Text("モード") },
             itemToString = { it.label },
         )
-        if (state.simulationMode == SimulationMode.CONTRIBUTION) {
+        if (state.simulationMode == SimulationMode.CONTRIBUTION || state.simulationMode == SimulationMode.CONTRIBUTION2) {
             ContributionSetting(state, dispatch)
         }
     }
