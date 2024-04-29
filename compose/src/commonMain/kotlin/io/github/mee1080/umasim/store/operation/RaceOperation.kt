@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.store.*
+import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
@@ -13,9 +14,24 @@ private val simulationPolicy = OnRunning.Ignore(simulationTag)
 private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
 
 fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
+    emit { it.clearSimulationResult() }
+    when (state.simulationMode) {
+        SimulationMode.NORMAL -> runSimulationNormal(state, overrideCount)
+        SimulationMode.CONTRIBUTION -> runSimulationContribution(state)
+    }
+}, simulationPolicy)
+
+private fun AppState.clearSimulationResult() = copy(
+    simulationProgress = 0,
+    simulationSummary = null,
+    lastSimulationSettingWithPassive = null,
+    graphData = null,
+    contributionResults = emptyList(),
+)
+
+private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState, overrideCount: Int? = null) {
     val simulationCount = overrideCount ?: state.simulationCount
-    if (simulationCount <= 0) return@AsyncOperation
-    emit { it.copy(simulationSummary = null) }
+    if (simulationCount <= 0) return
     val calculator = RaceCalculator(state.setting)
     val results = mutableListOf<RaceSimulationResult>()
     val skillSummaries = state.setting.hasSkills.associate {
@@ -52,7 +68,7 @@ fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state
             graphData = graphData,
         )
     }
-}, simulationPolicy)
+}
 
 private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntry {
     return if (result.isEmpty()) SimulationSummaryEntry() else SimulationSummaryEntry(
@@ -268,5 +284,61 @@ private fun toGraphData(
 }
 
 fun cancelSimulation() = AsyncOperation<AppState>({ state ->
-    emit { it.copy(simulationProgress = 0, simulationSummary = null) }
+    emit { it.clearSimulationResult() }
 }, simulationCancelPolicy)
+
+private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState) {
+    val targets = state.contributionTargets.intersect(state.skillIdSet)
+    if (state.simulationCount < 5 || targets.isEmpty()) return
+    var progress = 0
+    val setCount = targets.size + 1
+    val baseCalculator = RaceCalculator(state.setting)
+    val baseTimes = List(state.simulationCount) {
+        progress++
+        if (progress % 50 == 0) {
+            emit { it.copy(simulationProgress = progress / setCount) }
+        }
+        baseCalculator.simulate().first.raceTime
+    }.sorted()
+    val baseResult = ContributionResult(
+        name = "基本値",
+        averageTime = baseTimes.average(),
+        averageDiff = Double.NaN,
+        upperTime = baseTimes.subList(0, baseTimes.size / 5).average(),
+        upperDiff = Double.NaN,
+        lowerTime = baseTimes.subList(baseTimes.size * 4 / 5, baseTimes.size).average(),
+        lowerDiff = Double.NaN,
+    )
+    val targetResults = targets.mapNotNull { target ->
+        val targetSkill = state.setting.hasSkills.firstOrNull { it.id == target } ?: return@mapNotNull null
+        val setting = state.setting.copy(
+            hasSkills = state.setting.hasSkills.filterNot { it.id == target },
+        )
+        val calculator = RaceCalculator(setting)
+        val times = List(state.simulationCount) {
+            progress++
+            if (progress % 50 == 0) {
+                emit { it.copy(simulationProgress = progress / setCount) }
+            }
+            calculator.simulate().first.raceTime
+        }.sorted()
+        val averageTime = times.average()
+        val upperTime = times.subList(0, times.size / 5).average()
+        val lowerTime = times.subList(times.size * 4 / 5, times.size).average()
+        ContributionResult(
+            name = targetSkill.name,
+            averageTime = averageTime,
+            averageDiff = averageTime - baseResult.averageTime,
+            upperTime = upperTime,
+            upperDiff = upperTime - baseResult.upperTime,
+            lowerTime = lowerTime,
+            lowerDiff = lowerTime - baseResult.lowerTime,
+        )
+    }.sortedBy { -it.averageDiff }
+    emit {
+        it.copy(
+            simulationProgress = 0,
+            contributionResults = listOf(baseResult) + targetResults,
+        )
+    }
+}

@@ -32,6 +32,11 @@ fun AppState.saveSetting() {
     persistentSettings.putString(KEY_APP_STATE_AUTO_SAVE, encodeToString(this))
 }
 
+enum class SimulationMode(val label: String) {
+    NORMAL("通常"),
+    CONTRIBUTION("スキル貢献度（各スキルを所持していない場合と比較）"),
+}
+
 @Stable
 @Serializable
 data class AppState(
@@ -39,6 +44,8 @@ data class AppState(
     val charaName: String = NOT_SELECTED,
     val skillIdSet: Set<String> = emptySet(),
     val simulationCount: Int = 100,
+    val simulationMode: SimulationMode = SimulationMode.NORMAL,
+    val contributionTargets: Set<String> = emptySet(),
     @Transient
     val simulationProgress: Int = 0,
     @Transient
@@ -47,6 +54,8 @@ data class AppState(
     val lastSimulationSettingWithPassive: RaceSettingWithPassive? = null,
     @Transient
     val graphData: GraphData? = null,
+    @Transient
+    val contributionResults: List<ContributionResult> = emptyList(),
 ) : State
 
 @Stable
@@ -143,4 +152,15 @@ data class GraphData(
     val upSlopeData: List<Pair<Float, Float>>,
     val downSlopeData: List<Pair<Float, Float>>,
     val skillData: List<Pair<Float, String>>,
+)
+
+@Stable
+data class ContributionResult(
+    val name: String,
+    val averageTime: Double,
+    val averageDiff: Double,
+    val upperTime: Double,
+    val upperDiff: Double,
+    val lowerTime: Double,
+    val lowerDiff: Double,
 )

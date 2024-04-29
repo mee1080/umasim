@@ -1,54 +1,15 @@
 package io.github.mee1080.umasim.compose.common.parts
 
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-
-@Composable
-fun Table(
-    rowCount: Int,
-    columnCount: Int,
-    modifier: Modifier = Modifier,
-    cellPadding: Dp = 4.dp,
-    cellBackground: Color = MaterialTheme.colorScheme.surfaceVariant,
-    headerBackground: Color = cellBackground,
-    rowGap: Dp = 1.dp,
-    columnGap: Dp = 1.dp,
-    content: @Composable BoxScope.(row: Int, column: Int) -> Unit
-) {
-    Row(
-        modifier = modifier.height(IntrinsicSize.Min),
-        horizontalArrangement = Arrangement.spacedBy(columnGap),
-    ) {
-        repeat(columnCount) { column ->
-            val background = if (column == 0) headerBackground else cellBackground
-            val contentColor = MaterialTheme.colorScheme.contentColorFor(background)
-            val cellModifier = Modifier
-                .fillMaxWidth()
-                .background(if (column == 0) headerBackground else cellBackground)
-                .padding(cellPadding)
-            Column(
-                modifier = Modifier.width(IntrinsicSize.Max),
-                verticalArrangement = Arrangement.spacedBy(rowGap, Alignment.CenterVertically),
-            ) {
-                repeat(rowCount) { row ->
-                    Box(cellModifier) {
-                        CompositionLocalProvider(LocalContentColor provides contentColor) {
-                            content(row, column)
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
+import io.github.mee1080.utility.applyIfNotNull
 
 @Composable
 fun LinedTable(
@@ -88,5 +49,47 @@ fun LinedTable(
             }
         }
         VerticalDivider(Modifier.fillMaxHeight(), borderWidth, borderColor)
+    }
+}
+
+@Composable
+fun Table(
+    rowCount: Int,
+    columnCount: Int,
+    modifier: Modifier = Modifier,
+    scrollable: Boolean = false,
+    cellHorizontalMargin: Dp = 2.dp,
+    cellVerticalMargin: Dp = 2.dp,
+    cellBackground: Color = MaterialTheme.colorScheme.surface,
+    content: @Composable BoxScope.(row: Int, col: Int) -> Unit
+) {
+    Column(modifier) {
+        val scrollState = if (scrollable) rememberScrollState() else null
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .applyIfNotNull(scrollState) { horizontalScroll(it) },
+            horizontalArrangement = Arrangement.spacedBy(cellHorizontalMargin),
+        ) {
+            for (col in 0..<columnCount) {
+                Column(
+                    modifier = Modifier.width(IntrinsicSize.Max),
+                    verticalArrangement = Arrangement.spacedBy(cellVerticalMargin),
+                ) {
+                    for (row in 0..<rowCount) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .background(cellBackground),
+                        ) {
+                            content(row, col)
+                        }
+                    }
+                }
+            }
+        }
+        if (scrollState != null) {
+            HorizontalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.fillMaxWidth())
+        }
     }
 }

@@ -20,6 +20,7 @@ fun setCharaName(charaName: String) = DirectOperation<AppState> { state ->
     state.copy(
         charaName = charaName,
         skillIdSet = state.skillIdSet - deleteSkillIds + addSkillIds,
+        contributionTargets = state.contributionTargets - deleteSkillIds,
     ).updateSetting {
         it.copy(hasSkills = it.hasSkills - deleteSkills + addSkills)
     }
@@ -31,7 +32,10 @@ fun setUniqueLevel(uniqueLevel: Int) = DirectOperation<AppState> { state ->
 
 fun toggleSkill(skillData: SkillData) = DirectOperation<AppState> { state ->
     if (state.skillIdSet.contains(skillData.id)) {
-        state.copy(skillIdSet = state.skillIdSet - skillData.id).updateSetting {
+        state.copy(
+            skillIdSet = state.skillIdSet - skillData.id,
+            contributionTargets = state.contributionTargets - skillData.id,
+        ).updateSetting {
             it.copy(hasSkills = it.hasSkills - skillData)
         }
     } else {

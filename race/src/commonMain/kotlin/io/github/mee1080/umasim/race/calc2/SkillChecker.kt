@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.race.data.Corner
 import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data2.SkillCondition
 import io.github.mee1080.umasim.race.data2.SkillData
+import io.github.mee1080.umasim.race.data2.approximateTypeToState
 import io.github.mee1080.umasim.race.data2.ignoreConditions
 import kotlin.math.max
 import kotlin.math.min
@@ -177,42 +178,42 @@ private fun checkCondition(
 
         "weather" -> condition.preChecked(baseSetting.weather)
 
-        "is_move_lane" -> condition.checkSpecialState("move_lane")
+        "is_move_lane" -> condition.checkSpecialState()
 
-        "change_order_onetime" -> condition.checkSpecialState("change_order_onetime")
+        "change_order_onetime" -> condition.checkSpecialState()
 
-        "is_overtake" -> condition.checkSpecialState("overtake")
+        "is_overtake" -> condition.checkSpecialState()
 
-        "overtake_target_time" -> condition.checkSpecialState("overtaken", -1)
+        "overtake_target_time" -> condition.checkSpecialState(-1)
 
         "compete_fight_count" -> condition.checkInRaceBool { simulation.competeFight }
 
-        "blocked_front" -> condition.checkSpecialState("blocked_front")
+        "blocked_front" -> condition.checkSpecialState()
 
-        "blocked_front_continuetime" -> condition.checkSpecialState("blocked_front", -1)
+        "blocked_front_continuetime" -> condition.checkSpecialState(-1)
 
-        "blocked_side_continuetime" -> condition.checkSpecialState("blocked_side", -1)
+        "blocked_side_continuetime" -> condition.checkSpecialState(-1)
 
-        "infront_near_lane_time" -> condition.checkSpecialState("infront_near_lane", -1)
+        "infront_near_lane_time" -> condition.checkSpecialState(-1)
 
-        "behind_near_lane_time" -> condition.checkSpecialState("behind_near_lane", -1)
+        "behind_near_lane_time" -> condition.checkSpecialState(-1)
 
-        "behind_near_lane_time_set1" -> condition.checkSpecialState("behind_near_lane", -1)
+        "behind_near_lane_time_set1" -> condition.checkSpecialState(-1)
 
-        "near_count" -> condition.checkSpecialState("near_count")
+        "near_count" -> condition.checkSpecialState()
 
-        "is_surrounded" -> condition.checkSpecialState("is_surrounded")
+        "is_surrounded" -> condition.checkSpecialState()
 
-        "temptation_opponent_count_behind" -> condition.checkSpecialState("temptation_opponent_count_behind")
+        "temptation_opponent_count_behind" -> condition.checkSpecialState()
 
         "is_other_character_activate_advantage_skill" -> condition.withAssert("==") {
             val key = "is_other_character_activate_advantage_skill${condition.value}"
             { (simulation.specialState[key] ?: 0) > 0 }
         }
 
-        "change_order_up_end_after" -> condition.checkSpecialState("change_order_up_end_after")
+        "change_order_up_end_after" -> condition.checkSpecialState()
 
-        "change_order_up_finalcorner_after" -> condition.checkSpecialState("change_order_up_finalcorner_after")
+        "change_order_up_finalcorner_after" -> condition.checkSpecialState()
 
         "is_activate_other_skill_detail" -> condition.withAssert("==", 1) {
             { simulation.coolDownMap.containsKey(skill.id) }
@@ -275,7 +276,8 @@ private inline fun checkInRandom(
     return { areas.any { simulation.position in it } }
 }
 
-private fun SkillCondition.checkSpecialState(key: String, adjust: Int = 0): RaceState.() -> Boolean {
+private fun SkillCondition.checkSpecialState(adjust: Int = 0): RaceState.() -> Boolean {
+    val key = approximateTypeToState[type]
     return { check((simulation.specialState[key] ?: 0) + adjust) }
 }
 

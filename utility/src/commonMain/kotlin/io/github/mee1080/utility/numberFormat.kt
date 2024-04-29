@@ -55,13 +55,13 @@ fun Float.roundToString(position: Int = 0, unit: String = ""): String {
     }
 }
 
-fun Double.roundToString(position: Int = 0, unit: String = ""): String {
+fun Double.roundToString(position: Int = 0, unit: String = "", displayPlus: Boolean = false): String {
     return if (isNaN() || isInfinite()) {
         "-"
     } else if (position == 0) {
         "${roundToInt()}$unit"
     } else {
-        val minus = if (this < 0) "-" else ""
+        val minus = if (this < 0) "-" else if (displayPlus) "+" else ""
         val factor = 10.0.pow(position).roundToInt()
         val intValue = (abs(this) * factor).roundToInt()
         "$minus${intValue / factor}.${(intValue % factor).zeroPad(position)}$unit"

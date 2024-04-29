@@ -216,6 +216,24 @@ val approximateConditions = mapOf(
     ),
 )
 
+val approximateTypeToState = mapOf(
+    "is_move_lane" to "move_lane",
+    "change_order_onetime" to "change_order_onetime",
+    "is_overtake" to "overtake",
+    "overtake_target_time" to "overtaken",
+    "blocked_front" to "blocked_front",
+    "blocked_front_continuetime" to "blocked_front",
+    "blocked_side_continuetime" to "blocked_side",
+    "infront_near_lane_time" to "infront_near_lane",
+    "behind_near_lane_time" to "behind_near_lane",
+    "behind_near_lane_time_set1" to "behind_near_lane",
+    "near_count" to "near_count",
+    "is_surrounded" to "is_surrounded",
+    "temptation_opponent_count_behind" to "temptation_opponent_count_behind",
+    "change_order_up_end_after" to "change_order_up_end_after",
+    "change_order_up_finalcorner_after" to "change_order_up_finalcorner_after",
+)
+
 val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
     "time" to "ナイター条件は無視",
@@ -287,7 +305,11 @@ data class SkillData(
     }
 
     val messages by lazy {
-        (info + description + invokes.flatMap { it.messages }).distinct()
+        info + notice
+    }
+
+    val notice by lazy {
+        (description + invokes.flatMap { it.messages }).distinct()
     }
 }
 
@@ -317,6 +339,7 @@ data class Invoke(
         return buildSet {
             target.forEach { andConditions ->
                 andConditions.forEach { condition ->
+                    if (approximateTypeToState.containsKey(condition.type)) add("発動条件近似")
                     ignoreConditions[condition.type]?.let { add(it) }
                 }
             }

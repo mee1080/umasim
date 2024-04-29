@@ -1,7 +1,10 @@
 package io.github.mee1080.umasim.compose.pages.race
 
-import androidx.compose.foundation.*
+import androidx.compose.foundation.HorizontalScrollbar
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -9,6 +12,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.parts.LinedTable
+import io.github.mee1080.umasim.compose.common.parts.Table
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationSkillSummary
 import io.github.mee1080.umasim.store.SimulationSummary
@@ -123,36 +127,18 @@ private fun SkillTable(summary: SimulationSummary) {
     }
     Text("スキル情報", modifier = Modifier.padding(top = 8.dp))
     Row {
-        Column {
+        Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text("", Modifier.padding(4.dp))
             summaries.forEach {
                 Text(it.first, Modifier.padding(4.dp))
             }
         }
-        Column(
-            modifier = Modifier.weight(1f),
-        ) {
-            val scrollState = rememberScrollState()
-            Row(
-                modifier = Modifier.fillMaxWidth().horizontalScroll(scrollState),
-            ) {
-                for (col in 0..<14) {
-                    Column(
-                        Modifier
-                            .padding(horizontal = 2.dp)
-                            .background(MaterialTheme.colorScheme.surface)
-                    ) {
-                        tableData.forEachIndexed { row, item ->
-                            Text(
-                                item[col], Modifier.padding(4.dp).align(
-                                    if (row == 0) Alignment.CenterHorizontally else Alignment.End
-                                )
-                            )
-                        }
-                    }
-                }
-            }
-            HorizontalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.fillMaxWidth())
+        Table(tableData.size, 14, scrollable = true) { row, col ->
+            Text(
+                tableData[row][col], Modifier.padding(4.dp).align(
+                    if (row == 0) Alignment.Center else Alignment.CenterEnd
+                )
+            )
         }
     }
 }
