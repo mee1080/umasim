@@ -7,7 +7,7 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateUaf() {
-    speed2Power1Guts1Wisdom1Mile()
+//    speed2Power1Guts1Wisdom1Mile()
     speed2Stamina1Guts1Wisdom1Long()
 }
 
@@ -69,25 +69,25 @@ private fun speed2Power1Guts1Wisdom1Mile() {
 //        selector = UafActionSelector.speed2Power1Guts1Wisdom1Mile,
 //        evaluateSetting = Runner.uafMileEvaluateSetting,
 //    )
-    doSimulation2(
-        Scenario.UAF,
-        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
-        Store.getSupportByName(
-            "[血脈の胎動]ドゥラメンテ",
-            "[大望は飛んでいく]エルコンドルパサー",
-            "[冬溶かす熾火]メジロラモーヌ",
-            "[只、君臨す。]オルフェーヴル",
-//            "[かっとばせー！ですわ！？]メジロマックイーン",
-            "[共に描くキラメキ]都留岐涼花",
-        ).toTypedArray(),
-//        targetStatus = StatusType.WISDOM, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[Take Them Down!]ナリタタイシン" to it }.toTypedArray())),
-//        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
-        factor = factor(StatusType.SPEED, 1) + factor(StatusType.STAMINA, 1) + factor(StatusType.POWER, 4),
-        testCount = 100000,
-        selector = UafActionSelector.speed2Power1Guts1Wisdom1Mile,
-        evaluateSetting = Runner.uafMileEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.UAF,
+//        Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5),
+//        Store.getSupportByName(
+//            "[血脈の胎動]ドゥラメンテ",
+//            "[大望は飛んでいく]エルコンドルパサー",
+//            "[冬溶かす熾火]メジロラモーヌ",
+//            "[只、君臨す。]オルフェーヴル",
+////            "[かっとばせー！ですわ！？]メジロマックイーン",
+//            "[共に描くキラメキ]都留岐涼花",
+//        ).toTypedArray(),
+//        targetStatus = StatusType.WISDOM, rarity = 2..2, talent = 0..3,
+////        Store.getSupportByName(*((0..4).map { "[Take Them Down!]ナリタタイシン" to it }.toTypedArray())),
+////        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+//        factor = factor(StatusType.SPEED, 1) + factor(StatusType.STAMINA, 1) + factor(StatusType.POWER, 4),
+//        testCount = 100000,
+//        selector = UafActionSelector.speed2Power1Guts1Wisdom1Mile,
+//        evaluateSetting = Runner.uafMileEvaluateSetting,
+//    )
 }
 
 private fun speed2Stamina1Guts1Wisdom1Long() {
@@ -106,7 +106,7 @@ private fun speed2Stamina1Guts1Wisdom1Long() {
 //        Store.getSupportByName(*((0..4).map { "[わーく・あ・みらくる！]ヒシミラクル" to it }.toTypedArray())),
 //        Store.getSupportByName("[大地と我らのアンサンブル]サウンズオブアース" to 4),
         factor = factor(StatusType.POWER, 4) + factor(StatusType.STAMINA, 2),
-        testCount = 1000,
+        testCount = 100000,
         selector = UafActionSelector.speed2Stamina1Guts1Wisdom1Long,
         evaluateSetting = Runner.uafLongEvaluateSetting,
     )
