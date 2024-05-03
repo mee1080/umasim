@@ -10,10 +10,13 @@ internal val charaToUniqueSkill = skillData2.filter { it.rarity == "unique" }.as
 internal val charaToEvoSkills = skillData2.filter { it.rarity == "evo" }.groupBy { it.holder!! }
 
 fun setCharaName(charaName: String) = DirectOperation<AppState> { state ->
-    val deleteSkills = state.setting.hasSkills.filter { it.holder != null }.toSet()
+    val uniqueSkill = charaToUniqueSkill[charaName]
+    val deleteSkills = state.setting.hasSkills.filter {
+        it.holder != null || it.name == uniqueSkill?.name
+    }.toSet()
     val deleteSkillIds = deleteSkills.map { it.id }.toSet()
     val addSkills = buildSet {
-        charaToUniqueSkill[charaName]?.let { add(it) }
+        uniqueSkill?.let { add(it) }
 //        charaToEvoSkills[charaName]?.let { addAll(it) }
     }
     val addSkillIds = addSkills.map { it.id }.toSet()

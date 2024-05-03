@@ -174,6 +174,10 @@ private fun TypeSkillSetting(
             if (!inheritSkills.isNullOrEmpty()) {
                 SkillFlowRow("継承", inheritSkills, skillIdSet, dispatch)
             }
+            val scenarioSkills = skills["scenario"]?.filterBySetting(setting)
+            if (!scenarioSkills.isNullOrEmpty()) {
+                SkillFlowRow("シナリオ進化", scenarioSkills, skillIdSet, dispatch)
+            }
             val rareSkills = skills["rare"]?.filterBySetting(setting)
             if (!rareSkills.isNullOrEmpty()) {
                 SkillFlowRow("レア", rareSkills, skillIdSet, dispatch)

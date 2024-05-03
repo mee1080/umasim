@@ -290,6 +290,7 @@ data class SkillData(
     val id: String,
     val name: String,
     val rarity: String,
+    val group: Int,
     val type: String,
     val sp: Int = 0,
     val activateLot: Int = 1,
