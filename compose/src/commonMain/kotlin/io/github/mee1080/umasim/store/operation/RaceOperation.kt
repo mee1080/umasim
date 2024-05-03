@@ -312,6 +312,7 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         upperDiff = Double.NaN,
         lowerTime = baseTimes.subList(baseTimes.size * 4 / 5, baseTimes.size).average(),
         lowerDiff = Double.NaN,
+        efficiency = List(6) { Double.NaN },
     )
     val targetResults = targets.mapNotNull { target ->
         val targetSkill = state.setting.hasSkills.firstOrNull { it.id == target } ?: return@mapNotNull null
@@ -341,8 +342,12 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
             upperDiff = upperTime - baseResult.upperTime,
             lowerTime = lowerTime,
             lowerDiff = lowerTime - baseResult.lowerTime,
+            efficiency = if (targetSkill.sp == 0) List(6) { Double.NaN } else {
+                val base = (averageTime - baseResult.averageTime) * 100.0 / targetSkill.sp
+                listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
+            },
         )
-    }.sortedBy { if (selectMode) it.averageDiff else -it.averageDiff }
+    }.sortedBy { if (selectMode) it.efficiency[0] else -it.efficiency[0] }
     emit {
         it.copy(
             simulationProgress = 0,

@@ -164,4 +164,5 @@ data class ContributionResult(
     val upperDiff: Double,
     val lowerTime: Double,
     val lowerDiff: Double,
+    val efficiency: List<Double>,
 )

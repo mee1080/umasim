@@ -32,7 +32,7 @@ fun App() {
     val dispatch = remember { OperationDispatcher(stateHolder, coroutineScope) }
     val state = stateHolder.state.collectAsState().value
 
-    AppTheme {
+    AppTheme(darkTheme = false) {
         val scrollState = rememberScrollState()
         Row(Modifier.fillMaxSize()) {
             Column(
