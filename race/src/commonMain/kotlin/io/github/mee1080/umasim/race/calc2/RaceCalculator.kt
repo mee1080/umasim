@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import kotlin.math.*
 import kotlin.random.Random
+import kotlin.random.nextInt
 
 class RaceCalculator(
     private val setting: RaceSetting,
@@ -42,7 +43,13 @@ class RaceCalculator(
         val invokedSkills = setting.invokeSkills()
         val settingWithPassive = setting.applyPassive(system, invokedSkills)
         val passiveTriggered = settingWithPassive.passiveBonus.skills.size
+        val gateNumber = if (setting.gateNumber == 0) {
+            Random.nextInt(1..setting.track.gateCount)
+        } else setting.gateNumber
+        val initialLane = gateNumber * horseLane + setting.track.initialLaneAdjuster
         val simulationState = RaceSimulationState(
+            currentLane = initialLane,
+            targetLane = initialLane,
             invokedSkills = invokedSkills,
             passiveTriggered = passiveTriggered,
         )
@@ -127,6 +134,7 @@ private fun RaceState.triggerStartSkills() {
         speed = 0.0,
         sp = setting.spMax,
         startPosition = 0.0,
+        currentLane = simulation.currentLane,
         triggeredSkills = skills,
     )
 }
@@ -155,6 +163,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             speed = simulation.currentSpeed,
             sp = simulation.sp,
             startPosition = simulation.startPosition,
+            currentLane = simulation.currentLane,
             temptation = simulation.isInTemptation,
             paceDownMode = paceDownMode,
             downSlopeMode = simulation.isInDownSlopeMode,
@@ -320,6 +329,9 @@ private fun RaceState.progressRace(): RaceSimulationResult {
             (simulation.frameElapsed - operatingSkill.startFrame) * secondPerFrame > duration * setting.timeCoef
         }
         simulation.operatingSkills.removeAll(endedSkills)
+
+        // レーン移動
+        applyMoveLane()
 
         frame = frame.copy(
             triggeredSkills = skillTriggered,
@@ -504,6 +516,55 @@ fun RaceState.applyPositionCompetition() {
             // 2秒後に再判定
             simulation.positionCompetition = false
             simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
+        }
+    }
+}
+
+fun RaceState.applyMoveLane() {
+    val currentLane = simulation.currentLane
+
+    // 最終コーナー/最終直線での目標レーン計算
+    if (simulation.extraMoveLane < 0.0 && (isAfterFinalCorner || isInFinalStraight())) {
+        simulation.extraMoveLane =
+            min(currentLane / 0.1, setting.trackDetail.maxLaneDistance) * 0.5 + Random.nextDouble(0.1)
+    }
+
+    // 横ブロック
+    val sideBlocked = (simulation.specialState["blocked_side"] ?: 0) > 0
+
+    // 目標レーン再計算
+    if (sideBlocked || abs(simulation.targetLane - currentLane) < 0.5 * horseLane) {
+        // TODO 追い抜きモードは未実装
+        simulation.targetLane = if (simulation.operatingSkills.any { it.fixLane }) {
+            // 危険回避
+            9.5 * horseLane
+        } else {
+            when {
+                simulation.sp <= 0.0 -> currentLane
+                paceDownMode -> 0.18
+                simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
+                currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
+                else -> currentLane
+            }
+        }
+    }
+
+    if (sideBlocked || abs(simulation.targetLane - currentLane) < 0.00001) {
+        simulation.laneChangeSpeed = 0.0
+    } else {
+        val targetSpeed = if (simulation.position < setting.trackDetail.moveLanePoint) {
+            setting.baseSpeed * (1 + currentLane / setting.trackDetail.maxLaneDistance * 0.05)
+        } else setting.baseSpeed
+        // 終盤の順位係数は無視
+
+        simulation.laneChangeSpeed = min(simulation.laneChangeSpeed + laneChangeAccelerationPerFrame, targetSpeed)
+
+        val actualSpeed = min(simulation.laneChangeSpeed + simulation.operatingSkills.sumOf { it.laneChangeSpeed }, 0.6)
+        if (simulation.targetLane > currentLane) {
+            simulation.currentLane = min(simulation.targetLane, currentLane + actualSpeed * secondPerFrame)
+        } else {
+            simulation.currentLane =
+                max(simulation.targetLane, currentLane - actualSpeed * secondPerFrame * (1.0 + currentLane))
         }
     }
 }

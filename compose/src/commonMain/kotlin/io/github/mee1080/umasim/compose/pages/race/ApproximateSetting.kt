@@ -28,6 +28,10 @@ fun ApproximateSetting() {
         }
 
         Column {
+            Text("走行レーン", style = MaterialTheme.typography.titleLarge)
+            Text("追い越しモードによるレーン移動は未実装です")
+            Text("横ブロックによる移動停止は近似処理を行っています（スキル発動の欄を参照）")
+
             Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
             Text("以下のセクションで、ペースダウンモードに入ります")
             Text("掛かり状態でも発動します（位置固定のため）")
@@ -100,6 +104,9 @@ fun ApproximateSetting() {
             )
             approximateConditions.forEach { (key, condition) ->
                 Text(condition.displayName, modifier = Modifier.padding(top = 8.dp))
+                if (condition.valueOnStart > 0) {
+                    Text("スタート時は判定ON", modifier = Modifier.padding(start = 8.dp))
+                }
                 if (condition is ApproximateMultiCondition) {
                     condition.conditions.forEach {
                         Text(

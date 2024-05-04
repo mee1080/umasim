@@ -1,11 +1,13 @@
 package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.calc2.*
+import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
+import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
 
@@ -211,6 +213,12 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
             if (raceFrame.sp >= 0) null else {
                 index / 15f to adjustRange(raceFrame.sp, staminaMin, staminaMax)
             }
+        },
+        laneData = frameList.mapIndexed { index, raceFrame ->
+            index / 15f to adjustRange(
+                raceFrame.currentLane + horseLane / 2.0, 0f,
+                (max(setting.track.gateCount + 1, 11) * horseLane + setting.track.initialLaneAdjuster).toFloat()
+            )
         },
         phase1Start = frameList.indexOfFirst { it.startPosition >= setting.phase1Start } / 15f,
         phase2Start = frameList.indexOfFirst { it.startPosition >= setting.phase2Start } / 15f,

@@ -14,10 +14,7 @@ import io.github.mee1080.umasim.race.data.recentEventTrackList
 import io.github.mee1080.umasim.race.data.trackData
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
-import io.github.mee1080.umasim.store.operation.setCourse
-import io.github.mee1080.umasim.store.operation.setCourseCondition
-import io.github.mee1080.umasim.store.operation.setLocation
-import io.github.mee1080.umasim.store.operation.setTrack
+import io.github.mee1080.umasim.store.operation.*
 
 @Composable
 fun CourseInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -34,6 +31,8 @@ fun CourseInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 private val locationList = trackData.keys.sorted()
 
 private val courseKeyList = trackData.mapValues { it.value.courses.keys.sorted() }
+
+private val gateCountSelection = List(10) { it + 9 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -79,6 +78,12 @@ private fun CourseSetting(track: Track, dispatch: OperationDispatcher<AppState>)
                 modifier = Modifier.width(128.dp),
                 label = { Text("バ場状態") },
                 itemToString = { it.label },
+            )
+            SelectBox(
+                gateCountSelection, track.gateCount,
+                onSelect = { dispatch(setGateCount(it)) },
+                modifier = Modifier.width(128.dp),
+                label = { Text("出走人数") },
             )
         }
     }

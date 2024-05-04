@@ -14,10 +14,7 @@ import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
-import io.github.mee1080.umasim.store.operation.setPopularity
-import io.github.mee1080.umasim.store.operation.setRandomPosition
-import io.github.mee1080.umasim.store.operation.setSimulationCount
-import io.github.mee1080.umasim.store.operation.setSkillActivateAdjustment
+import io.github.mee1080.umasim.store.operation.*
 
 @Composable
 fun SettingInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -31,6 +28,8 @@ fun SettingInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 
 private val popularitySelection = List(18) { it + 1 }
 
+private val gateNumberSelection = List(19) { it }
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -38,12 +37,23 @@ private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        SelectBox(
-            popularitySelection, setting.popularity,
-            onSelect = { dispatch(setPopularity(it)) },
-            modifier = Modifier.width(128.dp),
-            label = { Text("人気") },
-        )
+        FlowRow(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            SelectBox(
+                popularitySelection, setting.popularity,
+                onSelect = { dispatch(setPopularity(it)) },
+                modifier = Modifier.width(128.dp),
+                label = { Text("人気") },
+            )
+            SelectBox(
+                gateNumberSelection, setting.gateNumber,
+                onSelect = { dispatch(setGateNumber(it)) },
+                modifier = Modifier.width(256.dp),
+                label = { Text("ゲート番号") },
+                itemToString = { if (it == 0) "ランダム" else it.toString() },
+            )
+        }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

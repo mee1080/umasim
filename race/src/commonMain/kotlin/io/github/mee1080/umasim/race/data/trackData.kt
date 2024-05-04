@@ -30,19 +30,26 @@ val trackData by lazy {
     Json.decodeFromString<Map<Int, RaceTrack>>(rawCourseData)
 }
 
+private class RecentEventTrackEntry(
+    val courseName: String,
+    val distance: String,
+    val condition: CourseCondition,
+    val gateCount: Int,
+)
+
 val recentEventTrackList by lazy {
     listOf(
-        Triple("京都", "芝3200", CourseCondition.GOOD),
-        Triple("京都", "芝3200", CourseCondition.YAYAOMO),
-        Triple("京都", "芝3200", CourseCondition.OMO),
-        Triple("京都", "芝3200", CourseCondition.BAD),
+        RecentEventTrackEntry("京都", "芝3200", CourseCondition.GOOD, 12),
+        RecentEventTrackEntry("京都", "芝3200", CourseCondition.YAYAOMO, 12),
+        RecentEventTrackEntry("京都", "芝3200", CourseCondition.OMO, 12),
+        RecentEventTrackEntry("京都", "芝3200", CourseCondition.BAD, 12),
 
-        Triple("東京", "芝2400", CourseCondition.OMO),
+        RecentEventTrackEntry("東京", "芝2400", CourseCondition.OMO, 9),
     ).mapNotNull { target ->
-        val course = trackData.entries.firstOrNull { it.value.name == target.first } ?: return@mapNotNull null
-        val track = course.value.courses.entries.firstOrNull { it.value.name.startsWith(target.second) }
+        val course = trackData.entries.firstOrNull { it.value.name == target.courseName } ?: return@mapNotNull null
+        val track = course.value.courses.entries.firstOrNull { it.value.name.startsWith(target.distance) }
             ?: return@mapNotNull null
-        Track(course.key, track.key, target.third)
+        Track(course.key, track.key, target.condition, target.gateCount)
     }
 }
 
@@ -86,6 +93,12 @@ data class TrackDetail(
         4 -> Distance.LONG
         else -> throw RuntimeException("unknown distance type: $distanceType")
     }
+
+    // FIXME レース途中で変化するコースあり
+    val maxLaneDistance = courseWidth * laneMax / 10000.0
+
+    // FIXME 新潟1000以外に直線のみのコースが実装されたら要確認
+    val moveLanePoint = corners.firstOrNull()?.start ?: 30.0
 }
 
 @Serializable

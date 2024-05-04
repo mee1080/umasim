@@ -32,6 +32,13 @@ fun setCourseCondition(condition: CourseCondition) = DirectOperation<AppState> {
     }
 }
 
+fun setGateCount(gateCount: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { setting ->
+        val track = setting.track.copy(gateCount = gateCount)
+        setting.copy(track = track)
+    }
+}
+
 fun setTrack(track: Track) = DirectOperation<AppState> { state ->
     state.updateSetting { setting ->
         setting.copy(track = track)

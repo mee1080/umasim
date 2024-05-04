@@ -23,6 +23,10 @@ fun setPopularity(value: Int) = DirectOperation<AppState> { state ->
     state.updateSetting { it.copy(popularity = value) }
 }
 
+fun setGateNumber(value: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { it.copy(gateNumber = value) }
+}
+
 fun setSimulationMode(value: SimulationMode) = DirectOperation<AppState> { state ->
     state.copy(simulationMode = value).also { it.saveSetting() }
 }

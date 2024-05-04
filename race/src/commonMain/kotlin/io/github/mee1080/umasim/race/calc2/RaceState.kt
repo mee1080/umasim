@@ -51,8 +51,16 @@ data class Track(
     val location: Int = 10001,
     val course: Int = 10101,
     val condition: CourseCondition = CourseCondition.GOOD,
+    val gateCount: Int = 9,
 ) {
     val surfaceCondition: Int = condition.value
+
+    val initialLaneAdjuster = when {
+        location == 10101 -> 0.0
+        gateCount >= 14 -> 1.86
+        location < 10100 && gateCount >= 10 -> 0.6
+        else -> 0.0
+    }
 }
 
 data class PassiveBonus(
@@ -338,6 +346,7 @@ interface IRaceSetting {
     val hasSkills: List<SkillData>
     val uniqueLevel: Int
     val popularity: Int
+    val gateNumber: Int
     val track: Track
     val skillActivateAdjustment: SkillActivateAdjustment
     val randomPosition: RandomPosition
@@ -369,6 +378,7 @@ data class RaceSetting(
     override val uniqueLevel: Int = 6,
 
     override val popularity: Int = 1,
+    override val gateNumber: Int = 0,
     override val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
 
     override val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
@@ -390,11 +400,6 @@ data class RaceSetting(
     override val courseLength by lazy { trackDetail.distance }
 
     override val coolDownBaseFrames by lazy { courseLength / 1000.0 * 15.0 }
-
-//    val passiveBonus: PassiveBonus by lazy {
-//        // FIXME 発動条件判定
-//        hasSkills.fold(PassiveBonus()) { acc, skill -> acc.add(skill) }
-//    }
 
     override val skillActivateRate by lazy {
         maxOf(100.0 - 9000.0 / umaStatus.wisdom, 20.0)
@@ -638,6 +643,10 @@ class RaceSettingWithPassive(
         if (status <= 1200) return@lazy 0.0
         sqrt(status - 1200.0) * 0.0085 * staminaLimitBreakDistanceCoef(trackDetail.distance)
     }
+
+    val baseLaneChangeTargetSpeed by lazy {
+        0.02 * (0.3 + 0.001 * modifiedPower)
+    }
 }
 
 class RaceSimulationState(
@@ -646,6 +655,10 @@ class RaceSimulationState(
     var startPosition: Double = 0.0,
     var currentSpeed: Double = startSpeed,
     var sp: Double = 0.0,
+    var currentLane: Double = 0.0,
+    var targetLane: Double = 0.0,
+    var laneChangeSpeed: Double = 0.0,
+    var extraMoveLane:Double = -1.0,
     val operatingSkills: MutableList<OperatingSkill> = mutableListOf(),
     var startDelay: Double = 0.0,
     var isStartDash: Boolean = false,
@@ -731,6 +744,8 @@ data class OperatingSkill(
     val currentSpeed: Double,
     val acceleration: Double,
     val duration: Double,
+    val fixLane: Boolean,
+    val laneChangeSpeed: Double,
 ) {
     val totalSpeed = targetSpeed + speedWithDecel
 }
@@ -743,6 +758,7 @@ data class RaceFrame(
     val acceleration: Double = 0.0,
     val movement: Double = 0.0,
     val consume: Double = 0.0,
+    val currentLane: Double = 0.0,
     val triggeredSkills: List<InvokedSkill> = emptyList(),
     val endedSkills: List<OperatingSkill> = emptyList(),
     val operatingSkills: List<OperatingSkill> = emptyList(),

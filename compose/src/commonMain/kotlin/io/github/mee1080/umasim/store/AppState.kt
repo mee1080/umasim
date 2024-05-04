@@ -146,6 +146,7 @@ data class GraphData(
     val staminaData: List<Pair<Float, Float>>,
     val staminaOverData: List<Pair<Float, Float>>,
     val staminaZero: Float,
+    val laneData: List<Pair<Float, Float>>,
     val phase1Start: Float,
     val phase2Start: Float,
     val straightData: List<Pair<Float, Float>>,
