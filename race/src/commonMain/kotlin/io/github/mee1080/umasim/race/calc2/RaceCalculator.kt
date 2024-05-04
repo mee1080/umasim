@@ -538,20 +538,18 @@ fun RaceState.applyMoveLane() {
     // 横ブロック
     val sideBlocked = (simulation.specialState["blocked_side"] ?: 0) > 0
 
-    // 目標レーン再計算
-    if (sideBlocked || abs(simulation.targetLane - currentLane) < 0.5 * horseLane) {
-        // TODO 追い抜きモードは未実装
-        simulation.targetLane = if (simulation.operatingSkills.any { it.fixLane }) {
-            // 危険回避
-            9.5 * horseLane
-        } else {
-            when {
-                simulation.sp <= 0.0 -> currentLane
-                paceDownMode -> 0.18
-                simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
-                currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
-                else -> currentLane
-            }
+    // 目標レーン計算
+    // TODO 追い抜きモードは未実装
+    simulation.targetLane = if (simulation.operatingSkills.any { it.fixLane }) {
+        // 危険回避
+        9.5 * horseLane
+    } else {
+        when {
+            simulation.sp <= 0.0 -> currentLane
+            paceDownMode -> 0.18
+            simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
+            currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
+            else -> currentLane
         }
     }
 
@@ -559,18 +557,18 @@ fun RaceState.applyMoveLane() {
         simulation.laneChangeSpeed = 0.0
     } else {
         val targetSpeed = if (simulation.position < setting.trackDetail.moveLanePoint) {
-            setting.baseSpeed * (1 + currentLane / setting.trackDetail.maxLaneDistance * 0.05)
-        } else setting.baseSpeed
+            setting.baseLaneChangeTargetSpeed * (1 + currentLane / setting.trackDetail.maxLaneDistance * 0.05)
+        } else setting.baseLaneChangeTargetSpeed
         // 終盤の順位係数は無視
 
         simulation.laneChangeSpeed = min(simulation.laneChangeSpeed + laneChangeAccelerationPerFrame, targetSpeed)
 
         val actualSpeed = min(simulation.laneChangeSpeed + simulation.operatingSkills.sumOf { it.laneChangeSpeed }, 0.6)
         if (simulation.targetLane > currentLane) {
-            simulation.currentLane = min(simulation.targetLane, currentLane + actualSpeed * secondPerFrame)
+            simulation.currentLane = min(simulation.targetLane, currentLane + actualSpeed)
         } else {
             simulation.currentLane =
-                max(simulation.targetLane, currentLane - actualSpeed * secondPerFrame * (1.0 + currentLane))
+                max(simulation.targetLane, currentLane - actualSpeed * (1.0 + currentLane))
         }
     }
 }

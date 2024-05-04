@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.race.data2
 
 import io.github.mee1080.umasim.race.calc2.RaceState
+import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
 import io.github.mee1080.utility.toPercentString
@@ -138,7 +139,10 @@ val approximateConditions = mapOf(
     "blocked_side" to ApproximateMultiCondition(
         "横ブロック(つぼみなど)",
         listOf(
-            ApproximateStartContinue("序盤", 0.1, 0.75) to {
+            ApproximateStartContinue("序盤1/4以降かつ走行レーンが外側", 0.0, 0.0) to {
+                it.currentSection in 1..3 && it.simulation.currentLane > 3.0 * horseLane
+            },
+            ApproximateStartContinue("上記以外の序盤", 0.1, 0.85) to {
                 it.currentPhase == 0
             },
             ApproximateStartContinue("中盤", 0.08, 0.75) to {
@@ -482,7 +486,7 @@ data class Invoke(
         return targetSpeed(state) + speedWithDecel(state)
     }
 
-    fun laneChangeSpeed(state: RaceState):Double {
+    fun laneChangeSpeed(state: RaceState): Double {
         return totalEffect(state, "laneChangeSpeed") / 10000.0
     }
 
@@ -600,6 +604,9 @@ data class SkillEffect(
             when (additional) {
                 2 -> add("同時に別のスキルを2つ発動する条件で近似")
                 3 -> add("同時に別のスキルを1つ発動する条件で近似")
+            }
+            if (type == "fixLane") {
+                add("外方向移動に対する横ブロックは未実装")
             }
         }
     }

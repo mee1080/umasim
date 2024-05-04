@@ -83,7 +83,7 @@ internal const val maxSpeed = 30.0
 const val courseWidth = 11.25
 const val horseLane = courseWidth / 18.0
 const val laneChangeAcceleration = 0.02 * 1.5
-const val laneChangeAccelerationPerFrame = 0.02 * 1.5 / framePerSecond
+const val laneChangeAccelerationPerFrame = laneChangeAcceleration / framePerSecond
 
 /**
  * やる気->ステータス補正倍率
