@@ -482,6 +482,14 @@ data class Invoke(
         return targetSpeed(state) + speedWithDecel(state)
     }
 
+    fun laneChangeSpeed(state: RaceState):Double {
+        return totalEffect(state, "laneChangeSpeed") / 10000.0
+    }
+
+    val isFixLane by lazy {
+        effectsByTypeMap.containsKey("fixLane")
+    }
+
     private val durationMessage by lazy {
         buildList {
             when (durationSpecial) {

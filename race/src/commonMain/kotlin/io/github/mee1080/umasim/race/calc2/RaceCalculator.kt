@@ -73,6 +73,9 @@ class RaceCalculator(
         approximateConditions.forEach { entry ->
             simulation.specialState[entry.key] = entry.value.valueOnStart
         }
+
+        simulation.forceInSpeed = Random.nextDouble(0.1) * forceInFixed[setting.umaStatus.style]!!
+
         return state
     }
 
@@ -549,7 +552,7 @@ fun RaceState.applyMoveLane() {
         }
     }
 
-    if (sideBlocked || abs(simulation.targetLane - currentLane) < 0.00001) {
+    if ((sideBlocked && simulation.targetLane < currentLane) || abs(simulation.targetLane - currentLane) < 0.00001) {
         simulation.laneChangeSpeed = 0.0
     } else {
         val targetSpeed = if (simulation.position < setting.trackDetail.moveLanePoint) {

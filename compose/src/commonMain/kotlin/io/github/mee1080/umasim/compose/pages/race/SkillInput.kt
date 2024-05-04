@@ -64,9 +64,9 @@ private fun SkillSetting(state: AppState, dispatch: OperationDispatcher<AppState
         if (multiSkill != null) {
             TypeSkillSetting("複合", multiSkill, skillIdSet, setting, dispatch)
         }
-        val gateSkills = groupedSkills["gate"]
+        val gateSkills = groupedSkills["other"]
         if (gateSkills != null) {
-            TypeSkillSetting("ゲート", gateSkills, skillIdSet, setting, dispatch)
+            TypeSkillSetting("その他", gateSkills, skillIdSet, setting, dispatch)
         }
     }
 }

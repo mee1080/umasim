@@ -424,3 +424,14 @@ internal fun staminaLimitBreakDistanceCoef(distance: Int) = when {
     distance < 2601 -> 1.2
     else -> 1.5
 }
+
+/**
+ * 作戦->ForceIn加算値
+ */
+internal val forceInFixed = mapOf(
+    Style.OONIGE to 0.02,
+    Style.NIGE to 0.02,
+    Style.SEN to 0.01,
+    Style.SASI to 0.01,
+    Style.OI to 0.03,
+)

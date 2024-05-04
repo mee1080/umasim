@@ -168,12 +168,6 @@ class RaceState(
                 } + setting.baseSpeed * simulation.sectionTargetSpeedRandoms[currentSection]
             }
 
-            // TODO Force-in
-            // 序盤で内が空いている場合に速度上昇
-            // 乱数値はレース開始時に決定
-            // val forceInModifier = Random(0.1)+StrategyModifier[m/s]
-            // 逃げ 0.02m/s 先行 0.01m/s 差し 0.01m/s 追込 0.03m/s
-
             val skillModifier = simulation.operatingSkills.sumOf { it.totalSpeed }
 
             // ポジションキープ
@@ -183,14 +177,21 @@ class RaceState(
 
             var result = baseSpeed * positionKeepCoef + skillModifier
 
+            // 序盤で内が空いている場合に速度上昇
+            // 乱数値はレース開始時に決定
+            if (currentPhase == 0 && simulation.targetLane < simulation.currentLane && simulation.laneChangeSpeed > 0.0) {
+                result += simulation.forceInSpeed
+            }
+
             if (isInSlopeUp()) {
                 result -= (abs(currentSlope) * 200.0) / setting.modifiedPower
             } else if (simulation.isInDownSlopeMode) {
                 result += abs(currentSlope) / 10.0 + 0.3
             }
 
-            // TODO 横移動スキル中のレーン移動
-            // (0.0002 * setting.modifiedPower).pow(0.5)
+            if (simulation.laneChangeSpeed > 0.0 && simulation.operatingSkills.any { it.laneChangeSpeed > 0.0 }) {
+                result += (0.0002 * setting.modifiedPower).pow(0.5)
+            }
 
             if (inLeadCompetition) {
                 result += setting.leadCompetitionSpeed
@@ -658,7 +659,8 @@ class RaceSimulationState(
     var currentLane: Double = 0.0,
     var targetLane: Double = 0.0,
     var laneChangeSpeed: Double = 0.0,
-    var extraMoveLane:Double = -1.0,
+    var extraMoveLane: Double = -1.0,
+    var forceInSpeed: Double = 0.0,
     val operatingSkills: MutableList<OperatingSkill> = mutableListOf(),
     var startDelay: Double = 0.0,
     var isStartDash: Boolean = false,
