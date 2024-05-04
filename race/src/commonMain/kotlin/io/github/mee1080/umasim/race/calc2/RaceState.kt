@@ -279,6 +279,11 @@ class RaceState(
         return getSlope(position) <= -1.0
     }
 
+    val currentCorner: Corner?
+        get() {
+            return setting.trackDetail.corners.firstOrNull { simulation.position in it.start..it.end }
+        }
+
     val cornerNumber: Int
         get() {
             val corners = setting.trackDetail.corners

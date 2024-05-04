@@ -31,6 +31,7 @@ fun ApproximateSetting() {
             Text("走行レーン", style = MaterialTheme.typography.titleLarge)
             Text("追い越しモードによるレーン移動は未実装です")
             Text("横ブロックによる移動停止は近似処理を行っています（スキル発動の欄を参照）")
+            Text("外回りロスは全てのコーナーが90度として計算しています（いつか正確に計算したい）")
 
             Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
             Text("以下のセクションで、ペースダウンモードに入ります")

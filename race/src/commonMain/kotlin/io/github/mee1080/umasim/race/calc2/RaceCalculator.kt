@@ -360,10 +360,13 @@ private fun RaceState.move(elapsedTime: Double) {
         }
 
         updateSelfSpeed(elapsedTime /* NOT timeAfterDelay!! */)
-        val actualSpeed = simulation.currentSpeed
+        val moveLength = simulation.currentSpeed * timeAfterDelay
+        val cornerLoss = currentCorner?.let {
+            moveLength / it.length / 4 * 2 * PI * simulation.currentLane
+        } ?: 0.0
 
         // 移動距離及び耐力消耗を算出
-        simulation.position += actualSpeed * timeAfterDelay
+        simulation.position += moveLength - cornerLoss
         simulation.sp -= calcConsumePerSecond() * elapsedTime
 
         this.updateStartDash()
