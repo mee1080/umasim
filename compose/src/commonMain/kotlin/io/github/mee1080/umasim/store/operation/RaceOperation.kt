@@ -7,6 +7,7 @@ import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
+import kotlinx.coroutines.delay
 import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
@@ -14,6 +15,10 @@ private val simulationTag = OnRunning.Tag()
 private val simulationPolicy = OnRunning.Ignore(simulationTag)
 
 private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
+
+private const val progressReportInterval = 50
+
+private const val progressReportDelay = 10L
 
 fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
     emit { it.clearSimulationResult() }
@@ -42,8 +47,9 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
     }
     var lastRaceState: RaceState? = null
     repeat(simulationCount) { count ->
-        if (count % 10 == 0) {
+        if (count % progressReportInterval == 0) {
             emit { it.copy(simulationProgress = count + 1) }
+            delay(progressReportDelay)
         }
         val result = calculator.simulate()
         results += result.first
@@ -307,8 +313,9 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
     val baseCalculator = RaceCalculator(baseSetting)
     val baseTimes = List(state.simulationCount) {
         progress++
-        if (progress % 50 == 0) {
+        if (progress % progressReportInterval == 0) {
             emit { it.copy(simulationProgress = progress / setCount) }
+            delay(progressReportDelay)
         }
         baseCalculator.simulate().first.raceTime
     }.sorted()

@@ -15,6 +15,7 @@ import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationMode
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.runSimulation
+import io.github.mee1080.utility.toPercentString
 
 @Composable
 fun ActionInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -40,10 +41,14 @@ fun ActionInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
             }
         }
         if (state.simulationCount > 0 && state.simulationProgress > 0) {
-            LinearProgressIndicator(
-                progress = { state.simulationProgress.toFloat() / state.simulationCount },
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Column(Modifier.fillMaxWidth()) {
+                val progress = state.simulationProgress.toFloat() / state.simulationCount
+                Text(progress.toPercentString())
+                LinearProgressIndicator(
+                    progress = { progress },
+                    modifier = Modifier.fillMaxWidth(),
+                )
+            }
         }
     }
 }
