@@ -242,7 +242,6 @@ val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
     "time" to "ナイター条件は無視",
     "season" to "季節条件は無視",
-    "post_number" to "枠条件は無視",
     "is_dirtgrade" to "交流重賞条件は無視",
 
     "is_used_skill_id" to "他スキル発動条件は未実装",

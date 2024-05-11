@@ -28,7 +28,7 @@ fun SettingInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 
 private val popularitySelection = List(18) { it + 1 }
 
-private val gateNumberSelection = List(19) { it }
+private val gateNumberSelection = List(21) { it - 2 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
@@ -51,7 +51,14 @@ private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState
                 onSelect = { dispatch(setGateNumber(it)) },
                 modifier = Modifier.width(256.dp),
                 label = { Text("ゲート番号") },
-                itemToString = { if (it == 0) "ランダム" else it.toString() },
+                itemToString = {
+                    when (it) {
+                        0 -> "ランダム"
+                        -1 -> "内枠"
+                        -2 -> "外枠"
+                        else -> it.toString()
+                    }
+                },
             )
         }
         FlowRow(

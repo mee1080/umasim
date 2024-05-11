@@ -41,18 +41,23 @@ class RaceCalculator(
 
     private fun initializeState(): RaceState {
         val invokedSkills = setting.invokeSkills()
-        val settingWithPassive = setting.applyPassive(system, invokedSkills)
-        val passiveTriggered = settingWithPassive.passiveBonus.skills.size
-        val gateNumber = if (setting.gateNumber == 0) {
-            Random.nextInt(1..setting.track.gateCount)
-        } else setting.gateNumber
+        val gateCount = setting.track.gateCount
+        val gateNumber = when (setting.gateNumber) {
+            0 -> Random.nextInt(1..gateCount)
+            -1 -> Random.nextInt(1..((3..6).maxBy { gateNumberToPostNumber[it][gateCount] <= 3 }))
+            -2 -> Random.nextInt(((6..12).maxBy { gateNumberToPostNumber[it][gateCount] >= 6 })..8)
+            else -> setting.gateNumber
+        }
         val initialLane = gateNumber * horseLane + setting.track.initialLaneAdjuster
         val simulationState = RaceSimulationState(
             currentLane = initialLane,
             targetLane = initialLane,
             invokedSkills = invokedSkills,
-            passiveTriggered = passiveTriggered,
+            postNumber = gateNumberToPostNumber[gateNumber][gateCount],
         )
+        val settingWithPassive = setting.applyPassive(system, simulationState)
+        simulationState.passiveTriggered = settingWithPassive.passiveBonus.skills.size
+
         val state = RaceState(settingWithPassive, simulationState, system)
         val simulation = state.simulation
         if (!state.setting.fixRandom) {
@@ -106,10 +111,10 @@ private fun RaceSetting.invokeSkills(): List<InvokedSkill> {
     }
 }
 
-private fun RaceSetting.applyPassive(system: SystemSetting, invokedSkills: List<InvokedSkill>): RaceSettingWithPassive {
+private fun RaceSetting.applyPassive(system: SystemSetting, simulation: RaceSimulationState): RaceSettingWithPassive {
     var passiveBonus = PassiveBonus()
-    val stateForCheck = RaceState(RaceSettingWithPassive(this, passiveBonus), RaceSimulationState(), system)
-    invokedSkills.forEach { skill ->
+    val stateForCheck = RaceState(RaceSettingWithPassive(this, passiveBonus), simulation, system)
+    simulation.invokedSkills.forEach { skill ->
         if (skill.invoke.isPassive && skill.check(stateForCheck)) {
             passiveBonus = passiveBonus.add(stateForCheck, skill)
         }

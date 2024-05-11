@@ -22,6 +22,8 @@
  */
 package io.github.mee1080.umasim.race.data
 
+import kotlin.math.min
+
 enum class Distance {
     SHORT,
     MILE,
@@ -435,3 +437,13 @@ internal val forceInFixed = mapOf(
     Style.SASI to 0.01,
     Style.OI to 0.03,
 )
+
+val gateNumberToPostNumber = List(19) { gateNumber ->
+    List(19) { gateCount ->
+        if (gateCount > 16) {
+            min((gateNumber + 1) / 2, (gateNumber - gateCount + 26) / 3)
+        } else {
+            min(gateNumber, (gateNumber - gateCount + 17) / 2)
+        }
+    }
+}

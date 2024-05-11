@@ -221,6 +221,8 @@ private fun checkCondition(
 
         "popularity" -> condition.preChecked(baseSetting.popularity)
 
+        "post_number" -> condition.checkInRace { simulation.postNumber }
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
