@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.FontResource
 @Composable
 fun AppTheme(
     fontResource: String = defaultFontResource,
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
