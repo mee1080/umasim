@@ -350,7 +350,7 @@ private fun RaceSetting.initAllCornerRandom(): List<RandomEntry> {
     var corners = trackDetail.corners.toMutableList()
     val triggers = mutableListOf<RandomEntry>()
 
-    repeat(4) {
+    repeat(2) {
         if (corners.isEmpty()) {
             return@repeat
         }
@@ -358,12 +358,12 @@ private fun RaceSetting.initAllCornerRandom(): List<RandomEntry> {
         val corner = corners[i]
         val trigger = logTrigger(corner.start, corner.start + corner.length)
         triggers.add(trigger)
-        if (corner.start + corner.length - trigger.endInclusive >= 10) {
-            corners[i] = Corner(trigger.endInclusive, trigger.endInclusive - corner.start)
-        } else {
-            corners.removeAt(i)
-        }
-        corners = corners.subList(i, corners.size)
+//        if (corner.start + corner.length - trigger.endInclusive >= 10) {
+//            corners[i] = Corner(trigger.endInclusive, trigger.endInclusive - corner.start)
+//        } else {
+//            corners.removeAt(i)
+//        }
+//        corners = corners.subList(i, corners.size)
     }
     triggers.sortBy { it.start }
     return triggers
