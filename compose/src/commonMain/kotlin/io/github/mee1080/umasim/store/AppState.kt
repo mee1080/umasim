@@ -4,6 +4,8 @@ import androidx.compose.runtime.Stable
 import io.github.mee1080.umasim.race.calc2.RaceFrame
 import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.calc2.RaceSettingWithPassive
+import io.github.mee1080.umasim.race.calc2.UmaStatus
+import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.framework.State
 import io.github.mee1080.umasim.store.operation.updateSetting
@@ -13,8 +15,6 @@ import io.github.mee1080.utility.persistentSettings
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
-const val NOT_SELECTED = "(未選択)"
-
 private const val KEY_APP_STATE_AUTO_SAVE = "race.appStateAutoSave"
 
 fun AppState.loadSetting(): AppState {
@@ -22,7 +22,14 @@ fun AppState.loadSetting(): AppState {
         decodeFromStringOrNull<AppState>(it)
     }?.let { base ->
         base.updateSetting { setting ->
-            setting.copy(hasSkills = skillData2.filter { base.skillIdSet.contains(it.id) })
+            setting.copy(
+                umaStatus = setting.umaStatus.copy(
+                    hasSkills = skillData2.filter { base.skillIdSet.contains(it.id) }
+                ),
+                virtualLeader = setting.virtualLeader.copy(
+                    hasSkills = skillData2.filter { base.virtualSkillIdSet.contains(it.id) }
+                ),
+            )
         }
     }
     return savedSetting ?: this
@@ -42,8 +49,8 @@ enum class SimulationMode(val label: String) {
 @Serializable
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
-    val charaName: String = NOT_SELECTED,
     val skillIdSet: Set<String> = emptySet(),
+    val virtualSkillIdSet: Set<String> = emptySet(),
     val simulationCount: Int = 100,
     val simulationMode: SimulationMode = SimulationMode.NORMAL,
     val contributionTargets: Set<String> = emptySet(),
@@ -57,7 +64,19 @@ data class AppState(
     val graphData: GraphData? = null,
     @Transient
     val contributionResults: List<ContributionResult> = emptyList(),
-) : State
+) : State {
+    fun chara(virtual: Boolean): UmaStatus {
+        return if (virtual) setting.virtualLeader else setting.umaStatus
+    }
+
+    fun skillIdSet(virtual: Boolean): Set<String> {
+        return if (virtual) virtualSkillIdSet else skillIdSet
+    }
+
+    fun hasSkills(virtual: Boolean): List<SkillData> {
+        return if (virtual) setting.virtualLeader.hasSkills else setting.umaStatus.hasSkills
+    }
+}
 
 @Stable
 data class SimulationSummary(
@@ -154,6 +173,7 @@ data class GraphData(
     val upSlopeData: List<Pair<Float, Float>>,
     val downSlopeData: List<Pair<Float, Float>>,
     val skillData: List<Pair<Float, String>>,
+    val paceMakerData: List<Pair<Float, Float>>,
 )
 
 @Stable

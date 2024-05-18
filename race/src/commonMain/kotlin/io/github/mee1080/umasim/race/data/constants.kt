@@ -78,6 +78,12 @@ enum class RandomPosition(val value: Int, val label: String) {
     SLOWEST(5, "最遅"),
 }
 
+enum class PositionKeepMode(val label: String) {
+    APPROXIMATE("近似"),
+    VIRTUAL("仮想ペースメーカー(β板)"),
+    NONE("無し"),
+}
+
 const val framePerSecond = 15
 const val secondPerFrame = 1.0 / framePerSecond
 internal const val startSpeed = 3.0

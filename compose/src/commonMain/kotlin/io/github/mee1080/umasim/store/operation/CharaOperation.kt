@@ -7,18 +7,23 @@ import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.DirectOperation
 
-private fun AppState.updateUmaStatus(action: (UmaStatus) -> UmaStatus): AppState {
-    return updateSetting { it.copy(umaStatus = action(it.umaStatus)) }
+fun AppState.updateUmaStatus(virtual: Boolean, action: (UmaStatus) -> UmaStatus): AppState {
+    return if (virtual) {
+        updateSetting { it.copy(virtualLeader = action(it.virtualLeader)) }
+    } else {
+        updateSetting { it.copy(umaStatus = action(it.umaStatus)) }
+    }
 }
 
 fun setStatus(
+    virtual: Boolean,
     speed: Int? = null,
     stamina: Int? = null,
     power: Int? = null,
     guts: Int? = null,
     wisdom: Int? = null,
 ) = DirectOperation<AppState> { state ->
-    state.updateUmaStatus {
+    state.updateUmaStatus(virtual) {
         it.copy(
             speed = speed ?: it.speed,
             stamina = stamina ?: it.stamina,
@@ -29,16 +34,17 @@ fun setStatus(
     }
 }
 
-fun setStyle(style: Style) = DirectOperation<AppState> { state ->
-    state.updateUmaStatus { it.copy(style = style) }
+fun setStyle(virtual: Boolean, style: Style) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus(virtual) { it.copy(style = style) }
 }
 
 fun setFit(
+    virtual: Boolean,
     surface: FitRank? = null,
     distance: FitRank? = null,
     style: FitRank? = null,
 ) = DirectOperation<AppState> { state ->
-    state.updateUmaStatus {
+    state.updateUmaStatus(virtual) {
         it.copy(
             surfaceFit = surface ?: it.surfaceFit,
             distanceFit = distance ?: it.distanceFit,
@@ -47,6 +53,14 @@ fun setFit(
     }
 }
 
-fun setCondition(condition: Condition) = DirectOperation<AppState> { state ->
-    state.updateUmaStatus { it.copy(condition = condition) }
+fun setCondition(virtual: Boolean, condition: Condition) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus(virtual) { it.copy(condition = condition) }
+}
+
+fun setPopularity(virtual: Boolean, value: Int) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus(virtual) { it.copy(popularity = value) }
+}
+
+fun setGateNumber(virtual: Boolean, value: Int) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus(virtual) { it.copy(gateNumber = value) }
 }

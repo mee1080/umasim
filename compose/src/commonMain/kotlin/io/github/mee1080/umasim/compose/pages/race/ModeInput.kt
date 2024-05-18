@@ -33,7 +33,7 @@ fun ModeInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 @Composable
 private fun ContributionSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     Column {
-        state.setting.hasSkills.forEach { skill ->
+        state.hasSkills(false).forEach { skill ->
             val id = skill.id
             LabeledCheckbox(
                 selected = state.contributionTargets.contains(id),

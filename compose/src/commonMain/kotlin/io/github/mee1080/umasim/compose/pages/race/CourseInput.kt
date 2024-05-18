@@ -47,7 +47,7 @@ private fun CourseSetting(track: Track, dispatch: OperationDispatcher<AppState>)
                     val location = trackData[it.location] ?: return@forEach
                     val course = location.courses[it.course] ?: return@forEach
                     AssistChip({ dispatch(setTrack(it)) }, {
-                        Text("${location.name} ${course.name} ${it.condition.label}")
+                        Text("${location.name} ${course.name} ${it.condition.label} ${it.gateCount}人")
                     })
                 }
             }

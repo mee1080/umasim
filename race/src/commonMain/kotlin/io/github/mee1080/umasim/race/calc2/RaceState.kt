@@ -30,18 +30,26 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 import kotlin.math.*
 
+const val NOT_SELECTED = "(未選択)"
+
 @Serializable
 data class UmaStatus(
+    val charaName: String = NOT_SELECTED,
     val speed: Int = 1700,
     val stamina: Int = 1300,
     val power: Int = 1300,
     val guts: Int = 1200,
     val wisdom: Int = 1200,
     val condition: Condition = Condition.BEST,
-    val style: Style = Style.OI,
+    val style: Style = Style.NIGE,
     val distanceFit: FitRank = FitRank.S,
     val surfaceFit: FitRank = FitRank.A,
     val styleFit: FitRank = FitRank.A,
+    val popularity: Int = 1,
+    val gateNumber: Int = 0,
+    @Transient
+    val hasSkills: List<SkillData> = emptyList(),
+    val uniqueLevel: Int = 6,
 ) {
     val basicRunningStyle get() = style
 }
@@ -90,6 +98,7 @@ class RaceState(
     val setting: RaceSettingWithPassive,
     val simulation: RaceSimulationState,
     val system: SystemSetting,
+    val paceMaker: RaceState?
 ) {
     fun getPhase(position: Double): Int {
         return when {
@@ -129,15 +138,28 @@ class RaceState(
 
     val currentSlope get() = setting.trackDetail.getSlope(simulation.position)
 
-    val paceDownModeSetting
-        get() = when (setting.runningStyle) {
+    val paceDownModeSetting by lazy {
+        when (setting.runningStyle) {
             Style.SEN -> system.positionKeepSectionSen
             Style.SASI -> system.positionKeepSectionSasi
             Style.OI -> system.positionKeepSectionOi
             else -> emptyList()
         }
+    }
 
-    val paceDownMode get() = paceDownModeSetting.getOrElse(currentSection) { false }
+    val paceDownMode
+        get() = when (setting.positionKeepMode) {
+            PositionKeepMode.APPROXIMATE -> {
+                paceDownModeSetting.getOrElse(currentSection) { false }
+            }
+
+            PositionKeepMode.VIRTUAL -> {
+                // TODO
+                paceDownModeSetting.getOrElse(currentSection) { false }
+            }
+
+            PositionKeepMode.NONE -> false
+        }
 
     val inLeadCompetition: Boolean
         get() {
@@ -349,16 +371,14 @@ class RaceState(
 
 interface IRaceSetting {
     val umaStatus: UmaStatus
-    val hasSkills: List<SkillData>
-    val uniqueLevel: Int
-    val popularity: Int
-    val gateNumber: Int
     val track: Track
     val skillActivateAdjustment: SkillActivateAdjustment
     val randomPosition: RandomPosition
     val season: Int
     val weather: Int
     val badStart: Boolean
+    val positionKeepMode: PositionKeepMode
+    val virtualLeader: UmaStatus
     val fixRandom: Boolean
     val runningStyle: Style
     val basicRunningStyle: Style
@@ -379,12 +399,7 @@ interface IRaceSetting {
 @Serializable
 data class RaceSetting(
     override val umaStatus: UmaStatus = UmaStatus(),
-    @Transient
-    override val hasSkills: List<SkillData> = emptyList(),
-    override val uniqueLevel: Int = 6,
 
-    override val popularity: Int = 1,
-    override val gateNumber: Int = 0,
     override val track: Track = recentEventTrackList.firstOrNull() ?: Track(),
 
     override val skillActivateAdjustment: SkillActivateAdjustment = SkillActivateAdjustment.NONE,
@@ -393,6 +408,9 @@ data class RaceSetting(
     override val season: Int = 0,
     override val weather: Int = 0,
     override val badStart: Boolean = false,
+
+    override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
+    override val virtualLeader: UmaStatus = UmaStatus(),
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -416,7 +434,7 @@ data class RaceSetting(
     }
 
     override val oonige by lazy {
-        umaStatus.style == Style.NIGE && hasSkills.any { skill -> skill.invokes.any { it.oonige } }
+        umaStatus.style == Style.NIGE && umaStatus.hasSkills.any { skill -> skill.invokes.any { it.oonige } }
     }
 
     override val phase1Start by lazy { courseLength / 6.0 }
@@ -436,7 +454,6 @@ data class RaceSetting(
             else -> throw IllegalArgumentException()
         }
     }
-
 }
 
 class RaceSettingWithPassive(
@@ -781,6 +798,7 @@ data class RaceFrame(
     val staminaKeep: Boolean = false,
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = false,
+    val paceMakerFrame: RaceFrame? = null,
 )
 
 data class RaceSimulationResult(

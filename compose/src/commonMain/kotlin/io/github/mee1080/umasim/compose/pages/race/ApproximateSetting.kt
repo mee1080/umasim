@@ -3,19 +3,28 @@ package io.github.mee1080.umasim.compose.pages.race
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.race.calc2.SystemSetting
+import io.github.mee1080.umasim.race.data.PositionKeepMode
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
+import io.github.mee1080.umasim.store.AppState
+import io.github.mee1080.umasim.store.framework.OperationDispatcher
+import io.github.mee1080.umasim.store.operation.setPositionKeepMode
 import io.github.mee1080.utility.toPercentString
 
 @Composable
-fun ApproximateSetting() {
+fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
+    val positionKeepMode by derivedStateOf { state.setting.positionKeepMode }
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -28,36 +37,62 @@ fun ApproximateSetting() {
         }
 
         Column {
+            Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
+
+            SelectBox(
+                PositionKeepMode.entries, positionKeepMode,
+                onSelect = { dispatch(setPositionKeepMode(it)) },
+                modifier = Modifier.width(512.dp),
+                label = { Text("モード") },
+                itemToString = { it.label },
+            )
+            when (positionKeepMode) {
+                PositionKeepMode.APPROXIMATE -> {
+                    Text("以下のセクションで、ペースダウンモードに入ります")
+                    Text("掛かり状態でも発動します（位置固定のため）")
+                    Text("逃げの各モード、およびペースアップモードは実装していません")
+                    Text(
+                        "先行：${
+                            systemSetting.positionKeepSectionSen.mapIndexed { index, value -> index to value }
+                                .filter { it.second }
+                                .joinToString { (it.first + 1).toString() }
+                        }"
+                    )
+                    Text(
+                        "差し：${
+                            systemSetting.positionKeepSectionSasi.mapIndexed { index, value -> index to value }
+                                .filter { it.second }
+                                .joinToString { (it.first + 1).toString() }
+                        }"
+                    )
+                    Text(
+                        "追込：${
+                            systemSetting.positionKeepSectionOi.mapIndexed { index, value -> index to value }
+                                .filter { it.second }
+                                .joinToString { (it.first + 1).toString() }
+                        }"
+                    )
+                }
+
+                PositionKeepMode.VIRTUAL -> {
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Text("以下のキャラとの差で判定します")
+                        CharaInput(true, state, dispatch)
+                        SkillInput(true, state, dispatch)
+                    }
+                }
+
+                PositionKeepMode.NONE -> {
+                    Text("ポジションキープ判定を行いません")
+                }
+            }
+        }
+
+        Column {
             Text("走行レーン", style = MaterialTheme.typography.titleLarge)
             Text("追い越しモードによるレーン移動は未実装です")
             Text("横ブロックによる移動停止は近似処理を行っています（スキル発動の欄を参照）")
             Text("外回りロスは全てのコーナーが90度として計算しています（いつか正確に計算したい）")
-
-            Text("ポジションキープ", style = MaterialTheme.typography.titleLarge)
-            Text("以下のセクションで、ペースダウンモードに入ります")
-            Text("掛かり状態でも発動します（位置固定のため）")
-            Text("逃げの各モード、およびペースアップモードは実装していません")
-            Text(
-                "先行：${
-                    systemSetting.positionKeepSectionSen.mapIndexed { index, value -> index to value }
-                        .filter { it.second }
-                        .joinToString { (it.first + 1).toString() }
-                }"
-            )
-            Text(
-                "差し：${
-                    systemSetting.positionKeepSectionSasi.mapIndexed { index, value -> index to value }
-                        .filter { it.second }
-                        .joinToString { (it.first + 1).toString() }
-                }"
-            )
-            Text(
-                "追込：${
-                    systemSetting.positionKeepSectionOi.mapIndexed { index, value -> index to value }
-                        .filter { it.second }
-                        .joinToString { (it.first + 1).toString() }
-                }"
-            )
         }
 
         Column {

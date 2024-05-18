@@ -40,9 +40,9 @@ private fun AppState.clearSimulationResult() = copy(
 private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState, overrideCount: Int? = null) {
     val simulationCount = overrideCount ?: state.simulationCount
     if (simulationCount <= 0) return
-    val calculator = RaceCalculator(state.setting)
+    val calculator = RaceCalculator()
     val results = mutableListOf<RaceSimulationResult>()
-    val skillSummaries = state.setting.hasSkills.associate {
+    val skillSummaries = state.hasSkills(false).associate {
         it.name to mutableListOf<SimulationSkillInfo>()
     }
     var lastRaceState: RaceState? = null
@@ -51,7 +51,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
             emit { it.copy(simulationProgress = count + 1) }
             delay(progressReportDelay)
         }
-        val result = calculator.simulate()
+        val result = calculator.simulate(state.setting)
         results += result.first
         createSkillMap(result.second).forEach {
             skillSummaries[it.key]?.add(it.value)
@@ -105,7 +105,7 @@ private class SimulationSkillInfoWork(
 
 private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
     val (phase1Start, phase2Start) = getPhaseChangeFrames(state)
-    val skillMap = state.setting.hasSkills.associate {
+    val skillMap = state.setting.umaStatus.hasSkills.associate {
         it.name to SimulationSkillInfoWork(SimulationSkillInfo(phase1Start, phase2Start))
     }.toMutableMap()
     state.simulation.frames.forEachIndexed { index, frame ->
@@ -198,6 +198,8 @@ private const val speedMax = 28f
 
 private const val staminaMin = -200f
 
+private const val paceMakerMax = 100f
+
 private const val areaHeight = 0.1f
 
 private fun adjustRange(value: Double, min: Float, max: Float) = (value.toFloat() - min) / (max - min)
@@ -251,7 +253,12 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 add(index, raceFrame, last, "スタミナ勝負") { it.staminaLimitBreak }
                 last = raceFrame
             }
-        }.sortedBy { it.first }
+        }.sortedBy { it.first },
+        paceMakerData = frameList.mapIndexedNotNull { index, raceFrame ->
+            val paceMakerPosition = raceFrame.paceMakerFrame?.startPosition ?: return@mapIndexedNotNull null
+            val min = paceMakerMax / staminaMax * staminaMin
+            index / 15f to adjustRange(paceMakerPosition - raceFrame.startPosition, min, paceMakerMax)
+        },
     )
 }
 
@@ -308,16 +315,20 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
     var progress = 0
     val setCount = targets.size + 1
     val baseSetting = if (selectMode) {
-        state.setting.copy(hasSkills = state.setting.hasSkills.filterNot { targets.contains(it.id) })
+        state.setting.copy(
+            umaStatus = state.setting.umaStatus.copy(
+                hasSkills = state.hasSkills(false).filterNot { targets.contains(it.id) }
+            )
+        )
     } else state.setting
-    val baseCalculator = RaceCalculator(baseSetting)
+    val baseCalculator = RaceCalculator()
     val baseTimes = List(state.simulationCount) {
         progress++
         if (progress % progressReportInterval == 0) {
             emit { it.copy(simulationProgress = progress / setCount) }
             delay(progressReportDelay)
         }
-        baseCalculator.simulate().first.raceTime
+        baseCalculator.simulate(baseSetting).first.raceTime
     }.sorted()
     val baseResult = ContributionResult(
         name = "基本値",
@@ -330,21 +341,23 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         efficiency = List(6) { Double.NaN },
     )
     val targetResults = targets.mapNotNull { target ->
-        val targetSkill = state.setting.hasSkills.firstOrNull { it.id == target } ?: return@mapNotNull null
+        val targetSkill = state.hasSkills(false).firstOrNull { it.id == target } ?: return@mapNotNull null
         val setting = state.setting.copy(
-            hasSkills = if (selectMode) {
-                baseSetting.hasSkills + targetSkill
-            } else {
-                state.setting.hasSkills.filterNot { it.id == target }
-            },
+            umaStatus = state.setting.umaStatus.copy(
+                hasSkills = if (selectMode) {
+                    baseSetting.umaStatus.hasSkills + targetSkill
+                } else {
+                    state.setting.umaStatus.hasSkills.filterNot { it.id == target }
+                },
+            )
         )
-        val calculator = RaceCalculator(setting)
+        val calculator = RaceCalculator()
         val times = List(state.simulationCount) {
             progress++
             if (progress % 50 == 0) {
                 emit { it.copy(simulationProgress = progress / setCount) }
             }
-            calculator.simulate().first.raceTime
+            calculator.simulate(setting).first.raceTime
         }.sorted()
         val averageTime = times.average()
         val upperTime = times.subList(0, times.size / 5).average()

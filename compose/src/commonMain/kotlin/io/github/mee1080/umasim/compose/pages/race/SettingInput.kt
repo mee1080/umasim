@@ -26,10 +26,6 @@ fun SettingInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
     }
 }
 
-private val popularitySelection = List(18) { it + 1 }
-
-private val gateNumberSelection = List(21) { it - 2 }
-
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -37,30 +33,6 @@ private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-        ) {
-            SelectBox(
-                popularitySelection, setting.popularity,
-                onSelect = { dispatch(setPopularity(it)) },
-                modifier = Modifier.width(128.dp),
-                label = { Text("人気") },
-            )
-            SelectBox(
-                gateNumberSelection, setting.gateNumber,
-                onSelect = { dispatch(setGateNumber(it)) },
-                modifier = Modifier.width(256.dp),
-                label = { Text("ゲート番号") },
-                itemToString = {
-                    when (it) {
-                        0 -> "ランダム"
-                        -1 -> "内枠"
-                        -2 -> "外枠"
-                        else -> it.toString()
-                    }
-                },
-            )
-        }
         FlowRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {

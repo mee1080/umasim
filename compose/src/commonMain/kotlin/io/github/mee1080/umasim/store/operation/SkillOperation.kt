@@ -4,14 +4,23 @@ import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.DirectOperation
+import io.github.mee1080.utility.applyIf
 
 internal val charaToUniqueSkill = skillData2.filter { it.rarity == "unique" }.associateBy { it.holder!! }
 
 internal val charaToEvoSkills = skillData2.filter { it.rarity == "evo" }.groupBy { it.holder!! }
 
-fun setCharaName(charaName: String) = DirectOperation<AppState> { state ->
+private fun AppState.updateSkillIdSet(virtual: Boolean, action: (Set<String>) -> Set<String>): AppState {
+    return if (virtual) {
+        copy(virtualSkillIdSet = action(virtualSkillIdSet))
+    } else {
+        copy(skillIdSet = action(skillIdSet))
+    }
+}
+
+fun setCharaName(virtual: Boolean, charaName: String) = DirectOperation<AppState> { state ->
     val uniqueSkill = charaToUniqueSkill[charaName]
-    val deleteSkills = state.setting.hasSkills.filter {
+    val deleteSkills = state.hasSkills(virtual).filter {
         it.holder != null || it.name == uniqueSkill?.name
     }.toSet()
     val deleteSkillIds = deleteSkills.map { it.id }.toSet()
@@ -20,34 +29,40 @@ fun setCharaName(charaName: String) = DirectOperation<AppState> { state ->
 //        charaToEvoSkills[charaName]?.let { addAll(it) }
     }
     val addSkillIds = addSkills.map { it.id }.toSet()
-    state.copy(
-        charaName = charaName,
-        skillIdSet = state.skillIdSet - deleteSkillIds + addSkillIds,
-        contributionTargets = state.contributionTargets - deleteSkillIds,
-    ).updateSetting {
-        it.copy(hasSkills = it.hasSkills - deleteSkills + addSkills)
+    state.updateSkillIdSet(virtual) {
+        it - deleteSkillIds + addSkillIds
+    }.updateUmaStatus(virtual) {
+        it.copy(
+            charaName = charaName,
+            hasSkills = it.hasSkills - deleteSkills + addSkills,
+        )
+    }.applyIf(!virtual) {
+        copy(contributionTargets = state.contributionTargets - deleteSkillIds)
     }
 }
 
-fun setUniqueLevel(uniqueLevel: Int) = DirectOperation<AppState> { state ->
-    state.updateSetting { it.copy(uniqueLevel = uniqueLevel) }
+fun setUniqueLevel(virtual: Boolean, uniqueLevel: Int) = DirectOperation<AppState> { state ->
+    state.updateUmaStatus(virtual) { it.copy(uniqueLevel = uniqueLevel) }
 }
 
-fun toggleSkill(skillData: SkillData) = DirectOperation<AppState> { state ->
-    if (state.skillIdSet.contains(skillData.id)) {
-        state.copy(
-            skillIdSet = state.skillIdSet - skillData.id,
-            contributionTargets = state.contributionTargets - skillData.id,
-        ).updateSetting {
+fun toggleSkill(virtual: Boolean, skillData: SkillData) = DirectOperation<AppState> { state ->
+    if (state.skillIdSet(virtual).contains(skillData.id)) {
+        state.updateSkillIdSet(virtual) {
+            it - skillData.id
+        }.updateUmaStatus(virtual) {
             it.copy(hasSkills = it.hasSkills - skillData)
+        }.applyIf(!virtual) {
+            copy(contributionTargets = state.contributionTargets - skillData.id)
         }
     } else {
-        state.copy(skillIdSet = state.skillIdSet + skillData.id).updateSetting {
+        state.updateSkillIdSet(virtual) {
+            it + skillData.id
+        }.updateUmaStatus(virtual) {
             it.copy(hasSkills = it.hasSkills + skillData)
         }
     }
 }
 
-fun clearSkill() = DirectOperation<AppState> { state ->
-    state.copy(skillIdSet = emptySet()).updateSetting { it.copy(hasSkills = emptyList()) }
+fun clearSkill(virtual: Boolean) = DirectOperation<AppState> { state ->
+    state.copy(skillIdSet = emptySet()).updateUmaStatus(virtual) { it.copy(hasSkills = emptyList()) }
 }

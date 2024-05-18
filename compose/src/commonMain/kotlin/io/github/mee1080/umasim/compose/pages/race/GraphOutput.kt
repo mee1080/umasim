@@ -1,6 +1,5 @@
 package io.github.mee1080.umasim.compose.pages.race
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -16,7 +14,6 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import io.github.koalaplot.core.ChartLayout
 import io.github.koalaplot.core.Symbol
-import io.github.koalaplot.core.legend.ColumnLegend
 import io.github.koalaplot.core.legend.FlowLegend
 import io.github.koalaplot.core.legend.LegendLocation
 import io.github.koalaplot.core.line.AreaBaseline
@@ -38,10 +35,14 @@ fun GraphOutput(state: AppState) {
     GraphArea(graphData)
 }
 
-private val legends = persistentListOf(
+private val defaultLegends = persistentListOf(
     "速度" to Color.Blue,
     "耐力" to Color(255, 128, 100),
     "走行レーン" to Color.Green,
+)
+
+private val virtualLegends = defaultLegends + persistentListOf(
+    "先頭との差" to Color(0, 255, 255),
 )
 
 @OptIn(ExperimentalKoalaPlotApi::class)
@@ -53,6 +54,7 @@ private fun GraphArea(graphData: GraphData) {
         ChartLayout(
             modifier = Modifier.height(520.dp),
             legend = {
+                val legends = if (graphData.paceMakerData.isEmpty()) defaultLegends else virtualLegends
                 FlowLegend(
                     itemCount = legends.size,
                     symbol = { Symbol(shape = RectangleShape, fillBrush = SolidColor(legends[it].second)) },
@@ -95,6 +97,12 @@ private fun GraphArea(graphData: GraphData) {
                     data = graphData.laneData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color.Green), 2.dp),
                 )
+                if (graphData.paceMakerData.isNotEmpty()) {
+                    LinePlot(
+                        data = graphData.paceMakerData.map { Point(it.first, it.second) },
+                        lineStyle = LineStyle(SolidColor(Color(0, 255, 255)), 2.dp),
+                    )
+                }
                 LinePlot(
                     data = graphData.speedData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color.Blue), 2.dp),

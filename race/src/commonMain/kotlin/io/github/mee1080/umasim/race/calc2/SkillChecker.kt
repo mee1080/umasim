@@ -219,7 +219,7 @@ private fun checkCondition(
             { simulation.coolDownMap.containsKey(skill.id) }
         }
 
-        "popularity" -> condition.preChecked(baseSetting.popularity)
+        "popularity" -> condition.preChecked(baseSetting.umaStatus.popularity)
 
         "post_number" -> condition.checkInRace { simulation.postNumber }
 

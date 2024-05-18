@@ -17,9 +17,9 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Header()
-        CharaInput(state, dispatch)
+        CharaInput(false, state, dispatch)
         CourseInput(state, dispatch)
-        SkillInput(state, dispatch)
+        SkillInput(false, state, dispatch)
         SettingInput(state, dispatch)
         HorizontalDivider()
         ModeInput(state, dispatch)
@@ -28,7 +28,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         GraphOutput(state)
         LastSimulationDetailOutput(state)
         ContributionOutput(state)
-        ApproximateSetting()
+        ApproximateSetting(state, dispatch)
         Footer()
     }
 }

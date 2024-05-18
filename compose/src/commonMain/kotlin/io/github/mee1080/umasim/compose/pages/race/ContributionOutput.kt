@@ -42,7 +42,7 @@ fun ContributionOutput(state: AppState) {
                 "",
             )
         } else {
-            val skill = state.setting.hasSkills.firstOrNull { it.name == entry.name }
+            val skill = state.hasSkills(false).firstOrNull { it.name == entry.name }
             listOf(
 //                "${entry.averageTime.secondToTimeString()} (${entry.averageDiff.roundToString(3, displayPlus = true)})",
 //                "${entry.upperTime.secondToTimeString()} (${entry.upperDiff.roundToString(3, displayPlus = true)})",

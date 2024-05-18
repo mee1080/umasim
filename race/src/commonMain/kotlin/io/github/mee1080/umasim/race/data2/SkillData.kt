@@ -616,7 +616,7 @@ data class SkillEffect(
 
             2 -> {
                 // 獲得したスキルの数に応じて効果が高まる（叡智/加護）
-                value * min(1.2, 1 + 0.01 * state.setting.hasSkills.size)
+                value * min(1.2, 1 + 0.01 * state.setting.umaStatus.hasSkills.size)
             }
 
             3, 4, 5, 6, 7 -> {
