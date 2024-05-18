@@ -147,20 +147,6 @@ class RaceState(
         }
     }
 
-    val paceDownMode
-        get() = when (setting.positionKeepMode) {
-            PositionKeepMode.APPROXIMATE -> {
-                paceDownModeSetting.getOrElse(currentSection) { false }
-            }
-
-            PositionKeepMode.VIRTUAL -> {
-                // TODO
-                paceDownModeSetting.getOrElse(currentSection) { false }
-            }
-
-            PositionKeepMode.NONE -> false
-        }
-
     val inLeadCompetition: Boolean
         get() {
             val start = simulation.leadCompetitionStart ?: return false
@@ -172,7 +158,7 @@ class RaceState(
             if (simulation.sp <= 0) return vMin
             if (simulation.currentSpeed < setting.v0) return setting.v0
             val spurtParameters = simulation.spurtParameters
-            val baseSpeed = if (
+            var result = if (
                 spurtParameters != null && simulation.position + spurtParameters.distance > setting.courseLength
             ) {
                 // LastSpurtSpeed
@@ -190,14 +176,17 @@ class RaceState(
                 } + setting.baseSpeed * simulation.sectionTargetSpeedRandoms[currentSection]
             }
 
-            val skillModifier = simulation.operatingSkills.sumOf { it.totalSpeed }
-
             // ポジションキープ
-            val positionKeepCoef = if (skillModifier == 0.0 && paceDownMode) {
-                if (currentPhase == 1) 0.945 else 0.915
-            } else 1.0
+            result *= when (simulation.positionKeepState) {
+                PositionKeepState.NONE -> 1.0
+                PositionKeepState.SPEED_UP -> 1.04
+                PositionKeepState.OVERTAKE -> 1.05
+                PositionKeepState.PACE_UP -> 1.04
+                PositionKeepState.PACE_DOWN -> if (currentPhase == 1) 0.945 else 0.915
+                PositionKeepState.PACE_UP_EX -> 2.0
+            }
 
-            var result = baseSpeed * positionKeepCoef + skillModifier
+            result += simulation.operatingSkills.sumOf { it.totalSpeed }
 
             // 序盤で内が空いている場合に速度上昇
             // 乱数値はレース開始時に決定
@@ -271,7 +260,7 @@ class RaceState(
         get() {
             return if (simulation.sp <= 0) {
                 -1.2
-            } else if (paceDownMode) {
+            } else if (simulation.positionKeepState == PositionKeepState.PACE_DOWN) {
                 -0.5
             } else when (currentPhase) {
                 0 -> -1.2
@@ -347,7 +336,7 @@ class RaceState(
                     consume *= 1.6
                 }
             }
-            if (paceDownMode) {
+            if (simulation.positionKeepState == PositionKeepState.PACE_DOWN) {
                 consume *= 0.6
             }
         }
@@ -385,6 +374,7 @@ interface IRaceSetting {
     val locationName: String
     val trackDetail: TrackDetail
     val courseLength: Int
+    val sectionLength: Double
     val coolDownBaseFrames: Double
     val skillActivateRate: Double
     val timeCoef: Double
@@ -422,6 +412,8 @@ data class RaceSetting(
     }
 
     override val courseLength by lazy { trackDetail.distance }
+
+    override val sectionLength by lazy { courseLength / 24.0 }
 
     override val coolDownBaseFrames by lazy { courseLength / 1000.0 * 15.0 }
 
@@ -670,6 +662,36 @@ class RaceSettingWithPassive(
     val baseLaneChangeTargetSpeed by lazy {
         0.02 * (0.3 + 0.001 * modifiedPower)
     }
+
+    val positionKeepSpeedUpOvertakeRate by lazy {
+        0.2 * log10(modifiedWisdom * 0.1)
+    }
+
+    val positionKeepPaceUpRate by lazy {
+        0.15 * log10(modifiedWisdom * 0.1)
+    }
+
+    val positionKeepCourseFactor by lazy {
+        0.0008 * (courseLength - 1000) + 1.0
+    }
+
+    val positionKeepMinDistance by lazy {
+        when (basicRunningStyle) {
+            Style.SEN -> 3.0
+            Style.SASI -> 6.5 * positionKeepCourseFactor
+            Style.OI -> 7.5 * positionKeepCourseFactor
+            else -> 0.0
+        }
+    }
+
+    val positionKeepMaxDistance by lazy {
+        when (basicRunningStyle) {
+            Style.SEN -> 5.0 * positionKeepCourseFactor
+            Style.SASI -> 7.0 * positionKeepCourseFactor
+            Style.OI -> 8.0 * positionKeepCourseFactor
+            else -> 0.0
+        }
+    }
 }
 
 class RaceSimulationState(
@@ -721,6 +743,12 @@ class RaceSimulationState(
     var positionCompetitionCount: Int = 0,
     var staminaKeepStart: Double = 0.0,
     var staminaKeepDistance: Double = 0.0,
+
+    var positionKeepState: PositionKeepState = PositionKeepState.NONE,
+    var positionKeepNextFrame: Int = framePerSecond * 2,
+    var positionKeepExitPosition: Double = 0.0,
+    var positionKeepExitDistance: Double = 0.0,
+
     val frames: MutableList<RaceFrame> = mutableListOf(),
 ) {
     val isInTemptation: Boolean
@@ -789,7 +817,7 @@ data class RaceFrame(
     val operatingSkills: List<OperatingSkill> = emptyList(),
     val temptation: Boolean = false,
     val spurting: Boolean = false,
-    val paceDownMode: Boolean = false,
+    val positionKeepState: PositionKeepState = PositionKeepState.NONE,
     val downSlopeMode: Boolean = false,
     val leadCompetition: Boolean = false,
     val competeFight: Boolean = false,

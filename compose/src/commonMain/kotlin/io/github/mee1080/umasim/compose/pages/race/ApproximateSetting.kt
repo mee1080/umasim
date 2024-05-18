@@ -76,7 +76,10 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
                 PositionKeepMode.VIRTUAL -> {
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        Text("以下のキャラとの差で判定します")
+                        Column {
+                            Text("以下のキャラとの差で判定します")
+                            Text("ただし、逃げ同士の競り合いは未実装です（仮想ペースメーカーにはポジションキープが反映されない")
+                        }
                         CharaInput(true, state, dispatch)
                         SkillInput(true, state, dispatch)
                     }

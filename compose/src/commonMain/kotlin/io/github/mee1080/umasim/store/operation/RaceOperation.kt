@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.store.operation
 
 import io.github.mee1080.umasim.race.calc2.*
+import io.github.mee1080.umasim.race.data.PositionKeepState
 import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.ActionContext
@@ -113,7 +114,7 @@ private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
         frame.operatingSkills.filter { it.targetSpeed > 0.0 }.forEach {
             val current = skillMap[it.data.skill.name] ?: return@forEach
             current.totalFrameCount++
-            if (!frame.paceDownMode && speedDiff > it.targetSpeed) {
+            if (frame.positionKeepState != PositionKeepState.PACE_DOWN && speedDiff > it.targetSpeed) {
                 current.invalidFrameCount++
             }
         }
@@ -198,7 +199,7 @@ private const val speedMax = 28f
 
 private const val staminaMin = -200f
 
-private const val paceMakerMax = 100f
+private const val paceMakerMax = 80f
 
 private const val areaHeight = 0.1f
 
@@ -251,6 +252,9 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 add(index, raceFrame, last, "持久力温存") { it.staminaKeep }
 //                add(index, raceFrame, last, "リード確保") { it.secureLead }
                 add(index, raceFrame, last, "スタミナ勝負") { it.staminaLimitBreak }
+//                if (raceFrame.positionKeepState != PositionKeepState.NONE && raceFrame.positionKeepState != last.positionKeepState) {
+//                    add(index / 15f to raceFrame.positionKeepState.label)
+//                }
                 last = raceFrame
             }
         }.sortedBy { it.first },

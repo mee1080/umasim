@@ -80,7 +80,7 @@ enum class RandomPosition(val value: Int, val label: String) {
 
 enum class PositionKeepMode(val label: String) {
     APPROXIMATE("近似"),
-    VIRTUAL("仮想ペースメーカー(β板)"),
+    VIRTUAL("仮想ペースメーカー"),
     NONE("無し"),
 }
 
@@ -452,4 +452,13 @@ val gateNumberToPostNumber = List(19) { gateNumber ->
             min(gateNumber, (gateNumber - gateCount + 17) / 2)
         }
     }
+}
+
+enum class PositionKeepState(val label: String) {
+    NONE("なし"),
+    SPEED_UP("スピードアップ"),
+    OVERTAKE("追い越し"),
+    PACE_UP("ペースアップ"),
+    PACE_DOWN("ペースダウン"),
+    PACE_UP_EX("ペースアップEx"),
 }

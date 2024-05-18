@@ -183,7 +183,7 @@ private fun RaceState.updateFrame(): Boolean {
         startPosition = simulation.startPosition,
         currentLane = simulation.currentLane,
         temptation = simulation.isInTemptation,
-        paceDownMode = paceDownMode,
+        positionKeepState = simulation.positionKeepState,
         downSlopeMode = simulation.isInDownSlopeMode,
         leadCompetition = inLeadCompetition,
         competeFight = simulation.competeFight,
@@ -239,6 +239,13 @@ private fun RaceState.updateFrame(): Boolean {
     if (simulation.temptationSection > 0 && currentSection == simulation.temptationSection) {
         simulation.temptationModeStart = simulation.frameElapsed
         simulation.temptationSection = -1
+    }
+
+    // ポジションキープ
+    if (currentSection <= 10) {
+        applyPositionKeep()
+    } else if (currentSection == 11) {
+        simulation.positionKeepState = PositionKeepState.NONE
     }
 
     // 位置取り争い
@@ -560,7 +567,7 @@ fun RaceState.applyMoveLane() {
     } else {
         when {
             simulation.sp <= 0.0 -> currentLane
-            paceDownMode -> 0.18
+            simulation.positionKeepState == PositionKeepState.PACE_DOWN -> 0.18
             simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
             currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
             else -> currentLane
@@ -583,6 +590,157 @@ fun RaceState.applyMoveLane() {
         } else {
             simulation.currentLane =
                 max(simulation.targetLane, currentLane - actualSpeed * (1.0 + currentLane))
+        }
+    }
+}
+
+fun RaceState.applyPositionKeep() {
+    when (setting.positionKeepMode) {
+        PositionKeepMode.NONE -> return
+
+        PositionKeepMode.APPROXIMATE -> {
+            if (simulation.positionKeepState == PositionKeepState.NONE) {
+                if (simulation.frameElapsed < simulation.positionKeepNextFrame) return
+                if (paceDownModeSetting.getOrElse(currentSection) { false }) {
+                    simulation.positionKeepState = PositionKeepState.PACE_DOWN
+                    simulation.positionKeepExitPosition =
+                        simulation.position + floor(setting.sectionLength) * (if (setting.oonige) 3 else 1)
+                } else {
+                    simulation.positionKeepNextFrame += framePerSecond * 2
+                }
+            } else {
+                if (simulation.position >= simulation.positionKeepExitPosition) {
+                    simulation.positionKeepState = PositionKeepState.NONE
+                    simulation.positionKeepNextFrame += framePerSecond * 3
+                }
+            }
+        }
+
+        PositionKeepMode.VIRTUAL -> {
+            val paceMaker = paceMaker ?: return
+            val behind = paceMaker.simulation.startPosition - simulation.startPosition
+            val myStyle = setting.basicRunningStyle
+            // 自身が先頭の場合、逃げ先行は常に、差し追込は中盤以降なら、自身がペースメーカーになる
+            val paceMakerIsSelf = behind <= 0 && (myStyle <= Style.SEN || currentPhase >= 1)
+            val paceMakerStyle = paceMaker.setting.basicRunningStyle
+            when (simulation.positionKeepState) {
+                PositionKeepState.NONE -> {
+                    if (simulation.frameElapsed < simulation.positionKeepNextFrame) return
+                    if (behind > 0 && paceMakerStyle > myStyle) {
+                        simulation.positionKeepState = PositionKeepState.PACE_UP_EX
+                    } else if (myStyle == Style.NIGE) {
+                        if (behind <= 0) {
+                            val threshold = when {
+                                setting.oonige -> -17.5
+                                paceMakerStyle != Style.NIGE -> -12.5
+                                else -> -4.5
+                            }
+                            if (behind > threshold && Random.nextDouble() < setting.positionKeepSpeedUpOvertakeRate) {
+                                simulation.positionKeepState = PositionKeepState.SPEED_UP
+                            }
+                        } else {
+                            if (Random.nextDouble() < setting.positionKeepSpeedUpOvertakeRate) {
+                                simulation.positionKeepState = PositionKeepState.OVERTAKE
+                            }
+                        }
+                    } else {
+                        if (behind > setting.positionKeepMaxDistance) {
+                            if (Random.nextDouble() < setting.positionKeepPaceUpRate) {
+                                simulation.positionKeepState = PositionKeepState.PACE_UP
+                                simulation.positionKeepExitDistance = Random.nextDouble(
+                                    setting.positionKeepMinDistance, setting.positionKeepMaxDistance,
+                                )
+                            }
+                        } else if (!paceMakerIsSelf && behind < setting.positionKeepMinDistance) {
+                            if (simulation.operatingSkills.all { it.totalSpeed <= 0 }) {
+                                simulation.positionKeepState = PositionKeepState.PACE_DOWN
+                                val max = if (currentPhase == 1) {
+                                    setting.positionKeepMinDistance + 0.5 * (setting.positionKeepMaxDistance - setting.positionKeepMinDistance)
+                                } else setting.positionKeepMaxDistance
+                                simulation.positionKeepExitDistance = Random.nextDouble(
+                                    setting.positionKeepMinDistance, max,
+                                )
+                            }
+                        }
+                    }
+                    if (simulation.positionKeepState == PositionKeepState.NONE) {
+                        simulation.positionKeepNextFrame += framePerSecond * 2
+                    } else {
+                        simulation.positionKeepExitPosition =
+                            simulation.position + floor(setting.sectionLength) * (if (setting.oonige) 3 else 1)
+                    }
+                }
+
+                PositionKeepState.SPEED_UP -> {
+                    if (simulation.position >= simulation.positionKeepExitPosition) {
+                        simulation.positionKeepState = PositionKeepState.NONE
+                        simulation.positionKeepNextFrame += framePerSecond * 3
+                    } else {
+                        val threshold = when {
+                            setting.oonige -> -17.5
+                            paceMakerStyle != Style.NIGE -> -12.5
+                            else -> -4.5
+                        }
+                        if (behind < threshold) {
+                            simulation.positionKeepState = PositionKeepState.NONE
+                            simulation.positionKeepNextFrame += framePerSecond * 3
+                        }
+                    }
+                }
+
+                PositionKeepState.OVERTAKE -> {
+                    if (simulation.position >= simulation.positionKeepExitPosition) {
+                        simulation.positionKeepState = PositionKeepState.NONE
+                        simulation.positionKeepNextFrame += framePerSecond * 3
+                    } else {
+                        val threshold = if (setting.oonige) -27.5 else -10.0
+                        if (behind < threshold) {
+                            simulation.positionKeepState = PositionKeepState.NONE
+                            simulation.positionKeepNextFrame += framePerSecond * 3
+                        }
+                    }
+                }
+
+                PositionKeepState.PACE_UP -> {
+                    if (simulation.position >= simulation.positionKeepExitPosition) {
+                        simulation.positionKeepState = PositionKeepState.NONE
+                        simulation.positionKeepNextFrame += framePerSecond * 3
+                    } else {
+                        if (behind < simulation.positionKeepExitDistance) {
+                            simulation.positionKeepState = PositionKeepState.NONE
+                            simulation.positionKeepNextFrame += framePerSecond * 3
+                        }
+                    }
+                }
+
+                PositionKeepState.PACE_DOWN -> {
+                    if (simulation.position >= simulation.positionKeepExitPosition) {
+                        simulation.positionKeepState = PositionKeepState.NONE
+                        simulation.positionKeepNextFrame += framePerSecond * 3
+                    } else {
+                        if (
+                            paceMakerIsSelf ||
+                            behind > simulation.positionKeepExitDistance ||
+                            simulation.operatingSkills.any { it.totalSpeed > 0 }
+                        ) {
+                            simulation.positionKeepState = PositionKeepState.NONE
+                            simulation.positionKeepNextFrame += framePerSecond * 3
+                        }
+                    }
+                }
+
+                PositionKeepState.PACE_UP_EX -> {
+                    if (simulation.position >= simulation.positionKeepExitPosition) {
+                        simulation.positionKeepState = PositionKeepState.NONE
+                        simulation.positionKeepNextFrame += framePerSecond * 3
+                    } else {
+                        if (behind <= 0) {
+                            simulation.positionKeepState = PositionKeepState.NONE
+                            simulation.positionKeepNextFrame += framePerSecond * 3
+                        }
+                    }
+                }
+            }
         }
     }
 }
