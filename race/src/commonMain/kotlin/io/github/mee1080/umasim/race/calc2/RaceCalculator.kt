@@ -58,7 +58,7 @@ class RaceCalculator(
         simulationState.passiveTriggered = settingWithPassive.passiveBonus.skills.size
 
         val virtualLeader = if (positionKeepMode == PositionKeepMode.VIRTUAL) {
-            copy(umaStatus = virtualLeader, positionKeepMode = PositionKeepMode.NONE).initializeState()
+            copy(umaStatus = virtualLeader, positionKeepMode = PositionKeepMode.SPEED_UP).initializeState()
         } else null
         val state = RaceState(settingWithPassive, simulationState, system, virtualLeader)
         val simulation = state.simulation
@@ -664,7 +664,7 @@ fun RaceState.applyPositionKeep() {
                         }
                     }
                     if (simulation.positionKeepState == PositionKeepState.NONE) {
-                        simulation.positionKeepNextFrame += framePerSecond * 2
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         simulation.positionKeepExitPosition =
                             simulation.position + floor(setting.sectionLength) * (if (setting.oonige) 3 else 1)
@@ -674,7 +674,7 @@ fun RaceState.applyPositionKeep() {
                 PositionKeepState.SPEED_UP -> {
                     if (simulation.position >= simulation.positionKeepExitPosition) {
                         simulation.positionKeepState = PositionKeepState.NONE
-                        simulation.positionKeepNextFrame += framePerSecond * 3
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         val threshold = when {
                             setting.oonige -> -17.5
@@ -683,7 +683,7 @@ fun RaceState.applyPositionKeep() {
                         }
                         if (behind < threshold) {
                             simulation.positionKeepState = PositionKeepState.NONE
-                            simulation.positionKeepNextFrame += framePerSecond * 3
+                            simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                         }
                     }
                 }
@@ -691,12 +691,12 @@ fun RaceState.applyPositionKeep() {
                 PositionKeepState.OVERTAKE -> {
                     if (simulation.position >= simulation.positionKeepExitPosition) {
                         simulation.positionKeepState = PositionKeepState.NONE
-                        simulation.positionKeepNextFrame += framePerSecond * 3
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         val threshold = if (setting.oonige) -27.5 else -10.0
                         if (behind < threshold) {
                             simulation.positionKeepState = PositionKeepState.NONE
-                            simulation.positionKeepNextFrame += framePerSecond * 3
+                            simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                         }
                     }
                 }
@@ -704,11 +704,11 @@ fun RaceState.applyPositionKeep() {
                 PositionKeepState.PACE_UP -> {
                     if (simulation.position >= simulation.positionKeepExitPosition) {
                         simulation.positionKeepState = PositionKeepState.NONE
-                        simulation.positionKeepNextFrame += framePerSecond * 3
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         if (behind < simulation.positionKeepExitDistance) {
                             simulation.positionKeepState = PositionKeepState.NONE
-                            simulation.positionKeepNextFrame += framePerSecond * 3
+                            simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                         }
                     }
                 }
@@ -716,7 +716,7 @@ fun RaceState.applyPositionKeep() {
                 PositionKeepState.PACE_DOWN -> {
                     if (simulation.position >= simulation.positionKeepExitPosition) {
                         simulation.positionKeepState = PositionKeepState.NONE
-                        simulation.positionKeepNextFrame += framePerSecond * 3
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         if (
                             paceMakerIsSelf ||
@@ -724,7 +724,7 @@ fun RaceState.applyPositionKeep() {
                             simulation.operatingSkills.any { it.totalSpeed > 0 }
                         ) {
                             simulation.positionKeepState = PositionKeepState.NONE
-                            simulation.positionKeepNextFrame += framePerSecond * 3
+                            simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                         }
                     }
                 }
@@ -732,13 +732,31 @@ fun RaceState.applyPositionKeep() {
                 PositionKeepState.PACE_UP_EX -> {
                     if (simulation.position >= simulation.positionKeepExitPosition) {
                         simulation.positionKeepState = PositionKeepState.NONE
-                        simulation.positionKeepNextFrame += framePerSecond * 3
+                        simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                     } else {
                         if (behind <= 0) {
                             simulation.positionKeepState = PositionKeepState.NONE
-                            simulation.positionKeepNextFrame += framePerSecond * 3
+                            simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                         }
                     }
+                }
+            }
+        }
+
+        PositionKeepMode.SPEED_UP -> {
+            if (simulation.positionKeepState == PositionKeepState.NONE) {
+                if (simulation.frameElapsed < simulation.positionKeepNextFrame) return
+                if (Random.nextInt(100) < setting.positionKeepRate && Random.nextDouble() < setting.positionKeepSpeedUpOvertakeRate) {
+                    simulation.positionKeepState = PositionKeepState.SPEED_UP
+                    simulation.positionKeepExitPosition =
+                        simulation.position + floor(setting.sectionLength) * (if (setting.oonige) 3 else 1)
+                } else {
+                    simulation.positionKeepNextFrame += framePerSecond * 2
+                }
+            } else {
+                if (simulation.position >= simulation.positionKeepExitPosition) {
+                    simulation.positionKeepState = PositionKeepState.NONE
+                    simulation.positionKeepNextFrame += framePerSecond * 3
                 }
             }
         }

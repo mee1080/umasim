@@ -81,6 +81,7 @@ enum class RandomPosition(val value: Int, val label: String) {
 enum class PositionKeepMode(val label: String) {
     APPROXIMATE("近似"),
     VIRTUAL("仮想ペースメーカー"),
+    SPEED_UP("一定確率でスピードアップ(逃げ)"),
     NONE("無し"),
 }
 

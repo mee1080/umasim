@@ -32,6 +32,10 @@ fun setContributionTarget(id: String, value: Boolean) = DirectOperation<AppState
     }.also { it.saveSetting() }
 }
 
-fun setPositionKeepMode(value:PositionKeepMode) = DirectOperation<AppState> { state ->
+fun setPositionKeepMode(value: PositionKeepMode) = DirectOperation<AppState> { state ->
     state.updateSetting { it.copy(positionKeepMode = value) }
+}
+
+fun setPositionKeepRate(value: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { it.copy(positionKeepRate = value) }
 }

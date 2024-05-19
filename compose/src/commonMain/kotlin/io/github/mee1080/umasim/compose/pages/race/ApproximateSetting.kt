@@ -1,11 +1,9 @@
 package io.github.mee1080.umasim.compose.pages.race
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -20,11 +18,13 @@ import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.setPositionKeepMode
+import io.github.mee1080.umasim.store.operation.setPositionKeepRate
 import io.github.mee1080.utility.toPercentString
 
 @Composable
 fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     val positionKeepMode by derivedStateOf { state.setting.positionKeepMode }
+    val positionKeepRate by derivedStateOf { state.setting.positionKeepRate }
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -78,11 +78,31 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                         Column {
                             Text("以下のキャラとの差で判定します")
-                            Text("ただし、逃げ同士の競り合いは未実装です（仮想ペースメーカーにはポジションキープが反映されない")
+                            Text("ただし、逃げ同士の競り合いは未実装です（仮想ペースメーカーは一定確率でスピードアップモードに入ります）")
                         }
+                        Text("仮想ペースメーカーのスピードアップモード確率: $positionKeepRate %")
+                        Slider(
+                            value = positionKeepRate.toFloat(),
+                            onValueChange = { dispatch(setPositionKeepRate(it.toInt())) },
+                            valueRange = 0f..100f,
+                            steps = 100,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                         CharaInput(true, state, dispatch)
                         SkillInput(true, state, dispatch)
                     }
+                }
+
+                PositionKeepMode.SPEED_UP -> {
+                    Text("一定確率でスピードアップモードに入ります（実際は設定値に加えて賢さ判定もあり）")
+                    Text("確率: $positionKeepRate %")
+                    Slider(
+                        value = positionKeepRate.toFloat(),
+                        onValueChange = { dispatch(setPositionKeepRate(it.toInt())) },
+                        valueRange = 0f..100f,
+                        steps = 100,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
                 }
 
                 PositionKeepMode.NONE -> {

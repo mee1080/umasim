@@ -367,6 +367,7 @@ interface IRaceSetting {
     val weather: Int
     val badStart: Boolean
     val positionKeepMode: PositionKeepMode
+    val positionKeepRate: Int
     val virtualLeader: UmaStatus
     val fixRandom: Boolean
     val runningStyle: Style
@@ -400,6 +401,7 @@ data class RaceSetting(
     override val badStart: Boolean = false,
 
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
+    override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
