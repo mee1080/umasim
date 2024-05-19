@@ -751,12 +751,12 @@ fun RaceState.applyPositionKeep() {
                     simulation.positionKeepExitPosition =
                         simulation.position + floor(setting.sectionLength) * (if (setting.oonige) 3 else 1)
                 } else {
-                    simulation.positionKeepNextFrame += framePerSecond * 2
+                    simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                 }
             } else {
                 if (simulation.position >= simulation.positionKeepExitPosition) {
                     simulation.positionKeepState = PositionKeepState.NONE
-                    simulation.positionKeepNextFrame += framePerSecond * 3
+                    simulation.positionKeepNextFrame = simulation.frameElapsed + framePerSecond * 3
                 }
             }
         }
