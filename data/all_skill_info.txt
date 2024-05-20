@@ -725,6 +725,15 @@ distance_rate>=50&order_rate_in20_continue==1&track_id>=10001&track_id<=10010&gr
 distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
 「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）」の後「相手が加速スキル発動」、現在速度2500、持続5.0
 
+Shining Runway
+[Looking Fly!]ノースフライト 固有
+最終コーナーで好位置にいると少しの間速度が上がるマイルレースなら効果時間が増える
+評価点340、人気:スピード60、確定発動
+->distance_type==2&is_finalcorner==1&corner!=0&order_rate<=50&order_rate>=20
+「マイル、最終コーナー以降、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、持続5.0
+->is_finalcorner==1&corner!=0&order_rate<=50&order_rate>=20
+「最終コーナー以降、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、持続4.0
+
 Mission: Triumph
 [Onyx Soldier]シンボリクリスエス 固有
 レース中間付近以降の直線で中団にいると速度を上げる、さらにそこが下り坂なら上げ続ける
@@ -2017,6 +2026,14 @@ Info: Acquired
 評価点180、SP200、人気:パワー15
 distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
 「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）」の後「相手が加速スキル発動」、現在速度500、持続3.0
+
+Shining Runway
+最終コーナーで好位置にいると少しの間速度がわずかに上がるマイルレースなら効果時間が増える
+評価点180、SP200、人気:スピード15
+->distance_type==2&is_finalcorner==1&corner!=0&order_rate<=50&order_rate>=20
+「マイル、最終コーナー以降、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、持続3.0
+->is_finalcorner==1&corner!=0&order_rate<=50&order_rate>=20
+「最終コーナー以降、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、持続2.4
 
 Mission: Triumph
 レース中間付近以降の直線で中団にいるとわずかに速度を上げる、さらにそこが下り坂ならわずかに上げ続ける
@@ -3790,6 +3807,15 @@ U.A.F. 進化(アガッてきた！)
 [四白流星の襲]ヤエノムテキ 進化(アガッてきた！)
 レース中盤に追い抜くとしばらくの間速度が上がる
 評価点633、進化元SP340、人気:スピード60
+->phase==1&change_order_onetime<0
+「中盤、追い抜き」、目標速度3500、持続4.0（クールタイム短）
+
+ココロ、キラめくままに！
+[Looking Fly!]ノースフライト 進化(アガッてきた！)
+レース中盤に追い抜くとしばらくの間速度が上がる賢さが十二分に高いと効果が増える
+評価点633、進化元SP340、人気:スピード60
+->phase==1&change_order_onetime<0&base_wiz>=1200
+「中盤、追い抜き、基礎賢さ>=1200」、目標速度4000、持続4.0（クールタイム短）
 ->phase==1&change_order_onetime<0
 「中盤、追い抜き」、目標速度3500、持続4.0（クールタイム短）
 
@@ -8169,6 +8195,15 @@ Dreamer's Path
 評価点508、SP160(合計320)、人気:パワー60
 ->distance_type==2&phase_firsthalf_random==2&order_rate<=50
 「マイル、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+
+Enjoy the Flight
+[Looking Fly!]ノースフライト 進化(ハイボルテージ)
+レース終盤始めの方で前方にいると加速力が上がり、その後残り200m地点で速度がわずかに上がる＜マイル＞
+評価点633、進化元SP320、人気:パワー60
+->distance_type==2&phase_firsthalf_random==2&order_rate<=50
+「マイル、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+->is_activate_other_skill_detail==1&remain_distance<=201&remain_distance>=199
+「上記効果発動後、残り距離199～201」、目標速度1500、持続3.0
 
 心弾んで
 レース終盤始めの方で前方にいると加速力がわずかに上がる＜マイル＞
