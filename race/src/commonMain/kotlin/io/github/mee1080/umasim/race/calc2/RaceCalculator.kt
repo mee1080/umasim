@@ -548,6 +548,8 @@ fun RaceState.applyPositionCompetition() {
 }
 
 fun RaceState.applyMoveLane() {
+    if (setting.trackDetail.corners.isEmpty()) return
+
     val currentLane = simulation.currentLane
 
     // 最終コーナー/最終直線での目標レーン計算

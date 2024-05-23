@@ -829,10 +829,6 @@ internal val rawCourseData = """
         "straights": [
           {
             "start": 0,
-            "end": 649.9
-          },
-          {
-            "start": 650,
             "end": 1000
           }
         ],
