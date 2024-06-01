@@ -8,11 +8,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
+import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
 import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.ImportExportConverter
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.importChara
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ImportExport(virtual: Boolean, state: AppState, dispatch: OperationDispatcher<AppState>) {
@@ -38,6 +40,8 @@ private fun ImportDialog(virtual: Boolean, dispatch: OperationDispatcher<AppStat
             text = {
                 Column {
                     Text("※枠内にCtrl+Vなどでペーストし、インポートを押してください(Androidたぶん非対応)")
+                    Text("※フォーマットは適当なので、ChatGPT等にOCRさせて読み込むのも可能")
+                    TextWithLink("　例： https://x.com/mee10801/status/1796811671304028542")
                     OutlinedTextField(
                         value = input,
                         onValueChange = { input = it },
