@@ -88,6 +88,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
                             steps = 100,
                             modifier = Modifier.fillMaxWidth(),
                         )
+                        ImportExport(true, state, dispatch)
                         CharaInput(true, state, dispatch)
                         SkillInput(true, state, dispatch)
                     }

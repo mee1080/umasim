@@ -64,3 +64,21 @@ fun setPopularity(virtual: Boolean, value: Int) = DirectOperation<AppState> { st
 fun setGateNumber(virtual: Boolean, value: Int) = DirectOperation<AppState> { state ->
     state.updateUmaStatus(virtual) { it.copy(gateNumber = value) }
 }
+
+fun importChara(virtual: Boolean, data: UmaStatus) = DirectOperation<AppState> { state ->
+    val skillIdSet = data.hasSkills.map { it.id }.toSet()
+    state.updateUmaStatus(virtual) {
+        it.copy(
+            charaName = data.charaName,
+            speed = data.speed,
+            stamina = data.stamina,
+            power = data.power,
+            guts = data.guts,
+            wisdom = data.wisdom,
+            distanceFit = data.distanceFit,
+            surfaceFit = data.surfaceFit,
+            styleFit = data.styleFit,
+            hasSkills = data.hasSkills,
+        )
+    }.updateSkillIdSet(virtual) { skillIdSet }
+}

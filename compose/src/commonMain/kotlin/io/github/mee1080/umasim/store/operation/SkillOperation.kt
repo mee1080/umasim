@@ -10,7 +10,7 @@ internal val charaToUniqueSkill = skillData2.filter { it.rarity == "unique" }.as
 
 internal val charaToEvoSkills = skillData2.filter { it.rarity == "evo" }.groupBy { it.holder!! }
 
-private fun AppState.updateSkillIdSet(virtual: Boolean, action: (Set<String>) -> Set<String>): AppState {
+fun AppState.updateSkillIdSet(virtual: Boolean, action: (Set<String>) -> Set<String>): AppState {
     return if (virtual) {
         copy(virtualSkillIdSet = action(virtualSkillIdSet))
     } else {

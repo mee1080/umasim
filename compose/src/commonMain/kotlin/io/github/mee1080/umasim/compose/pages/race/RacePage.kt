@@ -17,6 +17,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         Header()
+        ImportExport(false, state, dispatch)
         CharaInput(false, state, dispatch)
         CourseInput(state, dispatch)
         SkillInput(false, state, dispatch)
