@@ -19,10 +19,9 @@ import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.FontResource
 
-@OptIn(ExperimentalResourceApi::class)
 @Composable
 fun AppTheme(
-    fontResource: String = defaultFontResource,
+    fontResource: FontResource = defaultFontResource,
     darkTheme: Boolean = false,
     content: @Composable () -> Unit
 ) {
@@ -30,9 +29,8 @@ fun AppTheme(
         darkTheme -> DarkColorScheme
         else -> LightColorScheme
     }
-    val fontPath = "font/$fontResource"
-    val font = Font(FontResource(fontPath))
-    if (font is LoadedFont && font.identity == fontPath) {
+    val font = Font(fontResource)
+    if (font is LoadedFont && font.identity != "org.jetbrains.compose.emptyFont") {
         val fontFamily = FontFamily(font)
         val typography = Typography(
             displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = fontFamily),

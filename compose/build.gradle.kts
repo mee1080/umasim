@@ -4,17 +4,21 @@ plugins {
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "io.github.mee1080.umasim"
 version = "1.0"
 
+composeCompiler {
+    enableStrongSkippingMode = true
+}
+
 kotlin {
-    jvm {
-        compilations.all {
-            kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
-        }
-    }
+
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+
+    jvm()
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -57,8 +61,4 @@ compose.desktop {
     application {
         mainClass = "MainKt"
     }
-}
-
-compose.experimental {
-    web.application {}
 }

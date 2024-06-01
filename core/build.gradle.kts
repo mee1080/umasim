@@ -8,11 +8,9 @@ version = "1.0"
 
 kotlin {
 
-    jvm("desktop") {
-        compilations.all {
-            kotlinOptions.jvmTarget = libs.versions.jvmTarget.get()
-        }
-    }
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+
+    jvm("desktop")
 
     js("web", IR) {
         useCommonJs()

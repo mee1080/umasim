@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.serialization)
+    alias(libs.plugins.compose.compiler)
 }
 
 group = "io.github.mee1080.umasim"
@@ -9,6 +10,10 @@ version = "1.0"
 
 repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+}
+
+composeCompiler {
+    enableStrongSkippingMode = true
 }
 
 kotlin {
@@ -28,11 +33,5 @@ kotlin {
                 implementation(libs.kotlinx.coroutinesCore)
             }
         }
-    }
-}
-
-afterEvaluate {
-    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
-        versions.webpackCli.version = "4.9.0"
     }
 }

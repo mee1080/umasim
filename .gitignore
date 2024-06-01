@@ -1,6 +1,7 @@
 /result/
 /settings.json*
 settings.conf
+/.kotlin
 
 .gradle
 .idea

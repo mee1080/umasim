@@ -66,8 +66,8 @@ private fun GraphArea(graphData: GraphData) {
         ) {
             val xMax = (frameList.size - 1) / 15f
             XYGraph(
-                xAxisModel = rememberLinearAxisModel(0f..xMax),
-                yAxisModel = rememberLinearAxisModel(0f..1f),
+                xAxisModel = rememberFloatLinearAxisModel(0f..xMax),
+                yAxisModel = rememberFloatLinearAxisModel(0f..1f),
                 yAxisLabels = { "" },
             ) {
                 AreaPlot(

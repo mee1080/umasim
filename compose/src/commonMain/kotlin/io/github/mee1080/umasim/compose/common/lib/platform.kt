@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.compose.common.lib
 
 import kotlinx.coroutines.CoroutineDispatcher
+import org.jetbrains.compose.resources.FontResource
 
 expect fun jumpToUrl(url: String)
 
@@ -8,4 +9,4 @@ expect val mainDispatcher: CoroutineDispatcher
 
 expect val asyncDispatcher: CoroutineDispatcher
 
-expect val defaultFontResource: String
+expect val defaultFontResource: FontResource
