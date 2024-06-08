@@ -223,6 +223,8 @@ private fun checkCondition(
 
         "post_number" -> condition.checkInRace { simulation.postNumber }
 
+        "corner_count" -> condition.preChecked(baseSetting.trackDetail.corners.size)
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")

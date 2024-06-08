@@ -219,6 +219,7 @@ private fun List<SkillData>.filterBySetting(virtual: Boolean, setting: RaceSetti
                     && it.targetDistanceType.emptyOrContains(track.distanceType)
                     && it.targetTrackId.emptyOrContains(track.raceTrackId)
                     && it.targetBasisDistance.emptyOrContains(track.isBasisDistance)
+                    && it.targetCornerCount.emptyOrContains(track.corners.size)
         }
     }
 }

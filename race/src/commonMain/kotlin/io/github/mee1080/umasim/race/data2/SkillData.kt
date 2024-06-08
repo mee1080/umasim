@@ -362,6 +362,8 @@ data class Invoke(
 
     val targetBasisDistance by lazy { createConditionValuesSet("is_basis_distance") }
 
+    val targetCornerCount by lazy { createConditionValuesSet("corner_count") }
+
     private fun createConditionValuesSet(type: String): Set<Int> {
         return buildSet {
             conditions.forEach { list ->
