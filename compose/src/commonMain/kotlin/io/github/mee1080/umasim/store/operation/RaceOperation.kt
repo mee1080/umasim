@@ -313,6 +313,11 @@ fun cancelSimulation() = AsyncOperation<AppState>({ state ->
     emit { it.clearSimulationResult() }
 }, simulationCancelPolicy)
 
+/**
+ * @param selectMode
+ *  true:選択スキルのうち1つを獲得した場合の短縮タイム
+ *  false:各スキルを所持していない場合の増加タイム
+ */
 private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState, selectMode: Boolean) {
     val targets = state.contributionTargets.intersect(state.skillIdSet)
     if (state.simulationCount < 5 || targets.isEmpty()) return
@@ -375,11 +380,11 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
             lowerTime = lowerTime,
             lowerDiff = lowerTime - baseResult.lowerTime,
             efficiency = if (targetSkill.sp == 0) List(6) { Double.NaN } else {
-                val base = (averageTime - baseResult.averageTime) * 100.0 / targetSkill.sp
+                val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / targetSkill.sp
                 listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
             },
         )
-    }.sortedBy { if (selectMode) it.efficiency[0] else -it.efficiency[0] }
+    }.sortedByDescending { it.efficiency[0] }
     emit {
         it.copy(
             simulationProgress = 0,
