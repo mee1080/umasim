@@ -809,6 +809,15 @@ phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70->remain_dista
 ->distance_type==3&phase_firsthalf_random==2&order_rate<=50&order_rate>=20@distance_type==4&phase_firsthalf_random==2&order_rate<=50&order_rate>=20
 「中距離、終盤前1/4ランダム、順位率20～50（チャンミ2～5/LoH3～6）」または「長距離、終盤前1/4ランダム、順位率20～50（チャンミ2～5/LoH3～6）」、現在速度2500、持続5.0
 
+Faith in the Feral
+[王者の喊声]ジャングルポケット 固有
+レース中間地点で中団にいると速度が上がる中距離レースならすごく上がる
+評価点340、人気:スピード60、確定発動
+->distance_rate>=50&distance_rate<=51&order_rate<=80&order_rate>=40&distance_type==3
+「距離割合50～51、順位率40～80（チャンミ4～7/LoH5～9）、中距離」、目標速度4500、持続5.0
+->distance_rate>=50&distance_rate<=51&order_rate<=80&order_rate>=40
+「距離割合50～51、順位率40～80（チャンミ4～7/LoH5～9）」、目標速度3500、持続5.0
+
 理運開かりて翔る
 [陰陽八卦☆開運衣]コパノリッキー 固有
 終盤が迫ったときどこかで速度を少し上げ、さらに能力を引き出すスキルの発動数に応じて速度と加速力を上げる
@@ -2115,6 +2124,14 @@ phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70->remain_dista
 ->distance_type==3&phase_firsthalf_random==2&order_rate<=50&order_rate>=20@distance_type==4&phase_firsthalf_random==2&order_rate<=50&order_rate>=20
 「中距離、終盤前1/4ランダム、順位率20～50（チャンミ2～5/LoH3～6）」または「長距離、終盤前1/4ランダム、順位率20～50（チャンミ2～5/LoH3～6）」、現在速度500、持続3.0
 
+Faith in the Feral
+レース中間地点で中団にいると速度がわずかに上がる中距離レースなら少し上がる
+評価点180、SP200、人気:スピード15
+->distance_rate>=50&distance_rate<=51&order_rate<=80&order_rate>=40&distance_type==3
+「距離割合50～51、順位率40～80（チャンミ4～7/LoH5～9）、中距離」、目標速度2500、持続3.0
+->distance_rate>=50&distance_rate<=51&order_rate<=80&order_rate>=40
+「距離割合50～51、順位率40～80（チャンミ4～7/LoH5～9）」、目標速度1500、持続3.0
+
 理運開かりて翔る
 終盤が迫ったときどこかで速度をちょっと上げる
 評価点180、SP200、人気:スピード15
@@ -2754,19 +2771,19 @@ remain_distance<=600&order_rate>=40&order_rate<=80&is_behind_in==1&change_order_
 直線のコースが得意になる
 評価点174、SP90(合計160)、人気:スピード45、確定発動
 ->corner_count==0
-「直線コース」、スピード60、持続0
+「corner_count==0」、スピード60、持続0
 
 直線コース○
 直線のコースが少し得意になる
 評価点129、SP70、人気:スピード30、確定発動
 ->corner_count==0
-「直線コース」、スピード40、持続0
+「corner_count==0」、スピード40、持続0
 
 直線コース×
 直線のコースが少し苦手になる
 評価点-129、SP40、人気:スピード-30、確定発動
 ->corner_count==0
-「直線コース」、スピード-40、持続0
+「corner_count==0」、スピード-40、持続0
 
 東京レース場◎
 東京レース場が得意になる
@@ -8209,6 +8226,15 @@ U.A.F. 進化(遮二無二)
 ->running_style==3&phase_laterhalf_random==1&order_rate>=40
 「差し、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続2.4
 
+猛襲の牙
+[王者の喊声]ジャングルポケット 進化(突撃魂)
+レース終盤が迫ったとき中団以降にいるとしばらくの間速度が上がるパワーが十二分に高いと効果が増える＜差し・中距離＞
+評価点633、進化元SP360、人気:スピード60
+->distance_type==3&running_style==3&phase_laterhalf_random==1&order_rate>=40&base_power>=1200
+「中距離、差し、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）、基礎パワー>=1200」、目標速度4000、持続4.0
+->distance_type==3&running_style==3&phase_laterhalf_random==1&order_rate>=40
+「中距離、差し、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続4.0
+
 進出開始
 レース終盤が迫ったとき中団以降にいると速度がわずかに上がる＜作戦・差し＞
 評価点217、SP180、人気:スピード20
@@ -8274,6 +8300,20 @@ Dreamer's Path
 評価点508、SP180(合計360)、人気:パワー60
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=30&order_rate<=80@distance_type==4&phase_firsthalf_random==2&order_rate>=30&order_rate<=80
 「中距離、終盤前1/4ランダム、順位率30～80（チャンミ3～7/LoH4～9）」または「長距離、終盤前1/4ランダム、順位率30～80（チャンミ3～7/LoH4～9）」、現在速度3500、持続3.0
+
+闘叫の鬼
+[王者の喊声]ジャングルポケット 進化(昂る鼓動)
+東京レース場ならレース終盤始めの方にしばらくの間前に出て、加速力がちょっと上がる＜中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&phase_firsthalf_random==2&track_id==10006
+「中距離、終盤前1/4ランダム、レース場==10006」、現在速度3500、加速1000、持続4.0
+
+天上天下唯我爆走
+[王者の喊声]ジャングルポケット 進化(昂る鼓動)
+レース終盤始めの方にすごく前に出る＜中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&phase_firsthalf_random==2
+「中距離、終盤前1/4ランダム」、現在速度4500、持続3.0
 
 込み上げる熱
 レース終盤始めの方に中団にいるとわずかに前に出る＜中距離/長距離＞
