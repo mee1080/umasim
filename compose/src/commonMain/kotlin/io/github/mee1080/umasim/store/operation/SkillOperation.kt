@@ -61,6 +61,8 @@ fun toggleSkill(virtual: Boolean, skillData: SkillData) = DirectOperation<AppSta
             it + skillData.id - groupSkillIds
         }.updateUmaStatus(virtual) {
             it.copy(hasSkills = it.hasSkills + skillData - groupSkills)
+        }.applyIf(!virtual) {
+            copy(contributionTargets = state.contributionTargets - groupSkillIds)
         }
     }
 }
