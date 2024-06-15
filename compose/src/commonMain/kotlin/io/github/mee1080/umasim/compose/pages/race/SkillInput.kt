@@ -204,6 +204,10 @@ private fun TypeSkillSetting(
             if (!specialSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "特殊", specialSkills, skillIdSet, dispatch)
             }
+            val minusSkills = skills["minus"]?.filterBySetting(virtual, setting)
+            if (!minusSkills.isNullOrEmpty()) {
+                SkillFlowRow(virtual, "マイナス", minusSkills, skillIdSet, dispatch)
+            }
         }
     }
 }
