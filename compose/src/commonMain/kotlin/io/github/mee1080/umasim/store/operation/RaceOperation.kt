@@ -3,6 +3,8 @@ package io.github.mee1080.umasim.store.operation
 import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data.PositionKeepState
 import io.github.mee1080.umasim.race.data.horseLane
+import io.github.mee1080.umasim.race.data2.SkillData
+import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
@@ -320,9 +322,23 @@ fun cancelSimulation() = AsyncOperation<AppState>({ state ->
  */
 private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState, selectMode: Boolean) {
     val targets = state.contributionTargets.intersect(state.skillIdSet)
-    if (state.simulationCount < 5 || targets.isEmpty()) return
-    var progress = 0
-    val setCount = targets.size + 1
+    val targetSkills = targets.flatMap { target ->
+        val skill = state.hasSkills(false).firstOrNull { it.id == target } ?: return@flatMap emptyList()
+        if (selectMode) {
+            val groupSkills = skillData2.filter {
+                it.group == skill.group && it.rarity == "normal" && it.sp < skill.sp
+            }.sortedBy { it.sp } + skill
+            buildList {
+                groupSkills.forEachIndexed { index, groupSkill ->
+                    add(groupSkill to groupSkills.subList(0, index))
+                }
+            }
+        } else {
+            listOf(skill to emptyList<SkillData>())
+        }
+    }
+    if (state.simulationCount < 5 || targetSkills.isEmpty()) return
+    val calculateState = CalculateState(this, state, targetSkills.size + 1)
     val baseSetting = if (selectMode) {
         state.setting.copy(
             umaStatus = state.setting.umaStatus.copy(
@@ -330,17 +346,10 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
             )
         )
     } else state.setting
-    val baseCalculator = RaceCalculator()
-    val baseTimes = List(state.simulationCount) {
-        progress++
-        if (progress % progressReportInterval == 0) {
-            emit { it.copy(simulationProgress = progress / setCount) }
-            delay(progressReportDelay)
-        }
-        baseCalculator.simulate(baseSetting).first.raceTime
-    }.sorted()
+    val baseTimes = calculateState.calculateTimes(baseSetting)
     val baseResult = ContributionResult(
         name = "基本値",
+        compareName = null,
         averageTime = baseTimes.average(),
         averageDiff = Double.NaN,
         upperTime = baseTimes.subList(0, baseTimes.size / 5).average(),
@@ -349,46 +358,84 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         lowerDiff = Double.NaN,
         efficiency = List(6) { Double.NaN },
     )
-    val targetResults = targets.mapNotNull { target ->
-        val targetSkill = state.hasSkills(false).firstOrNull { it.id == target } ?: return@mapNotNull null
+    val targetResults = mutableListOf<ContributionResult>()
+    targetSkills.forEach { target ->
+        val targetSkill = target.first
         val setting = state.setting.copy(
             umaStatus = state.setting.umaStatus.copy(
                 hasSkills = if (selectMode) {
                     baseSetting.umaStatus.hasSkills + targetSkill
                 } else {
-                    state.setting.umaStatus.hasSkills.filterNot { it.id == target }
+                    state.setting.umaStatus.hasSkills.filterNot { it.id == targetSkill.id }
                 },
             )
         )
+        val times = calculateState.calculateTimes(setting)
+        targetResults.add(
+            calculateState.calcContributionResult(
+                targetSkill.name, targetSkill.sp, baseResult, times, selectMode,
+            )
+        )
+        target.second.forEach { compareSkill ->
+            val compareResult = targetResults.first { it.name == compareSkill.name }
+            targetResults.add(
+                calculateState.calcContributionResult(
+                    targetSkill.name, targetSkill.sp - compareSkill.sp, compareResult, times, selectMode,
+                )
+            )
+        }
+    }
+    val sortedResults = targetResults.sortedByDescending { it.efficiency[0] }
+    emit {
+        it.copy(
+            simulationProgress = 0,
+            contributionResults = listOf(baseResult) + sortedResults,
+        )
+    }
+}
+
+private class CalculateState(
+    val context: ActionContext<AppState>,
+    val state: AppState,
+    val setCount: Int,
+) {
+    var progress: Int = 0
+
+    suspend fun calculateTimes(setting: RaceSetting): List<Double> {
         val calculator = RaceCalculator()
-        val times = List(state.simulationCount) {
+        return List(state.simulationCount) {
             progress++
-            if (progress % 50 == 0) {
-                emit { it.copy(simulationProgress = progress / setCount) }
+            if (progress % progressReportInterval == 0) {
+                context.emit { it.copy(simulationProgress = progress / setCount) }
+                delay(progressReportDelay)
             }
             calculator.simulate(setting).first.raceTime
         }.sorted()
+    }
+
+    fun calcContributionResult(
+        name: String,
+        sp: Int,
+        baseResult: ContributionResult,
+        times: List<Double>,
+        selectMode: Boolean,
+    ): ContributionResult {
         val averageTime = times.average()
         val upperTime = times.subList(0, times.size / 5).average()
         val lowerTime = times.subList(times.size * 4 / 5, times.size).average()
-        ContributionResult(
-            name = targetSkill.name,
+        return ContributionResult(
+            name = name,
+            compareName = if (baseResult.name == "基本値") null else baseResult.name,
             averageTime = averageTime,
             averageDiff = averageTime - baseResult.averageTime,
             upperTime = upperTime,
             upperDiff = upperTime - baseResult.upperTime,
             lowerTime = lowerTime,
             lowerDiff = lowerTime - baseResult.lowerTime,
-            efficiency = if (targetSkill.sp == 0) List(6) { Double.NaN } else {
-                val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / targetSkill.sp
+            efficiency = if (sp == 0) List(6) { Double.NaN } else {
+                val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / sp
                 listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
             },
-        )
-    }.sortedByDescending { it.efficiency[0] }
-    emit {
-        it.copy(
-            simulationProgress = 0,
-            contributionResults = listOf(baseResult) + targetResults,
         )
     }
 }

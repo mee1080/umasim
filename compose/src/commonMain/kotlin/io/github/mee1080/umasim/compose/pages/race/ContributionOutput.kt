@@ -59,7 +59,21 @@ fun ContributionOutput(state: AppState) {
         Text(state.simulationMode.label, style = MaterialTheme.typography.headlineSmall)
         Row {
             Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
-                names.forEach { Text(it, Modifier.padding(4.dp)) }
+                Text("", Modifier.padding(4.dp))
+                results.forEach {
+                    if (it.compareName == null) {
+                        Text(it.name, Modifier.padding(4.dp))
+                    } else {
+                        Column(Modifier.padding(horizontal = 4.dp)) {
+                            Text(it.compareName + " ->", style = MaterialTheme.typography.labelSmall)
+                            Text(
+                                it.name,
+                                style = MaterialTheme.typography.labelMedium,
+                                modifier = Modifier.align(Alignment.End),
+                            )
+                        }
+                    }
+                }
             }
             Table(results.size + 1, 5, scrollable = true) { row, col ->
                 if (row != 0 && col == 3) {

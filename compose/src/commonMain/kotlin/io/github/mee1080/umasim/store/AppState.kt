@@ -179,6 +179,7 @@ data class GraphData(
 @Stable
 data class ContributionResult(
     val name: String,
+    val compareName: String?,
     val averageTime: Double,
     val averageDiff: Double,
     val upperTime: Double,

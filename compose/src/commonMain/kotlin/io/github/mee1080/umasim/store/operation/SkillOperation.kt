@@ -55,10 +55,12 @@ fun toggleSkill(virtual: Boolean, skillData: SkillData) = DirectOperation<AppSta
             copy(contributionTargets = state.contributionTargets - skillData.id)
         }
     } else {
+        val groupSkills = state.hasSkills(virtual).filter { it.group == skillData.group }.toSet()
+        val groupSkillIds = groupSkills.map { it.id }.toSet()
         state.updateSkillIdSet(virtual) {
-            it + skillData.id
+            it + skillData.id - groupSkillIds
         }.updateUmaStatus(virtual) {
-            it.copy(hasSkills = it.hasSkills + skillData)
+            it.copy(hasSkills = it.hasSkills + skillData - groupSkills)
         }
     }
 }
