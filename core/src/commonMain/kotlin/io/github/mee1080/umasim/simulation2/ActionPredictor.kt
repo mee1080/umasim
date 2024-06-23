@@ -299,6 +299,7 @@ fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List
         Scenario.GM -> predictGmScenarioActionParams(baseActions)
         Scenario.LARC -> predictLArcScenarioActionParams(baseActions)
         Scenario.UAF -> predictUafScenarioActionParams(baseActions)
+        // TODO COOK
         else -> baseActions
     }
 }
@@ -436,6 +437,7 @@ private fun SimulationState.predictScenarioAction(): Array<Action> {
     return when (scenario) {
         Scenario.LARC -> predictLArcAction()
         Scenario.UAF -> predictUafAction()
+        // TODO COOK
         else -> emptyArray()
     }
 }

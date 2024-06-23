@@ -341,6 +341,8 @@ object Calculator {
         Scenario.GM -> calcGmStatus(info, base)
         Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
         Scenario.UAF -> calcUafStatus(info, raw, friendTraining)
+        // TODO COOK
+        Scenario.COOK -> Status()
     }
 
     private fun calcAoharuStatus(

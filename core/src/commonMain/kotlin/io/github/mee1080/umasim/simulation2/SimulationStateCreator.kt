@@ -36,6 +36,7 @@ fun SupportCard.toMemberState(
         Scenario.GM -> GmMemberState
         Scenario.LARC -> LArcMemberState()
         Scenario.UAF -> UafMemberState
+        Scenario.COOK -> CookMemberState
     }
 )
 
@@ -62,6 +63,7 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
         Scenario.GM -> GmMemberState
         Scenario.LARC -> LArcMemberState()
         Scenario.UAF -> UafMemberState
+        Scenario.COOK -> CookMemberState
     },
 )
 

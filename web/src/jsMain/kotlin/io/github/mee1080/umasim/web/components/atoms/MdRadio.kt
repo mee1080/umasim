@@ -56,6 +56,8 @@ fun <T : Any> MdRadioGroup(
             display(DisplayStyle.Flex)
             columnGap(12.px)
             padding(12.px)
+            flexWrap(FlexWrap.Wrap)
+            rowGap(16.px)
         }
         attrs?.invoke(this)
     }) {

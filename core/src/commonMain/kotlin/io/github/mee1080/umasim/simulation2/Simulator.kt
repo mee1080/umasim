@@ -93,6 +93,7 @@ class Simulator(
             Scenario.GM -> GmScenarioEvents()
             Scenario.LARC -> LArcScenarioEvents()
             Scenario.UAF -> UafScenarioEvents()
+            Scenario.COOK -> CookScenarioEvents()
         }
         val events = eventsProducer(state)
         state = scenarioEvents.beforeSimulation(state)

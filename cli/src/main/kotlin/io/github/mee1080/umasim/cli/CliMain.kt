@@ -96,6 +96,9 @@ class CliMain : CliktCommand() {
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
 
+            // TODO COOK
+            Scenario.COOK -> TODO()
+
             Scenario.UAF -> {
                 {
                     val options = (0..2).map {

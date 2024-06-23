@@ -132,7 +132,8 @@ enum class Scenario(
         turn = 67,
         levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
     ),
-    UAF("U.A.F.（仮実装）", trainingAutoLevelUp = false),
+    UAF("U.A.F.", trainingAutoLevelUp = false),
+    COOK("収穫ッ！満腹ッ！大豊食祭（未実装）"),
 }
 
 fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
@@ -144,6 +145,7 @@ fun toScenario(value: Int) = when (value) {
     5 -> Scenario.GM
     6 -> Scenario.LARC
     7 -> Scenario.UAF
+    8 -> Scenario.COOK
     else -> Scenario.URA
 }
 
