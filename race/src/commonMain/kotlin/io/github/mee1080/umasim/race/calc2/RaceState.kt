@@ -477,28 +477,26 @@ class RaceSettingWithPassive(
             (calcExceedStatus(umaStatus.speed) * statusCheckModifier * condCoef[umaStatus.condition]!!).toInt()
         val surfaceSpeed = surfaceSpeedModify[trackDetail.surface]!![track.surfaceCondition]!!
         val ret = baseStatus + surfaceSpeed + passiveBonus.speed
-        return@lazy ret.coerceIn(0, 2000)
+        return@lazy ret
     }
 
     val modifiedStamina by lazy {
         (calcExceedStatus(umaStatus.stamina) * condCoef[umaStatus.condition]!! + passiveBonus.stamina).toInt()
-            .coerceIn(0, 2000)
     }
 
     val modifiedPower by lazy {
         (calcExceedStatus(umaStatus.power) * condCoef[umaStatus.condition]!! +
                 surfacePowerModify[trackDetail.surface]!![track.surfaceCondition]!! +
-                passiveBonus.power).toInt().coerceIn(0, 2000)
+                passiveBonus.power).toInt()
     }
 
     val modifiedGuts by lazy {
         (calcExceedStatus(umaStatus.guts) * condCoef[umaStatus.condition]!! + passiveBonus.guts).toInt()
-            .coerceIn(0, 2000)
     }
 
     val modifiedWisdom by lazy {
         (calcExceedStatus(umaStatus.wisdom) * condCoef[umaStatus.condition]!! * styleFitCoef[umaStatus.styleFit]!! +
-                passiveBonus.wisdom).toInt().coerceIn(0, 2000)
+                passiveBonus.wisdom).toInt()
     }
 
     private fun calcExceedStatus(status: Int): Int {
