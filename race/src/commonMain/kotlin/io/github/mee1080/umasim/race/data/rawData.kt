@@ -832,7 +832,18 @@ internal val rawCourseData = """
             "end": 1000
           }
         ],
-        "slopes": []
+        "slopes": [
+          {
+            "start": 0,
+            "length": 240,
+            "slope": 10000
+          },
+          {
+            "start": 240,
+            "length": 60,
+            "slope": -10000
+          }
+        ]
       },
       "10302": {
         "raceTrackId": 10003,
