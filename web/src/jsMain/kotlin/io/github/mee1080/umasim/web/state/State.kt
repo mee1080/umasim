@@ -38,7 +38,7 @@ data class State(
     val lessonState: LessonState = LessonState(),
 
     val divideMode: Boolean = false,
-    val scenario: Scenario = Scenario.UAF,
+    val scenario: Scenario = Scenario.COOK,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),

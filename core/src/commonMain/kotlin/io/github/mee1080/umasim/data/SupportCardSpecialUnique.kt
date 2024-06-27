@@ -34,7 +34,7 @@ data class SupportCardSpecialUnique(
             118 -> "絆${value1}以上でトレーニング最大2箇所に配置"
             119 -> "絆${value2}以上でサポカ配置率アップ"
             120 -> "絆${value1}以上で編成サポカに応じたステータス/スキルボーナス（各最大${value3}）"
-            121 -> "トレーニングの全員の絆上昇量常時+1、このサポカが参加した場合さらに+2"
+            121 -> "トレーニングの全員の絆上昇量常時+$value0、このサポカが参加した場合さらに+$value1"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -108,6 +108,7 @@ data class SupportCardSpecialUnique(
         condition: SpecialUniqueCondition,
     ): Int {
         if (type == 120) {
+            if (condition.relation < value1) return 0
             val value = if (statusType == StatusType.SKILL) {
                 condition.supportCount.getOrElse(StatusType.FRIEND) { 0 } + condition.supportCount.getOrElse(StatusType.GROUP) { 0 }
             } else {
