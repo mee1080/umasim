@@ -57,7 +57,7 @@ fun testExpected() {
     val expectedCalcInfo = ExpectedCalculator.ExpectedCalcInfo(
         chara, training, motivation, member, scenario, fanCount, currentStatus, totalRelation,
         0, 0, 0, 5,
-        false, liveStatus, null, null, null,
+        false, liveStatus, null, null, null, null,
     )
     val start = System.currentTimeMillis()
     val expected = ExpectedCalculator(expectedCalcInfo).calc()
@@ -77,7 +77,7 @@ fun testExpected() {
         chara, training[StatusType.SPEED]!!, motivation, member, scenario,
         member.groupBy { it.card.type }.mapValues { it.value.size }, fanCount, currentStatus, totalRelation,
         0, 0, 0, 5,
-        false, liveStatus, null, null, null,
+        false, liveStatus, null, null, null, null,
     )
     val old = Calculator.calcExpectedTrainingStatus(calcInfo)
     println(old.first.toString())

@@ -86,6 +86,7 @@ data class State(
     val gmState: GmState = GmState(),
     val lArcState: LArcState = LArcState(),
     val uafState: UafState = UafState(),
+    val cookState: CookState = CookState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -145,6 +146,8 @@ data class State(
     val lArcStatusIfEnabled get() = if (scenario == Scenario.LARC) lArcState.toLArcStatus() else null
 
     val uafStatusIfEnabled get() = if (scenario == Scenario.UAF) uafState.toUafStatus() else null
+
+    val cookStatusIfEnabled get() = if (scenario == Scenario.COOK) cookState.toCookStatus(selectedTrainingType) else null
 }
 
 data class SupportSelection(
@@ -593,4 +596,23 @@ data class UafState(
             else -> false
         }
     }
+}
+
+data class CookState(
+    val cookPoint: Int = 0,
+    val phase: Int = -1,
+    val dishRank: Int = 0,
+    val materialLevel: Int = 0,
+) {
+    fun toCookStatus(trainingType: StatusType) = CookStatus(
+        cookPoint = cookPoint,
+        materialLevel = if (phase == 3) {
+            CookMaterial.entries.associateWith { if (it.ordinal < materialLevel) 5 else 1 }
+        } else {
+            CookMaterial.entries.associateWith { materialLevel }
+        },
+        activatedDish = cookDishData.firstOrNull {
+            it.phase == phase && (phase == 0 || it.rank == dishRank) && it.trainingTarget.contains(trainingType)
+        },
+    )
 }

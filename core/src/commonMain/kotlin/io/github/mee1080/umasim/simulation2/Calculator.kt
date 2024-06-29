@@ -44,6 +44,7 @@ object Calculator {
         val gmStatus: GmStatus?,
         val lArcStatus: LArcStatus?,
         val uafStatus: UafStatus?,
+        val cookStatus: CookStatus?,
     ) {
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
@@ -239,6 +240,7 @@ object Calculator {
         val gmStatus: GmStatus?,
         val lArcStatus: LArcStatus?,
         val uafStatus: UafStatus?,
+        val cookStatus: CookStatus?,
     )
 
     @ThreadLocal
@@ -265,6 +267,7 @@ object Calculator {
                 info.gmStatus,
                 info.lArcStatus,
                 info.uafStatus,
+                info.cookStatus,
             )
             val cached = expectedStatusCache[key]
             if (cached != null) {
@@ -341,8 +344,7 @@ object Calculator {
         Scenario.GM -> calcGmStatus(info, base)
         Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
         Scenario.UAF -> calcUafStatus(info, raw, friendTraining)
-        // TODO COOK
-        Scenario.COOK -> Status()
+        Scenario.COOK -> calcCookStatus(info, base)
     }
 
     private fun calcAoharuStatus(
@@ -668,5 +670,37 @@ object Calculator {
             }
         }
         return min(100, (total - baseInt).toInt())
+    }
+
+    private fun calcCookStatus(
+        info: CalcInfo,
+        base: Status,
+    ): Status {
+        val cookStatus = info.cookStatus ?: return Status()
+        val cookPointEffect = cookStatus.cookPointEffect
+        val trainingType = info.training.type
+        val dishFactor = cookStatus.activatedDishModified?.let {
+            if (it.trainingTarget.contains(trainingType)) it else null
+        }?.trainingFactor ?: 0
+        return Status(
+            speed = calcCookStatusSingle(StatusType.SPEED, base.speed, cookPointEffect, dishFactor),
+            stamina = calcCookStatusSingle(StatusType.STAMINA, base.stamina, cookPointEffect, dishFactor),
+            power = calcCookStatusSingle(StatusType.POWER, base.power, cookPointEffect, dishFactor),
+            guts = calcCookStatusSingle(StatusType.GUTS, base.guts, cookPointEffect, dishFactor),
+            wisdom = calcCookStatusSingle(StatusType.WISDOM, base.wisdom, cookPointEffect, dishFactor),
+            skillPt = calcCookStatusSingle(StatusType.SKILL, base.skillPt, cookPointEffect, dishFactor),
+        )
+    }
+
+    private fun calcCookStatusSingle(
+        target: StatusType,
+        baseValue: Int,
+        cookPointEffect: CookPointEffect,
+        dishFactor: Int,
+    ): Int {
+        val trainingFactor = (100 + cookPointEffect.trainingFactor + dishFactor) / 100.0
+        val skillFactor = if (target == StatusType.SKILL) (100 + cookPointEffect.skillPtFactor) / 100.0 else 1.0
+        val total = (baseValue * trainingFactor * skillFactor).toInt()
+        return min(100, total - baseValue)
     }
 }

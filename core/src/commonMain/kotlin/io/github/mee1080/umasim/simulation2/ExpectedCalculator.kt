@@ -49,6 +49,7 @@ class ExpectedCalculator(
         gmStatus: GmStatus?,
         lArcStatus: LArcStatus?,
         uafStatus: UafStatus?,
+        cookStatus: CookStatus?,
     ) {
 
         internal val baseCalcInfo = Calculator.CalcInfo(
@@ -70,6 +71,7 @@ class ExpectedCalculator(
             gmStatus = gmStatus,
             lArcStatus = lArcStatus,
             uafStatus = uafStatus,
+            cookStatus = cookStatus,
         )
 
         fun toCalcInfo(type: StatusType, factors: List<Wrapper>, count: Int): Calculator.CalcInfo {

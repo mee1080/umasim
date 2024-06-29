@@ -41,6 +41,7 @@ data class SimulationState(
     val gmStatus: GmStatus? = null,
     val lArcStatus: LArcStatus? = null,
     val uafStatus: UafStatus? = null,
+    val cookStatus: CookStatus? = null,
 ) {
     val supportTypeCount = supportCount.size
 
@@ -133,6 +134,7 @@ data class SimulationState(
         gmStatus = gmStatus,
         lArcStatus = lArcStatus,
         uafStatus = uafStatus,
+        cookStatus = cookStatus,
     )
 }
 

@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
+import io.github.mee1080.umasim.web.state.CookState
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.UafState
 import io.github.mee1080.umasim.web.state.WebConstants
@@ -219,6 +220,9 @@ fun TrainingSetting(model: ViewModel, state: State) {
         if (state.scenario == Scenario.UAF) {
             UafTrainingSetting(model, state.uafState)
         }
+        if (state.scenario == Scenario.COOK) {
+            CookTrainingSetting(model, state.cookState)
+        }
     }
 }
 
@@ -302,6 +306,57 @@ fun UafTrainingSetting(model: ViewModel, state: UafState) {
             }
             MdCheckbox(UafGenre.Yellow.longDisplayName, state.heatUpYellow) {
                 onChange { model.updateUaf { copy(heatUpYellow = it) } }
+            }
+        }
+    }
+}
+
+@Composable
+fun CookTrainingSetting(model: ViewModel, state: CookState) {
+    NestedHideBlock(Scenario.COOK.displayName) {
+        H4 { Text("お料理ポイント") }
+        DivFlexCenter {
+            MdRadioGroup(
+                selection = WebConstants.cookCookPoint,
+                selectedItem = state.cookPoint,
+                onSelect = { model.updateCook { copy(cookPoint = it) } },
+            )
+        }
+        H4 { Text("料理") }
+        DivFlexCenter {
+            MdRadioGroup(
+                selection = List(5) { it - 1 },
+                selectedItem = state.phase,
+                onSelect = { model.updateCook { copy(phase = it) } },
+                itemToLabel = { WebConstants.cookPhase[it]!! },
+            )
+        }
+        if (state.phase >= 1) {
+            DivFlexCenter {
+                val (label, results) = if (state.phase == 3) {
+                    "大豊食祭結果" to WebConstants.cookResult2
+                } else {
+                    "試食会結果" to WebConstants.cookResult1
+                }
+                Text(label)
+                MdRadioGroup(
+                    selection = List(3) { it },
+                    selectedItem = state.dishRank,
+                    onSelect = { model.updateCook { copy(dishRank = it) } },
+                    itemToLabel = { results[it]!! },
+                )
+            }
+            DivFlexCenter {
+                if (state.phase == 3) {
+                    Text("野菜Lv5個数")
+                } else {
+                    Text("野菜Lv")
+                }
+                MdRadioGroup(
+                    selection = List(6) { it },
+                    selectedItem = state.materialLevel,
+                    onSelect = { model.updateCook { copy(materialLevel = it) } },
+                )
             }
         }
     }

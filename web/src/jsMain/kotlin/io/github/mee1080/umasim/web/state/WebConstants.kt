@@ -227,6 +227,16 @@ object WebConstants {
     )
 
     val uafFestivalBonus = listOf(0, 1, 3, 7, 12, 17)
+
+    val cookCookPoint = listOf(0, 500, 1500, 2500, 5000, 7000, 10000, 12000)
+
+    val cookPhase = mapOf(
+        -1 to "なし", 0 to "ジュニア料理", 1 to "クラシック料理", 2 to "シニア料理", 3 to "GIプレート",
+    )
+
+    val cookResult1 = mapOf(0 to "すべて満足", 1 to "12月大満足", 2 to "6月大満足")
+
+    val cookResult2 = mapOf(0 to "満足", 1 to "大満足", 2 to "超満足")
 }
 
 fun SupportCard?.displayName(): String {

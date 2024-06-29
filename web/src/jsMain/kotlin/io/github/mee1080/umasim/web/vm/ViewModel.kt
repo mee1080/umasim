@@ -308,6 +308,7 @@ class ViewModel(val scope: CoroutineScope) {
         val gmStatus = state.gmStatusIfEnabled
         val lArcStatus = state.lArcStatusIfEnabled
         val uafStatus = state.uafStatusIfEnabled
+        val cookStatus = state.cookStatusIfEnabled
         val trainingLevel = if (state.scenario == Scenario.UAF) {
             (state.uafState.trainingGenre.ordinal + 1) * 10 + if (state.isLevelUpTurn) 5 else {
                 state.uafState.selectedTrainingLevel
@@ -338,6 +339,7 @@ class ViewModel(val scope: CoroutineScope) {
             gmStatus,
             lArcStatus,
             uafStatus,
+            cookStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -380,6 +382,7 @@ class ViewModel(val scope: CoroutineScope) {
                     gmStatus,
                     lArcStatus,
                     uafStatus,
+                    cookStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
@@ -408,6 +411,7 @@ class ViewModel(val scope: CoroutineScope) {
                 gmStatus,
                 lArcStatus,
                 uafStatus,
+                cookStatus,
             ),
             state.teamJoinCount,
         )
@@ -518,6 +522,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.gmStatusIfEnabled,
                 state.lArcStatusIfEnabled,
                 state.uafStatusIfEnabled,
+                state.cookStatusIfEnabled,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
@@ -752,6 +757,10 @@ class ViewModel(val scope: CoroutineScope) {
         update { copy(uafState = uafState.update()) }
     }
 
+    fun updateCook(update: CookState.() -> CookState) {
+        update { copy(cookState = cookState.update()) }
+    }
+
     fun calcUafAthleticsLevel() {
         updateUaf { copy(athleticsLevelUpRate = emptyList(), athleticsLevelUpCalculating = true) }
         scope.launch(Dispatchers.Default) {
@@ -789,7 +798,8 @@ class ViewModel(val scope: CoroutineScope) {
                 liveStatus = null,
                 gmStatus = null,
                 lArcStatus = null,
-                uafStatus,
+                uafStatus = uafStatus,
+                cookStatus = null,
             )
             val result = UafAthleticsLevelCalculator.calc(trainingCalcInfo, state.uafState.athleticsLevelUpBonus)
             var expected = 0.0
