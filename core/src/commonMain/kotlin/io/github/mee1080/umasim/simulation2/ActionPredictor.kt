@@ -270,10 +270,11 @@ fun SimulationState.applyScenarioRaceBonus(base: Status): Status {
         status = enableItem.raceBonus?.let {
             status.copy(
                 speed = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
-                stamina = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
-                power = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
-                guts = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
-                wisdom = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
+                stamina = (status.stamina * (1 + it.raceFactor / 100.0)).toInt(),
+                power = (status.power * (1 + it.raceFactor / 100.0)).toInt(),
+                guts = (status.guts * (1 + it.raceFactor / 100.0)).toInt(),
+                wisdom = (status.wisdom * (1 + it.raceFactor / 100.0)).toInt(),
+                skillPt = (status.skillPt * (1 + it.raceFactor / 100.0)).toInt(),
             )
         } ?: status
         status = enableItem.fanBonus?.let {
@@ -285,11 +286,27 @@ fun SimulationState.applyScenarioRaceBonus(base: Status): Status {
     if (gmStatus != null && gmStatus.activeWisdom == Founder.Red) {
         status = status.copy(
             speed = (status.speed * (1 + 35 / 100.0)).toInt(),
-            stamina = (status.speed * (1 + 35 / 100.0)).toInt(),
-            power = (status.speed * (1 + 35 / 100.0)).toInt(),
-            guts = (status.speed * (1 + 35 / 100.0)).toInt(),
-            wisdom = (status.speed * (1 + 35 / 100.0)).toInt(),
+            stamina = (status.stamina * (1 + 35 / 100.0)).toInt(),
+            power = (status.power * (1 + 35 / 100.0)).toInt(),
+            guts = (status.guts * (1 + 35 / 100.0)).toInt(),
+            wisdom = (status.wisdom * (1 + 35 / 100.0)).toInt(),
         )
+    }
+    if (cookStatus != null) {
+        status = status.copy(
+            fanCount = (status.fanCount * (1 + cookStatus.cookPointEffect.fanBonus / 100.0)).toInt(),
+        )
+        val dish = cookStatus.activatedDishModified
+        if (dish != null) {
+            status = status.copy(
+                speed = (status.speed * (1 + dish.raceBonus / 100.0)).toInt(),
+                stamina = (status.stamina * (1 + dish.raceBonus / 100.0)).toInt(),
+                power = (status.power * (1 + dish.raceBonus / 100.0)).toInt(),
+                guts = (status.guts * (1 + dish.raceBonus / 100.0)).toInt(),
+                wisdom = (status.wisdom * (1 + dish.raceBonus / 100.0)).toInt(),
+                skillPt = (status.skillPt * (1 + dish.raceBonus / 100.0)).toInt(),
+            )
+        }
     }
     return status
 }

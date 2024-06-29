@@ -148,6 +148,12 @@ data class State(
     val uafStatusIfEnabled get() = if (scenario == Scenario.UAF) uafState.toUafStatus() else null
 
     val cookStatusIfEnabled get() = if (scenario == Scenario.COOK) cookState.toCookStatus(selectedTrainingType) else null
+
+    val specialityRateUp get() = when (scenario) {
+        Scenario.GRAND_LIVE -> trainingLiveState.specialityRateUp
+        Scenario.COOK -> cookState.specialityRate
+        else -> 0
+    }
 }
 
 data class SupportSelection(
@@ -604,13 +610,18 @@ data class CookState(
     val dishRank: Int = 0,
     val materialLevel: Int = 0,
 ) {
-    fun toCookStatus(trainingType: StatusType) = CookStatus(
+    private val baseCookStatus = CookStatus(
         cookPoint = cookPoint,
         materialLevel = if (phase == 3) {
             CookMaterial.entries.associateWith { if (it.ordinal < materialLevel) 5 else 1 }
         } else {
             CookMaterial.entries.associateWith { materialLevel }
         },
+    )
+
+    val specialityRate = baseCookStatus.cookPointEffect.specialityRate
+
+    fun toCookStatus(trainingType: StatusType) = baseCookStatus.copy(
         activatedDish = cookDishData.firstOrNull {
             it.phase == phase && (phase == 0 || it.rank == dishRank) && it.trainingTarget.contains(trainingType)
         },

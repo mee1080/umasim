@@ -80,6 +80,8 @@ class ExpectedCalculator(
                 member = factors.map { it.factor },
             ).setTeamMember(count - factors.size)
         }
+
+        val specialityRateUp = baseCalcInfo.specialityRateUp
     }
 
     inner class Wrapper(val index: Int, val factor: MemberState) {
@@ -94,7 +96,7 @@ class ExpectedCalculator(
         private val cardType = factor.card.type
 
         private val positionSelection =
-            Calculator.calcCardPositionSelection(info.baseCalcInfo, factor, (info.liveStatus?.specialityRateUp ?: 0))
+            Calculator.calcCardPositionSelection(info.baseCalcInfo, factor, info.specialityRateUp)
 
         private val specialityRate = calcRate(cardType, *positionSelection)
 

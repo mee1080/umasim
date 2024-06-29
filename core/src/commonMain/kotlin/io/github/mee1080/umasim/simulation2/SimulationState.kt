@@ -136,6 +136,8 @@ data class SimulationState(
         uafStatus = uafStatus,
         cookStatus = cookStatus,
     )
+
+    val specialityRateUp get() = liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
 }
 
 data class MemberState(

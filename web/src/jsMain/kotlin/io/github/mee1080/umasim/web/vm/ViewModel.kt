@@ -455,7 +455,7 @@ class ViewModel(val scope: CoroutineScope) {
                     *Calculator.calcCardPositionSelection(
                         trainingCalcInfo,
                         memberState,
-                        state.trainingLiveState.specialityRateUp,
+                        state.specialityRateUp,
                     )
                 )
             }
@@ -469,7 +469,7 @@ class ViewModel(val scope: CoroutineScope) {
                 *Calculator.calcCardPositionSelection(
                     trainingCalcInfo.copy(member = allSupportList),
                     memberState,
-                    state.trainingLiveState.specialityRateUp,
+                    state.specialityRateUp,
                 )
             )
             supportSelectionList[memberState.index] = supportSelectionList[memberState.index].copy(

@@ -92,7 +92,35 @@ data class CookDish(
 
         else -> setOf(mainTrainingTarget)
     },
-)
+) {
+    override fun toString() = buildString {
+        append("CookDish(name=")
+        append(name)
+        append(", trainingFactor=")
+        append(trainingFactor)
+        append(", trainingTarget=")
+        append(trainingTarget)
+        if (raceBonus > 0) {
+            append(", raceBonus=")
+            append(raceBonus)
+        }
+        if (hp > 0) {
+            append(", hp=")
+            append(hp)
+        }
+        if (motivation > 0) {
+            append(", motivation=")
+            append(motivation)
+        }
+        if (relation > 0) {
+            append(", motivation=")
+            append(relation)
+        }
+        append(", gainGauge=")
+        append(gainGauge)
+        append(") ")
+    }
+}
 
 val cookDishData = listOf(
     CookDish(

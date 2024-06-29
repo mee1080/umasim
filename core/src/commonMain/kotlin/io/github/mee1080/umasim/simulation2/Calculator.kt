@@ -82,6 +82,10 @@ object Calculator {
         val positionRateUp by lazy {
             support.any { it.card.positionRateUp(it.relation) }
         }
+
+        val specialityRateUp by lazy {
+            liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
+        }
     }
 
     fun calcTrainingSuccessStatus(
@@ -284,7 +288,7 @@ object Calculator {
                 calcTrainingSuccessStatus(info)
             )
         } else {
-            val specialityRateBonus = info.liveStatus?.specialityRateUp ?: 0
+            val specialityRateBonus = info.specialityRateUp
             val joinRate = info.member.map {
                 calcRate(info.training.type, *calcCardPositionSelection(info, it, specialityRateBonus))
             }

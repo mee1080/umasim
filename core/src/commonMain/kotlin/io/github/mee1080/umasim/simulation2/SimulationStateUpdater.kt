@@ -93,7 +93,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
             *Calculator.calcCardPositionSelection(
                 state.baseCalcInfo,
                 this,
-                state.liveStatus?.specialityRateUp ?: 0,
+                state.specialityRateUp,
             )
         )
         secondPosition = if (card.hasSecondPosition(relation)) {
@@ -101,7 +101,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
                 *Calculator.calcCardPositionSelection(
                     state.baseCalcInfo,
                     this,
-                    state.liveStatus?.specialityRateUp ?: 0,
+                    state.specialityRateUp,
                 )
             )
         } else StatusType.NONE
