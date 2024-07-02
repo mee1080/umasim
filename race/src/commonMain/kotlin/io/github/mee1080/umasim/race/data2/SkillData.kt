@@ -362,7 +362,9 @@ data class Invoke(
 
     val targetBasisDistance by lazy { createConditionValuesSet("is_basis_distance") }
 
-    val targetCornerCount by lazy { createConditionValuesSet("corner_count") }
+    val targetCornerCount by lazy {
+        createConditionValuesSet("corner_count") + if (needCorner()) (1..10).toSet() else emptySet()
+    }
 
     private fun createConditionValuesSet(type: String): Set<Int> {
         return buildSet {
@@ -371,6 +373,27 @@ data class Invoke(
                     if (it.type == type) {
                         add(it.value)
                     }
+                }
+            }
+        }
+    }
+
+    private val cornerConditions = setOf(
+        "corner_random",
+        "all_corner_random",
+        "phase_corner_random",
+        "is_finalcorner_random",
+        "is_finalcorner",
+        "is_finalcorner_laterhalf",
+        "change_order_up_finalcorner_after",
+    )
+
+    private fun needCorner(): Boolean {
+        return conditions.any { list ->
+            list.any {
+                when (it.type) {
+                    "corner" -> !it.check(0)
+                    else -> cornerConditions.contains(it.type)
                 }
             }
         }
