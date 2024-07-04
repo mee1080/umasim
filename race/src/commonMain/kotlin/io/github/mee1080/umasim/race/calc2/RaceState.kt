@@ -109,7 +109,7 @@ class RaceState(
         }
     }
 
-    val currentPhase get() = getPhase(simulation.position)
+    val currentPhase get() = getPhase(simulation.startPosition)
 
     val isLaterHalf get() = simulation.position > setting.trackDetail.distance / 2
 
