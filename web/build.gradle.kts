@@ -28,7 +28,7 @@ kotlin {
                 implementation(project(":core"))
                 implementation(compose.html.core)
                 implementation(compose.runtime)
-                implementation(npm("@material/web", "1.0.1"))
+                implementation(npm("@material/web", libs.versions.materialWeb.get()))
                 implementation(libs.kotlinx.serializationJson)
                 implementation(libs.kotlinx.coroutinesCore)
             }
