@@ -176,7 +176,6 @@ private fun RaceState.updateFrame(): Boolean {
     paceMaker?.updateFrame()
     simulation.startPosition = simulation.position
     val startSp = simulation.sp
-    val startPhase = currentPhase
     var frame = RaceFrame(
         speed = simulation.currentSpeed,
         sp = simulation.sp,
@@ -324,7 +323,7 @@ private fun RaceState.updateFrame(): Boolean {
     simulation.frameElapsed++
 
     // 終盤入り
-    if (startPhase == 1 && currentPhase == 2) {
+    if (currentPhase == 1 && getPhase(simulation.position) == 2) {
         // ラストスパート計算
         simulation.spurtParameters = calcSpurtParameter()
 
