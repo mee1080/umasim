@@ -29,6 +29,12 @@ sealed interface Action {
     fun randomSelectResult(): ActionResult
 }
 
+data object NoAction : Action {
+    override val name = "行動終了"
+    override val candidates: List<Pair<ActionResult, Int>> = emptyList()
+    override fun randomSelectResult() = StatusActionResult(Status(), null)
+}
+
 sealed interface SingleAction : Action {
     val result: ActionResult
     override val candidates get() = listOf(result to 1)

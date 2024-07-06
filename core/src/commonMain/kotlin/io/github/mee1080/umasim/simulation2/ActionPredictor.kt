@@ -42,7 +42,7 @@ fun SimulationState.predictGoal(goal: RaceEntry): List<Action> {
 fun SimulationState.predictNormal(): List<Action> {
     val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
     member.forEach {
-        it.positions.forEach { status->
+        it.positions.forEach { status ->
             supportPosition[status]!!.add(it)
         }
     }
@@ -605,7 +605,7 @@ fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): L
     }
 }
 
-private fun SimulationState.predictCookAction(): Array<Action> {
+fun SimulationState.predictCookAction(beforeEvent: Boolean = false): Array<Action> {
     val cookStatus = cookStatus ?: return emptyArray()
     return buildList {
         if (!isLevelUpTurn) {
@@ -613,7 +613,7 @@ private fun SimulationState.predictCookAction(): Array<Action> {
                 add(CookMaterialLevelUp.instance[it.key]!!)
             }
         }
-        if (cookStatus.activatedDish == null) {
+        if (cookStatus.activatedDish == null && !beforeEvent) {
             cookStatus.availableDishList.forEach {
                 add(CookActivateDish(it))
             }

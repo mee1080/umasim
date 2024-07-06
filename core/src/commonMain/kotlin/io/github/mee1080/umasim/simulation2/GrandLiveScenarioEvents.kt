@@ -4,7 +4,7 @@ import io.github.mee1080.umasim.data.*
 
 class GrandLiveScenarioEvents : CommonScenarioEvents() {
 
-    override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.afterAction(state, selector)
         return when (base.turn) {
             // 導入

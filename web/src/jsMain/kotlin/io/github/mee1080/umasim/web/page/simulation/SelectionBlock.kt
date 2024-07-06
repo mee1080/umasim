@@ -80,6 +80,8 @@ fun SelectionBlock(
                     onClick { onSelect(action) }
                 }
                 when (action) {
+                    NoAction -> {}
+
                     is Outing -> {
                         CookMaterialInfo(action)
                     }
@@ -191,7 +193,7 @@ fun SelectionBlock(
 }
 
 @Composable
-private fun CookMaterialInfo(action:Action) {
+private fun CookMaterialInfo(action: Action) {
     val target = action.candidates.first().first as? StatusActionResult ?: return
     val param = target.scenarioActionParam as? CookActionParam ?: return
     Div {

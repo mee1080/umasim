@@ -52,7 +52,7 @@ class LArcScenarioEvents : ScenarioEvents {
         }
     }
 
-    override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = state.applyExpectationEvent()
         return when (base.turn) {
             // J10前行動後 適性Pt+100

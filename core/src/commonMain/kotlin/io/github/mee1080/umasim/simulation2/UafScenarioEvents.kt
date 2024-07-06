@@ -36,7 +36,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
         return base.copy(uafStatus = uafStatus.copy(athleticsLevelUp = levelUp))
     }
 
-    override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.afterAction(state, selector)
         return when (state.turn) {
 

@@ -38,7 +38,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
         return copy(training = newTraining)
     }
 
-    override fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.afterAction(state, selector)
         return when (base.turn) {
             // 導入
