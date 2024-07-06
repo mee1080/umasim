@@ -210,6 +210,10 @@ data class SupportCardSpecialUnique(
 
     fun positionRateUp(relation: Int) = type == 119 && relation >= value2
 
+    val trainingRelationAll = if (type == 121) value0 else 0
+
+    val trainingRelationJoin = if (type == 121) value1 else 0
+
     private fun getValue(
         card: SupportCard,
         condition: SpecialUniqueCondition,

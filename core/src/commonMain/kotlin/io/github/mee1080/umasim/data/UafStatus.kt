@@ -103,9 +103,7 @@ data class UafStatus(
     }
 }
 
-object UafMemberState : ScenarioMemberState {
-    override fun toString() = "UAF"
-}
+object UafMemberState : ScenarioMemberState(Scenario.UAF)
 
 enum class UafGenre(
     val displayName: String,

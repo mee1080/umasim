@@ -285,3 +285,54 @@ class UafScenarioActionParam(
         append(")")
     }
 }
+
+data class CookActionParam(
+    val stamp: CookStamp,
+) : ScenarioActionParam {
+    override fun toShortString() = buildString {
+        append("Cook(")
+        if (stamp.fullPower) {
+            append("全力:")
+        }
+        append(stamp.material.displayName)
+        if (stamp.plus > 0) {
+            append("+")
+            append(stamp.plus)
+        }
+        append(")")
+    }
+}
+
+class CookMaterialLevelUp(
+    override val result: CookMaterialLevelUpResult,
+) : SingleAction {
+    override val name get() = "野菜LvUp：$result"
+    override val turnChange get() = false
+
+    companion object {
+        val instance = CookMaterial.entries.associateWith {
+            CookMaterialLevelUp(CookMaterialLevelUpResult(it))
+        }
+    }
+}
+
+class CookMaterialLevelUpResult(
+    val target: CookMaterial,
+) : ActionResult {
+    override fun toString() = target.displayName
+}
+
+class CookActivateDish(
+    override val result: CookActivateDishResult,
+) : SingleAction {
+    override val name get() = "料理：$result"
+    override val turnChange get() = false
+
+    constructor(dish: CookDish) : this(CookActivateDishResult(dish))
+}
+
+class CookActivateDishResult(
+    val dish: CookDish,
+) : ActionResult {
+    override fun toString() = dish.toShortString()
+}

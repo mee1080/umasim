@@ -37,7 +37,7 @@ fun SimulationState.onTurnChange(): SimulationState {
         status = status.adjustRange(),
         training = training.map { it.copy(levelOverride = levelOverride) },
         enableItem = enableItem.onTurnChange(),
-    ).updateOutingStep()
+    ).updateOutingStep().updateScenarioTurn()
 }
 
 fun SimulationState.updateOutingStep(): SimulationState {
@@ -53,6 +53,16 @@ fun SimulationState.updateOutingStep(): SimulationState {
     }
 }
 
+fun SimulationState.updateScenarioTurn(): SimulationState {
+    return when (scenario) {
+        Scenario.COOK -> updateCookStatus {
+            updateTurn(isGoalRaceTurn, isLevelUpTurn, isLevelUpTurn || turn > 72)
+        }
+
+        else -> this
+    }
+}
+
 fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
@@ -61,8 +71,9 @@ fun SimulationState.shuffleMember(): SimulationState {
         newMember = member.map { it.onTurnChange(turn, this) }
         supportPosition = trainingType.associateWith { mutableListOf() }
         newMember.forEach {
-            if (it.position != StatusType.NONE) supportPosition[it.position]!!.add(it)
-            if (it.secondPosition != StatusType.NONE) supportPosition[it.secondPosition]!!.add(it)
+            it.positions.forEach { status ->
+                supportPosition[status]!!.add(it)
+            }
         }
     } while (supportPosition.any { it.value.size > 5 })
     return copy(
@@ -124,7 +135,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
         position = position,
         supportState = supportState,
         scenarioState = scenarioState,
-        secondPosition = secondPosition,
+        additionalPosition = if (secondPosition == StatusType.NONE) emptySet() else setOf(secondPosition),
     )
 }
 
@@ -159,6 +170,10 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
         is LArcGetAptitudeResult -> applySelectedLArcAction(result)
 
         is UafConsultResult -> applySelectedUafAction(result)
+
+        is CookActivateDishResult -> activateDish(result.dish)
+
+        is CookMaterialLevelUpResult -> updateCookStatus { materialLevelUp(result.target) }
     }
 }
 
@@ -175,9 +190,14 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
         val memberIndices = action.member.map { it.index }
         val trainingHint = selectTrainingHint(action.member)
         val trainingHintIndices = trainingHint.second.map { it.index }
+        val relationBonus = support.sumOf { it.card.trainingRelationAll } +
+                action.support.sumOf { it.card.trainingRelationJoin }
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
-                it.applyTraining(action, charm, chara, trainingHintIndices.contains(it.index), this)
+                it.applyTraining(
+                    action, if (charm) 2 else 0, relationBonus,
+                    chara, trainingHintIndices.contains(it.index), this
+                )
             } else it
         }
         copy(
@@ -199,14 +219,15 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
 
 private fun MemberState.applyTraining(
     action: Training,
-    charm: Boolean,
+    charmValue: Int,
+    relationBonus: Int,
     chara: Chara,
     hint: Boolean,
     state: SimulationState,
 ): MemberState {
     // 絆上昇量を反映
     val supportState = supportState?.copy(
-        relation = min(100, supportState.relation + getTrainingRelation(charm, hint)),
+        relation = min(100, supportState.relation + getTrainingRelation(charmValue, relationBonus, hint)),
         // FIXME GMの三女神の情熱ゾーンは欠片獲得と同時確定なので別処理、その他は実装保留
 //        passionTurn = if (card.type == StatusType.GROUP) {
 //            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
@@ -234,23 +255,7 @@ private fun MemberState.applyTraining(
 
 private fun SimulationState.applyFriendEvent(action: Training): SimulationState {
     return action.member.filter { !it.guest && it.outingType }.fold(this) { state, support ->
-        val isFirst = support.supportState?.outingStep == 0
-        when (support.charaName) {
-            "都留岐涼花" -> {
-                if (isFirst) {
-                    applyFriendEvent(support, Status(speed = 5, wisdom = 5, motivation = 1), 10, 1)
-                } else if (Random.nextDouble() < 0.4) {
-                    if (Random.nextDouble() < 0.1) {
-                        applyFriendEvent(support, Status(hp = 7, motivation = 1), 5)
-                    } else {
-                        applyFriendEvent(support, Status(hp = 7), 5)
-                    }
-                } else state
-            }
-
-            // TODO 他の友人のイベント
-            else -> state
-        }
+        state.applyAfterTrainingEvent(support)
     }
 }
 
@@ -263,7 +268,7 @@ fun SimulationState.applyFriendEvent(
     val newMember = member.mapIf({ it.index == support.index }) { member ->
         member.copy(supportState = member.supportState?.let {
             it.copy(
-                relation = min(100, it.relation + relation),
+                relation = min(100, it.relation + relation + if (charm) 2 else 0),
                 outingStep = max(outingStep, it.outingStep),
             )
         })
@@ -407,6 +412,25 @@ fun MemberState.addRelation(relation: Int): MemberState {
     )
 }
 
+fun SimulationState.addRelationAll(relation: Int): SimulationState {
+    return copy(member = member.map { it.addRelation(relation) })
+}
+
+fun SimulationState.addRelation(relation: Int, target: (MemberState) -> Boolean): SimulationState {
+    return copy(member = member.mapIf(target) { it.addRelation(relation) })
+}
+
+fun SimulationState.addRelation(relation: Int, target: MemberState): SimulationState {
+    return addRelation(relation) { it.index == target.index }
+}
+
+fun SimulationState.allTrainingLevelUp(): SimulationState {
+    val newTraining = training.map {
+        it.copy(level = min(5, it.level + 1))
+    }
+    return copy(training = newTraining)
+}
+
 fun SimulationState.updateLesson(): SimulationState {
     val liveStatus = liveStatus ?: return this
     val currentPeriod = LivePeriod.turnToPeriod(turn)
@@ -528,6 +552,7 @@ private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: 
         is GmActionParam -> applyGmAction(scenarioAction)
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
         is UafScenarioActionParam -> applyUafAction(scenarioAction)
+        is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
         null -> this
     }
 }

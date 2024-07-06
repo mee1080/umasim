@@ -26,23 +26,29 @@ import kotlin.math.min
 import kotlin.random.Random
 
 fun SimulationState.predict(): List<Action> {
-    val result = goalRace.find { it.turn == turn }?.let { predictGoal(it) } ?: predictNormal()
+    val nextGoalRace = nextGoalRace
+    val result = if (nextGoalRace?.turn == turn) {
+        predictGoal(nextGoalRace)
+    } else {
+        predictNormal()
+    }
     return predictScenarioActionParams(result)
 }
 
 fun SimulationState.predictGoal(goal: RaceEntry): List<Action> {
-    return listOf(predictRace(goal)) + (lArcStatus?.predictGetAptitude() ?: emptyList())
+    return listOf(predictRace(goal)) + predictScenarioAction(true)
 }
 
 fun SimulationState.predictNormal(): List<Action> {
     val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
     member.forEach {
-        if (it.position != StatusType.NONE) supportPosition[it.position]!!.add(it)
-        if (it.secondPosition != StatusType.NONE) supportPosition[it.secondPosition]!!.add(it)
+        it.positions.forEach { status->
+            supportPosition[status]!!.add(it)
+        }
     }
     return mutableListOf(
         *(predictTrainingResult(supportPosition)),
-        *(predictScenarioAction()),
+        *(predictScenarioAction(false)),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario == Scenario.LARC) emptyArray() else {
@@ -316,7 +322,7 @@ fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List
         Scenario.GM -> predictGmScenarioActionParams(baseActions)
         Scenario.LARC -> predictLArcScenarioActionParams(baseActions)
         Scenario.UAF -> predictUafScenarioActionParams(baseActions)
-        // TODO COOK
+        Scenario.COOK -> predictCookScenarioActionParams(baseActions)
         else -> baseActions
     }
 }
@@ -450,18 +456,22 @@ private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Ac
     }
 }
 
-private fun SimulationState.predictScenarioAction(): Array<Action> {
+private fun SimulationState.predictScenarioAction(goal: Boolean): Array<Action> {
     return when (scenario) {
-        Scenario.LARC -> predictLArcAction()
-        Scenario.UAF -> predictUafAction()
-        // TODO COOK
+        Scenario.LARC -> predictLArcAction(goal)
+        Scenario.UAF -> predictUafAction(goal)
+        Scenario.COOK -> predictCookAction()
         else -> emptyArray()
     }
 }
 
-private fun SimulationState.predictLArcAction(): Array<Action> {
+private fun SimulationState.predictLArcAction(goal: Boolean): Array<Action> {
     val lArcStatus = lArcStatus ?: return emptyArray()
-    return predictSSMatch(lArcStatus) + lArcStatus.predictGetAptitude()
+    return if (goal) {
+        lArcStatus.predictGetAptitude().toTypedArray()
+    } else {
+        predictSSMatch(lArcStatus) + lArcStatus.predictGetAptitude()
+    }
 }
 
 private fun SimulationState.predictSSMatch(lArcStatus: LArcStatus): Array<Action> {
@@ -535,19 +545,26 @@ private fun LArcStatus.predictGetAptitude(): List<Action> {
     }
 }
 
-private fun MultipleAction.addScenarioActionParam(scenarioActionParam: ScenarioActionParam): List<Pair<ActionResult, Int>> {
-    return candidates.map { it.first.addScenarioActionParam(scenarioActionParam) to it.second }
+private fun MultipleAction.addScenarioActionParam(
+    scenarioActionParam: ScenarioActionParam,
+    applyOnFailure: Boolean = false,
+): List<Pair<ActionResult, Int>> {
+    return candidates.map { it.first.addScenarioActionParam(scenarioActionParam, applyOnFailure) to it.second }
 }
 
-private fun ActionResult.addScenarioActionParam(scenarioActionParam: ScenarioActionParam): ActionResult {
+private fun ActionResult.addScenarioActionParam(
+    scenarioActionParam: ScenarioActionParam,
+    applyOnFailure: Boolean = false,
+): ActionResult {
     return when (this) {
-        is StatusActionResult -> copy(scenarioActionParam = if (success) scenarioActionParam else null)
+        is StatusActionResult -> copy(scenarioActionParam = if (success || applyOnFailure) scenarioActionParam else null)
         else -> this
     }
 }
 
-private fun SimulationState.predictUafAction(): Array<Action> {
+private fun SimulationState.predictUafAction(goal: Boolean): Array<Action> {
     val uafStatus = uafStatus ?: return emptyArray()
+    if (goal) return emptyArray()
     if (uafStatus.consultCount == 0) return emptyArray()
     return buildList {
         UafGenre.entries.forEach { genre ->
@@ -581,6 +598,55 @@ fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): L
 
             is Race -> {
                 it.copy(result = it.result.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
+            }
+
+            else -> it
+        }
+    }
+}
+
+private fun SimulationState.predictCookAction(): Array<Action> {
+    val cookStatus = cookStatus ?: return emptyArray()
+    return buildList {
+        if (!isLevelUpTurn) {
+            cookStatus.requiredGardenPoint.filter { it.value <= cookStatus.gardenPoint }.forEach {
+                add(CookMaterialLevelUp.instance[it.key]!!)
+            }
+        }
+        if (cookStatus.activatedDish == null) {
+            cookStatus.availableDishList.forEach {
+                add(CookActivateDish(it))
+            }
+        }
+    }.toTypedArray()
+}
+
+fun SimulationState.predictCookScenarioActionParams(baseActions: List<Action>): List<Action> {
+    val cookStatus = cookStatus ?: return baseActions
+    return baseActions.map {
+        when (it) {
+            is Training -> {
+                val stamp = CookStamp(
+                    material = statusTypeToCookMaterial[it.type]!!,
+                    fullPower = it.friendTraining,
+                    plus = it.member.size + it.support.count { member -> !member.guest && member.isScenarioLink },
+                )
+                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp), applyOnFailure = true))
+            }
+
+            is Sleep -> {
+                it.copy(candidates = it.addScenarioActionParam(CookActionParam(cookStatus.sleepStamp)))
+            }
+
+            is Outing -> {
+                val stamp = if (it.support?.charaName == "秋川理事長") {
+                    cookStatus.sleepStamp.copy(fullPower = true)
+                } else cookStatus.sleepStamp
+                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp)))
+            }
+
+            is Race -> {
+                it.copy(result = it.result.addScenarioActionParam(CookActionParam(cookStatus.raceStamp)))
             }
 
             else -> it

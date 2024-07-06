@@ -378,8 +378,14 @@ internal val scenarioLinkData = mapOf(
         "ナリタトップロード",
         "都留岐涼花",
     ),
-    // TODO COOK
-    Scenario.COOK to emptySet(),
+    Scenario.COOK to setOf(
+        "スペシャルウィーク",
+        "ヒシアケボノ",
+        "ライスシャワー",
+        "ニシノフラワー",
+        "カツラギエース",
+        "秋川理事長",
+    ),
 )
 
 val supportEffectName = mapOf(

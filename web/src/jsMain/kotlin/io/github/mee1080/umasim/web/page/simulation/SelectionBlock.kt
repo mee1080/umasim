@@ -80,9 +80,13 @@ fun SelectionBlock(
                     onClick { onSelect(action) }
                 }
                 when (action) {
-                    is Outing -> {}
+                    is Outing -> {
+                        CookMaterialInfo(action)
+                    }
 
-                    is Race -> {}
+                    is Race -> {
+                        CookMaterialInfo(action)
+                    }
 
                     is SSMatch -> {
                         Div {
@@ -94,9 +98,12 @@ fun SelectionBlock(
                         StatusTable(action.result.status)
                     }
 
-                    is Sleep -> {}
+                    is Sleep -> {
+                        CookMaterialInfo(action)
+                    }
 
                     is Training -> {
+                        CookMaterialInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -153,6 +160,10 @@ fun SelectionBlock(
                     is LiveGetLesson -> {}
 
                     is UafConsult -> {}
+
+                    is CookActivateDish -> {}
+
+                    is CookMaterialLevelUp -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == index || targetAiScore != null) {
@@ -176,5 +187,14 @@ fun SelectionBlock(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun CookMaterialInfo(action:Action) {
+    val target = action.candidates.first().first as? StatusActionResult ?: return
+    val param = target.scenarioActionParam as? CookActionParam ?: return
+    Div {
+        Text(param.stamp.toString())
     }
 }

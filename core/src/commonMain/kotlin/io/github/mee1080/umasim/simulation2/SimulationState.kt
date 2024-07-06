@@ -45,7 +45,9 @@ data class SimulationState(
 ) {
     val supportTypeCount = supportCount.size
 
-    val nextGoalRace get() = goalRace.firstOrNull { it.turn >= turn }
+    val nextGoalRace by lazy { goalRace.firstOrNull { it.turn >= turn } }
+
+    val isGoalRaceTurn get() = nextGoalRace?.turn == turn
 
     val itemAvailable get() = scenario == Scenario.CLIMAX
 
@@ -147,7 +149,7 @@ data class MemberState(
     val supportState: SupportState?,
     val scenarioState: ScenarioMemberState,
     val isScenarioLink: Boolean = supportState != null && scenarioState.scenarioLink.contains(card.chara),
-    val secondPosition: StatusType = StatusType.NONE,
+    val additionalPosition: Set<StatusType> = emptySet(),
 ) {
     fun toShortString() =
         "MemberState($index, ${card.name}, scenarioState=${scenarioState.toShortString()}, position=$position, supportState=$supportState)"
@@ -167,12 +169,13 @@ data class MemberState(
     }
 
     val hint = supportState?.hintIcon == true
-    fun getTrainingRelation(charm: Boolean, hint: Boolean) = getTrainingRelation(if (charm) 2 else 0, hint)
-    private fun getTrainingRelation(charmValue: Int, hint: Boolean) = card.trainingRelation + charmValue + if (hint) {
-        5 + charmValue
-    } else 0
 
-    val positions get() = listOf(position, secondPosition).filter { it != StatusType.NONE }
+    fun getTrainingRelation(charmValue: Int, trainingBonus: Int, hint: Boolean) =
+        card.trainingRelation + charmValue + trainingBonus + if (hint) {
+            5 + charmValue
+        } else 0
+
+    val positions by lazy { (additionalPosition + position).filter { it != StatusType.NONE } }
 }
 
 data class SupportState(
@@ -186,27 +189,20 @@ data class SupportState(
     val outingEnabled = outingStep >= 2
 }
 
-interface ScenarioMemberState {
-    val hintBlocked get() = false
-    val scenarioLink get() = emptySet<String>()
-    fun toShortString() = toString()
+abstract class ScenarioMemberState(val scenario: Scenario) {
+    open val hintBlocked get() = false
+    val scenarioLink get() = Store.getScenarioLink(scenario)
+    override fun toString() = scenario.name
+    open fun toShortString() = toString()
 }
 
-object UraMemberState : ScenarioMemberState {
-    override fun toString() = "URA"
-}
+object UraMemberState : ScenarioMemberState(Scenario.URA)
 
-object ClimaxMemberState : ScenarioMemberState {
-    override fun toString() = "Climax"
-}
+object ClimaxMemberState : ScenarioMemberState(Scenario.CLIMAX)
 
-object GrandLiveMemberState : ScenarioMemberState {
-    override fun toString() = "GrandLive"
-}
+object GrandLiveMemberState : ScenarioMemberState(Scenario.GRAND_LIVE)
 
-object GmMemberState : ScenarioMemberState {
-    override fun toString() = "GM"
-}
+object GmMemberState : ScenarioMemberState(Scenario.GM)
 
 data class AoharuMemberState(
     val member: TeamMemberData,
@@ -214,12 +210,12 @@ data class AoharuMemberState(
     val maxStatus: Status,
     val aoharuTrainingCount: Int,
     val aoharuIcon: Boolean,
-) : ScenarioMemberState {
+) : ScenarioMemberState(Scenario.AOHARU) {
     val aoharuBurn get() = aoharuIcon && aoharuTrainingCount == 4
     override val hintBlocked get() = aoharuIcon
 }
 
-data object AoharuNotMemberState : ScenarioMemberState
+data object AoharuNotMemberState : ScenarioMemberState(Scenario.AOHARU)
 
 data class TrainingState(
     val type: StatusType,

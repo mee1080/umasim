@@ -195,11 +195,9 @@ data class LArcMemberState(
     val nextStarEffect: List<StarEffect> = emptyList(),
     val starLevel: Int = 1,
     val starGauge: Int = 0,
-) : ScenarioMemberState {
+) : ScenarioMemberState(Scenario.LARC) {
     override fun toShortString() =
         "LArcMemberState(status=${status.toShortString()}, supporterPt=$supporterPt, initialRank=$initialRank, starGauge=$starGauge/Lv$starLevel/$starType/$specialStarEffect"
-
-    override val scenarioLink get() = Store.getScenarioLink(Scenario.LARC)
 
     fun initialize(initialRank: Int, charaName: String): LArcMemberState {
         val initialStatus = initialMemberStatus[initialRank - 1]

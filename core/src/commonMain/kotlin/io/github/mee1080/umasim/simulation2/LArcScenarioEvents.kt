@@ -276,11 +276,4 @@ class LArcScenarioEvents : ScenarioEvents {
             lArcStatus = lArcStatus.copy(lastExpectationEvent = eventLevel),
         ).applyIf(eventLevel in arrayOf(20, 60, 100)) { allTrainingLevelUp() }
     }
-
-    private fun SimulationState.allTrainingLevelUp(): SimulationState {
-        val newTraining = training.map {
-            it.copy(level = min(5, it.level + 1))
-        }
-        return copy(training = newTraining)
-    }
 }

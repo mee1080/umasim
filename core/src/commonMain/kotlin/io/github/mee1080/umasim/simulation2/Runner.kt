@@ -152,6 +152,15 @@ object Runner {
         StatusType.SKILL to (0.8 to 4000),
     )
 
+    val cookMileEvaluateSetting = mapOf(
+        StatusType.SPEED to (1.1 to 2400),
+        StatusType.STAMINA to (1.2 to 900),
+        StatusType.POWER to (1.1 to 2200),
+        StatusType.GUTS to (1.1 to 2200),
+        StatusType.WISDOM to (1.1 to 1400),
+        StatusType.SKILL to (0.8 to 5000),
+    )
+
     val noLimitSetting = mapOf(
         StatusType.SPEED to (1.0 to 10000),
         StatusType.STAMINA to (1.0 to 10000),

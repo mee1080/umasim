@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.CookMaterial
 import io.github.mee1080.umasim.data.UafAthletic
 import io.github.mee1080.umasim.data.UafGenre
 import io.github.mee1080.umasim.data.turnToString
@@ -107,6 +108,21 @@ fun SimulationStateBlock(state: SimulationState) {
                         }
                     }
                 }
+            }
+        }
+        state.cookStatus?.let { cookStatus ->
+            Div {
+                Text("畑Pt:${cookStatus.gardenPoint} | お料理Pt:${cookStatus.cookPoint} | お料理ゲージ:${cookStatus.cookGauge}")
+            }
+            Div {
+                Text("野菜Lv:")
+                Text(CookMaterial.entries.joinToString("/") { cookStatus.materialLevel[it]!!.toString() })
+                Text(" | 野菜数:")
+                Text(CookMaterial.entries.joinToString("/") {
+                    "${cookStatus.materialCount[it]!!}+${cookStatus.pendingMaterials[it]!!}"
+                })
+                Text(" | スタンプ:")
+                Text(cookStatus.currentStamp.joinToString("/"))
             }
         }
         HideBlock("サポートカード") {

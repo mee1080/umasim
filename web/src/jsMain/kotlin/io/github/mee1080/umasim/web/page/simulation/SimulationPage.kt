@@ -40,8 +40,8 @@ import org.jetbrains.compose.web.dom.Text
 fun SimulationPage(state: State) {
     val factorList = remember {
         mutableStateListOf(
-            StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
-            StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.GUTS to 3,
+            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
+            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
         )
     }
     var running by remember { mutableStateOf(false) }
