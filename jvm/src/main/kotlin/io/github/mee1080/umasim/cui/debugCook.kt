@@ -13,8 +13,8 @@ import kotlin.time.measureTime
 
 fun debugCook() {
     val time = measureTime {
-        debugCookSingleSimulation()
-//        debugCookRunSimulation()
+//        debugCookSingleSimulation()
+        debugCookRunSimulation()
     }
     println("time: $time")
 }
@@ -37,7 +37,7 @@ fun debugCookRunSimulation() {
     )
     runBlocking {
         repeat(8) { index ->
-            val selector = CookActionSelector.speed2Power1Guts1Wisdom1Mile
+            val selector = { CookActionSelector.Option().generateSelector() }
             launch(context) {
                 val summary = Runner.run(
                     1000,
@@ -67,7 +67,7 @@ fun debugCookSingleSimulation() {
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = CookActionSelector.speed2Power1Guts1Wisdom1Mile()
+    val selector = CookActionSelector.Option().generateSelector()
     val factor = listOf(
         StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
         StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,

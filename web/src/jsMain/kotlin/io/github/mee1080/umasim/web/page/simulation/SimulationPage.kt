@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.*
+import io.github.mee1080.umasim.ai.CookActionSelector
 import io.github.mee1080.umasim.ai.UafActionSelector
 import io.github.mee1080.umasim.data.Scenario
 import io.github.mee1080.umasim.data.StatusType
@@ -49,13 +50,14 @@ fun SimulationPage(state: State) {
         mutableStateOf(
             when (state.scenario) {
                 Scenario.UAF -> UafActionSelector.Option()
+                Scenario.COOK -> CookActionSelector.Option()
                 else -> null
             }
         )
     }
-    val aiSelector = remember(aiSelectorOption) { aiSelectorOption?.generateSelector() }
+    val aiSelector by derivedStateOf { aiSelectorOption?.generateSelector() }
     var optionEdit by remember { mutableStateOf(false) }
-    aiSelectorOption?.let { option ->
+    (aiSelectorOption as? SerializableActionSelectorGenerator)?.let { option ->
         OptionEditDialog(optionEdit, option) {
             optionEdit = false
             if (it != null) aiSelectorOption = it
@@ -136,7 +138,7 @@ fun SimulationPage(state: State) {
 }
 
 @Composable
-fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: UafActionSelector?) {
+fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: ActionSelector?) {
     val scope = rememberCoroutineScope()
     val selector = remember { ManualActionSelector() }
     var aiResult by remember { mutableStateOf(-1 to emptyList<Double>()) }

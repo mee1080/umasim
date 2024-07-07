@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.data
 
+import kotlin.math.max
 import kotlin.random.Random
 
 data class SupportCard(
@@ -181,7 +182,7 @@ data class SupportCard(
         (listOf(0) + (if (type == StatusType.FRIEND) emptyList() else listOf(80)) + specialUnique.mapNotNull { it.targetRelation })
             .sorted().distinct()
 
-    val requiredRelation = targetRelation.maxOrNull() ?: 80
+    val requiredRelation = max(targetRelation.maxOrNull() ?: 80, if (type == StatusType.FRIEND) 60 else 0)
 
     fun hasSecondPosition(relation: Int) = specialUnique.any { it.hasSecondPosition(relation) }
 

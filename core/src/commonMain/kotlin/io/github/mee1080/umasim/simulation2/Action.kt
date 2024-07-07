@@ -315,17 +315,14 @@ class CookMaterialLevelUp(
     override val name get() = "野菜LvUp：$result"
     override val turnChange get() = false
 
-    companion object {
-        val instance = CookMaterial.entries.associateWith {
-            CookMaterialLevelUp(CookMaterialLevelUpResult(it))
-        }
-    }
+    constructor(target: CookMaterial, level: Int) : this(CookMaterialLevelUpResult(target, level))
 }
 
 class CookMaterialLevelUpResult(
     val target: CookMaterial,
+    val level: Int,
 ) : ActionResult {
-    override fun toString() = target.displayName
+    override fun toString() = "${target.displayName} Lv$level"
 }
 
 class CookActivateDish(

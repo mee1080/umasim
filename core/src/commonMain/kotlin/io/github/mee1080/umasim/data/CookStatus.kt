@@ -99,14 +99,18 @@ data class CookStatus(
     }
 
     val pendingMaterials by lazy {
-        CookMaterial.entries.associateWith { material ->
+        calcPendingMaterials(currentStamp)
+    }
+
+    fun calcPendingMaterials(stampList: List<CookStamp>): Map<CookMaterial, Int> {
+        return CookMaterial.entries.associateWith { material ->
             val level = materialLevel[material]!!
             val base = (when (level) {
                 1, 2 -> 20
                 3 -> 30
                 else -> 40
             } * (if (alwaysHarvest) 0.5 else 1.0) * fullPowerFactor).toInt()
-            val materialStamp = currentStamp.filter { it.material == material }
+            val materialStamp = stampList.filter { it.material == material }
             if (materialStamp.isEmpty()) base else {
                 val additional = (when (level) {
                     1 -> 20
@@ -249,6 +253,10 @@ enum class CookMaterial(val displayName: String, val statusType: StatusType) {
     Potato("じゃがいも", StatusType.POWER),
     HotPepper("唐辛子", StatusType.GUTS),
     Strawberry("いちご", StatusType.WISDOM);
+
+    companion object {
+        fun fromStatusType(statusType: StatusType) = statusTypeToCookMaterial[statusType]!!
+    }
 }
 
 val statusTypeToCookMaterial = CookMaterial.entries.associateBy { it.statusType }

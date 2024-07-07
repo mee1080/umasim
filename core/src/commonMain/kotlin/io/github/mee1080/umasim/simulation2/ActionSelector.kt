@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Lesson
 import io.github.mee1080.umasim.data.StatusType
+import kotlinx.serialization.json.Json
 
 interface ActionSelector {
 
@@ -42,4 +43,18 @@ interface ActionSelector {
 
 interface ActionSelectorGenerator {
     fun generateSelector(): ActionSelector
+}
+
+interface SerializableActionSelectorGenerator : ActionSelectorGenerator {
+    companion object {
+        private val defaultSerializer = Json {
+            encodeDefaults = true
+            ignoreUnknownKeys = false
+            prettyPrint = true
+        }
+    }
+
+    val serializer get() = defaultSerializer
+    fun serialize(): String
+    fun deserialize(serialized: String): SerializableActionSelectorGenerator
 }

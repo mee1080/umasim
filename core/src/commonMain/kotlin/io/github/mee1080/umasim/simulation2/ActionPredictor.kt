@@ -48,12 +48,12 @@ fun SimulationState.predictNormal(): List<Action> {
     }
     return mutableListOf(
         *(predictTrainingResult(supportPosition)),
-        *(predictScenarioAction(false)),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario == Scenario.LARC) emptyArray() else {
             Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: emptyArray()
         }),
+        *(predictScenarioAction(false)),
     )
 }
 
@@ -547,17 +547,22 @@ private fun LArcStatus.predictGetAptitude(): List<Action> {
 
 private fun MultipleAction.addScenarioActionParam(
     scenarioActionParam: ScenarioActionParam,
-    applyOnFailure: Boolean = false,
+    failureScenarioActionParam: ScenarioActionParam? = null,
 ): List<Pair<ActionResult, Int>> {
-    return candidates.map { it.first.addScenarioActionParam(scenarioActionParam, applyOnFailure) to it.second }
+    return candidates.map {
+        it.first.addScenarioActionParam(
+            scenarioActionParam,
+            failureScenarioActionParam,
+        ) to it.second
+    }
 }
 
 private fun ActionResult.addScenarioActionParam(
     scenarioActionParam: ScenarioActionParam,
-    applyOnFailure: Boolean = false,
+    failureScenarioActionParam: ScenarioActionParam? = null,
 ): ActionResult {
     return when (this) {
-        is StatusActionResult -> copy(scenarioActionParam = if (success || applyOnFailure) scenarioActionParam else null)
+        is StatusActionResult -> copy(scenarioActionParam = if (success) scenarioActionParam else failureScenarioActionParam)
         else -> this
     }
 }
@@ -608,14 +613,14 @@ fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): L
 fun SimulationState.predictCookAction(beforeEvent: Boolean = false): Array<Action> {
     val cookStatus = cookStatus ?: return emptyArray()
     return buildList {
-        if (!isLevelUpTurn) {
-            cookStatus.requiredGardenPoint.filter { it.value <= cookStatus.gardenPoint }.forEach {
-                add(CookMaterialLevelUp.instance[it.key]!!)
-            }
-        }
         if (cookStatus.activatedDish == null && !beforeEvent) {
             cookStatus.availableDishList.forEach {
                 add(CookActivateDish(it))
+            }
+        }
+        if (!isLevelUpTurn) {
+            cookStatus.requiredGardenPoint.filter { it.value <= cookStatus.gardenPoint }.forEach {
+                add(CookMaterialLevelUp(it.key, cookStatus.materialLevel[it.key]!! + 1))
             }
         }
     }.toTypedArray()
@@ -631,7 +636,8 @@ fun SimulationState.predictCookScenarioActionParams(baseActions: List<Action>): 
                     fullPower = it.friendTraining,
                     plus = it.member.size + it.support.count { member -> !member.guest && member.isScenarioLink },
                 )
-                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp), applyOnFailure = true))
+                val failureStamp = stamp.copy(fullPower = false)
+                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp), CookActionParam(failureStamp)))
             }
 
             is Sleep -> {
