@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.web.components.atoms.Card
 import io.github.mee1080.umasim.web.components.atoms.MdClass
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.tertiary
+import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.page.share.StatusTable
 import io.github.mee1080.utility.roundToString
 import org.jetbrains.compose.web.css.*
@@ -36,7 +37,7 @@ import org.jetbrains.compose.web.dom.Text
 fun SelectionBlock(
     state: SimulationState,
     selection: List<Action>,
-    aiSelection: Int,
+    aiSelection: Action?,
     aiScore: List<Double>,
     onSelect: (Action) -> Unit,
 ) {
@@ -52,6 +53,14 @@ fun SelectionBlock(
             rowGap(8.px)
         }
     }) {
+        if (aiSelection != null) {
+            DivFlexCenter {
+                Text("AI判断：")
+                MdFilledButton(aiSelection.name) {
+                    onClick { onSelect(aiSelection) }
+                }
+            }
+        }
         selection.forEachIndexed { index, action ->
             val uafStatus = state.uafStatus
             val (actionName, uafAthletic, uafAthleticLevel) = if (uafStatus != null && action is Training) {
@@ -168,7 +177,7 @@ fun SelectionBlock(
                     is CookMaterialLevelUp -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
-                if (aiSelection == index || targetAiScore != null) {
+                if (aiSelection == action || targetAiScore != null) {
                     Div({
                         classes(MdClass.surfaceContainerHigh, MdClass.onSurfaceText)
                         style {
@@ -182,7 +191,7 @@ fun SelectionBlock(
                         if (targetAiScore != null) {
                             Text("AIスコア：${targetAiScore.roundToString(2)}")
                         }
-                        if (aiSelection == index) {
+                        if (aiSelection == action) {
                             Span({ style { fontWeight("bold") } }) { Text("[選択]") }
                         }
                     }

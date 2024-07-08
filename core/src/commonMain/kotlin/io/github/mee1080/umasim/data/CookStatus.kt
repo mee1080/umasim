@@ -651,15 +651,24 @@ sealed class CookSuccessEffect(
     })
 
     data object MultipleTraining : CookSuccessEffect("複数トレーニング", { state, dish ->
-        !state.isGoalRaceTurn && (dish.phase == 3 || state.member.count { it.positions.contains(dish.mainTrainingTarget) } < 5)
+        if (state.isGoalRaceTurn) {
+            false
+        } else if (dish.phase == 3) {
+            true
+        } else {
+            state.member.count { it.positions.contains(dish.mainTrainingTarget) } < 5 && state.support.any {
+                it.positions.isNotEmpty() && !it.positions.contains(dish.mainTrainingTarget)
+            }
+        }
     }, { state, dish ->
         if (dish.phase == 3) {
-            // 各トレーニングに1～3人で実装
+            // GIプレート:各トレーニングに2人
+            val availableSupport = state.support.filter { it.positions.isNotEmpty() }
             trainingType.fold(state) { newState, type ->
                 val currentCount = state.member.count { it.positions.contains(type) }
                 if (currentCount == 5) newState else {
-                    val targets = state.support.filter { !it.positions.contains(type) }
-                        .shuffled().take((1..min(3, 5 - currentCount)).random())
+                    val targets = availableSupport.filter { !it.positions.contains(type) }
+                        .shuffled().take(min(2, 5 - currentCount))
                         .map { it.index }.toSet()
                     newState.copy(
                         member = newState.member.mapIf({ it.index in targets }) {
@@ -669,7 +678,9 @@ sealed class CookSuccessEffect(
                 }
             }
         } else {
-            val target = state.support.filter { !it.positions.contains(dish.mainTrainingTarget) }.random()
+            val target = state.support.filter {
+                it.positions.isNotEmpty() && !it.positions.contains(dish.mainTrainingTarget)
+            }.random()
             state.copy(
                 member = state.member.mapIf({ it.index == target.index }) {
                     it.copy(additionalPosition = it.additionalPosition + dish.mainTrainingTarget)

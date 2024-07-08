@@ -137,11 +137,13 @@ fun SimulationPage(state: State) {
     }
 }
 
+private val emptyAiResult: Pair<Action?, List<Double>> = null to emptyList()
+
 @Composable
 fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: ActionSelector?) {
     val scope = rememberCoroutineScope()
     val selector = remember { ManualActionSelector() }
-    var aiResult by remember { mutableStateOf(-1 to emptyList<Double>()) }
+    var aiResult by remember { mutableStateOf(emptyAiResult) }
     var simulationState by remember { mutableStateOf<SimulationState?>(null) }
     var selection by remember { mutableStateOf<List<Action>>(emptyList()) }
     var result by remember { mutableStateOf<Summary?>(null) }
@@ -153,9 +155,8 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiS
                     selection = entry.second
                     result = null
                     aiSelector?.let { aiSelectorNonNull ->
-                        aiResult = -1 to emptyList()
-                        val aiOutput = aiSelectorNonNull.selectWithScore(entry.first, entry.second)
-                        aiResult = entry.second.indexOf(aiOutput.first) to aiOutput.second
+                        aiResult = emptyAiResult
+                        aiResult = aiSelectorNonNull.selectWithScore(entry.first, entry.second)
                     }
                 }
             }
@@ -176,9 +177,8 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiS
     LaunchedEffect(aiSelector) {
         val simulationStateNonNull = simulationState ?: return@LaunchedEffect
         aiSelector?.let { aiSelectorNonNull ->
-            aiResult = -1 to emptyList()
-            val aiOutput = aiSelectorNonNull.selectWithScore(simulationStateNonNull, selection)
-            aiResult = selection.indexOf(aiOutput.first) to aiOutput.second
+            aiResult = emptyAiResult
+            aiResult = aiSelectorNonNull.selectWithScore(simulationStateNonNull, selection)
         }
     }
     simulationState?.let { simulationStateNonNull ->

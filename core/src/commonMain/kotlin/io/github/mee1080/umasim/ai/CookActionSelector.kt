@@ -292,10 +292,13 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
             // GIプレート以外は作らない
             if (dish.phase == 3) {
                 val finalsTurn = state.turn - 73
-                val garlicNeed = finalsNeedMaterial[0][finalsTurn]
-                val otherNeed = finalsNeedMaterial[2][finalsTurn]
-                if (context.totalMaterials.all {
-                        it.value >= if (it.key == CookMaterial.Garlic) garlicNeed else otherNeed
+                if (cookStatus.materialCount.all {
+                        val rank = when (cookStatus.materialLevel[it.key]) {
+                            4, 5 -> 2
+                            3 -> 1
+                            else -> 0
+                        }
+                        it.value >= finalsNeedMaterial[rank][finalsTurn]
                     }) cookScore else ignoreScore
             } else ignoreScore
         } else if (cookStatus.cookPoint >= option.cookPtLimit) {
