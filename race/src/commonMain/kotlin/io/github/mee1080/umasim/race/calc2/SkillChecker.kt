@@ -88,8 +88,16 @@ private fun checkCondition(
             checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandom(up = true) }
         }
 
+        "up_slope_random_later_half" -> condition.withAssert("==", 1) {
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandomLaterHalf(up = true) }
+        }
+
         "down_slope_random" -> condition.withAssert("==", 1) {
             checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandom(up = false) }
+        }
+
+        "down_slope_random_later_half" -> condition.withAssert("==", 1) {
+            checkInRandom(calculatedAreas, condition.type) { baseSetting.initSlopeRandomLaterHalf(up = false) }
         }
 
         "running_style" -> condition.preChecked(baseSetting.basicRunningStyle.value)
@@ -389,7 +397,16 @@ private fun RaceSetting.initSlopeRandom(up: Boolean): List<RandomEntry> {
         (slope.slope > 0 && up) || (slope.slope < 0 && !up)
     }
     val slope = slopes.randomOrNull() ?: return emptyList()
-    return chooseRandom(slope.start, slope.start + slope.length)
+    return chooseRandom(slope.start, slope.end)
+}
+
+private fun RaceSetting.initSlopeRandomLaterHalf(up: Boolean): List<RandomEntry> {
+    val half = courseLength / 2.0
+    val slopes = trackDetail.slopes.filter { slope ->
+        slope.end >= half && ((slope.slope > 0 && up) || (slope.slope < 0 && !up))
+    }
+    val slope = slopes.randomOrNull() ?: return emptyList()
+    return chooseRandom(max(slope.start, half), slope.end)
 }
 
 private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double> = 0.0 to 1.0): List<RandomEntry> {

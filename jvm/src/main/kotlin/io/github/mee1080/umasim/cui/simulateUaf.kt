@@ -7,8 +7,8 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateUaf() {
-    speed2Power1Guts1Wisdom1Mile()
-//    speed2Stamina1Guts1Wisdom1Long()
+//    speed2Power1Guts1Wisdom1Mile()
+    speed2Stamina1Guts1Wisdom1Long()
 }
 
 private fun speed2Power1Guts1Wisdom1Mile() {
@@ -102,8 +102,8 @@ private fun speed2Stamina1Guts1Wisdom1Long() {
             "[君と見る泡沫]マンハッタンカフェ",
             "[共に描くキラメキ]都留岐涼花",
         ).toTypedArray(),
-        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..1,
-//        Store.getSupportByName(*((0..4).map { "[わーく・あ・みらくる！]ヒシミラクル" to it }.toTypedArray())),
+//        targetStatus = StatusType.STAMINA, rarity = 2..3, talent = 0..1,
+        Store.getSupportByName(*((0..4).map { "[そして幕は上がる]ダンツフレーム" to it }.toTypedArray())),
 //        Store.getSupportByName("[大地と我らのアンサンブル]サウンズオブアース" to 4),
         factor = factor(StatusType.POWER, 4) + factor(StatusType.STAMINA, 2),
         testCount = 100000,

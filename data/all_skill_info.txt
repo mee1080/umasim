@@ -6731,7 +6731,7 @@ Lose Myself
 レース後半の上り坂で加速力が上がる＜作戦・先行＞
 評価点633、進化元SP320、人気:パワー60
 ->up_slope_random_later_half==1&running_style==2
-「up_slope_random_later_half==1、先行」、加速4000、持続3.0
+「後半上り坂ランダム、先行」、加速4000、持続3.0
 
 登山家
 上り坂で加速力がわずかに上がる
