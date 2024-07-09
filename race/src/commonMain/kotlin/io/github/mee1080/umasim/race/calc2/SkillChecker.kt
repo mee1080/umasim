@@ -403,7 +403,7 @@ private fun RaceSetting.initSlopeRandom(up: Boolean): List<RandomEntry> {
 private fun RaceSetting.initSlopeRandomLaterHalf(up: Boolean): List<RandomEntry> {
     val half = courseLength / 2.0
     val slopes = trackDetail.slopes.filter { slope ->
-        slope.end >= half && ((slope.slope > 0 && up) || (slope.slope < 0 && !up))
+        slope.end > half && ((slope.slope > 0 && up) || (slope.slope < 0 && !up))
     }
     val slope = slopes.randomOrNull() ?: return emptyList()
     return chooseRandom(max(slope.start, half), slope.end)

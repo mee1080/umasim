@@ -22,7 +22,7 @@
  */
 package io.github.mee1080.umasim.race
 
-import io.github.mee1080.umasim.race.test.testCalc2
+import io.github.mee1080.umasim.race.data.trackData
 
 fun main() {
 //    skillData.forEach {
@@ -32,5 +32,17 @@ fun main() {
 //        println(it)
 //    }
 //    testCalc()
-    testCalc2()
+//    testCalc2()
+    trackData.forEach { (_, course) ->
+        course.courses.forEach { (_, track) ->
+            val half = track.distance / 2.0
+            if (track.slopes.any { it.slope > 0.0 && it.start <= half && it.end >= half }) {
+                println("${course.name} ${track.name}")
+                track.slopes.forEach {
+                    println("　${if (it.slope > 0.0) "上り" else "下り"} ${it.start} ～ ${it.end} ${if (it.slope > 0.0 && it.start <= half && it.end >= half) "★" else ""}")
+                }
+                println()
+            }
+        }
+    }
 }
