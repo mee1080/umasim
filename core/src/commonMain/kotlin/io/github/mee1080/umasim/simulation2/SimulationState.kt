@@ -34,6 +34,7 @@ data class SimulationState(
     val supportCount: Map<StatusType, Int>,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
+    val refreshTurn: Int = 0,
     val shopCoin: Int = 0,
     val possessionItem: List<ShopItem> = emptyList(),
     val enableItem: EnableItem = EnableItem(),

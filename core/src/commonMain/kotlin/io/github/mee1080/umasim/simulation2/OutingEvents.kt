@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.CookMaterial
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.randomSelect
 import io.github.mee1080.umasim.data.updateCookStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
@@ -79,16 +80,15 @@ fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
         }
 
         "秋川理事長" -> {
-            // TODO COOK リフレッシュの心得
             when (step) {
                 1 -> applyFriendEvent(support, Status(hp = 25, motivation = 1), 5, 2)
-                    .copy(condition = condition + "リフレッシュの心得")
+                    .copy(refreshTurn = refreshTurn + selectRefreshTurn())
 
                 2 -> applyFriendEvent(support, Status(guts = 20, hp = 30, motivation = 1), 5, 3)
                     .updateCookStatus { addMaterials(CookMaterial.entries.associateWith { 40 }) }
 
                 3 -> applyFriendEvent(support, Status(speed = 10, guts = 10, hp = 30, motivation = 1), 5, 4)
-                    .copy(condition = condition + "リフレッシュの心得")
+                    .copy(refreshTurn = refreshTurn + selectRefreshTurn())
                     .updateCookStatus { addMaterials(CookMaterial.entries.associateWith { 40 }) }
 
                 4 -> applyFriendEvent(support, Status(hp = 43, motivation = 1), 5, 5)
@@ -101,7 +101,7 @@ fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
                     support, Status(guts = 36, hp = 30, motivation = 1, skillHint = mapOf("ウママニア" to 1)),
                     5, 7,
                 )
-                    .copy(condition = condition + "リフレッシュの心得")
+                    .copy(refreshTurn = refreshTurn + selectRefreshTurn())
                     .updateCookStatus { addMaterials(CookMaterial.entries.associateWith { 40 }) }
 
                 else -> this
@@ -110,6 +110,15 @@ fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
 
         else -> this
     }
+}
+
+private fun selectRefreshTurn(): Int {
+    return randomSelect(
+        3 to 45,
+        4 to 30,
+        5 to 15,
+        6 to 10,
+    )
 }
 
 private fun SimulationState.uafAthleticsLevelUp(): SimulationState {

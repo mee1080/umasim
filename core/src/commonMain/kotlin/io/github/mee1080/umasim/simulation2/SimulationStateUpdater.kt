@@ -32,12 +32,24 @@ fun SimulationState.onTurnChange(): SimulationState {
     val levelOverride = if (levelUpTurns.contains(turn)) {
         if (scenario == Scenario.LARC) 6 else 5
     } else null
-    return copy(
+    var newState = updateRefresh()
+    newState = newState.copy(
         turn = turn,
-        status = status.adjustRange(),
-        training = training.map { it.copy(levelOverride = levelOverride) },
-        enableItem = enableItem.onTurnChange(),
-    ).updateOutingStep().updateScenarioTurn()
+        status = newState.status.adjustRange(),
+        training = newState.training.map { it.copy(levelOverride = levelOverride) },
+        enableItem = newState.enableItem.onTurnChange(),
+    )
+    newState = newState.updateOutingStep()
+    newState = newState.updateScenarioTurn()
+    return newState
+}
+
+fun SimulationState.updateRefresh(): SimulationState {
+    if (refreshTurn <= 0) return this
+    return copy(
+        status = status + Status(hp = 5),
+        refreshTurn = refreshTurn - 1,
+    )
 }
 
 fun SimulationState.updateOutingStep(): SimulationState {
