@@ -71,7 +71,7 @@ class ApproximateSimulationEvents(
  * 　　シナリオ/ウマ娘（固定含む）：15.9
  * 　　　固定：登場、チュートリアル、夏合宿前×2、正月×2、福引、バレ、クリスマス、感謝祭：10
  * 　　　シナリオ/ウマ娘（ランダム）：5.9
- * 　　連続（主にSSR3SR2友人編成）：12.6
+ * 　　連続（主にSSR3SR2友人編成）：12.6 → 大豊食祭実装時に確率上昇
  * 　　非連続：3.2
  * 　　編成外：1.7
  * 　合計33.5
@@ -82,14 +82,14 @@ class ApproximateSimulationEvents(
  * 　　連続全サポカ分、非連続3、編成外2、ウマ娘ランダム5（シナリオはグラライ固有なので除外）
  *
  * 　発生ターン
- * 　　夏合宿、ファイナルズ以外の3n-1ターン（合計22回）に、ランダムな順番で発生
+ * 　　夏合宿、ファイナルズ以外の2nターン（合計32回）に、ランダムな順番で発生
  * 　　FIXME イベント確率アップは考慮しない
  *
  * 　上昇量
- * 　　連続1/非連続：得意ステ5、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
- * 　　連続2：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
- * 　　連続3：得意ステ15、ランダムステ10(各1/7)orSP20(2/7)、絆7
- * 　　編成外：ランダムステ5、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)
+ * 　　連続1/非連続：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
+ * 　　連続2：得意ステ15、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
+ * 　　連続3：得意ステ20、ランダムステ10(各1/7)orSP20(2/7)、絆7
+ * 　　編成外：ランダムステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)
  * 　　ウマ娘ランダム：各ステ+15or体力10（勝負服と通常ランダム平均したらこれぐらい？）
  * 　　FIXME スキルヒントは考慮しない
  */
@@ -132,7 +132,7 @@ class RandomEvents(
     override fun beforeAction(state: SimulationState): SimulationState {
         if (eventQueue.isEmpty()) return state
         val turn = state.turn
-        return if (turn % 3 == 2 && turn != 38 && turn != 62 && turn < 72) {
+        return if (turn % 2 == 2 && turn !in 37..40 && turn !in 60..63 && turn < 72) {
             val event = eventQueue.removeFirst()
             state.copy(
                 status = (state.status + event.calcStatus(state.supportEventEffect, continuousEventCount)).adjustRange()
@@ -160,9 +160,9 @@ class RandomEvents(
             override fun baseStatus(continuousEventCount: IntArray): Status {
                 continuousEventCount[relationTarget] += 1
                 return when (continuousEventCount[relationTarget]) {
-                    1 -> randomStatus.random().add(type to 5)
-                    2 -> randomStatus.random().add(type to 10)
-                    3 -> finalRandomStatus.random().add(type to 15)
+                    1 -> randomStatus.random().add(type to 10)
+                    2 -> randomStatus.random().add(type to 15)
+                    3 -> finalRandomStatus.random().add(type to 20)
                     else -> Status()
                 }
             }
@@ -170,13 +170,13 @@ class RandomEvents(
 
         class Common(target: Int, val type: StatusType) : EventEntry(true, target) {
             override fun baseStatus(continuousEventCount: IntArray): Status {
-                return randomStatus.random().add(type to 5)
+                return randomStatus.random().add(type to 10)
             }
         }
 
         data object Outside : EventEntry(true) {
             override fun baseStatus(continuousEventCount: IntArray): Status {
-                return randomStatus.random().add(trainingType.random() to 5)
+                return randomStatus.random().add(trainingType.random() to 10)
             }
         }
 
