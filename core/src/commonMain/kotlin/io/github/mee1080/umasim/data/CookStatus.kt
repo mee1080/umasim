@@ -244,7 +244,22 @@ fun SimulationState.activateDish(dish: CookDish): SimulationState {
     effects.forEach {
         newState = it.effect.apply(newState, modifiedDish)
     }
+    newState = newState.addRandomHint()
     return newState
+}
+
+private fun SimulationState.addRandomHint(): SimulationState {
+    for (support in support.filter { it.card.skills.isNotEmpty() }.shuffled()) {
+        for (skill in support.card.skills.shuffled()) {
+            val currentLevel = status.skillHint.getOrElse(skill) { 0 }
+            if (currentLevel < 5) {
+                val level = support.card.hintLevel + if (support.isScenarioLink) 2 else 1
+                return addStatus(Status(skillHint = mapOf(skill to level)))
+            }
+        }
+    }
+    // TODO 適性A以上のスキルからランダム
+    return this
 }
 
 enum class CookMaterial(val displayName: String, val statusType: StatusType) {

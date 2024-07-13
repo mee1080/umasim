@@ -90,7 +90,7 @@ object SupportCardLoader {
                             data[i++].toInt(),
                             data[i++].toInt(),
                         ),
-                        data.getOrNull(i++)?.split(", ") ?: emptyList(),
+                        readSkills(data.getOrNull(i++)),
                         readHintStatus(data.getOrNull(i++)),
                         readSpecialUnique(data.getOrNull(i++))
                     )
@@ -99,6 +99,12 @@ object SupportCardLoader {
         }
         return list.filter { it.type != StatusType.NONE }
     }
+
+    private fun readSkills(value: String?) = value
+        ?.split(", ")
+        ?.map { it.trim() }
+        ?.filter { it.isNotEmpty() }
+        ?: emptyList()
 
     private fun readHintStatus(value: String?) = value
         ?.split(", ")

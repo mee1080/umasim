@@ -19,8 +19,10 @@
 package io.github.mee1080.umasim.web.page.share
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusValues
 import io.github.mee1080.umasim.data.motivationToString
+import io.github.mee1080.umasim.web.components.atoms.MdSysColor
 import io.github.mee1080.umasim.web.components.lib.gridTemplateColumns
 import io.github.mee1080.umasim.web.components.lib.repeatGrid
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -77,6 +79,19 @@ fun StatusTable(
                 Div({ style { textAlign("right") } }) { Text(motivationToString(status.motivation.toInt())) }
             } else {
                 Div({ style { textAlign("right") } }) { Text(status.motivation.toString()) }
+            }
+        }
+    }
+    if (summary && status is Status && status.skillHint.isNotEmpty()) {
+        Div({
+            style {
+                display(DisplayStyle.Flex)
+                flexWrap(FlexWrap.Wrap)
+                border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
+            }
+        }) {
+            status.skillHint.forEach {
+                Div({ style { marginRight(4.px) } }) { Text("${it.key}Lv${it.value},") }
             }
         }
     }
