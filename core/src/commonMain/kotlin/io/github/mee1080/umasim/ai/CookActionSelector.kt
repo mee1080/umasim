@@ -41,23 +41,43 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
             val option1 = Option(
                 speedFactor = 1.0,
                 staminaFactor = 1.0,
-                powerFactor = 1.0,
-                gutsFactor = 0.7,
-                wisdomFactor = 1.2,
-                skillPtFactor = 0.6,
-                hpFactor = 0.4,
-                motivationFactor = 10.0,
-                relationFactor = 10.0,
-                outingRelationFactor = 30.0,
-                hpKeepFactor = 0.2,
-                riskFactor = 2.0,
-                stampFactor = 2.0,
-                fullPowerFactor = 30.0,
-                cookThreshold = 50.0,
-                cookPtLimit = Int.MAX_VALUE,
-                cookPtRequired = 2500,
+                powerFactor = 1.1,
+                gutsFactor = 0.6,
+                wisdomFactor = 1.0,
+                skillPtFactor = 0.9,
+                hpFactor = 0.9,
+                motivationFactor = 7.0,
+                relationFactor = 17.5,
+                outingRelationFactor = 35.0,
+                hpKeepFactor = 0.3,
+                riskFactor = 4.0,
+                stampFactor = 4.0,
+                fullPowerFactor = 20.0,
+                cookThreshold = 55.0,
+                cookPtLimit = 2500,
+                cookPtRequired = 2000,
             )
-            speed1Power1Guts2Wisdom1ShortOptions = listOf(option1)
+            val option2 = option1.copy(
+                hpFactor = 0.9,
+                hpKeepFactor = 0.0,
+                riskFactor = 2.0,
+                stampFactor = 3.5,
+                fullPowerFactor = 20.0,
+                cookThreshold = 20.0,
+                cookPtLimit = 8000,
+                cookPtRequired = 6500,
+            )
+            val option3 = option1.copy(
+                hpFactor = 0.4,
+                hpKeepFactor = 0.2,
+                riskFactor = 4.0,
+                stampFactor = 4.0,
+                fullPowerFactor = 30.0,
+                cookThreshold = 45.0,
+                cookPtLimit = Int.MAX_VALUE,
+                cookPtRequired = 9000,
+            )
+            speed1Power1Guts2Wisdom1ShortOptions = listOf(option1, option2, option3)
         }
 
         /**

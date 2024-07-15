@@ -37,6 +37,7 @@ class CliMain : CliktCommand() {
     private val hp by option().double().multiple()
     private val motivation by option().double().multiple()
     private val relation by option().triple().multiple()
+    private val outingRelationFactor by option().double().multiple()
     private val relationDefault by option().double().default(0.0)
     private val hpKeep by option().double().multiple()
     private val risk by option().double().multiple()
@@ -64,6 +65,11 @@ class CliMain : CliktCommand() {
     private val consultAthleticRequired by option().double().multiple()
     private val consultHeatUpStatus by option().double().multiple()
     private val keepRedHeatUp by option().double().multiple()
+    private val stamp by option().double().multiple()
+    private val fullPower by option().double().multiple()
+    private val cookThreshold by option().double().multiple()
+    private val cookPtLimit by option().int().multiple()
+    private val cookPtRequired by option().int().multiple()
 
     private val evaluate by option().triple().multiple()
 
@@ -96,8 +102,32 @@ class CliMain : CliktCommand() {
         val scenarioValue = Scenario.valueOf(scenario)
         val selector = when (scenarioValue) {
 
-            // TODO COOK
-            Scenario.COOK -> TODO()
+            Scenario.COOK -> {
+                {
+                    val options = (0..2).map {
+                        CookActionSelector.Option(
+                            speedFactor = speed.getOrElse(it) { 1.0 },
+                            staminaFactor = stamina.getOrElse(it) { 1.0 },
+                            powerFactor = power.getOrElse(it) { 1.0 },
+                            gutsFactor = guts.getOrElse(it) { 1.0 },
+                            wisdomFactor = wisdom.getOrElse(it) { 1.0 },
+                            skillPtFactor = skillPt.getOrElse(it) { 1.0 },
+                            hpFactor = hp.getOrElse(it) { 1.0 },
+                            motivationFactor = motivation.getOrElse(it) { 1.0 },
+                            relationFactor = relationFactor(StatusType.NONE, 0, 0),
+                            outingRelationFactor = outingRelationFactor.getOrElse(it) { 30.0 },
+                            hpKeepFactor = hpKeep.getOrElse(it) { 1.0 },
+                            riskFactor = risk.getOrElse(it) { 2.0 },
+                            stampFactor = stamp.getOrElse(it) { 2.0 },
+                            fullPowerFactor = fullPower.getOrElse(it) { 30.0 },
+                            cookThreshold = cookThreshold.getOrElse(it) { 50.0 },
+                            cookPtLimit = cookPtLimit.getOrElse(it) { Int.MAX_VALUE },
+                            cookPtRequired = cookPtRequired.getOrElse(it) { 2500 },
+                        )
+                    }
+                    CookActionSelector(options)
+                }
+            }
 
             Scenario.UAF -> {
                 {
