@@ -169,7 +169,7 @@ val approximateConditions = mapOf(
     ),
     "behind_near_lane" to ApproximateStartContinue("後にウマ娘(お先など)", 0.15, 0.50),
     "near_count" to ApproximateMultiCondition(
-        "近くにウマ娘(ウマ好み/ワクワククライマックスなど)",
+        "近くのウマ娘人数(ウマ好み/ワクワククライマックスなど)",
         listOf(
             ApproximateRandomRates("序盤", listOf(1 to 0.1, 2 to 0.2, 3 to 0.3, 4 to 0.2, 5 to 0.1)) to {
                 it.currentPhase == 0
@@ -180,6 +180,7 @@ val approximateConditions = mapOf(
             ApproximateRandomRates("終盤", listOf(1 to 0.3, 2 to 0.3, 3 to 0.2)) to null,
         ),
     ),
+    "near_infront_count" to ApproximateRandomRates("前方近くのウマ娘人数(無二/無三)", listOf(1 to 0.05)),
     "is_surrounded" to ApproximateStartContinue("周囲にウマ娘(どこ吹く風など)", 0.05, 0.40),
     "temptation_opponent_count_behind" to ApproximateStartContinue(
         "後ろのウマ娘掛かり(トリック&トリートなど、自身への効果のみ反映)",
@@ -232,6 +233,7 @@ val approximateTypeToState = mapOf(
     "behind_near_lane_time" to "behind_near_lane",
     "behind_near_lane_time_set1" to "behind_near_lane",
     "near_count" to "near_count",
+    "near_infront_count" to "near_infront_count",
     "is_surrounded" to "is_surrounded",
     "temptation_opponent_count_behind" to "temptation_opponent_count_behind",
     "change_order_up_end_after" to "change_order_up_end_after",

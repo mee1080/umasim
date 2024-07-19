@@ -210,6 +210,8 @@ private fun checkCondition(
 
         "near_count" -> condition.checkSpecialState()
 
+        "near_infront_count" -> condition.checkSpecialState()
+
         "is_surrounded" -> condition.checkSpecialState()
 
         "temptation_opponent_count_behind" -> condition.checkSpecialState()
@@ -232,6 +234,12 @@ private fun checkCondition(
         "post_number" -> condition.checkInRace { simulation.postNumber }
 
         "corner_count" -> condition.preChecked(baseSetting.trackDetail.corners.size)
+
+        "furlong" -> condition.checkInRace { (simulation.startPosition / 200.0).toInt() }
+
+        "is_used_skill_id" -> {
+            { simulation.coolDownMap.containsKey(condition.value.toString()) }
+        }
 
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
