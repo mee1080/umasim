@@ -261,7 +261,7 @@ private fun RaceState.updateFrame(): Boolean {
         }
     } else {
         // 最終直線でHP15%以上で発動可能、1秒ごとに一定確率で発動するよう近似
-        if (changeSecond && isInFinalStraight() && simulation.sp >= 0.15 * setting.spMax && Random.nextDouble() < system.competeFightRate) {
+        if (changeSecond && simulation.frameElapsed >= framePerSecond * 2 - 1 && isInFinalStraight() && simulation.sp >= 0.15 * setting.spMax && Random.nextDouble() < system.competeFightRate) {
             simulation.competeFight = true
             simulation.competeFightStart = simulation.frameElapsed
         }
