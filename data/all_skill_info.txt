@@ -913,6 +913,15 @@ Billions of stars
 ->is_activate_other_skill_detail==1&corner==0&track_id==10005&distance_type==3@is_activate_other_skill_detail==1&corner==0&track_id==10005&distance_type==4@is_activate_other_skill_detail==1&corner==0&track_id==10009&distance_type==3@is_activate_other_skill_detail==1&corner==0&track_id==10009&distance_type==4
 「上記効果発動後、コーナー以外、レース場==10005、中距離」または「上記効果発動後、コーナー以外、レース場==10005、長距離」または「上記効果発動後、コーナー以外、レース場==10009、中距離」または「上記効果発動後、コーナー以外、レース場==10009、長距離」、現在速度4500、持続3.0
 
+無二無三なる一条の路
+[真実一路]カルストンライトオ 固有
+4ハロン目で前方にいると少しの間速度が上がる、「無二」「無三」を両方発動していると効果量が変わり少しの間速度がとてつもなく上がる
+評価点340、人気:スピード60、確定発動
+->furlong==3&order_rate<=50&is_used_skill_id==203061&is_used_skill_id==203071
+「furlong==3、順位率50以下（チャンミ～5/LoH～6）、is_used_skill_id==203061、is_used_skill_id==203071」、目標速度6500、持続4.0
+->furlong==3&order_rate<=50
+「furlong==3、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続4.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復しさらに速度が少し上がる
@@ -2231,6 +2240,12 @@ Billions of stars
 「距離割合66～68、順位率50以上（チャンミ5～/LoH6～）、残り距離>=500」、現在速度500、持続1.8
 ->is_activate_other_skill_detail==1&corner==0&track_id==10005&distance_type==3@is_activate_other_skill_detail==1&corner==0&track_id==10005&distance_type==4@is_activate_other_skill_detail==1&corner==0&track_id==10009&distance_type==3@is_activate_other_skill_detail==1&corner==0&track_id==10009&distance_type==4
 「上記効果発動後、コーナー以外、レース場==10005、中距離」または「上記効果発動後、コーナー以外、レース場==10005、長距離」または「上記効果発動後、コーナー以外、レース場==10009、中距離」または「上記効果発動後、コーナー以外、レース場==10009、長距離」、現在速度2500、持続1.8
+
+無二無三なる一条の路
+4ハロン目で前方にいると少しの間速度がわずかに上がる
+評価点180、SP200、人気:スピード15
+->furlong==3&order_rate<=50
+「furlong==3、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続2.4
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復しさらに速度がちょっと上がる
@@ -5293,6 +5308,15 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=201&remain_distance>=
 ->distance_type==1&straight_random==1@distance_type==2&straight_random==1
 「短距離、直線ランダム==1」または「マイル、直線ランダム==1」、目標速度3500、現在速度1500、持続3.0
 
+閃光一走！
+[真実一路]カルストンライトオ 進化(紫電一閃)
+スタート時に加速力がちょっと上がるその後直線で前に出る＜逃げ・短距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==1&running_style==1&phase==0
+「短距離、逃げ、序盤」、加速1000、持続1.2
+->is_activate_other_skill_detail==1&straight_random==1
+「上記効果発動後、直線ランダム==1」、現在速度3500、持続3.0
+
 短距離直線◎
 直線で速度が少し上がる＜短距離＞
 評価点262、SP110(合計210)、人気:スピード30
@@ -6018,6 +6042,21 @@ Gluttony's Grip
 評価点129、SP110、人気:パワー15/賢さ15
 ->distance_type==4&phase_random==2
 「長距離、終盤前半ランダム」、前方のウマ娘（18人）[視野-50000]、持続3.0
+
+陣風一閃
+直線で速度が上がる＜作戦・逃げ＞
+評価点508、SP150(合計420)、人気:スピード60
+->running_style==1&straight_random==1
+「逃げ、直線ランダム==1」、目標速度3500、持続3.0
+
+突風一駆！
+[真実一路]カルストンライトオ 進化(陣風一閃)
+スタート時に加速力がちょっと上がるその後直線で前に出る＜逃げ・短距離＞
+評価点633、進化元SP420、人気:パワー60
+->distance_type==1&running_style==1&phase==0
+「短距離、逃げ、序盤」、加速1000、持続1.2
+->is_activate_other_skill_detail==1&straight_random==1
+「上記効果発動後、直線ランダム==1」、現在速度3500、持続3.0
 
 逃げ直線◎
 直線で速度が少し上がる＜作戦・逃げ＞
@@ -8972,6 +9011,22 @@ U.A.F. 進化(機先の勝負)
 評価点217、SP160、人気:スピード20
 ->distance_type==3&phase_laterhalf_random==1&order_rate<=50
 「中距離、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続2.4
+
+無二
+2ハロン目に前がひらけていると速度がちょっと上がるスキル発動時、コーナーにいないと効果が増える＜短距離＞
+評価点217、SP120、人気:スピード20
+->distance_type==1&furlong==1&near_infront_count==0&corner==0
+「短距離、furlong==1、near_infront_count==0、コーナー以外」、目標速度1500、持続3.0
+->distance_type==1&furlong==1&near_infront_count==0
+「短距離、furlong==1、near_infront_count==0」、目標速度500、持続3.0
+
+無三
+3ハロン目に前がひらけていると速度がちょっと上がるスキル発動時、コーナーにいないと効果が増える＜短距離＞
+評価点217、SP120、人気:スピード20
+->distance_type==1&furlong==2&near_infront_count==0&corner==0
+「短距離、furlong==2、near_infront_count==0、コーナー以外」、目標速度1500、持続3.0
+->distance_type==1&furlong==2&near_infront_count==0
+「短距離、furlong==2、near_infront_count==0」、目標速度500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
