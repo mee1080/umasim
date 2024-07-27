@@ -69,7 +69,7 @@ private fun checkCondition(
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
-        "remain_distance" -> condition.checkInRace { baseSetting.courseLength - simulation.startPosition.toInt() }
+        "remain_distance" -> condition.checkInRace { (baseSetting.courseLength - simulation.startPosition).toInt() }
         "distance_rate_after_random" -> condition.withAssert("==") {
             checkInRandom(calculatedAreas, condition.type) { baseSetting.initIntervalRandom(value * 0.01, 1.0) }
         }
