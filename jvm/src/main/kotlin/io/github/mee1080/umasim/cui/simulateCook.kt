@@ -11,7 +11,7 @@ fun simulateCook() {
 }
 
 private fun speed1Power1Guts2Wisdom1Short() {
-    val defaultSupport = Store.getSupportByName(
+    var defaultSupport = Store.getSupportByName(
 //        "[アルストロメリアの夢]ヴィブロス",
         "[朝焼け苺の畑にて]ニシノフラワー",
         "[うらら～な休日]ハルウララ",
@@ -19,13 +19,34 @@ private fun speed1Power1Guts2Wisdom1Short() {
         "[Take Them Down!]ナリタタイシン",
         "[謹製ッ！特大夢にんじん！]秋川理事長",
     ).toTypedArray()
-    val targetStatus = StatusType.SPEED
+    var targetStatus = StatusType.SPEED
     doSimulation2(
         Scenario.COOK,
         Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[浚いの風]ヤマニンゼファー" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[波間のオフショット]スマートファルコン" to it }.toTypedArray())),
+//        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
+        factor = factor(StatusType.SPEED, 6),
+        testCount = 100000,
+        selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
+        evaluateSetting = Runner.cookShortEvaluateSetting,
+    )
+    defaultSupport = Store.getSupportByName(
+        "[アルストロメリアの夢]ヴィブロス",
+        "[朝焼け苺の畑にて]ニシノフラワー",
+        "[うらら～な休日]ハルウララ",
+        "[只、君臨す。]オルフェーヴル",
+//        "[Take Them Down!]ナリタタイシン",
+        "[謹製ッ！特大夢にんじん！]秋川理事長",
+    ).toTypedArray()
+    targetStatus = StatusType.WISDOM
+    doSimulation2(
+        Scenario.COOK,
+        Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
+        defaultSupport,
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[Lucky☆Summertime]コパノリッキー" to it }.toTypedArray())),
 //        Store.getSupportByName("[おセンチ注意報♪]マルゼンスキー" to 4),
         factor = factor(StatusType.SPEED, 6),
         testCount = 100000,
