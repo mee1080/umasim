@@ -75,14 +75,17 @@ data class SupportCard(
 
         val skillPtBonus: Int,
         val wisdomFriendRecovery: Int,
+
+        val initialSkillPt: Int,
     ) {
         val initialStatus
             get() = Status(
-                initialSpeed,
-                initialStamina,
-                initialPower,
-                initialGuts,
-                initialWisdom,
+                speed = initialSpeed,
+                stamina = initialStamina,
+                power = initialPower,
+                guts = initialGuts,
+                wisdom = initialWisdom,
+                skillPt = initialSkillPt,
             )
     }
 

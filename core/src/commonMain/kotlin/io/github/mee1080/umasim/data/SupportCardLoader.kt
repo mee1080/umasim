@@ -62,6 +62,7 @@ object SupportCardLoader {
                             data[i++].toInt(),
                             data[i++].toInt(),
                             data[i++].toInt(),
+                            0, // TODO
                         ),
                         SupportCard.SupportStatus(
                             data[i++].toInt(),
@@ -89,6 +90,7 @@ object SupportCardLoader {
                             data[i++].toInt(),
                             data[i++].toInt(),
                             data[i++].toInt(),
+                            0, // TODO
                         ),
                         readSkills(data.getOrNull(i++)),
                         readHintStatus(data.getOrNull(i++)),
