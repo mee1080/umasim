@@ -78,6 +78,7 @@ fun SupportCardInfo(state: State) {
 //            Th { Text("ミニゲーム効果アップ") }
                     Th { Text("スキルPtボーナス") }
                     Th { Text("賢さ友情回復量アップ") }
+                    Th { Text("初期スキルPtアップ") }
                     Th { Text("特殊固有") }
                 }
                 state.supportSelectionList.mapNotNull { it.card }.forEach { card ->
@@ -109,6 +110,7 @@ fun SupportCardInfo(state: State) {
                         StatusRow(card) { it.hpCost }
                         StatusRow(card) { it.skillPtBonus }
                         StatusRow(card) { it.wisdomFriendRecovery }
+                        StatusRow(card) { it.initialSkillPt }
                         Td({ style { textAlign("unset") } }) { Text(card.specialUnique.joinToString(" / ") { it.description }) }
                     }
                 }
