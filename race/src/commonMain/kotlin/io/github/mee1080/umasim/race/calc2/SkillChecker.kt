@@ -148,6 +148,12 @@ private fun checkCondition(
 
         "phase" -> condition.checkInRace { currentPhase }
 
+        "phase_firstquarter" -> {
+            val (start, end) = baseSetting.getPhaseStartEnd(condition.value)
+            val range = start..(start + (end - start) / 4.0)
+            condition.checkInRaceBool { range.contains(simulation.position) }
+        }
+
         "is_finalcorner" -> condition.checkInRaceBool { isAfterFinalCorner }
 
         "is_finalcorner_laterhalf" -> condition.withAssert("==", 1) {
