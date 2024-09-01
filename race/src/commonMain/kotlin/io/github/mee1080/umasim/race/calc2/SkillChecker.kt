@@ -126,6 +126,10 @@ private fun checkCondition(
             baseSetting.initPhaseRandom(condition.value, 0.5 to 1.0)
         }
 
+        "phase_latter_half_straight_random" -> checkInRandom(calculatedAreas, condition.type) {
+            baseSetting.initPhaseStraightRandom(condition.value, 0.5 to 1.0)
+        }
+
         "phase_corner_random" -> checkInRandom(calculatedAreas, condition.type) {
             baseSetting.initPhaseCornerRandom(condition.value)
         }
@@ -321,7 +325,9 @@ private fun RaceState.getStraightFrontType(position: Double = simulation.positio
     return 0
 }
 
-class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange<Double> by start..end
+class RandomEntry(start: Double, end: Double) : ClosedFloatingPointRange<Double> by start..end {
+    override fun toString() = "$start..$endInclusive"
+}
 
 private fun RaceSetting.chooseRandom(zoneStart: Double, zoneEnd: Double): List<RandomEntry> {
     val rate = when (randomPosition) {
@@ -433,6 +439,25 @@ private fun RaceSetting.initPhaseRandom(phase: Int, options: Pair<Double, Double
 private fun RaceSetting.initFinalCornerRandom(): List<RandomEntry> {
     val finalCorner = trackDetail.corners.lastOrNull() ?: return emptyList()
     return chooseRandom(finalCorner.start, finalCorner.end)
+}
+
+private fun RaceSetting.initPhaseStraightRandom(
+    phase: Int,
+    options: Pair<Double, Double> = 0.0 to 1.0,
+): List<RandomEntry> {
+    val (startRate, endRate) = options
+    val (phaseStart, phaseEnd) = getPhaseStartEnd(phase)
+    val phaseLength = phaseEnd - phaseStart
+    val areaStart = phaseStart + phaseLength * startRate
+    val areaEnd = phaseEnd - phaseLength * (1 - endRate)
+    val candidates = trackDetail.straights.mapNotNull { straight ->
+        if (straight.end < areaStart || straight.start > areaEnd) null else {
+            maxOf(straight.start, areaStart) to minOf(straight.end, areaEnd)
+        }
+    }
+    return chooseRandom(candidates).also {
+        println("${candidates.joinToString(",")} => $it")
+    }
 }
 
 private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {

@@ -23,6 +23,8 @@
 package io.github.mee1080.umasim.race
 
 import io.github.mee1080.umasim.race.data.trackData
+import kotlin.math.max
+import kotlin.math.min
 
 fun main() {
 //    skillData.forEach {
@@ -35,12 +37,20 @@ fun main() {
 //    testCalc2()
     trackData.forEach { (_, course) ->
         course.courses.forEach { (_, track) ->
-            val half = track.distance / 2.0
-            if (track.slopes.any { it.slope > 0.0 && it.start <= half && it.end >= half }) {
+            val start = track.distance * 5.0 / 12.0
+            val end = track.distance * 2.0 / 3.0
+            val targets = track.straights.filter { (it.start <= end && it.end >= start) }
+            if (targets.count() >= 2) {
                 println("${course.name} ${track.name}")
-                track.slopes.forEach {
-                    println("　${if (it.slope > 0.0) "上り" else "下り"} ${it.start} ～ ${it.end} ${if (it.slope > 0.0 && it.start <= half && it.end >= half) "★" else ""}")
+                println("  中盤後半 $start ～ $end")
+                val lengthList = mutableListOf<Double>()
+                targets.forEach {
+                    val length = min(it.end, end) - max(it.start, start)
+                    lengthList += length
+                    println("　  ${it.start} ～ ${it.end} $length")
                 }
+                val diff = lengthList.max() / lengthList.min()
+                println("  diff $diff")
                 println()
             }
         }
