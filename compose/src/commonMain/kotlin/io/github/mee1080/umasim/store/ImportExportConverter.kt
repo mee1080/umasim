@@ -42,7 +42,7 @@ object ImportExportConverter {
         val statusValues = mutableListOf<Int>()
         val skills = mutableListOf<SkillData>()
         val fitRanks = mutableListOf<FitRank>()
-        data.split("[\\s,:　/]+".toRegex()).forEach {
+        data.split("[\\n\\t,:：　/]+".toRegex()).forEach {
             if (it.isEmpty()) return@forEach
             val value = it.toIntOrNull()
             if (value != null) {
