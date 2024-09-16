@@ -172,8 +172,15 @@ data class GraphData(
     val cornerData: List<Pair<Float, Float>>,
     val upSlopeData: List<Pair<Float, Float>>,
     val downSlopeData: List<Pair<Float, Float>>,
-    val skillData: List<Pair<Float, String>>,
+    val skillData: List<GraphSkill>,
     val paceMakerData: List<Pair<Float, Float>>,
+)
+
+@Stable
+data class GraphSkill(
+    val start: Float,
+    val end: Float?,
+    val name: String,
 )
 
 @Stable

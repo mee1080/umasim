@@ -455,9 +455,7 @@ private fun RaceSetting.initPhaseStraightRandom(
             maxOf(straight.start, areaStart) to minOf(straight.end, areaEnd)
         }
     }
-    return chooseRandom(candidates).also {
-        println("${candidates.joinToString(",")} => $it")
-    }
+    return chooseRandom(candidates)
 }
 
 private fun RaceSetting.initPhaseCornerRandom(phase: Int): List<RandomEntry> {

@@ -238,28 +238,29 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
         upSlopeData = toGraphData(trackDetail.slopes.filter { it.slope > 0f }.map { it.start to it.end }, frameList),
         downSlopeData = toGraphData(trackDetail.slopes.filter { it.slope < 0f }.map { it.start to it.end }, frameList),
         skillData = buildList {
-            var last = frameList[0]
             frameList.forEachIndexed { index, raceFrame ->
-                raceFrame.triggeredSkills.forEach {
-                    add(index / 15f to it.skill.name)
+                raceFrame.triggeredSkills.forEach { skill ->
+                    val end = searchFrame(frameList, index + 1) { frame ->
+                        frame.endedSkills.any { it.data.skill.id == skill.skill.id }
+                    }
+                    add(GraphSkill(index / 15f, end?.div(15f), skill.skill.name))
                 }
-                add(index, raceFrame, last, "掛かり") { it.temptation }
+                add(frameList, index, raceFrame, "掛かり") { it.temptation }
 //                add(index, raceFrame, last, "スパート開始") { it.spurting }
 //                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
-//                add(index, raceFrame, last, "下り坂モード") { it.downSlopeMode }
+//                add(frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
 //                add(index, raceFrame, last, "位置取り争い") { it.leadCompetition }
-                add(index, raceFrame, last, "追い比べ") { it.competeFight }
+                add(frameList, index, raceFrame, "追い比べ") { it.competeFight }
 //                add(index, raceFrame, last, "脚色十分") { it.conservePower }
 //                add(index, raceFrame, last, "位置取り調整") { it.positionCompetition }
-                add(index, raceFrame, last, "持久力温存") { it.staminaKeep }
+                add(frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
 //                add(index, raceFrame, last, "リード確保") { it.secureLead }
-                add(index, raceFrame, last, "スタミナ勝負") { it.staminaLimitBreak }
+                add(frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
 //                if (raceFrame.positionKeepState != PositionKeepState.NONE && raceFrame.positionKeepState != last.positionKeepState) {
 //                    add(index / 15f to raceFrame.positionKeepState.label)
 //                }
-                last = raceFrame
             }
-        }.sortedBy { it.first },
+        }.sortedBy { it.start },
         paceMakerData = frameList.mapIndexedNotNull { index, raceFrame ->
             val paceMakerPosition = raceFrame.paceMakerFrame?.startPosition ?: return@mapIndexedNotNull null
             val min = paceMakerMax / staminaMax * staminaMin
@@ -268,16 +269,26 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
     )
 }
 
-private fun MutableList<Pair<Float, String>>.add(
+private fun MutableList<GraphSkill>.add(
+    frameList: List<RaceFrame>,
     frame: Int,
     raceFrame: RaceFrame,
-    last: RaceFrame,
     label: String,
     check: (RaceFrame) -> Boolean,
 ) {
-    if (check(raceFrame) && !check(last)) {
-        add(frame / 15f to label)
+    if (check(raceFrame) && (frame == 0 || !check(frameList[frame - 1]))) {
+        val end = searchFrame(frameList, frame + 1) { !check(it) } ?: frameList.lastIndex
+        add(GraphSkill(frame / 15f, end / 15f, label))
     }
+}
+
+private fun searchFrame(
+    frameList: List<RaceFrame>,
+    startIndex: Int,
+    predicate: (RaceFrame) -> Boolean,
+): Int? {
+    val frame = frameList.subList(startIndex, frameList.size).indexOfFirst(predicate)
+    return if (frame == -1) null else frame + startIndex
 }
 
 private fun toGraphData(

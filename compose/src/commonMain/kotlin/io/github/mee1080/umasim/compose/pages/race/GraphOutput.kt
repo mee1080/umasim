@@ -127,11 +127,18 @@ private fun GraphArea(graphData: GraphData) {
                 }
                 if (graphData.skillData.isNotEmpty()) {
                     val skillMargin = min(0.1f, 0.8f / graphData.skillData.size)
-                    graphData.skillData.forEachIndexed { index, (position, name) ->
-                        XYAnnotation(Point(position, 1f - skillMargin * index), AnchorPoint.TopLeft) {
+                    graphData.skillData.forEachIndexed { index, (start, end, name) ->
+                        val top = 1f - skillMargin * index
+                        XYAnnotation(Point(start, top), AnchorPoint.TopLeft) {
                             TooltipSurface(containerColor = Color(0, 0, 0, 176)) {
                                 Text(name)
                             }
+                        }
+                        if (end != null) {
+                            LinePlot(
+                                data = listOf(Point(start, top - 0.003f), Point(end, top - 0.003f)),
+                                lineStyle = LineStyle(SolidColor(Color.Red), 2.dp),
+                            )
                         }
                     }
                 }
