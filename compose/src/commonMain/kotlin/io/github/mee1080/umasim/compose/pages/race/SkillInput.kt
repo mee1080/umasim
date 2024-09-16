@@ -3,13 +3,8 @@ package io.github.mee1080.umasim.compose.pages.race
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -46,34 +41,72 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
     val skillIdSet by derivedStateOf { state.skillIdSet(virtual) }
     val chara by derivedStateOf { state.chara(virtual) }
     val setting by derivedStateOf { state.setting }
+    var filter by remember { mutableStateOf("") }
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         MyButton({ dispatch(clearSkill(virtual)) }) { Text("すべてのスキルを削除") }
         UniqueSkillSetting(virtual, chara.charaName, chara.uniqueLevel, skillIdSet, dispatch)
-        val passiveSkills = groupedSkills["passive"]
-        if (passiveSkills != null) {
-            TypeSkillSetting(virtual, "パッシブ", passiveSkills, skillIdSet, setting, dispatch)
+        SkillFilter(filter) { filter = it }
+        if (filter.isEmpty()) {
+            val passiveSkills = groupedSkills["passive"]
+            if (passiveSkills != null) {
+                TypeSkillSetting(virtual, "パッシブ", passiveSkills, skillIdSet, setting, dispatch)
+            }
+            val healSkills = groupedSkills["heal"]
+            if (healSkills != null) {
+                TypeSkillSetting(virtual, "回復", healSkills, skillIdSet, setting, dispatch)
+            }
+            val speedSkills = groupedSkills["speed"]
+            if (speedSkills != null) {
+                TypeSkillSetting(virtual, "速度", speedSkills, skillIdSet, setting, dispatch)
+            }
+            val accelerationSkills = groupedSkills["acceleration"]
+            if (accelerationSkills != null) {
+                TypeSkillSetting(virtual, "加速", accelerationSkills, skillIdSet, setting, dispatch)
+            }
+            val multiSkill = groupedSkills["multi"]
+            if (multiSkill != null) {
+                TypeSkillSetting(virtual, "複合", multiSkill, skillIdSet, setting, dispatch)
+            }
+            val gateSkills = groupedSkills["other"]
+            if (gateSkills != null) {
+                TypeSkillSetting(virtual, "その他", gateSkills, skillIdSet, setting, dispatch)
+            }
+        } else {
+            val skills = notUniqueSkills.filter { it.name.contains(filter) }
+            SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
         }
-        val healSkills = groupedSkills["heal"]
-        if (healSkills != null) {
-            TypeSkillSetting(virtual, "回復", healSkills, skillIdSet, setting, dispatch)
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+private fun SkillFilter(
+    value: String,
+    onChange: (String) -> Unit,
+) {
+    var inputValue by remember { mutableStateOf(value) }
+    LaunchedEffect(value) {
+        inputValue = value
+    }
+    FlowRow(
+        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        Text("フィルタ：")
+        OutlinedTextField(
+            value = inputValue,
+            onValueChange = { inputValue = it },
+            modifier = Modifier.width(256.dp),
+        )
+        MyButton({ onChange(inputValue) }) {
+            Text("反映")
         }
-        val speedSkills = groupedSkills["speed"]
-        if (speedSkills != null) {
-            TypeSkillSetting(virtual, "速度", speedSkills, skillIdSet, setting, dispatch)
-        }
-        val accelerationSkills = groupedSkills["acceleration"]
-        if (accelerationSkills != null) {
-            TypeSkillSetting(virtual, "加速", accelerationSkills, skillIdSet, setting, dispatch)
-        }
-        val multiSkill = groupedSkills["multi"]
-        if (multiSkill != null) {
-            TypeSkillSetting(virtual, "複合", multiSkill, skillIdSet, setting, dispatch)
-        }
-        val gateSkills = groupedSkills["other"]
-        if (gateSkills != null) {
-            TypeSkillSetting(virtual, "その他", gateSkills, skillIdSet, setting, dispatch)
+        if (value.isNotEmpty()) {
+            MyButton({ onChange("") }) {
+                Text("クリア")
+            }
         }
     }
 }
@@ -99,8 +132,10 @@ private fun SkillChip(virtual: Boolean, skill: SkillData, selected: Boolean, dis
 private val charaList =
     listOf(NOT_SELECTED) + skillData2.mapNotNull { it.holder }.distinct().sortedBy { it.substring(it.indexOf(']')) }
 
-private val groupedSkills = skillData2
+private val notUniqueSkills = skillData2
     .filter { it.rarity !in listOf("unique", "evo") }
+
+private val groupedSkills = notUniqueSkills
     .groupBy { it.type }
     .mapValues { skillsByType ->
         skillsByType.value.groupBy { it.rarity }.mapValues { skills ->
@@ -108,6 +143,7 @@ private val groupedSkills = skillData2
         }
     }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun UniqueSkillSetting(
     virtual: Boolean,
@@ -150,8 +186,8 @@ private fun UniqueSkillSetting(
                 }
                 val evoSkills = charaToEvoSkills[charaName]
                 if (evoSkills?.isNotEmpty() == true) {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
+                    FlowRow(
+                        verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                     ) {
                         evoSkills.forEach { skill ->
@@ -239,7 +275,9 @@ private fun SkillFlowRow(
     skillIdSet: Set<String>,
     dispatch: OperationDispatcher<AppState>,
 ) {
-    Text(title, style = MaterialTheme.typography.headlineSmall)
+    if (title.isNotEmpty()) {
+        Text(title, style = MaterialTheme.typography.headlineSmall)
+    }
     FlowRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth()
