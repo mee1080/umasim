@@ -70,3 +70,11 @@ fun toggleSkill(virtual: Boolean, skillData: SkillData) = DirectOperation<AppSta
 fun clearSkill(virtual: Boolean) = DirectOperation<AppState> { state ->
     state.updateSkillIdSet(virtual) { emptySet() }.updateUmaStatus(virtual) { it.copy(hasSkills = emptyList()) }
 }
+
+fun setSkillCategoryView(categoryView: Boolean) = DirectOperation<AppState> { state ->
+    state.copy(skillCategoryView = categoryView)
+}
+
+fun setSkillDisplayMinus(categoryView: Boolean) = DirectOperation<AppState> { state ->
+    state.copy(skillDisplayMinus = categoryView)
+}

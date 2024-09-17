@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.LabeledCheckbox
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.compose.common.parts.HideBlock
@@ -20,6 +22,7 @@ import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.*
+import io.github.mee1080.utility.applyIf
 
 
 @Composable
@@ -36,6 +39,7 @@ fun SkillInput(virtual: Boolean, state: AppState, dispatch: OperationDispatcher<
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationDispatcher<AppState>) {
     val skillIdSet by derivedStateOf { state.skillIdSet(virtual) }
@@ -48,7 +52,30 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
         MyButton({ dispatch(clearSkill(virtual)) }) { Text("すべてのスキルを削除") }
         UniqueSkillSetting(virtual, chara.charaName, chara.uniqueLevel, skillIdSet, dispatch)
         SkillFilter(filter) { filter = it }
-        if (filter.isEmpty()) {
+        FlowRow(
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            LabeledCheckbox(state.skillCategoryView, { dispatch(setSkillCategoryView(it)) }) {
+                Text("カテゴリ表示")
+            }
+            LabeledCheckbox(
+                selected = state.skillDisplayMinus,
+                onCheckedChange = { dispatch(setSkillDisplayMinus(it)) },
+                enabled = !state.skillCategoryView,
+            ) {
+                Text("マイナススキル表示")
+            }
+        }
+        if (filter.isNotEmpty()) {
+            val skills = notUniqueSkills.filter { it.name.contains(filter) }
+            SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
+        } else if (!state.skillCategoryView) {
+            val skills = notUniqueSkills.filterBySetting(virtual, setting).applyIf(!state.skillDisplayMinus) {
+                filter { it.rarity != "minus" }
+            }
+            SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
+        } else {
             val passiveSkills = groupedSkills["passive"]
             if (passiveSkills != null) {
                 TypeSkillSetting(virtual, "パッシブ", passiveSkills, skillIdSet, setting, dispatch)
@@ -73,9 +100,6 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
             if (gateSkills != null) {
                 TypeSkillSetting(virtual, "その他", gateSkills, skillIdSet, setting, dispatch)
             }
-        } else {
-            val skills = notUniqueSkills.filter { it.name.contains(filter) }
-            SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
         }
     }
 }
@@ -111,6 +135,13 @@ private fun SkillFilter(
     }
 }
 
+val rarityColors = mapOf(
+    "evo" to Color(255, 242, 249),
+    "scenario" to Color(255, 242, 249),
+    "rare" to Color(255, 255, 242),
+    "minus" to Color(244, 239, 255),
+)
+
 @Composable
 private fun SkillChip(virtual: Boolean, skill: SkillData, selected: Boolean, dispatch: OperationDispatcher<AppState>) {
     WithTooltip(
@@ -120,11 +151,24 @@ private fun SkillChip(virtual: Boolean, skill: SkillData, selected: Boolean, dis
             }
         },
     ) {
+        val containerColor = rarityColors.getOrElse(skill.rarity) { Color.Transparent }
+        val colors = FilterChipDefaults.filterChipColors(
+            containerColor = containerColor,
+            selectedContainerColor = containerColor,
+        )
+        val border = FilterChipDefaults.filterChipBorder(
+            enabled = true,
+            selected = selected,
+            selectedBorderColor = Color.Red,
+            selectedBorderWidth = 2.dp,
+        )
         FilterChip(
             selected = selected,
             onClick = { dispatch(toggleSkill(virtual, skill)) },
             label = { Text(skill.name) },
             leadingIcon = { if (selected) Icon(Icons.Default.Check, "Selected") },
+            colors = colors,
+            border = border,
         )
     }
 }
@@ -248,6 +292,7 @@ private fun TypeSkillSetting(
     }
 }
 
+@Composable
 private fun List<SkillData>.filterBySetting(virtual: Boolean, setting: RaceSetting): List<SkillData> {
     val style by derivedStateOf { if (virtual) setting.virtualLeader.basicRunningStyle else setting.basicRunningStyle }
     val track by derivedStateOf { setting.trackDetail }
