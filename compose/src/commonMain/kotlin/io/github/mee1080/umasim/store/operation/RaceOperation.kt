@@ -248,7 +248,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 add(frameList, index, raceFrame, "掛かり") { it.temptation }
 //                add(index, raceFrame, last, "スパート開始") { it.spurting }
 //                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
-//                add(frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
+                add(frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
 //                add(index, raceFrame, last, "位置取り争い") { it.leadCompetition }
                 add(frameList, index, raceFrame, "追い比べ") { it.competeFight }
 //                add(index, raceFrame, last, "脚色十分") { it.conservePower }

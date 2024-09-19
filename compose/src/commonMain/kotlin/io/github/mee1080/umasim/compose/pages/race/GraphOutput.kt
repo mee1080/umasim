@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -23,10 +23,12 @@ import io.github.koalaplot.core.style.AreaStyle
 import io.github.koalaplot.core.style.LineStyle
 import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
 import io.github.koalaplot.core.xygraph.*
+import io.github.mee1080.umasim.compose.common.atoms.LabeledCheckbox
 import io.github.mee1080.umasim.compose.common.atoms.TooltipSurface
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.GraphData
 import kotlinx.collections.immutable.persistentListOf
+import kotlin.math.max
 import kotlin.math.min
 
 @Composable
@@ -51,8 +53,13 @@ private fun GraphArea(graphData: GraphData) {
     val frameList = graphData.frameList
     Column {
         Text("直近レース詳細", style = MaterialTheme.typography.headlineSmall)
+        var verticalZoom by remember { mutableStateOf(false) }
+        LabeledCheckbox(verticalZoom, { verticalZoom = it }) {
+            Text("スキル数に応じて縦方向に拡大")
+        }
+        val height by derivedStateOf { if (verticalZoom) max(520, graphData.skillData.size * 34) else 520 }
         ChartLayout(
-            modifier = Modifier.height(520.dp),
+            modifier = Modifier.height(height.dp),
             legend = {
                 val legends = if (graphData.paceMakerData.isEmpty()) defaultLegends else virtualLegends
                 FlowLegend(
@@ -130,7 +137,7 @@ private fun GraphArea(graphData: GraphData) {
                     graphData.skillData.forEachIndexed { index, (start, end, name) ->
                         val top = 1f - skillMargin * index
                         XYAnnotation(Point(start, top), AnchorPoint.TopLeft) {
-                            TooltipSurface(containerColor = Color(0, 0, 0, 176)) {
+                            TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
                                 Text(name)
                             }
                         }
