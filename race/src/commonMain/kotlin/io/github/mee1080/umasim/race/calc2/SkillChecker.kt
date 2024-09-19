@@ -353,14 +353,11 @@ private fun RaceSetting.chooseRandom(entries: List<Pair<Double, Double>>): List<
 }
 
 private fun RaceSetting.initCornerRandom(value: Int): List<RandomEntry> {
-    println("initCornerRandom $value")
     val corners: MutableList<Corner?> = trackDetail.corners.takeLast(4).toMutableList()
     repeat(4 - corners.size) {
         corners.add(0, null)
     }
-    println(corners.toString())
     val corner = corners.getOrNull(value - 1) ?: return emptyList()
-    println(corner.toString())
     return chooseRandom(corner.start, corner.end)
 }
 
