@@ -71,11 +71,11 @@ private fun checkCondition(
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
         "remain_distance" -> condition.checkInRace { (baseSetting.courseLength - simulation.startPosition).toInt() }
         "distance_rate_after_random" -> condition.withAssert("==") {
-            checkInRandom(calculatedAreas, condition.type) { baseSetting.initIntervalRandom(value * 0.01, 1.0) }
+            checkInRandom(calculatedAreas, condition.type + value) { baseSetting.initIntervalRandom(value * 0.01, 1.0) }
         }
 
         "corner_random" -> condition.withAssert("==") {
-            checkInRandom(calculatedAreas, condition.type) { baseSetting.initCornerRandom(value) }
+            checkInRandom(calculatedAreas, condition.type + value) { baseSetting.initCornerRandom(value) }
         }
 
         "all_corner_random" -> condition.withAssert("==", 1) {
@@ -108,29 +108,27 @@ private fun checkCondition(
         "track_id" -> condition.preChecked(baseSetting.trackDetail.raceTrackId)
         "is_basis_distance" -> condition.preChecked(baseSetting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / baseSetting.courseLength).toInt() }
-        "phase_random" -> checkInRandom(
-            calculatedAreas,
-            condition.type
-        ) { baseSetting.initPhaseRandom(condition.value) }
+        "phase_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
+            baseSetting.initPhaseRandom(condition.value)
+        }
 
-        "phase_firsthalf_random" -> checkInRandom(
-            calculatedAreas,
-            condition.type
-        ) { baseSetting.initPhaseRandom(condition.value, 0.0 to 0.5) }
+        "phase_firsthalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
+            baseSetting.initPhaseRandom(condition.value, 0.0 to 0.5)
+        }
 
-        "phase_firstquarter_random" -> checkInRandom(calculatedAreas, condition.type) {
+        "phase_firstquarter_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseRandom(condition.value, 0.0 to 0.25)
         }
 
-        "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type) {
+        "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseRandom(condition.value, 0.5 to 1.0)
         }
 
-        "phase_latter_half_straight_random" -> checkInRandom(calculatedAreas, condition.type) {
+        "phase_latter_half_straight_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseStraightRandom(condition.value, 0.5 to 1.0)
         }
 
-        "phase_corner_random" -> checkInRandom(calculatedAreas, condition.type) {
+        "phase_corner_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseCornerRandom(condition.value)
         }
 
@@ -284,19 +282,6 @@ private fun SkillCondition.checkInRace(target: RaceState.() -> Int): RaceState.(
     return { check(target()) }
 }
 
-//private inline fun checkInRandom(
-//    calculated: MutableMap<String, List<RandomEntry>>,
-//    key: String,
-//    calcArea: () -> RandomEntry?,
-//): RaceState.() -> Boolean {
-//    val area = calculated.getOrPut(key) { calcArea()?.let { listOf(it) } ?: emptyList() }
-//    return if (area.isEmpty()) {
-//        { false }
-//    } else {
-//        { simulation.position in area[0] }
-//    }
-//}
-
 private inline fun checkInRandom(
     calculated: MutableMap<String, List<RandomEntry>>,
     key: String,
@@ -368,16 +353,19 @@ private fun RaceSetting.chooseRandom(entries: List<Pair<Double, Double>>): List<
 }
 
 private fun RaceSetting.initCornerRandom(value: Int): List<RandomEntry> {
+    println("initCornerRandom $value")
     val corners: MutableList<Corner?> = trackDetail.corners.takeLast(4).toMutableList()
     repeat(4 - corners.size) {
         corners.add(0, null)
     }
+    println(corners.toString())
     val corner = corners.getOrNull(value - 1) ?: return emptyList()
+    println(corner.toString())
     return chooseRandom(corner.start, corner.end)
 }
 
 private fun RaceSetting.initAllCornerRandom(): List<RandomEntry> {
-    var corners = trackDetail.corners.toMutableList()
+    val corners = trackDetail.corners.toMutableList()
     val triggers = mutableListOf<RandomEntry>()
 
     repeat(2) {
@@ -388,12 +376,6 @@ private fun RaceSetting.initAllCornerRandom(): List<RandomEntry> {
         val corner = corners[i]
         val trigger = logTrigger(corner.start, corner.start + corner.length)
         triggers.add(trigger)
-//        if (corner.start + corner.length - trigger.endInclusive >= 10) {
-//            corners[i] = Corner(trigger.endInclusive, trigger.endInclusive - corner.start)
-//        } else {
-//            corners.removeAt(i)
-//        }
-//        corners = corners.subList(i, corners.size)
     }
     triggers.sortBy { it.start }
     return triggers
