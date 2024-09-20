@@ -940,6 +940,15 @@ Guiding Sea
 ->furlong==3&order_rate<=50
 「ハロン(距離÷200)==3、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続4.0
 
+Lame de vent
+[Chevalier fidèle]デュランダル 固有
+最終コーナーで追い抜くとラストスパートで速度が上がる短距離かマイルレースでスキル発動時中団にいるとすごく上がる
+評価点340、人気:スピード60、確定発動
+is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3&order_rate>=40&order_rate<=80&distance_type==1@is_lastspurt==1&phase==3&order_rate>=40&order_rate<=80&distance_type==2
+「最終コーナー以降、コーナー、追い抜き」の後「ラストスパート、終盤後半、順位率40～80（チャンミ4～7/LoH5～9）、短距離」または「ラストスパート、終盤後半、順位率40～80（チャンミ4～7/LoH5～9）、マイル」、目標速度4500、持続5.0
+is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
+「最終コーナー以降、コーナー、追い抜き」の後「ラストスパート、終盤後半」、目標速度3500、持続5.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復しさらに速度が少し上がる
@@ -2316,6 +2325,14 @@ Guiding Sea
 評価点180、SP200、人気:スピード15
 ->furlong==3&order_rate<=50
 「ハロン(距離÷200)==3、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続2.4
+
+Lame de vent
+最終コーナーで追い抜くとラストスパートで速度がわずかに上がる短距離かマイルレースでスキル発動時中団にいると少し上がる
+評価点180、SP200、人気:スピード15
+is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3&order_rate>=40&order_rate<=80&distance_type==1@is_lastspurt==1&phase==3&order_rate>=40&order_rate<=80&distance_type==2
+「最終コーナー以降、コーナー、追い抜き」の後「ラストスパート、終盤後半、順位率40～80（チャンミ4～7/LoH5～9）、短距離」または「ラストスパート、終盤後半、順位率40～80（チャンミ4～7/LoH5～9）、マイル」、目標速度2500、持続3.0
+is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
+「最終コーナー以降、コーナー、追い抜き」の後「ラストスパート、終盤後半」、目標速度1500、持続3.0
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復しさらに速度がちょっと上がる
@@ -8158,6 +8175,15 @@ U.A.F. 進化(破竹の勢い)
 ->running_style==3&distance_type==2&phase>=2&is_overtake==1&distance_rate<=75@running_style==3&distance_type==2&phase_firsthalf_random==2
 「差し、マイル、終盤、追い抜きモード、距離割合<=75」または「差し、マイル、終盤前1/4ランダム」、加速4000、持続2.0
 
+オリファントの轟雷
+[Chevalier fidèle]デュランダル 進化(電光石火)
+レース終盤に追い抜こうとすると加速力が上がるスキル発動時、最終コーナーにいるとすごく上がる＜短距離/マイル＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==1&phase>=2&is_overtake==1&is_finalcorner==1&corner!=0@distance_type==2&phase>=2&is_overtake==1&is_finalcorner==1&corner!=0
+「短距離、終盤、追い抜きモード、最終コーナー以降、コーナー」または「マイル、終盤、追い抜きモード、最終コーナー以降、コーナー」、加速5000、持続2.0
+->distance_type==1&phase>=2&is_overtake==1@distance_type==2&phase>=2&is_overtake==1
+「短距離、終盤、追い抜きモード」または「マイル、終盤、追い抜きモード」、加速4000、持続2.0
+
 一足飛び
 レース終盤に後方で追い抜こうとすると加速力がわずかに上がる＜短距離/マイル＞
 評価点217、SP180、人気:パワー20
@@ -9088,6 +9114,13 @@ U.A.F. 進化(機先の勝負)
 ->is_activate_other_skill_detail==1&phase>=2&is_last_straight==1
 「上記効果発動後、終盤、最終直線」、目標速度1500、持続3.0
 
+忠心のヴェイヤンティフ
+[Chevalier fidèle]デュランダル 進化(一心不乱)
+レース終盤が迫ったとき持久力を使って速度がものすごく上がる＜作戦・追込＞
+評価点633、進化元SP320、人気:スピード60
+->phase_laterhalf_random==1&running_style==4
+「中盤後半ランダム、追込」、目標速度5500、体力-300、持続2.4
+
 惜しみなし
 レース中盤に持久力を少し使って速度が少し上がる＜作戦・追込＞
 評価点217、SP160、人気:スピード20
@@ -9723,6 +9756,18 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点0、人気:スタミナ60、確定発動
 ->always==1
 「常時」、スタミナ80、持続0
+
+匣の抑圧
+匣からの抑圧により能力が絶望的に発揮しにくくなる
+評価点0、人気:スピード-30、確定発動
+->always==1
+「常時」、スピード-500、持続0
+
+まとわりつく霧
+前向きな気持ちが霞みレース終盤に加速力が絶望的に下がる
+評価点0、人気:パワー-60、確定発動
+->phase>=2
+「終盤」、加速-16000、持続4.0
 
 カーニバルボーナス
 レーシングカーニバルで獲得するカーニバルptにボーナスが付く（＋{0}％）このスキルはイベント終了時に消滅する
