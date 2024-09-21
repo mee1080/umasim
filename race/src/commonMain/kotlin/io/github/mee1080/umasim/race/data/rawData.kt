@@ -37,25 +37,25 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 400,
-            "length": 275
+            "start": 400.0,
+            "length": 275.0
           },
           {
-            "start": 675,
-            "length": 259
+            "start": 675.0,
+            "length": 259.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 934,
-            "end": 1200
+            "start": 934.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -70,29 +70,29 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 87.9,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 150,
-            "length": 275
+            "start": 150.0,
+            "length": 275.0
           },
           {
-            "start": 700,
-            "length": 275
+            "start": 700.0,
+            "length": 275.0
           },
           {
-            "start": 975,
-            "length": 259
+            "start": 975.0,
+            "length": 259.0
           }
         ],
         "straights": [
           {
-            "start": 425,
-            "end": 700
+            "start": 425.0,
+            "end": 700.0
           },
           {
-            "start": 1234,
-            "end": 1500
+            "start": 1234.0,
+            "end": 1500.0
           }
         ],
         "slopes": []
@@ -107,37 +107,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 175,
-            "length": 275
+            "start": 175.0,
+            "length": 275.0
           },
           {
-            "start": 450,
-            "length": 275
+            "start": 450.0,
+            "length": 275.0
           },
           {
-            "start": 1000,
-            "length": 275
+            "start": 1000.0,
+            "length": 275.0
           },
           {
-            "start": 1275,
-            "length": 259
+            "start": 1275.0,
+            "length": 259.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 175
+            "start": 0.0,
+            "end": 175.0
           },
           {
-            "start": 725,
-            "end": 1000
+            "start": 725.0,
+            "end": 1000.0
           },
           {
-            "start": 1534,
-            "end": 1800
+            "start": 1534.0,
+            "end": 1800.0
           }
         ],
         "slopes": []
@@ -154,37 +154,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 375,
-            "length": 275
+            "start": 375.0,
+            "length": 275.0
           },
           {
-            "start": 650,
-            "length": 275
+            "start": 650.0,
+            "length": 275.0
           },
           {
-            "start": 1200,
-            "length": 275
+            "start": 1200.0,
+            "length": 275.0
           },
           {
-            "start": 1475,
-            "length": 259
+            "start": 1475.0,
+            "length": 259.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 375
+            "start": 0.0,
+            "end": 375.0
           },
           {
-            "start": 925,
-            "end": 1200
+            "start": 925.0,
+            "end": 1200.0
           },
           {
-            "start": 1734,
-            "end": 2000
+            "start": 1734.0,
+            "end": 2000.0
           }
         ],
         "slopes": []
@@ -201,49 +201,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 157.6,
-        "finishTimeMax": 165,
+        "finishTimeMax": 165.0,
         "corners": [
           {
-            "start": 175,
-            "length": 275
+            "start": 175.0,
+            "length": 275.0
           },
           {
-            "start": 450,
-            "length": 275
+            "start": 450.0,
+            "length": 275.0
           },
           {
-            "start": 975,
-            "length": 275
+            "start": 975.0,
+            "length": 275.0
           },
           {
-            "start": 1250,
-            "length": 275
+            "start": 1250.0,
+            "length": 275.0
           },
           {
-            "start": 1800,
-            "length": 275
+            "start": 1800.0,
+            "length": 275.0
           },
           {
-            "start": 2075,
-            "length": 259
+            "start": 2075.0,
+            "length": 259.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 175
+            "start": 0.0,
+            "end": 175.0
           },
           {
-            "start": 725,
-            "end": 975
+            "start": 725.0,
+            "end": 975.0
           },
           {
-            "start": 1525,
-            "end": 1800
+            "start": 1525.0,
+            "end": 1800.0
           },
           {
-            "start": 2334,
-            "end": 2600
+            "start": 2334.0,
+            "end": 2600.0
           }
         ],
         "slopes": []
@@ -258,25 +258,25 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11000,
         "finishTimeMin": 57.4,
-        "finishTimeMax": 63,
+        "finishTimeMax": 63.0,
         "corners": [
           {
-            "start": 280,
-            "length": 230
+            "start": 280.0,
+            "length": 230.0
           },
           {
-            "start": 510,
-            "length": 226
+            "start": 510.0,
+            "length": 226.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 280
+            "start": 0.0,
+            "end": 280.0
           },
           {
-            "start": 736,
-            "end": 1000
+            "start": 736.0,
+            "end": 1000.0
           }
         ],
         "slopes": []
@@ -293,37 +293,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 11000,
         "finishTimeMin": 101.4,
-        "finishTimeMax": 113,
+        "finishTimeMax": 113.0,
         "corners": [
           {
-            "start": 240,
-            "length": 230
+            "start": 240.0,
+            "length": 230.0
           },
           {
-            "start": 470,
-            "length": 230
+            "start": 470.0,
+            "length": 230.0
           },
           {
-            "start": 980,
-            "length": 230
+            "start": 980.0,
+            "length": 230.0
           },
           {
-            "start": 1210,
-            "length": 226
+            "start": 1210.0,
+            "length": 226.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 240
+            "start": 0.0,
+            "end": 240.0
           },
           {
-            "start": 700,
-            "end": 980
+            "start": 700.0,
+            "end": 980.0
           },
           {
-            "start": 1436,
-            "end": 1700
+            "start": 1436.0,
+            "end": 1700.0
           }
         ],
         "slopes": []
@@ -338,49 +338,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11000,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 200,
-            "length": 230
+            "start": 200.0,
+            "length": 230.0
           },
           {
-            "start": 430,
-            "length": 230
+            "start": 430.0,
+            "length": 230.0
           },
           {
-            "start": 940,
-            "length": 230
+            "start": 940.0,
+            "length": 230.0
           },
           {
-            "start": 1170,
-            "length": 230
+            "start": 1170.0,
+            "length": 230.0
           },
           {
-            "start": 1680,
-            "length": 230
+            "start": 1680.0,
+            "length": 230.0
           },
           {
-            "start": 1910,
-            "length": 226
+            "start": 1910.0,
+            "length": 226.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 200
+            "start": 0.0,
+            "end": 200.0
           },
           {
-            "start": 660,
-            "end": 940
+            "start": 660.0,
+            "end": 940.0
           },
           {
-            "start": 1408,
-            "end": 1680
+            "start": 1408.0,
+            "end": 1680.0
           },
           {
-            "start": 2136,
-            "end": 2400
+            "start": 2136.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -400,32 +400,32 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14700,
         "finishTimeMin": 54.7,
-        "finishTimeMax": 57,
+        "finishTimeMax": 57.0,
         "corners": [
           {
-            "start": 310,
-            "length": 220
+            "start": 310.0,
+            "length": 220.0
           },
           {
-            "start": 530,
-            "length": 208
+            "start": 530.0,
+            "length": 208.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 310
+            "start": 0.0,
+            "end": 310.0
           },
           {
-            "start": 738,
-            "end": 1000
+            "start": 738.0,
+            "end": 1000.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 555,
-            "slope": 10000
+            "start": 0.0,
+            "length": 555.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -439,32 +439,32 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14700,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 510,
-            "length": 220
+            "start": 510.0,
+            "length": 220.0
           },
           {
-            "start": 730,
-            "length": 208
+            "start": 730.0,
+            "length": 208.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 510
+            "start": 0.0,
+            "end": 510.0
           },
           {
-            "start": 938,
-            "end": 1200
+            "start": 938.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 755,
-            "slope": 10000
+            "start": 0.0,
+            "length": 755.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -480,49 +480,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 14700,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 320,
-            "length": 220
+            "start": 320.0,
+            "length": 220.0
           },
           {
-            "start": 540,
-            "length": 220
+            "start": 540.0,
+            "length": 220.0
           },
           {
-            "start": 1110,
-            "length": 220
+            "start": 1110.0,
+            "length": 220.0
           },
           {
-            "start": 1330,
-            "length": 208
+            "start": 1330.0,
+            "length": 208.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 320
+            "start": 0.0,
+            "end": 320.0
           },
           {
-            "start": 760,
-            "end": 1110
+            "start": 760.0,
+            "end": 1110.0
           },
           {
-            "start": 1538,
-            "end": 1800
+            "start": 1538.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 220,
-            "length": 200,
-            "slope": -10000
+            "start": 220.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 665,
-            "length": 720,
-            "slope": 10000
+            "start": 665.0,
+            "length": 720.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -538,49 +538,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 14700,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 520,
-            "length": 220
+            "start": 520.0,
+            "length": 220.0
           },
           {
-            "start": 740,
-            "length": 220
+            "start": 740.0,
+            "length": 220.0
           },
           {
-            "start": 1310,
-            "length": 220
+            "start": 1310.0,
+            "length": 220.0
           },
           {
-            "start": 1530,
-            "length": 208
+            "start": 1530.0,
+            "length": 208.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 520
+            "start": 0.0,
+            "end": 520.0
           },
           {
-            "start": 960,
-            "end": 1310
+            "start": 960.0,
+            "end": 1310.0
           },
           {
-            "start": 1738,
-            "end": 2000
+            "start": 1738.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 420,
-            "length": 200,
-            "slope": -10000
+            "start": 420.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 865,
-            "length": 720,
-            "slope": 10000
+            "start": 865.0,
+            "length": 720.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -596,66 +596,66 @@ internal val rawCourseData = """
         ],
         "laneMax": 14700,
         "finishTimeMin": 157.6,
-        "finishTimeMax": 165,
+        "finishTimeMax": 165.0,
         "corners": [
           {
-            "start": 260,
-            "length": 240
+            "start": 260.0,
+            "length": 240.0
           },
           {
-            "start": 500,
-            "length": 230
+            "start": 500.0,
+            "length": 230.0
           },
           {
-            "start": 1120,
-            "length": 220
+            "start": 1120.0,
+            "length": 220.0
           },
           {
-            "start": 1340,
-            "length": 220
+            "start": 1340.0,
+            "length": 220.0
           },
           {
-            "start": 1910,
-            "length": 220
+            "start": 1910.0,
+            "length": 220.0
           },
           {
-            "start": 2130,
-            "length": 208
+            "start": 2130.0,
+            "length": 208.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 260
+            "start": 0.0,
+            "end": 260.0
           },
           {
-            "start": 730,
-            "end": 1120
+            "start": 730.0,
+            "end": 1120.0
           },
           {
-            "start": 1560,
-            "end": 1910
+            "start": 1560.0,
+            "end": 1910.0
           },
           {
-            "start": 2338,
-            "end": 2600
+            "start": 2338.0,
+            "end": 2600.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 495,
-            "slope": 10000
+            "start": 0.0,
+            "length": 495.0,
+            "slope": 10000.0
           },
           {
-            "start": 970,
-            "length": 200,
-            "slope": -10000
+            "start": 970.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 1425,
-            "length": 720,
-            "slope": 10000
+            "start": 1425.0,
+            "length": 720.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -669,25 +669,25 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11000,
         "finishTimeMin": 57.4,
-        "finishTimeMax": 63,
+        "finishTimeMax": 63.0,
         "corners": [
           {
-            "start": 370,
-            "length": 190
+            "start": 370.0,
+            "length": 190.0
           },
           {
-            "start": 560,
-            "length": 180
+            "start": 560.0,
+            "length": 180.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 740,
-            "end": 1000
+            "start": 740.0,
+            "end": 1000.0
           }
         ],
         "slopes": []
@@ -702,49 +702,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11000,
         "finishTimeMin": 101.4,
-        "finishTimeMax": 113,
+        "finishTimeMax": 113.0,
         "corners": [
           {
-            "start": 350,
-            "length": 190
+            "start": 350.0,
+            "length": 190.0
           },
           {
-            "start": 540,
-            "length": 190
+            "start": 540.0,
+            "length": 190.0
           },
           {
-            "start": 1070,
-            "length": 190
+            "start": 1070.0,
+            "length": 190.0
           },
           {
-            "start": 1260,
-            "length": 180
+            "start": 1260.0,
+            "length": 180.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 350
+            "start": 0.0,
+            "end": 350.0
           },
           {
-            "start": 730,
-            "end": 1070
+            "start": 730.0,
+            "end": 1070.0
           },
           {
-            "start": 1440,
-            "end": 1700
+            "start": 1440.0,
+            "end": 1700.0
           }
         ],
         "slopes": [
           {
-            "start": 275,
-            "length": 340,
-            "slope": -10000
+            "start": 275.0,
+            "length": 340.0,
+            "slope": -10000.0
           },
           {
-            "start": 615,
-            "length": 670,
-            "slope": 10000
+            "start": 615.0,
+            "length": 670.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -760,49 +760,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 11000,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 292,
-            "length": 190
+            "start": 292.0,
+            "length": 190.0
           },
           {
-            "start": 482,
-            "length": 190
+            "start": 482.0,
+            "length": 190.0
           },
           {
-            "start": 1040,
-            "length": 190
+            "start": 1040.0,
+            "length": 190.0
           },
           {
-            "start": 1230,
-            "length": 190
+            "start": 1230.0,
+            "length": 190.0
           },
           {
-            "start": 1770,
-            "length": 190
+            "start": 1770.0,
+            "length": 190.0
           },
           {
-            "start": 1960,
-            "length": 180
+            "start": 1960.0,
+            "length": 180.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 292
+            "start": 0.0,
+            "end": 292.0
           },
           {
-            "start": 672,
-            "end": 1040
+            "start": 672.0,
+            "end": 1040.0
           },
           {
-            "start": 1420,
-            "end": 1770
+            "start": 1420.0,
+            "end": 1770.0
           },
           {
-            "start": 2140,
-            "end": 2400
+            "start": 2140.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -822,26 +822,26 @@ internal val rawCourseData = """
         "courseSetStatus": [
           3
         ],
-        "laneMax": 13500,
+        "laneMax": 23500,
         "finishTimeMin": 54.7,
-        "finishTimeMax": 57,
+        "finishTimeMax": 57.0,
         "corners": [],
         "straights": [
           {
-            "start": 0,
-            "end": 1000
+            "start": 0.0,
+            "end": 1000.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 240,
-            "slope": 10000
+            "start": 0.0,
+            "length": 240.0,
+            "slope": 10000.0
           },
           {
-            "start": 240,
-            "length": 60,
-            "slope": -10000
+            "start": 240.0,
+            "length": 60.0,
+            "slope": -10000.0
           }
         ]
       },
@@ -855,25 +855,25 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 450,
-            "length": 200
+            "start": 450.0,
+            "length": 200.0
           },
           {
-            "start": 650,
-            "length": 192
+            "start": 650.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 450
+            "start": 0.0,
+            "end": 450.0
           },
           {
-            "start": 842,
-            "end": 1200
+            "start": 842.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -887,26 +887,26 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 13500,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 650,
-            "length": 200
+            "start": 650.0,
+            "length": 200.0
           },
           {
-            "start": 850,
-            "length": 192
+            "start": 850.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 650
+            "start": 0.0,
+            "end": 650.0
           },
           {
-            "start": 1042,
-            "end": 1400
+            "start": 1042.0,
+            "end": 1400.0
           }
         ],
         "slopes": []
@@ -921,37 +921,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 550,
-            "length": 200
+            "start": 550.0,
+            "length": 200.0
           },
           {
-            "start": 750,
-            "length": 192
+            "start": 750.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 550
+            "start": 0.0,
+            "end": 550.0
           },
           {
-            "start": 942,
-            "end": 1600
+            "start": 942.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 250,
-            "length": 350,
-            "slope": 10000
+            "start": 250.0,
+            "length": 350.0,
+            "slope": 10000.0
           },
           {
-            "start": 600,
-            "length": 300,
-            "slope": -15000
+            "start": 600.0,
+            "length": 300.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -967,37 +967,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 750,
-            "length": 200
+            "start": 750.0,
+            "length": 200.0
           },
           {
-            "start": 950,
-            "length": 192
+            "start": 950.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 750
+            "start": 0.0,
+            "end": 750.0
           },
           {
-            "start": 1142,
-            "end": 1800
+            "start": 1142.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 450,
-            "length": 350,
-            "slope": 10000
+            "start": 450.0,
+            "length": 350.0,
+            "slope": 10000.0
           },
           {
-            "start": 800,
-            "length": 300,
-            "slope": -15000
+            "start": 800.0,
+            "length": 300.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -1014,37 +1014,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 420,
-            "length": 200
+            "start": 420.0,
+            "length": 200.0
           },
           {
-            "start": 620,
-            "length": 200
+            "start": 620.0,
+            "length": 200.0
           },
           {
-            "start": 1250,
-            "length": 200
+            "start": 1250.0,
+            "length": 200.0
           },
           {
-            "start": 1450,
-            "length": 192
+            "start": 1450.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 420
+            "start": 0.0,
+            "end": 420.0
           },
           {
-            "start": 820,
-            "end": 1250
+            "start": 820.0,
+            "end": 1250.0
           },
           {
-            "start": 1642,
-            "end": 2000
+            "start": 1642.0,
+            "end": 2000.0
           }
         ],
         "slopes": []
@@ -1062,37 +1062,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 950,
-            "length": 200
+            "start": 950.0,
+            "length": 200.0
           },
           {
-            "start": 1150,
-            "length": 192
+            "start": 1150.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 950
+            "start": 0.0,
+            "end": 950.0
           },
           {
-            "start": 1342,
-            "end": 2000
+            "start": 1342.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 1000,
-            "length": 300,
-            "slope": -15000
+            "start": 1000.0,
+            "length": 300.0,
+            "slope": -15000.0
           },
           {
-            "start": 650,
-            "length": 350,
-            "slope": 10000
+            "start": 650.0,
+            "length": 350.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -1108,37 +1108,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 13500,
         "finishTimeMin": 130.2,
-        "finishTimeMax": 135,
+        "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 650,
-            "length": 200
+            "start": 650.0,
+            "length": 200.0
           },
           {
-            "start": 850,
-            "length": 200
+            "start": 850.0,
+            "length": 200.0
           },
           {
-            "start": 1450,
-            "length": 200
+            "start": 1450.0,
+            "length": 200.0
           },
           {
-            "start": 1650,
-            "length": 192
+            "start": 1650.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 650
+            "start": 0.0,
+            "end": 650.0
           },
           {
-            "start": 1050,
-            "end": 1450
+            "start": 1050.0,
+            "end": 1450.0
           },
           {
-            "start": 1842,
-            "end": 2200
+            "start": 1842.0,
+            "end": 2200.0
           }
         ],
         "slopes": []
@@ -1153,37 +1153,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13500,
         "finishTimeMin": 141.6,
-        "finishTimeMax": 149,
+        "finishTimeMax": 149.0,
         "corners": [
           {
-            "start": 810,
-            "length": 200
+            "start": 810.0,
+            "length": 200.0
           },
           {
-            "start": 1010,
-            "length": 200
+            "start": 1010.0,
+            "length": 200.0
           },
           {
-            "start": 1650,
-            "length": 200
+            "start": 1650.0,
+            "length": 200.0
           },
           {
-            "start": 1850,
-            "length": 192
+            "start": 1850.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 810
+            "start": 0.0,
+            "end": 810.0
           },
           {
-            "start": 1210,
-            "end": 1650
+            "start": 1210.0,
+            "end": 1650.0
           },
           {
-            "start": 2042,
-            "end": 2400
+            "start": 2042.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -1197,26 +1197,26 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 11000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 540,
-            "length": 160
+            "start": 540.0,
+            "length": 160.0
           },
           {
-            "start": 700,
-            "length": 147
+            "start": 700.0,
+            "length": 147.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 540
+            "start": 0.0,
+            "end": 540.0
           },
           {
-            "start": 847,
-            "end": 1200
+            "start": 847.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -1233,37 +1233,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 11000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 400,
-            "length": 160
+            "start": 400.0,
+            "length": 160.0
           },
           {
-            "start": 560,
-            "length": 160
+            "start": 560.0,
+            "length": 160.0
           },
           {
-            "start": 1140,
-            "length": 160
+            "start": 1140.0,
+            "length": 160.0
           },
           {
-            "start": 1300,
-            "length": 147
+            "start": 1300.0,
+            "length": 147.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 720,
-            "end": 1140
+            "start": 720.0,
+            "end": 1140.0
           },
           {
-            "start": 1447,
-            "end": 1800
+            "start": 1447.0,
+            "end": 1800.0
           }
         ],
         "slopes": []
@@ -1278,49 +1278,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11000,
         "finishTimeMin": 159.1,
-        "finishTimeMax": 164,
+        "finishTimeMax": 164.0,
         "corners": [
           {
-            "start": 380,
-            "length": 160
+            "start": 380.0,
+            "length": 160.0
           },
           {
-            "start": 540,
-            "length": 160
+            "start": 540.0,
+            "length": 160.0
           },
           {
-            "start": 1120,
-            "length": 160
+            "start": 1120.0,
+            "length": 160.0
           },
           {
-            "start": 1280,
-            "length": 160
+            "start": 1280.0,
+            "length": 160.0
           },
           {
-            "start": 1850,
-            "length": 160
+            "start": 1850.0,
+            "length": 160.0
           },
           {
-            "start": 2010,
-            "length": 160
+            "start": 2010.0,
+            "length": 160.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 380
+            "start": 0.0,
+            "end": 380.0
           },
           {
-            "start": 700,
-            "end": 1120
+            "start": 700.0,
+            "end": 1120.0
           },
           {
-            "start": 1440,
-            "end": 1850
+            "start": 1440.0,
+            "end": 1850.0
           },
           {
-            "start": 2170,
-            "end": 2500
+            "start": 2170.0,
+            "end": 2500.0
           }
         ],
         "slopes": []
@@ -1340,32 +1340,32 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 420,
-            "length": 300
+            "start": 420.0,
+            "length": 300.0
           },
           {
-            "start": 720,
-            "length": 188
+            "start": 720.0,
+            "length": 188.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 420
+            "start": 0.0,
+            "end": 420.0
           },
           {
-            "start": 908,
-            "end": 1200
+            "start": 908.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 180,
-            "length": 100,
-            "slope": 15000
+            "start": 180.0,
+            "length": 100.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -1381,44 +1381,44 @@ internal val rawCourseData = """
         ],
         "laneMax": 13000,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 330,
-            "length": 200
+            "start": 330.0,
+            "length": 200.0
           },
           {
-            "start": 530,
-            "length": 200
+            "start": 530.0,
+            "length": 200.0
           },
           {
-            "start": 1020,
-            "length": 300
+            "start": 1020.0,
+            "length": 300.0
           },
           {
-            "start": 1320,
-            "length": 188
+            "start": 1320.0,
+            "length": 188.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 330
+            "start": 0.0,
+            "end": 330.0
           },
           {
-            "start": 730,
-            "end": 1020
+            "start": 730.0,
+            "end": 1020.0
           },
           {
-            "start": 1508,
-            "end": 1800
+            "start": 1508.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 780,
-            "length": 100,
-            "slope": 15000
+            "start": 780.0,
+            "length": 100.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -1434,44 +1434,44 @@ internal val rawCourseData = """
         ],
         "laneMax": 13000,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 530,
-            "length": 200
+            "start": 530.0,
+            "length": 200.0
           },
           {
-            "start": 730,
-            "length": 200
+            "start": 730.0,
+            "length": 200.0
           },
           {
-            "start": 1220,
-            "length": 300
+            "start": 1220.0,
+            "length": 300.0
           },
           {
-            "start": 1520,
-            "length": 188
+            "start": 1520.0,
+            "length": 188.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 530
+            "start": 0.0,
+            "end": 530.0
           },
           {
-            "start": 930,
-            "end": 1220
+            "start": 930.0,
+            "end": 1220.0
           },
           {
-            "start": 1708,
-            "end": 2000
+            "start": 1708.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 980,
-            "length": 100,
-            "slope": 15000
+            "start": 980.0,
+            "length": 100.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -1485,61 +1485,61 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 157.6,
-        "finishTimeMax": 165,
+        "finishTimeMax": 165.0,
         "corners": [
           {
-            "start": 220,
-            "length": 300
+            "start": 220.0,
+            "length": 300.0
           },
           {
-            "start": 520,
-            "length": 200
+            "start": 520.0,
+            "length": 200.0
           },
           {
-            "start": 1130,
-            "length": 200
+            "start": 1130.0,
+            "length": 200.0
           },
           {
-            "start": 1330,
-            "length": 200
+            "start": 1330.0,
+            "length": 200.0
           },
           {
-            "start": 1820,
-            "length": 300
+            "start": 1820.0,
+            "length": 300.0
           },
           {
-            "start": 2120,
-            "length": 188
+            "start": 2120.0,
+            "length": 188.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 220
+            "start": 0.0,
+            "end": 220.0
           },
           {
-            "start": 720,
-            "end": 1130
+            "start": 720.0,
+            "end": 1130.0
           },
           {
-            "start": 1530,
-            "end": 1820
+            "start": 1530.0,
+            "end": 1820.0
           },
           {
-            "start": 2308,
-            "end": 2600
+            "start": 2308.0,
+            "end": 2600.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 80,
-            "slope": 15000
+            "start": 0.0,
+            "length": 80.0,
+            "slope": 15000.0
           },
           {
-            "start": 1580,
-            "length": 100,
-            "slope": 15000
+            "start": 1580.0,
+            "length": 100.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -1553,25 +1553,25 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 11500,
         "finishTimeMin": 66.6,
-        "finishTimeMax": 72,
+        "finishTimeMax": 72.0,
         "corners": [
           {
-            "start": 500,
-            "length": 210
+            "start": 500.0,
+            "length": 210.0
           },
           {
-            "start": 710,
-            "length": 145
+            "start": 710.0,
+            "length": 145.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 855,
-            "end": 1150
+            "start": 855.0,
+            "end": 1150.0
           }
         ],
         "slopes": []
@@ -1588,44 +1588,44 @@ internal val rawCourseData = """
         ],
         "laneMax": 11500,
         "finishTimeMin": 101.4,
-        "finishTimeMax": 113,
+        "finishTimeMax": 113.0,
         "corners": [
           {
-            "start": 360,
-            "length": 170
+            "start": 360.0,
+            "length": 170.0
           },
           {
-            "start": 530,
-            "length": 170
+            "start": 530.0,
+            "length": 170.0
           },
           {
-            "start": 1050,
-            "length": 210
+            "start": 1050.0,
+            "length": 210.0
           },
           {
-            "start": 1260,
-            "length": 145
+            "start": 1260.0,
+            "length": 145.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 360
+            "start": 0.0,
+            "end": 360.0
           },
           {
-            "start": 700,
-            "end": 1050
+            "start": 700.0,
+            "end": 1050.0
           },
           {
-            "start": 1405,
-            "end": 1700
+            "start": 1405.0,
+            "end": 1700.0
           }
         ],
         "slopes": [
           {
-            "start": 285,
-            "length": 320,
-            "slope": -10000
+            "start": 285.0,
+            "length": 320.0,
+            "slope": -10000.0
           }
         ]
       },
@@ -1641,49 +1641,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 11500,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 310,
-            "length": 210
+            "start": 310.0,
+            "length": 210.0
           },
           {
-            "start": 520,
-            "length": 160
+            "start": 520.0,
+            "length": 160.0
           },
           {
-            "start": 1060,
-            "length": 170
+            "start": 1060.0,
+            "length": 170.0
           },
           {
-            "start": 1230,
-            "length": 170
+            "start": 1230.0,
+            "length": 170.0
           },
           {
-            "start": 1750,
-            "length": 210
+            "start": 1750.0,
+            "length": 210.0
           },
           {
-            "start": 1960,
-            "length": 145
+            "start": 1960.0,
+            "length": 145.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 310
+            "start": 0.0,
+            "end": 310.0
           },
           {
-            "start": 680,
-            "end": 1060
+            "start": 680.0,
+            "end": 1060.0
           },
           {
-            "start": 1400,
-            "end": 1750
+            "start": 1400.0,
+            "end": 1750.0
           },
           {
-            "start": 2105,
-            "end": 2400
+            "start": 2105.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -1703,33 +1703,33 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 300,
-            "length": 350
+            "start": 300.0,
+            "length": 350.0
           },
           {
-            "start": 650,
-            "length": 240
+            "start": 650.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 890,
-            "end": 1200
+            "start": 890.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 200,
-            "slope": -15000
+            "start": 0.0,
+            "length": 200.0,
+            "slope": -15000.0
           },
           {
-            "start": 1025,
-            "length": 110,
-            "slope": 20000
+            "start": 1025.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -1745,37 +1745,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 50,
-            "length": 450
+            "start": 50.0,
+            "length": 450.0
           },
           {
-            "start": 700,
-            "length": 350
+            "start": 700.0,
+            "length": 350.0
           },
           {
-            "start": 1050,
-            "length": 240
+            "start": 1050.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 1290,
-            "end": 1600
+            "start": 1290.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 300,
-            "length": 300,
-            "slope": -15000
+            "start": 300.0,
+            "length": 300.0,
+            "slope": -15000.0
           },
           {
-            "start": 1425,
-            "length": 110,
-            "slope": 20000
+            "start": 1425.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -1789,59 +1789,59 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 175,
-            "length": 250
+            "start": 175.0,
+            "length": 250.0
           },
           {
-            "start": 425,
-            "length": 250
+            "start": 425.0,
+            "length": 250.0
           },
           {
-            "start": 1000,
-            "length": 250
+            "start": 1000.0,
+            "length": 250.0
           },
           {
-            "start": 1250,
-            "length": 240
+            "start": 1250.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 175
+            "start": 0.0,
+            "end": 175.0
           },
           {
-            "start": 675,
-            "end": 1000
+            "start": 675.0,
+            "end": 1000.0
           },
           {
-            "start": 1490,
-            "end": 1800
+            "start": 1490.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 1,
-            "length": 35,
-            "slope": 20000
+            "start": 1.0,
+            "length": 35.0,
+            "slope": 20000.0
           },
           {
-            "start": 125,
-            "length": 200,
-            "slope": 15000
+            "start": 125.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 425,
-            "length": 400,
-            "slope": -15000
+            "start": 425.0,
+            "length": 400.0,
+            "slope": -15000.0
           },
           {
-            "start": 1625,
-            "length": 110,
-            "slope": 20000
+            "start": 1625.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -1857,59 +1857,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 375,
-            "length": 250
+            "start": 375.0,
+            "length": 250.0
           },
           {
-            "start": 625,
-            "length": 250
+            "start": 625.0,
+            "length": 250.0
           },
           {
-            "start": 1200,
-            "length": 250
+            "start": 1200.0,
+            "length": 250.0
           },
           {
-            "start": 1450,
-            "length": 240
+            "start": 1450.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 375
+            "start": 0.0,
+            "end": 375.0
           },
           {
-            "start": 875,
-            "end": 1200
+            "start": 875.0,
+            "end": 1200.0
           },
           {
-            "start": 1690,
-            "end": 2000
+            "start": 1690.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 325,
-            "length": 200,
-            "slope": 15000
+            "start": 325.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 125,
-            "length": 110,
-            "slope": 20000
+            "start": 125.0,
+            "length": 110.0,
+            "slope": 20000.0
           },
           {
-            "start": 625,
-            "length": 400,
-            "slope": -15000
+            "start": 625.0,
+            "length": 400.0,
+            "slope": -15000.0
           },
           {
-            "start": 1825,
-            "length": 110,
-            "slope": 20000
+            "start": 1825.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -1926,55 +1926,55 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 130.2,
-        "finishTimeMax": 135,
+        "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 403,
-            "length": 247
+            "start": 403.0,
+            "length": 247.0
           },
           {
-            "start": 650,
-            "length": 450
+            "start": 650.0,
+            "length": 450.0
           },
           {
-            "start": 1300,
-            "length": 350
+            "start": 1300.0,
+            "length": 350.0
           },
           {
-            "start": 1650,
-            "length": 240
+            "start": 1650.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 403
+            "start": 0.0,
+            "end": 403.0
           },
           {
-            "start": 1890,
-            "end": 2200
+            "start": 1890.0,
+            "end": 2200.0
           }
         ],
         "slopes": [
           {
-            "start": 153,
-            "length": 110,
-            "slope": 20000
+            "start": 153.0,
+            "length": 110.0,
+            "slope": 20000.0
           },
           {
-            "start": 353,
-            "length": 200,
-            "slope": 15000
+            "start": 353.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 900,
-            "length": 300,
-            "slope": -15000
+            "start": 900.0,
+            "length": 300.0,
+            "slope": -15000.0
           },
           {
-            "start": 2025,
-            "length": 110,
-            "slope": 20000
+            "start": 2025.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -1991,67 +1991,67 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 148.7,
-        "finishTimeMax": 157,
+        "finishTimeMax": 157.0,
         "corners": [
           {
-            "start": 100,
-            "length": 146
+            "start": 100.0,
+            "length": 146.0
           },
           {
-            "start": 246,
-            "length": 250
+            "start": 246.0,
+            "length": 250.0
           },
           {
-            "start": 875,
-            "length": 250
+            "start": 875.0,
+            "length": 250.0
           },
           {
-            "start": 1125,
-            "length": 250
+            "start": 1125.0,
+            "length": 250.0
           },
           {
-            "start": 1700,
-            "length": 250
+            "start": 1700.0,
+            "length": 250.0
           },
           {
-            "start": 1950,
-            "length": 240
+            "start": 1950.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 496,
-            "end": 875
+            "start": 496.0,
+            "end": 875.0
           },
           {
-            "start": 1375,
-            "end": 1700
+            "start": 1375.0,
+            "end": 1700.0
           },
           {
-            "start": 2190,
-            "end": 2500
+            "start": 2190.0,
+            "end": 2500.0
           }
         ],
         "slopes": [
           {
-            "start": 621,
-            "length": 110,
-            "slope": 20000
+            "start": 621.0,
+            "length": 110.0,
+            "slope": 20000.0
           },
           {
-            "start": 825,
-            "length": 200,
-            "slope": 15000
+            "start": 825.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 1125,
-            "length": 400,
-            "slope": -15000
+            "start": 1125.0,
+            "length": 400.0,
+            "slope": -15000.0
           },
           {
-            "start": 2325,
-            "length": 110,
-            "slope": 20000
+            "start": 2325.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -2067,98 +2067,98 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 223.1,
-        "finishTimeMax": 227,
+        "finishTimeMax": 227.0,
         "corners": [
           {
-            "start": 290,
-            "length": 250
+            "start": 290.0,
+            "length": 250.0
           },
           {
-            "start": 540,
-            "length": 250
+            "start": 540.0,
+            "length": 250.0
           },
           {
-            "start": 1115,
-            "length": 250
+            "start": 1115.0,
+            "length": 250.0
           },
           {
-            "start": 1365,
-            "length": 250
+            "start": 1365.0,
+            "length": 250.0
           },
           {
-            "start": 1975,
-            "length": 250
+            "start": 1975.0,
+            "length": 250.0
           },
           {
-            "start": 2225,
-            "length": 250
+            "start": 2225.0,
+            "length": 250.0
           },
           {
-            "start": 2800,
-            "length": 250
+            "start": 2800.0,
+            "length": 250.0
           },
           {
-            "start": 3050,
-            "length": 240
+            "start": 3050.0,
+            "length": 240.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 290
+            "start": 0.0,
+            "end": 290.0
           },
           {
-            "start": 790,
-            "end": 1115
+            "start": 790.0,
+            "end": 1115.0
           },
           {
-            "start": 1615,
-            "end": 1975
+            "start": 1615.0,
+            "end": 1975.0
           },
           {
-            "start": 2475,
-            "end": 2800
+            "start": 2475.0,
+            "end": 2800.0
           },
           {
-            "start": 3290,
-            "end": 3600
+            "start": 3290.0,
+            "end": 3600.0
           }
         ],
         "slopes": [
           {
-            "start": 40,
-            "length": 110,
-            "slope": 20000
+            "start": 40.0,
+            "length": 110.0,
+            "slope": 20000.0
           },
           {
-            "start": 240,
-            "length": 200,
-            "slope": 15000
+            "start": 240.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 540,
-            "length": 400,
-            "slope": -15000
+            "start": 540.0,
+            "length": 400.0,
+            "slope": -15000.0
           },
           {
-            "start": 1740,
-            "length": 110,
-            "slope": 20000
+            "start": 1740.0,
+            "length": 110.0,
+            "slope": 20000.0
           },
           {
-            "start": 1925,
-            "length": 200,
-            "slope": 15000
+            "start": 1925.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 2225,
-            "length": 400,
-            "slope": -15000
+            "start": 2225.0,
+            "length": 400.0,
+            "slope": -15000.0
           },
           {
-            "start": 3425,
-            "length": 110,
-            "slope": 20000
+            "start": 3425.0,
+            "length": 110.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -2173,38 +2173,38 @@ internal val rawCourseData = """
           3
         ],
         "laneMax": 12000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 700,
-            "length": 192
+            "start": 700.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 892,
-            "end": 1200
+            "start": 892.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 175,
-            "length": 175,
-            "slope": -15000
+            "start": 175.0,
+            "length": 175.0,
+            "slope": -15000.0
           },
           {
-            "start": 1000,
-            "length": 175,
-            "slope": 15000
+            "start": 1000.0,
+            "length": 175.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2220,59 +2220,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 350,
-            "length": 200
+            "start": 350.0,
+            "length": 200.0
           },
           {
-            "start": 550,
-            "length": 200
+            "start": 550.0,
+            "length": 200.0
           },
           {
-            "start": 1100,
-            "length": 200
+            "start": 1100.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 192
+            "start": 1300.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 350
+            "start": 0.0,
+            "end": 350.0
           },
           {
-            "start": 750,
-            "end": 1100
+            "start": 750.0,
+            "end": 1100.0
           },
           {
-            "start": 1492,
-            "end": 1800
+            "start": 1492.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 100,
-            "length": 175,
-            "slope": 15000
+            "start": 100.0,
+            "length": 175.0,
+            "slope": 15000.0
           },
           {
-            "start": 350,
-            "length": 175,
-            "slope": 10000
+            "start": 350.0,
+            "length": 175.0,
+            "slope": 10000.0
           },
           {
-            "start": 775,
-            "length": 175,
-            "slope": -15000
+            "start": 775.0,
+            "length": 175.0,
+            "slope": -15000.0
           },
           {
-            "start": 1600,
-            "length": 175,
-            "slope": 15000
+            "start": 1600.0,
+            "length": 175.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2288,49 +2288,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 200,
-            "length": 200
+            "start": 200.0,
+            "length": 200.0
           },
           {
-            "start": 400,
-            "length": 200
+            "start": 400.0,
+            "length": 200.0
           },
           {
-            "start": 950,
-            "length": 200
+            "start": 950.0,
+            "length": 200.0
           },
           {
-            "start": 1150,
-            "length": 200
+            "start": 1150.0,
+            "length": 200.0
           },
           {
-            "start": 1700,
-            "length": 200
+            "start": 1700.0,
+            "length": 200.0
           },
           {
-            "start": 1900,
-            "length": 192
+            "start": 1900.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 200
+            "start": 0.0,
+            "end": 200.0
           },
           {
-            "start": 600,
-            "end": 950
+            "start": 600.0,
+            "end": 950.0
           },
           {
-            "start": 1350,
-            "end": 1700
+            "start": 1350.0,
+            "end": 1700.0
           },
           {
-            "start": 2092,
-            "end": 2400
+            "start": 2092.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -2345,49 +2345,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 159.1,
-        "finishTimeMax": 164,
+        "finishTimeMax": 164.0,
         "corners": [
           {
-            "start": 300,
-            "length": 200
+            "start": 300.0,
+            "length": 200.0
           },
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 1050,
-            "length": 200
+            "start": 1050.0,
+            "length": 200.0
           },
           {
-            "start": 1250,
-            "length": 200
+            "start": 1250.0,
+            "length": 200.0
           },
           {
-            "start": 1800,
-            "length": 200
+            "start": 1800.0,
+            "length": 200.0
           },
           {
-            "start": 2000,
-            "length": 192
+            "start": 2000.0,
+            "length": 192.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 700,
-            "end": 1050
+            "start": 700.0,
+            "end": 1050.0
           },
           {
-            "start": 1450,
-            "end": 1800
+            "start": 1450.0,
+            "end": 1800.0
           },
           {
-            "start": 2192,
-            "end": 2500
+            "start": 2192.0,
+            "end": 2500.0
           }
         ],
         "slopes": []
@@ -2409,43 +2409,43 @@ internal val rawCourseData = """
           3
         ],
         "laneMax": 15000,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 350,
-            "length": 275
+            "start": 350.0,
+            "length": 275.0
           },
           {
-            "start": 625,
-            "length": 250
+            "start": 625.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 350
+            "start": 0.0,
+            "end": 350.0
           },
           {
-            "start": 875,
-            "end": 1400
+            "start": 875.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 125,
-            "length": 75,
-            "slope": 20000
+            "start": 125.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 250,
-            "length": 250,
-            "slope": -15000
+            "start": 250.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 950,
-            "length": 150,
-            "slope": 15000
+            "start": 950.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2462,42 +2462,42 @@ internal val rawCourseData = """
         ],
         "laneMax": 15000,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 550,
-            "length": 275
+            "start": 550.0,
+            "length": 275.0
           },
           {
-            "start": 825,
-            "length": 250
+            "start": 825.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 550
+            "start": 0.0,
+            "end": 550.0
           },
           {
-            "start": 1075,
-            "end": 1600
+            "start": 1075.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 450,
-            "length": 250,
-            "slope": -15000
+            "start": 450.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 325,
-            "length": 75,
-            "slope": 20000
+            "start": 325.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 1150,
-            "length": 150,
-            "slope": 15000
+            "start": 1150.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2513,46 +2513,46 @@ internal val rawCourseData = """
         ],
         "laneMax": 15000,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 75,
-            "length": 250
+            "start": 75.0,
+            "length": 250.0
           },
           {
-            "start": 750,
-            "length": 275
+            "start": 750.0,
+            "length": 275.0
           },
           {
-            "start": 1025,
-            "length": 250
+            "start": 1025.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 325,
-            "end": 750
+            "start": 325.0,
+            "end": 750.0
           },
           {
-            "start": 1275,
-            "end": 1800
+            "start": 1275.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 525,
-            "length": 75,
-            "slope": 20000
+            "start": 525.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 650,
-            "length": 250,
-            "slope": -15000
+            "start": 650.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 1350,
-            "length": 150,
-            "slope": 15000
+            "start": 1350.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2566,46 +2566,46 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 15000,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 200,
-            "length": 200
+            "start": 200.0,
+            "length": 200.0
           },
           {
-            "start": 950,
-            "length": 275
+            "start": 950.0,
+            "length": 275.0
           },
           {
-            "start": 1225,
-            "length": 250
+            "start": 1225.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 400,
-            "end": 950
+            "start": 400.0,
+            "end": 950.0
           },
           {
-            "start": 1475,
-            "end": 2000
+            "start": 1475.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 725,
-            "length": 75,
-            "slope": 20000
+            "start": 725.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 850,
-            "length": 250,
-            "slope": -15000
+            "start": 850.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 1550,
-            "length": 150,
-            "slope": 15000
+            "start": 1550.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2621,54 +2621,54 @@ internal val rawCourseData = """
         ],
         "laneMax": 15000,
         "finishTimeMin": 139.3,
-        "finishTimeMax": 143,
+        "finishTimeMax": 143.0,
         "corners": [
           {
-            "start": 225,
-            "length": 250
+            "start": 225.0,
+            "length": 250.0
           },
           {
-            "start": 475,
-            "length": 325
+            "start": 475.0,
+            "length": 325.0
           },
           {
-            "start": 1250,
-            "length": 275
+            "start": 1250.0,
+            "length": 275.0
           },
           {
-            "start": 1525,
-            "length": 250
+            "start": 1525.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 225
+            "start": 0.0,
+            "end": 225.0
           },
           {
-            "start": 800,
-            "end": 1250
+            "start": 800.0,
+            "end": 1250.0
           },
           {
-            "start": 1775,
-            "end": 2300
+            "start": 1775.0,
+            "end": 2300.0
           }
         ],
         "slopes": [
           {
-            "start": 1025,
-            "length": 75,
-            "slope": 20000
+            "start": 1025.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 1150,
-            "length": 250,
-            "slope": -15000
+            "start": 1150.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 1850,
-            "length": 150,
-            "slope": 15000
+            "start": 1850.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2682,59 +2682,59 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 15000,
         "finishTimeMin": 141.6,
-        "finishTimeMax": 149,
+        "finishTimeMax": 149.0,
         "corners": [
           {
-            "start": 325,
-            "length": 250
+            "start": 325.0,
+            "length": 250.0
           },
           {
-            "start": 575,
-            "length": 325
+            "start": 575.0,
+            "length": 325.0
           },
           {
-            "start": 1350,
-            "length": 275
+            "start": 1350.0,
+            "length": 275.0
           },
           {
-            "start": 1625,
-            "length": 250
+            "start": 1625.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 325
+            "start": 0.0,
+            "end": 325.0
           },
           {
-            "start": 900,
-            "end": 1350
+            "start": 900.0,
+            "end": 1350.0
           },
           {
-            "start": 1875,
-            "end": 2400
+            "start": 1875.0,
+            "end": 2400.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 40,
-            "slope": 15000
+            "start": 0.0,
+            "length": 40.0,
+            "slope": 15000.0
           },
           {
-            "start": 1125,
-            "length": 75,
-            "slope": 20000
+            "start": 1125.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 1250,
-            "length": 250,
-            "slope": -15000
+            "start": 1250.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 1950,
-            "length": 150,
-            "slope": 15000
+            "start": 1950.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2750,59 +2750,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 15000,
         "finishTimeMin": 148.7,
-        "finishTimeMax": 157,
+        "finishTimeMax": 157.0,
         "corners": [
           {
-            "start": 425,
-            "length": 250
+            "start": 425.0,
+            "length": 250.0
           },
           {
-            "start": 675,
-            "length": 325
+            "start": 675.0,
+            "length": 325.0
           },
           {
-            "start": 1450,
-            "length": 275
+            "start": 1450.0,
+            "length": 275.0
           },
           {
-            "start": 1725,
-            "length": 250
+            "start": 1725.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 425
+            "start": 0.0,
+            "end": 425.0
           },
           {
-            "start": 1000,
-            "end": 1450
+            "start": 1000.0,
+            "end": 1450.0
           },
           {
-            "start": 1975,
-            "end": 2500
+            "start": 1975.0,
+            "end": 2500.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 140,
-            "slope": 15000
+            "start": 0.0,
+            "length": 140.0,
+            "slope": 15000.0
           },
           {
-            "start": 1225,
-            "length": 75,
-            "slope": 20000
+            "start": 1225.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 1350,
-            "length": 250,
-            "slope": -15000
+            "start": 1350.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 2050,
-            "length": 150,
-            "slope": 15000
+            "start": 2050.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2816,81 +2816,81 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 15000,
         "finishTimeMin": 209.9,
-        "finishTimeMax": 214,
+        "finishTimeMax": 214.0,
         "corners": [
           {
-            "start": 292,
-            "length": 275
+            "start": 292.0,
+            "length": 275.0
           },
           {
-            "start": 567,
-            "length": 275
+            "start": 567.0,
+            "length": 275.0
           },
           {
-            "start": 1325,
-            "length": 250
+            "start": 1325.0,
+            "length": 250.0
           },
           {
-            "start": 1575,
-            "length": 325
+            "start": 1575.0,
+            "length": 325.0
           },
           {
-            "start": 2350,
-            "length": 275
+            "start": 2350.0,
+            "length": 275.0
           },
           {
-            "start": 2625,
-            "length": 250
+            "start": 2625.0,
+            "length": 250.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 292
+            "start": 0.0,
+            "end": 292.0
           },
           {
-            "start": 842,
-            "end": 1325
+            "start": 842.0,
+            "end": 1325.0
           },
           {
-            "start": 1900,
-            "end": 2350
+            "start": 1900.0,
+            "end": 2350.0
           },
           {
-            "start": 2875,
-            "end": 3400
+            "start": 2875.0,
+            "end": 3400.0
           }
         ],
         "slopes": [
           {
-            "start": 67,
-            "length": 75,
-            "slope": 20000
+            "start": 67.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 192,
-            "length": 250,
-            "slope": -15000
+            "start": 192.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 892,
-            "length": 150,
-            "slope": 15000
+            "start": 892.0,
+            "length": 150.0,
+            "slope": 15000.0
           },
           {
-            "start": 2125,
-            "length": 75,
-            "slope": 20000
+            "start": 2125.0,
+            "length": 75.0,
+            "slope": 20000.0
           },
           {
-            "start": 2250,
-            "length": 250,
-            "slope": -15000
+            "start": 2250.0,
+            "length": 250.0,
+            "slope": -15000.0
           },
           {
-            "start": 2950,
-            "length": 150,
-            "slope": 15000
+            "start": 2950.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2906,37 +2906,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 76.6,
-        "finishTimeMax": 82,
+        "finishTimeMax": 82.0,
         "corners": [
           {
-            "start": 350,
-            "length": 225
+            "start": 350.0,
+            "length": 225.0
           },
           {
-            "start": 575,
-            "length": 224
+            "start": 575.0,
+            "length": 224.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 350
+            "start": 0.0,
+            "end": 350.0
           },
           {
-            "start": 799,
-            "end": 1300
+            "start": 799.0,
+            "end": 1300.0
           }
         ],
         "slopes": [
           {
-            "start": 275,
-            "length": 200,
-            "slope": -10000
+            "start": 275.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 800,
-            "length": 250,
-            "slope": 15000
+            "start": 800.0,
+            "length": 250.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2952,37 +2952,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 80.8,
-        "finishTimeMax": 94,
+        "finishTimeMax": 94.0,
         "corners": [
           {
-            "start": 450,
-            "length": 225
+            "start": 450.0,
+            "length": 225.0
           },
           {
-            "start": 675,
-            "length": 224
+            "start": 675.0,
+            "length": 224.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 450
+            "start": 0.0,
+            "end": 450.0
           },
           {
-            "start": 899,
-            "end": 1400
+            "start": 899.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 375,
-            "length": 200,
-            "slope": -10000
+            "start": 375.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 900,
-            "length": 250,
-            "slope": 15000
+            "start": 900.0,
+            "length": 250.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -2999,37 +2999,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 94.1,
-        "finishTimeMax": 108,
+        "finishTimeMax": 108.0,
         "corners": [
           {
-            "start": 650,
-            "length": 225
+            "start": 650.0,
+            "length": 225.0
           },
           {
-            "start": 875,
-            "length": 224
+            "start": 875.0,
+            "length": 224.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 650
+            "start": 0.0,
+            "end": 650.0
           },
           {
-            "start": 1099,
-            "end": 1600
+            "start": 1099.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 575,
-            "length": 200,
-            "slope": -10000
+            "start": 575.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 1100,
-            "length": 250,
-            "slope": 15000
+            "start": 1100.0,
+            "length": 250.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -3043,49 +3043,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12500,
         "finishTimeMin": 127.4,
-        "finishTimeMax": 133,
+        "finishTimeMax": 133.0,
         "corners": [
           {
-            "start": 200,
-            "length": 250
+            "start": 200.0,
+            "length": 250.0
           },
           {
-            "start": 450,
-            "length": 250
+            "start": 450.0,
+            "length": 250.0
           },
           {
-            "start": 1150,
-            "length": 225
+            "start": 1150.0,
+            "length": 225.0
           },
           {
-            "start": 1375,
-            "length": 224
+            "start": 1375.0,
+            "length": 224.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 200
+            "start": 0.0,
+            "end": 200.0
           },
           {
-            "start": 700,
-            "end": 1150
+            "start": 700.0,
+            "end": 1150.0
           },
           {
-            "start": 1599,
-            "end": 2100
+            "start": 1599.0,
+            "end": 2100.0
           }
         ],
         "slopes": [
           {
-            "start": 1075,
-            "length": 200,
-            "slope": -10000
+            "start": 1075.0,
+            "length": 200.0,
+            "slope": -10000.0
           },
           {
-            "start": 1600,
-            "length": 250,
-            "slope": 15000
+            "start": 1600.0,
+            "length": 250.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -3101,41 +3101,41 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 500,
-            "length": 250
+            "start": 500.0,
+            "length": 250.0
           },
           {
-            "start": 750,
-            "length": 250
+            "start": 750.0,
+            "length": 250.0
           },
           {
-            "start": 1450,
-            "length": 225
+            "start": 1450.0,
+            "length": 225.0
           },
           {
-            "start": 1675,
-            "length": 225
+            "start": 1675.0,
+            "length": 225.0
           },
           {
-            "start": 2348,
-            "length": 500
+            "start": 2348.0,
+            "length": 500.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 1000,
-            "end": 1450
+            "start": 1000.0,
+            "end": 1450.0
           },
           {
-            "start": 1900,
-            "end": 2400
+            "start": 1900.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -3155,37 +3155,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14400,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 300,
-            "length": 250
+            "start": 300.0,
+            "length": 250.0
           },
           {
-            "start": 550,
-            "length": 238
+            "start": 550.0,
+            "length": 238.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 788,
-            "end": 1200
+            "start": 788.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 100,
-            "length": 775,
-            "slope": -10000
+            "start": 100.0,
+            "length": 775.0,
+            "slope": -10000.0
           },
           {
-            "start": 875,
-            "length": 100,
-            "slope": 20000
+            "start": 875.0,
+            "length": 100.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -3198,38 +3198,38 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 14400,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 500,
-            "length": 250
+            "start": 500.0,
+            "length": 250.0
           },
           {
-            "start": 750,
-            "length": 238
+            "start": 750.0,
+            "length": 238.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 988,
-            "end": 1400
+            "start": 988.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 300,
-            "length": 775,
-            "slope": -10000
+            "start": 300.0,
+            "length": 775.0,
+            "slope": -10000.0
           },
           {
-            "start": 1075,
-            "length": 100,
-            "slope": 20000
+            "start": 1075.0,
+            "length": 100.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -3245,41 +3245,41 @@ internal val rawCourseData = """
         ],
         "laneMax": 14400,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 150,
-            "length": 150
+            "start": 150.0,
+            "length": 150.0
           },
           {
-            "start": 700,
-            "length": 250
+            "start": 700.0,
+            "length": 250.0
           },
           {
-            "start": 950,
-            "length": 238
+            "start": 950.0,
+            "length": 238.0
           }
         ],
         "straights": [
           {
-            "start": 300,
-            "end": 700
+            "start": 300.0,
+            "end": 700.0
           },
           {
-            "start": 1188,
-            "end": 1600
+            "start": 1188.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 500,
-            "length": 775,
-            "slope": -10000
+            "start": 500.0,
+            "length": 775.0,
+            "slope": -10000.0
           },
           {
-            "start": 1275,
-            "length": 100,
-            "slope": 20000
+            "start": 1275.0,
+            "length": 100.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -3293,54 +3293,54 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14400,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 300,
-            "length": 200
+            "start": 300.0,
+            "length": 200.0
           },
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 1100,
-            "length": 250
+            "start": 1100.0,
+            "length": 250.0
           },
           {
-            "start": 1350,
-            "length": 238
+            "start": 1350.0,
+            "length": 238.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1588,
-            "end": 2000
+            "start": 1588.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 50,
-            "slope": 20000
+            "start": 0.0,
+            "length": 50.0,
+            "slope": 20000.0
           },
           {
-            "start": 900,
-            "length": 775,
-            "slope": -10000
+            "start": 900.0,
+            "length": 775.0,
+            "slope": -10000.0
           },
           {
-            "start": 1675,
-            "length": 100,
-            "slope": 20000
+            "start": 1675.0,
+            "length": 100.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -3356,59 +3356,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 14400,
         "finishTimeMin": 130.2,
-        "finishTimeMax": 135,
+        "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 700,
-            "length": 200
+            "start": 700.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 250
+            "start": 1300.0,
+            "length": 250.0
           },
           {
-            "start": 1550,
-            "length": 238
+            "start": 1550.0,
+            "length": 238.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 900,
-            "end": 1300
+            "start": 900.0,
+            "end": 1300.0
           },
           {
-            "start": 1788,
-            "end": 2200
+            "start": 1788.0,
+            "end": 2200.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 150,
-            "slope": -10000
+            "start": 0.0,
+            "length": 150.0,
+            "slope": -10000.0
           },
           {
-            "start": 150,
-            "length": 100,
-            "slope": 20000
+            "start": 150.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 1100,
-            "length": 775,
-            "slope": -10000
+            "start": 1100.0,
+            "length": 775.0,
+            "slope": -10000.0
           },
           {
-            "start": 1875,
-            "length": 100,
-            "slope": 20000
+            "start": 1875.0,
+            "length": 100.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -3421,26 +3421,26 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 13000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 400,
-            "length": 200
+            "start": 400.0,
+            "length": 200.0
           },
           {
-            "start": 600,
-            "length": 190
+            "start": 600.0,
+            "length": 190.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 790,
-            "end": 1200
+            "start": 790.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -3455,37 +3455,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 80.8,
-        "finishTimeMax": 94,
+        "finishTimeMax": 94.0,
         "corners": [
           {
-            "start": 600,
-            "length": 200
+            "start": 600.0,
+            "length": 200.0
           },
           {
-            "start": 800,
-            "length": 190
+            "start": 800.0,
+            "length": 190.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 600
+            "start": 0.0,
+            "end": 600.0
           },
           {
-            "start": 990,
-            "end": 1400
+            "start": 990.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 425,
-            "length": 600,
-            "slope": -15000
+            "start": 425.0,
+            "length": 600.0,
+            "slope": -15000.0
           },
           {
-            "start": 1025,
-            "length": 150,
-            "slope": 15000
+            "start": 1025.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -3501,54 +3501,54 @@ internal val rawCourseData = """
         ],
         "laneMax": 13000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 270,
-            "length": 165
+            "start": 270.0,
+            "length": 165.0
           },
           {
-            "start": 435,
-            "length": 165
+            "start": 435.0,
+            "length": 165.0
           },
           {
-            "start": 1000,
-            "length": 200
+            "start": 1000.0,
+            "length": 200.0
           },
           {
-            "start": 1200,
-            "length": 190
+            "start": 1200.0,
+            "length": 190.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 270
+            "start": 0.0,
+            "end": 270.0
           },
           {
-            "start": 600,
-            "end": 1000
+            "start": 600.0,
+            "end": 1000.0
           },
           {
-            "start": 1390,
-            "end": 1800
+            "start": 1390.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 50,
-            "slope": 15000
+            "start": 0.0,
+            "length": 50.0,
+            "slope": 15000.0
           },
           {
-            "start": 825,
-            "length": 600,
-            "slope": -15000
+            "start": 825.0,
+            "length": 600.0,
+            "slope": -15000.0
           },
           {
-            "start": 1425,
-            "length": 150,
-            "slope": 15000
+            "start": 1425.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -3562,37 +3562,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 114.2,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 370,
-            "length": 165
+            "start": 370.0,
+            "length": 165.0
           },
           {
-            "start": 535,
-            "length": 165
+            "start": 535.0,
+            "length": 165.0
           },
           {
-            "start": 1100,
-            "length": 200
+            "start": 1100.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 190
+            "start": 1300.0,
+            "length": 190.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1490,
-            "end": 1900
+            "start": 1490.0,
+            "end": 1900.0
           }
         ],
         "slopes": []
@@ -3612,37 +3612,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14100,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 320,
-            "length": 275
+            "start": 320.0,
+            "length": 275.0
           },
           {
-            "start": 595,
-            "length": 277
+            "start": 595.0,
+            "length": 277.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 320
+            "start": 0.0,
+            "end": 320.0
           },
           {
-            "start": 872,
-            "end": 1200
+            "start": 872.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 120,
-            "length": 175,
-            "slope": 15000
+            "start": 120.0,
+            "length": 175.0,
+            "slope": 15000.0
           },
           {
-            "start": 420,
-            "length": 150,
-            "slope": -15000
+            "start": 420.0,
+            "length": 150.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -3655,38 +3655,38 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 14100,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 520,
-            "length": 275
+            "start": 520.0,
+            "length": 275.0
           },
           {
-            "start": 795,
-            "length": 277
+            "start": 795.0,
+            "length": 277.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 520
+            "start": 0.0,
+            "end": 520.0
           },
           {
-            "start": 1072,
-            "end": 1400
+            "start": 1072.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 320,
-            "length": 175,
-            "slope": 15000
+            "start": 320.0,
+            "length": 175.0,
+            "slope": 15000.0
           },
           {
-            "start": 620,
-            "length": 150,
-            "slope": -15000
+            "start": 620.0,
+            "length": 150.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -3699,43 +3699,43 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 14100,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 500,
-            "length": 250
+            "start": 500.0,
+            "length": 250.0
           },
           {
-            "start": 750,
-            "length": 247
+            "start": 750.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 997,
-            "end": 1400
+            "start": 997.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 250,
-            "length": 100,
-            "slope": 20000
+            "start": 250.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 350,
-            "length": 225,
-            "slope": 10000
+            "start": 350.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 575,
-            "length": 150,
-            "slope": -20000
+            "start": 575.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -3751,37 +3751,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 720,
-            "length": 275
+            "start": 720.0,
+            "length": 275.0
           },
           {
-            "start": 995,
-            "length": 277
+            "start": 995.0,
+            "length": 277.0
           }
         ],
         "straights": [
           {
-            "start": 200,
-            "end": 720
+            "start": 200.0,
+            "end": 720.0
           },
           {
-            "start": 1272,
-            "end": 1600
+            "start": 1272.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 520,
-            "length": 175,
-            "slope": 15000
+            "start": 520.0,
+            "length": 175.0,
+            "slope": 15000.0
           },
           {
-            "start": 820,
-            "length": 150,
-            "slope": -15000
+            "start": 820.0,
+            "length": 150.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -3797,42 +3797,42 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 700,
-            "length": 250
+            "start": 700.0,
+            "length": 250.0
           },
           {
-            "start": 950,
-            "length": 247
+            "start": 950.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 200,
-            "end": 700
+            "start": 200.0,
+            "end": 700.0
           },
           {
-            "start": 1197,
-            "end": 1600
+            "start": 1197.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 450,
-            "length": 100,
-            "slope": 20000
+            "start": 450.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 550,
-            "length": 225,
-            "slope": 10000
+            "start": 550.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 775,
-            "length": 150,
-            "slope": -20000
+            "start": 775.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -3846,42 +3846,42 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14100,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 900,
-            "length": 250
+            "start": 900.0,
+            "length": 250.0
           },
           {
-            "start": 1150,
-            "length": 247
+            "start": 1150.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 400,
-            "end": 900
+            "start": 400.0,
+            "end": 900.0
           },
           {
-            "start": 1397,
-            "end": 1800
+            "start": 1397.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 650,
-            "length": 100,
-            "slope": 20000
+            "start": 650.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 750,
-            "length": 225,
-            "slope": 10000
+            "start": 750.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 975,
-            "length": 150,
-            "slope": -20000
+            "start": 975.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -3897,49 +3897,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 400,
-            "length": 185
+            "start": 400.0,
+            "length": 185.0
           },
           {
-            "start": 585,
-            "length": 185
+            "start": 585.0,
+            "length": 185.0
           },
           {
-            "start": 1120,
-            "length": 275
+            "start": 1120.0,
+            "length": 275.0
           },
           {
-            "start": 1395,
-            "length": 277
+            "start": 1395.0,
+            "length": 277.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 770,
-            "end": 1120
+            "start": 770.0,
+            "end": 1120.0
           },
           {
-            "start": 1672,
-            "end": 2000
+            "start": 1672.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 970,
-            "length": 175,
-            "slope": 15000
+            "start": 970.0,
+            "length": 175.0,
+            "slope": 15000.0
           },
           {
-            "start": 1270,
-            "length": 150,
-            "slope": -15000
+            "start": 1270.0,
+            "length": 150.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -3955,54 +3955,54 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 130.2,
-        "finishTimeMax": 135,
+        "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 400,
-            "length": 200
+            "start": 400.0,
+            "length": 200.0
           },
           {
-            "start": 600,
-            "length": 200
+            "start": 600.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 250
+            "start": 1300.0,
+            "length": 250.0
           },
           {
-            "start": 1550,
-            "length": 247
+            "start": 1550.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 800,
-            "end": 1300
+            "start": 800.0,
+            "end": 1300.0
           },
           {
-            "start": 1797,
-            "end": 2200
+            "start": 1797.0,
+            "end": 2200.0
           }
         ],
         "slopes": [
           {
-            "start": 1050,
-            "length": 100,
-            "slope": 20000
+            "start": 1050.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 1150,
-            "length": 225,
-            "slope": 10000
+            "start": 1150.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 1375,
-            "length": 150,
-            "slope": -20000
+            "start": 1375.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -4018,54 +4018,54 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 141.6,
-        "finishTimeMax": 149,
+        "finishTimeMax": 149.0,
         "corners": [
           {
-            "start": 600,
-            "length": 200
+            "start": 600.0,
+            "length": 200.0
           },
           {
-            "start": 800,
-            "length": 200
+            "start": 800.0,
+            "length": 200.0
           },
           {
-            "start": 1500,
-            "length": 250
+            "start": 1500.0,
+            "length": 250.0
           },
           {
-            "start": 1750,
-            "length": 247
+            "start": 1750.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 600
+            "start": 0.0,
+            "end": 600.0
           },
           {
-            "start": 1000,
-            "end": 1500
+            "start": 1000.0,
+            "end": 1500.0
           },
           {
-            "start": 1997,
-            "end": 2400
+            "start": 1997.0,
+            "end": 2400.0
           }
         ],
         "slopes": [
           {
-            "start": 1350,
-            "length": 225,
-            "slope": 10000
+            "start": 1350.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 1250,
-            "length": 100,
-            "slope": 20000
+            "start": 1250.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 1575,
-            "length": 150,
-            "slope": -20000
+            "start": 1575.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -4082,81 +4082,81 @@ internal val rawCourseData = """
         ],
         "laneMax": 14100,
         "finishTimeMin": 181.5,
-        "finishTimeMax": 190,
+        "finishTimeMax": 190.0,
         "corners": [
           {
-            "start": 261,
-            "length": 250
+            "start": 261.0,
+            "length": 250.0
           },
           {
-            "start": 511,
-            "length": 250
+            "start": 511.0,
+            "length": 250.0
           },
           {
-            "start": 1250,
-            "length": 200
+            "start": 1250.0,
+            "length": 200.0
           },
           {
-            "start": 1450,
-            "length": 200
+            "start": 1450.0,
+            "length": 200.0
           },
           {
-            "start": 2100,
-            "length": 250
+            "start": 2100.0,
+            "length": 250.0
           },
           {
-            "start": 2350,
-            "length": 247
+            "start": 2350.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 261
+            "start": 0.0,
+            "end": 261.0
           },
           {
-            "start": 761,
-            "end": 1250
+            "start": 761.0,
+            "end": 1250.0
           },
           {
-            "start": 1650,
-            "end": 2100
+            "start": 1650.0,
+            "end": 2100.0
           },
           {
-            "start": 2597,
-            "end": 3000
+            "start": 2597.0,
+            "end": 3000.0
           }
         ],
         "slopes": [
           {
-            "start": 11,
-            "length": 100,
-            "slope": 20000
+            "start": 11.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 111,
-            "length": 225,
-            "slope": 10000
+            "start": 111.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 336,
-            "length": 150,
-            "slope": -20000
+            "start": 336.0,
+            "length": 150.0,
+            "slope": -20000.0
           },
           {
-            "start": 1950,
-            "length": 225,
-            "slope": 10000
+            "start": 1950.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 1850,
-            "length": 100,
-            "slope": 20000
+            "start": 1850.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 2175,
-            "length": 150,
-            "slope": -20000
+            "start": 2175.0,
+            "length": 150.0,
+            "slope": -20000.0
           }
         ]
       },
@@ -4169,82 +4169,82 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 14100,
-        "finishTimeMin": 193,
-        "finishTimeMax": 204,
+        "finishTimeMin": 193.0,
+        "finishTimeMax": 204.0,
         "corners": [
           {
-            "start": 458,
-            "length": 250
+            "start": 458.0,
+            "length": 250.0
           },
           {
-            "start": 708,
-            "length": 250
+            "start": 708.0,
+            "length": 250.0
           },
           {
-            "start": 1450,
-            "length": 200
+            "start": 1450.0,
+            "length": 200.0
           },
           {
-            "start": 1650,
-            "length": 200
+            "start": 1650.0,
+            "length": 200.0
           },
           {
-            "start": 2300,
-            "length": 250
+            "start": 2300.0,
+            "length": 250.0
           },
           {
-            "start": 2550,
-            "length": 247
+            "start": 2550.0,
+            "length": 247.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 458
+            "start": 0.0,
+            "end": 458.0
           },
           {
-            "start": 958,
-            "end": 1450
+            "start": 958.0,
+            "end": 1450.0
           },
           {
-            "start": 1850,
-            "end": 2300
+            "start": 1850.0,
+            "end": 2300.0
           },
           {
-            "start": 2797,
-            "end": 3200
+            "start": 2797.0,
+            "end": 3200.0
           }
         ],
         "slopes": [
           {
-            "start": 208,
-            "length": 100,
-            "slope": 20000
+            "start": 208.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 308,
-            "length": 225,
-            "slope": 10000
+            "start": 308.0,
+            "length": 225.0,
+            "slope": 10000.0
           },
           {
-            "start": 533,
-            "length": 150,
-            "slope": -20000
+            "start": 533.0,
+            "length": 150.0,
+            "slope": -20000.0
           },
           {
-            "start": 2050,
-            "length": 100,
-            "slope": 20000
+            "start": 2050.0,
+            "length": 100.0,
+            "slope": 20000.0
           },
           {
-            "start": 2375,
-            "length": 150,
-            "slope": -20000
+            "start": 2375.0,
+            "length": 150.0,
+            "slope": -20000.0
           },
           {
-            "start": 2150,
-            "length": 225,
-            "slope": 10000
+            "start": 2150.0,
+            "length": 225.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -4257,38 +4257,38 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 13000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 400,
-            "length": 225
+            "start": 400.0,
+            "length": 225.0
           },
           {
-            "start": 625,
-            "length": 246
+            "start": 625.0,
+            "length": 246.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 871,
-            "end": 1200
+            "start": 871.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 175,
-            "length": 200,
-            "slope": 15000
+            "start": 175.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 475,
-            "length": 200,
-            "slope": -15000
+            "start": 475.0,
+            "length": 200.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -4302,37 +4302,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 80.8,
-        "finishTimeMax": 94,
+        "finishTimeMax": 94.0,
         "corners": [
           {
-            "start": 600,
-            "length": 225
+            "start": 600.0,
+            "length": 225.0
           },
           {
-            "start": 825,
-            "length": 246
+            "start": 825.0,
+            "length": 246.0
           }
         ],
         "straights": [
           {
-            "start": 100,
-            "end": 600
+            "start": 100.0,
+            "end": 600.0
           },
           {
-            "start": 1071,
-            "end": 1400
+            "start": 1071.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 375,
-            "length": 200,
-            "slope": 15000
+            "start": 375.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 675,
-            "length": 200,
-            "slope": -15000
+            "start": 675.0,
+            "length": 200.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -4346,49 +4346,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 300,
-            "length": 150
+            "start": 300.0,
+            "length": 150.0
           },
           {
-            "start": 450,
-            "length": 150
+            "start": 450.0,
+            "length": 150.0
           },
           {
-            "start": 1000,
-            "length": 225
+            "start": 1000.0,
+            "length": 225.0
           },
           {
-            "start": 1225,
-            "length": 246
+            "start": 1225.0,
+            "length": 246.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 600,
-            "end": 1000
+            "start": 600.0,
+            "end": 1000.0
           },
           {
-            "start": 1471,
-            "end": 1800
+            "start": 1471.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 775,
-            "length": 200,
-            "slope": 15000
+            "start": 775.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 1075,
-            "length": 200,
-            "slope": -15000
+            "start": 1075.0,
+            "length": 200.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -4402,49 +4402,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 13000,
         "finishTimeMin": 114.2,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 400,
-            "length": 150
+            "start": 400.0,
+            "length": 150.0
           },
           {
-            "start": 550,
-            "length": 150
+            "start": 550.0,
+            "length": 150.0
           },
           {
-            "start": 1100,
-            "length": 225
+            "start": 1100.0,
+            "length": 225.0
           },
           {
-            "start": 1325,
-            "length": 246
+            "start": 1325.0,
+            "length": 246.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1571,
-            "end": 1900
+            "start": 1571.0,
+            "end": 1900.0
           }
         ],
         "slopes": [
           {
-            "start": 875,
-            "length": 200,
-            "slope": 15000
+            "start": 875.0,
+            "length": 200.0,
+            "slope": 15000.0
           },
           {
-            "start": 1175,
-            "length": 200,
-            "slope": -15000
+            "start": 1175.0,
+            "length": 200.0,
+            "slope": -15000.0
           }
         ]
       }
@@ -4463,37 +4463,37 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12500,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 250,
-            "length": 300
+            "start": 250.0,
+            "length": 300.0
           },
           {
-            "start": 550,
-            "length": 294
+            "start": 550.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 250
+            "start": 0.0,
+            "end": 250.0
           },
           {
-            "start": 844,
-            "end": 1200
+            "start": 844.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 400,
-            "length": 595,
-            "slope": -10000
+            "start": 400.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 1000,
-            "length": 125,
-            "slope": 20000
+            "start": 1000.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4506,38 +4506,38 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 12500,
-        "finishTimeMin": 80,
-        "finishTimeMax": 84,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
         "corners": [
           {
-            "start": 450,
-            "length": 300
+            "start": 450.0,
+            "length": 300.0
           },
           {
-            "start": 750,
-            "length": 294
+            "start": 750.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 450
+            "start": 0.0,
+            "end": 450.0
           },
           {
-            "start": 1044,
-            "end": 1400
+            "start": 1044.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 600,
-            "length": 595,
-            "slope": -10000
+            "start": 600.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 1200,
-            "length": 125,
-            "slope": 20000
+            "start": 1200.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4553,37 +4553,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 90.8,
-        "finishTimeMax": 95,
+        "finishTimeMax": 95.0,
         "corners": [
           {
-            "start": 450,
-            "length": 350
+            "start": 450.0,
+            "length": 350.0
           },
           {
-            "start": 800,
-            "length": 327
+            "start": 800.0,
+            "length": 327.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 450
+            "start": 0.0,
+            "end": 450.0
           },
           {
-            "start": 1127,
-            "end": 1600
+            "start": 1127.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 950,
-            "length": 400,
-            "slope": -10000
+            "start": 950.0,
+            "length": 400.0,
+            "slope": -10000.0
           },
           {
-            "start": 1405,
-            "length": 120,
-            "slope": 20000
+            "start": 1405.0,
+            "length": 120.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4599,37 +4599,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 650,
-            "length": 350
+            "start": 650.0,
+            "length": 350.0
           },
           {
-            "start": 1000,
-            "length": 327
+            "start": 1000.0,
+            "length": 327.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 650
+            "start": 0.0,
+            "end": 650.0
           },
           {
-            "start": 1327,
-            "end": 1800
+            "start": 1327.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 1150,
-            "length": 400,
-            "slope": -10000
+            "start": 1150.0,
+            "length": 400.0,
+            "slope": -10000.0
           },
           {
-            "start": 1605,
-            "length": 120,
-            "slope": 20000
+            "start": 1605.0,
+            "length": 120.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4645,59 +4645,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 370,
-            "length": 190
+            "start": 370.0,
+            "length": 190.0
           },
           {
-            "start": 560,
-            "length": 190
+            "start": 560.0,
+            "length": 190.0
           },
           {
-            "start": 1050,
-            "length": 300
+            "start": 1050.0,
+            "length": 300.0
           },
           {
-            "start": 1350,
-            "length": 294
+            "start": 1350.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 750,
-            "end": 1050
+            "start": 750.0,
+            "end": 1050.0
           },
           {
-            "start": 1644,
-            "end": 2000
+            "start": 1644.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 140,
-            "slope": -10000
+            "start": 0.0,
+            "length": 140.0,
+            "slope": -10000.0
           },
           {
-            "start": 145,
-            "length": 125,
-            "slope": 20000
+            "start": 145.0,
+            "length": 125.0,
+            "slope": 20000.0
           },
           {
-            "start": 1200,
-            "length": 595,
-            "slope": -10000
+            "start": 1200.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 1800,
-            "length": 125,
-            "slope": 20000
+            "start": 1800.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4713,59 +4713,59 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 130.2,
-        "finishTimeMax": 135,
+        "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 520,
-            "length": 190
+            "start": 520.0,
+            "length": 190.0
           },
           {
-            "start": 710,
-            "length": 190
+            "start": 710.0,
+            "length": 190.0
           },
           {
-            "start": 1250,
-            "length": 300
+            "start": 1250.0,
+            "length": 300.0
           },
           {
-            "start": 1550,
-            "length": 294
+            "start": 1550.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 520
+            "start": 0.0,
+            "end": 520.0
           },
           {
-            "start": 900,
-            "end": 1250
+            "start": 900.0,
+            "end": 1250.0
           },
           {
-            "start": 1844,
-            "end": 2200
+            "start": 1844.0,
+            "end": 2200.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 290,
-            "slope": -10000
+            "start": 0.0,
+            "length": 290.0,
+            "slope": -10000.0
           },
           {
-            "start": 295,
-            "length": 125,
-            "slope": 20000
+            "start": 295.0,
+            "length": 125.0,
+            "slope": 20000.0
           },
           {
-            "start": 1400,
-            "length": 595,
-            "slope": -10000
+            "start": 1400.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 2000,
-            "length": 125,
-            "slope": 20000
+            "start": 2000.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4781,55 +4781,55 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 141.6,
-        "finishTimeMax": 149,
+        "finishTimeMax": 149.0,
         "corners": [
           {
-            "start": 382,
-            "length": 190
+            "start": 382.0,
+            "length": 190.0
           },
           {
-            "start": 558,
-            "length": 190
+            "start": 558.0,
+            "length": 190.0
           },
           {
-            "start": 1250,
-            "length": 350
+            "start": 1250.0,
+            "length": 350.0
           },
           {
-            "start": 1600,
-            "length": 327
+            "start": 1600.0,
+            "length": 327.0
           }
         ],
         "straights": [
           {
-            "start": 750,
-            "end": 1250
+            "start": 750.0,
+            "end": 1250.0
           },
           {
-            "start": 1927,
-            "end": 2400
+            "start": 1927.0,
+            "end": 2400.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 132,
-            "slope": -10000
+            "start": 0.0,
+            "length": 132.0,
+            "slope": -10000.0
           },
           {
-            "start": 187,
-            "length": 120,
-            "slope": 20000
+            "start": 187.0,
+            "length": 120.0,
+            "slope": 20000.0
           },
           {
-            "start": 1750,
-            "length": 400,
-            "slope": -10000
+            "start": 1750.0,
+            "length": 400.0,
+            "slope": -10000.0
           },
           {
-            "start": 2205,
-            "length": 120,
-            "slope": 20000
+            "start": 2205.0,
+            "length": 120.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4843,59 +4843,59 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12500,
         "finishTimeMin": 157.6,
-        "finishTimeMax": 165,
+        "finishTimeMax": 165.0,
         "corners": [
           {
-            "start": 570,
-            "length": 190
+            "start": 570.0,
+            "length": 190.0
           },
           {
-            "start": 760,
-            "length": 190
+            "start": 760.0,
+            "length": 190.0
           },
           {
-            "start": 1450,
-            "length": 350
+            "start": 1450.0,
+            "length": 350.0
           },
           {
-            "start": 1800,
-            "length": 327
+            "start": 1800.0,
+            "length": 327.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 570
+            "start": 0.0,
+            "end": 570.0
           },
           {
-            "start": 950,
-            "end": 1450
+            "start": 950.0,
+            "end": 1450.0
           },
           {
-            "start": 2127,
-            "end": 2600
+            "start": 2127.0,
+            "end": 2600.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 315,
-            "slope": -10000
+            "start": 0.0,
+            "length": 315.0,
+            "slope": -10000.0
           },
           {
-            "start": 370,
-            "length": 120,
-            "slope": 20000
+            "start": 370.0,
+            "length": 120.0,
+            "slope": 20000.0
           },
           {
-            "start": 1950,
-            "length": 400,
-            "slope": -10000
+            "start": 1950.0,
+            "length": 400.0,
+            "slope": -10000.0
           },
           {
-            "start": 2405,
-            "length": 120,
-            "slope": 20000
+            "start": 2405.0,
+            "length": 120.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4911,71 +4911,71 @@ internal val rawCourseData = """
         ],
         "laneMax": 12500,
         "finishTimeMin": 181.5,
-        "finishTimeMax": 190,
+        "finishTimeMax": 190.0,
         "corners": [
           {
-            "start": 348,
-            "length": 300
+            "start": 348.0,
+            "length": 300.0
           },
           {
-            "start": 648,
-            "length": 300
+            "start": 648.0,
+            "length": 300.0
           },
           {
-            "start": 1320,
-            "length": 190
+            "start": 1320.0,
+            "length": 190.0
           },
           {
-            "start": 1510,
-            "length": 190
+            "start": 1510.0,
+            "length": 190.0
           },
           {
-            "start": 2050,
-            "length": 300
+            "start": 2050.0,
+            "length": 300.0
           },
           {
-            "start": 2350,
-            "length": 294
+            "start": 2350.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 348
+            "start": 0.0,
+            "end": 348.0
           },
           {
-            "start": 948,
-            "end": 1320
+            "start": 948.0,
+            "end": 1320.0
           },
           {
-            "start": 1700,
-            "end": 2050
+            "start": 1700.0,
+            "end": 2050.0
           },
           {
-            "start": 2644,
-            "end": 3000
+            "start": 2644.0,
+            "end": 3000.0
           }
         ],
         "slopes": [
           {
-            "start": 498,
-            "length": 595,
-            "slope": -10000
+            "start": 498.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 1095,
-            "length": 125,
-            "slope": 20000
+            "start": 1095.0,
+            "length": 125.0,
+            "slope": 20000.0
           },
           {
-            "start": 2200,
-            "length": 595,
-            "slope": -10000
+            "start": 2200.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 2800,
-            "length": 125,
-            "slope": 20000
+            "start": 2800.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       },
@@ -4988,26 +4988,26 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 12000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 350,
-            "length": 250
+            "start": 350.0,
+            "length": 250.0
           },
           {
-            "start": 600,
-            "length": 248
+            "start": 600.0,
+            "length": 248.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 350
+            "start": 0.0,
+            "end": 350.0
           },
           {
-            "start": 848,
-            "end": 1200
+            "start": 848.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -5022,32 +5022,32 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 80.8,
-        "finishTimeMax": 94,
+        "finishTimeMax": 94.0,
         "corners": [
           {
-            "start": 550,
-            "length": 250
+            "start": 550.0,
+            "length": 250.0
           },
           {
-            "start": 800,
-            "length": 248
+            "start": 800.0,
+            "length": 248.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 550
+            "start": 0.0,
+            "end": 550.0
           },
           {
-            "start": 1048,
-            "end": 1400
+            "start": 1048.0,
+            "end": 1400.0
           }
         ],
         "slopes": [
           {
-            "start": 1200,
-            "length": 125,
-            "slope": 15000
+            "start": 1200.0,
+            "length": 125.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5061,49 +5061,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 330,
-            "length": 150
+            "start": 330.0,
+            "length": 150.0
           },
           {
-            "start": 480,
-            "length": 150
+            "start": 480.0,
+            "length": 150.0
           },
           {
-            "start": 950,
-            "length": 250
+            "start": 950.0,
+            "length": 250.0
           },
           {
-            "start": 1200,
-            "length": 248
+            "start": 1200.0,
+            "length": 248.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 330
+            "start": 0.0,
+            "end": 330.0
           },
           {
-            "start": 630,
-            "end": 950
+            "start": 630.0,
+            "end": 950.0
           },
           {
-            "start": 1448,
-            "end": 1800
+            "start": 1448.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 105,
-            "length": 125,
-            "slope": 15000
+            "start": 105.0,
+            "length": 125.0,
+            "slope": 15000.0
           },
           {
-            "start": 1599,
-            "length": 125,
-            "slope": 15000
+            "start": 1599.0,
+            "length": 125.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5120,49 +5120,49 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 121.9,
-        "finishTimeMax": 129,
+        "finishTimeMax": 129.0,
         "corners": [
           {
-            "start": 500,
-            "length": 150
+            "start": 500.0,
+            "length": 150.0
           },
           {
-            "start": 650,
-            "length": 150
+            "start": 650.0,
+            "length": 150.0
           },
           {
-            "start": 1150,
-            "length": 250
+            "start": 1150.0,
+            "length": 250.0
           },
           {
-            "start": 1400,
-            "length": 248
+            "start": 1400.0,
+            "length": 248.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 800,
-            "end": 1150
+            "start": 800.0,
+            "end": 1150.0
           },
           {
-            "start": 1648,
-            "end": 2000
+            "start": 1648.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 275,
-            "length": 125,
-            "slope": 15000
+            "start": 275.0,
+            "length": 125.0,
+            "slope": 15000.0
           },
           {
-            "start": 1800,
-            "length": 125,
-            "slope": 15000
+            "start": 1800.0,
+            "length": 125.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5175,72 +5175,72 @@ internal val rawCourseData = """
         "turn": 1,
         "courseSetStatus": [],
         "laneMax": 12500,
-        "finishTimeMin": 193,
-        "finishTimeMax": 204,
+        "finishTimeMin": 193.0,
+        "finishTimeMax": 204.0,
         "corners": [
           {
-            "start": 370,
-            "length": 350
+            "start": 370.0,
+            "length": 350.0
           },
           {
-            "start": 720,
-            "length": 350
+            "start": 720.0,
+            "length": 350.0
           },
           {
-            "start": 1520,
-            "length": 190
+            "start": 1520.0,
+            "length": 190.0
           },
           {
-            "start": 1710,
-            "length": 190
+            "start": 1710.0,
+            "length": 190.0
           },
           {
-            "start": 2250,
-            "length": 300
+            "start": 2250.0,
+            "length": 300.0
           },
           {
-            "start": 2550,
-            "length": 294
+            "start": 2550.0,
+            "length": 294.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 1070,
-            "end": 1520
+            "start": 1070.0,
+            "end": 1520.0
           },
           {
-            "start": 1900,
-            "end": 2250
+            "start": 1900.0,
+            "end": 2250.0
           },
           {
-            "start": 2844,
-            "end": 3200
+            "start": 2844.0,
+            "end": 3200.0
           }
         ],
         "slopes": [
           {
-            "start": 870,
-            "length": 400,
-            "slope": -10000
+            "start": 870.0,
+            "length": 400.0,
+            "slope": -10000.0
           },
           {
-            "start": 1325,
-            "length": 120,
-            "slope": 20000
+            "start": 1325.0,
+            "length": 120.0,
+            "slope": 20000.0
           },
           {
-            "start": 2400,
-            "length": 595,
-            "slope": -10000
+            "start": 2400.0,
+            "length": 595.0,
+            "slope": -10000.0
           },
           {
-            "start": 3000,
-            "length": 125,
-            "slope": 20000
+            "start": 3000.0,
+            "length": 125.0,
+            "slope": 20000.0
           }
         ]
       }
@@ -5261,32 +5261,32 @@ internal val rawCourseData = """
         ],
         "laneMax": 14500,
         "finishTimeMin": 67.5,
-        "finishTimeMax": 71,
+        "finishTimeMax": 71.0,
         "corners": [
           {
-            "start": 500,
-            "length": 205
+            "start": 500.0,
+            "length": 205.0
           },
           {
-            "start": 705,
-            "length": 202
+            "start": 705.0,
+            "length": 202.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 907,
-            "end": 1200
+            "start": 907.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 60,
-            "slope": -15000
+            "start": 0.0,
+            "length": 60.0,
+            "slope": -15000.0
           }
         ]
       },
@@ -5300,44 +5300,44 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 14500,
         "finishTimeMin": 104.4,
-        "finishTimeMax": 110,
+        "finishTimeMax": 110.0,
         "corners": [
           {
-            "start": 290,
-            "length": 205
+            "start": 290.0,
+            "length": 205.0
           },
           {
-            "start": 495,
-            "length": 205
+            "start": 495.0,
+            "length": 205.0
           },
           {
-            "start": 1100,
-            "length": 205
+            "start": 1100.0,
+            "length": 205.0
           },
           {
-            "start": 1305,
-            "length": 202
+            "start": 1305.0,
+            "length": 202.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 290
+            "start": 0.0,
+            "end": 290.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1507,
-            "end": 1800
+            "start": 1507.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 280,
-            "length": 255,
-            "slope": 15000
+            "start": 280.0,
+            "length": 255.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5353,44 +5353,44 @@ internal val rawCourseData = """
         ],
         "laneMax": 14500,
         "finishTimeMin": 117.1,
-        "finishTimeMax": 123,
+        "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 490,
-            "length": 205
+            "start": 490.0,
+            "length": 205.0
           },
           {
-            "start": 695,
-            "length": 205
+            "start": 695.0,
+            "length": 205.0
           },
           {
-            "start": 1300,
-            "length": 205
+            "start": 1300.0,
+            "length": 205.0
           },
           {
-            "start": 1505,
-            "length": 202
+            "start": 1505.0,
+            "length": 202.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 490
+            "start": 0.0,
+            "end": 490.0
           },
           {
-            "start": 900,
-            "end": 1300
+            "start": 900.0,
+            "end": 1300.0
           },
           {
-            "start": 1707,
-            "end": 2000
+            "start": 1707.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 480,
-            "length": 255,
-            "slope": 15000
+            "start": 480.0,
+            "length": 255.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5406,56 +5406,56 @@ internal val rawCourseData = """
         ],
         "laneMax": 14500,
         "finishTimeMin": 157.6,
-        "finishTimeMax": 165,
+        "finishTimeMax": 165.0,
         "corners": [
           {
-            "start": 309,
-            "length": 205
+            "start": 309.0,
+            "length": 205.0
           },
           {
-            "start": 514,
-            "length": 205
+            "start": 514.0,
+            "length": 205.0
           },
           {
-            "start": 1110,
-            "length": 205
+            "start": 1110.0,
+            "length": 205.0
           },
           {
-            "start": 1315,
-            "length": 205
+            "start": 1315.0,
+            "length": 205.0
           },
           {
-            "start": 1900,
-            "length": 205
+            "start": 1900.0,
+            "length": 205.0
           },
           {
-            "start": 2105,
-            "length": 202
+            "start": 2105.0,
+            "length": 202.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 309
+            "start": 0.0,
+            "end": 309.0
           },
           {
-            "start": 719,
-            "end": 1110
+            "start": 719.0,
+            "end": 1110.0
           },
           {
-            "start": 1520,
-            "end": 1900
+            "start": 1520.0,
+            "end": 1900.0
           },
           {
-            "start": 2307,
-            "end": 2600
+            "start": 2307.0,
+            "end": 2600.0
           }
         ],
         "slopes": [
           {
-            "start": 1100,
-            "length": 255,
-            "slope": 15000
+            "start": 1100.0,
+            "length": 255.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5471,25 +5471,25 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 57.4,
-        "finishTimeMax": 63,
+        "finishTimeMax": 63.0,
         "corners": [
           {
-            "start": 360,
-            "length": 180
+            "start": 360.0,
+            "length": 180.0
           },
           {
-            "start": 540,
-            "length": 169
+            "start": 540.0,
+            "length": 169.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 360
+            "start": 0.0,
+            "end": 360.0
           },
           {
-            "start": 709,
-            "end": 1000
+            "start": 709.0,
+            "end": 1000.0
           }
         ],
         "slopes": []
@@ -5504,44 +5504,44 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 101.4,
-        "finishTimeMax": 113,
+        "finishTimeMax": 113.0,
         "corners": [
           {
-            "start": 340,
-            "length": 180
+            "start": 340.0,
+            "length": 180.0
           },
           {
-            "start": 520,
-            "length": 180
+            "start": 520.0,
+            "length": 180.0
           },
           {
-            "start": 1060,
-            "length": 180
+            "start": 1060.0,
+            "length": 180.0
           },
           {
-            "start": 1240,
-            "length": 169
+            "start": 1240.0,
+            "length": 169.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 340
+            "start": 0.0,
+            "end": 340.0
           },
           {
-            "start": 700,
-            "end": 1060
+            "start": 700.0,
+            "end": 1060.0
           },
           {
-            "start": 1409,
-            "end": 1700
+            "start": 1409.0,
+            "end": 1700.0
           }
         ],
         "slopes": [
           {
-            "start": 370,
-            "length": 150,
-            "slope": 15000
+            "start": 370.0,
+            "length": 150.0,
+            "slope": 15000.0
           }
         ]
       },
@@ -5555,49 +5555,49 @@ internal val rawCourseData = """
         "courseSetStatus": [],
         "laneMax": 12000,
         "finishTimeMin": 149.1,
-        "finishTimeMax": 156,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 312,
-            "length": 180
+            "start": 312.0,
+            "length": 180.0
           },
           {
-            "start": 492,
-            "length": 180
+            "start": 492.0,
+            "length": 180.0
           },
           {
-            "start": 1040,
-            "length": 180
+            "start": 1040.0,
+            "length": 180.0
           },
           {
-            "start": 1220,
-            "length": 180
+            "start": 1220.0,
+            "length": 180.0
           },
           {
-            "start": 1760,
-            "length": 180
+            "start": 1760.0,
+            "length": 180.0
           },
           {
-            "start": 1940,
-            "length": 169
+            "start": 1940.0,
+            "length": 169.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 312
+            "start": 0.0,
+            "end": 312.0
           },
           {
-            "start": 672,
-            "end": 1040
+            "start": 672.0,
+            "end": 1040.0
           },
           {
-            "start": 1400,
-            "end": 1760
+            "start": 1400.0,
+            "end": 1760.0
           },
           {
-            "start": 2109,
-            "end": 2400
+            "start": 2109.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -5619,26 +5619,26 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 12000,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 500,
-            "length": 150
+            "start": 500.0,
+            "length": 150.0
           },
           {
-            "start": 650,
-            "length": 164
+            "start": 650.0,
+            "length": 164.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 814,
-            "end": 1200
+            "start": 814.0,
+            "end": 1200.0
           }
         ],
         "slopes": []
@@ -5655,37 +5655,37 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 108.1,
-        "finishTimeMax": 118,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 300,
-            "length": 150
+            "start": 300.0,
+            "length": 150.0
           },
           {
-            "start": 500,
-            "length": 150
+            "start": 500.0,
+            "length": 150.0
           },
           {
-            "start": 1100,
-            "length": 150
+            "start": 1100.0,
+            "length": 150.0
           },
           {
-            "start": 1250,
-            "length": 164
+            "start": 1250.0,
+            "length": 164.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 301
+            "start": 0.0,
+            "end": 301.0
           },
           {
-            "start": 600,
-            "end": 1100.23
+            "start": 600.0,
+            "end": 1100.22998046875
           },
           {
-            "start": 1414,
-            "end": 1800
+            "start": 1414.0,
+            "end": 1800.0
           }
         ],
         "slopes": []
@@ -5702,40 +5702,125 @@ internal val rawCourseData = """
         ],
         "laneMax": 12000,
         "finishTimeMin": 121.9,
-        "finishTimeMax": 129,
+        "finishTimeMax": 129.0,
         "corners": [
           {
-            "start": 500,
-            "length": 150
+            "start": 500.0,
+            "length": 150.0
           },
           {
-            "start": 650,
-            "length": 150
+            "start": 650.0,
+            "length": 150.0
           },
           {
-            "start": 1300,
-            "length": 150
+            "start": 1300.0,
+            "length": 150.0
           },
           {
-            "start": 1450,
-            "length": 164
+            "start": 1450.0,
+            "length": 164.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 500
+            "start": 0.0,
+            "end": 500.0
           },
           {
-            "start": 800,
-            "end": 1300
+            "start": 800.0,
+            "end": 1300.0
           },
           {
-            "start": 1614,
-            "end": 2000
+            "start": 1614.0,
+            "end": 2000.0
           }
         ],
         "slopes": []
+      }
+    }
+  },
+  "10201": {
+    "name": "ロンシャン",
+    "courses": {
+      "11201": {
+        "raceTrackId": 10201,
+        "name": "芝1000m",
+        "distance": 1000,
+        "distanceType": 1,
+        "surface": 1,
+        "turn": 4,
+        "courseSetStatus": [],
+        "laneMax": 12000,
+        "finishTimeMin": 54.7,
+        "finishTimeMax": 57.0,
+        "corners": [
+          {
+            "start": 200.0,
+            "length": 200.0
+          },
+          {
+            "start": 400.0,
+            "length": 200.0
+          }
+        ],
+        "straights": [],
+        "slopes": []
+      },
+      "11203": {
+        "raceTrackId": 10201,
+        "name": "芝2400m",
+        "distance": 2400,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 1,
+        "courseSetStatus": [
+          2,
+          3
+        ],
+        "laneMax": 12000,
+        "finishTimeMin": 145.0,
+        "finishTimeMax": 165.0,
+        "corners": [
+          {
+            "start": 1000.0,
+            "length": 417.0
+          },
+          {
+            "start": 1417.0,
+            "length": 200.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 1000.0
+          },
+          {
+            "start": 1617.0,
+            "end": 1866.0
+          },
+          {
+            "start": 1867.0,
+            "end": 2400.0
+          }
+        ],
+        "slopes": [
+          {
+            "start": 400.0,
+            "length": 600.0,
+            "slope": 20000.0
+          },
+          {
+            "start": 1017.0,
+            "length": 383.0,
+            "slope": -20000.0
+          },
+          {
+            "start": 1400.0,
+            "length": 217.0,
+            "slope": -15000.0
+          }
+        ]
       }
     }
   },
@@ -5753,38 +5838,38 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 13500,
-        "finishTimeMin": 87,
-        "finishTimeMax": 94,
+        "finishTimeMin": 87.0,
+        "finishTimeMax": 94.0,
         "corners": [
           {
-            "start": 300,
-            "length": 100
+            "start": 300.0,
+            "length": 100.0
           },
           {
-            "start": 400,
-            "length": 100
+            "start": 400.0,
+            "length": 100.0
           },
           {
-            "start": 900,
-            "length": 100
+            "start": 900.0,
+            "length": 100.0
           },
           {
-            "start": 1000,
-            "length": 100
+            "start": 1000.0,
+            "length": 100.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 500,
-            "end": 900
+            "start": 500.0,
+            "end": 900.0
           },
           {
-            "start": 1100,
-            "end": 1400
+            "start": 1100.0,
+            "end": 1400.0
           }
         ],
         "slopes": []
@@ -5800,38 +5885,38 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 13500,
-        "finishTimeMin": 98,
-        "finishTimeMax": 108,
+        "finishTimeMin": 98.0,
+        "finishTimeMax": 108.0,
         "corners": [
           {
-            "start": 500,
-            "length": 100
+            "start": 500.0,
+            "length": 100.0
           },
           {
-            "start": 600,
-            "length": 100
+            "start": 600.0,
+            "length": 100.0
           },
           {
-            "start": 1100,
-            "length": 100
+            "start": 1100.0,
+            "length": 100.0
           },
           {
-            "start": 1200,
-            "length": 100
+            "start": 1200.0,
+            "length": 100.0
           }
         ],
         "straights": [
           {
-            "start": 100,
-            "end": 500
+            "start": 100.0,
+            "end": 500.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1300,
-            "end": 1600
+            "start": 1300.0,
+            "end": 1600.0
           }
         ],
         "slopes": []
@@ -5848,50 +5933,50 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 13500,
-        "finishTimeMin": 131,
-        "finishTimeMax": 140,
+        "finishTimeMin": 131.0,
+        "finishTimeMax": 140.0,
         "corners": [
           {
-            "start": 400,
-            "length": 100
+            "start": 400.0,
+            "length": 100.0
           },
           {
-            "start": 500,
-            "length": 100
+            "start": 500.0,
+            "length": 100.0
           },
           {
-            "start": 1000,
-            "length": 100
+            "start": 1000.0,
+            "length": 100.0
           },
           {
-            "start": 1100,
-            "length": 100
+            "start": 1100.0,
+            "length": 100.0
           },
           {
-            "start": 1600,
-            "length": 100
+            "start": 1600.0,
+            "length": 100.0
           },
           {
-            "start": 1700,
-            "length": 100
+            "start": 1700.0,
+            "length": 100.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 400
+            "start": 0.0,
+            "end": 400.0
           },
           {
-            "start": 600,
-            "end": 1000
+            "start": 600.0,
+            "end": 1000.0
           },
           {
-            "start": 1200,
-            "end": 1600
+            "start": 1200.0,
+            "end": 1600.0
           },
           {
-            "start": 1800,
-            "end": 2100
+            "start": 1800.0,
+            "end": 2100.0
           }
         ],
         "slopes": []
@@ -5912,26 +5997,26 @@ internal val rawCourseData = """
           1
         ],
         "laneMax": 13500,
-        "finishTimeMin": 58,
-        "finishTimeMax": 63,
+        "finishTimeMin": 58.0,
+        "finishTimeMax": 63.0,
         "corners": [
           {
-            "start": 370,
-            "length": 170
+            "start": 370.0,
+            "length": 170.0
           },
           {
-            "start": 540,
-            "length": 152
+            "start": 540.0,
+            "length": 152.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 692,
-            "end": 1000
+            "start": 692.0,
+            "end": 1000.0
           }
         ],
         "slopes": []
@@ -5945,38 +6030,38 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 13500,
-        "finishTimeMin": 96,
-        "finishTimeMax": 108,
+        "finishTimeMin": 96.0,
+        "finishTimeMax": 108.0,
         "corners": [
           {
-            "start": 260,
-            "length": 180
+            "start": 260.0,
+            "length": 180.0
           },
           {
-            "start": 440,
-            "length": 160
+            "start": 440.0,
+            "length": 160.0
           },
           {
-            "start": 970,
-            "length": 170
+            "start": 970.0,
+            "length": 170.0
           },
           {
-            "start": 1140,
-            "length": 152
+            "start": 1140.0,
+            "length": 152.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 260
+            "start": 0.0,
+            "end": 260.0
           },
           {
-            "start": 600,
-            "end": 970
+            "start": 600.0,
+            "end": 970.0
           },
           {
-            "start": 1292,
-            "end": 1600
+            "start": 1292.0,
+            "end": 1600.0
           }
         ],
         "slopes": []
@@ -5990,38 +6075,38 @@ internal val rawCourseData = """
         "turn": 2,
         "courseSetStatus": [],
         "laneMax": 13500,
-        "finishTimeMin": 108,
-        "finishTimeMax": 118,
+        "finishTimeMin": 108.0,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 460,
-            "length": 180
+            "start": 460.0,
+            "length": 180.0
           },
           {
-            "start": 640,
-            "length": 160
+            "start": 640.0,
+            "length": 160.0
           },
           {
-            "start": 1170,
-            "length": 170
+            "start": 1170.0,
+            "length": 170.0
           },
           {
-            "start": 1340,
-            "length": 152
+            "start": 1340.0,
+            "length": 152.0
           }
         ],
         "straights": [
           {
-            "start": 90,
-            "end": 460
+            "start": 90.0,
+            "end": 460.0
           },
           {
-            "start": 800,
-            "end": 1170
+            "start": 800.0,
+            "end": 1170.0
           },
           {
-            "start": 1492,
-            "end": 1800
+            "start": 1492.0,
+            "end": 1800.0
           }
         ],
         "slopes": []
@@ -6037,50 +6122,50 @@ internal val rawCourseData = """
           2
         ],
         "laneMax": 13500,
-        "finishTimeMin": 150,
-        "finishTimeMax": 156,
+        "finishTimeMin": 150.0,
+        "finishTimeMax": 156.0,
         "corners": [
           {
-            "start": 370,
-            "length": 170
+            "start": 370.0,
+            "length": 170.0
           },
           {
-            "start": 540,
-            "length": 150
+            "start": 540.0,
+            "length": 150.0
           },
           {
-            "start": 1060,
-            "length": 180
+            "start": 1060.0,
+            "length": 180.0
           },
           {
-            "start": 1240,
-            "length": 160
+            "start": 1240.0,
+            "length": 160.0
           },
           {
-            "start": 1770,
-            "length": 170
+            "start": 1770.0,
+            "length": 170.0
           },
           {
-            "start": 1940,
-            "length": 152
+            "start": 1940.0,
+            "length": 152.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 370
+            "start": 0.0,
+            "end": 370.0
           },
           {
-            "start": 690,
-            "end": 1060
+            "start": 690.0,
+            "end": 1060.0
           },
           {
-            "start": 1400,
-            "end": 1770
+            "start": 1400.0,
+            "end": 1770.0
           },
           {
-            "start": 2092,
-            "end": 2400
+            "start": 2092.0,
+            "end": 2400.0
           }
         ],
         "slopes": []
@@ -6101,43 +6186,43 @@ internal val rawCourseData = """
           2
         ],
         "laneMax": 13500,
-        "finishTimeMin": 69,
-        "finishTimeMax": 77,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 77.0,
         "corners": [
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 700,
-            "length": 200
+            "start": 700.0,
+            "length": 200.0
           }
         ],
         "straights": [
           {
-            "start": 100,
-            "end": 500
+            "start": 100.0,
+            "end": 500.0
           },
           {
-            "start": 900,
-            "end": 1200
+            "start": 900.0,
+            "end": 1200.0
           }
         ],
         "slopes": [
           {
-            "start": 100,
-            "length": 375,
-            "slope": 10000
+            "start": 100.0,
+            "length": 375.0,
+            "slope": 10000.0
           },
           {
-            "start": 475,
-            "length": 450,
-            "slope": -15000
+            "start": 475.0,
+            "length": 450.0,
+            "slope": -15000.0
           },
           {
-            "start": 975,
-            "length": 175,
-            "slope": 10000
+            "start": 975.0,
+            "length": 175.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -6153,43 +6238,43 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 13500,
-        "finishTimeMin": 93,
-        "finishTimeMax": 108,
+        "finishTimeMin": 93.0,
+        "finishTimeMax": 108.0,
         "corners": [
           {
-            "start": 900,
-            "length": 200
+            "start": 900.0,
+            "length": 200.0
           },
           {
-            "start": 1100,
-            "length": 200
+            "start": 1100.0,
+            "length": 200.0
           }
         ],
         "straights": [
           {
-            "start": 500,
-            "end": 900
+            "start": 500.0,
+            "end": 900.0
           },
           {
-            "start": 1300,
-            "end": 1600
+            "start": 1300.0,
+            "end": 1600.0
           }
         ],
         "slopes": [
           {
-            "start": 500,
-            "length": 375,
-            "slope": 10000
+            "start": 500.0,
+            "length": 375.0,
+            "slope": 10000.0
           },
           {
-            "start": 875,
-            "length": 450,
-            "slope": -15000
+            "start": 875.0,
+            "length": 450.0,
+            "slope": -15000.0
           },
           {
-            "start": 1375,
-            "length": 175,
-            "slope": 10000
+            "start": 1375.0,
+            "length": 175.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -6205,55 +6290,55 @@ internal val rawCourseData = """
           5
         ],
         "laneMax": 13500,
-        "finishTimeMin": 110,
-        "finishTimeMax": 118,
+        "finishTimeMin": 110.0,
+        "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 300,
-            "length": 200
+            "start": 300.0,
+            "length": 200.0
           },
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 1100,
-            "length": 200
+            "start": 1100.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 200
+            "start": 1300.0,
+            "length": 200.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 300
+            "start": 0.0,
+            "end": 300.0
           },
           {
-            "start": 700,
-            "end": 1100
+            "start": 700.0,
+            "end": 1100.0
           },
           {
-            "start": 1500,
-            "end": 1800
+            "start": 1500.0,
+            "end": 1800.0
           }
         ],
         "slopes": [
           {
-            "start": 0,
-            "length": 150,
-            "slope": 10000
+            "start": 0.0,
+            "length": 150.0,
+            "slope": 10000.0
           },
           {
-            "start": 700,
-            "length": 450,
-            "slope": -15000
+            "start": 700.0,
+            "length": 450.0,
+            "slope": -15000.0
           },
           {
-            "start": 1575,
-            "length": 175,
-            "slope": 10000
+            "start": 1575.0,
+            "length": 175.0,
+            "slope": 10000.0
           }
         ]
       },
@@ -6268,145 +6353,184 @@ internal val rawCourseData = """
           2
         ],
         "laneMax": 13500,
-        "finishTimeMin": 121,
-        "finishTimeMax": 129,
+        "finishTimeMin": 121.0,
+        "finishTimeMax": 129.0,
         "corners": [
           {
-            "start": 500,
-            "length": 200
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 700,
-            "length": 200
+            "start": 700.0,
+            "length": 200.0
           },
           {
-            "start": 1300,
-            "length": 200
+            "start": 1300.0,
+            "length": 200.0
           },
           {
-            "start": 1500,
-            "length": 200
+            "start": 1500.0,
+            "length": 200.0
           }
         ],
         "straights": [
           {
-            "start": 100,
-            "end": 500
+            "start": 100.0,
+            "end": 500.0
           },
           {
-            "start": 900,
-            "end": 1300
+            "start": 900.0,
+            "end": 1300.0
           },
           {
-            "start": 1700,
-            "end": 2000
+            "start": 1700.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 175,
-            "length": 175,
-            "slope": 10000
+            "start": 175.0,
+            "length": 175.0,
+            "slope": 10000.0
           },
           {
-            "start": 900,
-            "length": 375,
-            "slope": 10000
+            "start": 900.0,
+            "length": 375.0,
+            "slope": 10000.0
           },
           {
-            "start": 1275,
-            "length": 450,
-            "slope": -15000
+            "start": 1275.0,
+            "length": 450.0,
+            "slope": -15000.0
           },
           {
-            "start": 1775,
-            "length": 175,
-            "slope": 10000
+            "start": 1775.0,
+            "length": 175.0,
+            "slope": 10000.0
           }
         ]
       }
     }
   },
-  "10201": {
-    "name": "ロンシャン",
+  "10202": {
+    "name": "サンタアニタパーク",
     "courses": {
-      "11201": {
-        "raceTrackId": 10201,
-        "name": "芝1000m",
-        "distance": 1000,
-        "distanceType": 1,
-        "surface": 1,
-        "turn": 4,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 54.7,
-        "finishTimeMax": 57,
-        "corners": [
-          {
-            "start": 200,
-            "length": 200
-          },
-          {
-            "start": 400,
-            "length": 200
-          }
-        ],
-        "straights": [],
-        "slopes": []
-      },
-      "11203": {
-        "raceTrackId": 10201,
-        "name": "芝2400m",
-        "distance": 2400,
+      "11605": {
+        "raceTrackId": 10202,
+        "name": "芝2000m",
+        "distance": 2000,
         "distanceType": 3,
         "surface": 1,
-        "turn": 1,
-        "courseSetStatus": [
-          2,
-          3
-        ],
+        "turn": 2,
+        "courseSetStatus": [],
         "laneMax": 12000,
-        "finishTimeMin": 141.6,
-        "finishTimeMax": 149,
+        "finishTimeMin": 117.2,
+        "finishTimeMax": 123.2,
         "corners": [
           {
-            "start": 1000,
-            "length": 417
+            "start": 700.0,
+            "length": 150.0
           },
           {
-            "start": 1417,
-            "length": 200
+            "start": 850.0,
+            "length": 150.0
+          },
+          {
+            "start": 1400.0,
+            "length": 150.0
+          },
+          {
+            "start": 1550.0,
+            "length": 150.0
           }
         ],
         "straights": [
           {
-            "start": 0,
-            "end": 1000
+            "start": 300.0,
+            "end": 700.0
           },
           {
-            "start": 1617,
-            "end": 1866
+            "start": 1000.0,
+            "end": 1400.0
           },
           {
-            "start": 1867,
-            "end": 2400
+            "start": 1700.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
           {
-            "start": 400,
-            "length": 600,
-            "slope": 20000
+            "start": 0.0,
+            "length": 150.0,
+            "slope": -20000.0
+          }
+        ]
+      },
+      "11612": {
+        "raceTrackId": 10202,
+        "name": "芝2000m",
+        "distance": 2000,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          2
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 121.0,
+        "finishTimeMax": 129.0,
+        "corners": [
+          {
+            "start": 500.0,
+            "length": 200.0
           },
           {
-            "start": 1017,
-            "length": 383,
-            "slope": -20000
+            "start": 700.0,
+            "length": 200.0
           },
           {
-            "start": 1400,
-            "length": 217,
-            "slope": -15000
+            "start": 1300.0,
+            "length": 200.0
+          },
+          {
+            "start": 1500.0,
+            "length": 200.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 100.0,
+            "end": 500.0
+          },
+          {
+            "start": 900.0,
+            "end": 1300.0
+          },
+          {
+            "start": 1700.0,
+            "end": 2000.0
+          }
+        ],
+        "slopes": [
+          {
+            "start": 175.0,
+            "length": 175.0,
+            "slope": 10000.0
+          },
+          {
+            "start": 900.0,
+            "length": 375.0,
+            "slope": 10000.0
+          },
+          {
+            "start": 1275.0,
+            "length": 450.0,
+            "slope": -15000.0
+          },
+          {
+            "start": 1775.0,
+            "length": 175.0,
+            "slope": 10000.0
           }
         ]
       }
