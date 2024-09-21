@@ -253,7 +253,7 @@ class RaceState(
                 acceleration += simulation.conservePowerAcceleration ?: 0.0
             }
 
-            return acceleration
+            return max(acceleration, 0.0)
         }
 
     val deceleration: Double
