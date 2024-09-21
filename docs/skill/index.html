@@ -38,7 +38,13 @@
 
 		function load(target) {
 			out.value = '';
-			axios.get(target).then(r => out.value = r.data);
+			axios.get(target,{
+				headers: {
+					'Cache-Control': 'no-cache',
+					'Pragma': 'no-cache',
+					'Expires': '0',
+				}
+			}).then(r => out.value = r.data);
 		}
 
 		const initial = window.location.hash == '#new' ? newRadio : allRadio;
