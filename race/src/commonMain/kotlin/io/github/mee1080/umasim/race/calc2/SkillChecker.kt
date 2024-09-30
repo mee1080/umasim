@@ -124,6 +124,14 @@ private fun checkCondition(
             baseSetting.initPhaseRandom(condition.value, 0.5 to 1.0)
         }
 
+        "phase_straight_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
+            baseSetting.initPhaseStraightRandom(condition.value, 0.0 to 1.0)
+        }
+
+        "phase_first_half_straight_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
+            baseSetting.initPhaseStraightRandom(condition.value, 0.0 to 0.5)
+        }
+
         "phase_latter_half_straight_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseStraightRandom(condition.value, 0.5 to 1.0)
         }
