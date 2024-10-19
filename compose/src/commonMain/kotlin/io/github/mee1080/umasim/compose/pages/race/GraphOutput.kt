@@ -27,7 +27,6 @@ import io.github.mee1080.umasim.compose.common.atoms.LabeledCheckbox
 import io.github.mee1080.umasim.compose.common.atoms.TooltipSurface
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.GraphData
-import kotlinx.collections.immutable.persistentListOf
 import kotlin.math.max
 import kotlin.math.min
 
@@ -37,13 +36,13 @@ fun GraphOutput(state: AppState) {
     GraphArea(graphData)
 }
 
-private val defaultLegends = persistentListOf(
+private val defaultLegends = listOf(
     "速度" to Color.Blue,
     "耐力" to Color(255, 128, 100),
     "走行レーン" to Color.Green,
 )
 
-private val virtualLegends = defaultLegends + persistentListOf(
+private val virtualLegends = defaultLegends + listOf(
     "先頭との差" to Color(0, 255, 255),
 )
 

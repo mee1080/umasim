@@ -39,7 +39,6 @@ kotlin {
                 @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
                 implementation(compose.components.resources)
                 implementation(libs.kotlinx.serializationJson)
-                implementation(libs.kotlinx.collections.immutable)
                 implementation(libs.kotlinx.coroutinesCore)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.koalaplot.core)

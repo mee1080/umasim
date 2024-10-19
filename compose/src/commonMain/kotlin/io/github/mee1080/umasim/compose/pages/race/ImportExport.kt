@@ -14,7 +14,6 @@ import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.ImportExportConverter
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.importChara
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun ImportExport(virtual: Boolean, state: AppState, dispatch: OperationDispatcher<AppState>) {

@@ -21,7 +21,6 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation(libs.kotlinx.collections.immutable)
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.serializationJson)
             }

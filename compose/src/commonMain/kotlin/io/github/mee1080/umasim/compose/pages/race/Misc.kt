@@ -7,7 +7,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
-import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun Header() {
@@ -40,7 +39,7 @@ fun Footer() {
     Column {
         Row { Text("本プログラムについて", style = MaterialTheme.typography.headlineSmall) }
         TextWithLink(
-            persistentListOf(
+            listOf(
                 "本プログラムは、砂井裏鍵さん（X: " to null,
                 "@urakagi" to "https://twitter.com/urakagi",
                 "）作のレースエミュレータを、mee1080（X: " to null,
