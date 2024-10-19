@@ -87,7 +87,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
         val winCount = uafStatus.athleticsLevel.entries.groupBy { it.key.genre }
             .mapValues { levels -> levels.value.count { it.value >= needWinCount } }
         val isWin = winCount.values.sum() >= 12
-        val linkBonus = if (Store.isScenarioLink(scenario, chara.charaName)) 3 else 0
+        val linkBonus = if (scenario.scenarioLink.contains(chara.charaName)) 3 else 0
         val status = if (isWin) winStatus + linkBonus else loseStatus
         val skillPt = if (isWin) winSkillPt else loseSkillPt
         val fan = if (isWin) winFan else loseFan

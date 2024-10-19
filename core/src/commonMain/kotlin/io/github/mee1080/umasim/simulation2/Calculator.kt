@@ -21,7 +21,6 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.*
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
-import kotlin.random.Random
 
 object Calculator {
 
@@ -123,7 +122,11 @@ object Calculator {
             skillPt = raw.skillPt.toInt(),
             hp = hp,
         )
-        return Triple(base to raw, calcScenarioStatus(info, base, raw, friendTraining), friendTraining)
+        return Triple(
+            base to raw,
+            info.scenario.calculator.calcScenarioStatus(info, base, raw, friendTraining),
+            friendTraining,
+        )
     }
 
     private fun SpecialUniqueCondition.applyMember(member: MemberState) = copy(
@@ -131,7 +134,7 @@ object Calculator {
         friendCount = member.friendCount,
     )
 
-    private fun calcTrainingStatus(
+    internal fun calcTrainingStatus(
         info: CalcInfo,
         targetType: StatusType,
         friendTraining: Boolean,
@@ -224,7 +227,7 @@ object Calculator {
         teamJoinCount: Int,
     ) = calcExpectedTrainingStatus(
         info.copy(
-            member = info.member + if (info.scenario == Scenario.AOHARU) createTeamMemberState(
+            member = info.member + if (info.scenario.guestMember) createTeamMemberState(
                 teamJoinCount,
                 info.scenario
             ) else emptyList(),
@@ -335,119 +338,6 @@ object Calculator {
         return result.add(rate, status)
     }
 
-    private fun calcScenarioStatus(
-        info: CalcInfo,
-        base: Status,
-        raw: ExpectedStatus,
-        friendTraining: Boolean,
-    ) = when (info.scenario) {
-        Scenario.URA -> Status()
-        Scenario.AOHARU -> calcAoharuStatus(info.training, info.member)
-        Scenario.CLIMAX -> Status()
-        Scenario.GRAND_LIVE -> calcLiveStatus(info, base, friendTraining)
-        Scenario.GM -> calcGmStatus(info, base)
-        Scenario.LARC -> calcLArcStatus(info, base, friendTraining)
-        Scenario.UAF -> calcUafStatus(info, raw, friendTraining)
-        Scenario.COOK -> calcCookStatus(info, base)
-    }
-
-    private fun calcAoharuStatus(
-        training: TrainingBase,
-        member: List<MemberState>,
-    ): Status {
-        val states = member.mapNotNull { it.scenarioState as? AoharuMemberState }
-        val aoharuMember = states.filter { it.aoharuIcon && !it.aoharuBurn }
-        val aoharuCount = aoharuMember.size
-        val linkCount = aoharuMember.count { Store.isScenarioLink(Scenario.AOHARU, it.member.chara) }
-        val aoharuTraining = Store.Aoharu.getTraining(training.type, aoharuCount)?.status?.let {
-            it.copy(
-                speed = if (it.speed == 0) 0 else it.speed + linkCount,
-                stamina = if (it.stamina == 0) 0 else it.stamina + linkCount,
-                power = if (it.power == 0) 0 else it.power + linkCount,
-                guts = if (it.guts == 0) 0 else it.guts + linkCount,
-                wisdom = if (it.wisdom == 0) 0 else it.wisdom + linkCount,
-            )
-        } ?: Status()
-        val burn = states.filter { it.aoharuBurn }
-            .map { Store.Aoharu.getBurn(training.type, Store.isScenarioLink(Scenario.AOHARU, it.member.chara)) }
-            .map { it.status }
-        return burn.fold(aoharuTraining) { acc, status -> acc + status }
-    }
-
-    private fun calcLiveStatus(
-        info: CalcInfo,
-        base: Status,
-        friendTraining: Boolean,
-    ): Status {
-        return if (info.liveStatus != null) {
-            val performanceValue = calcPerformanceValue(info)
-            val firstPerformanceType = selectFirstPerformanceType(info)
-            val trainingUp = Status(
-                speed = calcLiveStatusSingle(info, StatusType.SPEED),
-                stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
-                power = calcLiveStatusSingle(info, StatusType.POWER),
-                guts = calcLiveStatusSingle(info, StatusType.GUTS),
-                wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
-                skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
-                performance = firstPerformanceType.asPerformance(performanceValue),
-            )
-            val friendUp = if (friendTraining) {
-                val calc = base + trainingUp
-                val secondPerformanceType = selectSecondPerformanceType(info, firstPerformanceType)
-                Status(
-                    speed = calcTrainingUp(calc.speed, info.liveStatus.friendTrainingUp),
-                    stamina = calcTrainingUp(calc.stamina, info.liveStatus.friendTrainingUp),
-                    power = calcTrainingUp(calc.power, info.liveStatus.friendTrainingUp),
-                    guts = calcTrainingUp(calc.guts, info.liveStatus.friendTrainingUp),
-                    wisdom = calcTrainingUp(calc.wisdom, info.liveStatus.friendTrainingUp),
-                    skillPt = calcTrainingUp(calc.skillPt, info.liveStatus.friendTrainingUp),
-                    performance = secondPerformanceType.asPerformance(performanceValue),
-                )
-            } else Status()
-            trainingUp + friendUp
-        } else Status()
-    }
-
-    private fun calcLiveStatusSingle(
-        info: CalcInfo,
-        target: StatusType,
-    ) = if (upInTraining(info.training.type, target)) info.liveStatus?.trainingUp(target) ?: 0 else 0
-
-    private fun calcTrainingUp(value: Int, up: Int) = ((value * up) + 50) / 100
-
-    fun calcPerformanceValue(
-        info: CalcInfo,
-    ): Int {
-        val base = if (info.training.type == StatusType.WISDOM) 5 else 9
-        val link = 2 * info.member.count { !it.guest && Store.isScenarioLink(info.scenario, it.charaName) }
-        return (base + info.training.displayLevel) * when (info.member.size) {
-            1 -> 11
-            2 -> 13
-            3 -> 15
-            4 -> 17
-            5 -> 20
-            else -> 10
-        } / 10 + link
-    }
-
-    private fun selectFirstPerformanceType(
-        info: CalcInfo,
-    ): PerformanceType {
-        return randomSelect(firstPerformanceRate[info.training.type]!!)
-    }
-
-    private fun selectSecondPerformanceType(
-        info: CalcInfo,
-        firstType: PerformanceType,
-    ): PerformanceType {
-        val minimumType = info.currentStatus.performance?.minimumType ?: PerformanceType.entries
-        return if (!minimumType.contains(firstType) && Random.nextInt(100) >= 85) {
-            minimumType.random()
-        } else {
-            return randomSelect(firstPerformanceRate[info.training.type]!!.filterNot { it.first == firstType })
-        }
-    }
-
     fun calcItemBonus(trainingType: StatusType, status: Status, item: List<ShopItem>): Status {
         val statusFactor = item.sumOf {
             when (it) {
@@ -467,244 +357,5 @@ object Calculator {
             skillPt = (status.skillPt * statusFactor / 100.0).toInt(),
             hp = (status.hp * hpFactor / 100.0).toInt(),
         )
-    }
-
-    private fun calcGmStatus(
-        info: CalcInfo,
-        base: Status
-    ): Status {
-        val gmStatus = info.gmStatus ?: return Status()
-        return Status(
-            speed = calcGmStatusSingle(gmStatus, StatusType.SPEED, base.speed),
-            stamina = calcGmStatusSingle(gmStatus, StatusType.STAMINA, base.stamina),
-            power = calcGmStatusSingle(gmStatus, StatusType.POWER, base.power),
-            guts = calcGmStatusSingle(gmStatus, StatusType.GUTS, base.guts),
-            wisdom = calcGmStatusSingle(gmStatus, StatusType.WISDOM, base.wisdom),
-            skillPt = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.skillPt),
-            // TODO 体力消費ダウン計算式
-            hp = -(base.hp * gmStatus.wisdomHpCost / 100.0).toInt()
-        ) + calcGmStatusHint(info.member, gmStatus)
-    }
-
-    private fun calcGmStatusSingle(
-        gmStatus: GmStatus,
-        target: StatusType,
-        baseValue: Int,
-    ): Int {
-        if (baseValue == 0) return 0
-        val bonus = gmStatus.getStatusBonus(target)
-        val factor = ((baseValue + bonus) * gmStatus.wisdomTrainingFactor / 100.0).toInt()
-        return bonus + factor
-    }
-
-    private fun calcGmStatusHint(
-        member: List<MemberState>,
-        gmStatus: GmStatus,
-    ): Status {
-        if (!gmStatus.hintFrequencyUp) return Status()
-        val hintSupportList = member.filter { !it.outingType }
-        val hintStatus = hintSupportList.map { hintSupport ->
-            val base = hintSupport.card.hintStatus
-            // ヒント全潰しは無視
-            if (hintSupport.card.skills.isNotEmpty()) base else base + base
-        }.fold(Status()) { acc, status ->
-            acc + status
-        }
-        return hintStatus + Status(
-            speed = if (hintStatus.speed > 0) gmStatus.getStatusBonus(StatusType.SPEED) else 0,
-            stamina = if (hintStatus.stamina > 0) gmStatus.getStatusBonus(StatusType.STAMINA) else 0,
-            power = if (hintStatus.power > 0) gmStatus.getStatusBonus(StatusType.POWER) else 0,
-            guts = if (hintStatus.guts > 0) gmStatus.getStatusBonus(StatusType.GUTS) else 0,
-            wisdom = if (hintStatus.wisdom > 0) gmStatus.getStatusBonus(StatusType.WISDOM) else 0,
-            skillPt = hintSupportList.size * 20,
-        )
-    }
-
-    private fun calcLArcStatus(
-        info: CalcInfo,
-        base: Status,
-        friendTraining: Boolean,
-    ): Status {
-        val lArcStatus = info.lArcStatus ?: return Status()
-        val trainingType = info.training.type
-        val overseas = info.training.level == 6
-        return Status(
-            speed = calcLArcStatusSingle(
-                lArcStatus,
-                trainingType,
-                StatusType.SPEED,
-                base.speed,
-                overseas,
-                friendTraining
-            ),
-            stamina = calcLArcStatusSingle(
-                lArcStatus,
-                trainingType,
-                StatusType.STAMINA,
-                base.stamina,
-                overseas,
-                friendTraining
-            ),
-            power = calcLArcStatusSingle(
-                lArcStatus,
-                trainingType,
-                StatusType.POWER,
-                base.power,
-                overseas,
-                friendTraining
-            ),
-            guts = calcLArcStatusSingle(lArcStatus, trainingType, StatusType.GUTS, base.guts, overseas, friendTraining),
-            wisdom = calcLArcStatusSingle(
-                lArcStatus,
-                trainingType,
-                StatusType.WISDOM,
-                base.wisdom,
-                overseas,
-                friendTraining
-            ),
-            skillPt = calcLArcStatusSingle(
-                lArcStatus,
-                trainingType,
-                StatusType.SKILL,
-                base.skillPt,
-                overseas,
-                friendTraining
-            ),
-            hp = -(base.hp * lArcStatus.hpCost(overseas) / 100.0).toInt()
-        )
-    }
-
-    private fun calcLArcStatusSingle(
-        lArcStatus: LArcStatus,
-        trainingType: StatusType,
-        target: StatusType,
-        baseValue: Int,
-        overseas: Boolean,
-        friendTraining: Boolean,
-    ): Int {
-        if (baseValue == 0) return 0
-        val bonus = lArcStatus.getStatusBonus(target)
-        val factor = (baseValue + bonus) * lArcStatus.getTrainingFactor(trainingType, overseas) / 100.0
-        val friend = if (friendTraining) {
-            (baseValue + bonus + factor) * lArcStatus.friendFactor / 100.0
-        } else 0.0
-        return bonus + (factor + friend).toInt()
-    }
-
-    private fun calcUafStatus(
-        info: CalcInfo,
-        raw: ExpectedStatus,
-        isFriendTraining: Boolean,
-    ): Status {
-        val uafStatus = info.uafStatus ?: return Status()
-        val trainingType = info.training.type
-        val targetAthletic = uafStatus.trainingAthletics[trainingType]!!
-        val linkAthletics = uafStatus.trainingAthletics.filter {
-            it.key != trainingType && it.value.genre == targetAthletic.genre
-        }
-        return Status(
-            speed = calcUafStatusSingle(info, linkAthletics, StatusType.SPEED, raw.speed, isFriendTraining),
-            stamina = calcUafStatusSingle(info, linkAthletics, StatusType.STAMINA, raw.stamina, isFriendTraining),
-            power = calcUafStatusSingle(info, linkAthletics, StatusType.POWER, raw.power, isFriendTraining),
-            guts = calcUafStatusSingle(info, linkAthletics, StatusType.GUTS, raw.guts, isFriendTraining),
-            wisdom = calcUafStatusSingle(info, linkAthletics, StatusType.WISDOM, raw.wisdom, isFriendTraining),
-            skillPt = calcUafStatusSingle(info, linkAthletics, StatusType.SKILL, raw.skillPt, isFriendTraining),
-            hp = when (linkAthletics.size) {
-                4 -> -3
-                3, 2 -> -2
-                1 -> -1
-                else -> 0
-            }
-        )
-    }
-
-    private fun calcUafStatusSingle(
-        info: CalcInfo,
-        linkAthletics: Map<StatusType, UafAthletic>,
-        target: StatusType,
-        baseValue: Double,
-        isFriendTraining: Boolean,
-    ): Int {
-        val uafStatus = info.uafStatus ?: return 0
-        val trainingType = info.training.type
-        val targetLink = linkAthletics[target]
-        // リンク先の基本値上昇：各リンク先について、FLOOR((リンク先トレLv+1)/2)？
-        val linkBonus = when (target) {
-            trainingType -> 0
-            StatusType.SKILL -> linkAthletics.size
-            else -> targetLink?.let {
-                (uafStatus.trainingLevel(it) + 1) / 2
-            } ?: 0
-        }
-        val training = info.training.copy(status = info.training.status.add(target to linkBonus))
-        val scenarioInfo = info.copy(training = training)
-        val baseInt = baseValue.toInt()
-        var total = calcTrainingStatus(scenarioInfo, target, isFriendTraining, baseInt == 0)
-        // リンク数によって基本上昇量(切り捨て前)に倍率がかかる
-        if (target == trainingType && linkAthletics.isNotEmpty()) {
-            val baseFactor = when (linkAthletics.size) {
-                4 -> 1.3
-                3 -> 1.25
-                2 -> 1.2
-                else -> 1.1
-            }
-            total *= baseFactor + if (info.isLevelUpTurn) 0.1 else 0.0
-        }
-        // 大会ボーナス
-        val festivalFactor = 1.0 + uafStatus.festivalBonus / 100.0
-        total *= festivalFactor
-        // ヒートアップ効果
-        if (uafStatus.heatUp[UafGenre.Red]!! > 0 && target == trainingType) {
-            val heatUpRedFactor = when (linkAthletics.size) {
-                4 -> 1.6
-                3 -> 1.54
-                2 -> 1.45
-                1 -> 1.3
-                else -> 1.0
-            }
-            total *= heatUpRedFactor
-        }
-        if (uafStatus.heatUp[UafGenre.Blue]!! > 0) {
-            total += if (target == StatusType.SKILL) {
-                // スキルPt：20
-                20
-            } else {
-                // 5ステ：対応する箇所のトレーニングの競技Lv上昇量÷2+1（切り捨て）
-                uafStatus.athleticsLevelUp[target]!! / 2 + 1
-            }
-        }
-        return min(100, (total - baseInt).toInt())
-    }
-
-    private fun calcCookStatus(
-        info: CalcInfo,
-        base: Status,
-    ): Status {
-        val cookStatus = info.cookStatus ?: return Status()
-        val cookPointEffect = cookStatus.cookPointEffect
-        val trainingType = info.training.type
-        val dishFactor = cookStatus.activatedDishModified?.let {
-            if (it.trainingTarget.contains(trainingType)) it else null
-        }?.trainingFactor ?: 0
-        return Status(
-            speed = calcCookStatusSingle(StatusType.SPEED, base.speed, cookPointEffect, dishFactor),
-            stamina = calcCookStatusSingle(StatusType.STAMINA, base.stamina, cookPointEffect, dishFactor),
-            power = calcCookStatusSingle(StatusType.POWER, base.power, cookPointEffect, dishFactor),
-            guts = calcCookStatusSingle(StatusType.GUTS, base.guts, cookPointEffect, dishFactor),
-            wisdom = calcCookStatusSingle(StatusType.WISDOM, base.wisdom, cookPointEffect, dishFactor),
-            skillPt = calcCookStatusSingle(StatusType.SKILL, base.skillPt, cookPointEffect, dishFactor),
-        )
-    }
-
-    private fun calcCookStatusSingle(
-        target: StatusType,
-        baseValue: Int,
-        cookPointEffect: CookPointEffect,
-        dishFactor: Int,
-    ): Int {
-        val trainingFactor = (100 + cookPointEffect.trainingFactor + dishFactor) / 100.0
-        val skillFactor = if (target == StatusType.SKILL) (100 + cookPointEffect.skillPtFactor) / 100.0 else 1.0
-        val total = (baseValue * trainingFactor * skillFactor).toInt()
-        return min(100, total - baseValue)
     }
 }

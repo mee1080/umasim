@@ -30,7 +30,7 @@ interface ScenarioEvents {
     fun afterSimulation(state: SimulationState): SimulationState = state
 }
 
-abstract class CommonScenarioEvents : ScenarioEvents {
+open class CommonScenarioEvents : ScenarioEvents {
 
     override fun beforeAction(state: SimulationState): SimulationState {
         return when (state.turn) {

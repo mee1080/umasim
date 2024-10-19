@@ -113,42 +113,6 @@ fun <T> randomSelectPercent(percent: Double, success: T, failed: T): T {
     return if (Random.nextDouble() < percent) success else failed
 }
 
-enum class Scenario(
-    val displayName: String,
-    val trainingAutoLevelUp: Boolean = true,
-    val guestMember: Boolean = false,
-    val turn: Int = 78,
-    val levelUpTurns: List<Int> = listOf(37, 38, 39, 40, 61, 62, 63, 64),
-    val hasSecondTrainingStatus: Boolean = true,
-) {
-    URA("URA", hasSecondTrainingStatus = false),
-    AOHARU("アオハル", trainingAutoLevelUp = false, guestMember = true),
-    CLIMAX("クライマックス", hasSecondTrainingStatus = false),
-    GRAND_LIVE("グランドライブ", guestMember = true),
-    GM("グランドマスターズ", trainingAutoLevelUp = false),
-    LARC(
-        "プロジェクトL'Arc",
-        guestMember = true,
-        turn = 67,
-        levelUpTurns = listOf(37, 38, 39, 40, 42, 61, 62, 63, 64, 66),
-    ),
-    UAF("U.A.F.", trainingAutoLevelUp = false),
-    COOK("収穫ッ！満腹ッ！大豊食祭", guestMember = true),
-}
-
-fun toScenario(value: String) = toScenario(value.toIntOrNull() ?: 0)
-
-fun toScenario(value: Int) = when (value) {
-    2 -> Scenario.AOHARU
-    4 -> Scenario.CLIMAX
-    3 -> Scenario.GRAND_LIVE
-    5 -> Scenario.GM
-    6 -> Scenario.LARC
-    7 -> Scenario.UAF
-    8 -> Scenario.COOK
-    else -> Scenario.URA
-}
-
 fun turnToString(turn: Int) = buildString {
     append(
         when {

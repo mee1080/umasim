@@ -85,16 +85,7 @@ class Simulator(
         var state = initialState
         val turn = min(option.turn, state.scenario.turn)
         val history = mutableListOf<SimulationHistoryItem>()
-        val scenarioEvents = when (state.scenario) {
-            Scenario.URA -> UraScenarioEvents()
-            Scenario.AOHARU -> AoharuScenarioEvents()
-            Scenario.CLIMAX -> ClimaxScenarioEvents()
-            Scenario.GRAND_LIVE -> GrandLiveScenarioEvents()
-            Scenario.GM -> GmScenarioEvents()
-            Scenario.LARC -> LArcScenarioEvents()
-            Scenario.UAF -> UafScenarioEvents()
-            Scenario.COOK -> CookScenarioEvents()
-        }
+        val scenarioEvents = state.scenario.scenarioEvents()
         val events = eventsProducer(state)
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))

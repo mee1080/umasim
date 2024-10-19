@@ -343,7 +343,7 @@ class ViewModel(val scope: CoroutineScope) {
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
-            Calculator.calcPerformanceValue(trainingCalcInfo)
+            LiveCalculator.calcPerformanceValue(trainingCalcInfo)
         } else 0
 
         val itemList = listOfNotNull(

@@ -263,7 +263,8 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
                 trainingType.maxOf { type ->
                     val newTraining = newState.uafStatus!!.getTraining(type, newState.isLevelUpTurn)
                     val currentTraining = trainingScores[type]!!.first as Training
-                    val newAction = newState.predictUafScenarioActionParams(
+                    val newAction = UafCalculator.predictScenarioActionParams(
+                        newState,
                         listOf(newState.calcTrainingResult(newTraining, currentTraining.member))
                     ).first()
                     val newScore = calcScore(newState, newAction, expectedScore)

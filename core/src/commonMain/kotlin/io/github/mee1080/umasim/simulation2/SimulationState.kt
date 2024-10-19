@@ -190,20 +190,14 @@ data class SupportState(
     val outingEnabled = outingStep >= 2
 }
 
-abstract class ScenarioMemberState(val scenario: Scenario) {
+open class ScenarioMemberState(val scenario: Scenario) {
     open val hintBlocked get() = false
-    val scenarioLink get() = Store.getScenarioLink(scenario)
+    val scenarioLink get() = scenario.scenarioLink
     override fun toString() = scenario.name
     open fun toShortString() = toString()
 }
 
-object UraMemberState : ScenarioMemberState(Scenario.URA)
-
-object ClimaxMemberState : ScenarioMemberState(Scenario.CLIMAX)
-
 object GrandLiveMemberState : ScenarioMemberState(Scenario.GRAND_LIVE)
-
-object GmMemberState : ScenarioMemberState(Scenario.GM)
 
 data class AoharuMemberState(
     val member: TeamMemberData,

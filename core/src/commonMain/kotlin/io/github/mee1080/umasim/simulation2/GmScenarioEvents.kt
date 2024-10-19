@@ -87,7 +87,8 @@ class GmScenarioEvents : CommonScenarioEvents() {
             }
         val raceBonusStatus = baseStatus.multiplyToInt(totalRaceBonus)
         return updateStatus {
-            it + applyScenarioRaceBonus(raceBonusStatus) + Status(fanCount = raceFanCount(race.fanCount))
+            val raceStatus = scenario.calculator.applyScenarioRaceBonus(this, raceBonusStatus)
+            it + raceStatus + Status(fanCount = raceFanCount(race.fanCount))
         }
     }
 

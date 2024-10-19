@@ -120,7 +120,7 @@ class LArcScenarioEvents : ScenarioEvents {
     }
 
     private fun SimulationState.createLArcStatus(): SimulationState {
-        val linkChara = Store.getScenarioLink(Scenario.LARC)
+        val linkChara = Scenario.LARC.scenarioLink
         val outingMember = member.filter { it.outingType }
         val supportMember = member.filter { !it.outingType }
         var memberIndex = 6

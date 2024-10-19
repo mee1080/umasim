@@ -355,39 +355,6 @@ internal val aoharuTeamStatusRank = listOf(
     AoharuTeamStatusRank(7, "G", 0, 0, 0, 0, 1),
 )
 
-internal val scenarioLinkData = mapOf(
-    Scenario.URA to emptySet(),
-    Scenario.AOHARU to setOf("タイキシャトル", "マチカネフクキタル", "ライスシャワー", "ハルウララ"),
-    Scenario.CLIMAX to emptySet(),
-    Scenario.GRAND_LIVE to setOf("スマートファルコン", "サイレンススズカ", "アグネスタキオン", "ミホノブルボン"),
-    Scenario.LARC to setOf(
-        "ゴールドシップ",
-        "エルコンドルパサー",
-        "サトノダイヤモンド",
-        "マンハッタンカフェ",
-        "シリウスシンボリ",
-        "ナカヤマフェスタ",
-        "タップダンスシチー",
-        "オルフェーヴル",
-    ),
-    Scenario.UAF to setOf(
-        "メジロライアン",
-        "ウイニングチケット",
-        "トーセンジョーダン",
-        "ヤエノムテキ",
-        "ナリタトップロード",
-        "都留岐涼花",
-    ),
-    Scenario.COOK to setOf(
-        "スペシャルウィーク",
-        "ヒシアケボノ",
-        "ライスシャワー",
-        "ニシノフラワー",
-        "カツラギエース",
-        "秋川理事長",
-    ),
-)
-
 val supportEffectName = mapOf(
     1 to "友情ボーナス",
     2 to "やる気効果アップ",

@@ -12,34 +12,43 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
             3 -> newState
                 .addLinkMember()
                 .updateTrainingLevel()
+
             18 -> newState
                 .updateStatus { it.copy(motivation = it.motivation + 1) }
                 .addMember(9 - newState.teamMember.size)
                 .updateTrainingLevel()
+
             24 -> newState
                 .updateTrainingLevel()
                 .applyRace("E")
                 .addMember((3..min(4, 13 - newState.teamMember.size)).random())
+
             36 -> newState
                 .updateTrainingLevel()
                 .applyRace("D")
                 .addMember((max(2, 15 - newState.teamMember.size)..min(4, 16 - newState.teamMember.size)).random())
+
             48 -> newState
                 .updateTrainingLevel()
                 .applyRace("B")
                 .addMember(19 - newState.teamMember.size)
+
             60 -> newState
                 .updateTrainingLevel()
                 .applyRace("A")
+
             70 -> newState
                 // TODO アオハルヒント、爆発10で+20
                 .updateStatus { it.copy(skillPt = it.skillPt + 15) }
                 .updateTrainingLevel()
+
             72 -> newState
                 .updateTrainingLevel()
                 .applyRace("S")
+
             78 -> newState
                 .updateStatus { it + newState.raceStatus(0, 0, 50) }
+
             else -> newState
                 .updateTrainingLevel()
         }
@@ -48,7 +57,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
     private fun SimulationState.addLinkMember(): SimulationState {
         val current = member.map { it.charaName }
         val newMember = member.toMutableList()
-        Store.getScenarioLink(scenario).filter { !current.contains(it) }.forEach {
+        scenario.scenarioLink.filter { !current.contains(it) }.forEach {
             newMember.add(createGuest(newMember.size, Store.Aoharu.getGuest(it)!!))
         }
         return copy(member = newMember)

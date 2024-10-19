@@ -5,7 +5,7 @@ import io.github.mee1080.umasim.data.*
 class CookScenarioEvents : CommonScenarioEvents() {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
-        val initialMaterialCount = if (Store.isScenarioLink(Scenario.COOK, state.chara.charaName)) {
+        val initialMaterialCount = if (Scenario.COOK.scenarioLink.contains(state.chara.charaName)) {
             75
         } else 50
         return super.beforeSimulation(state).addGuest().copy(
@@ -93,7 +93,7 @@ class CookScenarioEvents : CommonScenarioEvents() {
         var newState = this
         var action: Action
         do {
-            val candidates = listOf(NoAction) + newState.predictCookAction(true)
+            val candidates = listOf(NoAction) + CookCalculator.predictCookAction(newState, true)
             action = selector.select(newState, candidates)
             newState = newState.applyAction(action, action.randomSelectResult())
         } while (action != NoAction)

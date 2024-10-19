@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.utility.applyIf
 import kotlin.math.ceil
 import kotlin.math.max
 import kotlin.math.min
@@ -32,11 +31,11 @@ fun SimulationState.predict(): List<Action> {
     } else {
         predictNormal()
     }
-    return predictScenarioActionParams(result)
+    return scenario.calculator.predictScenarioActionParams(this, result)
 }
 
 fun SimulationState.predictGoal(goal: RaceEntry): List<Action> {
-    return listOf(predictRace(goal)) + predictScenarioAction(true)
+    return listOf(predictRace(goal)) + scenario.calculator.predictScenarioAction(this, true)
 }
 
 fun SimulationState.predictNormal(): List<Action> {
@@ -50,10 +49,10 @@ fun SimulationState.predictNormal(): List<Action> {
         *(predictTrainingResult(supportPosition)),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
-        *(if (scenario == Scenario.LARC) emptyArray() else {
+        *(if (scenario.calculator.normalRaceBlocked(this)) emptyArray() else {
             Store.raceMap.getOrNull(turn)?.map { predictRace(it, false) }?.toTypedArray() ?: emptyArray()
         }),
-        *(predictScenarioAction(false)),
+        *(scenario.calculator.predictScenarioAction(this, false)),
     )
 }
 
@@ -154,24 +153,14 @@ private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, supp
 }
 
 fun SimulationState.predictSleep(): Array<Action> {
-    return if (isLevelUpTurn) {
-        if (scenario == Scenario.LARC) {
-            arrayOf(
-                Sleep(
-                    listOf(
-                        StatusActionResult(Status(hp = 50, motivation = 1), LArcActionParam(aptitudePt = 100)) to 1
-                    )
+    return scenario.calculator.predictSleep(this) ?: if (isLevelUpTurn) {
+        arrayOf(
+            Sleep(
+                listOf(
+                    StatusActionResult(Status(hp = 40, motivation = 1)) to 1
                 )
             )
-        } else {
-            arrayOf(
-                Sleep(
-                    listOf(
-                        StatusActionResult(Status(hp = 40, motivation = 1)) to 1
-                    )
-                )
-            )
-        }
+        )
     } else arrayOf(
         Sleep(
             listOf(
@@ -202,61 +191,36 @@ fun SimulationState.predictSleep(): Array<Action> {
 }
 
 fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
-    val climax = scenario == Scenario.CLIMAX
-    var status = if (scenario == Scenario.LARC && race.courseName == "ロンシャン") when (turn) {
-        41 -> raceStatus(5, 5, 40)
-        43 -> raceStatus(5, 7, 50)
-        65 -> raceStatus(5, 7, 40)
-        67 -> if (lArcStatus!!.consecutiveVictories >= 2) {
-            raceStatus(5, 30, 140)
-        } else {
-            raceStatus(5, 10, 60)
-        }
-
-        else -> throw IllegalArgumentException()
-    } else if (goal) when (race.grade) {
-        RaceGrade.DEBUT -> raceStatus(3, 3, if (climax) 15 else 30)
-        RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
-        RaceGrade.OPEN -> raceStatus(3, 3, 30)
-        RaceGrade.G3 -> raceStatus(4, 3, 35)
-        RaceGrade.G2 -> raceStatus(4, 3, 35)
-        RaceGrade.G1 -> raceStatus(5, 3, 45)
-        RaceGrade.FINALS -> if (scenario == Scenario.GM) {
-            raceStatus(5, 20, 80)
-        } else {
-            when (race.turn) {
-                74 -> raceStatus(5, 10, if (climax) 30 else 40)
-                76 -> raceStatus(5, 10, if (climax) 30 else 60)
-                78 -> raceStatus(5, 10, if (climax) 30 else 80)
+    var status = scenario.calculator.calcBaseRaceStatus(this, race, goal)
+        ?: if (goal) when (race.grade) {
+            RaceGrade.DEBUT -> raceStatus(3, 3, 30)
+            RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
+            RaceGrade.OPEN -> raceStatus(3, 3, 30)
+            RaceGrade.G3 -> raceStatus(4, 3, 35)
+            RaceGrade.G2 -> raceStatus(4, 3, 35)
+            RaceGrade.G1 -> raceStatus(5, 3, 45)
+            RaceGrade.FINALS -> when (race.turn) {
+                74 -> raceStatus(5, 10, 40)
+                76 -> raceStatus(5, 10, 60)
+                78 -> raceStatus(5, 10, 80)
                 else -> Status()
             }
-        }
 
-        RaceGrade.UNKNOWN -> Status()
-    } else when (race.grade) {
-        RaceGrade.PRE_OPEN -> raceStatus(1, 5, if (climax) 20 else 30)
-        RaceGrade.OPEN -> raceStatus(1, 5, if (climax) 20 else 30)
-        RaceGrade.G3 -> raceStatus(1, 8, if (climax) 25 else 35)
-        RaceGrade.G2 -> raceStatus(1, 8, if (climax) 25 else 35)
-        RaceGrade.G1 -> raceStatus(1, 10, if (climax) 35 else 45)
-        else -> Status()
-    }
+            RaceGrade.UNKNOWN -> Status()
+        } else when (race.grade) {
+            RaceGrade.PRE_OPEN -> raceStatus(1, 5, 30)
+            RaceGrade.OPEN -> raceStatus(1, 5, 30)
+            RaceGrade.G3 -> raceStatus(1, 8, 35)
+            RaceGrade.G2 -> raceStatus(1, 8, 35)
+            RaceGrade.G1 -> raceStatus(1, 10, 45)
+            else -> Status()
+        }
     status += Status(
-        hp = if (goal) 0 else if (climax) -20 else -15,
+        hp = if (goal) 0 else -15,
         fanCount = raceFanCount(race.getFan),
     )
-    status = applyScenarioRaceBonus(status)
-    val scenarioParam = if (scenario == Scenario.LARC) {
-        when {
-            turn == 43 -> LArcActionParam(supporterPt = 3000)
-            turn == 41 || turn == 65 -> LArcActionParam(supporterPt = 2000)
-            turn == 67 -> null
-            race.grade == RaceGrade.G1 -> LArcActionParam(supporterPt = 1300)
-            race.grade == RaceGrade.G2 -> LArcActionParam(supporterPt = 900)
-            race.grade == RaceGrade.G3 -> LArcActionParam(supporterPt = 700)
-            else -> null
-        }
-    } else null
+    status = scenario.calculator.applyScenarioRaceBonus(this, status)
+    val scenarioParam = scenario.calculator.raceScenarioActionParam(this, race, goal)
     return Race(goal, race.name, race.grade, StatusActionResult(status, scenarioParam))
 }
 
@@ -270,282 +234,7 @@ fun SimulationState.raceFanCount(base: Int): Int {
     return (base * Random.nextDouble(0.01, 0.0109) * (100 + totalFanBonus)).toInt()
 }
 
-fun SimulationState.applyScenarioRaceBonus(base: Status): Status {
-    var status = base
-    if (itemAvailable) {
-        status = enableItem.raceBonus?.let {
-            status.copy(
-                speed = (status.speed * (1 + it.raceFactor / 100.0)).toInt(),
-                stamina = (status.stamina * (1 + it.raceFactor / 100.0)).toInt(),
-                power = (status.power * (1 + it.raceFactor / 100.0)).toInt(),
-                guts = (status.guts * (1 + it.raceFactor / 100.0)).toInt(),
-                wisdom = (status.wisdom * (1 + it.raceFactor / 100.0)).toInt(),
-                skillPt = (status.skillPt * (1 + it.raceFactor / 100.0)).toInt(),
-            )
-        } ?: status
-        status = enableItem.fanBonus?.let {
-            status.copy(
-                fanCount = (status.fanCount * (1 + it.fanFactor / 100.0)).toInt(),
-            )
-        } ?: status
-    }
-    if (gmStatus != null && gmStatus.activeWisdom == Founder.Red) {
-        status = status.copy(
-            speed = (status.speed * (1 + 35 / 100.0)).toInt(),
-            stamina = (status.stamina * (1 + 35 / 100.0)).toInt(),
-            power = (status.power * (1 + 35 / 100.0)).toInt(),
-            guts = (status.guts * (1 + 35 / 100.0)).toInt(),
-            wisdom = (status.wisdom * (1 + 35 / 100.0)).toInt(),
-        )
-    }
-    if (cookStatus != null) {
-        status = status.copy(
-            fanCount = (status.fanCount * (1 + cookStatus.cookPointEffect.fanBonus / 100.0)).toInt(),
-        )
-        val dish = cookStatus.activatedDishModified
-        if (dish != null) {
-            status = status.copy(
-                speed = (status.speed * (1 + dish.raceBonus / 100.0)).toInt(),
-                stamina = (status.stamina * (1 + dish.raceBonus / 100.0)).toInt(),
-                power = (status.power * (1 + dish.raceBonus / 100.0)).toInt(),
-                guts = (status.guts * (1 + dish.raceBonus / 100.0)).toInt(),
-                wisdom = (status.wisdom * (1 + dish.raceBonus / 100.0)).toInt(),
-                skillPt = (status.skillPt * (1 + dish.raceBonus / 100.0)).toInt(),
-            )
-        }
-    }
-    return status
-}
-
-fun SimulationState.predictScenarioActionParams(baseActions: List<Action>): List<Action> {
-    return when (scenario) {
-        Scenario.GM -> predictGmScenarioActionParams(baseActions)
-        Scenario.LARC -> predictLArcScenarioActionParams(baseActions)
-        Scenario.UAF -> predictUafScenarioActionParams(baseActions)
-        Scenario.COOK -> predictCookScenarioActionParams(baseActions)
-        else -> baseActions
-    }
-}
-
-private val gmTrainingKnowledgeType by lazy {
-    trainingType.associateWith { training ->
-        if (training == StatusType.GUTS) {
-            trainingTypeOrSkill.map {
-                it to if (upInTraining(training, it)) 0.85 / 4 else 0.15 / 2
-            }
-        } else {
-            trainingTypeOrSkill.map {
-                it to if (upInTraining(training, it)) 0.8 / 3 else 0.2 / 3
-            }
-        }
-    }
-}
-
-fun SimulationState.predictGmScenarioActionParams(baseActions: List<Action>): List<Action> {
-    val gmStatus = gmStatus ?: return baseActions
-    return if (baseActions.size == 1) {
-        baseActions.map {
-            (it as Race).copy(
-                result = it.result.addScenarioActionParam(
-                    GmActionParam(
-                        Founder.entries.random(), trainingTypeOrSkill.random(), predictKnowledgeCount(1.0),
-                    )
-                ),
-            )
-        }
-    } else {
-        val trainingFounders = (Founder.entries + Founder.entries).shuffled()
-        val sleepFounders = Founder.entries.shuffled()
-        val raceKnowledgeType = trainingTypeOrSkill.random()
-        baseActions.map {
-            when (it) {
-                is Training -> {
-                    val knowledgeTypeRate = gmTrainingKnowledgeType[it.type]!!
-                    val doubleRate = when {
-                        !it.friendTraining -> 0.0
-                        it.type == StatusType.WISDOM -> 0.45
-                        else -> 1.0
-                    }
-                    it.copy(
-                        candidates = it.addScenarioActionParam(
-                            GmActionParam(
-                                trainingFounders[it.type.ordinal],
-                                randomSelectDouble(knowledgeTypeRate),
-                                predictKnowledgeCount(doubleRate),
-                            ).applyIf(it.support.any { support -> support.charaName == "ダーレーアラビアン" }) {
-                                val eventRate =
-                                    if (it.support.first { support -> support.charaName == "ダーレーアラビアン" }.supportState?.passion == true) {
-                                        1.0
-                                    } else {
-                                        0.4 * (100 + gmStatus.wisdomHintFrequency) / 100.0
-                                    }
-                                copy(knowledgeEventRate = eventRate)
-                            }
-                        ),
-                    )
-                }
-
-                is Sleep -> it.copy(
-                    candidates = it.addScenarioActionParam(
-                        GmActionParam(
-                            sleepFounders[0], trainingTypeOrSkill.random(), predictKnowledgeCount(0.2)
-                        )
-                    ),
-                )
-
-                is Outing -> it.copy(
-                    candidates = it.addScenarioActionParam(
-                        GmActionParam(
-                            sleepFounders[1], trainingTypeOrSkill.random(), predictKnowledgeCount(0.2)
-                        )
-                    ),
-                )
-
-                is Race -> it.copy(
-                    result = it.result.addScenarioActionParam(
-                        GmActionParam(
-                            sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(0.2)
-                        ),
-                    )
-                )
-
-                else -> it
-            }
-        }
-    }
-}
-
-private fun SimulationState.predictKnowledgeCount(doubleRate: Double): Int {
-    return when (gmStatus?.knowledgeFragmentCount) {
-        8, null -> 0
-        7 -> 1
-        else -> randomSelectPercent(doubleRate, 2, 1)
-    }
-}
-
-private fun SimulationState.predictLArcScenarioActionParams(baseActions: List<Action>): List<Action> {
-    return baseActions.map {
-        when (it) {
-            is Training -> {
-                val param = if (isLevelUpTurn) LArcActionParam(
-                    aptitudePt = 50 + it.member.size * 20 + it.friendCount * 20 - (if (it.type == StatusType.WISDOM) 20 else 0),
-                    mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" },
-                ) else LArcActionParam(
-                    mayEventChance = it.member.any { member -> member.charaName == "佐岳メイ" }
-                )
-                it.copy(candidates = it.addScenarioActionParam(param))
-            }
-
-            is Race -> {
-                val supporterPt = when (turn) {
-                    41, 65 -> 2000
-                    43 -> 3000
-                    67 -> 0
-                    else -> when (it.grade) {
-                        RaceGrade.G1 -> 1300
-                        RaceGrade.G2 -> 900
-                        RaceGrade.G3 -> 700
-                        else -> 0
-                    }
-                }
-                it.copy(result = it.result.addScenarioActionParam(LArcActionParam(supporterPt = supporterPt)))
-            }
-
-            else -> it
-        }
-    }
-}
-
-private fun SimulationState.predictScenarioAction(goal: Boolean): Array<Action> {
-    return when (scenario) {
-        Scenario.LARC -> predictLArcAction(goal)
-        Scenario.UAF -> predictUafAction(goal)
-        Scenario.COOK -> predictCookAction()
-        else -> emptyArray()
-    }
-}
-
-private fun SimulationState.predictLArcAction(goal: Boolean): Array<Action> {
-    val lArcStatus = lArcStatus ?: return emptyArray()
-    return if (goal) {
-        lArcStatus.predictGetAptitude().toTypedArray()
-    } else {
-        predictSSMatch(lArcStatus) + lArcStatus.predictGetAptitude()
-    }
-}
-
-private fun SimulationState.predictSSMatch(lArcStatus: LArcStatus): Array<Action> {
-    if (isLevelUpTurn) return emptyArray()
-    val joinMember = lArcStatus.ssMatchMember
-    if (joinMember.isEmpty()) return emptyArray()
-    val supporterRank = (listOf(-1 to lArcStatus.supporterPt) + member
-        .filter { !it.outingType }
-        .map { it.index to (it.scenarioState as LArcMemberState).supporterPt })
-        .sortedByDescending { it.second }
-        .mapIndexed { order, (index, _) -> index to order }
-        .toMap()
-
-    var status = Status()
-    var lArcParam = LArcActionParam()
-    joinMember.forEach {
-        val memberState = it.scenarioState as LArcMemberState
-        val effect = memberState.nextStarEffect[0]
-        status += Status(
-            speed = memberState.predictSSMatchStatus(StatusType.SPEED, it.isScenarioLink),
-            stamina = memberState.predictSSMatchStatus(StatusType.STAMINA, it.isScenarioLink),
-            power = memberState.predictSSMatchStatus(StatusType.POWER, it.isScenarioLink),
-            guts = memberState.predictSSMatchStatus(StatusType.GUTS, it.isScenarioLink),
-            wisdom = memberState.predictSSMatchStatus(StatusType.WISDOM, it.isScenarioLink),
-            skillPt = 5,
-        ) + when (effect) {
-            StarEffect.Status -> Status().add(memberState.starType to (if (it.isScenarioLink) 15 else 10))
-            StarEffect.SkillPt -> Status(skillPt = 20)
-            StarEffect.Hp -> Status(hp = 20)
-            StarEffect.MaxHp -> Status(hp = 20, maxHp = 4)
-            StarEffect.Motivation -> Status(hp = 20, motivation = 1)
-            else -> Status()
-        }
-        val rank = supporterRank[it.index]!! + supporterRank[-1]!! + 2
-        lArcParam += LArcActionParam(
-            supporterPt = 800 + (13 - rank) * (if (rank >= 13) 10 else 15),
-            aptitudePt = 10,
-        ) + when (effect) {
-            StarEffect.AptitudePt -> LArcActionParam(aptitudePt = 50)
-            StarEffect.StarGauge -> LArcActionParam(starGaugeMember = setOf(it))
-            StarEffect.Aikyou -> LArcActionParam(condition = setOf("愛嬌○"))
-            StarEffect.GoodTraining -> LArcActionParam(condition = setOf("練習上手○"))
-            else -> LArcActionParam()
-        }
-        // スキルヒントは無視
-    }
-    val isSSSMatch = lArcStatus.isSSSMatch == true
-    if (isSSSMatch) {
-        status += Status(15, 15, 15, 15, 15, 25)
-        lArcParam += LArcActionParam(supporterPt = lArcParam.supporterPt)
-    }
-    return arrayOf(SSMatch(isSSSMatch, joinMember, StatusActionResult(status, lArcParam)))
-}
-
-private fun LArcMemberState.predictSSMatchStatus(type: StatusType, scenarioLink: Boolean): Int {
-    val baseValue = min(5, max(1, (status.get(type) / 150)))
-    val typeValue = when {
-        type != starType -> 0
-        scenarioLink -> 6
-        else -> 4
-    }
-    return baseValue + typeValue
-}
-
-private fun LArcStatus.predictGetAptitude(): List<Action> {
-    return LArcAptitude.entries.mapNotNull {
-        val level = it.getLevel(this)
-        if (level in 1..<it.maxLevel && it.getCost(this) <= aptitudePt) {
-            LArcGetAptitude(LArcGetAptitudeResult(it, level + 1))
-        } else null
-    }
-}
-
-private fun MultipleAction.addScenarioActionParam(
+fun MultipleAction.addScenarioActionParam(
     scenarioActionParam: ScenarioActionParam,
     failureScenarioActionParam: ScenarioActionParam? = null,
 ): List<Pair<ActionResult, Int>> {
@@ -557,105 +246,12 @@ private fun MultipleAction.addScenarioActionParam(
     }
 }
 
-private fun ActionResult.addScenarioActionParam(
+fun ActionResult.addScenarioActionParam(
     scenarioActionParam: ScenarioActionParam,
     failureScenarioActionParam: ScenarioActionParam? = null,
 ): ActionResult {
     return when (this) {
         is StatusActionResult -> copy(scenarioActionParam = if (success) scenarioActionParam else failureScenarioActionParam)
         else -> this
-    }
-}
-
-private fun SimulationState.predictUafAction(goal: Boolean): Array<Action> {
-    val uafStatus = uafStatus ?: return emptyArray()
-    if (goal) return emptyArray()
-    if (uafStatus.consultCount == 0) return emptyArray()
-    return buildList {
-        UafGenre.entries.forEach { genre ->
-            if (uafStatus.trainingAthletics.any { it.value.genre == genre }) {
-                addAll(UafConsult.instance[genre]!!)
-            }
-        }
-    }.toTypedArray()
-}
-
-
-fun SimulationState.predictUafScenarioActionParams(baseActions: List<Action>): List<Action> {
-    val uafStatus = uafStatus ?: return baseActions
-    return baseActions.map {
-        when (it) {
-            is Training -> {
-                val genre = uafStatus.trainingAthletics[it.type]!!.genre
-                val levelUp = uafStatus.athleticsLevelUp.mapValues { (key, value) ->
-                    if (uafStatus.trainingAthletics[key]!!.genre == genre) value else 0
-                }
-                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(athleticsLevelUp = levelUp)))
-            }
-
-            is Sleep -> {
-                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
-            }
-
-            is Outing -> {
-                it.copy(candidates = it.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
-            }
-
-            is Race -> {
-                it.copy(result = it.result.addScenarioActionParam(UafScenarioActionParam(notTraining = true)))
-            }
-
-            else -> it
-        }
-    }
-}
-
-fun SimulationState.predictCookAction(beforeEvent: Boolean = false): Array<Action> {
-    val cookStatus = cookStatus ?: return emptyArray()
-    return buildList {
-        if (cookStatus.activatedDish == null && !beforeEvent) {
-            cookStatus.availableDishList.forEach {
-                add(CookActivateDish(it))
-            }
-        }
-        if (!isLevelUpTurn) {
-            cookStatus.requiredGardenPoint.filter { it.value <= cookStatus.gardenPoint }.forEach {
-                add(CookMaterialLevelUp(it.key, cookStatus.materialLevel[it.key]!! + 1))
-            }
-        }
-    }.toTypedArray()
-}
-
-fun SimulationState.predictCookScenarioActionParams(baseActions: List<Action>): List<Action> {
-    val cookStatus = cookStatus ?: return baseActions
-    return baseActions.map {
-        when (it) {
-            is Training -> {
-                val stamp = CookStamp(
-                    material = statusTypeToCookMaterial[it.type]!!,
-                    fullPower = it.friendTraining,
-                    plus = it.member.size + it.support.count { member -> !member.guest && member.isScenarioLink },
-                )
-                val failureStamp = stamp.copy(fullPower = false)
-                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp), CookActionParam(failureStamp)))
-            }
-
-            is Sleep -> {
-                it.copy(candidates = it.addScenarioActionParam(CookActionParam(cookStatus.sleepStamp)))
-            }
-
-            is Outing -> {
-                val stamp = if (it.support?.charaName == "秋川理事長") {
-                    cookStatus.sleepStamp.copy(fullPower = true)
-                } else cookStatus.sleepStamp
-                it.copy(candidates = it.addScenarioActionParam(CookActionParam(stamp)))
-            }
-
-            is Race -> {
-                it.copy(result = it.result.addScenarioActionParam(CookActionParam(cookStatus.raceStamp)))
-            }
-
-            else -> it
-        }
     }
 }

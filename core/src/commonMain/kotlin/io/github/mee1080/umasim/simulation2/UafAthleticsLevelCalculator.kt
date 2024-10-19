@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.calcRate
 
 data class ColorFactor(
@@ -31,7 +30,7 @@ object UafAthleticsLevelCalculator {
         val factors = info.member.map { member ->
             val positions = Calculator.calcCardPositionSelection(info, member, 0)
             val restRate = calcRate(StatusType.NONE, *positions)
-            val link = Store.isScenarioLink(info.scenario, member.charaName)
+            val link = info.scenario.scenarioLink.contains(member.charaName)
             val typeInt = member.card.type.ordinal
             if (typeInt >= 5) {
                 val joinRate = (1.0 - restRate) / 5.0

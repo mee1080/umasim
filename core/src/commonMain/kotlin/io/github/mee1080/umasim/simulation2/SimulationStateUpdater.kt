@@ -40,7 +40,7 @@ fun SimulationState.onTurnChange(): SimulationState {
         enableItem = newState.enableItem.onTurnChange(),
     )
     newState = newState.updateOutingStep()
-    newState = newState.updateScenarioTurn()
+    newState = scenario.calculator.updateScenarioTurn(newState)
     return newState
 }
 
@@ -62,16 +62,6 @@ fun SimulationState.updateOutingStep(): SimulationState {
     }
     return targets.fold(this) { state, target ->
         state.applyOutingEvent(target)
-    }
-}
-
-fun SimulationState.updateScenarioTurn(): SimulationState {
-    return when (scenario) {
-        Scenario.COOK -> updateCookStatus {
-            updateTurn(isGoalRaceTurn, isLevelUpTurn, isLevelUpTurn || turn > 72)
-        }
-
-        else -> this
     }
 }
 

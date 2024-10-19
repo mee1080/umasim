@@ -191,17 +191,6 @@ object WebConstants {
     val displaySimulationModeList =
         simulationModeList.mapValues { it.value.mapIndexed { index, pair -> index to pair.first } }
 
-    val specialTurnList = mapOf(
-        Scenario.AOHARU to listOf(
-            17 to "ジュニア9月後半加入",
-            23 to "ジュニア12月後半レース＆加入",
-            33 to "クラシック6月後半レース＆加入",
-            43 to "クラシック12月後半レース＆加入",
-            53 to "シニア6月後半レース",
-            63 to "シニア12月後半レース",
-        )
-    )
-
     val dummyMegaphoneItem = MegaphoneItem("なし", 0, 0, 0)
 
     val shopItemMegaphone = listOf(dummyMegaphoneItem) + Store.Climax.shopItem.filterIsInstance<MegaphoneItem>()

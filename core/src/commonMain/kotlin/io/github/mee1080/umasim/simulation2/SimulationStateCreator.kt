@@ -19,25 +19,7 @@ fun SupportCard.toMemberState(
         friendCount = friendCount,
         outingStep = 0,
     ),
-    scenarioState = when (scenario) {
-        Scenario.URA -> UraMemberState
-        Scenario.AOHARU -> Store.Aoharu.getTeamMember(id)?.let { member ->
-            AoharuMemberState(
-                member = member,
-                status = member.initialStatus,
-                maxStatus = member.maxStatus,
-                aoharuTrainingCount = 0,
-                aoharuIcon = false,
-            )
-        } ?: AoharuNotMemberState
-
-        Scenario.CLIMAX -> ClimaxMemberState
-        Scenario.GRAND_LIVE -> GrandLiveMemberState
-        Scenario.GM -> GmMemberState
-        Scenario.LARC -> LArcMemberState()
-        Scenario.UAF -> UafMemberState
-        Scenario.COOK -> CookMemberState
-    }
+    scenarioState = scenario.memberState(this),
 )
 
 fun List<SupportCard>.toMemberState(scenario: Scenario) =
@@ -48,23 +30,7 @@ fun TeamMemberData.toMemberState(scenario: Scenario, index: Int) = MemberState(
     card = Store.getSupport(supportCardId, 0),
     position = StatusType.NONE,
     supportState = null,
-    scenarioState = when (scenario) {
-        Scenario.URA -> UraMemberState
-        Scenario.AOHARU -> AoharuMemberState(
-            member = this,
-            status = initialStatus,
-            maxStatus = maxStatus,
-            aoharuTrainingCount = 0,
-            aoharuIcon = false,
-        )
-
-        Scenario.CLIMAX -> ClimaxMemberState
-        Scenario.GRAND_LIVE -> GrandLiveMemberState
-        Scenario.GM -> GmMemberState
-        Scenario.LARC -> LArcMemberState()
-        Scenario.UAF -> UafMemberState
-        Scenario.COOK -> CookMemberState
-    },
+    scenarioState = scenario.memberState(this),
 )
 
 fun createTeamMemberState(count: Int, scenario: Scenario) = Store.Aoharu.getShuffledGuest().subList(0, count)

@@ -43,7 +43,6 @@ object Store {
     val charaList by lazy { CharaLoader.load(charaSource) }
     val supportList by lazy { SupportCardLoader.load(supportSource) }
     private val trainingList = trainingData
-    val scenarioLink = scenarioLinkData
     private val goalRaceMap by lazy { GoalRaceLoader.load(goalRaceSource).associate { it.charaId to it.turns } }
     val raceList by lazy { RaceLoader.load(raceSource) }
     val raceMap by lazy {
@@ -91,11 +90,7 @@ object Store {
 
     fun getTraining(scenario: Scenario, type: StatusType) = getTrainingInfo(scenario)[type]!!
 
-    fun getScenarioLink(scenario: Scenario) = scenarioLink[scenario] ?: emptySet()
-
-    fun isScenarioLink(scenario: Scenario, charaName: String) = scenarioLink[scenario]?.contains(charaName) ?: false
-
-    fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }
+   fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }
 
     fun getRace(name: String) = raceList.first { it.name == name }
 
@@ -149,7 +144,7 @@ object Store {
     object GrandLive {
         private val notLinkSupportList by lazy {
             supportList.filter {
-                it.rarity == 1 && it.talent == 0 && !it.type.outingType && !getScenarioLink(Scenario.GRAND_LIVE).contains(
+                it.rarity == 1 && it.talent == 0 && !it.type.outingType && !Scenario.GRAND_LIVE.scenarioLink.contains(
                     it.chara
                 )
             }
