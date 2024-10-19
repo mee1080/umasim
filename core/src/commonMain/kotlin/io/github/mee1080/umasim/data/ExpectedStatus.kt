@@ -1,5 +1,7 @@
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.scenario.live.Performance
+
 data class ExpectedStatus(
     override val speed: Double = 0.0,
     override val stamina: Double = 0.0,

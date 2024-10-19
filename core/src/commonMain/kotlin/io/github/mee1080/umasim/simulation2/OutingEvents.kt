@@ -1,9 +1,9 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.CookMaterial
+import io.github.mee1080.umasim.scenario.cook.CookMaterial
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.randomSelect
-import io.github.mee1080.umasim.data.updateCookStatus
+import io.github.mee1080.umasim.scenario.cook.updateCookStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
 

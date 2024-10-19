@@ -18,13 +18,13 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
-//    debugCook()
-    simulateCook()
+    debugCook()
+//    simulateCook()
 //    debugUaf()
 //    simulateUaf()
 //    simulateLarc()

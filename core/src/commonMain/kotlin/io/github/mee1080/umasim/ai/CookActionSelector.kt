@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.cook.CookMaterial
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

@@ -19,6 +19,15 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.climax.ShopItem
+import io.github.mee1080.umasim.scenario.cook.CookDish
+import io.github.mee1080.umasim.scenario.cook.CookMaterial
+import io.github.mee1080.umasim.scenario.cook.CookStamp
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.larc.LArcAptitude
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
+import io.github.mee1080.umasim.scenario.live.Lesson
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
 
 sealed interface Action {
     val name: String

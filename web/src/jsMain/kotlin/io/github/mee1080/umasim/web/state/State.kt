@@ -20,6 +20,24 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.rotation.RaceRotationCalculator
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
+import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
+import io.github.mee1080.umasim.scenario.climax.RaceAchievement
+import io.github.mee1080.umasim.scenario.climax.WeightItem
+import io.github.mee1080.umasim.scenario.cook.CookMaterial
+import io.github.mee1080.umasim.scenario.cook.CookStatus
+import io.github.mee1080.umasim.scenario.cook.cookDishData
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.gm.GmStatus
+import io.github.mee1080.umasim.scenario.gm.Knowledge
+import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.live.LessonPeriod
+import io.github.mee1080.umasim.scenario.live.Performance
+import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
+import io.github.mee1080.umasim.scenario.uaf.UafAthletic
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
+import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.utility.replaced

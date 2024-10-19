@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.cui
 import io.github.mee1080.umasim.ai.ClimaxFactorBasedActionSelector
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
 import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking

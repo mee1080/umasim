@@ -20,6 +20,9 @@ package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.ai.FactorBasedActionSelector2
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
+import io.github.mee1080.umasim.scenario.climax.WeightItem
 
 object WebConstants {
 

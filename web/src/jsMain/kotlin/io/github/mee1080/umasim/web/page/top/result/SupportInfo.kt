@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.disabled

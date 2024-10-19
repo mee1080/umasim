@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.LArcAptitude
+import io.github.mee1080.umasim.scenario.larc.LArcAptitude
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.web.components.atoms.Card
 import io.github.mee1080.umasim.web.components.atoms.MdClass

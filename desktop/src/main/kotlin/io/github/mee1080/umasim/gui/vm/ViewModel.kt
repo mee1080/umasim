@@ -23,7 +23,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.Chara
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import kotlinx.coroutines.CoroutineScope

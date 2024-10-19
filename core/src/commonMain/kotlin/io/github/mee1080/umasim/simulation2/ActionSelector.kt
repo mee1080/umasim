@@ -18,7 +18,7 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.Lesson
+import io.github.mee1080.umasim.scenario.live.Lesson
 import io.github.mee1080.umasim.data.StatusType
 import kotlinx.serialization.json.Json
 

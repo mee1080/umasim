@@ -19,6 +19,10 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.uaf.UafAthletic
+import io.github.mee1080.umasim.scenario.uaf.UafCalculator
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
+import io.github.mee1080.umasim.scenario.uaf.uafNeedWinCount
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlin.math.max

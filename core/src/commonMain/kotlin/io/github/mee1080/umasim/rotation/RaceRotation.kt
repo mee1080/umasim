@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.rotation
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.climax.*
 import kotlin.math.max
 
 class RaceRotation(

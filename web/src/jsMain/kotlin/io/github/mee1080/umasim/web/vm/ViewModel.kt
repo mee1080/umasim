@@ -23,6 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
+import io.github.mee1080.umasim.scenario.climax.WeightItem
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.live.LiveCalculator
+import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.*

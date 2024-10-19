@@ -19,6 +19,17 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.climax.*
+import io.github.mee1080.umasim.scenario.cook.activateDish
+import io.github.mee1080.umasim.scenario.cook.updateCookStatus
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.gm.Knowledge
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
+import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.larc.StarEffect
+import io.github.mee1080.umasim.scenario.live.*
+import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
 import io.github.mee1080.utility.mapIf

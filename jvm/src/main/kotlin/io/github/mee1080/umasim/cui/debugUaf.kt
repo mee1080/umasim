@@ -1,11 +1,12 @@
 package io.github.mee1080.umasim.cui
 
 
-import io.github.mee1080.umasim.ai.LArcActionSelector
 import io.github.mee1080.umasim.ai.UafActionSelector
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.scenario.uaf.ColorFactor
+import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

@@ -19,9 +19,9 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.CookMaterial
-import io.github.mee1080.umasim.data.UafAthletic
-import io.github.mee1080.umasim.data.UafGenre
+import io.github.mee1080.umasim.scenario.cook.CookMaterial
+import io.github.mee1080.umasim.scenario.uaf.UafAthletic
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.web.components.atoms.MdClass

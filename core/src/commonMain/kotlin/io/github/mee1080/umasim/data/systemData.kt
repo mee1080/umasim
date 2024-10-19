@@ -1,5 +1,15 @@
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.scenario.aoharu.AoharuBurnTeam
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTraining
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTrainingTeam
+import io.github.mee1080.umasim.scenario.climax.*
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.gm.WisdomLevelEffect
+import io.github.mee1080.umasim.scenario.live.*
+import io.github.mee1080.umasim.scenario.toScenario
+
 internal val trainingData = listOf(
     TrainingBase(toScenario(1), toSupportType("S"), 1, 520, Status(11, 0, 6, 0, 0, 4, -21)),
     TrainingBase(toScenario(1), toSupportType("S"), 2, 524, Status(12, 0, 6, 0, 0, 4, -22)),

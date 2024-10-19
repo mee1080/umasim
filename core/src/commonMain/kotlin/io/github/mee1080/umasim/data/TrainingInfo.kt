@@ -18,6 +18,8 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
 import kotlin.math.min
 
 class TrainingInfo(

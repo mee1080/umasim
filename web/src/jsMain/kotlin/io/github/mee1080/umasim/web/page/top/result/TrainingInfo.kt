@@ -19,9 +19,9 @@
 package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.UafGenre
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock

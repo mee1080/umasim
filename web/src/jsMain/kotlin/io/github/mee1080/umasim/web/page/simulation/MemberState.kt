@@ -1,7 +1,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.LArcMemberState
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor

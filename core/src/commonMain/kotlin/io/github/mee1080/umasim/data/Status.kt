@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.data
 
+import io.github.mee1080.umasim.scenario.live.Performance
 import io.github.mee1080.utility.diffIntMap
 import io.github.mee1080.utility.sumMapOf
 import kotlin.math.max

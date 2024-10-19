@@ -20,7 +20,7 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.web.components.LabeledRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.MdFilledButton

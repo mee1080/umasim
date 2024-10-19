@@ -19,8 +19,8 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.LArcAptitude
-import io.github.mee1080.umasim.data.LArcMemberState
+import io.github.mee1080.umasim.scenario.larc.LArcAptitude
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.max

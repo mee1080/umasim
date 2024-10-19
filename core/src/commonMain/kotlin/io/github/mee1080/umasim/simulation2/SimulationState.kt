@@ -19,6 +19,14 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
+import io.github.mee1080.umasim.scenario.climax.*
+import io.github.mee1080.umasim.scenario.cook.CookStatus
+import io.github.mee1080.umasim.scenario.gm.GmStatus
+import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.live.LiveStatus
+import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
 data class SimulationState(

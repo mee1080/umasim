@@ -2,6 +2,8 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.LArcActionSelector
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi

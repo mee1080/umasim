@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking

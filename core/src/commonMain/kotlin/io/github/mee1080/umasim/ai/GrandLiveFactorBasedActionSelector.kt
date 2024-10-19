@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.simulation2.*
 
 @Suppress("unused")

@@ -20,6 +20,10 @@ package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.gm.Founder
+import io.github.mee1080.umasim.scenario.gm.Knowledge
+import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.umasim.web.components.LabeledRadio
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup

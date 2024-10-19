@@ -2,7 +2,7 @@ package io.github.mee1080.umasim.optimize
 
 import io.github.mee1080.umasim.cui.context
 import io.github.mee1080.umasim.data.Chara
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.simulation2.ActionSelector
 import io.github.mee1080.umasim.simulation2.Evaluator

@@ -19,6 +19,12 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.cook.CookStatus
+import io.github.mee1080.umasim.scenario.gm.GmStatus
+import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
+import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.math.min
 import kotlin.math.pow

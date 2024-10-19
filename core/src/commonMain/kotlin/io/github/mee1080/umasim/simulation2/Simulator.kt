@@ -19,6 +19,7 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.scenario.Scenario
 import kotlin.math.min
 
 class Simulator(

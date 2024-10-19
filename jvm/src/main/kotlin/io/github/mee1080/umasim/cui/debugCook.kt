@@ -2,7 +2,7 @@ package io.github.mee1080.umasim.cui
 
 
 import io.github.mee1080.umasim.ai.CookActionSelector
-import io.github.mee1080.umasim.data.Scenario
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.*
