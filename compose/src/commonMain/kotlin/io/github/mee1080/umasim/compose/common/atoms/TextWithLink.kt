@@ -1,28 +1,36 @@
 package io.github.mee1080.umasim.compose.common.atoms
 
-import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.LocalTextStyle
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.*
 import androidx.compose.ui.text.style.TextDecoration
 import io.github.mee1080.umasim.compose.common.lib.jumpToUrl
-import io.github.mee1080.utility.buildPersistentList
-import kotlinx.collections.immutable.ImmutableList
 
 private val urlRegex = "https?://[\\w/:%#$&?()~.=+\\-]+".toRegex()
+
+val defaultTextLinkStyle = TextLinkStyles(
+    style = SpanStyle(
+        color = Color.Blue,
+        textDecoration = TextDecoration.Underline,
+    ),
+    hoveredStyle = SpanStyle(
+        color = Color.Red,
+    ),
+    focusedStyle = SpanStyle(
+        color = Color.Red,
+    ),
+)
 
 @Composable
 fun TextWithLink(
     text: String,
     modifier: Modifier = Modifier,
-    linkStyle: SpanStyle = SpanStyle(
-        color = Color.Blue,
-        textDecoration = TextDecoration.Underline,
-    ),
+    linkStyle: TextLinkStyles = defaultTextLinkStyle,
 ) {
-    val contents = buildPersistentList {
+    val contents = buildList {
         var index = 0
         var result = urlRegex.find(text)
         while (result != null) {
@@ -42,36 +50,29 @@ fun TextWithLink(
     TextWithLink(contents, modifier, linkStyle)
 }
 
-@OptIn(ExperimentalTextApi::class)
 @Composable
 fun TextWithLink(
-    contents: ImmutableList<Pair<String, String?>>,
+    contents: List<Pair<String, String?>>,
     modifier: Modifier = Modifier,
-    linkStyle: SpanStyle = SpanStyle(
-        color = Color.Blue,
-        textDecoration = TextDecoration.Underline,
-    ),
+    linkStyle: TextLinkStyles = defaultTextLinkStyle,
 ) {
     val content = buildAnnotatedString {
         contents.forEach { (text, url) ->
             if (url == null) {
                 append(text)
             } else {
-                withAnnotation(UrlAnnotation(url)) {
-                    withStyle(linkStyle) {
-                        append(text)
-                    }
+                val annotation = LinkAnnotation.Url(url, linkStyle) {
+                    jumpToUrl(url)
+                }
+                withLink(annotation) {
+                    append(text)
                 }
             }
         }
     }
-    ClickableText(
+    Text(
         text = content,
         style = LocalTextStyle.current,
-        modifier = modifier,
-    ) { offset ->
-        content.getUrlAnnotations(offset, offset).firstOrNull()?.let { annotation ->
-            jumpToUrl(annotation.item.url)
-        }
-    }
+        modifier = modifier
+    )
 }

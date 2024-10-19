@@ -1,4 +1,5 @@
-import org.jetbrains.kotlin.gradle.targets.js.dsl.ExperimentalWasmDsl
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
     alias(libs.plugins.compose)
@@ -9,10 +10,6 @@ plugins {
 
 group = "io.github.mee1080.umasim"
 version = "1.0"
-
-composeCompiler {
-    enableStrongSkippingMode = true
-}
 
 kotlin {
 

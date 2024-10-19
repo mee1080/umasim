@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -14,10 +15,6 @@ version = "1.0.1"
 
 repositories {
     maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
-}
-
-composeCompiler {
-    enableStrongSkippingMode = true
 }
 
 dependencies {

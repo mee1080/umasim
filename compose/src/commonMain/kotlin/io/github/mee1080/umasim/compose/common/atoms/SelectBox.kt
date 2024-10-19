@@ -47,7 +47,9 @@ fun <T> SelectBox(
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor().pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
             )
         } else {
             TextField(
@@ -57,7 +59,9 @@ fun <T> SelectBox(
                 readOnly = true,
                 trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
                 colors = ExposedDropdownMenuDefaults.textFieldColors(),
-                modifier = Modifier.menuAnchor().pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
+                modifier = Modifier
+                    .menuAnchor(MenuAnchorType.PrimaryNotEditable)
+                    .pointerHoverIcon(PointerIcon.Hand, overrideDescendants = true)
             )
         }
         ExposedDropdownMenu(expanded, { onExpandedChange(false) }) {

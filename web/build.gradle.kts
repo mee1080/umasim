@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
@@ -10,10 +12,6 @@ version = "1.0"
 
 repositories {
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
-}
-
-composeCompiler {
-    enableStrongSkippingMode = true
 }
 
 kotlin {
