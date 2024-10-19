@@ -153,11 +153,11 @@ class LArcScenarioEvents : ScenarioEvents {
         }
         val newMember = (outingMember + initializedMember).sortedBy { it.index }
 
-        return copy(member = newMember, lArcStatus = LArcStatus())
+        return copy(member = newMember, scenarioStatus = LArcStatus())
     }
 
     private fun SimulationState.turnUpdate(): SimulationState {
-        if (lArcStatus == null) return this
+        val lArcStatus = lArcStatus ?: return this
         val newMember = member.map {
             if (it.outingType) return@map it
             val lArcMemberState = it.scenarioState as LArcMemberState
@@ -215,7 +215,7 @@ class LArcScenarioEvents : ScenarioEvents {
 
         return copy(
             member = newMember,
-            lArcStatus = lArcStatus.copy(
+            scenarioStatus = lArcStatus.copy(
                 memberSupporterPt = totalSupporterPt,
                 ssMatchMember = newSSMatchMember,
                 isSSSMatch = newIsSSSMatch,
@@ -277,7 +277,7 @@ class LArcScenarioEvents : ScenarioEvents {
         }
         return copy(
             status = status + addStatus,
-            lArcStatus = lArcStatus.copy(lastExpectationEvent = eventLevel),
+            scenarioStatus = lArcStatus.copy(lastExpectationEvent = eventLevel),
         ).applyIf(eventLevel in arrayOf(20, 60, 100)) { allTrainingLevelUp() }
     }
 }

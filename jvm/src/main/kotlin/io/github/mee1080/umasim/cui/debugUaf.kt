@@ -2,9 +2,9 @@ package io.github.mee1080.umasim.cui
 
 
 import io.github.mee1080.umasim.ai.UafActionSelector
-import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.uaf.ColorFactor
 import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator
 import io.github.mee1080.umasim.simulation2.*
@@ -16,8 +16,8 @@ import kotlin.time.measureTime
 
 fun debugUaf() {
     val time = measureTime {
-//    debugUafSingleSimulation()
-        debugUafRunSimulation()
+        debugUafSingleSimulation()
+//        debugUafRunSimulation()
     }
     println("time: $time")
 }

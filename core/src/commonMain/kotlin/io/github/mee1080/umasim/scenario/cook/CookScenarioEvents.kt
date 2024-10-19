@@ -1,6 +1,8 @@
 package io.github.mee1080.umasim.scenario.cook
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.*
@@ -12,7 +14,7 @@ class CookScenarioEvents : CommonScenarioEvents() {
             75
         } else 50
         return super.beforeSimulation(state).addGuest().copy(
-            cookStatus = CookStatus(materialCount = CookMaterial.entries.associateWith { initialMaterialCount })
+            scenarioStatus = CookStatus(materialCount = CookMaterial.entries.associateWith { initialMaterialCount })
         )
     }
 

@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.RatedSet
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.simulation2.ScenarioStatus
 
 interface TrainingLiveStatus {
     fun trainingUp(type: StatusType): Int
@@ -35,7 +36,7 @@ data class LiveStatus(
     val learnedLesson: List<Lesson> = emptyList(),
     val livedLesson: List<Lesson> = emptyList(),
     val lessonSelection: List<Lesson> = emptyList(),
-) : TrainingLiveStatus {
+) : ScenarioStatus, TrainingLiveStatus {
     private val learnedBonusList by lazy { learnedLesson.map { it.learnBonus } }
 
     private val livedBonusList by lazy { livedLesson.mapNotNull { it.liveBonus } }

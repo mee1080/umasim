@@ -2,7 +2,10 @@ package io.github.mee1080.umasim.scenario.gm
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
-import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.umasim.simulation2.ActionSelector
+import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.raceFanCount
+import io.github.mee1080.umasim.simulation2.updateStatus
 import io.github.mee1080.utility.applyIf
 
 class GmScenarioEvents : CommonScenarioEvents() {
@@ -44,7 +47,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
         val base = super.afterAction(state, selector)
         return when (base.turn) {
             // 導入
-            2 -> base.copy(gmStatus = GmStatus())
+            2 -> base.copy(scenarioStatus = GmStatus())
 
             24 -> base.applyRace(SpecialRace.GUR)
 
@@ -97,7 +100,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
     override fun onTurnEnd(state: SimulationState): SimulationState {
         val base = super.onTurnEnd(state)
         val gmStatus = base.gmStatus ?: return base
-        return state.copy(gmStatus = gmStatus.turnChange())
+        return state.copy(scenarioStatus = gmStatus.turnChange())
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {

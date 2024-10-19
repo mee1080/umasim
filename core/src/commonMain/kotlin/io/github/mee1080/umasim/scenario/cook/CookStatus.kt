@@ -25,7 +25,7 @@ data class CookStatus(
     val dishRank: List<Int> = listOf(0, -1, -1, -1),
     val activatedDish: CookDish? = null,
     val alwaysHarvest: Boolean = false,
-) {
+) : ScenarioStatus {
     val cookPointEffect by lazy {
         when {
             cookPoint >= 12000 -> cookPointEffects[7]
@@ -199,7 +199,7 @@ data class CookStatus(
 }
 
 fun SimulationState.updateCookStatus(update: CookStatus.() -> CookStatus): SimulationState {
-    return copy(cookStatus = cookStatus?.update())
+    return copy(scenarioStatus = cookStatus?.update())
 }
 
 fun SimulationState.activateDish(dish: CookDish): SimulationState {

@@ -25,7 +25,7 @@ val scenario = Scenario.URA
 fun openCui(args: Array<String>) {
     debugCook()
 //    simulateCook()
-//    debugUaf()
+    debugUaf()
 //    simulateUaf()
 //    simulateLarc()
 //    singleGrandLiveSimulation()

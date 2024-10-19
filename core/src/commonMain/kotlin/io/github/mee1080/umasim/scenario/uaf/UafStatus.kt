@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
+import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import kotlin.math.max
 import kotlin.math.min
 
@@ -35,7 +36,7 @@ data class UafStatus(
     val athleticsLevelUp: Map<StatusType, Int> = trainingType.associateWith { 3 },
     val levelUpBonus: Boolean = false,
     val consultCount: Int = 3,
-) {
+) : ScenarioStatus {
     companion object {
         private val trainingData = Scenario.UAF.trainingData
             .groupBy { it.type }

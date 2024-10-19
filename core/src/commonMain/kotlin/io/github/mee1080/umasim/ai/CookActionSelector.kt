@@ -168,7 +168,7 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
         val pendingMaterials by lazy {
             val param = maxActionParam ?: return@lazy state.cookStatus!!.pendingMaterials
             val stampList = state.cookStatus!!.currentStamp + param.stamp
-            state.cookStatus.calcPendingMaterials(stampList)
+            state.cookStatus!!.calcPendingMaterials(stampList)
         }
 
         val totalMaterials by lazy {

@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.scenario.live
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
 
@@ -11,7 +14,7 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
         return when (base.turn) {
             // 導入
             4 -> base.copy(
-                liveStatus = LiveStatus(),
+                scenarioStatus = LiveStatus(),
                 status = state.status.copy(performance = Performance())
             ).addMember("[トレセン学園]スマートファルコン").purchaseLesson(specialSongs[0])
 

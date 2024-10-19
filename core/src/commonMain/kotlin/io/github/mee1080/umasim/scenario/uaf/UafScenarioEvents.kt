@@ -1,6 +1,8 @@
 package io.github.mee1080.umasim.scenario.uaf
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.sumMapOf
@@ -18,7 +20,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
                 UafMemberState,
             )
         }
-        return base.copy(member = newMember, uafStatus = UafStatus())
+        return base.copy(member = newMember, scenarioStatus = UafStatus())
     }
 
     override fun beforeAction(state: SimulationState): SimulationState {
@@ -28,14 +30,14 @@ class UafScenarioEvents : CommonScenarioEvents() {
             1, 13, 25, 37, 49, 61, 73 -> uafStatus.copy(consultCount = 3)
             else -> uafStatus
         }.randomizeTraining()
-        return base.copy(uafStatus = newUafStatus)
+        return base.copy(scenarioStatus = newUafStatus)
     }
 
     override fun beforePredict(state: SimulationState): SimulationState {
         val base = super.beforePredict(state)
         val uafStatus = state.uafStatus ?: return base
         val levelUp = UafAthleticsLevelCalculator.calcLevelUp(base.member, uafStatus.levelUpBonus)
-        return base.copy(uafStatus = uafStatus.copy(athleticsLevelUp = levelUp))
+        return base.copy(scenarioStatus = uafStatus.copy(athleticsLevelUp = levelUp))
     }
 
     override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
@@ -120,7 +122,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
                 skillHint = skill,
             )
         ).copy(
-            uafStatus = uafStatus.copy(
+            scenarioStatus = uafStatus.copy(
                 festivalWinCount = newFestivalWinCount,
                 festivalBonus = newFestivalBonus,
             )

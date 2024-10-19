@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
+import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.utility.replaceItem
 import io.github.mee1080.utility.replaced
 
@@ -109,7 +110,7 @@ data class LArcStatus(
     val consecutiveVictories: Int = 0,
 
     val ssMatchMember: Set<MemberState> = emptySet(),
-) {
+) : ScenarioStatus {
     fun toShortString() =
         "LArcStatus(SupporterPt=$supporterPt/$memberSupporterPt, expectationLevel=$expectationLevel aptitudePt=$aptitudePt, ssMatch=$ssMatchCount/$totalSSMatchCount/$isSSSMatch, aptitude=$overseasTurfAptitude/$longchampAptitude/$lifeRhythm/$nutritionManagement/$frenchSkill/$overseasExpedition/$strongHeart/$mentalStrength/$hopeOfLArc/$consecutiveVictories)"
 

@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.randomSelectPercent
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
+import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.utility.mapValuesIf
 import io.github.mee1080.utility.replaced
 
@@ -28,7 +29,7 @@ data class GmStatus(
     val activeWisdom: Founder? = null,
     val wisdomLevel: Map<Founder, Int> = Founder.entries.associateWith { 0 },
     val fragmentCount: Map<StatusType, Int> = trainingTypeOrSkill.associateWith { 0 },
-) {
+) : ScenarioStatus {
     fun toShortString() = buildString {
         append(knowledgeTable1.joinToString { it.toShortString() })
         append(" : ")

@@ -29,6 +29,8 @@ import io.github.mee1080.umasim.scenario.live.LiveStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
+interface ScenarioStatus
+
 data class SimulationState(
     val scenario: Scenario,
     val chara: Chara,
@@ -46,12 +48,18 @@ data class SimulationState(
     val shopCoin: Int = 0,
     val possessionItem: List<ShopItem> = emptyList(),
     val enableItem: EnableItem = EnableItem(),
-    val liveStatus: LiveStatus? = null,
-    val gmStatus: GmStatus? = null,
-    val lArcStatus: LArcStatus? = null,
-    val uafStatus: UafStatus? = null,
-    val cookStatus: CookStatus? = null,
+    val scenarioStatus: ScenarioStatus? = null,
 ) {
+    val liveStatus get() = scenarioStatus as? LiveStatus
+
+    val gmStatus get() = scenarioStatus as? GmStatus
+
+    val lArcStatus get() = scenarioStatus as? LArcStatus
+
+    val uafStatus get() = scenarioStatus as? UafStatus
+
+    val cookStatus get() = scenarioStatus as? CookStatus
+
     val supportTypeCount = supportCount.size
 
     val nextGoalRace by lazy { goalRace.firstOrNull { it.turn >= turn } }

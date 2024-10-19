@@ -205,7 +205,7 @@ class GrandLiveFactorBasedActionSelector(val option: Option = Option()) : Action
         reservedLesson = null
         if (DEBUG_LESSON) println("${state.turn}: ${state.status.performance} ${state.liveStatus!!.lessonSelection.joinToString { it.displayName }}")
         if (checkWaitLesson(state)) {
-            if (DEBUG_LESSON) println("${state.turn}: wait lesson ${state.liveStatus!!.lessonSelection.first().displayName} <- ${state.liveStatus.newLesson.joinToString { it.displayName }}")
+            if (DEBUG_LESSON) println("${state.turn}: wait lesson ${state.liveStatus!!.lessonSelection.first().displayName} <- ${state.liveStatus!!.newLesson.joinToString { it.displayName }}")
             return null
         }
         val lesson = selectLessonImmediately(state)

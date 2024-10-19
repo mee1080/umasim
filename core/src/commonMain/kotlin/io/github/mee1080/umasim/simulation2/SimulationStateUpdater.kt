@@ -454,7 +454,7 @@ fun SimulationState.updateLesson(): SimulationState {
         liveStatus.learnedSongs,
     )
     return copy(
-        liveStatus = liveStatus.copy(
+        scenarioStatus = liveStatus.copy(
             currentPeriod = currentPeriod,
             lessonCount = lessonCount + 1,
             lessonSelection = lessonSelection,
@@ -473,7 +473,7 @@ fun SimulationState.purchaseLesson(lesson: Lesson): SimulationState {
     }
     return copy(
         status = status.copy(performance = performance - lesson.cost) + lessonStatus,
-        liveStatus = liveStatus.copy(
+        scenarioStatus = liveStatus.copy(
             learnedLesson = liveStatus.learnedLesson + lesson,
         ),
     ).updateLesson()
@@ -482,7 +482,7 @@ fun SimulationState.purchaseLesson(lesson: Lesson): SimulationState {
 fun SimulationState.addLesson(lesson: Lesson): SimulationState {
     val liveStatus = liveStatus ?: return this
     return copy(
-        liveStatus = liveStatus.copy(
+        scenarioStatus = liveStatus.copy(
             learnedLesson = liveStatus.learnedLesson + lesson,
         ),
     )
@@ -550,7 +550,7 @@ fun SimulationState.applyLive(selector: ActionSelector): SimulationState {
     }
     return state.copy(
         status = status + statusUp,
-        liveStatus = liveStatus.applyLive(),
+        scenarioStatus = liveStatus.applyLive(),
     )
 }
 
@@ -603,21 +603,21 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
             }
             addKnowledge(Knowledge(founder, trainingTypeOrSkill.random()))
         }
-    return copy(gmStatus = newGmStatus, member = newMember, status = status + addStatus)
+    return copy(scenarioStatus = newGmStatus, member = newMember, status = status + addStatus)
 }
 
 private fun SimulationState.applySelectedGmAction(): SimulationState {
     val gmStatus = gmStatus ?: return this
     val effect = gmStatus.activateWisdom()
-    return copy(gmStatus = effect.first, status = status + effect.second)
+    return copy(scenarioStatus = effect.first, status = status + effect.second)
 }
 
 fun SimulationState.updateLArcStatus(update: LArcStatus.() -> LArcStatus): SimulationState {
-    return copy(lArcStatus = lArcStatus?.update())
+    return copy(scenarioStatus = lArcStatus?.update())
 }
 
 fun SimulationState.updateUafStatus(update: UafStatus.() -> UafStatus): SimulationState {
-    return copy(uafStatus = uafStatus?.update())
+    return copy(scenarioStatus = uafStatus?.update())
 }
 
 private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActionParam): SimulationState {
@@ -761,5 +761,5 @@ private fun SimulationState.applyUafAction(uafAction: UafScenarioActionParam): S
     ).applyIf(!uafAction.notTraining) {
         copy(heatUp = heatUp.mapValues { max(0, it.value - 1) })
     }
-    return copy(uafStatus = newUafStatus.applyHeatUpFrom(uafStatus))
+    return copy(scenarioStatus = newUafStatus.applyHeatUpFrom(uafStatus))
 }
