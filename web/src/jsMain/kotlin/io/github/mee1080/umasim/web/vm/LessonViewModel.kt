@@ -18,11 +18,7 @@
  */
 package io.github.mee1080.umasim.web.vm
 
-import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.scenario.live.LessonPeriod
-import io.github.mee1080.umasim.scenario.live.Performance
-import io.github.mee1080.umasim.scenario.live.TechniqueLesson
-import io.github.mee1080.umasim.scenario.live.LessonClearCalculator
+import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.web.state.LessonState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay

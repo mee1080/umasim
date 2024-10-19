@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.scenario.gm
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.randomSelectPercent
+import io.github.mee1080.umasim.data.trainingTypeOrSkill
 import io.github.mee1080.utility.mapValuesIf
 import io.github.mee1080.utility.replaced
 

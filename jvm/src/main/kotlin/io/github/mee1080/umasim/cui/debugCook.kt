@@ -13,8 +13,8 @@ import kotlin.time.measureTime
 
 fun debugCook() {
     val time = measureTime {
-//        debugCookSingleSimulation()
-        debugCookRunSimulation()
+        debugCookSingleSimulation()
+//        debugCookRunSimulation()
     }
     println("time: $time")
 }

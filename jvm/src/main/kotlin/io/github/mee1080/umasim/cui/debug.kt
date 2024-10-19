@@ -61,8 +61,8 @@ fun singleSimulation() {
 }
 
 fun dataCheck() {
-    Store.getTrainingList(Scenario.URA).forEach { println(it) }
-    Store.getTrainingList(Scenario.AOHARU).forEach { println(it) }
+    Scenario.URA.trainingData.forEach { println(it) }
+    Scenario.AOHARU.trainingData.forEach { println(it) }
     Store.charaList.distinctBy { it.charaId }.forEach {
         println("${it.charaName} ${Store.getGoalRaceList(it.charaId).joinToString(",")}")
     }

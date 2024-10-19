@@ -48,7 +48,7 @@ class Simulator(
                 )
             )
         },
-        training = Store.getTrainingList(scenario)
+        training = scenario.trainingData
             .groupBy { it.type }
             .map { entry ->
                 TrainingState(

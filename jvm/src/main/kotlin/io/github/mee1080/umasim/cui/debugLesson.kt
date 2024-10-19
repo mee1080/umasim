@@ -19,15 +19,11 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.GrandLiveFactorBasedActionSelector
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.live.LessonPeriod
-import io.github.mee1080.umasim.scenario.live.LivePeriod
-import io.github.mee1080.umasim.scenario.live.Performance
-import io.github.mee1080.umasim.scenario.live.SongLesson
+import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.simulation2.ApproximateSimulationEvents
-import io.github.mee1080.umasim.scenario.live.LessonClearCalculator
-import io.github.mee1080.umasim.scenario.live.LessonProvider
 import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking
 

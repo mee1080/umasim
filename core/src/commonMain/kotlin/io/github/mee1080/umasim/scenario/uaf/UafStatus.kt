@@ -19,7 +19,6 @@
 package io.github.mee1080.umasim.scenario.uaf
 
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
@@ -38,7 +37,7 @@ data class UafStatus(
     val consultCount: Int = 3,
 ) {
     companion object {
-        private val trainingData = Store.getTrainingList(Scenario.UAF)
+        private val trainingData = Scenario.UAF.trainingData
             .groupBy { it.type }
             .mapValues { it.value.associateBy { it.level } }
     }

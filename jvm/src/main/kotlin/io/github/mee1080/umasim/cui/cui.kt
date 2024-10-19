@@ -32,7 +32,7 @@ fun openCui(args: Array<String>) {
 //    testProvideLesson()
 //    testLessonClear()
 //    testExpected()
-//    dataCheck()
+    dataCheck()
 //    singleSimulation()
 //    singleClimaxSimulation()
 //    calcExpected()

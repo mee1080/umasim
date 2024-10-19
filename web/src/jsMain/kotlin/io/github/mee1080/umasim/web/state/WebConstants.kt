@@ -169,7 +169,7 @@ object WebConstants {
 
     val trainingInfo = Scenario.entries.associateWith { Store.getTrainingInfo(it) }
 
-    val trainingList = Scenario.entries.associateWith { Store.getTrainingList(it) }
+    val trainingList = Scenario.entries.associateWith { it.trainingData }
 
     val simulationModeList = mapOf(
         Scenario.URA to listOf(

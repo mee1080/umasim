@@ -21,7 +21,7 @@ package io.github.mee1080.umasim.data
 import io.github.mee1080.umasim.scenario.Scenario
 
 data class TrainingBase(
-    val scenario: Scenario,
+//    val scenario: Scenario,
     val type: StatusType,
     val level: Int,
     val failureRate: Int,

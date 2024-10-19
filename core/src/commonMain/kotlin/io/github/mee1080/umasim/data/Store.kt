@@ -19,15 +19,22 @@
 package io.github.mee1080.umasim.data
 
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.aoharu.AoharuTraining
+import io.github.mee1080.umasim.scenario.aoharu.AoharuStore
+import io.github.mee1080.umasim.scenario.climax.ClimaxStore
+import io.github.mee1080.umasim.scenario.live.LiveStore
 
 object Store {
 
     private lateinit var charaSource: String
     private lateinit var supportSource: String
-    private lateinit var teamMemberSource: String
     private lateinit var goalRaceSource: String
     private lateinit var raceSource: String
+
+    lateinit var Aoharu: AoharuStore
+        private set
+
+    val Climax = ClimaxStore()
+    val GrandLive = LiveStore()
 
     fun load(
         charaSource: String,
@@ -38,14 +45,14 @@ object Store {
     ) {
         Store.charaSource = charaSource
         Store.supportSource = supportSource
-        Store.teamMemberSource = teamMemberSource
         Store.goalRaceSource = goalRaceSource
         Store.raceSource = raceSource
+
+        Aoharu = AoharuStore(teamMemberSource)
     }
 
     val charaList by lazy { CharaLoader.load(charaSource) }
     val supportList by lazy { SupportCardLoader.load(supportSource) }
-    private val trainingList = trainingData
     private val goalRaceMap by lazy { GoalRaceLoader.load(goalRaceSource).associate { it.charaId to it.turns } }
     val raceList by lazy { RaceLoader.load(raceSource) }
     val raceMap by lazy {
@@ -60,8 +67,6 @@ object Store {
     val guestSupportCardMap by lazy {
         guestSupportCardList.associateBy { it.chara }
     }
-
-    fun getTrainingList(scenario: Scenario) = trainingList.filter { it.scenario == scenario }
 
     fun getSupport(vararg target: Pair<Int, Int>) = supportList
         .filter { target.contains(it.id to it.talent) }
@@ -87,72 +92,17 @@ object Store {
     fun getCharaOrNull(id: Int, rarity: Int, rank: Int) = charaList
         .firstOrNull { it.id == id && it.rarity == rarity && it.rank == rank }
 
-    fun getTrainingInfo(scenario: Scenario) = getTrainingList(scenario)
+    fun getTrainingInfo(scenario: Scenario) = scenario.trainingData
         .groupBy { it.type }
         .mapValues { entry -> TrainingInfo(entry.key, entry.value.sortedBy { it.level }) }
 
     fun getTraining(scenario: Scenario, type: StatusType) = getTrainingInfo(scenario)[type]!!
 
-   fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }
+    fun getGoalRaceList(charaId: Int) = goalRaceMap.getOrElse(charaId) { emptyList() }
 
     fun getRace(name: String) = raceList.first { it.name == name }
 
     fun getRace(turn: Int, name: String) = raceMap[turn].first { it.name == name }
 
     fun getSeniorRace(name: String) = raceList.first { it.turn >= 49 && it.name == name }
-
-    object Aoharu {
-        private val training = aoharuTrainingData
-            .groupBy { it.type }
-            .mapValues { entry -> entry.value.associateBy { it.count } }
-
-        fun getTraining(type: StatusType, count: Int) = training[type]!![count]
-
-        fun getBurn(type: StatusType, isLink: Boolean) =
-            training[type]!![if (isLink) AoharuTraining.COUNT_BURN_LINK else AoharuTraining.COUNT_BURN]!!
-
-        private val trainingTeam = aoharuTrainingTeamData
-            .groupBy { it.type }
-            .mapValues { entry -> entry.value.associateBy { it.level } }
-
-        fun getTrainingTeam(type: StatusType, level: Int) = trainingTeam[type]!![level]!!
-
-        private val burnTeam = aoharuBurnTeamData
-            .associateBy { it.type }
-
-        fun getBurnTeam(type: StatusType) = burnTeam[type]!!
-
-        private val teamMemberList by lazy { TeamMemberLoader.load(teamMemberSource) }
-
-        fun getTeamMember(supportCardId: Int) = teamMemberList.firstOrNull { it.supportCardId == supportCardId }
-
-        fun getGuest(name: String) = teamMemberList.firstOrNull { it.rarity == 1 && it.chara == name }
-
-        fun getShuffledGuest() = teamMemberList.filter { it.rarity == 1 }.shuffled()
-
-        val teamStatusRank = aoharuTeamStatusRank
-            .associateBy { it.rank }
-    }
-
-    object Climax {
-        val shopItem = shopItemData
-
-        private val shopItemMap = shopItem.associateBy { it.name }
-
-        fun getShopItem(name: String) = shopItemMap[name]!!
-
-        val raceAchievement = raceAchievementData
-    }
-
-    object GrandLive {
-        private val notLinkSupportList by lazy {
-            supportList.filter {
-                it.rarity == 1 && it.talent == 0 && !it.type.outingType && !Scenario.GRAND_LIVE.scenarioLink.contains(
-                    it.chara
-                )
-            }
-        }
-
-        fun getShuffledGuest() = notLinkSupportList.shuffled()
-    }
 }
