@@ -200,7 +200,7 @@ private fun checkCondition(
             { isInFinalStraight() && !isInFinalStraight(simulation.startPosition) }
         }
 
-        "weather" -> condition.preChecked(baseSetting.weather)
+//        "weather" -> condition.preChecked(baseSetting.weather)
 
         "is_move_lane" -> condition.checkSpecialState()
 
@@ -256,6 +256,8 @@ private fun checkCondition(
         "is_used_skill_id" -> {
             { simulation.coolDownMap.containsKey(condition.value.toString()) }
         }
+
+        "overtake_target_no_order_up_time" -> condition.checkSpecialState()
 
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {

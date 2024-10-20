@@ -219,6 +219,10 @@ val approximateConditions = mapOf(
             ApproximateNone("その他") to null,
         )
     ),
+    "overtake_target_no_order_up_time" to ApproximateStartContinue(
+        "追い抜き対象ウマ娘順位変動なし(絶ボク、追い抜きモード条件と同時設定されるためこちらの条件は緩め)",
+        0.80, 0.60,
+    ),
 )
 
 val approximateTypeToState = mapOf(
@@ -238,12 +242,14 @@ val approximateTypeToState = mapOf(
     "temptation_opponent_count_behind" to "temptation_opponent_count_behind",
     "change_order_up_end_after" to "change_order_up_end_after",
     "change_order_up_finalcorner_after" to "change_order_up_finalcorner_after",
+    "overtake_target_no_order_up_time" to "overtake_target_no_order_up_time",
 )
 
 val ignoreConditions = mapOf(
     "grade" to "GI条件は無視",
     "time" to "ナイター条件は無視",
     "season" to "季節条件は無視",
+    "weather" to "天候条件は無視",
     "is_dirtgrade" to "交流重賞条件は無視",
 
     "is_used_skill_id" to "他スキル発動条件は未実装",
