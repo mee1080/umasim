@@ -23,6 +23,9 @@ import io.github.mee1080.umasim.scenario.larc.lArcTrainingData
 import io.github.mee1080.umasim.scenario.live.GrandLiveScenarioEvents
 import io.github.mee1080.umasim.scenario.live.LiveCalculator
 import io.github.mee1080.umasim.scenario.live.liveTrainingData
+import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
+import io.github.mee1080.umasim.scenario.mecha.MechaScenarioEvents
+import io.github.mee1080.umasim.scenario.mecha.mechaTrainingData
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
@@ -153,6 +156,15 @@ enum class Scenario(
         ),
         calculator = CookCalculator,
     ),
+
+    MECHA(
+        scenarioNumber = 9,
+        displayName = "走れ！メカウマ娘(作成中)",
+        trainingData = mechaTrainingData,
+        scenarioEvents = { MechaScenarioEvents() },
+        calculator = MechaCalculator,
+    )
+
     ;
 
     open fun memberState(card: SupportCard) = ScenarioMemberState(this)

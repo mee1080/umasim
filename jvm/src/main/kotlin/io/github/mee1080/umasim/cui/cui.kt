@@ -23,16 +23,17 @@ import io.github.mee1080.umasim.scenario.Scenario
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
-    debugCook()
+    debugMecha()
+//    debugCook()
 //    simulateCook()
-    debugUaf()
+//    debugUaf()
 //    simulateUaf()
 //    simulateLarc()
 //    singleGrandLiveSimulation()
 //    testProvideLesson()
 //    testLessonClear()
 //    testExpected()
-    dataCheck()
+//    dataCheck()
 //    singleSimulation()
 //    singleClimaxSimulation()
 //    calcExpected()

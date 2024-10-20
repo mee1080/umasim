@@ -18,7 +18,10 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.RaceGrade
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.randomSelect
 import io.github.mee1080.umasim.scenario.climax.ShopItem
 import io.github.mee1080.umasim.scenario.cook.CookDish
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
@@ -347,4 +350,12 @@ class CookActivateDishResult(
     val dish: CookDish,
 ) : ActionResult {
     override fun toString() = dish.toShortString()
+}
+
+data class MechaActionParam(
+    val dummy: Int,
+) : ScenarioActionParam {
+    override fun toShortString() = buildString {
+        append("Mecha")
+    }
 }

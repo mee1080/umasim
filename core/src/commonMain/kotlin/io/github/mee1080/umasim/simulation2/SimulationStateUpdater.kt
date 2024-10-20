@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
 import io.github.mee1080.umasim.scenario.live.*
+import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -566,6 +567,7 @@ private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: 
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
         is UafScenarioActionParam -> applyUafAction(scenarioAction)
         is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
+        is MechaActionParam -> MechaCalculator.applyScenarioAction(this, action, scenarioAction)
         null -> this
     }
 }
