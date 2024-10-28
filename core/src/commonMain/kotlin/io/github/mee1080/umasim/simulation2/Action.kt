@@ -30,6 +30,7 @@ import io.github.mee1080.umasim.scenario.gm.Founder
 import io.github.mee1080.umasim.scenario.larc.LArcAptitude
 import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.live.Lesson
+import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 
 sealed interface Action {
@@ -353,9 +354,36 @@ class CookActivateDishResult(
 }
 
 data class MechaActionParam(
-    val dummy: Int,
+    val learningLevel: Status,
+    val gear: Boolean,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
-        append("Mecha")
+        append("Mecha gear=$gear")
     }
+}
+
+data object MechaOverdriveResult : ActionResult {
+    override fun toString() = "オーバードライブ"
+}
+
+data object MechaOverdrive : SingleAction {
+    override val result get() = MechaOverdriveResult
+    override val name get() = "オーバードライブ"
+    override val turnChange get() = false
+}
+
+class MechaTuningResult(
+    val type: MechaChipType,
+    val index: Int,
+) : ActionResult {
+    override fun toString() = type.chipNames[index]
+}
+
+class MechaTuning(
+    override val result: MechaTuningResult,
+) : SingleAction {
+    override val name get() = "チューニング：$result +1"
+    override val turnChange get() = false
+
+    constructor(type: MechaChipType, index: Int) : this(MechaTuningResult(type, index))
 }

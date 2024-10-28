@@ -50,3 +50,13 @@ internal val mechaTrainingData = listOf(
     TrainingBase(StatusType.WISDOM, 4, 323, Status(3, 0, 0, 0, 13, 5, 5)),
     TrainingBase(StatusType.WISDOM, 5, 324, Status(4, 0, 0, 0, 14, 5, 5)),
 )
+
+val mechaChipLearningBonus = arrayOf(0, 10, 18, 26, 33, 40)
+
+val mechaChipHintFrequency = arrayOf(0, 15, 30, /*TODO*/45, 60, 75)
+
+val mechaChipSpecialityRate = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)
+
+val mechaChipFriendBonus = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)
+
+val mechaChipSkillPt = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)

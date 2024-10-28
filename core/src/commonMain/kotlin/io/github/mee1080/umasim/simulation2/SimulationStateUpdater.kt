@@ -30,6 +30,9 @@ import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
 import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
+import io.github.mee1080.umasim.scenario.mecha.applyOverdrive
+import io.github.mee1080.umasim.scenario.mecha.applyTuning
+import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -188,6 +191,10 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
         is CookActivateDishResult -> activateDish(result.dish)
 
         is CookMaterialLevelUpResult -> updateCookStatus { materialLevelUp(result.target) }
+
+        MechaOverdriveResult -> updateMechaStatus { applyOverdrive() }
+
+        is MechaTuningResult -> updateMechaStatus { applyTuning(result) }
     }
 }
 

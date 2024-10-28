@@ -162,6 +162,10 @@ enum class Scenario(
         displayName = "走れ！メカウマ娘(作成中)",
         trainingData = mechaTrainingData,
         scenarioEvents = { MechaScenarioEvents() },
+        guestMember = true,
+        scenarioLink = setOf(
+            "ビワハヤヒデ", "ナリタタイシン", "エアシャカール", "シンボリクリスエス", "タニノギムレット",
+        ),
         calculator = MechaCalculator,
     )
 

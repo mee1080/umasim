@@ -18,19 +18,51 @@
  */
 package io.github.mee1080.umasim.scenario.mecha
 
+import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.Action
+import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.MechaActionParam
 import io.github.mee1080.umasim.simulation2.SimulationState
+import kotlin.math.min
 
 object MechaCalculator : ScenarioCalculator {
+
+    override fun calcScenarioStatus(
+        info: Calculator.CalcInfo,
+        base: Status,
+        raw: ExpectedStatus,
+        friendTraining: Boolean
+    ): Status {
+        // TODO
+        return Status()
+    }
 
     fun applyScenarioAction(
         state: SimulationState,
         action: Action,
         scenarioAction: MechaActionParam?,
     ): SimulationState {
-        // TODO
-        return state
+        if (scenarioAction == null) return state
+        val maxLearningLevel = when {
+            // TODO
+            state.turn >= 60 -> 600
+            else -> 200
+        }
+        return state.updateMechaStatus {
+            copy(
+                learningLevels = learningLevels.mapValues { (type, value) ->
+                    min(maxLearningLevel, value + scenarioAction.learningLevel.get(type))
+                },
+                overdriveGauge = min(6, overdriveGauge + (if (scenarioAction.gear) 1 else 0)),
+            )
+        }
+    }
+
+    override fun updateScenarioTurn(state: SimulationState): SimulationState {
+        return state.updateMechaStatus {
+            copy(overdrive = false)
+        }
     }
 }
