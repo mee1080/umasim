@@ -30,8 +30,6 @@ import kotlin.math.min
 
 object MechaCalculator : ScenarioCalculator {
 
-    private val gearFactors = listOf(0, 300, 600, 900, 1200, 3000)
-
     override fun calcScenarioStatus(
         info: Calculator.CalcInfo,
         base: Status,
@@ -40,7 +38,8 @@ object MechaCalculator : ScenarioCalculator {
     ): Status {
         val mechaStatus = info.mechaStatus ?: return Status()
         val learningFactor = mechaStatus.learningTrainingFactors[info.training.type] ?: 0
-        val gearFactor = if (mechaStatus.gearExists[info.training.type] == true) gearFactors[info.training.level] else 0
+        val gearFactor =
+            if (mechaStatus.gearExists[info.training.type] == true) 300 * (mechaStatus.totalLearningLevel / 280 + 1) else 0
         val odMemberCountFactor = if (mechaStatus.overdrive) mechaStatus.odMemberCountBonus * info.member.size else 0
         val singleInfo = StatusSingleInfo(
             mechaStatus = mechaStatus,
