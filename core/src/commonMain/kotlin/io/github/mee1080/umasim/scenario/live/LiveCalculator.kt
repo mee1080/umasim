@@ -1,8 +1,8 @@
 package io.github.mee1080.umasim.scenario.live
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
+import io.github.mee1080.umasim.simulation2.Calculator
 import kotlin.random.Random
 
 object LiveCalculator : ScenarioCalculator {
@@ -21,33 +21,32 @@ object LiveCalculator : ScenarioCalculator {
         base: Status,
         friendTraining: Boolean,
     ): Status {
-        return if (info.liveStatus != null) {
-            val performanceValue = calcPerformanceValue(info)
-            val firstPerformanceType = selectFirstPerformanceType(info)
-            val trainingUp = Status(
-                speed = calcLiveStatusSingle(info, StatusType.SPEED),
-                stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
-                power = calcLiveStatusSingle(info, StatusType.POWER),
-                guts = calcLiveStatusSingle(info, StatusType.GUTS),
-                wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
-                skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
-                performance = firstPerformanceType.asPerformance(performanceValue),
+        val liveStatus = info.liveStatus ?: return Status()
+        val performanceValue = calcPerformanceValue(info)
+        val firstPerformanceType = selectFirstPerformanceType(info)
+        val trainingUp = Status(
+            speed = calcLiveStatusSingle(info, StatusType.SPEED),
+            stamina = calcLiveStatusSingle(info, StatusType.STAMINA),
+            power = calcLiveStatusSingle(info, StatusType.POWER),
+            guts = calcLiveStatusSingle(info, StatusType.GUTS),
+            wisdom = calcLiveStatusSingle(info, StatusType.WISDOM),
+            skillPt = calcLiveStatusSingle(info, StatusType.SKILL),
+            performance = firstPerformanceType.asPerformance(performanceValue),
+        )
+        val friendUp = if (friendTraining) {
+            val calc = base + trainingUp
+            val secondPerformanceType = selectSecondPerformanceType(info, firstPerformanceType)
+            Status(
+                speed = calcTrainingUp(calc.speed, liveStatus.friendTrainingUp),
+                stamina = calcTrainingUp(calc.stamina, liveStatus.friendTrainingUp),
+                power = calcTrainingUp(calc.power, liveStatus.friendTrainingUp),
+                guts = calcTrainingUp(calc.guts, liveStatus.friendTrainingUp),
+                wisdom = calcTrainingUp(calc.wisdom, liveStatus.friendTrainingUp),
+                skillPt = calcTrainingUp(calc.skillPt, liveStatus.friendTrainingUp),
+                performance = secondPerformanceType.asPerformance(performanceValue),
             )
-            val friendUp = if (friendTraining) {
-                val calc = base + trainingUp
-                val secondPerformanceType = selectSecondPerformanceType(info, firstPerformanceType)
-                Status(
-                    speed = calcTrainingUp(calc.speed, info.liveStatus.friendTrainingUp),
-                    stamina = calcTrainingUp(calc.stamina, info.liveStatus.friendTrainingUp),
-                    power = calcTrainingUp(calc.power, info.liveStatus.friendTrainingUp),
-                    guts = calcTrainingUp(calc.guts, info.liveStatus.friendTrainingUp),
-                    wisdom = calcTrainingUp(calc.wisdom, info.liveStatus.friendTrainingUp),
-                    skillPt = calcTrainingUp(calc.skillPt, info.liveStatus.friendTrainingUp),
-                    performance = secondPerformanceType.asPerformance(performanceValue),
-                )
-            } else Status()
-            trainingUp + friendUp
         } else Status()
+        return trainingUp + friendUp
     }
 
     private fun calcLiveStatusSingle(

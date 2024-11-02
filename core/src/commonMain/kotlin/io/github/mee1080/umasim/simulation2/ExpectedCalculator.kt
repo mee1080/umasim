@@ -20,11 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.cook.CookStatus
-import io.github.mee1080.umasim.scenario.gm.GmStatus
-import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
-import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.math.min
 import kotlin.math.pow
@@ -51,12 +47,10 @@ class ExpectedCalculator(
         accelSkillCount: Int,
         totalTrainingLevel: Int,
         isLevelUpTurn: Boolean,
-        val liveStatus: TrainingLiveStatus?,
-        gmStatus: GmStatus?,
-        lArcStatus: LArcStatus?,
-        uafStatus: UafStatus?,
-        cookStatus: CookStatus?,
+        val scenarioStatus: ScenarioStatus?,
     ) {
+
+        val liveStatus get() = scenarioStatus as? TrainingLiveStatus
 
         internal val baseCalcInfo = Calculator.CalcInfo(
             chara = chara,
@@ -73,11 +67,7 @@ class ExpectedCalculator(
             accelSkillCount = accelSkillCount,
             totalTrainingLevel = totalTrainingLevel,
             isLevelUpTurn = isLevelUpTurn,
-            liveStatus = liveStatus,
-            gmStatus = gmStatus,
-            lArcStatus = lArcStatus,
-            uafStatus = uafStatus,
-            cookStatus = cookStatus,
+            scenarioStatus = scenarioStatus,
         )
 
         fun toCalcInfo(type: StatusType, factors: List<Wrapper>, count: Int): Calculator.CalcInfo {

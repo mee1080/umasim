@@ -48,12 +48,14 @@ object Calculator {
         val accelSkillCount: Int,
         val totalTrainingLevel: Int,
         val isLevelUpTurn: Boolean,
-        val liveStatus: TrainingLiveStatus?,
-        val gmStatus: GmStatus?,
-        val lArcStatus: LArcStatus?,
-        val uafStatus: UafStatus?,
-        val cookStatus: CookStatus?,
+        val scenarioStatus: ScenarioStatus?,
     ) {
+        val liveStatus get() = scenarioStatus as? TrainingLiveStatus
+        val gmStatus get() = scenarioStatus as? GmStatus
+        val lArcStatus get() = scenarioStatus as? LArcStatus
+        val uafStatus get() = scenarioStatus as? UafStatus
+        val cookStatus get() = scenarioStatus as? CookStatus
+
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
                 teamJoinCount,

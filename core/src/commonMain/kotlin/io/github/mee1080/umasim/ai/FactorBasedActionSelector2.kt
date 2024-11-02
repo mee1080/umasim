@@ -19,8 +19,8 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.*
 
 @Suppress("unused")
@@ -372,11 +372,7 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         0,
                         state.totalTrainingLevel,
                         state.isLevelUpTurn,
-                        state.liveStatus,
-                        state.gmStatus,
-                        state.lArcStatus,
-                        state.uafStatus,
-                        state.cookStatus,
+                        state.scenarioStatus,
                     ),
                 ).first
                 expectedStatus.speed * option.speedFactor +

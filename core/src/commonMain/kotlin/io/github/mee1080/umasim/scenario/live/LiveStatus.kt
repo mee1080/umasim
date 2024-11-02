@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 
-interface TrainingLiveStatus {
+interface TrainingLiveStatus : ScenarioStatus {
     fun trainingUp(type: StatusType): Int
     val friendTrainingUp: Int
     val specialityRateUp: Int

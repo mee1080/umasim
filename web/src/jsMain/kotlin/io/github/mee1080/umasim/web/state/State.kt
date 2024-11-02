@@ -157,6 +157,13 @@ data class State(
 
     fun calcRaceStatus(value: Int) = (value * (1 + totalRaceBonus / 100.0)).toInt()
 
+    val scenarioStatus
+        get() = trainingLiveStateIfEnabled
+            ?: gmStatusIfEnabled
+            ?: lArcStatusIfEnabled
+            ?: uafStatusIfEnabled
+            ?: cookStatusIfEnabled
+
     val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
 
     val gmStatusIfEnabled get() = if (scenario == Scenario.GM) gmState.toGmStatus() else null

@@ -330,10 +330,6 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
                 null,
-                null,
-                null,
-                null,
-                null,
             ),
         ).first
         return expectedStatus.speed * option.speedFactor +

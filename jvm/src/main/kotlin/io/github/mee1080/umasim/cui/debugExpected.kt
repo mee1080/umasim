@@ -18,7 +18,9 @@
  */
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
 import io.github.mee1080.umasim.simulation2.*
@@ -59,7 +61,7 @@ fun testExpected() {
     val expectedCalcInfo = ExpectedCalculator.ExpectedCalcInfo(
         chara, training, motivation, member, scenario, fanCount, currentStatus, totalRelation,
         0, 0, 0, 5,
-        false, liveStatus, null, null, null, null,
+        false, liveStatus,
     )
     val start = System.currentTimeMillis()
     val expected = ExpectedCalculator(expectedCalcInfo).calc()
@@ -79,7 +81,7 @@ fun testExpected() {
         chara, training[StatusType.SPEED]!!, motivation, member, scenario,
         member.groupBy { it.card.type }.mapValues { it.value.size }, fanCount, currentStatus, totalRelation,
         0, 0, 0, 5,
-        false, liveStatus, null, null, null, null,
+        false, liveStatus,
     )
     val old = Calculator.calcExpectedTrainingStatus(calcInfo)
     println(old.first.toString())

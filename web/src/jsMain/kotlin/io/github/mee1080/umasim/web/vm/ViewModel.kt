@@ -312,9 +312,6 @@ class ViewModel(val scope: CoroutineScope) {
             state.supportSelectionList.mapNotNull { it.card?.type }.groupBy { it }.mapValues { it.value.size }
         val fanCount = state.fanCount
         val gmStatus = state.gmStatusIfEnabled
-        val lArcStatus = state.lArcStatusIfEnabled
-        val uafStatus = state.uafStatusIfEnabled
-        val cookStatus = state.cookStatusIfEnabled
         val trainingLevel = if (state.scenario == Scenario.UAF) {
             (state.uafState.trainingGenre.ordinal + 1) * 10 + if (state.isLevelUpTurn) 5 else {
                 state.uafState.selectedTrainingLevel
@@ -341,11 +338,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.accelSkillCount,
             state.totalTrainingLevel,
             state.isLevelUpTurn,
-            state.trainingLiveStateIfEnabled,
-            gmStatus,
-            lArcStatus,
-            uafStatus,
-            cookStatus,
+            state.scenarioStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -384,11 +377,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.accelSkillCount,
                     state.totalTrainingLevel,
                     state.isLevelUpTurn,
-                    state.trainingLiveStateIfEnabled,
-                    gmStatus,
-                    lArcStatus,
-                    uafStatus,
-                    cookStatus,
+                    state.scenarioStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
@@ -413,11 +402,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
-                state.trainingLiveStateIfEnabled,
-                gmStatus,
-                lArcStatus,
-                uafStatus,
-                cookStatus,
+                state.scenarioStatus,
             ),
             state.teamJoinCount,
         )
@@ -524,11 +509,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
-                state.trainingLiveStateIfEnabled,
-                state.gmStatusIfEnabled,
-                state.lArcStatusIfEnabled,
-                state.uafStatusIfEnabled,
-                state.cookStatusIfEnabled,
+                state.scenarioStatus,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
@@ -801,11 +782,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
-                liveStatus = null,
-                gmStatus = null,
-                lArcStatus = null,
-                uafStatus = uafStatus,
-                cookStatus = null,
+                uafStatus,
             )
             val result = UafAthleticsLevelCalculator.calc(trainingCalcInfo, state.uafState.athleticsLevelUpBonus)
             var expected = 0.0

@@ -149,11 +149,7 @@ data class SimulationState(
         accelSkillCount = min(3, status.skillPt / 160),
         totalTrainingLevel = totalTrainingLevel,
         isLevelUpTurn = isLevelUpTurn,
-        liveStatus = liveStatus,
-        gmStatus = gmStatus,
-        lArcStatus = lArcStatus,
-        uafStatus = uafStatus,
-        cookStatus = cookStatus,
+        scenarioStatus = scenarioStatus,
     )
 
     val specialityRateUp get() = liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
