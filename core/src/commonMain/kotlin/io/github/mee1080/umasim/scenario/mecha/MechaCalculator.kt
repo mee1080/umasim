@@ -30,6 +30,8 @@ import kotlin.math.min
 
 object MechaCalculator : ScenarioCalculator {
 
+    private val gearFactors = listOf(0, 300, 600, 900, 1200, 3000)
+
     override fun calcScenarioStatus(
         info: Calculator.CalcInfo,
         base: Status,
@@ -38,12 +40,14 @@ object MechaCalculator : ScenarioCalculator {
     ): Status {
         val mechaStatus = info.mechaStatus ?: return Status()
         val learningFactor = mechaStatus.learningTrainingFactors[info.training.type] ?: 0
-        val gearFactor = if (mechaStatus.gearExists[info.training.type] == true) 310 else 0
+        val gearFactor = if (mechaStatus.gearExists[info.training.type] == true) gearFactors[info.training.level] else 0
+        val odMemberCountFactor = if (mechaStatus.overdrive) mechaStatus.odMemberCountBonus * info.member.size else 0
         val singleInfo = StatusSingleInfo(
             mechaStatus = mechaStatus,
             friendTraining = friendTraining,
             learningFactor = learningFactor,
             gearFactor = gearFactor,
+            odMemberCountFactor = odMemberCountFactor,
         )
         return Status(
             speed = calcStatusSingle(singleInfo, StatusType.SPEED, base.speed),
@@ -61,6 +65,7 @@ object MechaCalculator : ScenarioCalculator {
         val friendTraining: Boolean,
         val learningFactor: Int,
         val gearFactor: Int,
+        val odMemberCountFactor: Int,
     )
 
     private fun calcStatusSingle(
@@ -69,17 +74,19 @@ object MechaCalculator : ScenarioCalculator {
         baseValue: Int,
     ): Int {
         if (baseValue == 0) return 0
-        val friendFactor = if (info.friendTraining) info.mechaStatus.friendBonus * 100 else 0
-        val skillPtFactor = if (target == StatusType.SKILL) info.mechaStatus.skillPt * 100 else 0
-        val odFactor = if (!info.mechaStatus.overdrive) 0 else {
-            val odBaseBonus = 2500
-            val odStatusBonus = info.mechaStatus.odStatusBonus(target) * 10000
-            val odMemberCountBonus = info.mechaStatus.odMemberCountBonus * 10000
-            odBaseBonus + odStatusBonus + odMemberCountBonus
-        }
-        if (Calculator.DEBUG) println("Mecha: $target $baseValue ${info.learningFactor} ${info.gearFactor} $friendFactor $skillPtFactor $odFactor")
-        val total =
-            baseValue.toLong() * (10000 + info.learningFactor + info.gearFactor) * (10000 + odFactor) / 100000000L
+        val friendFactor = if (info.friendTraining) info.mechaStatus.friendBonus else 0
+        val skillPtFactor = if (target == StatusType.SKILL) info.mechaStatus.skillPt else 0
+        val odBaseBonus = if (info.mechaStatus.overdrive) 25 else 0
+        val odStatusBonus = if (info.mechaStatus.overdrive) info.mechaStatus.odStatusBonus(target) else 0
+        if (Calculator.DEBUG) println("Mecha: $target $baseValue ${info.learningFactor} ${info.gearFactor} $friendFactor $skillPtFactor $odBaseBonus $odStatusBonus ${info.odMemberCountFactor}")
+        val total = baseValue *
+                (10000 + info.learningFactor) / 10000.0 *
+                (10000 + info.gearFactor) / 10000.0 *
+                (100 + friendFactor) / 100.0 *
+                (100 + skillPtFactor) / 100.0 *
+                (100 + odBaseBonus) / 100.0 *
+                (100 + odStatusBonus) / 100.0 *
+                (100 + info.odMemberCountFactor) / 100.0
         return min(100, total.toInt() - baseValue)
     }
 

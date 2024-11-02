@@ -26,7 +26,7 @@ import io.github.mee1080.umasim.simulation2.updateStatus
 class MechaScenarioEvents : CommonScenarioEvents() {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
-        val mechaStatus = MechaStatus(MechaLinkEffect(state.support.map { it.charaName }))
+        val mechaStatus = MechaStatus(MechaLinkEffect(state.support.map { it.charaName } + state.chara.charaName))
         return super.beforeSimulation(state).copy(scenarioStatus = mechaStatus)
     }
 
@@ -35,6 +35,7 @@ class MechaScenarioEvents : CommonScenarioEvents() {
         return when (newState.turn) {
             45 -> newState
                 .updateStatus { it + Status(wisdom = 20, skillPt = 20) }
+
             else -> newState
         }
     }
