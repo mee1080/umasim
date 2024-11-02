@@ -56,7 +56,7 @@ data class State(
     val lessonState: LessonState = LessonState(),
 
     val divideMode: Boolean = false,
-    val scenario: Scenario = Scenario.COOK,
+    val scenario: Scenario = Scenario.MECHA,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),
@@ -167,11 +167,12 @@ data class State(
 
     val cookStatusIfEnabled get() = if (scenario == Scenario.COOK) cookState.toCookStatus(selectedTrainingType) else null
 
-    val specialityRateUp get() = when (scenario) {
-        Scenario.GRAND_LIVE -> trainingLiveState.specialityRateUp
-        Scenario.COOK -> cookState.specialityRate
-        else -> 0
-    }
+    val specialityRateUp
+        get() = when (scenario) {
+            Scenario.GRAND_LIVE -> trainingLiveState.specialityRateUp
+            Scenario.COOK -> cookState.specialityRate
+            else -> 0
+        }
 }
 
 data class SupportSelection(

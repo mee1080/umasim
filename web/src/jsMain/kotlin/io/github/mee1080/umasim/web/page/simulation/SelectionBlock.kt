@@ -175,6 +175,10 @@ fun SelectionBlock(
                     is CookActivateDish -> {}
 
                     is CookMaterialLevelUp -> {}
+
+                    MechaOverdrive -> {}
+
+                    is MechaTuning -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
