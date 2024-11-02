@@ -44,11 +44,16 @@ fun MechaStatus.applyTuning(result: MechaTuningResult) = copy(
     }
 )
 
+fun MechaStatus.resetTuning() = copy(
+    chipLevels = chipLevels.mapValues { listOf(0, 0, 0) }
+)
+
 data class MechaStatus(
     val linkEffects: MechaLinkEffect = MechaLinkEffect(),
     val learningLevels: Map<StatusType, Int> = trainingType.associateWith { linkEffects.initialLearningLevel },
     val maxMechaEnergy: Int = 0,
     val chipLevels: Map<MechaChipType, List<Int>> = MechaChipType.entries.associateWith { listOf(0, 0, 0) },
+    val gearExists: Map<StatusType, Boolean> = trainingType.associateWith { false },
     val overdriveGauge: Int = linkEffects.initialOverdrive,
     val overdrive: Boolean = false,
 ) : ScenarioStatus {
@@ -62,13 +67,13 @@ data class MechaStatus(
         )
     }
 
-    val trainingEffects by lazy { trainingType.associateWith { calcTrainingEffect(learningLevels[it]!!) } }
+    val learningTrainingFactors by lazy { trainingType.associateWith { calcLearningTrainingFactor(learningLevels[it]!!) } }
 
-    private fun calcTrainingEffect(learningLevel: Int): Double {
-        return if (linkEffects.hasLearningTrainingEffect) {
-            9.0 + 0.09 * learningLevel
+    private fun calcLearningTrainingFactor(learningLevel: Int): Int {
+        return if (learningLevel <= 1) 0 else if (linkEffects.hasLearningTrainingFactor) {
+            900 + 9 * learningLevel
         } else {
-            6.0 + 0.06 * learningLevel
+            600 + 6 * learningLevel
         }
     }
 
@@ -86,6 +91,16 @@ data class MechaStatus(
 
     val odGearAll by lazy { odLevels[MechaChipType.HEAD]!! >= 1 }
 
+    fun odStatusBonus(type: StatusType) = when (type) {
+        StatusType.SPEED -> odSpeedBonus
+        StatusType.STAMINA -> odStaminaBonus
+        StatusType.POWER -> odPowerBonus
+        StatusType.GUTS -> odGutsBonus
+        StatusType.WISDOM -> odWisdomBonus
+        StatusType.SKILL -> odSkillPtBonus
+        else -> 0
+    }
+
     val odSpeedBonus by lazy { calcOdStatusBonus(MechaChipType.LEG) }
     val odStaminaBonus by lazy { calcOdStatusBonus(MechaChipType.BODY) }
     val odPowerBonus by lazy { calcOdStatusBonus(MechaChipType.LEG) }
@@ -98,7 +113,7 @@ data class MechaStatus(
 
     val odHintAll by lazy { odLevels[MechaChipType.HEAD]!! >= 5 }
 
-    val odTrainingBonus by lazy { mechaOdTrainingBonus[odLevels[MechaChipType.BODY]!!] }
+    val odMemberCountBonus by lazy { mechaOdMemberCountBonus[odLevels[MechaChipType.BODY]!!] }
 
     val odAddSupport by lazy { odLevels[MechaChipType.BODY]!! >= 5 }
 
@@ -140,7 +155,7 @@ data class MechaLinkEffect(
 
     val gearFrequency = mechaGearFrequencyCount * 10 // TODO
 
-    val hasLearningTrainingEffect = learningTrainingEffectCount > 0
+    val hasLearningTrainingFactor = learningTrainingEffectCount > 0
 
     val initialLearningLevel = if (initialLearningLevelCount == 0) 1 else initialLearningLevelCount * 20
 

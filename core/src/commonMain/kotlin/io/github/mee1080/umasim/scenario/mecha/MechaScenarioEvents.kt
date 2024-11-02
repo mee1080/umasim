@@ -25,6 +25,11 @@ import io.github.mee1080.umasim.simulation2.updateStatus
 
 class MechaScenarioEvents : CommonScenarioEvents() {
 
+    override fun beforeSimulation(state: SimulationState): SimulationState {
+        val mechaStatus = MechaStatus(MechaLinkEffect(state.support.map { it.charaName }))
+        return super.beforeSimulation(state).copy(scenarioStatus = mechaStatus)
+    }
+
     override fun onTurnEnd(state: SimulationState): SimulationState {
         val newState = super.onTurnEnd(state)
         return when (newState.turn) {

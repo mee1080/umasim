@@ -27,11 +27,14 @@ import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
+import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
 
 object Calculator {
+
+    var DEBUG = false
 
     data class CalcInfo(
         val chara: Chara,
@@ -55,6 +58,7 @@ object Calculator {
         val lArcStatus get() = scenarioStatus as? LArcStatus
         val uafStatus get() = scenarioStatus as? UafStatus
         val cookStatus get() = scenarioStatus as? CookStatus
+        val mechaStatus get() = scenarioStatus as? MechaStatus
 
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
@@ -176,6 +180,7 @@ object Calculator {
                 it.card.trainingFactor(baseCondition.applyMember(it))
             } / 100.0
         val count = 1 + info.member.size * 0.05
+        if (DEBUG) println("$targetType $base $charaBonus $friend $motivationBonus $trainingBonus $count")
         return min(100.0, base * charaBonus * friend * motivationBonus * trainingBonus * count)
     }
 

@@ -36,7 +36,7 @@ class Simulator(
 
     private val initialRelationAll = supportCardList.sumOf { it.initialRelationAll }
 
-    private val initialState = SimulationState(
+    val initialState = SimulationState(
         scenario = scenario,
         chara = chara,
         factor = factorList,

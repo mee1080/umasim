@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.scenario.mecha
 
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.Action
 import io.github.mee1080.umasim.simulation2.Calculator
@@ -35,8 +36,51 @@ object MechaCalculator : ScenarioCalculator {
         raw: ExpectedStatus,
         friendTraining: Boolean
     ): Status {
-        // TODO
-        return Status()
+        val mechaStatus = info.mechaStatus ?: return Status()
+        val learningFactor = mechaStatus.learningTrainingFactors[info.training.type] ?: 0
+        val gearFactor = if (mechaStatus.gearExists[info.training.type] == true) 310 else 0
+        val singleInfo = StatusSingleInfo(
+            mechaStatus = mechaStatus,
+            friendTraining = friendTraining,
+            learningFactor = learningFactor,
+            gearFactor = gearFactor,
+        )
+        return Status(
+            speed = calcStatusSingle(singleInfo, StatusType.SPEED, base.speed),
+            stamina = calcStatusSingle(singleInfo, StatusType.STAMINA, base.stamina),
+            power = calcStatusSingle(singleInfo, StatusType.POWER, base.power),
+            guts = calcStatusSingle(singleInfo, StatusType.GUTS, base.guts),
+            wisdom = calcStatusSingle(singleInfo, StatusType.WISDOM, base.wisdom),
+            skillPt = calcStatusSingle(singleInfo, StatusType.SKILL, base.skillPt),
+            hp = if (mechaStatus.overdrive) -(base.hp * mechaStatus.odHpCostDown / 100.0).toInt() else 0,
+        )
+    }
+
+    private data class StatusSingleInfo(
+        val mechaStatus: MechaStatus,
+        val friendTraining: Boolean,
+        val learningFactor: Int,
+        val gearFactor: Int,
+    )
+
+    private fun calcStatusSingle(
+        info: StatusSingleInfo,
+        target: StatusType,
+        baseValue: Int,
+    ): Int {
+        if (baseValue == 0) return 0
+        val friendFactor = if (info.friendTraining) info.mechaStatus.friendBonus * 100 else 0
+        val skillPtFactor = if (target == StatusType.SKILL) info.mechaStatus.skillPt * 100 else 0
+        val odFactor = if (!info.mechaStatus.overdrive) 0 else {
+            val odBaseBonus = 2500
+            val odStatusBonus = info.mechaStatus.odStatusBonus(target) * 10000
+            val odMemberCountBonus = info.mechaStatus.odMemberCountBonus * 10000
+            odBaseBonus + odStatusBonus + odMemberCountBonus
+        }
+        if (Calculator.DEBUG) println("Mecha: $target $baseValue ${info.learningFactor} ${info.gearFactor} $friendFactor $skillPtFactor $odFactor")
+        val total =
+            baseValue.toLong() * (10000 + info.learningFactor + info.gearFactor) * (10000 + odFactor) / 100000000L
+        return min(100, total.toInt() - baseValue)
     }
 
     fun applyScenarioAction(

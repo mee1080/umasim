@@ -56,9 +56,9 @@ val mechaChipHintFrequency = listOf(0, 15, 30, 45, 60, 75)
 
 val mechaChipSpecialityRate = listOf(0, 15, 30, 45, 60, 75)
 
-val mechaChipFriendBonus = listOf(2, 4, 6, 8, 10)
+val mechaChipFriendBonus = listOf(0, 2, 4, 6, 8, 10)
 
-val mechaChipSkillPt = listOf(12, 24, 36, 48, 60)
+val mechaChipSkillPt = listOf(0, 12, 24, 36, 48, 60)
 
 val mechaOdStatusBonusDivider = listOf(0, 0, 300, 200, 200, 200)
 
@@ -66,7 +66,7 @@ val mechaOdLearningLevelBonus = listOf(0, 0, 15, 20, 25, 25)
 
 val mechaOdHpCostDown = listOf(0, 0, 0, 0, 50, 50)
 
-val mechaOdTrainingBonus = listOf(0, 1, 1, 1, 3, 3)
+val mechaOdMemberCountBonus = listOf(0, 1, 1, 1, 3, 3)
 
 val mechaOdRelationBonus = listOf(0, 3, 3, 3, 3, 3)
 
