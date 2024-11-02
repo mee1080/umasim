@@ -45,11 +45,11 @@ fun MechaStatus.applyTuning(result: MechaTuningResult) = copy(
 )
 
 data class MechaStatus(
-    val learningLevels: Map<StatusType, Int> = trainingType.associateWith { 0 },
+    val linkEffects: MechaLinkEffect = MechaLinkEffect(),
+    val learningLevels: Map<StatusType, Int> = trainingType.associateWith { linkEffects.initialLearningLevel },
     val maxMechaEnergy: Int = 0,
     val chipLevels: Map<MechaChipType, List<Int>> = MechaChipType.entries.associateWith { listOf(0, 0, 0) },
-    val linkEffects: MechaLinkEffect = MechaLinkEffect(),
-    val overdriveGauge: Int = 0,
+    val overdriveGauge: Int = linkEffects.initialOverdrive,
     val overdrive: Boolean = false,
 ) : ScenarioStatus {
     val learningBonus by lazy {
@@ -65,8 +65,11 @@ data class MechaStatus(
     val trainingEffects by lazy { trainingType.associateWith { calcTrainingEffect(learningLevels[it]!!) } }
 
     private fun calcTrainingEffect(learningLevel: Int): Double {
-        // TODO
-        return 0.0 + learningLevel * 0.7 + linkEffects.learningTrainingEffect * 0.1
+        return if (linkEffects.hasLearningTrainingEffect) {
+            9.0 + 0.09 * learningLevel
+        } else {
+            6.0 + 0.06 * learningLevel
+        }
     }
 
     val hintFrequency by lazy { mechaChipHintFrequency[chipLevels[MechaChipType.HEAD]!![1]] }
@@ -76,28 +79,72 @@ data class MechaStatus(
     val friendBonus by lazy { mechaChipFriendBonus[chipLevels[MechaChipType.BODY]!![2]] }
 
     val skillPt by lazy { mechaChipSkillPt[chipLevels[MechaChipType.LEG]!![2]] }
+
+    val totalLearningLevel by lazy { learningLevels.values.sum() }
+
+    val odLevels by lazy { chipLevels.mapValues { it.value.sum() / 3 } }
+
+    val odGearAll by lazy { odLevels[MechaChipType.HEAD]!! >= 1 }
+
+    val odSpeedBonus by lazy { calcOdStatusBonus(MechaChipType.LEG) }
+    val odStaminaBonus by lazy { calcOdStatusBonus(MechaChipType.BODY) }
+    val odPowerBonus by lazy { calcOdStatusBonus(MechaChipType.LEG) }
+    val odGutsBonus by lazy { calcOdStatusBonus(MechaChipType.BODY) }
+    val odWisdomBonus by lazy { calcOdStatusBonus(MechaChipType.HEAD) }
+
+    val odLearningLevelBonus by lazy { mechaOdLearningLevelBonus[odLevels[MechaChipType.HEAD]!!] }
+
+    val odHpCostDown by lazy { mechaOdHpCostDown[odLevels[MechaChipType.HEAD]!!] }
+
+    val odHintAll by lazy { odLevels[MechaChipType.HEAD]!! >= 5 }
+
+    val odTrainingBonus by lazy { mechaOdTrainingBonus[odLevels[MechaChipType.BODY]!!] }
+
+    val odAddSupport by lazy { odLevels[MechaChipType.BODY]!! >= 5 }
+
+    val odRelationBonus by lazy { mechaOdRelationBonus[odLevels[MechaChipType.LEG]!!] }
+
+    val odHpGain by lazy { mechaOdHpGain[odLevels[MechaChipType.LEG]!!] }
+
+    val odMotivationGain by lazy { mechaOdMotivationGain[odLevels[MechaChipType.LEG]!!] }
+
+    val odSkillPtBonus by lazy { if (odLevels[MechaChipType.LEG]!! >= 5) calcOdStatusBonus(150) else 0 }
+
+    private fun calcOdStatusBonus(type: MechaChipType): Int {
+        return calcOdStatusBonus(mechaOdStatusBonusDivider[odLevels[type]!!])
+    }
+
+    private fun calcOdStatusBonus(divider: Int) = if (divider == 0) 0 else 3 * (totalLearningLevel / divider + 1)
 }
 
 data class MechaLinkEffect(
-    val initialMechaEnergy: Int = 0,
-    val mechaGearFrequency: Int = 0,
-    val initialOverdrive: Int = 0,
-    val learningTrainingEffect: Int = 0,
-    val initialLearningLevel: Int = 0,
+    val initialMechaEnergyCount: Int = 0,
+    val mechaGearFrequencyCount: Int = 0,
+    val initialOverdriveCount: Int = 0,
+    val learningTrainingEffectCount: Int = 0,
+    val initialLearningLevelCount: Int = 0,
 ) {
     constructor(charaNames: List<String>) : this(
-        Scenario.MECHA.scenarioLink.associateWith { chara -> charaNames.count { it == chara } },
+        Scenario.MECHA.scenarioLink.associateWith { charaNames.contains(it) },
     )
 
-    constructor(charaCounts: Map<String, Int>) : this(
-        initialMechaEnergy = listOf("ビワハヤヒデ", "エアシャカール").sumOf { charaCounts[it] ?: 0 },
-        mechaGearFrequency = listOf("ビワハヤヒデ", "ナリタタイシン", "タニノギムレット").sumOf {
-            charaCounts[it] ?: 0
+    constructor(charaExists: Map<String, Boolean>) : this(
+        initialMechaEnergyCount = listOf("ビワハヤヒデ", "エアシャカール").count { charaExists[it]!! },
+        mechaGearFrequencyCount = listOf("ビワハヤヒデ", "ナリタタイシン", "タニノギムレット").count {
+            charaExists[it]!!
         },
-        initialOverdrive = listOf("ナリタタイシン", "シンボリクリスエス").sumOf { charaCounts[it] ?: 0 },
-        learningTrainingEffect = charaCounts["エアシャカール"] ?: 0,
-        initialLearningLevel = listOf("シンボリクリスエス", "タニノギムレット").sumOf { charaCounts[it] ?: 0 },
+        initialOverdriveCount = listOf("ナリタタイシン", "シンボリクリスエス").count { charaExists[it]!! },
+        learningTrainingEffectCount = if (charaExists["エアシャカール"]!!) 1 else 0,
+        initialLearningLevelCount = listOf("シンボリクリスエス", "タニノギムレット").count { charaExists[it]!! },
     )
+
+    val gearFrequency = mechaGearFrequencyCount * 10 // TODO
+
+    val hasLearningTrainingEffect = learningTrainingEffectCount > 0
+
+    val initialLearningLevel = if (initialLearningLevelCount == 0) 1 else initialLearningLevelCount * 20
+
+    val initialOverdrive = initialOverdriveCount * 3
 }
 
 enum class MechaChipType(

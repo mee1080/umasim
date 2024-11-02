@@ -50,12 +50,79 @@ internal val mechaTrainingData = listOf(
     TrainingBase(StatusType.WISDOM, 5, 324, Status(4, 0, 0, 0, 12, 5, 5)),
 )
 
-val mechaChipLearningBonus = arrayOf(0, 10, 18, 26, 33, 40)
+val mechaChipLearningBonus = listOf(0, 10, 18, 26, 33, 40)
 
-val mechaChipHintFrequency = arrayOf(0, 15, 30, /*TODO*/45, 60, 75)
+val mechaChipHintFrequency = listOf(0, 15, 30, 45, 60, 75)
 
-val mechaChipSpecialityRate = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)
+val mechaChipSpecialityRate = listOf(0, 15, 30, 45, 60, 75)
 
-val mechaChipFriendBonus = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)
+val mechaChipFriendBonus = listOf(2, 4, 6, 8, 10)
 
-val mechaChipSkillPt = arrayOf(/*TODO*/0, 15, 30, 45, 60, 75)
+val mechaChipSkillPt = listOf(12, 24, 36, 48, 60)
+
+val mechaOdStatusBonusDivider = listOf(0, 0, 300, 200, 200, 200)
+
+val mechaOdLearningLevelBonus = listOf(0, 0, 15, 20, 25, 25)
+
+val mechaOdHpCostDown = listOf(0, 0, 0, 0, 50, 50)
+
+val mechaOdTrainingBonus = listOf(0, 1, 1, 1, 3, 3)
+
+val mechaOdRelationBonus = listOf(0, 3, 3, 3, 3, 3)
+
+val mechaOdHpGain = listOf(0, 0, 0, 0, 15, 15)
+
+val mechaOdMotivationGain = listOf(0, 0, 0, 0, 1, 1)
+
+val mechaLearningGain = listOf(
+    // 通常
+    listOf(
+        // 通常
+        listOf(
+            listOf(7, 11, 14, 18, 21, 25),
+            listOf(2, 3, 4, 5, 6, 7),
+            listOf(1, 1, 2, 2, 3, 3),
+        ),
+        // メカギア
+        listOf(
+            listOf(9, 13, 17, 21, 26, 30),
+            listOf(2, 4, 5, 6, 7, 8),
+            listOf(1, 1, 2, 3, 3, 4),
+        ),
+        // 友情
+        listOf(
+            listOf(0, 17, 21, 25, 29, 33),
+            listOf(0, 4, 6, 7, 8, 10),
+            listOf(0, 2, 2, 3, 4, 4),
+        ),
+    ),
+    // 合宿
+    listOf(
+        // 通常
+        listOf(
+            listOf(14, 18, 21, 25, 28, 32),
+            listOf(4, 5, 6, 7, 8, 9),
+            listOf(2, 2, 3, 3, 4, 4),
+        ),
+        // メカギア
+        listOf(
+            listOf(17, 21, 26, 30, 34, 38),
+            listOf(5, 6, 7, 8, 10, 11),
+            listOf(2, 3, 3, 4, 4, 5),
+        ),
+        // 友情
+        listOf(
+            listOf(0, 25, 29, 33, 38, 42),
+            listOf(0, 7, 8, 10, 10, 12),
+            listOf(0, 3, 4, 4, 5, 5),
+        ),
+    ),
+)
+
+val mechaLearningSubStatus = mapOf(
+    StatusType.SPEED to (StatusType.POWER to StatusType.STAMINA),
+    StatusType.STAMINA to (StatusType.WISDOM to StatusType.GUTS),
+    StatusType.POWER to (StatusType.STAMINA to StatusType.WISDOM),
+    StatusType.GUTS to (StatusType.SPEED to StatusType.POWER),
+    StatusType.WISDOM to (StatusType.GUTS to StatusType.SPEED),
+)
