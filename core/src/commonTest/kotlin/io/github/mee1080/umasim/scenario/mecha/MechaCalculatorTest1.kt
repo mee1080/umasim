@@ -22,6 +22,8 @@ class MechaCalculatorTest1 : MechaCalculatorTest(
         var baseCalcInfo = state.baseCalcInfo
             .copy(speedSkillCount = 1)
 
+        MechaCalculator.gearFactorValue = 300
+
         testTraining(
             baseCalcInfo, StatusType.SPEED, 1, 0, 1, 2, 4,
             condition = mechaGear,
@@ -199,6 +201,8 @@ class MechaCalculatorTest1 : MechaCalculatorTest(
 
         baseCalcInfo = baseCalcInfo.setLearningLevels(89, 86, 53, 54, 100)
 
+        MechaCalculator.gearFactorValue = 600
+
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 2, 1, 3,
             condition = mechaGear,
@@ -330,6 +334,8 @@ class MechaCalculatorTest1 : MechaCalculatorTest(
             .setRelation(4, 100)
             .setRelation(5, 100)
             .setLearningLevels(600, 464, 405, 543, 512)
+
+        MechaCalculator.gearFactorValue = 3000
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 5, 1, 0, 5,

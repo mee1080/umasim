@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.umasim.simulation2.MechaTuningResult
 import io.github.mee1080.umasim.simulation2.Simulator
 import io.github.mee1080.umasim.test.loadTestStore
 import io.github.mee1080.utility.mapIf
@@ -108,5 +109,15 @@ abstract class MechaCalculatorTest(
                 it.copy(supportState = it.supportState?.copy(relation = value))
             }
         )
+    }
+
+    protected fun Calculator.CalcInfo.setChipLevel(type: MechaChipType, index: Int, level: Int): Calculator.CalcInfo {
+        return updateMechaStatus {
+            var result = this
+            repeat(level) {
+                result = result.applyTuning(MechaTuningResult(type, index))
+            }
+            result
+        }
     }
 }
