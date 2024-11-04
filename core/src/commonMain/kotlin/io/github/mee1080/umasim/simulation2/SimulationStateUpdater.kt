@@ -574,7 +574,7 @@ private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: 
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
         is UafScenarioActionParam -> applyUafAction(scenarioAction)
         is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
-        is MechaActionParam -> MechaCalculator.applyScenarioAction(this, action, scenarioAction)
+        is MechaActionParam -> MechaCalculator.applyScenarioAction(this, scenarioAction)
         null -> this
     }
 }

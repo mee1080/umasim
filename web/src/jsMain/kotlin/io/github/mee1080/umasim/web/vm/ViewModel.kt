@@ -28,11 +28,13 @@ import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
 import io.github.mee1080.umasim.scenario.climax.WeightItem
 import io.github.mee1080.umasim.scenario.gm.Founder
 import io.github.mee1080.umasim.scenario.live.LiveCalculator
+import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.state.*
 import io.github.mee1080.utility.applyIf
+import io.github.mee1080.utility.applyIfNotNull
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
 import kotlinx.serialization.encodeToString
@@ -323,6 +325,7 @@ class ViewModel(val scope: CoroutineScope) {
         val trainingBase = WebConstants.trainingList[state.scenario]!!.first {
             it.type == trainingType && it.level == trainingLevel
         }
+        val scenarioStatus = state.scenarioStatus
         val trainingCalcInfo = Calculator.CalcInfo(
             state.chara,
             trainingBase,
@@ -338,7 +341,7 @@ class ViewModel(val scope: CoroutineScope) {
             state.accelSkillCount,
             state.totalTrainingLevel,
             state.isLevelUpTurn,
-            state.scenarioStatus,
+            scenarioStatus,
         ).setTeamMember(state.teamJoinCount)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
@@ -359,6 +362,18 @@ class ViewModel(val scope: CoroutineScope) {
 
             else -> Status()
         }
+        val mechaLearningGain = if (state.scenario != Scenario.MECHA) null else {
+            kotlin.runCatching {
+                MechaCalculator.calcLearningGain(
+                    trainingCalcInfo.mechaStatus!!,
+                    trainingType,
+                    state.isLevelUpTurn,
+                    joinSupportList.any { it.isFriendTraining(trainingType) },
+                    state.mechaState.gear,
+                    joinSupportList.count() + state.teamJoinCount,
+                )
+            }.getOrElse { Status() }
+        }
 
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
             val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
@@ -377,7 +392,7 @@ class ViewModel(val scope: CoroutineScope) {
                     state.accelSkillCount,
                     state.totalTrainingLevel,
                     state.isLevelUpTurn,
-                    state.scenarioStatus,
+                    scenarioStatus,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
@@ -402,7 +417,7 @@ class ViewModel(val scope: CoroutineScope) {
                 state.accelSkillCount,
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
-                state.scenarioStatus,
+                scenarioStatus,
             ),
             state.teamJoinCount,
         )
@@ -480,6 +495,9 @@ class ViewModel(val scope: CoroutineScope) {
             upperRate = upperRate,
 //            coinRate = coinRate,
             friendProbability = friendProbability,
+            mechaState = state.mechaState.applyIfNotNull(mechaLearningGain) {
+                copy(learningLevelGain = it)
+            }
         )
     }
 

@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.web.state
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
@@ -27,6 +28,8 @@ data class MechaState(
     val gear: Boolean = false,
     val phase: MechaPhase = MechaPhase.Junior1,
     val overdrive: Boolean = false,
+
+    val learningLevelGain: Status = Status(),
 ) {
     fun toMechaStatus(charaNames: List<String>) = MechaStatus(
         linkEffects = MechaLinkEffect(charaNames),

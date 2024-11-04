@@ -19,8 +19,8 @@
 package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -272,6 +272,18 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         if (state.scenario == Scenario.GRAND_LIVE) {
                             Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
                         }
+                    }
+                    if (state.scenario == Scenario.MECHA) {
+                        Th { Text("研究Lv") }
+                        Td { Text(state.mechaState.learningLevelGain.speed.toString()) }
+                        Td { Text(state.mechaState.learningLevelGain.stamina.toString()) }
+                        Td { Text(state.mechaState.learningLevelGain.power.toString()) }
+                        Td { Text(state.mechaState.learningLevelGain.guts.toString()) }
+                        Td { Text(state.mechaState.learningLevelGain.wisdom.toString()) }
+                        Td { Text("-") }
+                        Td { Text("-") }
+                        Td { Text(state.mechaState.learningLevelGain.statusTotal.toString()) }
+                        Td { Text("-") }
                     }
                 }
             }

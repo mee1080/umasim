@@ -355,10 +355,10 @@ class CookActivateDishResult(
 
 data class MechaActionParam(
     val learningLevel: Status,
-    val gear: Boolean,
+    val overdriveGage: Int,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
-        append("Mecha gear=$gear")
+        append("Mecha learningLevel=$learningLevel, overdriveGage=$overdriveGage")
     }
 }
 
