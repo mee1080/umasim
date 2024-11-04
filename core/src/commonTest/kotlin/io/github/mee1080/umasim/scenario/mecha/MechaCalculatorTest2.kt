@@ -34,10 +34,9 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
             }
             .copy(speedSkillCount = 1)
 
-        MechaCalculator.gearFactorValue = 300
-
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 1, 1, 2, 5,
+            mechaGear = false,
             base = Status(2, 0, 0, 0, 15, 8),
             scenario = Status(0, 0, 0, 0, 2, 1),
         )
@@ -47,37 +46,39 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
             .setRelation(1, 80)
             .setRelation(2, 80)
             .setRelation(4, 80)
-
-        MechaCalculator.gearFactorValue = 600
+            .updateMechaStatus { updateTurn(13) }
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 1, 1, 3,
+            mechaGear = false,
             base = Status(15, 0, 3, 0, 0, 6),
             scenario = Status(2, 0, 0, 0, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 1, 0,
+            mechaGear = false,
             base = Status(0, 11, 0, 4, 0, 5),
             scenario = Status(0, 1, 0, 0, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 1, 1, 1, 4,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 6, 19, 0, 0, 11),
             scenario = Status(0, 1, 3, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 1, 2, 2,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(2, 0, 3, 14, 0, 8),
             scenario = Status(0, 0, 0, 3, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 5, 1, 5,
+            mechaGear = false,
             base = Status(5, 0, 0, 0, 17, 8),
             scenario = Status(1, 0, 0, 0, 4, 2),
         )
@@ -86,34 +87,35 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 1, 0, 4,
+            mechaGear = false,
             base = Status(13, 0, 3, 0, 0, 7),
             scenario = Status(2, 0, 0, 0, 0, 1),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 1, 2, 0, 1, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 17, 0, 7, 0, 12),
             scenario = Status(0, 3, 0, 1, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 1, 1,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 4, 13, 0, 0, 5),
             scenario = Status(0, 0, 2, 0, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 1, 2,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(2, 0, 2, 11, 0, 6),
             scenario = Status(0, 0, 0, 3, 0, 1),
         )
 
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 5, 0, 5,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(5, 0, 0, 0, 16, 7),
             scenario = Status(1, 0, 0, 0, 5, 2),
         )
@@ -126,73 +128,76 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
             .setChipLevel(MechaChipType.LEG, 1, 1)
             .setRelation(5, 80)
             .copy(motivation = 2)
-
-        MechaCalculator.gearFactorValue = 980
+            .updateMechaStatus { updateTurn(25) }
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 2, 1,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(15, 0, 3, 0, 0, 6),
             scenario = Status(4, 0, 0, 0, 0, 1),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 2, 1, 3, 5,
+            mechaGear = false,
             base = Status(0, 18, 0, 7, 0, 10),
             scenario = Status(0, 2, 0, 0, 0, 1),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 2, 0, 0, 1,
+            mechaGear = false,
             base = Status(0, 6, 20, 0, 0, 10),
             scenario = Status(0, 0, 2, 0, 0, 1),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 2, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(2, 0, 3, 15, 0, 6),
             scenario = Status(0, 0, 1, 5, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 5, 0, 2, 4,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(10, 0, 0, 0, 38, 19),
-            scenario = Status(3, 0, 0, 0, 14, 7),
+            scenario = Status(3, 0, 0, 0, 15, 7),
         )
 
         baseCalcInfo = baseCalcInfo.updateMechaStatus { applyOverdrive() }
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 2, 1,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(15, 0, 3, 0, 0, 6),
             scenario = Status(11, 0, 2, 0, 0, 3),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 2, 1, 3, 5,
+            mechaGear = false,
             base = Status(0, 18, 0, 7, 0, 10),
             scenario = Status(0, 8, 0, 3, 0, 4),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 2, 0, 0, 1,
+            mechaGear = false,
             base = Status(0, 6, 20, 0, 0, 10),
             scenario = Status(0, 2, 10, 0, 0, 4),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 2, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(2, 0, 3, 15, 0, 6),
             scenario = Status(1, 0, 2, 11, 0, 4),
         )
 
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 5, 0, 2, 4,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(10, 0, 0, 0, 38, 19),
             scenario = Status(8, 0, 0, 0, 29, 14),
         )
@@ -203,26 +208,28 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 2, 0,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(14, 0, 2, 0, 0, 6),
             scenario = Status(4, 0, 0, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 2, 2,
+            mechaGear = false,
             base = Status(0, 14, 0, 5, 0, 6),
             scenario = Status(0, 1, 0, 0, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 2, 1, 1, 2, 4,
+            mechaGear = false,
             base = Status(0, 8, 29, 0, 0, 17),
             scenario = Status(0, 1, 3, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 2, 0, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(4, 0, 3, 15, 0, 6),
             scenario = Status(1, 0, 1, 6, 0, 2),
         )
@@ -232,27 +239,28 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 2, 1,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(15, 0, 3, 0, 0, 6),
             scenario = Status(5, 0, 1, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 2, 1, 2, 5,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 20, 0, 8, 0, 12),
             scenario = Status(0, 4, 0, 1, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 2, 1, 1,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 6, 20, 0, 0, 9),
             scenario = Status(0, 1, 4, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 2, 1, 3, 4,
+            mechaGear = false,
             base = Status(5, 0, 4, 18, 0, 10),
             scenario = Status(1, 0, 1, 5, 0, 3),
         )
@@ -265,31 +273,32 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
             .setChipLevel(MechaChipType.LEG, 0, 5)
             .setChipLevel(MechaChipType.LEG, 1, 1)
             .setLearningLevels(151, 55, 55, 259, 300)
-
-        MechaCalculator.gearFactorValue = 1600
+            .updateMechaStatus { updateTurn(37) }
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 5, 0,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(18, 0, 5, 0, 0, 6),
             scenario = Status(7, 0, 2, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 5, 1,
+            mechaGear = false,
             base = Status(0, 17, 0, 8, 0, 6),
             scenario = Status(0, 2, 0, 1, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 5, 2, 1, 2, 5,
+            mechaGear = false,
             base = Status(0, 13, 38, 0, 0, 18),
             scenario = Status(0, 1, 5, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 5, 1, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(7, 0, 5, 20, 0, 7),
             scenario = Status(3, 0, 2, 10, 0, 3),
         )
@@ -300,26 +309,28 @@ class MechaCalculatorTest2 : MechaCalculatorTest(
 
         testTraining(
             baseCalcInfo, StatusType.SPEED, 5, 0,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(18, 0, 5, 0, 0, 6),
             scenario = Status(7, 0, 2, 0, 0, 2),
         )
 
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 5, 0, 0, 2, 3,
-            condition = mechaGear,
+            mechaGear = true,
             base = Status(0, 26, 0, 12, 0, 13),
             scenario = Status(0, 8, 0, 3, 0, 4),
         )
 
         testTraining(
             baseCalcInfo, StatusType.POWER, 5, 1,
+            mechaGear = false,
             base = Status(0, 7, 21, 0, 0, 6),
             scenario = Status(0, 0, 2, 0, 0, 0),
         )
 
         testTraining(
             baseCalcInfo, StatusType.GUTS, 5, 0, 1, 5,
+            mechaGear = false,
             base = Status(7, 0, 6, 25, 0, 12),
             scenario = Status(2, 0, 1, 8, 0, 3),
         )

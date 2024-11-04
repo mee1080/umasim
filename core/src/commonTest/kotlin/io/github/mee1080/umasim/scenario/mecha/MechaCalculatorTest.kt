@@ -48,7 +48,7 @@ abstract class MechaCalculatorTest(
         level: Int,
         guestCount: Int,
         vararg supportIndices: Int,
-        condition: Calculator.CalcInfo.() -> Calculator.CalcInfo = { this },
+        mechaGear: Boolean,
         base: Status? = null,
         scenario: Status? = null,
     ) {
@@ -57,7 +57,9 @@ abstract class MechaCalculatorTest(
         val info = baseCalcInfo.copy(
             training = state.training[type.ordinal].base[level - 1],
             member = baseCalcInfo.member.filter { memberNames.contains(it.name) },
-        ).setTeamMember(guestCount).condition()
+        ).setTeamMember(guestCount).updateMechaStatus {
+            copy(gearExists = gearExists.mapValues { mechaGear })
+        }
         val result = Calculator.calcTrainingSuccessStatusSeparated(info)
         val message = buildString {
             appendLine("expected:")

@@ -259,11 +259,7 @@ object Calculator {
         val scenario: Scenario,
         val supportTypeCount: Int,
         val fanCountLevel: Int,
-        val liveStatus: TrainingLiveStatus?,
-        val gmStatus: GmStatus?,
-        val lArcStatus: LArcStatus?,
-        val uafStatus: UafStatus?,
-        val cookStatus: CookStatus?,
+        val scenarioStatus: ScenarioStatus?,
     )
 
     @ThreadLocal
@@ -286,11 +282,7 @@ object Calculator {
                     )
                 },
                 info.scenario, info.supportTypeCount, info.fanCount / 10000,
-                info.liveStatus,
-                info.gmStatus,
-                info.lArcStatus,
-                info.uafStatus,
-                info.cookStatus,
+                info.scenarioStatus,
             )
             val cached = expectedStatusCache[key]
             if (cached != null) {

@@ -48,12 +48,26 @@ fun MechaStatus.resetTuning() = copy(
     chipLevels = chipLevels.mapValues { listOf(0, 0, 0) }
 )
 
+fun MechaStatus.updateTurn(turn: Int) = copy(
+    gearFactorValue = when {
+        turn > 72 -> 3000
+        turn > 60 -> 2500
+        turn > 48 -> 2000
+        turn > 36 -> 1600
+        turn > 24 -> 1000
+        turn > 12 -> 600
+        else -> 300
+    },
+    overdrive = false,
+)
+
 data class MechaStatus(
     val linkEffects: MechaLinkEffect = MechaLinkEffect(),
     val learningLevels: Map<StatusType, Int> = trainingType.associateWith { linkEffects.initialLearningLevel },
     val maxMechaEnergy: Int = 0,
     val chipLevels: Map<MechaChipType, List<Int>> = MechaChipType.entries.associateWith { listOf(0, 0, 0) },
     val gearExists: Map<StatusType, Boolean> = trainingType.associateWith { false },
+    val gearFactorValue: Int = 300,
     val overdriveGauge: Int = linkEffects.initialOverdrive,
     val overdrive: Boolean = false,
 ) : ScenarioStatus {
@@ -68,6 +82,8 @@ data class MechaStatus(
     }
 
     val learningTrainingFactors by lazy { trainingType.associateWith { calcLearningTrainingFactor(learningLevels[it]!!) } }
+
+    fun gearFactor(type: StatusType) = if (gearExists[type] == true) gearFactorValue else 0
 
     private fun calcLearningTrainingFactor(learningLevel: Int): Int {
         return if (learningLevel <= 1) 0 else if (linkEffects.hasLearningTrainingFactor) {
