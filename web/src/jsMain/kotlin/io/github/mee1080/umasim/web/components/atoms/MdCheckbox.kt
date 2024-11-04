@@ -51,6 +51,7 @@ fun MdCheckbox(
             columnGap(4.px)
             alignItems(AlignItems.Center)
             cursor("pointer")
+            padding(16.px)
         }
         labelAttrs()
     }) {

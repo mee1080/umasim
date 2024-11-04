@@ -452,9 +452,7 @@ class ViewModel(val scope: CoroutineScope) {
             }
         }
         val supportSelectionList = state.supportSelectionList.toMutableList()
-        println(trainingCalcInfo.member)
         supportList.forEach { memberState ->
-            println(memberState.name)
             val specialtyRate = calcRate(
                 memberState.card.type,
                 *Calculator.calcCardPositionSelection(
@@ -803,5 +801,9 @@ class ViewModel(val scope: CoroutineScope) {
                 }
             }
         }
+    }
+
+    fun updateMecha(update: MechaState.() -> MechaState) {
+        update { copy(mechaState = mechaState.update()) }
     }
 }

@@ -70,5 +70,8 @@ fun TrainingSetting(model: ViewModel, state: State) {
         if (state.scenario == Scenario.COOK) {
             CookTrainingSetting(model, state.cookState)
         }
+        if (state.scenario == Scenario.MECHA) {
+            MechaTrainingSetting(model, state.mechaState)
+        }
     }
 }

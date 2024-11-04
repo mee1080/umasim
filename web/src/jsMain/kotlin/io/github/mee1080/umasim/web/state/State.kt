@@ -87,6 +87,7 @@ data class State(
     val lArcState: LArcState = LArcState(),
     val uafState: UafState = UafState(),
     val cookState: CookState = CookState(),
+    val mechaState: MechaState = MechaState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -145,6 +146,7 @@ data class State(
             ?: lArcStatusIfEnabled
             ?: uafStatusIfEnabled
             ?: cookStatusIfEnabled
+            ?: mechaStatusIfEnabled
 
     val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
 
@@ -155,6 +157,11 @@ data class State(
     val uafStatusIfEnabled get() = if (scenario == Scenario.UAF) uafState.toUafStatus() else null
 
     val cookStatusIfEnabled get() = if (scenario == Scenario.COOK) cookState.toCookStatus(selectedTrainingType) else null
+
+    val mechaStatusIfEnabled
+        get() = if (scenario == Scenario.MECHA) mechaState.toMechaStatus(
+            supportSelectionList.mapNotNull { it.card?.chara } + chara.charaName
+        ) else null
 
     val specialityRateUp
         get() = when (scenario) {
