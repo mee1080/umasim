@@ -19,30 +19,12 @@
 package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.gm.Founder
-import io.github.mee1080.umasim.scenario.gm.Knowledge
-import io.github.mee1080.umasim.scenario.uaf.UafGenre
-import io.github.mee1080.umasim.web.components.LabeledRadio
-import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
-import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
-import io.github.mee1080.umasim.web.components.atoms.MdTextButton
-import io.github.mee1080.umasim.web.components.atoms.onChange
-import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
-import io.github.mee1080.umasim.web.state.CookState
 import io.github.mee1080.umasim.web.state.State
-import io.github.mee1080.umasim.web.state.UafState
-import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.vm.ViewModel
-import org.jetbrains.compose.web.attributes.selected
-import org.jetbrains.compose.web.attributes.size
-import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.*
-import org.w3c.dom.HTMLSelectElement
 
 @Composable
 fun TrainingSetting(model: ViewModel, state: State) {
@@ -74,294 +56,19 @@ fun TrainingSetting(model: ViewModel, state: State) {
             }
         }
         if (state.scenario == Scenario.GRAND_LIVE) {
-            NestedHideBlock("グランドライブ") {
-                Div {
-                    Span { Text("トレーニング上昇量：") }
-                    Text("スピード")
-                    TextInput(state.trainingLiveState.speed) {
-                        size(10)
-                        onInput { model.updateLiveSpeed(it.value) }
-                    }
-                    Text("スタミナ")
-                    TextInput(state.trainingLiveState.stamina) {
-                        size(10)
-                        onInput { model.updateLiveStamina(it.value) }
-                    }
-                    Text("パワー")
-                    TextInput(state.trainingLiveState.power) {
-                        size(10)
-                        onInput { model.updateLivePower(it.value) }
-                    }
-                    Text("根性")
-                    TextInput(state.trainingLiveState.guts) {
-                        size(10)
-                        onInput { model.updateLiveGuts(it.value) }
-                    }
-                    Text("賢さ")
-                    TextInput(state.trainingLiveState.wisdom) {
-                        size(10)
-                        onInput { model.updateLiveWisdom(it.value) }
-                    }
-                    Text("スキルPt")
-                    TextInput(state.trainingLiveState.skillPt) {
-                        size(10)
-                        onInput { model.updateLiveSkillPt(it.value) }
-                    }
-                }
-                Div {
-                    Span { Text("友情トレーニング獲得量アップ：") }
-                    TextInput(state.trainingLiveState.friendTrainingUpInput) {
-                        size(10)
-                        onInput { model.updateLiveFriend(it.value) }
-                    }
-                }
-                Div {
-                    Span { Text("得意率アップ：") }
-                    TextInput(state.trainingLiveState.specialityRateUpInput) {
-                        size(10)
-                        onInput { model.updateLiveSpecialityRate(it.value) }
-                    }
-                    Span { Text("※サポカの得意率に加算で実装") }
-                }
-            }
+            LiveTrainingSetting(model, state.trainingLiveState)
         }
         if (state.scenario == Scenario.GM) {
-            NestedHideBlock("グランドマスターズ") {
-                H3 { Text("知識表") }
-                Div {
-                    for (i in 12..13) {
-                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-                    }
-                }
-                Div {
-                    for (i in 8..11) {
-                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-                    }
-                }
-                Div {
-                    for (i in 0..7) {
-                        KnowledgeTable(model, i, state.gmState.knowledgeTable[i])
-                    }
-                }
-                Div {
-                    MdTextButton("クリア") {
-                        onClick { model.clearGmKnowledge() }
-                    }
-                }
-
-                H3 { Text("女神の叡智") }
-                val wisdomSelection = listOf(null) + Founder.entries
-                val selectedWisdom = state.gmState.wisdom
-                Select({
-                    prop(
-                        { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                        wisdomSelection.indexOfFirst { it == selectedWisdom }
-                    )
-                    onChange { model.updateGmWisdom(wisdomSelection[it.value!!.toInt()]) }
-                }) {
-                    wisdomSelection.forEachIndexed { index, wisdom ->
-                        Option(
-                            index.toString(),
-                            { if (wisdom == selectedWisdom) selected() }
-                        ) { Text(wisdom?.longName ?: "なし") }
-                    }
-                }
-
-                H3 { Text("知識Lv") }
-                Founder.entries.forEach { founder ->
-                    SliderEntry("${founder.longName}：", state.gmState.wisdomLevel[founder]!!, 0, 5) {
-                        model.updateGmWisdomLevel(founder, it.toInt())
-                    }
-                }
-            }
+            GmTrainingSetting(model, state.gmState)
         }
         if (state.scenario == Scenario.LARC) {
-            NestedHideBlock("プロジェクトL'Arc") {
-                val lArcState = state.lArcState
-                SliderEntry("期待度：", lArcState.expectations, 0, 200) {
-                    model.updateLArc { copy(expectations = it.toInt()) }
-                }
-                SliderEntry("海外洋芝適性：", lArcState.overseasTurfAptitude, 0, 3) {
-                    model.updateLArc { copy(overseasTurfAptitude = it.toInt()) }
-                }
-                SliderEntry("ロンシャン適性：", lArcState.longchampAptitude, 0, 3) {
-                    model.updateLArc { copy(longchampAptitude = it.toInt()) }
-                }
-                SliderEntry("生活リズム：", lArcState.lifeRhythm, 0, 3) {
-                    model.updateLArc { copy(lifeRhythm = it.toInt()) }
-                }
-                SliderEntry("栄養管理：", lArcState.nutritionManagement, 0, 3) {
-                    model.updateLArc { copy(nutritionManagement = it.toInt()) }
-                }
-                SliderEntry("フランス語力：", lArcState.frenchSkill, 0, 3) {
-                    model.updateLArc { copy(frenchSkill = it.toInt()) }
-                }
-                SliderEntry("海外遠征：", lArcState.overseasExpedition, 0, 3) {
-                    model.updateLArc { copy(overseasExpedition = it.toInt()) }
-                }
-                SliderEntry("強心臓：", lArcState.strongHeart, 0, 3) {
-                    model.updateLArc { copy(strongHeart = it.toInt()) }
-                }
-                SliderEntry("精神力：", lArcState.mentalStrength, 0, 3) {
-                    model.updateLArc { copy(mentalStrength = it.toInt()) }
-                }
-                SliderEntry("L’Arcの希望：", lArcState.hopeOfLArc, 0, 3) {
-                    model.updateLArc { copy(hopeOfLArc = it.toInt()) }
-                }
-                DivFlexCenter {
-                    MdTextButton("海外適性すべて0") { onClick { model.setAllAptitude(0) } }
-                    MdTextButton("海外適性すべて1") { onClick { model.setAllAptitude(1) } }
-                    MdTextButton("海外適性すべて2") { onClick { model.setAllAptitude(2) } }
-                    MdTextButton("海外適性すべて3") { onClick { model.setAllAptitude(3) } }
-                }
-                DivFlexCenter {
-                    MdCheckbox("海外遠征中", lArcState.overseas) {
-                        onChange { model.updateLArc { copy(overseas = it) } }
-                    }
-                }
-            }
+            LArcTrainingSetting(model, state.lArcState)
         }
         if (state.scenario == Scenario.UAF) {
             UafTrainingSetting(model, state.uafState)
         }
         if (state.scenario == Scenario.COOK) {
             CookTrainingSetting(model, state.cookState)
-        }
-    }
-}
-
-@Composable
-fun KnowledgeTable(model: ViewModel, index: Int, knowledge: Knowledge?) {
-    Div({
-        style {
-            paddingLeft(16.px)
-            flexDirection(FlexDirection.Column)
-            display(DisplayStyle.LegacyInlineFlex)
-        }
-    }) {
-        val typeSelection = listOf(null, *trainingTypeOrSkill)
-        val selectedType = knowledge?.type
-        Select({
-            prop(
-                { e: HTMLSelectElement, v -> e.selectedIndex = v },
-                typeSelection.indexOfFirst { it == selectedType }
-            )
-            onChange { model.updateGmKnowledgeType(index, typeSelection[it.value!!.toInt()]) }
-        }) {
-            typeSelection.forEachIndexed { index, type ->
-                Option(
-                    index.toString(),
-                    { if (type == selectedType) selected() }
-                ) { Text(type?.displayName ?: "なし") }
-            }
-        }
-
-        if (index >= 8) {
-            Div {
-                val selectedBonus = knowledge?.bonus ?: 2
-                for (i in 2..3) {
-                    LabeledRadio("knowledgeBonus$index", "$i", "$i", selectedBonus == i) {
-                        model.updateGmKnowledgeBonus(index, i)
-                    }
-                }
-            }
-        }
-    }
-}
-
-@Composable
-fun UafTrainingSetting(model: ViewModel, state: UafState) {
-    NestedHideBlock(Scenario.UAF.displayName) {
-        H4 { Text("大会ボーナス") }
-        DivFlexCenter {
-            Text(UafGenre.Blue.longDisplayName)
-            MdRadioGroup(
-                selection = WebConstants.uafFestivalBonus,
-                selectedItem = state.blueFestivalBonus,
-                onSelect = { model.updateUaf { copy(blueFestivalBonus = it) } },
-                itemToLabel = { WebConstants.uafFestivalBonusValue[it]!! },
-            )
-        }
-        DivFlexCenter {
-            Text(UafGenre.Red.longDisplayName)
-            MdRadioGroup(
-                selection = WebConstants.uafFestivalBonus,
-                selectedItem = state.redFestivalBonus,
-                onSelect = { model.updateUaf { copy(redFestivalBonus = it) } },
-                itemToLabel = { WebConstants.uafFestivalBonusValue[it]!! },
-            )
-        }
-        DivFlexCenter {
-            Text(UafGenre.Yellow.longDisplayName)
-            MdRadioGroup(
-                selection = WebConstants.uafFestivalBonus,
-                selectedItem = state.yellowFestivalBonus,
-                onSelect = { model.updateUaf { copy(yellowFestivalBonus = it) } },
-                itemToLabel = { WebConstants.uafFestivalBonusValue[it]!! },
-            )
-        }
-        H4 { Text("ヒートアップ効果") }
-        DivFlexCenter {
-            MdCheckbox(UafGenre.Blue.longDisplayName, state.heatUpBlue) {
-                onChange { model.updateUaf { copy(heatUpBlue = it) } }
-            }
-            MdCheckbox(UafGenre.Red.longDisplayName, state.heatUpRed) {
-                onChange { model.updateUaf { copy(heatUpRed = it) } }
-            }
-            MdCheckbox(UafGenre.Yellow.longDisplayName, state.heatUpYellow) {
-                onChange { model.updateUaf { copy(heatUpYellow = it) } }
-            }
-        }
-    }
-}
-
-@Composable
-fun CookTrainingSetting(model: ViewModel, state: CookState) {
-    NestedHideBlock(Scenario.COOK.displayName) {
-        H4 { Text("お料理ポイント") }
-        DivFlexCenter {
-            MdRadioGroup(
-                selection = WebConstants.cookCookPoint,
-                selectedItem = state.cookPoint,
-                onSelect = { model.updateCook { copy(cookPoint = it) } },
-            )
-        }
-        H4 { Text("料理") }
-        DivFlexCenter {
-            MdRadioGroup(
-                selection = List(5) { it - 1 },
-                selectedItem = state.phase,
-                onSelect = { model.updateCook { copy(phase = it) } },
-                itemToLabel = { WebConstants.cookPhase[it]!! },
-            )
-        }
-        if (state.phase >= 1) {
-            DivFlexCenter {
-                val (label, results) = if (state.phase == 3) {
-                    "大豊食祭結果" to WebConstants.cookResult2
-                } else {
-                    "試食会結果" to WebConstants.cookResult1
-                }
-                Text(label)
-                MdRadioGroup(
-                    selection = List(3) { it },
-                    selectedItem = state.dishRank,
-                    onSelect = { model.updateCook { copy(dishRank = it) } },
-                    itemToLabel = { results[it]!! },
-                )
-            }
-            DivFlexCenter {
-                if (state.phase == 3) {
-                    Text("野菜Lv5個数")
-                } else {
-                    Text("野菜Lv")
-                }
-                MdRadioGroup(
-                    selection = List(6) { it },
-                    selectedItem = state.materialLevel,
-                    onSelect = { model.updateCook { copy(materialLevel = it) } },
-                )
-            }
         }
     }
 }

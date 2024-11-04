@@ -19,28 +19,11 @@
 package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.rotation.RaceRotationCalculator
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
 import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
-import io.github.mee1080.umasim.scenario.climax.RaceAchievement
 import io.github.mee1080.umasim.scenario.climax.WeightItem
-import io.github.mee1080.umasim.scenario.cook.CookMaterial
-import io.github.mee1080.umasim.scenario.cook.CookStatus
-import io.github.mee1080.umasim.scenario.cook.cookDishData
-import io.github.mee1080.umasim.scenario.gm.Founder
-import io.github.mee1080.umasim.scenario.gm.GmStatus
-import io.github.mee1080.umasim.scenario.gm.Knowledge
-import io.github.mee1080.umasim.scenario.larc.LArcStatus
-import io.github.mee1080.umasim.scenario.live.LessonPeriod
-import io.github.mee1080.umasim.scenario.live.Performance
-import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
-import io.github.mee1080.umasim.scenario.uaf.UafAthletic
-import io.github.mee1080.umasim.scenario.uaf.UafGenre
-import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
-import io.github.mee1080.utility.replaced
 
 // https://fonts.google.com/icons
 enum class Page(val displayName: String, val icon: String) {
@@ -88,7 +71,6 @@ data class State(
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
-//    val coinRate: Double = 0.0,
     val friendProbability: Double = 0.0,
     val raceSetting: List<RaceSetting> = emptyList(),
     val totalRaceBonus: Int = 0,
@@ -238,25 +220,6 @@ data class SupportSelection(
     )
 }
 
-data class AoharuSimulationState(
-    val simulationMode: Int = 0,
-    val simulationTurn: Int = 65,
-    val simulationHistory: List<HistoryItem> = emptyList(),
-)
-
-data class HistoryItem(
-    val action: String,
-    val charaStatus: Status,
-    val teamTotalStatus: Status,
-    val teamAverageStatus: ExpectedStatus,
-    val teamStatusRank: Map<StatusType, AoharuTeamStatusRank>,
-) {
-    val next = trainingType.associateWith { type ->
-        val nextRank = teamStatusRank[type]!!.next
-        if (nextRank == null) 0.0 else nextRank.threshold - teamAverageStatus.get(type)
-    }
-}
-
 data class RaceSetting(
     val label: String,
     val raceCount: String,
@@ -277,50 +240,6 @@ data class RaceSetting(
     ) : this(
         label, raceCount.toString(), statusValue, statusCount, skillPt, editable, item,
     )
-}
-
-data class RotationState(
-    val calcState: RaceRotationCalculator.State,
-    val raceSelection: List<List<RaceEntry>>,
-    val achievementList: List<RaceAchievement>,
-    val groundSetting: Map<RaceGround, RaceRotationCalculator.Rank>,
-    val distanceSetting: Map<RaceDistance, RaceRotationCalculator.Rank>,
-    val option: RaceRotationCalculator.Option,
-    val charaSelection: List<Pair<Int, String>>,
-    val recommendFilter: RecommendFilter = NoFilter,
-    val rotationSaveName: String = "",
-    val rotationLoadList: List<String> = emptyList(),
-    val rotationLoadName: String = "",
-) {
-    val selectedChara = calcState.charaId
-    val rotation = calcState.rotation
-    val selectedRace = rotation.list
-    val raceCount = selectedRace.count { it != null }
-    val raceType = rotation.raceType
-    val recommendation = calcState.recommendation.filter { recommendFilter(it) }
-}
-
-data class TrainingLiveState(
-    val speed: String = "0",
-    val stamina: String = "0",
-    val power: String = "0",
-    val guts: String = "0",
-    val wisdom: String = "0",
-    val skillPt: String = "0",
-    val friendTrainingUpInput: String = "0",
-    val specialityRateUpInput: String = "0",
-) : TrainingLiveStatus {
-    override val friendTrainingUp: Int get() = friendTrainingUpInput.toIntOrNull() ?: 0
-    override val specialityRateUp: Int get() = specialityRateUpInput.toIntOrNull() ?: 0
-    override fun trainingUp(type: StatusType) = when (type) {
-        StatusType.SPEED -> speed
-        StatusType.STAMINA -> stamina
-        StatusType.POWER -> power
-        StatusType.GUTS -> guts
-        StatusType.WISDOM -> wisdom
-        StatusType.SKILL -> skillPt
-        else -> "0"
-    }.toIntOrNull() ?: 0
 }
 
 data class ExpectedState(
@@ -410,246 +329,4 @@ data class ExpectedState(
                 status.hp * evaluateHp +
                 (status.performance?.totalValue ?: 0.0) * evaluatePerformance
     }
-}
-
-sealed interface RecommendFilter {
-    operator fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>): Boolean
-}
-
-object NoFilter : RecommendFilter {
-    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = true
-    override fun toString() = "全て"
-}
-
-class TurnJustFilter(val turn: Int) : RecommendFilter {
-    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.first.turn == turn
-    override fun toString() = turnToString(turn)
-}
-
-class TurnAfterFilter(val turn: Int) : RecommendFilter {
-    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.first.turn >= turn
-    override fun toString() = turnToString(turn) + " 以降"
-}
-
-class AchievementFilter(val name: String) : RecommendFilter {
-    override fun invoke(entry: Triple<RaceEntry, Int, List<Pair<String, Int?>>>) = entry.third.any { it.first == name }
-    override fun toString() = name
-}
-
-data class LessonState(
-    val periodIndex: Int = 0,
-    val dance: String = "10",
-    val passion: String = "10",
-    val vocal: String = "10",
-    val visual: String = "10",
-    val mental: String = "10",
-    val stepCount: Int = 2,
-    val threshold: String = "0.001",
-
-    val message: String? = null,
-    val result: List<Double> = emptyList(),
-
-    val periodList: List<Pair<Int, String>> = LessonPeriod.entries.map { it.ordinal to it.displayName }
-) {
-    val period get() = LessonPeriod.entries.getOrElse(periodIndex) { LessonPeriod.Junior }
-
-    fun convertParameters() = kotlin.runCatching {
-        Pair(
-            Performance(
-                dance.toInt(),
-                passion.toInt(),
-                vocal.toInt(),
-                visual.toInt(),
-                mental.toInt(),
-            ),
-            threshold.toDouble(),
-        )
-    }.getOrNull()
-}
-
-data class GmState(
-    val knowledgeTable: List<Knowledge?> = List(14) { null },
-    val wisdom: Founder? = null,
-    val wisdomLevel: Map<Founder, Int> = Founder.entries.associateWith { 0 }
-) {
-    fun toGmStatus() = GmStatus(
-        knowledgeTable1 = knowledgeTable.subList(0, 8).filterNotNull(),
-        knowledgeTable2 = knowledgeTable.subList(8, 12).filterNotNull(),
-        knowledgeTable3 = knowledgeTable.subList(12, 14).filterNotNull(),
-        activeWisdom = wisdom,
-        wisdomLevel = wisdomLevel,
-    )
-
-    fun updateType(index: Int, value: StatusType?): GmState {
-        val knowledge = if (value == null) null else {
-            val bonus = knowledgeTable[index]?.bonus ?: if (index >= 8) 2 else 1
-            Knowledge(Founder.Red, value, bonus)
-        }
-        return copy(knowledgeTable = knowledgeTable.replaced(index) { knowledge })
-    }
-
-    fun updateBonus(index: Int, value: Int): GmState {
-        val type = knowledgeTable[index]?.type ?: return this
-        val knowledge = Knowledge(Founder.Red, type, value)
-        return copy(knowledgeTable = knowledgeTable.replaced(index) { knowledge })
-    }
-
-    fun clearKnowledge(): GmState {
-        return copy(knowledgeTable = List(14) { null })
-    }
-
-    fun updateWisdomLevel(target: Founder, value: Int): GmState {
-        val newWisdomLevel = wisdomLevel.mapValues { if (it.key == target) value else it.value }
-        return copy(wisdomLevel = newWisdomLevel)
-    }
-}
-
-data class LArcState(
-    val expectations: Int = 0,
-    val overseas: Boolean = false,
-    val overseasTurfAptitude: Int = 0,
-    val longchampAptitude: Int = 0,
-    val lifeRhythm: Int = 0,
-    val nutritionManagement: Int = 0,
-    val frenchSkill: Int = 0,
-    val overseasExpedition: Int = 0,
-    val strongHeart: Int = 0,
-    val mentalStrength: Int = 0,
-    val hopeOfLArc: Int = 0,
-) {
-    fun toLArcStatus() = LArcStatus(
-        supporterPt = expectations * 1700,
-        overseasTurfAptitude = overseasTurfAptitude,
-        longchampAptitude = longchampAptitude,
-        lifeRhythm = lifeRhythm,
-        nutritionManagement = nutritionManagement,
-        frenchSkill = frenchSkill,
-        overseasExpedition = overseasExpedition,
-        strongHeart = strongHeart,
-        mentalStrength = mentalStrength,
-        hopeOfLArc = hopeOfLArc,
-    )
-}
-
-data class UafState(
-    val trainingGenre: UafGenre = UafGenre.Blue,
-    val selectedTrainingType: StatusType = StatusType.SPEED,
-    val speedAthleticLevel: Int = 1,
-    val staminaAthleticLevel: Int = 1,
-    val powerAthleticLevel: Int = 1,
-    val gutsAthleticLevel: Int = 1,
-    val wisdomAthleticLevel: Int = 1,
-    val speedAthleticLevelUp: Int = 3,
-    val staminaAthleticLevelUp: Int = 3,
-    val powerAthleticLevelUp: Int = 3,
-    val gutsAthleticLevelUp: Int = 3,
-    val wisdomAthleticLevelUp: Int = 3,
-    val linkSpeed: Boolean = false,
-    val linkStamina: Boolean = false,
-    val linkPower: Boolean = false,
-    val linkGuts: Boolean = false,
-    val linkWisdom: Boolean = false,
-    val blueFestivalBonus: Int = 0,
-    val redFestivalBonus: Int = 0,
-    val yellowFestivalBonus: Int = 0,
-    val heatUpBlue: Boolean = false,
-    val heatUpRed: Boolean = false,
-    val heatUpYellow: Boolean = false,
-    val athleticsLevelUpBonus: Boolean = false,
-    val athleticsLevelUpRate: List<Pair<Int, Double>> = emptyList(),
-    val expectedAthleticsLevelUp: Double = 0.0,
-    val athleticsLevelUpCalculating: Boolean = false,
-) {
-    val trainingName get() = UafAthletic.byStatusType[selectedTrainingType]!!.first { it.genre == trainingGenre }.longDisplayName
-
-    val selectedTrainingLevel: Int
-        get() {
-            val athleticLevel = when (selectedTrainingType) {
-                StatusType.SPEED -> speedAthleticLevel
-                StatusType.STAMINA -> staminaAthleticLevel
-                StatusType.POWER -> powerAthleticLevel
-                StatusType.GUTS -> gutsAthleticLevel
-                StatusType.WISDOM -> wisdomAthleticLevel
-                else -> 0
-            }
-            return when {
-                athleticLevel >= 50 -> 5
-                athleticLevel >= 40 -> 4
-                athleticLevel >= 30 -> 3
-                athleticLevel >= 20 -> 2
-                else -> 1
-            }
-        }
-
-    fun toUafStatus(): UafStatus {
-        val athletics = trainingType.associateWith { type ->
-            if (checkJoin(type)) {
-                UafAthletic.byStatusType[type]!!.first { it.genre == trainingGenre }
-            } else {
-                UafAthletic.byStatusType[type]!!.first { it.genre != trainingGenre }
-            }
-        }
-        val athleticsLevel = mapOf(
-            athletics[StatusType.SPEED]!! to speedAthleticLevel,
-            athletics[StatusType.STAMINA]!! to staminaAthleticLevel,
-            athletics[StatusType.POWER]!! to powerAthleticLevel,
-            athletics[StatusType.GUTS]!! to gutsAthleticLevel,
-            athletics[StatusType.WISDOM]!! to wisdomAthleticLevel,
-        )
-        val heatUp = mapOf(
-            UafGenre.Blue to if (heatUpBlue) 2 else 0,
-            UafGenre.Red to if (heatUpRed) 2 else 0,
-            UafGenre.Yellow to if (heatUpYellow) 2 else 0,
-        )
-        val festivalBonus = blueFestivalBonus + redFestivalBonus + yellowFestivalBonus
-        val athleticLevelUp = mapOf(
-            StatusType.SPEED to speedAthleticLevelUp,
-            StatusType.STAMINA to staminaAthleticLevelUp,
-            StatusType.POWER to powerAthleticLevelUp,
-            StatusType.GUTS to gutsAthleticLevelUp,
-            StatusType.WISDOM to wisdomAthleticLevelUp,
-        )
-        return UafStatus(
-            athleticsLevel = athleticsLevel,
-            trainingAthletics = athletics,
-            heatUp = heatUp,
-            festivalBonus = festivalBonus,
-            athleticsLevelUp = athleticLevelUp,
-        )
-    }
-
-    private fun checkJoin(type: StatusType): Boolean {
-        return type == selectedTrainingType || when (type) {
-            StatusType.SPEED -> linkSpeed
-            StatusType.STAMINA -> linkStamina
-            StatusType.POWER -> linkPower
-            StatusType.GUTS -> linkGuts
-            StatusType.WISDOM -> linkWisdom
-            else -> false
-        }
-    }
-}
-
-data class CookState(
-    val cookPoint: Int = 0,
-    val phase: Int = -1,
-    val dishRank: Int = 0,
-    val materialLevel: Int = 0,
-) {
-    private val baseCookStatus = CookStatus(
-        cookPoint = cookPoint,
-        materialLevel = if (phase == 3) {
-            CookMaterial.entries.associateWith { if (it.ordinal < materialLevel) 5 else 1 }
-        } else {
-            CookMaterial.entries.associateWith { materialLevel }
-        },
-    )
-
-    val specialityRate = baseCookStatus.cookPointEffect.specialityRate
-
-    fun toCookStatus(trainingType: StatusType) = baseCookStatus.copy(
-        activatedDish = cookDishData.firstOrNull {
-            it.phase == phase && (phase == 0 || it.rank == dishRank) && it.trainingTarget.contains(trainingType)
-        },
-    )
 }
