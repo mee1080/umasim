@@ -15,15 +15,12 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main() {
-    with(Dispatchers.Default.limitedParallelism(4)) {
-        StoreLoader.load()
-//        gmSingleSimulation()
-        gmRunSimulation()
-    }
+    StoreLoader.load()
+//    gmSingleSimulation()
+    gmRunSimulation(Dispatchers.Default.limitedParallelism(4))
 }
 
-context(CoroutineContext)
-fun gmRunSimulation() {
+fun gmRunSimulation(context: CoroutineContext) {
     val chara = Store.getChara("[餓狼]ナリタブライアン", 5, 5)
 //    val support = Store.getSupportByName(
 //        "[泥まみれのコンパネーロ]エルコンドルパサー",
@@ -58,7 +55,7 @@ fun gmRunSimulation() {
     )
     val results = runBlocking {
         List(4) {
-            async(this@CoroutineContext) {
+            async(context) {
                 println("start")
                 Runner.run(
                     10000,

@@ -1,24 +1,25 @@
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
-    alias(libs.plugins.kotlin.jvm)
+    alias(libs.plugins.kotlin.multiplatform)
 }
 
 group = "io.github.mee1080.umasim"
 version = "1.0"
 
-dependencies {
-    implementation(project(":core"))
-    implementation(kotlin("stdlib"))
-    implementation(libs.kotlinx.coroutinesCore)
-    implementation(libs.ktor.clientCio)
-    implementation(libs.sqlite.jdbc)
-}
+kotlin {
 
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvmTarget.get()))
-        freeCompilerArgs.add("-Xcontext-receivers")
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+
+    jvm("desktop")
+
+    sourceSets {
+        val desktopMain by getting {
+            dependencies {
+                implementation(project(":core"))
+                implementation(kotlin("stdlib"))
+                implementation(libs.kotlinx.coroutinesCore)
+                implementation(libs.ktor.clientCio)
+                implementation(libs.sqlite.jdbc)
+            }
+        }
     }
 }

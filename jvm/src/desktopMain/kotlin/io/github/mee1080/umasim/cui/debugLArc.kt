@@ -14,15 +14,12 @@ import kotlin.math.roundToInt
 
 @OptIn(ExperimentalCoroutinesApi::class)
 fun main() {
-    with(Dispatchers.Default.limitedParallelism(10)) {
-        StoreLoader.load()
-        lArcRunSimulation()
+    StoreLoader.load()
+    lArcRunSimulation(Dispatchers.Default.limitedParallelism(10))
 //        lArcSingleSimulation()
-    }
 }
 
-context(CoroutineContext)
-fun lArcRunSimulation() {
+fun lArcRunSimulation(context: CoroutineContext) {
     val chara = Store.getChara("[超特急！フルカラー特殊PP]アグネスデジタル", 5, 5)
     val support = Store.getSupportByName(
         "[大望は飛んでいく]エルコンドルパサー",
@@ -41,7 +38,7 @@ fun lArcRunSimulation() {
     runBlocking {
         repeat(9) { index ->
             val selector = LArcActionSelector.speed3Power1Wisdom1Middle
-            launch(this@CoroutineContext) {
+            launch(context) {
                 val summary = Runner.run(
                     10000,
                     Scenario.LARC,

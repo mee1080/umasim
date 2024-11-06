@@ -95,11 +95,10 @@ object MechaCalculator : ScenarioCalculator {
             when (it) {
                 is Training -> {
                     val gear = mechaStatus.gearExists[it.type] ?: false
-                    val learningLevel =
-                        calcLearningGain(
-                            mechaStatus, it.type, state.isLevelUpTurn,
-                            it.friendTraining, gear, it.member.size,
-                        )
+                    val learningLevel = calcLearningGain(
+                        mechaStatus, it.type, state.isLevelUpTurn,
+                        it.friendTraining, gear, it.member.size,
+                    )
                     it.copy(
                         candidates = it.addScenarioActionParam(
                             MechaActionParam(learningLevel.adjustRange(maxGain), if (gear) 1 else 0),
@@ -176,15 +175,10 @@ object MechaCalculator : ScenarioCalculator {
         state: SimulationState,
         scenarioAction: MechaActionParam,
     ): SimulationState {
-        val maxLearningLevel = when {
-            // TODO
-            state.turn >= 60 -> 600
-            else -> 200
-        }
         return state.updateMechaStatus {
             copy(
                 learningLevels = learningLevels.mapValues { (type, value) ->
-                    min(maxLearningLevel, value + scenarioAction.learningLevel.get(type))
+                    value + scenarioAction.learningLevel.get(type)
                 },
                 overdriveGauge = min(6, overdriveGauge + scenarioAction.overdriveGage),
             )

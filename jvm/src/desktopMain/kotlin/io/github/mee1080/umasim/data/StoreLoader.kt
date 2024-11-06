@@ -27,7 +27,7 @@ import java.io.File
 
 object StoreLoader {
 
-    private const val FILE_BASE = "data/"
+    private const val FILE_BASE = "../data/"
     private const val URL_BASE = "https://raw.githubusercontent.com/mee1080/umasim/main/data/"
     private const val FORCE_NETWORK = false
 
