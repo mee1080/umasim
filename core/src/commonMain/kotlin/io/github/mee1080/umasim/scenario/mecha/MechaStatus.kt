@@ -70,6 +70,7 @@ data class MechaStatus(
     val gearFactorValue: Int = 300,
     val overdriveGauge: Int = linkEffects.initialOverdrive,
     val overdrive: Boolean = false,
+    val ugeHistory: List<Int> = emptyList(),
 ) : ScenarioStatus {
     val learningBonus by lazy {
         mapOf(

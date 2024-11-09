@@ -19,7 +19,11 @@
 package io.github.mee1080.umasim.scenario
 
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.scenario.cook.CookMemberState
 import io.github.mee1080.umasim.simulation2.ActionSelector
+import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.simulation2.updateStatus
 
@@ -88,4 +92,15 @@ internal fun SimulationState.updateFactor() = updateStatus { status ->
             else -> 0
         }
     }.toTypedArray())
+}
+
+internal fun SimulationState.addGuest(totalCount: Int): SimulationState {
+    val supportNames = member.filter { !it.outingType }.map { it.charaName }.toSet()
+    var memberIndex = member.size
+    val guestMembers = Store.guestSupportCardList
+        .filter { !it.type.outingType && !supportNames.contains(it.chara) }
+        .shuffled()
+        .take(totalCount - supportNames.size)
+        .map { MemberState(memberIndex++, it, StatusType.NONE, null, CookMemberState) }
+    return copy(member = member + guestMembers)
 }
