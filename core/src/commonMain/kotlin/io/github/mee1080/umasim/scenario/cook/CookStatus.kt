@@ -199,7 +199,8 @@ data class CookStatus(
 }
 
 fun SimulationState.updateCookStatus(update: CookStatus.() -> CookStatus): SimulationState {
-    return copy(scenarioStatus = cookStatus?.update())
+    val cookStatus = cookStatus ?: return this
+    return copy(scenarioStatus = cookStatus.update())
 }
 
 fun SimulationState.activateDish(dish: CookDish): SimulationState {

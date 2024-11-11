@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
+import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
@@ -59,6 +60,8 @@ data class SimulationState(
     val uafStatus get() = scenarioStatus as? UafStatus
 
     val cookStatus get() = scenarioStatus as? CookStatus
+
+    val mechaStatus get() = scenarioStatus as? MechaStatus
 
     val supportTypeCount = supportCount.size
 
@@ -124,6 +127,7 @@ data class SimulationState(
     }
 
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
+        ?: mechaStatus?.hintFrequency
 
     val forceHint = uafStatus?.forceHint ?: false
 
@@ -152,7 +156,15 @@ data class SimulationState(
         scenarioStatus = scenarioStatus,
     )
 
-    val specialityRateUp get() = liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
+    val specialityRateUp
+        get() = liveStatus?.specialityRateUp
+            ?: cookStatus?.cookPointEffect?.specialityRate
+            ?: mechaStatus?.specialityRate
+            ?: 0
+
+    val trainingRelationBonus
+        get() = mechaStatus?.trainingRelationBonus
+            ?: 0
 }
 
 data class MemberState(

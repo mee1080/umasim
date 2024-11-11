@@ -19,10 +19,13 @@
 package io.github.mee1080.umasim.scenario.mecha
 
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.randomSelect
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
+import io.github.mee1080.utility.mapIf
 
 class MechaScenarioEvents : CommonScenarioEvents() {
 
@@ -46,6 +49,53 @@ class MechaScenarioEvents : CommonScenarioEvents() {
 
             else -> base
         }
+    }
+
+    override fun beforePredict(state: SimulationState): SimulationState {
+        var result = super.beforePredict(state)
+        val mechaStatus = result.mechaStatus ?: return result
+
+        // ギア配置
+        val newGearExists = if (mechaStatus.overdrive && mechaStatus.odGearAll) {
+            trainingType.associateWith { true }
+        } else {
+            val gearCount = randomSelect(mechaGearRate[state.turn / 24][mechaStatus.linkEffects.gearFrequency])
+            val gearStatus = trainingType.asList().shuffled().take(gearCount)
+            val friendStatus = state.member.filter { it.isFriendTraining(it.position) }.map { it.position }.toSet()
+            trainingType.associateWith { friendStatus.contains(it) || gearStatus.contains(it) }
+        }
+        result = result.updateMechaStatus { copy(gearExists = newGearExists) }
+
+        if (!mechaStatus.overdrive) return result
+
+        // ODヒント全員
+        if (mechaStatus.odHintAll) {
+            val newMember = state.member.mapIf({ !it.guest && !it.outingType }) {
+                it.copy(supportState = it.supportState?.copy(hintIcon = true))
+            }
+            result = result.copy(member = newMember)
+        }
+
+        // OD複数配置
+        if (mechaStatus.odAddSupport) {
+            val targetMember = state.member.filter { !it.guest && !it.outingType }.map { it.index }.shuffled().take(2)
+            val supportPosition = trainingType.associateWith { 0 }.toMutableMap()
+            state.member.forEach {
+                it.positions.forEach { status ->
+                    supportPosition[status] = supportPosition[status]!! + 1
+                }
+            }
+            val targetPosition = supportPosition.filter { it.value < 5 }.keys
+            val newMember = state.member.mapIf({ targetMember.contains(it.index) }) {
+                val candidates = targetPosition - it.position
+                it.applyIf(candidates.isNotEmpty()) {
+                    it.copy(additionalPosition = setOf(candidates.random()))
+                }
+            }
+            result = result.copy(member = newMember)
+        }
+
+        return result
     }
 
     override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {

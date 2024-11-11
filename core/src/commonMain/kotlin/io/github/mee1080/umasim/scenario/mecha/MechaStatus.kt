@@ -18,19 +18,26 @@
  */
 package io.github.mee1080.umasim.scenario.mecha
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.MechaTuningResult
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.addStatus
 import io.github.mee1080.utility.mapValuesIf
 import io.github.mee1080.utility.replaced
 
-val SimulationState.mechaStatus get() = scenarioStatus as? MechaStatus
-
 fun SimulationState.updateMechaStatus(update: MechaStatus.() -> MechaStatus): SimulationState {
-    return copy(scenarioStatus = mechaStatus?.update())
+    val mechaStatus = mechaStatus ?: return this
+    return copy(scenarioStatus = mechaStatus.update())
+}
+
+fun SimulationState.applyMechaOverdrive(): SimulationState {
+    val mechaStatus = mechaStatus ?: return this
+    return updateMechaStatus { applyOverdrive() }
+        .addStatus(Status(hp = mechaStatus.odHpGain, motivation = mechaStatus.odMotivationGain))
 }
 
 fun MechaStatus.applyOverdrive() = copy(
@@ -135,6 +142,8 @@ data class MechaStatus(
     val odAddSupport by lazy { odLevels[MechaChipType.BODY]!! >= 5 }
 
     val odRelationBonus by lazy { mechaOdRelationBonus[odLevels[MechaChipType.LEG]!!] }
+
+    val trainingRelationBonus get() = if (overdrive) odRelationBonus else 0
 
     val odHpGain by lazy { mechaOdHpGain[odLevels[MechaChipType.LEG]!!] }
 

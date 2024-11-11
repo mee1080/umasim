@@ -30,7 +30,7 @@ import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
 import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
-import io.github.mee1080.umasim.scenario.mecha.applyOverdrive
+import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
@@ -192,7 +192,7 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
 
         is CookMaterialLevelUpResult -> updateCookStatus { materialLevelUp(result.target) }
 
-        MechaOverdriveResult -> updateMechaStatus { applyOverdrive() }
+        MechaOverdriveResult -> applyMechaOverdrive()
 
         is MechaTuningResult -> updateMechaStatus { applyTuning(result) }
     }
@@ -212,7 +212,8 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
         val trainingHint = selectTrainingHint(action.member)
         val trainingHintIndices = trainingHint.second.map { it.index }
         val relationBonus = support.sumOf { it.card.trainingRelationAll } +
-                action.support.sumOf { it.card.trainingRelationJoin }
+                action.support.sumOf { it.card.trainingRelationJoin } +
+                trainingRelationBonus
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
                 it.applyTraining(

@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.ai.MechaActionSelector
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.mecha.mechaStatus
 import io.github.mee1080.umasim.simulation2.MultipleAction
 import io.github.mee1080.umasim.simulation2.RandomEvents
 import io.github.mee1080.umasim.simulation2.Simulator
@@ -35,12 +34,12 @@ fun debugMecha() {
 fun debugMechaSingleSimulation() {
     val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5)
     val support = Store.getSupportByName(
-        "[アルストロメリアの夢]ヴィブロス",
-        "[朝焼け苺の畑にて]ニシノフラワー",
-        "[うらら～な休日]ハルウララ",
-        "[只、君臨す。]オルフェーヴル",
+        "[Devilish Whispers]スティルインラブ",
+        "[大望は飛んでいく]エルコンドルパサー",
+        "[Cocoon]エアシャカール",
+        "[大地と我らのアンサンブル]サウンズオブアース",
+        "[COOL⇔CRAZY/Buddy]シンボリクリスエス",
         "[百花の願いをこの胸に]サトノダイヤモンド",
-        "[謹製ッ！特大夢にんじん！]秋川理事長",
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })

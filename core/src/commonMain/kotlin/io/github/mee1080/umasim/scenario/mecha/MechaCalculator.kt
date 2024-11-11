@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.utility.applyIf
 import kotlin.math.max
 import kotlin.math.min
 
@@ -95,9 +96,9 @@ object MechaCalculator : ScenarioCalculator {
 
                 is Race -> {
                     it.copy(
-                        result = it.result.addScenarioActionParam(
-                            MechaActionParam(raceLearningGain, 1)
-                        )
+                        result = it.result.applyIf(state.turn <= 72) {
+                            addScenarioActionParam(MechaActionParam(raceLearningGain, 1))
+                        }
                     )
                 }
 
