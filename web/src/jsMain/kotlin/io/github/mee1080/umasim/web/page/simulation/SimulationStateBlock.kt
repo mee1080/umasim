@@ -19,10 +19,13 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
+import io.github.mee1080.umasim.scenario.mecha.MechaChipType
+import io.github.mee1080.umasim.scenario.mecha.maxLearningLevel
 import io.github.mee1080.umasim.scenario.uaf.UafAthletic
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
-import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.web.components.atoms.MdClass
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor
@@ -128,6 +131,33 @@ fun SimulationStateBlock(state: SimulationState) {
                 })
                 Text(" | スタンプ:")
                 Text(cookStatus.currentStamp.joinToString("/"))
+            }
+        }
+        state.mechaStatus?.let { mechaStatus ->
+            Div {
+                val chipLevels = MechaChipType.entries.joinToString(" / ") { type ->
+                    (0..2).joinToString(", ") {
+                        "${type.chipNames[it]} ${mechaStatus.chipLevels[type]!![it]}pt"
+                    }
+                }
+                Text("チューニング: $chipLevels")
+            }
+            Div {
+                var total = 0
+                val learningLevels = trainingType.joinToString(", ") {
+                    val value = mechaStatus.learningLevels[it]!!
+                    total += value
+                    value.toString()
+                }
+                Text("研究Lv: $learningLevels / ${maxLearningLevel(state.turn)} (合計 $total)")
+            }
+            Div {
+                Text("オーバードライブゲージ: ${mechaStatus.overdriveGauge} / 6")
+                if (mechaStatus.overdrive) {
+                    Text(" 【発動中】")
+                } else if (mechaStatus.overdriveGauge >= 3) {
+                    Text(" （発動可能）")
+                }
             }
         }
         HideBlock("サポートカード") {

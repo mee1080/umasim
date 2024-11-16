@@ -44,7 +44,7 @@ class MechaScenarioEvents : CommonScenarioEvents() {
 
             // スーパーオーバードライブ
             73, 74, 75, 76, 77, 78 -> base.applyIf(mechaStatus.ugeHistory.all { it == 2 }) {
-                updateMechaStatus { applyOverdrive() }
+                applyMechaOverdrive().updateMechaStatus { copy(overdriveGauge = 6) }
             }
 
             else -> base

@@ -158,3 +158,12 @@ val mechaGearRate = listOf(
         listOf(2 to 40, 3 to 45, 4 to 45),
     ),
 )
+
+fun maxLearningLevel(turn: Int) = when {
+    turn > 72 -> 700
+    turn > 60 -> 600
+    turn > 48 -> 500
+    turn > 36 -> 400
+    turn > 24 -> 300
+    else -> 200
+}

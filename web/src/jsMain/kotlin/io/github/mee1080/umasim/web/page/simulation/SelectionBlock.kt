@@ -19,12 +19,11 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.larc.LArcAptitude
+import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.simulation2.*
-import io.github.mee1080.umasim.web.components.atoms.Card
-import io.github.mee1080.umasim.web.components.atoms.MdClass
-import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
-import io.github.mee1080.umasim.web.components.atoms.tertiary
+import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.page.share.StatusTable
 import io.github.mee1080.utility.roundToString
@@ -115,6 +114,7 @@ fun SelectionBlock(
 
                     is Training -> {
                         CookMaterialInfo(action)
+                        MechaInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -178,7 +178,7 @@ fun SelectionBlock(
 
                     MechaOverdrive -> {}
 
-                    is MechaTuning -> {}
+                    is MechaTuning -> MechaTuningInfo(state, action)
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
@@ -211,5 +211,36 @@ private fun CookMaterialInfo(action: Action) {
     val param = target.scenarioActionParam as? CookActionParam ?: return
     Div {
         Text(param.stamp.toString())
+    }
+}
+
+@Composable
+private fun MechaInfo(action: Training) {
+    val target = action.candidates.first().first as? StatusActionResult ?: return
+    val param = target.scenarioActionParam as? MechaActionParam ?: return
+    Div({ style { display(DisplayStyle.Flex) } }) {
+        if (param.overdriveGage > 0) {
+            MdIcon("settings")
+        }
+        var total = 0
+        val learningLevels = trainingType.joinToString(",") {
+            val value = param.learningLevel.get(it)
+            total += value
+            value.toString()
+        }
+        Text("研究Lv: $learningLevels (合計 $total)")
+    }
+}
+
+@Composable
+private fun MechaTuningInfo(state: SimulationState, action: MechaTuning) {
+    val mechaStatus = state.mechaStatus ?: return
+    Div {
+        Text("あと ${mechaStatus.maxMechaEnergy - mechaStatus.chipLevels.values.sumOf { it.sum() }}pt")
+    }
+    Div {
+        MechaChipType.entries.forEach {
+            Text("${it.displayName} ${mechaStatus.chipLevels[it]!!.sum()}pt ${if (it == action.result.type) "(+1)" else ""} / ")
+        }
     }
 }

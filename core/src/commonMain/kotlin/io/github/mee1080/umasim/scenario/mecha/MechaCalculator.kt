@@ -75,10 +75,19 @@ object MechaCalculator : ScenarioCalculator {
         return min(100, total.toInt() - baseValue)
     }
 
+    override fun predictScenarioAction(state: SimulationState, goal: Boolean): Array<Action> {
+        if (goal) return emptyArray()
+        val mechaStatus = state.mechaStatus ?: return emptyArray()
+        if (!mechaStatus.overdrive && mechaStatus.overdriveGauge >= 3) {
+            return arrayOf(MechaOverdrive)
+        }
+        return emptyArray()
+    }
+
     override fun predictScenarioActionParams(state: SimulationState, baseActions: List<Action>): List<Action> {
         val mechaStatus = state.mechaStatus ?: return baseActions
         val maxGain = calcMaxLearningLevelGain(state.turn, mechaStatus)
-        val raceLearningGain = Status(7, 7, 7, 7, 7).adjustRange(maxGain)
+        val raceLearningGain = Status(7, 7, 7, 7, 7).adjustRange(maxGain, 0)
         return baseActions.map {
             when (it) {
                 is Training -> {
@@ -89,7 +98,7 @@ object MechaCalculator : ScenarioCalculator {
                     )
                     it.copy(
                         candidates = it.addScenarioActionParam(
-                            MechaActionParam(learningLevel.adjustRange(maxGain), if (gear) 1 else 0),
+                            MechaActionParam(learningLevel.adjustRange(maxGain, 0), if (gear) 1 else 0),
                         )
                     )
                 }
@@ -146,14 +155,7 @@ object MechaCalculator : ScenarioCalculator {
     }
 
     private fun calcMaxLearningLevelGain(turn: Int, mechaStatus: MechaStatus): Status {
-        val maxLearningLevel = when {
-            turn > 72 -> 700
-            turn > 60 -> 600
-            turn > 48 -> 500
-            turn > 36 -> 400
-            turn > 24 -> 300
-            else -> 200
-        }
+        val maxLearningLevel = maxLearningLevel(turn)
         return Status().add(
             *trainingType.map { it to maxLearningLevel - mechaStatus.learningLevels[it]!! }.toTypedArray()
         )

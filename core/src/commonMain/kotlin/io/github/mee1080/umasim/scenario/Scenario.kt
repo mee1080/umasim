@@ -159,7 +159,7 @@ enum class Scenario(
 
     MECHA(
         scenarioNumber = 9,
-        displayName = "走れ！メカウマ娘(作成中)",
+        displayName = "走れ！メカウマ娘",
         trainingData = mechaTrainingData,
         scenarioEvents = { MechaScenarioEvents() },
         guestMember = true,

@@ -137,6 +137,8 @@ data class MechaStatus(
 
     val odHintAll by lazy { odLevels[MechaChipType.HEAD]!! >= 5 }
 
+    val allSupportHint get() = overdrive && odHintAll
+
     val odMemberCountBonus by lazy { mechaOdMemberCountBonus[odLevels[MechaChipType.BODY]!!] }
 
     val odAddSupport by lazy { odLevels[MechaChipType.BODY]!! >= 5 }

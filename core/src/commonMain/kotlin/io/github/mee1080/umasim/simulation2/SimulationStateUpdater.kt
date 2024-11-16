@@ -340,7 +340,7 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
 }
 
 private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair<Status, List<MemberState>> {
-    return if (gmStatus?.hintFrequencyUp == true) {
+    return if (allSupportHint) {
         // ステータス上昇はCalculatorで計算済み
         val hintSupportList = support.filter { !it.outingType }
         hintSupportList.map { hintSupport ->
