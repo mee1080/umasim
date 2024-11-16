@@ -20,10 +20,11 @@ package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.*
 import io.github.mee1080.umasim.ai.CookActionSelector
+import io.github.mee1080.umasim.ai.MechaActionSelector
 import io.github.mee1080.umasim.ai.UafActionSelector
-import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -51,6 +52,7 @@ fun SimulationPage(state: State) {
             when (state.scenario) {
                 Scenario.UAF -> UafActionSelector.Option()
                 Scenario.COOK -> CookActionSelector.Option()
+                Scenario.MECHA -> MechaActionSelector.speed2Stamina1Power1Wisdom1Friend1Generator
                 else -> null
             }
         )
@@ -137,7 +139,7 @@ fun SimulationPage(state: State) {
     }
 }
 
-private val emptyAiResult: Pair<Action?, List<Double>> = null to emptyList()
+private val emptyAiResult: Triple<Action?, List<Double>, Double> = Triple(null, emptyList(), 0.0)
 
 @Composable
 fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: ActionSelector?) {

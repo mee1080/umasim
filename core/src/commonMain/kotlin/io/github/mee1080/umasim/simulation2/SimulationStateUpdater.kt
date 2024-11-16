@@ -227,10 +227,11 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
             training = newTraining,
             status = newStatus + trainingHint.first + selectAoharuTrainingHint(action.member),
         ).applyFriendEvent(action)
-    } else if (action is Race && itemAvailable && action.grade != RaceGrade.FINALS) {
+    } else if (action is Race) {
         copy(
             status = newStatus,
-            shopCoin = shopCoin + 100,
+            raceTurns = raceTurns + turn,
+            shopCoin = if (itemAvailable && action.grade != RaceGrade.FINALS) shopCoin + 100 else shopCoin,
         )
     } else {
         copy(status = newStatus)

@@ -84,10 +84,12 @@ fun SimulationStateBlock(state: SimulationState) {
             }
         }
         StatusTable(state.status, summary = true)
-        Div {
-            Text("状態：")
-            if (state.refreshTurn > 0) Text("リフレッシュの心得, ")
-            Text(state.condition.joinToString(", "))
+        if (state.refreshTurn > 0 || state.condition.isNotEmpty()) {
+            Div {
+                Text("状態：")
+                if (state.refreshTurn > 0) Text("リフレッシュの心得, ")
+                Text(state.condition.joinToString(", "))
+            }
         }
         state.lArcStatus?.let {
             Div {

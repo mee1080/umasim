@@ -42,6 +42,7 @@ data class SimulationState(
     val turn: Int = 0,
     val status: Status,
     val condition: List<String> = emptyList(),
+    val raceTurns: Set<Int> = emptySet(),
     val supportCount: Map<StatusType, Int>,
     val totalRaceBonus: Int,
     val totalFanBonus: Int,
@@ -170,6 +171,10 @@ data class SimulationState(
     val trainingRelationBonus
         get() = mechaStatus?.trainingRelationBonus
             ?: 0
+
+    val continuousRace by lazy {
+        raceTurns.contains(turn - 2) && raceTurns.contains(turn - 1)
+    }
 }
 
 data class MemberState(

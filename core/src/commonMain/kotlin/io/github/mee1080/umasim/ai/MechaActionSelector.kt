@@ -18,10 +18,8 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.simulation2.Action
-import io.github.mee1080.umasim.simulation2.MechaActionParam
-import io.github.mee1080.umasim.simulation2.ScenarioActionParam
-import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.scenario.mecha.MechaChipType
+import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 
@@ -29,58 +27,164 @@ class MechaActionSelector(private val options: List<Option>) :
     BaseActionSelector<MechaActionSelector.Option, MechaActionSelector.Context>() {
 
     companion object {
-        private const val DEBUG = false
+        private const val DEBUG = true
 
-        val speed1Power1Guts2Wisdom1Short = {
-            MechaActionSelector(speed1Power1Guts2Wisdom1ShortOptions)
+        val speed2Stamina1Power1Wisdom1Friend1Generator = object : ActionSelectorGenerator {
+            override fun generateSelector(): ActionSelector {
+                return MechaActionSelector(speed2Stamina1Power1Wisdom1Friend1Options)
+            }
         }
 
-        val speed1Power1Guts2Wisdom1ShortOptions: List<Option>
+        val speed2Stamina1Power1Wisdom1Friend1 = {
+            MechaActionSelector(speed2Stamina1Power1Wisdom1Friend1Options)
+        }
+
+        val speed2Stamina1Power1Wisdom1Friend1Options: List<Option>
 
         init {
             val option1 = Option(
-                speedFactor = 1.0,
-                staminaFactor = 1.0,
-                powerFactor = 1.0,
-                gutsFactor = 1.0,
-                wisdomFactor = 1.0,
-                skillPtFactor = 1.0,
-                hpFactor = 0.9,
-                motivationFactor = 7.0,
-                relationFactor = 17.5,
-                outingRelationFactor = 35.0,
-                hpKeepFactor = 0.3,
-                riskFactor = 4.0,
+//                speedFactor = 100,
+//                staminaFactor = 100,
+//                powerFactor = 100,
+//                gutsFactor = 100,
+//                wisdomFactor = 100,
+//                skillPtFactor = 100,
+//                hpFactor = 90,
+//                motivationFactor = 700,
+//                relationFactor = 1750,
+//                outingRelationFactor = 3500,
+//                hpKeepFactor = 30,
+//                riskFactor = 400,
+//                learningLevelFactor = 200,
+//                overdriveGageFactor = 10000,
+//                overdriveRate = 200,
             )
             val option2 = option1.copy(
-                hpFactor = 0.9,
-                hpKeepFactor = 0.0,
-                riskFactor = 2.0,
+                hpFactor = 90,
+                hpKeepFactor = 200,
+                riskFactor = 200,
             )
             val option3 = option1.copy(
-                hpFactor = 0.4,
-                hpKeepFactor = 0.2,
-                riskFactor = 4.0,
+                hpFactor = 40,
+                hpKeepFactor = 200,
+                riskFactor = 400,
             )
-            speed1Power1Guts2Wisdom1ShortOptions = listOf(option1, option2, option3)
+            val option4 = option1.copy(
+                hpFactor = 40,
+                hpKeepFactor = 200,
+                riskFactor = 400,
+            )
+            val option5 = option1.copy(
+                hpFactor = 40,
+                hpKeepFactor = 200,
+                riskFactor = 400,
+            )
+            speed2Stamina1Power1Wisdom1Friend1Options = listOf(option1, option2, option3, option4, option5)
         }
 
+        val tuningTemplate = mapOf(
+            // 初回
+            2 to listOf(
+                // 緑3(スピ1パワ2)→青2(スタ1根性1)→赤1(賢さ1)→青3(根性2)
+                buildList {
+                    add(MechaChipType.LEG to 0)
+                    add(MechaChipType.LEG to 1)
+                    add(MechaChipType.LEG to 1)
+                    add(MechaChipType.BODY to 0)
+                    add(MechaChipType.BODY to 1)
+                    add(MechaChipType.HEAD to 0)
+                    add(MechaChipType.BODY to 1)
+                }
+            ),
+
+            // クラシック前半
+            24 to listOf(
+                // 赤9(賢さ4ヒント5)→青3(スタ1根性2)→緑1(パワ1)
+                buildList {
+                    repeat(4) { add(MechaChipType.HEAD to 0) }
+                    repeat(5) { add(MechaChipType.HEAD to 1) }
+                    add(MechaChipType.BODY to 0)
+                    add(MechaChipType.BODY to 1)
+                    add(MechaChipType.BODY to 1)
+                    add(MechaChipType.LEG to 1)
+                }
+            ),
+
+            // クラシック後半
+            36 to listOf(
+                // 赤15→青3(スタ1根性2)→緑1(パワ1)
+                buildList {
+                    repeat(5) { add(MechaChipType.HEAD to 0) }
+                    repeat(5) { add(MechaChipType.HEAD to 1) }
+                    repeat(5) { add(MechaChipType.HEAD to 2) }
+                    add(MechaChipType.BODY to 0)
+                    add(MechaChipType.BODY to 1)
+                    add(MechaChipType.BODY to 1)
+                    add(MechaChipType.LEG to 1)
+                }
+            ),
+
+            // シニア前半
+            48 to listOf(
+                buildList {
+                    // 赤15→青9(スタ4根性5)→緑1(パワ1)
+                    repeat(5) { add(MechaChipType.HEAD to 0) }
+                    repeat(5) { add(MechaChipType.HEAD to 1) }
+                    repeat(5) { add(MechaChipType.HEAD to 2) }
+                    repeat(4) { add(MechaChipType.BODY to 0) }
+                    repeat(5) { add(MechaChipType.BODY to 1) }
+                    add(MechaChipType.LEG to 1)
+                }
+            ),
+
+            // シニア後半
+            60 to listOf(
+                buildList {
+                    // 緑15→赤12(賢さ2ヒント5得意率5)→青4(友情4)
+                    repeat(5) { add(MechaChipType.LEG to 0) }
+                    repeat(5) { add(MechaChipType.LEG to 1) }
+                    repeat(5) { add(MechaChipType.LEG to 2) }
+                    repeat(2) { add(MechaChipType.HEAD to 0) }
+                    repeat(5) { add(MechaChipType.HEAD to 1) }
+                    repeat(5) { add(MechaChipType.HEAD to 2) }
+                    repeat(4) { add(MechaChipType.BODY to 2) }
+                }
+            ),
+
+            // ファイナルズ
+            72 to listOf(
+                buildList {
+                    // ファイナルズ：緑15→青15→赤7(得意率5ヒント2)
+                    repeat(5) { add(MechaChipType.LEG to 0) }
+                    repeat(5) { add(MechaChipType.LEG to 1) }
+                    repeat(5) { add(MechaChipType.LEG to 2) }
+                    repeat(5) { add(MechaChipType.BODY to 0) }
+                    repeat(5) { add(MechaChipType.BODY to 1) }
+                    repeat(5) { add(MechaChipType.BODY to 2) }
+                    repeat(5) { add(MechaChipType.HEAD to 2) }
+                    repeat(2) { add(MechaChipType.HEAD to 1) }
+                }
+            ),
+        )
     }
 
     @Serializable
     data class Option(
-        override val speedFactor: Double = 1.0,
-        override val staminaFactor: Double = 1.0,
-        override val powerFactor: Double = 1.0,
-        override val gutsFactor: Double = 1.0,
-        override val wisdomFactor: Double = 1.2,
-        override val skillPtFactor: Double = 0.6,
-        override val hpFactor: Double = 0.4,
-        override val motivationFactor: Double = 10.0,
-        override val relationFactor: Double = 10.0,
-        override val outingRelationFactor: Double = 30.0,
-        override val hpKeepFactor: Double = 0.2,
-        override val riskFactor: Double = 2.0,
+        override val speedFactor: Int = 100,
+        override val staminaFactor: Int = 100,
+        override val powerFactor: Int = 100,
+        override val gutsFactor: Int = 100,
+        override val wisdomFactor: Int = 100,
+        override val skillPtFactor: Int = 60,
+        override val hpFactor: Int = 40,
+        override val motivationFactor: Int = 3000,
+        override val relationFactor: Int = 1000,
+        override val outingRelationFactor: Int = 1000,
+        override val hpKeepFactor: Int = 200,
+        override val riskFactor: Int = 200,
+        val learningLevelFactor: Int = 60,
+        val overdriveGageFactor: Int = 5000,
+        val overdriveRate: Int = 150,
     ) : BaseOption {
         override fun generateSelector() = MechaActionSelector(listOf(this))
         override fun serialize() = serializer.encodeToString(this)
@@ -88,7 +192,6 @@ class MechaActionSelector(private val options: List<Option>) :
     }
 
     class Context(option: Option, state: SimulationState) : BaseContext<Option>(option, state) {
-        val phase by lazy { (state.turn - 1) / 24 }
     }
 
     override fun toString(): String {
@@ -96,18 +199,74 @@ class MechaActionSelector(private val options: List<Option>) :
     }
 
     override fun getContext(state: SimulationState): Context {
-        // TODO
-        return Context(options.first(), state)
+        val option = options.getOrElse(
+            when {
+                state.turn >= 60 -> 4
+                state.turn >= 48 -> 3
+                state.turn >= 36 -> 2
+                state.turn >= 24 -> 1
+                else -> 0
+            }
+        ) { options[0] }
+        return Context(option, state)
     }
 
-    override fun calcScenarioActionScore(context: Context, action: Action, expectedScore: Double): Double? {
-        // TODO
-        return null
+    override fun calcExpectedScores(context: Context): Double {
+        // 期待値は計算が複雑になるため使用しない
+        return 0.0
+    }
+
+    override suspend fun calcScenarioActionScore(context: Context, action: Action, expectedScore: Double): Double? {
+        return when (action) {
+            MechaOverdrive -> calcOverdriveScore(context)
+            is MechaTuning -> calcTuningScore(context, action)
+            else -> null
+        }
     }
 
     override fun actionParamScore(option: Option, scenarioActionParam: ScenarioActionParam?): Double {
         val param = scenarioActionParam as? MechaActionParam ?: return 0.0
-        // TODO
-        return 0.0
+        if (DEBUG) {
+            println(
+                "$param : ${
+                    param.learningLevel.statusTotal * option.learningLevelFactor + param.overdriveGage * option.overdriveGageFactor
+                }"
+            )
+        }
+        return (param.learningLevel.statusTotal * option.learningLevelFactor +
+                param.overdriveGage * option.overdriveGageFactor).toDouble()
+    }
+
+    private fun calcOverdriveScore(context: Context): Double {
+        val mechaStatus = context.state.mechaStatus ?: return 0.0
+        val turn = context.state.turn
+        // トレーニング以外を行いたいターンは発動しない
+        if (context.maxAction?.first !is Training) return 0.0
+        // 計算の高速化のため、単純なルールで実装
+        val activate = when {
+            // 2ターン目までは初期ODゲージ上昇×2の場合のみ発動
+            turn <= 2 -> mechaStatus.overdriveGauge == 6
+
+            // ジュニア前半/シニア後半以降は最速発動
+            turn <= 12 || turn >= 61 -> true
+
+            // 次回チューニング直後にODゲージMAXになるよう調整
+            // （発動して残りターン＜必要ゲージになるなら発動しない）
+            (12 - (turn - 1) % 12) < 9 - mechaStatus.overdriveGauge -> false
+
+            else -> true
+        }
+        return if (activate) 10000000.0 else 0.0
+    }
+
+    private fun calcTuningScore(context: Context, action: MechaTuning): Double {
+        val mechaStatus = context.state.mechaStatus ?: return 0.0
+        val tuningTargets =
+            tuningTemplate[context.state.turn]?.getOrNull(0)?.take(mechaStatus.maxMechaEnergy) ?: return 0.0
+        val result = action.result
+        val currentPt = mechaStatus.chipLevels[result.type]!![result.index]
+        val targetPt = tuningTargets.count { it.first == result.type && it.second == result.index }
+        if (DEBUG) println("Tuning $result $currentPt / $targetPt")
+        return if (currentPt < targetPt) 10000000.0 else 0.0
     }
 }

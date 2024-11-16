@@ -18,8 +18,8 @@
  */
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.scenario.live.Lesson
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.live.Lesson
 import kotlinx.serialization.json.Json
 
 interface ActionSelector {
@@ -28,8 +28,8 @@ interface ActionSelector {
 
     suspend fun select(state: SimulationState, selection: List<Action>): Action
 
-    suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> =
-        select(state, selection) to emptyList()
+    suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Triple<Action, List<Double>, Double> =
+        Triple(select(state, selection), emptyList(), 0.0)
 
     fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
 

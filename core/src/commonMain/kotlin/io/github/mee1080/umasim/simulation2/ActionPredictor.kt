@@ -217,6 +217,8 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
         }
     status += Status(
         hp = if (goal) 0 else -15,
+        // やる気は3連続出走以上で強制低下扱い
+        motivation = if (!goal && continuousRace) -1 else 0,
         fanCount = raceFanCount(race.getFan),
     )
     status = scenario.calculator.applyScenarioRaceBonus(this, status)

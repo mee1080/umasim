@@ -18,7 +18,9 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.uaf.UafAthletic
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
@@ -156,7 +158,10 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         return selectWithScore(state, selection).first
     }
 
-    override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
+    override suspend fun selectWithScore(
+        state: SimulationState,
+        selection: List<Action>
+    ): Triple<Action, List<Double>, Double> {
         option = when {
             state.turn <= 24 -> options[0]
             state.turn <= 48 -> options.getOrElse(1) { options[0] }
@@ -174,13 +179,16 @@ class UafActionSelector(private val options: List<Option>) : ActionSelector {
         // 半年の最終ターンでは相談を選ぶ
         val consultMinScore = if (state.turn % 12 == 0) 0.0 else option.consultMinScore
         if (consultMax != null && consultMax.second >= consultMinScore) {
-            return consultMax.first to actionScores
+            return Triple(consultMax.first, actionScores, 0.0)
         }
-        var selected = selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
-        if (selected is Sleep) {
-            selected = selection.firstOrNull { it is Outing && it.support != null } ?: selected
+        var selected = selectionWithScore.maxByOrNull { it.second } ?: (selection.first() to 0.0)
+        if (selected.first is Sleep) {
+            val supportOuting = selection.firstOrNull { it is Outing && it.support != null }
+            if (supportOuting != null) {
+                selected = selected.copy(first = supportOuting)
+            }
         }
-        return selected to actionScores
+        return Triple(selected.first, actionScores, selected.second)
     }
 
     private var expectedStatusCache: Pair<Int, Double>? = null

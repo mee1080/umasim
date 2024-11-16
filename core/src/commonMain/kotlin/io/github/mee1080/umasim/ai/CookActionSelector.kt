@@ -184,7 +184,7 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
         return selectWithScore(state, selection).first
     }
 
-    override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
+    override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Triple<Action, List<Double>, Double> {
         val option = when {
             state.turn <= 24 -> options[0]
             state.turn <= 48 -> options.getOrElse(1) { options[0] }
@@ -196,11 +196,14 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
             context.add(it, calcScore(context, it, expectedScore))
         }
         val actionScores = context.selectionWithScore.map { it.second }
-        var selected = context.selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
-        if (selected is Sleep) {
-            selected = selection.firstOrNull { it is Outing && it.support != null } ?: selected
+        var selected = context.selectionWithScore.maxByOrNull { it.second } ?: (selection.first() to 0.0)
+        if (selected.first is Sleep) {
+            val supportOuting = selection.firstOrNull { it is Outing && it.support != null }
+            if (supportOuting != null) {
+                selected = selected.copy(first = supportOuting)
+            }
         }
-        return selected to actionScores
+        return Triple(selected.first, actionScores, selected.second)
     }
 
     private var expectedStatusCache: Pair<Int, Double>? = null

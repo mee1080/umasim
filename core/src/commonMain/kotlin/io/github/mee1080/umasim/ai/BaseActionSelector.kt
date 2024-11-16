@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.*
-import kotlin.math.max
 import kotlin.math.min
 
 @Suppress("unused")
@@ -30,24 +29,24 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
     ActionSelector {
 
     companion object {
-        private const val DEBUG = false
+        private const val DEBUG = true
     }
 
     abstract fun getContext(state: SimulationState): Context
 
     interface BaseOption : SerializableActionSelectorGenerator {
-        val speedFactor: Double
-        val staminaFactor: Double
-        val powerFactor: Double
-        val gutsFactor: Double
-        val wisdomFactor: Double
-        val skillPtFactor: Double
-        val hpFactor: Double
-        val motivationFactor: Double
-        val relationFactor: Double
-        val outingRelationFactor: Double
-        val hpKeepFactor: Double
-        val riskFactor: Double
+        val speedFactor: Int
+        val staminaFactor: Int
+        val powerFactor: Int
+        val gutsFactor: Int
+        val wisdomFactor: Int
+        val skillPtFactor: Int
+        val hpFactor: Int
+        val motivationFactor: Int
+        val relationFactor: Int
+        val outingRelationFactor: Int
+        val hpKeepFactor: Int
+        val riskFactor: Int
     }
 
     open class BaseContext<Option : BaseOption>(
@@ -81,23 +80,29 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
         return selectWithScore(state, selection).first
     }
 
-    override suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Pair<Action, List<Double>> {
+    override suspend fun selectWithScore(
+        state: SimulationState,
+        selection: List<Action>,
+    ): Triple<Action, List<Double>, Double> {
         val context = getContext(state)
         val expectedScore = calcExpectedScores(context)
         selection.forEach {
             context.add(it, calcScore(context, it, expectedScore))
         }
         val actionScores = context.selectionWithScore.map { it.second }
-        var selected = context.selectionWithScore.maxByOrNull { it.second }?.first ?: selection.first()
-        if (selected is Sleep) {
-            selected = selection.firstOrNull { it is Outing && it.support != null } ?: selected
+        var selected = context.selectionWithScore.maxByOrNull { it.second } ?: (selection.first() to 0.0)
+        if (selected.first is Sleep) {
+            val supportOuting = selection.firstOrNull { it is Outing && it.support != null }
+            if (supportOuting != null) {
+                selected = selected.copy(first = supportOuting)
+            }
         }
-        return selected to actionScores
+        return Triple(selected.first, actionScores, selected.second)
     }
 
     private var expectedStatusCache: Pair<Int, Double>? = null
 
-    private fun calcExpectedScores(context: Context): Double {
+    protected open fun calcExpectedScores(context: Context): Double {
         val (option, state) = context
         val expectedStatusCacheNonNull = expectedStatusCache
         if (expectedStatusCacheNonNull != null) {
@@ -116,12 +121,12 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
         return max
     }
 
-    private fun calcScore(context: Context, action: Action, expectedScore: Double): Double {
+    private suspend fun calcScore(context: Context, action: Action, expectedScore: Double): Double {
         val scenarioActionScore = calcScenarioActionScore(context, action, expectedScore)
         if (scenarioActionScore != null) return scenarioActionScore
         if (!action.turnChange) return Double.MIN_VALUE
         val (option, state) = context
-        val hpKeepFactor = if (state.turn == 36) 20.0 * option.hpKeepFactor else option.hpKeepFactor
+        val hpKeepFactor = if (state.turn == 36) 20 * option.hpKeepFactor else option.hpKeepFactor
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
         val score = action.candidates.sumOf {
@@ -155,7 +160,7 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
         option: Option,
         status: ExpectedStatus,
         currentStatus: Status,
-        hpKeepFactor: Double = option.hpKeepFactor,
+        hpKeepFactor: Int = option.hpKeepFactor,
     ): Double {
         val score = status.speed * option.speedFactor +
                 status.stamina * option.staminaFactor +
@@ -165,20 +170,20 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
                 status.skillPt * option.skillPtFactor +
                 status.hp * option.hpFactor +
                 status.motivation * option.motivationFactor +
-                min(0.0, max(-20.0, currentStatus.hp + status.hp - 70.0)) * hpKeepFactor
+                min(0.0, currentStatus.hp + status.hp - 50.0) * hpKeepFactor
         if (DEBUG) println("  $score $status")
-        return score * (if (score < 0) option.riskFactor else 1.0)
+        return score * (if (score < 0) option.riskFactor / 100.0 else 1.0)
     }
 
     private fun calcRelationScore(option: Option, action: Action): Double {
         if (action !is Training) return 0.0
         val score = action.support.sumOf {
             when {
-                it.relation >= it.card.requiredRelation -> 0.0
+                it.relation >= it.card.requiredRelation -> 0
                 it.outingType -> option.outingRelationFactor
                 else -> option.relationFactor
             }
-        }
+        }.toDouble()
         if (DEBUG) println("  relation $score")
         return score
     }
@@ -187,7 +192,9 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
         return 0.0
     }
 
-    protected open fun calcScenarioActionScore(context: Context, action: Action, expectedScore: Double): Double? {
+    protected open suspend fun calcScenarioActionScore(
+        context: Context, action: Action, expectedScore: Double,
+    ): Double? {
         return null
     }
 }
