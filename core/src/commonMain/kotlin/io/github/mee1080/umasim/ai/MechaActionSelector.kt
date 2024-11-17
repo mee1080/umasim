@@ -27,7 +27,7 @@ class MechaActionSelector(private val options: List<Option>) :
     BaseActionSelector<MechaActionSelector.Option, MechaActionSelector.Context>() {
 
     companion object {
-        private const val DEBUG = true
+        private const val DEBUG = false
 
         val speed2Stamina1Power1Wisdom1Friend1Generator = object : ActionSelectorGenerator {
             override fun generateSelector(): ActionSelector {
@@ -174,7 +174,7 @@ class MechaActionSelector(private val options: List<Option>) :
         override val staminaFactor: Int = 100,
         override val powerFactor: Int = 100,
         override val gutsFactor: Int = 100,
-        override val wisdomFactor: Int = 100,
+        override val wisdomFactor: Int = 90,
         override val skillPtFactor: Int = 60,
         override val hpFactor: Int = 40,
         override val motivationFactor: Int = 3000,

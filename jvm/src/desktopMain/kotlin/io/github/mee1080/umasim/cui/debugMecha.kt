@@ -39,7 +39,7 @@ fun debugMechaSingleSimulation() {
         "[Cocoon]エアシャカール",
         "[大地と我らのアンサンブル]サウンズオブアース",
         "[COOL⇔CRAZY/Buddy]シンボリクリスエス",
-        "[百花の願いをこの胸に]サトノダイヤモンド",
+        "[Take Them Down!]ナリタタイシン",
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })

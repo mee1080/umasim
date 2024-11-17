@@ -181,8 +181,6 @@ data class MechaLinkEffect(
         initialLearningLevelCount = listOf("シンボリクリスエス", "タニノギムレット").count { charaExists[it]!! },
     )
 
-    val gearFrequency = mechaGearFrequencyCount * 10 // TODO
-
     val hasLearningTrainingFactor = learningTrainingEffectCount > 0
 
     val initialLearningLevel = if (initialLearningLevelCount == 0) 1 else initialLearningLevelCount * 20

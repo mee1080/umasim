@@ -151,7 +151,15 @@ fun SimulationStateBlock(state: SimulationState) {
                     total += value
                     value.toString()
                 }
-                Text("研究Lv: $learningLevels / ${maxLearningLevel(state.turn)} (合計 $total)")
+                val targetTotal = when {
+                    state.turn > 72 -> null
+                    state.turn > 60 -> 2400
+                    state.turn > 48 -> 1900
+                    state.turn > 36 -> 1400
+                    state.turn > 24 -> 1000
+                    else -> 600
+                }?.let { " / $it" } ?: ""
+                Text("研究Lv: $learningLevels / ${maxLearningLevel(state.turn)} (合計 $total$targetTotal)")
             }
             Div {
                 Text("オーバードライブゲージ: ${mechaStatus.overdriveGauge} / 6")

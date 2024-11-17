@@ -59,7 +59,7 @@ class MechaScenarioEvents : CommonScenarioEvents() {
         val newGearExists = if (mechaStatus.overdrive && mechaStatus.odGearAll) {
             trainingType.associateWith { true }
         } else {
-            val gearCount = randomSelect(mechaGearRate[state.turn / 24][mechaStatus.linkEffects.gearFrequency])
+            val gearCount = randomSelect(mechaGearRate[state.turn / 24][mechaStatus.linkEffects.mechaGearFrequencyCount])
             val gearStatus = trainingType.asList().shuffled().take(gearCount)
             val friendStatus = state.member.filter { it.isFriendTraining(it.position) }.map { it.position }.toSet()
             trainingType.associateWith { friendStatus.contains(it) || gearStatus.contains(it) }
