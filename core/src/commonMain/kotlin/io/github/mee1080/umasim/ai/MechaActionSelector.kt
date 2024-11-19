@@ -183,8 +183,7 @@ class MechaActionSelector(private val options: List<Option>) :
         override val hpKeepFactor: Int = 200,
         override val riskFactor: Int = 200,
         val learningLevelFactor: Int = 60,
-        val overdriveGageFactor: Int = 5000,
-        val overdriveRate: Int = 150,
+        val overdriveGaugeFactor: Int = 5000,
     ) : BaseOption {
         override fun generateSelector() = MechaActionSelector(listOf(this))
         override fun serialize() = serializer.encodeToString(this)
@@ -229,12 +228,12 @@ class MechaActionSelector(private val options: List<Option>) :
         if (DEBUG) {
             println(
                 "$param : ${
-                    param.learningLevel.statusTotal * option.learningLevelFactor + param.overdriveGage * option.overdriveGageFactor
+                    param.learningLevel.statusTotal * option.learningLevelFactor + param.overdriveGage * option.overdriveGaugeFactor
                 }"
             )
         }
         return (param.learningLevel.statusTotal * option.learningLevelFactor +
-                param.overdriveGage * option.overdriveGageFactor).toDouble()
+                param.overdriveGage * option.overdriveGaugeFactor).toDouble()
     }
 
     private fun calcOverdriveScore(context: Context): Double {

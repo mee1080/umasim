@@ -28,7 +28,8 @@ import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking
 
 fun debugMecha() {
-    debugMechaSingleSimulation()
+//    debugMechaSingleSimulation()
+    debugMechaRepeatSimulation(1000)
 }
 
 fun debugMechaSingleSimulation() {
@@ -82,4 +83,30 @@ fun debugMechaSingleSimulation() {
     }
     println(result.first)
     println(result.first.status.toShortString())
+}
+
+fun debugMechaRepeatSimulation(count: Int) {
+    val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5)
+    val support = Store.getSupportByName(
+        "[Devilish Whispers]スティルインラブ",
+        "[大望は飛んでいく]エルコンドルパサー",
+        "[Cocoon]エアシャカール",
+        "[大地と我らのアンサンブル]サウンズオブアース",
+        "[COOL⇔CRAZY/Buddy]シンボリクリスエス",
+        "[Take Them Down!]ナリタタイシン",
+    )
+    println(chara.name)
+    println(support.joinToString(", ") { it.name })
+    repeat(count) {
+        val selector = MechaActionSelector.Option().generateSelector()
+        val factor = listOf(
+            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
+            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
+        )
+        val result = runBlocking {
+            Simulator(Scenario.MECHA, chara, support, factor)
+                .simulateWithHistory(selector) { RandomEvents(it) }
+        }
+        println(result.first.status.toShortString())
+    }
 }

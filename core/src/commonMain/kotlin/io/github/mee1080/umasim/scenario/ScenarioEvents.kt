@@ -22,10 +22,7 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.cook.CookMemberState
-import io.github.mee1080.umasim.simulation2.ActionSelector
-import io.github.mee1080.umasim.simulation2.MemberState
-import io.github.mee1080.umasim.simulation2.SimulationState
-import io.github.mee1080.umasim.simulation2.updateStatus
+import io.github.mee1080.umasim.simulation2.*
 
 interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
@@ -94,13 +91,13 @@ internal fun SimulationState.updateFactor() = updateStatus { status ->
     }.toTypedArray())
 }
 
-internal fun SimulationState.addGuest(totalCount: Int): SimulationState {
+internal fun SimulationState.addGuest(totalCount: Int, scenario: Scenario): SimulationState {
     val supportNames = member.filter { !it.outingType }.map { it.charaName }.toSet()
     var memberIndex = member.size
     val guestMembers = Store.guestSupportCardList
         .filter { !it.type.outingType && !supportNames.contains(it.chara) }
         .shuffled()
         .take(totalCount - supportNames.size)
-        .map { MemberState(memberIndex++, it, StatusType.NONE, null, CookMemberState) }
+        .map { MemberState(memberIndex++, it, StatusType.NONE, null, scenario.memberState(it)) }
     return copy(member = member + guestMembers)
 }

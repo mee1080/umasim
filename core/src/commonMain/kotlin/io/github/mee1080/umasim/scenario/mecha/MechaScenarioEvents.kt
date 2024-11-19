@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.randomSelect
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
@@ -40,7 +41,7 @@ class MechaScenarioEvents : CommonScenarioEvents() {
         return when (base.turn) {
 
             // 1T: 研究メンバー参加
-            1 -> base.addGuest(11)
+            1 -> base.addGuest(11, Scenario.MECHA)
 
             // スーパーオーバードライブ
             73, 74, 75, 76, 77, 78 -> base.applyIf(mechaStatus.ugeHistory.all { it == 2 }) {
@@ -59,7 +60,8 @@ class MechaScenarioEvents : CommonScenarioEvents() {
         val newGearExists = if (mechaStatus.overdrive && mechaStatus.odGearAll) {
             trainingType.associateWith { true }
         } else {
-            val gearCount = randomSelect(mechaGearRate[state.turn / 24][mechaStatus.linkEffects.mechaGearFrequencyCount])
+            val gearCount =
+                randomSelect(mechaGearRate[state.turn / 24][mechaStatus.linkEffects.mechaGearFrequencyCount])
             val gearStatus = trainingType.asList().shuffled().take(gearCount)
             val friendStatus = state.member.filter { it.isFriendTraining(it.position) }.map { it.position }.toSet()
             trainingType.associateWith { friendStatus.contains(it) || gearStatus.contains(it) }
@@ -85,11 +87,15 @@ class MechaScenarioEvents : CommonScenarioEvents() {
                     supportPosition[status] = supportPosition[status]!! + 1
                 }
             }
-            val targetPosition = supportPosition.filter { it.value < 5 }.keys
+            val targetPosition = supportPosition.filter { it.value < 5 }.keys.toMutableSet()
             val newMember = state.member.mapIf({ targetMember.contains(it.index) }) {
                 val candidates = targetPosition - it.position
                 it.applyIf(candidates.isNotEmpty()) {
-                    it.copy(additionalPosition = setOf(candidates.random()))
+                    val newPosition = candidates.random()
+                    if (supportPosition[newPosition] == 4) {
+                        targetPosition -= newPosition
+                    }
+                    it.copy(additionalPosition = setOf(newPosition))
                 }
             }
             result = result.copy(member = newMember)
