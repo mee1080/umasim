@@ -179,6 +179,15 @@ object Runner {
         StatusType.SKILL to (0.8 to 10000),
     )
 
+    val mechaSetting = mapOf(
+        StatusType.SPEED to (1.1 to 2200),
+        StatusType.STAMINA to (1.2 to 2000),
+        StatusType.POWER to (1.1 to 1700),
+        StatusType.GUTS to (0.9 to 1250),
+        StatusType.WISDOM to (1.0 to 1250),
+        StatusType.SKILL to (1.2 to 6000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,

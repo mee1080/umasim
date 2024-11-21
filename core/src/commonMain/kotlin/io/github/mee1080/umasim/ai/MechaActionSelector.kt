@@ -29,57 +29,100 @@ class MechaActionSelector(private val options: List<Option>) :
     companion object {
         private const val DEBUG = false
 
-        val speed2Stamina1Power1Wisdom1Friend1Generator = object : ActionSelectorGenerator {
+        val s2h2p1w1Generator = object : ActionSelectorGenerator {
             override fun generateSelector(): ActionSelector {
-                return MechaActionSelector(speed2Stamina1Power1Wisdom1Friend1Options)
+                return MechaActionSelector(s2h2p1w1Options)
             }
         }
 
-        val speed2Stamina1Power1Wisdom1Friend1 = {
-            MechaActionSelector(speed2Stamina1Power1Wisdom1Friend1Options)
+        val s2h2p1w1 = {
+            MechaActionSelector(s2h2p1w1Options)
         }
 
-        val speed2Stamina1Power1Wisdom1Friend1Options: List<Option>
+        val s2h2p1w1Options: List<Option>
 
         init {
             val option1 = Option(
-//                speedFactor = 100,
-//                staminaFactor = 100,
-//                powerFactor = 100,
-//                gutsFactor = 100,
-//                wisdomFactor = 100,
-//                skillPtFactor = 100,
-//                hpFactor = 90,
-//                motivationFactor = 700,
-//                relationFactor = 1750,
-//                outingRelationFactor = 3500,
-//                hpKeepFactor = 30,
-//                riskFactor = 400,
-//                learningLevelFactor = 200,
-//                overdriveGageFactor = 10000,
-//                overdriveRate = 200,
+                speedFactor = 100,
+                staminaFactor = 120,
+                powerFactor = 100,
+                gutsFactor = 120,
+                wisdomFactor = 60,
+                skillPtFactor = 80,
+                hpFactor = 100,
+                motivationFactor = 4000,
+                relationFactor = 1400,
+                outingRelationFactor = 1400,
+                hpKeepFactor = 200,
+                riskFactor = 500,
+                learningLevelFactor = 50,
+                overdriveGaugeFactor = 2000,
             )
             val option2 = option1.copy(
-                hpFactor = 90,
-                hpKeepFactor = 200,
-                riskFactor = 200,
+                speedFactor = 160,
+                staminaFactor = 140,
+                powerFactor = 180,
+                gutsFactor = 180,
+                wisdomFactor = 120,
+                skillPtFactor = 180,
+                hpFactor = 100,
+//                motivationFactor = 700,
+//                relationFactor = 1750,
+                outingRelationFactor = 3500,
+                hpKeepFactor = 400,
+                riskFactor = 100,
+                learningLevelFactor = 40,
+                overdriveGaugeFactor = 2500,
             )
             val option3 = option1.copy(
-                hpFactor = 40,
-                hpKeepFactor = 200,
-                riskFactor = 400,
+                speedFactor = 60,
+                staminaFactor = 80,
+                powerFactor = 60,
+                gutsFactor = 80,
+                wisdomFactor = 60,
+                skillPtFactor = 60,
+                hpFactor = 100,
+//                motivationFactor = 700,
+//                relationFactor = 1750,
+                outingRelationFactor = 3500,
+                hpKeepFactor = 100,
+                riskFactor = 100,
+                learningLevelFactor = 60,
+                overdriveGaugeFactor = 2000,
             )
             val option4 = option1.copy(
-                hpFactor = 40,
-                hpKeepFactor = 200,
-                riskFactor = 400,
+                speedFactor = 60,
+                staminaFactor = 100,
+                powerFactor = 80,
+                gutsFactor = 100,
+                wisdomFactor = 60,
+                skillPtFactor = 80,
+                hpFactor = 100,
+//                motivationFactor = 700,
+//                relationFactor = 1750,
+                outingRelationFactor = 3500,
+                hpKeepFactor = 300,
+                riskFactor = 300,
+                learningLevelFactor = 70,
+                overdriveGaugeFactor = 5000,
             )
             val option5 = option1.copy(
-                hpFactor = 40,
+                speedFactor = 60,
+                staminaFactor = 100,
+                powerFactor = 100,
+                gutsFactor = 80,
+                wisdomFactor = 60,
+                skillPtFactor = 80,
+                hpFactor = 100,
+//                motivationFactor = 700,
+//                relationFactor = 1750,
+                outingRelationFactor = 3500,
                 hpKeepFactor = 200,
-                riskFactor = 400,
+                riskFactor = 200,
+                learningLevelFactor = 80,
+                overdriveGaugeFactor = 3000,
             )
-            speed2Stamina1Power1Wisdom1Friend1Options = listOf(option1, option2, option3, option4, option5)
+            s2h2p1w1Options = listOf(option1, option2, option3, option4, option5)
         }
 
         val tuningTemplate = mapOf(

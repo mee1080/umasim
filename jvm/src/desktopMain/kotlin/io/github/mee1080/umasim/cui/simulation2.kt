@@ -51,7 +51,7 @@ fun doSimulation2(
         defaultSupport,
         Store.supportList.filter {
             talent.contains(it.talent) && it.rarity in rarity && (it.type == targetStatus)
-        },
+        }.sortedBy { -it.rarity * 1000000 + it.id * 10 + it.talent },
         factor,
         testCount,
         selector,

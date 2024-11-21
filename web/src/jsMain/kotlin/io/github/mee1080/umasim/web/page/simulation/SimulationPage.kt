@@ -52,7 +52,7 @@ fun SimulationPage(state: State) {
             when (state.scenario) {
                 Scenario.UAF -> UafActionSelector.Option()
                 Scenario.COOK -> CookActionSelector.Option()
-                Scenario.MECHA -> MechaActionSelector.speed2Stamina1Power1Wisdom1Friend1Generator
+                Scenario.MECHA -> MechaActionSelector.s2h2p1w1Generator
                 else -> null
             }
         )

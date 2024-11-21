@@ -55,13 +55,13 @@ def objective(trial):
         trial.suggest_int ('skillPt5', 60, 200, step=20),
     ]
     hp = [
-        trial.suggest_int ('hp1', 20, 100, step=20),
-        trial.suggest_int ('hp2', 20, 100, step=20),
-        trial.suggest_int ('hp3', 20, 100, step=20),
-        trial.suggest_int ('hp4', 20, 100, step=20),
-        trial.suggest_int ('hp5', 20, 100, step=20),
+        100,
+        100,
+        100,
+        100,
+        100,
     ]
-    motivation = 3000
+    motivation = trial.suggest_int ('motivation', 2000, 4000, step=500)
     relation = trial.suggest_int ('relation', 600, 1400, step=200)
     hpKeep = [
         trial.suggest_int ('hpKeep1', 100, 500, step=100),
@@ -143,9 +143,9 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='mecha_s2h2p1w1_1',
+    study_name='mecha_s2h2p1w1_2',
     storage='sqlite:///optuna_study_mecha.db',
     load_if_exists=True,
     direction='maximize'
 )
-study.optimize(objective, n_trials=10000)
+study.optimize(objective, n_trials=20000)
