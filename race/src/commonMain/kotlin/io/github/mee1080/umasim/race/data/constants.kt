@@ -430,8 +430,8 @@ internal fun staminaLimitBreakDistanceCoef(distance: Int) = when {
     distance < 2101 -> 0.0
     distance < 2201 -> 0.5
     distance < 2401 -> 1.0
-    distance < 2601 -> 1.2
-    else -> 1.5
+    distance < 2601 -> 1.5
+    else -> 1.8
 }
 
 /**
