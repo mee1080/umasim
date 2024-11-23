@@ -90,6 +90,7 @@ fun doSimulation2(
     testCount: Int,
     selector: () -> ActionSelector,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
 ) {
     println(chara.name)
     defaultSupport.forEach { println(it.name) }
@@ -106,6 +107,7 @@ fun doSimulation2(
                     useSupport,
                     factor,
                     evaluateSetting,
+                    evaluateUpperRate,
 //                    events = ApproximateSimulationEvents(
 //                        beforeActionEvents = {
 //                            return@ApproximateSimulationEvents if (it.turn == 13) {

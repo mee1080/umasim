@@ -39,14 +39,9 @@ fun SimulationState.predictGoal(goal: RaceEntry): List<Action> {
 }
 
 fun SimulationState.predictNormal(): List<Action> {
-    val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
-    member.forEach {
-        it.positions.forEach { status ->
-            supportPosition[status]!!.add(it)
-        }
-    }
+
     return mutableListOf(
-        *(predictTrainingResult(supportPosition)),
+        *(predictTrainingResult()),
         *(predictSleep()),
         // TODO 出走可否判定、レース後イベント
         *(if (scenario.calculator.normalRaceBlocked(this)) emptyArray() else {
@@ -62,7 +57,13 @@ private fun SimulationState.StatusActionResult(
     success: Boolean = true,
 ) = StatusActionResult(this.status, status, scenarioActionParam, success)
 
-private fun SimulationState.predictTrainingResult(supportPosition: Map<StatusType, List<MemberState>>): Array<Action> {
+fun SimulationState.predictTrainingResult(): Array<Action> {
+    val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
+    member.forEach {
+        it.positions.forEach { status ->
+            supportPosition[status]!!.add(it)
+        }
+    }
     return training.map {
         calcTrainingResult(it, supportPosition[it.type] ?: emptyList())
     }.toTypedArray()

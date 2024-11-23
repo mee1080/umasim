@@ -28,8 +28,8 @@ import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking
 
 fun debugMecha() {
-//    debugMechaSingleSimulation()
-    debugMechaRepeatSimulation(1000)
+    debugMechaSingleSimulation()
+//    debugMechaRepeatSimulation(1000)
 }
 
 fun debugMechaSingleSimulation() {

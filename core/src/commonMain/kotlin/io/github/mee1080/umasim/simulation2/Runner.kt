@@ -1,9 +1,9 @@
 package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Chara
-import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.scenario.Scenario
 import kotlin.math.roundToInt
 
 object Runner {
@@ -195,11 +195,12 @@ object Runner {
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         evaluateSetting: Map<StatusType, Pair<Double, Int>>,
+        evaluateUpperRate: Double = 0.2,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): Pair<Double, Evaluator> {
         val summaries = run(count, scenario, chara, supportCardList, factorList, events, selector)
-        val evaluator = Evaluator(summaries, evaluateSetting, 0.2)
+        val evaluator = Evaluator(summaries, evaluateSetting, evaluateUpperRate)
         return (evaluator.upperSum(1.0, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
 

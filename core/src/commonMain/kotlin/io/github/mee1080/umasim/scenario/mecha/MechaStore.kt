@@ -131,17 +131,17 @@ val mechaLearningSubStatus = mapOf(
 val mechaGearRate = listOf(
     // ジュニア
     listOf(
-        listOf(2 to 55, 3 to 40, 4 to 5),
-        listOf(2 to 55, 3 to 45, 4 to 10),
-        listOf(2 to 55, 3 to 50, 4 to 15),
-        listOf(2 to 55, 3 to 55, 4 to 20),
+        listOf(2 to 60, 3 to 35, 4 to 5),
+        listOf(2 to 60, 3 to 40, 4 to 10),
+        listOf(2 to 60, 3 to 45, 4 to 15),
+        listOf(2 to 60, 3 to 50, 4 to 20),
     ),
     // クラシック
     listOf(
-        listOf(2 to 55, 3 to 35, 4 to 10),
-        listOf(2 to 55, 3 to 40, 4 to 20),
-        listOf(2 to 55, 3 to 45, 4 to 25),
-        listOf(2 to 55, 3 to 50, 4 to 30),
+        listOf(2 to 60, 3 to 30, 4 to 10),
+        listOf(2 to 60, 3 to 35, 4 to 20),
+        listOf(2 to 60, 3 to 40, 4 to 25),
+        listOf(2 to 60, 3 to 45, 4 to 30),
     ),
     // シニア
     listOf(

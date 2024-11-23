@@ -6,7 +6,7 @@ def objective(trial):
     count = 10000
 
     evaluateSpeed   = '1.1 2200'
-    evaluateStamina = '1.2 2000'
+    evaluateStamina = '1.1 2000'
     evaluatePower   = '1.1 1700'
     evaluateGuts    = '0.9 1250'
     evaluateWisdom  = '1.0 1250'
@@ -57,12 +57,12 @@ def objective(trial):
     hp = [
         100,
         100,
-        100,
-        100,
-        100,
+        150,
+        150,
+        150,
     ]
-    motivation = trial.suggest_int ('motivation', 2000, 4000, step=500)
-    relation = trial.suggest_int ('relation', 600, 1400, step=200)
+    motivation = trial.suggest_int ('motivation', 3000, 6000, step=1000)
+    relation = trial.suggest_int ('relation', 1000, 2000, step=200)
     hpKeep = [
         trial.suggest_int ('hpKeep1', 100, 500, step=100),
         trial.suggest_int ('hpKeep2', 100, 500, step=100),
@@ -91,6 +91,13 @@ def objective(trial):
         trial.suggest_int ('overdriveGauge4', 1000, 5000, step=500),
         trial.suggest_int ('overdriveGauge5', 1000, 5000, step=500),
     ]
+    overdriveThreshold = [
+        trial.suggest_int ('overdriveThreshold1', 400, 1000, step=100),
+        trial.suggest_int ('overdriveThreshold2', 1500, 2100, step=100),
+        trial.suggest_int ('overdriveThreshold3', 2500, 4000, step=250),
+        trial.suggest_int ('overdriveThreshold4', 4000, 8000, step=500),
+        trial.suggest_int ('overdriveThreshold5', 6000, 12000, step=500),
+    ]
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count {count} --scenario MECHA'\
@@ -115,26 +122,31 @@ def objective(trial):
           f' --guts {guts[0]} --wisdom {wisdom[0]} --skill-pt {skillPt[0]}'\
           f' --hp {hp[0]} --hp-keep {hpKeep[0]} --risk {risk[0]}'\
           f' --mecha-learning-level {learningLevel[0]} --mecha-overdrive-gauge {overdriveGauge[0]}'\
+          f' --mecha-overdrive-threshold {overdriveThreshold[0]}'\
           \
           f' --speed {speed[1]} --stamina {stamina[1]} --power {power[1]}'\
           f' --guts {guts[1]} --wisdom {wisdom[1]} --skill-pt {skillPt[1]}'\
           f' --hp {hp[1]} --hp-keep {hpKeep[1]} --risk {risk[1]}'\
           f' --mecha-learning-level {learningLevel[1]} --mecha-overdrive-gauge {overdriveGauge[1]}'\
+          f' --mecha-overdrive-threshold {overdriveThreshold[1]}'\
           \
           f' --speed {speed[2]} --stamina {stamina[2]} --power {power[2]}'\
           f' --guts {guts[2]} --wisdom {wisdom[2]} --skill-pt {skillPt[2]}'\
           f' --hp {hp[2]} --hp-keep {hpKeep[2]} --risk {risk[2]}'\
           f' --mecha-learning-level {learningLevel[2]} --mecha-overdrive-gauge {overdriveGauge[2]}'\
+          f' --mecha-overdrive-threshold {overdriveThreshold[2]}'\
           \
           f' --speed {speed[3]} --stamina {stamina[3]} --power {power[3]}'\
           f' --guts {guts[3]} --wisdom {wisdom[3]} --skill-pt {skillPt[3]}'\
           f' --hp {hp[3]} --hp-keep {hpKeep[3]} --risk {risk[3]}'\
           f' --mecha-learning-level {learningLevel[3]} --mecha-overdrive-gauge {overdriveGauge[3]}'\
+          f' --mecha-overdrive-threshold {overdriveThreshold[3]}'\
           \
           f' --speed {speed[4]} --stamina {stamina[4]} --power {power[4]}'\
           f' --guts {guts[4]} --wisdom {wisdom[4]} --skill-pt {skillPt[4]}'\
           f' --hp {hp[4]} --hp-keep {hpKeep[4]} --risk {risk[4]}'\
           f' --mecha-learning-level {learningLevel[4]} --mecha-overdrive-gauge {overdriveGauge[4]}'\
+          f' --mecha-overdrive-threshold {overdriveThreshold[4]}'\
           f''
 
     print(cmd)
@@ -143,7 +155,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='mecha_s2h2p1w1_2',
+    study_name='mecha_s2h2p1w1_3',
     storage='sqlite:///optuna_study_mecha.db',
     load_if_exists=True,
     direction='maximize'

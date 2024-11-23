@@ -124,10 +124,14 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
     private suspend fun calcScore(context: Context, action: Action, expectedScore: Double): Double {
         val scenarioActionScore = calcScenarioActionScore(context, action, expectedScore)
         if (scenarioActionScore != null) return scenarioActionScore
+        return calcBaseScore(context, action, expectedScore)
+    }
+
+    fun calcBaseScore(context: Context, action: Action, expectedScore: Double): Double {
         if (!action.turnChange) return Double.MIN_VALUE
         val (option, state) = context
         val hpKeepFactor = if (state.turn == 36) 20 * option.hpKeepFactor else option.hpKeepFactor
-        if (DEBUG) println("${state.turn}: $action")
+        if (DEBUG) println("${state.turn}: ${action.toShortString()}")
         val total = action.candidates.sumOf { it.second }.toDouble()
         val score = action.candidates.sumOf {
             if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")

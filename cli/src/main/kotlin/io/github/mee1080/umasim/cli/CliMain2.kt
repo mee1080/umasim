@@ -41,6 +41,7 @@ class CliMain2 : CliktCommand() {
     private val risk by option().int().multiple()
     private val mechaLearningLevel by option().int().multiple()
     private val mechaOverdriveGauge by option().int().multiple()
+    private val mechaOverdriveThreshold by option().int().multiple()
 
     private val evaluate by option().triple().multiple()
 
@@ -69,6 +70,7 @@ class CliMain2 : CliktCommand() {
                             riskFactor = risk.getOrElse(it) { risk.first() },
                             learningLevelFactor = mechaLearningLevel.getOrElse(it) { mechaLearningLevel.first() },
                             overdriveGaugeFactor = mechaOverdriveGauge.getOrElse(it) { mechaOverdriveGauge.first() },
+                            overdriveThreshold = mechaOverdriveThreshold.getOrElse(it) { mechaOverdriveThreshold.first() },
                         )
                     }
                     MechaActionSelector(options)

@@ -18,10 +18,13 @@
  */
 package io.github.mee1080.umasim.ai
 
+import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
+import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
+import kotlin.math.max
 
 class MechaActionSelector(private val options: List<Option>) :
     BaseActionSelector<MechaActionSelector.Option, MechaActionSelector.Context>() {
@@ -57,6 +60,7 @@ class MechaActionSelector(private val options: List<Option>) :
                 riskFactor = 500,
                 learningLevelFactor = 50,
                 overdriveGaugeFactor = 2000,
+                overdriveThreshold = 400,
             )
             val option2 = option1.copy(
                 speedFactor = 160,
@@ -68,11 +72,12 @@ class MechaActionSelector(private val options: List<Option>) :
                 hpFactor = 100,
 //                motivationFactor = 700,
 //                relationFactor = 1750,
-                outingRelationFactor = 3500,
+//                outingRelationFactor = 3500,
                 hpKeepFactor = 400,
                 riskFactor = 100,
                 learningLevelFactor = 40,
                 overdriveGaugeFactor = 2500,
+                overdriveThreshold = 1500,
             )
             val option3 = option1.copy(
                 speedFactor = 60,
@@ -84,11 +89,12 @@ class MechaActionSelector(private val options: List<Option>) :
                 hpFactor = 100,
 //                motivationFactor = 700,
 //                relationFactor = 1750,
-                outingRelationFactor = 3500,
+//                outingRelationFactor = 3500,
                 hpKeepFactor = 100,
                 riskFactor = 100,
                 learningLevelFactor = 60,
                 overdriveGaugeFactor = 2000,
+                overdriveThreshold = 2500,
             )
             val option4 = option1.copy(
                 speedFactor = 60,
@@ -100,11 +106,12 @@ class MechaActionSelector(private val options: List<Option>) :
                 hpFactor = 100,
 //                motivationFactor = 700,
 //                relationFactor = 1750,
-                outingRelationFactor = 3500,
+//                outingRelationFactor = 3500,
                 hpKeepFactor = 300,
                 riskFactor = 300,
                 learningLevelFactor = 70,
                 overdriveGaugeFactor = 5000,
+                overdriveThreshold = 4000,
             )
             val option5 = option1.copy(
                 speedFactor = 60,
@@ -116,11 +123,12 @@ class MechaActionSelector(private val options: List<Option>) :
                 hpFactor = 100,
 //                motivationFactor = 700,
 //                relationFactor = 1750,
-                outingRelationFactor = 3500,
+//                outingRelationFactor = 3500,
                 hpKeepFactor = 200,
                 riskFactor = 200,
                 learningLevelFactor = 80,
                 overdriveGaugeFactor = 3000,
+                overdriveThreshold = 6000,
             )
             s2h2p1w1Options = listOf(option1, option2, option3, option4, option5)
         }
@@ -128,14 +136,24 @@ class MechaActionSelector(private val options: List<Option>) :
         val tuningTemplate = mapOf(
             // 初回
             2 to listOf(
-                // 緑3(スピ1パワ2)→青2(スタ1根性1)→赤1(賢さ1)→青3(根性2)
+//                // 緑3(スピ1パワ2)→青2(スタ1根性1)→赤1(賢さ1)→青3(根性2)
+//                buildList {
+//                    add(MechaChipType.LEG to 0)
+//                    add(MechaChipType.LEG to 1)
+//                    add(MechaChipType.LEG to 1)
+//                    add(MechaChipType.BODY to 0)
+//                    add(MechaChipType.BODY to 1)
+//                    add(MechaChipType.HEAD to 0)
+//                    add(MechaChipType.BODY to 1)
+//                }
+                // 緑3(スピ1パワ2)→赤3(ヒント3)→青1(根性1)
                 buildList {
                     add(MechaChipType.LEG to 0)
                     add(MechaChipType.LEG to 1)
                     add(MechaChipType.LEG to 1)
-                    add(MechaChipType.BODY to 0)
-                    add(MechaChipType.BODY to 1)
-                    add(MechaChipType.HEAD to 0)
+                    add(MechaChipType.HEAD to 1)
+                    add(MechaChipType.HEAD to 1)
+                    add(MechaChipType.HEAD to 1)
                     add(MechaChipType.BODY to 1)
                 }
             ),
@@ -227,6 +245,7 @@ class MechaActionSelector(private val options: List<Option>) :
         override val riskFactor: Int = 200,
         val learningLevelFactor: Int = 60,
         val overdriveGaugeFactor: Int = 5000,
+        val overdriveThreshold: Int = 500,
     ) : BaseOption {
         override fun generateSelector() = MechaActionSelector(listOf(this))
         override fun serialize() = serializer.encodeToString(this)
@@ -262,6 +281,9 @@ class MechaActionSelector(private val options: List<Option>) :
         return when (action) {
             MechaOverdrive -> calcOverdriveScore(context)
             is MechaTuning -> calcTuningScore(context, action)
+//            else -> if (context.state.turn in 13..24) {
+//                calcJuniorLaterHalfScore(context, action)
+//            } else null
             else -> null
         }
     }
@@ -280,25 +302,48 @@ class MechaActionSelector(private val options: List<Option>) :
     }
 
     private fun calcOverdriveScore(context: Context): Double {
-        val mechaStatus = context.state.mechaStatus ?: return 0.0
-        val turn = context.state.turn
         // トレーニング以外を行いたいターンは発動しない
         if (context.maxAction?.first !is Training) return 0.0
-        // 計算の高速化のため、単純なルールで実装
-        val activate = when {
+        return if (isOverdriveAvailableTurn(context)) 10000000.0 else 0.0
+    }
+
+    private fun isOverdriveAvailableTurn(context: Context): Boolean {
+        val mechaStatus = context.state.mechaStatus ?: return false
+        val turn = context.state.turn
+        return when {
             // 2ターン目までは初期ODゲージ上昇×2の場合のみ発動
             turn <= 2 -> mechaStatus.overdriveGauge == 6
 
-            // ジュニア前半/シニア後半以降は最速発動
-            turn <= 12 || turn >= 61 -> true
+            // シニア最終盤は発動（スーパーオーバードライブ前提）
+            turn >= 71 -> true
 
             // 次回チューニング直後にODゲージMAXになるよう調整
             // （発動して残りターン＜必要ゲージになるなら発動しない）
-            (12 - (turn - 1) % 12) < 9 - mechaStatus.overdriveGauge -> false
+            turn >= 13 && (12 - (turn - 1) % 12) < 9 - mechaStatus.overdriveGauge -> false
 
-            else -> true
+            else -> {
+                if (mechaStatus.overdriveGauge == 6) return true
+                val overdriveThreshold = if (mechaStatus.overdriveGauge == 5) {
+                    context.option.overdriveThreshold * 2 / 3
+                } else context.option.overdriveThreshold
+                val odState = context.state.applyMechaOverdrive()
+                val odContext = Context(context.option, odState)
+                val odActions = odState.predictTrainingResult().let {
+                    MechaCalculator.predictScenarioActionParams(odState, it.asList())
+                }
+                odActions.forEach {
+                    odContext.add(it, calcBaseScore(odContext, it, 0.0))
+                }
+                val odMaxScore = odContext.maxAction?.second ?: 0.0
+                val currentMaxScore = max(1.0, context.maxAction?.second ?: 0.0)
+                if (DEBUG) {
+                    println("OD turn ${odState.turn} diff ${odMaxScore - currentMaxScore} rate ${odMaxScore / currentMaxScore} threshold $overdriveThreshold")
+                    println("  current: ${context.maxAction?.second} ${context.maxAction?.first?.toShortString()}")
+                    println("  OD: ${odContext.maxAction?.second} ${odContext.maxAction?.first?.toShortString()}")
+                }
+                return odMaxScore - currentMaxScore >= overdriveThreshold
+            }
         }
-        return if (activate) 10000000.0 else 0.0
     }
 
     private fun calcTuningScore(context: Context, action: MechaTuning): Double {
@@ -310,5 +355,30 @@ class MechaActionSelector(private val options: List<Option>) :
         val targetPt = tuningTargets.count { it.first == result.type && it.second == result.index }
         if (DEBUG) println("Tuning $result $currentPt / $targetPt")
         return if (currentPt < targetPt) 10000000.0 else 0.0
+    }
+
+    private fun calcJuniorLaterHalfScore(context: Context, action: Action): Double {
+        val mechaStatus = context.state.mechaStatus ?: return 0.0
+        return calcBaseScore(context, action, 0.0) + when (action) {
+            is Training -> {
+                // OD+多人数なら実行
+                if (action.failureRate >= 10) 0.0 else {
+                    val relationCount = action.support.count { it.relation < it.card.requiredRelation }
+                    val overdriveBonus = if (isOverdriveAvailableTurn(context)) mechaStatus.overdriveGauge else 0
+                    if (DEBUG) println("  MechaJunior ${action.toShortString()} relation $relationCount overdrive ${mechaStatus.overdrive} overdriveGauge $overdriveBonus")
+                    if (mechaStatus.overdrive || relationCount + overdriveBonus >= 6) {
+                        1000000.0
+                    } else 0.0
+                }
+            }
+
+            is Race -> {
+                // 連続出走以外はできるだけ出走する
+                if (DEBUG) println("  MechaJunior ${action.toShortString()} continuousRace ${context.state.continuousRace}")
+                if (context.state.continuousRace) -100000.0 else 100000.0
+            }
+
+            else -> 0.0
+        }
     }
 }
