@@ -18,6 +18,7 @@ fun doSimulation2(
     testCount: Int,
     option: ActionSelectorGenerator,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
 ) {
     doSimulation2(
         scenario,
@@ -30,6 +31,7 @@ fun doSimulation2(
         testCount,
         { option.generateSelector() },
         evaluateSetting,
+        evaluateUpperRate,
     )
 }
 
@@ -44,6 +46,7 @@ fun doSimulation2(
     testCount: Int,
     selector: () -> ActionSelector,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
 ) {
     doSimulation2(
         scenario,
@@ -51,11 +54,12 @@ fun doSimulation2(
         defaultSupport,
         Store.supportList.filter {
             talent.contains(it.talent) && it.rarity in rarity && (it.type == targetStatus)
-        }.sortedBy { -it.rarity * 1000000 + it.id * 10 + it.talent },
+        }.sortedBy { -it.rarity * 1000000 + -it.id * 10 + it.talent },
         factor,
         testCount,
         selector,
         evaluateSetting,
+        evaluateUpperRate,
     )
 }
 
@@ -68,6 +72,7 @@ fun doSimulation2(
     testCount: Int,
     option: ActionSelectorGenerator,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
 ) {
     doSimulation2(
         scenario,
@@ -78,6 +83,7 @@ fun doSimulation2(
         testCount,
         { option.generateSelector() },
         evaluateSetting,
+        evaluateUpperRate,
     )
 }
 
