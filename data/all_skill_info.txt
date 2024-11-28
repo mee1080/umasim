@@ -1210,6 +1210,15 @@ Drain for rose
 ->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50
 「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度4500、持続4.0
 
+Crystal Mist
+[Glacialis Vega]アドマイヤベガ 固有
+最終コーナー以降で中団以降にいると加速力が上がる、さらに2400mのレースならすごく上がる＜作戦・追込＞
+評価点340、人気:パワー60、確定発動
+->running_style==4&is_finalcorner==1&order_rate>=40&course_distance==2400
+「追込、最終コーナー以降、順位率40以上（チャンミ4～/LoH5～）、距離==2400」、加速5000、持続4.0
+->running_style==4&is_finalcorner==1&order_rate>=40
+「追込、最終コーナー以降、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続4.0
+
 灯穂
 [夢ノ金原]イナリワン 固有
 終盤のコーナーで後方から詰め寄ると最終直線で速度が上がる終盤のコーナーで追い抜いた回数に応じて効果が増える
@@ -1461,6 +1470,15 @@ Illuminate you
 「中盤、順位率40～80（チャンミ4～7/LoH5～9）」、体力750、現在速度-1500、持続1.2
 ->is_activate_other_skill_detail==1&base_stamina>=1200&phase>=2
 「上記効果発動後、基礎スタミナ>=1200、終盤」、現在速度1500、持続8.0
+
+Joy to the World
+[Celestial Road]ナリタトップロード 固有
+レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度が少し上がるゴールまですごく遠いとすごく上がる
+評価点340、人気:スピード60、確定発動
+phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度4500、持続5.0
+phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
 
 Immortal Work
 [Jetblack Automaton]シンボリクリスエス 固有
@@ -2616,6 +2634,12 @@ Drain for rose
 ->distance_rate>=50&corner!=0&order_rate>=20&order_rate<=50
 「距離割合>=50、コーナー、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続2.4
 
+Crystal Mist
+最終コーナー以降で中団以降にいると加速力がわずかに上がる＜作戦・追込＞
+評価点180、SP200、人気:パワー15
+->running_style==4&is_finalcorner==1&order_rate>=40
+「追込、最終コーナー以降、順位率40以上（チャンミ4～/LoH5～）」、加速2000、持続2.4
+
 灯穂
 終盤のコーナーで後方から詰め寄ると最終直線で速度がわずかに上がる終盤のコーナーで追い抜いた回数に応じて効果が増える
 評価点180、SP200、人気:スピード15
@@ -2829,6 +2853,14 @@ Illuminate you
 「中盤、順位率40～80（チャンミ4～7/LoH5～9）」、体力350、現在速度-1500、持続1.2
 ->is_activate_other_skill_detail==1&base_stamina>=1200&phase>=2
 「上記効果発動後、基礎スタミナ>=1200、終盤」、現在速度350、持続4.8
+
+Joy to the World
+レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度がちょっと上がるゴールまですごく遠いと少し上がる
+評価点180、SP200、人気:スピード15
+phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度2500、持続3.0
+phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
 
 Immortal Work
 レース中間地点で中団にいると最終直線で速度がわずかに上がる
@@ -4611,6 +4643,13 @@ Breakaway Star
 ->running_style==2&order_rate<=50&phase_laterhalf_random==1
 「先行、順位率50以下（チャンミ～5/LoH～6）、中盤後半ランダム」、体力350、目標速度2500、持続3.0
 
+朝腹、朝腹、かやすしや♪
+[紫雲の夢見取り]トウカイテイオー 進化(余裕綽々)
+レース中盤始めの方に前の方にいると持久力をわずかに使い速度をすごく上げる＜作戦・先行＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==2&phase_firsthalf_random==1&order_rate<=50
+「先行、中盤前半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、体力-100、持続3.0
+
 名優の余裕
 [エレガンス・ライン]メジロマックイーン 進化(余裕綽々)
 レース中盤が迫ったとき前の方にいると持久力を回復し速度がわずかに上がる＜作戦・先行＞
@@ -6339,6 +6378,13 @@ Gluttony's Grip
 ->distance_type==4&phase_random==1
 「長距離、中盤ランダム」、前方のウマ娘（5人）[体力-100]、体力550、持続0.0
 
+ノイズキャンセリング
+[Belphegor's Prime]エアシャカール 進化(スタミナグリード)
+レース中盤に中団で追い抜かれると前に出て、前5人までのウマ娘の持久力をわずかに削る＜長距離＞
+評価点508、進化元SP320、人気:スタミナ30/パワー30
+->distance_type==4&phase==1&change_order_onetime>0&order_rate>=50&order_rate<=80
+「長距離、中盤、追い抜かれ、順位率50～80（チャンミ5～7/LoH6～9）」、前方のウマ娘（5人）[体力-100]、現在速度3500、持続3.0
+
 明けぬ夜はない！
 [花形・弥栄之翠]サトノダイヤモンド 進化(スタミナグリード)
 レース中盤で後ろの方にいると前方の持久力をわずかに奪いさらに速度がわずかに上がる＜長距離＞
@@ -8036,6 +8082,13 @@ U.A.F. 進化(破竹の勢い)
 ->is_badstart==0&running_style==2&distance_type==4&phase_firsthalf_random==1
 「出遅れ無し、先行、長距離、中盤前半ランダム」、体力950、持続0.0
 
+ひたむきサンタクロース
+[Celestial Road]ナリタトップロード 進化(一意専心)
+中盤始めの方で持久力をすごく回復する＜作戦・先行＞
+評価点633、進化元SP340、人気:スタミナ60
+->running_style==2&phase_firsthalf_random==1
+「先行、中盤前半ランダム」、体力750、持続0.0
+
 抜かりなし
 出遅れずにスタートを切れると中盤始めの方で持久力を少し回復する＜先行・長距離＞
 評価点217、SP170、人気:スタミナ20
@@ -9717,6 +9770,15 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 ->is_activate_other_skill_detail==1&phase_firsthalf_random==2
 「上記効果発動後、終盤前1/4ランダム」、現在速度4500、持続2.4
 
+氷星融解
+[Glacialis Vega]アドマイヤベガ 進化(一張一弛)
+レース終盤始めの方にすごく前に出るさらに2400mのレースならしばらくの間すごく前に出る＜中距離＞
+評価点633、進化元SP320、人気:パワー60
+->distance_type==3&phase_firsthalf_random==2&course_distance==2400
+「中距離、終盤前1/4ランダム、距離==2400」、現在速度4500、持続4.0
+->distance_type==3&phase_firsthalf_random==2
+「中距離、終盤前1/4ランダム」、現在速度4500、持続2.4
+
 麗しき転身
 [Future Weaver]シーザリオ 進化(一張一弛)
 レース中盤が迫ったとき速度をわずかに落とすその後レース終盤始めの方にものすごく前に出る＜中距離＞
@@ -9780,6 +9842,13 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点508、SP160(合計320)、人気:スピード60
 ->running_style==2&phase_random==1
 「先行、中盤ランダム」、目標速度4500、体力-200、持続2.4
+
+暗い夜道もお任せを！
+[Celestial Road]ナリタトップロード 進化(影従打破)
+レース終盤が迫ったとき持久力をすごく使ってしばらくの間速度をすごく上げる＜作戦・先行＞
+評価点633、進化元SP320、人気:スピード60
+->running_style==2&phase_laterhalf_random==1
+「先行、中盤後半ランダム」、目標速度4500、体力-400、持続4.0
 
 アグレッシブ
 レース中盤に持久力を少し使って速度を少し上げる＜作戦・先行＞
@@ -9886,6 +9955,45 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点217、SP160、人気:スピード20
 ->running_style==3&phase_firsthalf_random==1&order_rate>=40
 「差し、中盤前半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
+
+追跡者
+レース中盤に中団以降にいると速度が上がる＜追込・中距離＞
+評価点508、SP170(合計340)、人気:スピード60
+->running_style==4&distance_type==3&phase_random==1&order_rate>=40
+「追込、中距離、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続3.0
+
+アル・ワーキを追いかけて
+[Glacialis Vega]アドマイヤベガ 進化(追跡者)
+レース中盤に中団以降にいると速度がすごく上がる、さらに2400mのレースならしばらくの間速度がすごく上がる＜追込・中距離＞
+評価点633、進化元SP340、人気:スピード60
+->running_style==4&distance_type==3&phase_random==1&order_rate>=40&course_distance==2400
+「追込、中距離、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）、距離==2400」、目標速度4500、持続4.0
+->running_style==4&distance_type==3&phase_random==1&order_rate>=40
+「追込、中距離、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度4500、持続3.0
+
+這い寄る足音
+レース中盤に中団以降にいると速度がわずかに上がる＜追込・中距離＞
+評価点217、SP170、人気:スピード20
+->running_style==4&distance_type==3&phase_random==1&order_rate>=40
+「追込、中距離、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続3.0
+
+勇猛果敢
+レース中盤に中団以降にいると持久力を少し使って速度をすごく上げる＜マイル＞
+評価点508、SP160(合計320)、人気:スピード60
+->distance_type==2&order_rate>=40&phase_random==1
+「マイル、順位率40以上（チャンミ4～/LoH5～）、中盤ランダム」、目標速度4500、体力-200、持続2.4
+
+ハイピッチ
+レース中盤に中団以降にいると持久力を少し使って速度を少し上げる＜マイル＞
+評価点217、SP160、人気:スピード20
+->distance_type==2&order_rate>=40&phase_random==1
+「マイル、順位率40以上（チャンミ4～/LoH5～）、中盤ランダム」、目標速度2500、体力-200、持続2.4
+
+一歩ずつ前へ
+レース中盤に中団以降にいると速度がわずかに上がる
+評価点217、SP180、人気:スピード20
+->phase_random==1&order_rate>=40
+「中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
