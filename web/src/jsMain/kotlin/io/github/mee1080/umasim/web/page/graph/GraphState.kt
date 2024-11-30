@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.web.page.graph
 
 import androidx.compose.runtime.Immutable
+import io.github.mee1080.utility.Expression
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 

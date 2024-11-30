@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.web.page.graph.*
 import io.github.mee1080.umasim.web.state.WebConstants
+import io.github.mee1080.utility.Expression
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.replaced
 import kotlinx.browser.localStorage

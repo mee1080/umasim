@@ -24,7 +24,7 @@
  *
  * For more information, please refer to <https://unlicense.org/>
  */
-package io.github.mee1080.umasim.web.page.graph
+package io.github.mee1080.utility
 
 import kotlin.math.*
 
@@ -157,10 +157,10 @@ class Expression private constructor(private val tokens: List<TokenOrBracket>) {
                 }
 
                 is OperatorToken -> {
-                    val last = operatorStack.lastOrNull()
-                    if (last != null && last >= token) {
-                        addAll(operatorStack.reversed())
-                        operatorStack.clear()
+                    var last = operatorStack.lastOrNull()
+                    while (last != null && last >= token) {
+                        add(operatorStack.removeLast())
+                        last = operatorStack.lastOrNull()
                     }
                     operatorStack.add(token)
                 }
