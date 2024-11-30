@@ -29,6 +29,7 @@ kotlin {
                 implementation(npm("@material/web", libs.versions.materialWeb.get()))
                 implementation(libs.kotlinx.serializationJson)
                 implementation(libs.kotlinx.coroutinesCore)
+                implementation(libs.ktor.clientJs)
             }
         }
     }

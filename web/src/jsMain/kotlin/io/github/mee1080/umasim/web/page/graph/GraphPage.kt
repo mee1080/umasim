@@ -29,6 +29,10 @@ fun GraphPage(
     LaunchedEffect(Unit) {
         viewModel.generateGraphData()
     }
+    if (state.loading) {
+        Text("Loading...")
+        return
+    }
     MainArea(viewModel, state, slim)
     MdDialog(
         state.dialogData != null,
@@ -58,7 +62,7 @@ private fun MainArea(
     state: GraphState,
     slim: Boolean,
 ) {
-    var divider by remember { mutableStateOf<Double?>(null) }
+    var divider by remember { mutableStateOf<Double?>(0.0) }
     Div({ classes(S.wrapper) }) {
         Div({ classes(S.header) }) {
             MdFilledButton("フィルタ") {

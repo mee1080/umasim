@@ -26,6 +26,10 @@ import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.utility.Expression
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.replaced
+import io.ktor.client.*
+import io.ktor.client.engine.js.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.browser.localStorage
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -40,12 +44,16 @@ class GraphViewModel(private val root: ViewModel) {
 
         private const val maxTickCount = 10
 
-        private fun supportToGraphEntry(card: SupportCard): GraphEntry {
+        private fun supportToGraphEntry(
+            card: SupportCard,
+            simulationResults: Map<Int, List<Map<String, Double>>>,
+        ): GraphEntry {
             val initialStatus = card.initialStatus(emptyList())
             val noSpecialUniqueCondition = WebConstants.noSpecialUniqueCondition(card)
             val withSpecialUniqueCondition = WebConstants.withSpecialUniqueCondition
+            val simulationResult = simulationResults[card.id]?.get(card.talent) ?: emptyMap()
             return GraphEntry(
-                mapOf(
+                simulationResult + mapOf(
                     "initialRelation" to card.initialRelation.toDouble(),
                     "initialSpeed" to initialStatus.speed.toDouble(),
                     "initialStamina" to initialStatus.stamina.toDouble(),
@@ -76,7 +84,7 @@ class GraphViewModel(private val root: ViewModel) {
                     "specialityRate" to card.specialtyRate(0, noSpecialUniqueCondition).toDouble(),
                     "specialityRate2" to card.specialtyRate(0, withSpecialUniqueCondition).toDouble(),
                     "hintLevel" to card.hintLevel.toDouble(),
-                    "hintFrequency" to card.hintFrequency.toDouble(),
+                    "hintFrequency" to card.hintFrequency,
                     "wisdomFriendRecovery" to card.wisdomFriendRecovery(noSpecialUniqueCondition).toDouble(),
                     "wisdomFriendRecovery2" to card.wisdomFriendRecovery(withSpecialUniqueCondition).toDouble(),
                 )
@@ -95,28 +103,62 @@ class GraphViewModel(private val root: ViewModel) {
         localStorage.setItem(KEY_FACTOR_LIST, Json.encodeToString(state.factorList))
     }
 
-    fun generateGraphData() {
+    suspend fun generateGraphData() {
+        updateState { copy(loading = true) }
         val factorList = localStorage.getItem(KEY_FACTOR_LIST)?.let {
             Json.decodeFromString<List<GraphFactor>>(it)
         } ?: emptyList()
+        val simulationResults = loadCsv()
         val baseData = Store.supportList
-            .filter { it.type == StatusType.SPEED }
+            .filter { it.type == StatusType.SPEED && it.rarity >= 2 }
             .groupBy { it.id }
             .map { (id, cardList) ->
-                GraphRowData(id, cardList.first().name, cardList.sortedBy { it.talent }.map { supportToGraphEntry(it) })
+                GraphRowData(
+                    id, cardList.first().name,
+                    cardList.sortedBy { it.talent }.map { supportToGraphEntry(it, simulationResults) },
+                )
             }
             .sortedByDescending { it.id }
         val initialFactorList = factorList.map { factor ->
             val template = graphFactorTemplates.firstOrNull { it.id == factor.templateId } ?: graphFactorTemplates[0]
             factor.copy(template = template).updateExpression()
         }.ifEmpty {
-            listOf(factorA, factorB, factorC, factorD, factorE)
+            defaultGraphFactors.map { it.updateExpression() }
         }
 
         updateState {
-            copy(baseData = baseData, factorList = initialFactorList).calcDisplayData()
+            copy(
+                loading = false,
+                baseData = baseData,
+                factorList = initialFactorList,
+            ).calcDisplayData()
         }
     }
+
+    private suspend fun loadCsv(): Map<Int, List<Map<String, Double>>> = kotlin.runCatching {
+        val text = HttpClient(Js)
+            .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/simulation/speed_20241130.csv")
+            .bodyAsText()
+        val lines = text.split("\n")
+        val result = mutableMapOf<Int, MutableList<Map<String, Double>>>()
+        for (line in lines) {
+            val data = line.trim().split(",")
+            if (data.size < 9) continue
+            val id = data[0].toInt()
+            val index = data[1].toInt()
+            val list = result.getOrPut(id) { MutableList(5) { emptyMap() } }
+            list[index] = mapOf(
+                "speed" to data[2].toDouble(),
+                "stamina" to data[3].toDouble(),
+                "power" to data[4].toDouble(),
+                "guts" to data[5].toDouble(),
+                "wisdom" to data[6].toDouble(),
+                "skillPt" to data[7].toDouble(),
+                "totalHintLevel" to data[8].toDouble(),
+            )
+        }
+        result
+    }.onFailure { it.printStackTrace() }.getOrElse { emptyMap() }
 
     fun addGraphFactor() {
         updateState {

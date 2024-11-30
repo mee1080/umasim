@@ -7,6 +7,7 @@ import kotlinx.serialization.Transient
 
 @Immutable
 data class GraphState(
+    val loading: Boolean = true,
     val baseData: List<GraphRowData> = emptyList(),
     val factorList: List<GraphFactor> = emptyList(),
     val displayData: List<GraphRowDisplayData> = emptyList(),
@@ -54,10 +55,6 @@ data class GraphFactor(
     val template: GraphFactorTemplate = graphFactorTemplates[0],
 )
 
-private fun defaultGraphFactor(coefficient: Double, expressionInput: String): GraphFactor {
-    return GraphFactor(coefficient, expressionInput, expression = Expression.parseOrNull(expressionInput))
-}
-
 @Immutable
 data class GraphFactorTemplate(
     val id: Int,
@@ -73,16 +70,26 @@ data class GraphFactorTemplate(
 
 val graphFactorTemplates = listOf(
     GraphFactorTemplate(0, "手入力", ""),
-    GraphFactorTemplate(1, "a", "a"),
-    GraphFactorTemplate(2, "b", "b"),
-    GraphFactorTemplate(3, "c", "c"),
-    GraphFactorTemplate(4, "d", "d"),
-    GraphFactorTemplate(5, "e", "e"),
-    GraphFactorTemplate(6, "aとbの積", "a*b"),
+
+    GraphFactorTemplate(1, "スピード", "speed"),
+    GraphFactorTemplate(2, "スタミナ", "stamina"),
+    GraphFactorTemplate(3, "パワー", "power"),
+    GraphFactorTemplate(4, "根性", "guts"),
+    GraphFactorTemplate(5, "賢さ", "wisdom"),
+    GraphFactorTemplate(6, "スキルPt", "skillPt"),
+    GraphFactorTemplate(7, "合計ヒントLv", "totalHintLevel"),
+
+    GraphFactorTemplate(11, "5ステSP合計", "speed + stamina + power + guts + wisdom + skillPt"),
+    GraphFactorTemplate(12, "5ステSP合計+ヒント×5", "speed + stamina + power + guts + wisdom + skillPt + totalHintLevel * 5"),
+
+    GraphFactorTemplate(21, "スピード得意性能", "speed + power + skillPt"),
+    GraphFactorTemplate(31, "スタミナ得意性能", "stamina + guts + skillPt"),
+    GraphFactorTemplate(41, "パワー得意性能", "power + stamina + skillPt"),
+    GraphFactorTemplate(51, "根性得意性能", "guts + speed + power + skillPt"),
+    GraphFactorTemplate(61, "賢さ得意性能", "wisdom + speed + skillPt"),
 )
 
-val factorA = defaultGraphFactor(1.0, "a")
-val factorB = defaultGraphFactor(1.0, "b")
-val factorC = defaultGraphFactor(1.0, "c")
-val factorD = defaultGraphFactor(1.0, "d")
-val factorE = defaultGraphFactor(1.0, "e")
+val defaultGraphFactors = List(7) {
+    val template = graphFactorTemplates[it + 1]
+    GraphFactor(templateId = template.id, template = template)
+}
