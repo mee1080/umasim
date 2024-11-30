@@ -57,6 +57,8 @@ class ViewModel(val scope: CoroutineScope) {
 
     val lessonViewModel = LessonViewModel(this)
 
+    val graphViewModel = GraphViewModel(this)
+
     fun navigate(page: Page) {
         state = state.copy(page = page)
     }

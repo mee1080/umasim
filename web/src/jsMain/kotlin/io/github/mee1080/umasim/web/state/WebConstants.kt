@@ -91,25 +91,26 @@ object WebConstants {
         }
     }
 
-    private val SupportCard.noSpecialUniqueCondition
-        get() = SpecialUniqueCondition(
-            type,
-            1,
-            5,
-            0,
-            emptyMap(),
-            0,
-            Status(maxHp = 100, hp = 100),
-            0,
-            1,
-            0,
-            0,
-            0,
-            false,
-            0,
-        )
+    fun noSpecialUniqueCondition(card: SupportCard) = SpecialUniqueCondition(
+        card.type,
+        1,
+        5,
+        0,
+        emptyMap(),
+        0,
+        Status(maxHp = 100, hp = 100),
+        0,
+        1,
+        0,
+        0,
+        0,
+        false,
+        0,
+    )
 
-    private val SupportCard.withSpecialUniqueCondition
+    private val SupportCard.noSpecialUniqueCondition get() = noSpecialUniqueCondition(this)
+
+    val withSpecialUniqueCondition
         get() = SpecialUniqueCondition(
             StatusType.NONE,
             5,

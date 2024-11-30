@@ -113,13 +113,17 @@ class ScopedCSSVar<T : StylePropertyValue>(
     operator fun invoke(other: CSSVar<T>, defaultValue: T) = invoke(scope, other, defaultValue)
 }
 
-class CSSVarProperty<T : StylePropertyValue>(private val name: String) : ReadWriteProperty<StyleScope, T> {
+class CSSVarProperty<T : StylePropertyValue>(name: String = generateId()) : ReadWriteProperty<StyleScope, T> {
 
-    override fun getValue(thisRef: StyleScope, property: KProperty<*>) = "var($name)".unsafeCast<T>()
+    private val prefixName = if (name.startsWith("--")) name else "--$name"
+
+    private val noPrefixName = if (name.startsWith("--")) name.substring(2) else name
+
+    override fun getValue(thisRef: StyleScope, property: KProperty<*>) = "var($prefixName)".unsafeCast<T>()
 
     override fun setValue(thisRef: StyleScope, property: KProperty<*>, value: T) {
         thisRef.variable(variableName(thisRef), value)
     }
 
-    private fun variableName(scope: StyleScope) = if (scope is CSSBuilder) name.substring(2) else name
+    private fun variableName(scope: StyleScope) = if (scope is CSSBuilder) noPrefixName else prefixName
 }

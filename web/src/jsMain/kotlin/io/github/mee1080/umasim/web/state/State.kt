@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
 import io.github.mee1080.umasim.scenario.climax.WeightItem
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
+import io.github.mee1080.umasim.web.page.graph.GraphState
 
 // https://fonts.google.com/icons
 enum class Page(val displayName: String, val icon: String) {
@@ -31,12 +32,14 @@ enum class Page(val displayName: String, val icon: String) {
     Rotation("ローテーション", "event_note"),
     Lesson("レッスン", "queue_music"),
     Simulation("シミュレーション", "person_raised_hand"),
+    Graph("グラフ", "bar_chart"),
 }
 
 data class State(
     val page: Page = Page.Top,
     val rotationState: RotationState? = null,
     val lessonState: LessonState = LessonState(),
+    val graphState: GraphState = GraphState(),
 
     val divideMode: Boolean = false,
     val scenario: Scenario = Scenario.MECHA,

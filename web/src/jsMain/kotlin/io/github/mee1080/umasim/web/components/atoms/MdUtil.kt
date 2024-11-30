@@ -120,6 +120,22 @@ object MdClass {
     const val surfaceDimText = "surface-dim-text"
     const val surfaceBright = "surface-bright"
     const val surfaceBrightText = "surface-bright-text"
+
+    const val displayLarge = "md-typescale-display-large"
+    const val displayMedium = "md-typescale-display-medium"
+    const val displaySmall = "md-typescale-display-small"
+    const val headlineLarge = "md-typescale-headline-large"
+    const val headlineMedium = "md-typescale-headline-medium"
+    const val headlineSmall = "md-typescale-headline-small"
+    const val bodyLarge = "md-typescale-body-large"
+    const val bodyMedium = "md-typescale-body-medium"
+    const val bodySmall = "md-typescale-body-small"
+    const val labelLarge = "md-typescale-label-large"
+    const val labelMedium = "md-typescale-label-medium"
+    const val labelSmall = "md-typescale-label-small"
+    const val titleLarge = "md-typescale-title-large"
+    const val titleMedium = "md-typescale-title-medium"
+    const val titleSmall = "md-typescale-title-small"
 }
 
 @Suppress("unused")

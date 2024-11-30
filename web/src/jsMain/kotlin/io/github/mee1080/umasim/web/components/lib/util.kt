@@ -21,7 +21,9 @@
 package io.github.mee1080.umasim.web.components.lib
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import kotlinx.browser.document
+import kotlinx.browser.window
 import org.jetbrains.compose.web.attributes.AttrsScope
 import org.jetbrains.compose.web.css.StyleScope
 import org.jetbrains.compose.web.css.StyleSheet
@@ -30,6 +32,10 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.stringPresentation
 import org.w3c.dom.HTMLElement
 import org.w3c.dom.HTMLStyleElement
+import org.w3c.dom.MediaQueryList
+import org.w3c.dom.MediaQueryListEvent
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventListener
 
 const val ROOT_ELEMENT_ID = "root"
 
@@ -73,3 +79,54 @@ private fun setProp(name: String) = propCache.getOrPut(name) {
 }
 
 fun AttrsScope<*>.prop(prop: String, value: Any?) = prop(setProp(prop), value)
+
+fun appendCss(css: String) {
+    val element = document.createElement("style") as HTMLStyleElement
+    element.textContent = css
+    document.head?.appendChild(element)
+}
+
+fun MediaQueryList.addEventListener(event: String, listener: (MediaQueryListEvent) -> Unit) {
+    asDynamic().addEventListener(event, listener)
+}
+
+fun watchPrefersColorScheme(listener: (dark: Boolean) -> Unit) {
+    val target = window.matchMedia("(prefers-color-scheme: dark)")
+    target.addEventListener("change") {
+        listener(it.matches)
+    }
+    listener(target.matches)
+}
+
+@Composable
+fun onWindowResize(onResize: () -> Unit) {
+    DisposableEffect(Unit) {
+        val listener = object : EventListener {
+            override fun handleEvent(event: Event) {
+                onResize()
+            }
+        }
+        window.addEventListener("resize", listener)
+        onDispose {
+            window.removeEventListener("resize", listener)
+        }
+    }
+}
+
+@Composable
+fun onDocumentHidden(onHidden: () -> Unit) {
+    DisposableEffect(Unit) {
+        val listener = object : EventListener {
+            override fun handleEvent(event: Event) {
+                if (document.asDynamic().visibilityState === "hidden") {
+                    onHidden()
+                }
+            }
+        }
+        document.addEventListener("visibilitychange", listener)
+        onDispose {
+            onHidden()
+            document.removeEventListener("visibilitychange", listener)
+        }
+    }
+}

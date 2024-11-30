@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.lib.ROOT_ELEMENT_ID
 import io.github.mee1080.umasim.web.components.lib.dvh
 import io.github.mee1080.umasim.web.components.lib.dvw
+import io.github.mee1080.umasim.web.page.graph.GraphPage
 import io.github.mee1080.umasim.web.page.lesson.LessonPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
 import io.github.mee1080.umasim.web.page.simulation.SimulationPage
@@ -67,6 +68,7 @@ fun main() {
                     Page.Rotation -> RotationPage(model.rotationViewModel, model.state.rotationState)
                     Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
                     Page.Simulation -> SimulationPage(model.state)
+                    Page.Graph -> GraphPage(model.graphViewModel, model.state.graphState)
                 }
             }
             Div({
@@ -77,7 +79,11 @@ fun main() {
                 MdElevation(3)
                 MdDivider()
                 MdPrimaryTabs(
-                    selection = Page.entries,
+                    selection = listOf(
+                        Page.Top,
+                        Page.Simulation,
+                        Page.Graph,
+                    ),
                     selectedItem = model.state.page,
                     itemToLabel = { it.displayName },
                     itemToIcon = { it.icon },
