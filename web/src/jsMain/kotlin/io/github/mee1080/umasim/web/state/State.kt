@@ -27,12 +27,12 @@ import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.page.graph.GraphState
 
 // https://fonts.google.com/icons
-enum class Page(val displayName: String, val icon: String) {
-    Top("トレーニング", "trending_up"),
-    Rotation("ローテーション", "event_note"),
-    Lesson("レッスン", "queue_music"),
-    Simulation("シミュレーション", "person_raised_hand"),
-    Graph("グラフ", "bar_chart"),
+enum class Page(val path: String, val displayName: String, val icon: String) {
+    Top("", "トレーニング", "trending_up"),
+    Rotation("rotation", "ローテーション", "event_note"),
+    Lesson("lesson", "レッスン", "queue_music"),
+    Simulation("simulation", "シミュレーション", "person_raised_hand"),
+    Graph("graph", "グラフ", "bar_chart"),
 }
 
 data class State(

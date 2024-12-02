@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.web
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import io.github.mee1080.umasim.data.StoreLoader
@@ -33,6 +34,7 @@ import io.github.mee1080.umasim.web.page.top.RootPage
 import io.github.mee1080.umasim.web.state.Page
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
+import kotlinx.browser.window
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.renderComposable
@@ -40,9 +42,15 @@ import org.jetbrains.compose.web.renderComposable
 fun main() {
     StoreLoader.load()
 
+    val rootPath = window.location.pathname
+    val hash = window.location.hash
     renderComposable(rootElementId = ROOT_ELEMENT_ID) {
         val scope = rememberCoroutineScope()
-        val model = remember { ViewModel(scope) }
+        val model = remember { ViewModel(scope, hash.substring(1)) }
+        LaunchedEffect(model.state.page) {
+            val path = model.state.page.path
+            window.history.replaceState(null, "", if (path.isEmpty()) rootPath else "$rootPath#$path")
+        }
         Style(AppStyle)
         Div({
             classes(MdClass.background, MdClass.onBackgroundText)

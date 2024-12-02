@@ -41,7 +41,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Stable
-class ViewModel(val scope: CoroutineScope) {
+class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
     companion object {
         private const val KEY_CHARA = "umasim.chara"
@@ -718,6 +718,10 @@ class ViewModel(val scope: CoroutineScope) {
 
     init {
         updateState { state ->
+            val pathList = initialPage?.split("/")
+            val startPage = if (pathList.isNullOrEmpty()) Page.Top else {
+                Page.entries.firstOrNull { it.path == pathList.getOrNull(0) } ?: Page.Top
+            }
             val selectedChara = localStorage.getItem(KEY_CHARA)?.let { id ->
                 WebConstants.charaList.firstOrNull { it.id == id.toIntOrNull() }
             } ?: state.chara
@@ -730,6 +734,7 @@ class ViewModel(val scope: CoroutineScope) {
                 }
             val supportLoadList = loadSupportData().keys.sorted()
             state.copy(
+                page = startPage,
                 chara = selectedChara,
                 supportSelectionList = newList,
                 supportLoadList = supportLoadList,
