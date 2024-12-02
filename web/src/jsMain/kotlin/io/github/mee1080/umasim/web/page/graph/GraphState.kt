@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.web.page.graph
 
 import androidx.compose.runtime.Immutable
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.utility.Expression
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
@@ -8,6 +9,9 @@ import kotlinx.serialization.Transient
 @Immutable
 data class GraphState(
     val loading: Boolean = true,
+    val loadError: Boolean = false,
+    val targetPath: String = graphTargetCandidates.first().path,
+    val target:GraphTarget = graphTargetCandidates.first(),
     val baseData: List<GraphRowData> = emptyList(),
     val factorList: List<GraphFactor> = emptyList(),
     val displayData: List<GraphRowDisplayData> = emptyList(),
@@ -15,6 +19,17 @@ data class GraphState(
     val dialogData: Pair<GraphRowData, Int>? = null,
     val filterDialog: Boolean = false,
     val sortOrder: GraphSortOrder = GraphSortOrder.ID,
+)
+
+data class GraphTarget(
+    val path: String,
+    val type: StatusType,
+    val displayName: String,
+)
+
+val graphTargetCandidates = listOf(
+    GraphTarget("wisdom_20241202", StatusType.WISDOM, "賢さ メカスピ2スタ2パワ1賢さ1"),
+    GraphTarget("speed_20241130", StatusType.SPEED, "スピード メカスピ2スタ2パワ1賢さ1"),
 )
 
 enum class GraphSortOrder(val displayName: String) {
@@ -80,7 +95,11 @@ val graphFactorTemplates = listOf(
     GraphFactorTemplate(7, "合計ヒントLv", "totalHintLevel"),
 
     GraphFactorTemplate(11, "5ステSP合計", "speed + stamina + power + guts + wisdom + skillPt"),
-    GraphFactorTemplate(12, "5ステSP合計+ヒント×5", "speed + stamina + power + guts + wisdom + skillPt + totalHintLevel * 5"),
+    GraphFactorTemplate(
+        12,
+        "5ステSP合計+ヒント×5",
+        "speed + stamina + power + guts + wisdom + skillPt + totalHintLevel * 5"
+    ),
 
     GraphFactorTemplate(21, "スピード得意性能", "speed + power + skillPt"),
     GraphFactorTemplate(31, "スタミナ得意性能", "stamina + guts + skillPt"),

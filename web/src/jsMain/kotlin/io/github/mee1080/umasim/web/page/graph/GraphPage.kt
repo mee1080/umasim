@@ -9,6 +9,7 @@ import io.github.mee1080.umasim.web.components.lib.onWindowResize
 import io.github.mee1080.umasim.web.vm.GraphViewModel
 import io.github.mee1080.utility.roundToString
 import kotlinx.browser.window
+import kotlinx.coroutines.launch
 import org.jetbrains.compose.web.attributes.Draggable
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.Div
@@ -31,6 +32,10 @@ fun GraphPage(
     }
     if (state.loading) {
         Text("Loading...")
+        return
+    }
+    if (state.loadError) {
+        Text("データ読み込み失敗")
         return
     }
     MainArea(viewModel, state, slim)
@@ -65,6 +70,13 @@ private fun MainArea(
     var divider by remember { mutableStateOf<Double?>(0.0) }
     Div({ classes(S.wrapper) }) {
         Div({ classes(S.header) }) {
+            MdOutlinedSelect(
+                selection = graphTargetCandidates,
+                selectedItem = state.target,
+                onSelect = { viewModel.setGraphTarget(it) },
+                itemToValue = { it.path },
+                itemToDisplayText = { it.displayName },
+            )
             MdFilledButton("フィルタ") {
                 onClick { viewModel.openGraphFilterDialog() }
             }

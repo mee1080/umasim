@@ -722,6 +722,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             val startPage = if (pathList.isNullOrEmpty()) Page.Top else {
                 Page.entries.firstOrNull { it.path == pathList.getOrNull(0) } ?: Page.Top
             }
+            val graphTarget = if (startPage == Page.Graph) pathList?.getOrNull(1) else null
             val selectedChara = localStorage.getItem(KEY_CHARA)?.let { id ->
                 WebConstants.charaList.firstOrNull { it.id == id.toIntOrNull() }
             } ?: state.chara
@@ -739,7 +740,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 supportSelectionList = newList,
                 supportLoadList = supportLoadList,
                 supportLoadName = supportLoadList.firstOrNull() ?: "",
-            ).createRaceSetting()
+            ).createRaceSetting().applyIfNotNull(graphTarget) {
+                copy(graphState = graphState.copy(targetPath = it))
+            }
         }
     }
 

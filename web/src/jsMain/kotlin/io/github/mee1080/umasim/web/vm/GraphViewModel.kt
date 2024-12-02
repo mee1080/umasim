@@ -31,6 +31,7 @@ import io.ktor.client.engine.js.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.browser.localStorage
+import kotlinx.coroutines.launch
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.max
@@ -99,18 +100,43 @@ class GraphViewModel(private val root: ViewModel) {
         root.state = root.state.copy(graphState = state.update())
     }
 
+    init {
+        val factorList = localStorage.getItem(KEY_FACTOR_LIST)?.let {
+            Json.decodeFromString<List<GraphFactor>>(it)
+        } ?: emptyList()
+        val initialFactorList = factorList.map { factor ->
+            val template = graphFactorTemplates.firstOrNull { it.id == factor.templateId } ?: graphFactorTemplates[0]
+            factor.copy(template = template).updateExpression()
+        }.ifEmpty {
+            defaultGraphFactors.map { it.updateExpression() }
+        }
+
+        updateState { copy(factorList = initialFactorList) }
+    }
+
     fun saveFactorList() {
         localStorage.setItem(KEY_FACTOR_LIST, Json.encodeToString(state.factorList))
     }
 
+    fun setGraphTarget(target: GraphTarget) {
+        updateState { copy(target = target, targetPath = target.path) }
+        root.scope.launch {
+            generateGraphData()
+        }
+    }
+
     suspend fun generateGraphData() {
-        updateState { copy(loading = true) }
-        val factorList = localStorage.getItem(KEY_FACTOR_LIST)?.let {
-            Json.decodeFromString<List<GraphFactor>>(it)
-        } ?: emptyList()
-        val simulationResults = loadCsv()
+        updateState { copy(loading = true, loadError = false) }
+        val target = if (state.target.path == state.targetPath) state.target else {
+            graphTargetCandidates.firstOrNull { it.path == state.targetPath } ?: graphTargetCandidates[0]
+        }
+        val simulationResults = loadCsv(target.path)
+        if (simulationResults == null) {
+            updateState { copy(loading = false, loadError = true) }
+            return
+        }
         val baseData = Store.supportList
-            .filter { it.type == StatusType.SPEED && it.rarity >= 2 }
+            .filter { it.type == target.type && it.rarity >= 2 }
             .groupBy { it.id }
             .map { (id, cardList) ->
                 GraphRowData(
@@ -119,25 +145,19 @@ class GraphViewModel(private val root: ViewModel) {
                 )
             }
             .sortedByDescending { it.id }
-        val initialFactorList = factorList.map { factor ->
-            val template = graphFactorTemplates.firstOrNull { it.id == factor.templateId } ?: graphFactorTemplates[0]
-            factor.copy(template = template).updateExpression()
-        }.ifEmpty {
-            defaultGraphFactors.map { it.updateExpression() }
-        }
 
         updateState {
             copy(
                 loading = false,
+                target = target,
                 baseData = baseData,
-                factorList = initialFactorList,
             ).calcDisplayData()
         }
     }
 
-    private suspend fun loadCsv(): Map<Int, List<Map<String, Double>>> = kotlin.runCatching {
+    private suspend fun loadCsv(path: String): Map<Int, List<Map<String, Double>>>? = kotlin.runCatching {
         val text = HttpClient(Js)
-            .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/simulation/speed_20241130.csv")
+            .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/simulation/$path.csv")
             .bodyAsText()
         val lines = text.split("\n")
         val result = mutableMapOf<Int, MutableList<Map<String, Double>>>()
@@ -158,7 +178,7 @@ class GraphViewModel(private val root: ViewModel) {
             )
         }
         result
-    }.onFailure { it.printStackTrace() }.getOrElse { emptyMap() }
+    }.onFailure { it.printStackTrace() }.getOrNull()
 
     fun addGraphFactor() {
         updateState {
