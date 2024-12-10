@@ -4648,11 +4648,11 @@ internal val rawCourseData = """
         "finishTimeMax": 123.0,
         "corners": [
           {
-            "start": 370.0,
+            "start": 320.0,
             "length": 190.0
           },
           {
-            "start": 560.0,
+            "start": 510.0,
             "length": 190.0
           },
           {
@@ -4667,10 +4667,10 @@ internal val rawCourseData = """
         "straights": [
           {
             "start": 0.0,
-            "end": 370.0
+            "end": 320.0
           },
           {
-            "start": 750.0,
+            "start": 700.0,
             "end": 1050.0
           },
           {
@@ -4681,11 +4681,11 @@ internal val rawCourseData = """
         "slopes": [
           {
             "start": 0.0,
-            "length": 140.0,
+            "length": 90.0,
             "slope": -10000.0
           },
           {
-            "start": 145.0,
+            "start": 95.0,
             "length": 125.0,
             "slope": 20000.0
           },
@@ -4784,11 +4784,11 @@ internal val rawCourseData = """
         "finishTimeMax": 149.0,
         "corners": [
           {
-            "start": 382.0,
+            "start": 370.0,
             "length": 190.0
           },
           {
-            "start": 558.0,
+            "start": 560.0,
             "length": 190.0
           },
           {
@@ -4802,6 +4802,10 @@ internal val rawCourseData = """
         ],
         "straights": [
           {
+            "start": 0.0,
+            "end": 370.0
+          },
+          {
             "start": 750.0,
             "end": 1250.0
           },
@@ -4813,11 +4817,11 @@ internal val rawCourseData = """
         "slopes": [
           {
             "start": 0.0,
-            "length": 132.0,
+            "length": 115.0,
             "slope": -10000.0
           },
           {
-            "start": 187.0,
+            "start": 170.0,
             "length": 120.0,
             "slope": 20000.0
           },
@@ -4914,12 +4918,12 @@ internal val rawCourseData = """
         "finishTimeMax": 190.0,
         "corners": [
           {
-            "start": 348.0,
+            "start": 345.0,
             "length": 300.0
           },
           {
-            "start": 648.0,
-            "length": 300.0
+            "start": 645.0,
+            "length": 294.0
           },
           {
             "start": 1320.0,
@@ -4941,10 +4945,10 @@ internal val rawCourseData = """
         "straights": [
           {
             "start": 0.0,
-            "end": 348.0
+            "end": 345.0
           },
           {
-            "start": 948.0,
+            "start": 939.0,
             "end": 1320.0
           },
           {
@@ -4958,7 +4962,7 @@ internal val rawCourseData = """
         ],
         "slopes": [
           {
-            "start": 498.0,
+            "start": 495.0,
             "length": 595.0,
             "slope": -10000.0
           },
@@ -5010,7 +5014,18 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [
+          {
+            "start": 200.0,
+            "length": 800.0,
+            "slope": -10000.0
+          },
+          {
+            "start": 1000.0,
+            "length": 125.0,
+            "slope": 15000.0
+          }
+        ]
       },
       "10911": {
         "raceTrackId": 10009,
@@ -5045,6 +5060,11 @@ internal val rawCourseData = """
         ],
         "slopes": [
           {
+            "start": 400.0,
+            "length": 800.0,
+            "slope": -10000.0
+          },
+          {
             "start": 1200.0,
             "length": 125.0,
             "slope": 15000.0
@@ -5064,11 +5084,11 @@ internal val rawCourseData = """
         "finishTimeMax": 118.0,
         "corners": [
           {
-            "start": 330.0,
+            "start": 300.0,
             "length": 150.0
           },
           {
-            "start": 480.0,
+            "start": 450.0,
             "length": 150.0
           },
           {
@@ -5083,10 +5103,10 @@ internal val rawCourseData = """
         "straights": [
           {
             "start": 0.0,
-            "end": 330.0
+            "end": 300.0
           },
           {
-            "start": 630.0,
+            "start": 600.0,
             "end": 950.0
           },
           {
@@ -5096,12 +5116,17 @@ internal val rawCourseData = """
         ],
         "slopes": [
           {
-            "start": 105.0,
+            "start": 75.0,
             "length": 125.0,
             "slope": 15000.0
           },
           {
-            "start": 1599.0,
+            "start": 800.0,
+            "length": 800.0,
+            "slope": -10000.0
+          },
+          {
+            "start": 1600.0,
             "length": 125.0,
             "slope": 15000.0
           }
@@ -5155,9 +5180,19 @@ internal val rawCourseData = """
         ],
         "slopes": [
           {
+            "start": 0.0,
+            "length": 275.0,
+            "slope": -10000.0
+          },
+          {
             "start": 275.0,
             "length": 125.0,
             "slope": 15000.0
+          },
+          {
+            "start": 1000.0,
+            "length": 800.0,
+            "slope": -10000.0
           },
           {
             "start": 1800.0,
