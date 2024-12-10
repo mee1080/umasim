@@ -931,6 +931,15 @@ Guiding Sea
 ->is_activate_other_skill_detail==1&order_rate<=40&phase>=2&is_last_straight==1
 「上記効果発動後、順位率40以下（チャンミ～4/LoH～5）、終盤、最終直線」、目標速度4500、持続3.0
 
+鋭気のアレグロ
+[ドラマティック・チュチュ]ウインバリアシオン 固有
+レース中盤以降に追い抜くと終盤の最終直線に入ったとき少しの間速度が上がる作戦が追込で中盤以降に3回以上追い抜くと少しの間ものすごく上がる
+評価点340、人気:スピード60、確定発動
+running_style==4&phase>=2->is_last_straight_onetime==1&change_order_up_end_after>=3@is_last_straight_onetime==1&change_order_up_end_after>=2&change_order_up_middle>=1@is_last_straight_onetime==1&change_order_up_end_after>=1&change_order_up_middle>=2@is_last_straight_onetime==1&change_order_up_middle>=3
+「追込、終盤」の後「最終直線に入った時、終盤追い抜き>=3」または「最終直線に入った時、終盤追い抜き>=2、中盤追い抜き>=1」または「最終直線に入った時、終盤追い抜き>=1、中盤追い抜き>=2」または「最終直線に入った時、中盤追い抜き>=3」、目標速度5500、持続4.0
+phase>=2->is_last_straight_onetime==1&change_order_up_end_after>=1@is_last_straight_onetime==1&change_order_up_middle>=1
+「終盤」の後「最終直線に入った時、終盤追い抜き>=1」または「最終直線に入った時、中盤追い抜き>=1」、目標速度3500、持続4.0
+
 『それでは、よき旅を』
 [夢路のよすが]ドリームジャーニー 固有
 終盤突入時に後方にいるときゴールまで遠いと短い間少し前に出る、中山か阪神レース場の中距離か長距離レースならその後直線で短い間すごく前に出る
@@ -2395,6 +2404,14 @@ Guiding Sea
 「距離割合<=50、コーナー、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続3.0
 ->is_activate_other_skill_detail==1&order_rate<=40&phase>=2&is_last_straight==1
 「上記効果発動後、順位率40以下（チャンミ～4/LoH～5）、終盤、最終直線」、目標速度2500、持続1.8
+
+鋭気のアレグロ
+レース中盤以降に追い抜くと終盤の最終直線に入ったとき少しの間速度がわずかに上がる、作戦が追込で中盤以降に3回以上追い抜くと少しの間速度が上がる
+評価点180、SP200、人気:スピード15
+running_style==4&phase>=2->is_last_straight_onetime==1&change_order_up_end_after>=3@is_last_straight_onetime==1&change_order_up_end_after>=2&change_order_up_middle>=1@is_last_straight_onetime==1&change_order_up_end_after>=1&change_order_up_middle>=2@is_last_straight_onetime==1&change_order_up_middle>=3
+「追込、終盤」の後「最終直線に入った時、終盤追い抜き>=3」または「最終直線に入った時、終盤追い抜き>=2、中盤追い抜き>=1」または「最終直線に入った時、終盤追い抜き>=1、中盤追い抜き>=2」または「最終直線に入った時、中盤追い抜き>=3」、目標速度3500、持続2.4
+phase>=2->is_last_straight_onetime==1&change_order_up_end_after>=1@is_last_straight_onetime==1&change_order_up_middle>=1
+「終盤」の後「最終直線に入った時、終盤追い抜き>=1」または「最終直線に入った時、中盤追い抜き>=1」、目標速度1500、持続2.4
 
 『それでは、よき旅を』
 終盤突入時に後方にいるときゴールまで遠いと短い間ちょっと前に出る、中山か阪神レース場の中距離か長距離レースならその後直線で短い間少し前に出る
@@ -9108,6 +9125,15 @@ Enjoy the Flight
 ->phase_corner_random==1
 「中盤コーナーランダム」、目標速度3500、持続4.0
 
+邁進アン・レール
+[ドラマティック・チュチュ]ウインバリアシオン 進化(ネバーギブアップ)
+レース中盤のコーナーでしばらくの間少し前に出る、その後最終直線でわずかに前に出る
+評価点633、進化元SP360、人気:パワー60
+->phase_corner_random==1
+「中盤コーナーランダム」、現在速度2500、持続4.0
+->is_activate_other_skill_detail==1&is_last_straight==1
+「上記効果発動後、最終直線」、現在速度1500、持続3.0
+
 折れない心
 レース中盤のコーナーでしばらくの間速度がちょっと上がる
 評価点217、SP180、人気:スピード20
@@ -9438,6 +9464,19 @@ U.A.F. 進化(機先の勝負)
 評価点217、SP160、人気:スピード20
 ->running_style==4&phase_random==1
 「追込、中盤ランダム」、目標速度2500、体力-200、持続2.4
+
+肉薄
+レース後半に追い抜こうとすると速度が上がる＜作戦・追込＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==4&distance_rate>=50&is_overtake==1
+「追込、距離割合>=50、追い抜きモード」、目標速度3500、持続2.4
+
+グラン・ジュッテ
+[ドラマティック・チュチュ]ウインバリアシオン 進化(肉薄)
+レース後半に追い抜こうとすると速度がすごく上がる＜作戦・追込＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==4&distance_rate>=50&is_overtake==1
+「追込、距離割合>=50、追い抜きモード」、目標速度4500、持続2.4
 
 影踏み
 レース後半に追い抜こうとすると速度がわずかに上がる＜作戦・追込＞
@@ -9994,6 +10033,30 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点217、SP180、人気:スピード20
 ->phase_random==1&order_rate>=40
 「中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
+
+努力の結実
+レース中盤に前方にいると速度が上がる＜先行・長距離＞
+評価点508、SP170(合計340)、人気:スピード60
+->phase_random==1&running_style==2&distance_type==4&order_rate<=50
+「中盤ランダム、先行、長距離、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続3.0
+
+地道に重ねて
+レース中盤に前方にいると速度がわずかに上がる＜先行・長距離＞
+評価点217、SP170、人気:スピード20
+->phase_random==1&running_style==2&distance_type==4&order_rate<=50
+「中盤ランダム、先行、長距離、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続3.0
+
+正々堂々
+ラストスパートの最中に速度が上がる＜作戦・先行＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==2&is_lastspurt==1&phase_firsthalf_random==3
+「先行、ラストスパート、終盤1/2～3/4ランダム」、目標速度3500、持続3.0
+
+己を信じて
+ラストスパートの最中に速度がわずかに上がる＜作戦・先行＞
+評価点217、SP180、人気:スピード20
+->running_style==2&is_lastspurt==1&phase_firsthalf_random==3
+「先行、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
