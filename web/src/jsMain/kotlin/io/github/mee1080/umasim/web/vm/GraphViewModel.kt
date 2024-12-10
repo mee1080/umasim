@@ -48,11 +48,11 @@ class GraphViewModel(private val root: ViewModel) {
         private fun supportToGraphEntry(
             card: SupportCard,
             simulationResults: Map<Int, List<Map<String, Double>>>,
-        ): GraphEntry {
+        ): GraphEntry? {
             val initialStatus = card.initialStatus(emptyList())
             val noSpecialUniqueCondition = WebConstants.noSpecialUniqueCondition(card)
             val withSpecialUniqueCondition = WebConstants.withSpecialUniqueCondition
-            val simulationResult = simulationResults[card.id]?.get(card.talent) ?: emptyMap()
+            val simulationResult = simulationResults[card.id]?.get(card.talent) ?: return null
             return GraphEntry(
                 simulationResult + mapOf(
                     "initialRelation" to card.initialRelation.toDouble(),
@@ -138,11 +138,10 @@ class GraphViewModel(private val root: ViewModel) {
         val baseData = Store.supportList
             .filter { it.type == target.type && it.rarity >= 2 }
             .groupBy { it.id }
-            .map { (id, cardList) ->
-                GraphRowData(
-                    id, cardList.first().name,
-                    cardList.sortedBy { it.talent }.map { supportToGraphEntry(it, simulationResults) },
-                )
+            .mapNotNull { (id, cardList) ->
+                val entries = cardList.sortedBy { it.talent }.mapNotNull { supportToGraphEntry(it, simulationResults) }
+                if (entries.isEmpty()) return@mapNotNull null
+                GraphRowData(id, cardList.first().name, entries)
             }
             .sortedByDescending { it.id }
 
