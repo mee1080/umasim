@@ -13,49 +13,49 @@ fun simulateCook() {
 private fun speed1Power1Guts2Wisdom1Short() {
     var defaultSupport = Store.getSupportByName(
         "[アルストロメリアの夢]ヴィブロス",
-//        "[朝焼け苺の畑にて]ニシノフラワー",
+        "[朝焼け苺の畑にて]ニシノフラワー",
         "[うらら～な休日]ハルウララ",
-        "[只、君臨す。]オルフェーヴル",
+//        "[只、君臨す。]オルフェーヴル",
         "[Take Them Down!]ナリタタイシン",
         "[謹製ッ！特大夢にんじん！]秋川理事長",
     ).toTypedArray()
-    var targetStatus = StatusType.SPEED
+    var targetStatus = StatusType.GUTS
     doSimulation2(
         Scenario.COOK,
         Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
         defaultSupport,
-//        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[COOL⇔CRAZY/Buddy]シンボリクリスエス" to it }.toTypedArray())),
+        targetStatus, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[COOL⇔CRAZY/Buddy]シンボリクリスエス" to it }.toTypedArray())),
 //        Store.getSupportByName("[アルストロメリアの夢]ヴィブロス" to 4),
         factor = factor(StatusType.SPEED, 6),
         testCount = 100000,
         selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
         evaluateSetting = Runner.cookShortEvaluateSetting,
     )
-    doSimulation2(
-        Scenario.COOK,
-        Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
-        defaultSupport,
-//        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[朝焼け苺の畑にて]ニシノフラワー" to it }.toTypedArray())),
-//        Store.getSupportByName("[アルストロメリアの夢]ヴィブロス" to 4),
-        factor = factor(StatusType.SPEED, 6),
-        testCount = 100000,
-        selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
-        evaluateSetting = Runner.cookShortEvaluateSetting,
-    )
-    doSimulation2(
-        Scenario.COOK,
-        Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
-        defaultSupport,
-//        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[炎々、闘志を抱き]ヒシアマゾン" to it }.toTypedArray())),
-//        Store.getSupportByName("[アルストロメリアの夢]ヴィブロス" to 4),
-        factor = factor(StatusType.SPEED, 6),
-        testCount = 100000,
-        selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
-        evaluateSetting = Runner.cookShortEvaluateSetting,
-    )
+//    doSimulation2(
+//        Scenario.COOK,
+//        Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
+//        defaultSupport,
+////        targetStatus, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[朝焼け苺の畑にて]ニシノフラワー" to it }.toTypedArray())),
+////        Store.getSupportByName("[アルストロメリアの夢]ヴィブロス" to 4),
+//        factor = factor(StatusType.SPEED, 6),
+//        testCount = 100000,
+//        selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
+//        evaluateSetting = Runner.cookShortEvaluateSetting,
+//    )
+//    doSimulation2(
+//        Scenario.COOK,
+//        Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5),
+//        defaultSupport,
+////        targetStatus, rarity = 2..3, talent = 0..4,
+//        Store.getSupportByName(*((0..4).map { "[炎々、闘志を抱き]ヒシアマゾン" to it }.toTypedArray())),
+////        Store.getSupportByName("[アルストロメリアの夢]ヴィブロス" to 4),
+//        factor = factor(StatusType.SPEED, 6),
+//        testCount = 100000,
+//        selector = CookActionSelector.speed1Power1Guts2Wisdom1Short,
+//        evaluateSetting = Runner.cookShortEvaluateSetting,
+//    )
 }
 
 private fun speed2Stamina1Guts1Wisdom1Long() {
