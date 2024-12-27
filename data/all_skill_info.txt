@@ -1377,6 +1377,13 @@ Flowering Dreams
 ->distance_rate>=50&order_rate>=40&overtake_target_time>=2
 「距離割合>=50、順位率40以上（チャンミ4～/LoH5～）、追い抜き対象時間>=2」、目標速度3500、持続5.0
 
+爛然闊歩
+[絢爛花道歌舞く君]ミスターシービー 固有
+レース後半に後方にいると残りの持久力に応じたロングスパートをかけて速度をわずかに上げ続ける
+評価点340、人気:スピード60、確定発動
+->distance_rate>=50&order_rate>=50
+「距離割合>=50、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、持続5.0(特殊3)
+
 Spooky-Scary-Happy
 [Dot-o'-Lantern]メイショウドトウ 固有
 最終直線に入ったとき前の方だと速度を上げ、前2人後ろ2人までのウマ娘をちょっと萎縮させる
@@ -1515,6 +1522,15 @@ distance_rate>=50&distance_rate<=51&order_rate>=40&order_rate<=80->is_last_strai
 「距離割合50～51、ダート、corner!=3」、目標速度2500、目標速度1500、持続5.0
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度2500、持続5.0
+
+決意一筆
+[雅号・墨龍]カツラギエース 固有
+中距離レースでレース後半まで前方をキープしていると長時間速度を少し上げ続ける、「大逃げ」が発動していると効果が変わり持久力をすごく回復する
+評価点340、人気:スピード30/スタミナ30、確定発動
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1&is_used_skill_id==202051
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）、大逃げ」、体力750、持続0.0
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）」、目標速度2500、持続8.0
 
 Encounter with U
 [Like “ZEER”]ネオユニヴァース 固有
@@ -2794,6 +2810,12 @@ Flowering Dreams
 ->distance_rate>=50&order_rate>=40&overtake_target_time>=2
 「距離割合>=50、順位率40以上（チャンミ4～/LoH5～）、追い抜き対象時間>=2」、目標速度1500、持続3.0
 
+爛然闊歩
+レース後半に後方にいると残りの持久力に応じたロングスパートをかけて速度をほんのわずかに上げ続ける
+評価点180、SP200、人気:スピード15
+->distance_rate>=50&order_rate>=50
+「距離割合>=50、順位率50以上（チャンミ5～/LoH6～）」、目標速度350、持続3.0(特殊3)
+
 Spooky-Scary-Happy
 最終直線に入ったとき前の方だと速度をわずかに上げ、前2人後ろ2人までのウマ娘をほんのちょっと萎縮させる
 評価点180、SP200、人気:スピード15
@@ -2909,6 +2931,12 @@ distance_rate>=50&distance_rate<=51&order_rate>=40&order_rate<=80->is_last_strai
 「距離割合50～51、ダート、corner!=3」、目標速度500、目標速度350、持続3.0
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度500、持続3.0
+
+決意一筆
+中距離レースでレース後半まで前方をキープしていると長時間速度をちょっと上げ続ける
+評価点180、SP200、人気:スピード15
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）」、目標速度500、持続4.8
 
 Encounter with U
 終盤の最終直線で2番手以降だと速度がわずかに上がる
@@ -4624,6 +4652,13 @@ U.A.F. 進化(全身全霊)
 評価点633、進化元SP360、人気:スピード60
 ->running_style==1&phase_random==1&order_rate<=50
 「逃げ、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、体力150、持続3.0
+
+甘さ控えめエスケープ
+[CODE：グラサージュ]ミホノブルボン 進化(脱出術)
+賢さが十二分に高いならレース終盤が迫ったとき前方にいるとしばらくの間速度が上がる＜作戦・逃げ＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==1&phase_laterhalf_random==1&order_rate<=50&base_wiz>=1200
+「逃げ、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）、基礎賢さ>=1200」、目標速度3500、持続4.0
 
 未来へ飛び立ちましょう！
 [真打・慶鶴之志]キタサンブラック 進化(脱出術)
@@ -8767,6 +8802,15 @@ U.A.F. 進化(遮二無二)
 ->distance_type==3&corner_random==3&order_rate>=50@distance_type==4&corner_random==3&order_rate>=50
 「中距離、最初のコーナーランダム==3、順位率50以上（チャンミ5～/LoH6～）」または「長距離、最初のコーナーランダム==3、順位率50以上（チャンミ5～/LoH6～）」、現在速度4500、持続3.0
 
+奪目の宙乗り
+[絢爛花道歌舞く君]ミスターシービー 進化(天衣無縫)
+最終コーナー前の第3コーナーで前に出る、さらにレース後半に追い抜いているとしばらくの間前に出る＜中距離/長距離＞
+評価点633、進化元SP360、人気:パワー60
+distance_rate>=50&change_order_onetime<0->distance_type==3&corner_random==3@distance_type==4&corner_random==3
+「距離割合>=50、追い抜き」の後「中距離、最初のコーナーランダム==3」または「長距離、最初のコーナーランダム==3」、現在速度3500、持続4.0
+->distance_type==3&corner_random==3@distance_type==4&corner_random==3
+「中距離、最初のコーナーランダム==3」または「長距離、最初のコーナーランダム==3」、現在速度3500、持続3.0
+
 型破り
 最終コーナー前の第3コーナーで後ろの方にいるとわずかに前に出る＜中距離/長距離＞
 評価点217、SP180、人気:パワー20
@@ -9554,6 +9598,21 @@ U.A.F. 進化(機先の勝負)
 ->distance_type==2&phase_laterhalf_random==1&order_rate>=40
 「マイル、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
 
+千載一遇
+レース終盤始めの方早めに中団以降にいると加速力が上がる＜追込・長距離＞
+評価点508、SP160(合計320)、人気:パワー60
+->running_style==4&distance_type==4&phase_firstquarter_random==2&order_rate>=40
+「追込、長距離、終盤前1/8ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続1.2
+
+さァさ、お立ち合い！
+[絢爛花道歌舞く君]ミスターシービー 進化(千載一遇)
+レース終盤始めの方早めに加速力が上がる、スキル発動時中団以降にいるとすごく上がる＜追込・長距離＞
+評価点633、進化元SP320、人気:パワー60
+->running_style==4&distance_type==4&phase_firstquarter_random==2&order_rate>=40
+「追込、長距離、終盤前1/8ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速5000、持続1.2
+->running_style==4&distance_type==4&phase_firstquarter_random==2
+「追込、長距離、終盤前1/8ランダム」、加速4000、持続1.2
+
 好機を捉えて
 レース終盤始めの方早めに中団以降にいると加速力がわずかに上がる＜追込・長距離＞
 評価点217、SP160、人気:パワー20
@@ -10079,6 +10138,50 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
 「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
 
+勝負はここから！
+終盤の最終コーナーで3番手以内にいると加速力が上がる＜逃げ・中距離＞
+評価点508、SP180(合計360)、人気:パワー60
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速4000、持続0.9
+
+伏竜は目覚めて
+[雅号・墨龍]カツラギエース 進化(勝負はここから！)
+終盤の最終コーナーで3番手以内にいると加速力が上がり前に出る＜逃げ・中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速4000、現在速度3500、持続0.9
+
+逃げ切り体勢
+終盤の最終コーナーで3番手以内にいると加速力がわずかに上がる＜逃げ・中距離＞
+評価点217、SP180、人気:パワー20
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速2000、持続0.9
+
+英姿颯爽
+最終コーナー前の第3コーナーで前方にいると前に出る＜逃げ・中距離＞
+評価点508、SP170(合計340)、人気:パワー60
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続3.0
+
+暁光背負いて
+[雅号・墨龍]カツラギエース 進化(英姿颯爽)
+最終コーナー前の第3コーナーで前方にいるとすごく前に出る＜逃げ・中距離＞
+評価点633、進化元SP340、人気:パワー60
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度4500、持続3.0
+
+破天荒
+最終コーナー前の第3コーナーで前方にいるとわずかに前に出る＜逃げ・中距離＞
+評価点217、SP170、人気:パワー20
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
+
+追い風に乗って
+レース終盤始めの方早めに前方にいると加速力がわずかに上がる＜逃げ・中距離＞
+評価点217、SP170、人気:パワー20
+->running_style==1&distance_type==3&phase_firstquarter_random==2&order_rate<=50
+「逃げ、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
+
 努力の結実
 レース中盤に前方にいると速度が上がる＜先行・長距離＞
 評価点508、SP170(合計340)、人気:スピード60
@@ -10102,6 +10205,18 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点217、SP180、人気:スピード20
 ->running_style==2&is_lastspurt==1&phase_firsthalf_random==3
 「先行、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
+
+躍動
+ラストスパートの最中に速度がわずかに上がる＜中距離＞
+評価点217、SP170、人気:スピード20
+->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3
+「中距離、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
+
+憧れを越えて
+レース終盤始めの方早めに前方にいると加速力がわずかに上がる＜先行・中距離＞
+評価点217、SP170、人気:パワー20
+->running_style==2&distance_type==3&phase_firstquarter_random==2&order_rate<=50
+「先行、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる

@@ -1,46 +1,116 @@
-演舞・撫子大薙刀
-[蒼炎の誉]グラスワンダー 固有
-レース後半で中団にいるとき追い抜こうとするか詰め寄られると残り400m地点で速度が上がる非根幹距離のレースならすごく上がる
+爛然闊歩
+[絢爛花道歌舞く君]ミスターシービー 固有
+レース後半に後方にいると残りの持久力に応じたロングスパートをかけて速度をわずかに上げ続ける
 評価点340、人気:スピード60、確定発動
-distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399&is_basis_distance==0
-「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401、非根幹距離」、目標速度4500、持続5.0
-distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399
-「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401」、目標速度3500、持続5.0
+->distance_rate>=50&order_rate>=50
+「距離割合>=50、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、持続5.0(特殊3)
 
-演舞・撫子大薙刀
-レース後半で中団にいるとき追い抜こうとするか詰め寄られると残り400m地点で速度がわずかに上がる非根幹距離のレースなら少し上がる
+決意一筆
+[雅号・墨龍]カツラギエース 固有
+中距離レースでレース後半まで前方をキープしていると長時間速度を少し上げ続ける、「大逃げ」が発動していると効果が変わり持久力をすごく回復する
+評価点340、人気:スピード30/スタミナ30、確定発動
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1&is_used_skill_id==202051
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）、大逃げ」、体力750、持続0.0
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）」、目標速度2500、持続8.0
+
+爛然闊歩
+レース後半に後方にいると残りの持久力に応じたロングスパートをかけて速度をほんのわずかに上げ続ける
 評価点180、SP200、人気:スピード15
-distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399&is_basis_distance==0
-「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401、非根幹距離」、目標速度2500、持続3.0
-distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399
-「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401」、目標速度1500、持続3.0
+->distance_rate>=50&order_rate>=50
+「距離割合>=50、順位率50以上（チャンミ5～/LoH6～）」、目標速度350、持続3.0(特殊3)
 
-射貫く蒼
-[蒼炎の誉]グラスワンダー 進化(勇往邁進)
-レース中盤の直線で持久力を使って速度をものすごく上げる、中山レース場の長距離レースなら持久力を使わずに効果が増える＜作戦・差し＞
-評価点633、進化元SP320、人気:スピード60
-->running_style==3&phase_straight_random==1&distance_type==4&track_id==10005
-「差し、中盤直線ランダム、長距離、レース場==10005」、目標速度6000、持続2.4
-->running_style==3&phase_straight_random==1
-「差し、中盤直線ランダム」、目標速度5500、体力-300、持続2.4
+決意一筆
+中距離レースでレース後半まで前方をキープしていると長時間速度をちょっと上げ続ける
+評価点180、SP200、人気:スピード15
+->distance_type==3&distance_rate>=50&order_rate_in40_continue==1
+「中距離、距離割合>=50、順位率40以前維持（チャンミ～4/LoH～5）」、目標速度500、持続4.8
 
-後の先
-終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間少し前に出る＜中距離/長距離＞
-評価点508、SP180(合計360)、人気:パワー60
-->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度2500、持続4.0
+甘さ控えめエスケープ
+[CODE：グラサージュ]ミホノブルボン 進化(脱出術)
+賢さが十二分に高いならレース終盤が迫ったとき前方にいるとしばらくの間速度が上がる＜作戦・逃げ＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==1&phase_laterhalf_random==1&order_rate<=50&base_wiz>=1200
+「逃げ、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）、基礎賢さ>=1200」、目標速度3500、持続4.0
 
-勝機到来
-[蒼炎の誉]グラスワンダー 進化(後の先)
-終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間前に出る＜中距離/長距離＞
+奪目の宙乗り
+[絢爛花道歌舞く君]ミスターシービー 進化(天衣無縫)
+最終コーナー前の第3コーナーで前に出る、さらにレース後半に追い抜いているとしばらくの間前に出る＜中距離/長距離＞
 評価点633、進化元SP360、人気:パワー60
-->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度3500、持続4.0
+distance_rate>=50&change_order_onetime<0->distance_type==3&corner_random==3@distance_type==4&corner_random==3
+「距離割合>=50、追い抜き」の後「中距離、最初のコーナーランダム==3」または「長距離、最初のコーナーランダム==3」、現在速度3500、持続4.0
+->distance_type==3&corner_random==3@distance_type==4&corner_random==3
+「中距離、最初のコーナーランダム==3」または「長距離、最初のコーナーランダム==3」、現在速度3500、持続3.0
 
-切り返し
-終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間ちょっと前に出る＜中距離/長距離＞
+千載一遇
+レース終盤始めの方早めに中団以降にいると加速力が上がる＜追込・長距離＞
+評価点508、SP160(合計320)、人気:パワー60
+->running_style==4&distance_type==4&phase_firstquarter_random==2&order_rate>=40
+「追込、長距離、終盤前1/8ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続1.2
+
+さァさ、お立ち合い！
+[絢爛花道歌舞く君]ミスターシービー 進化(千載一遇)
+レース終盤始めの方早めに加速力が上がる、スキル発動時中団以降にいるとすごく上がる＜追込・長距離＞
+評価点633、進化元SP320、人気:パワー60
+->running_style==4&distance_type==4&phase_firstquarter_random==2&order_rate>=40
+「追込、長距離、終盤前1/8ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速5000、持続1.2
+->running_style==4&distance_type==4&phase_firstquarter_random==2
+「追込、長距離、終盤前1/8ランダム」、加速4000、持続1.2
+
+勝負はここから！
+終盤の最終コーナーで3番手以内にいると加速力が上がる＜逃げ・中距離＞
+評価点508、SP180(合計360)、人気:パワー60
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速4000、持続0.9
+
+伏竜は目覚めて
+[雅号・墨龍]カツラギエース 進化(勝負はここから！)
+終盤の最終コーナーで3番手以内にいると加速力が上がり前に出る＜逃げ・中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速4000、現在速度3500、持続0.9
+
+逃げ切り体勢
+終盤の最終コーナーで3番手以内にいると加速力がわずかに上がる＜逃げ・中距離＞
 評価点217、SP180、人気:パワー20
-->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
+->distance_type==3&running_style==1&phase>=2&is_finalcorner==1&corner!=0&order<=3
+「中距離、逃げ、終盤、最終コーナー以降、コーナー、順位<=3」、加速2000、持続0.9
+
+英姿颯爽
+最終コーナー前の第3コーナーで前方にいると前に出る＜逃げ・中距離＞
+評価点508、SP170(合計340)、人気:パワー60
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続3.0
+
+暁光背負いて
+[雅号・墨龍]カツラギエース 進化(英姿颯爽)
+最終コーナー前の第3コーナーで前方にいるとすごく前に出る＜逃げ・中距離＞
+評価点633、進化元SP340、人気:パワー60
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度4500、持続3.0
+
+破天荒
+最終コーナー前の第3コーナーで前方にいるとわずかに前に出る＜逃げ・中距離＞
+評価点217、SP170、人気:パワー20
+->distance_type==3&running_style==1&corner_random==3&order_rate<=50
+「中距離、逃げ、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
+
+追い風に乗って
+レース終盤始めの方早めに前方にいると加速力がわずかに上がる＜逃げ・中距離＞
+評価点217、SP170、人気:パワー20
+->running_style==1&distance_type==3&phase_firstquarter_random==2&order_rate<=50
+「逃げ、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
+
+躍動
+ラストスパートの最中に速度がわずかに上がる＜中距離＞
+評価点217、SP170、人気:スピード20
+->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3
+「中距離、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
+
+憧れを越えて
+レース終盤始めの方早めに前方にいると加速力がわずかに上がる＜先行・中距離＞
+評価点217、SP170、人気:パワー20
+->running_style==2&distance_type==3&phase_firstquarter_random==2&order_rate<=50
+「先行、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
 
 
