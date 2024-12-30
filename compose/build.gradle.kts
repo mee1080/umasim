@@ -26,6 +26,10 @@ kotlin {
             }
         }
         binaries.executable()
+        compilerOptions {
+            freeCompilerArgs.add("-Xwasm-debugger-custom-formatters")
+            freeCompilerArgs.add("-Xwasm-attach-js-exception")
+        }
     }
 
     sourceSets {
@@ -48,6 +52,12 @@ kotlin {
         val jvmMain by getting {
             dependencies {
                 implementation(compose.desktop.currentOs)
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.browser)
             }
         }
     }

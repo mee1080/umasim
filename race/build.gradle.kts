@@ -24,6 +24,10 @@ kotlin {
     wasmJs {
         browser()
         binaries.executable()
+        compilerOptions {
+            freeCompilerArgs.add("-Xwasm-debugger-custom-formatters")
+            freeCompilerArgs.add("-Xwasm-attach-js-exception")
+        }
     }
 
     sourceSets {
@@ -32,6 +36,12 @@ kotlin {
                 implementation(project(":utility"))
                 implementation(libs.kotlinx.coroutinesCore)
                 implementation(libs.kotlinx.serializationJson)
+            }
+        }
+
+        val wasmJsMain by getting {
+            dependencies {
+                implementation(libs.kotlinx.browser)
             }
         }
     }
