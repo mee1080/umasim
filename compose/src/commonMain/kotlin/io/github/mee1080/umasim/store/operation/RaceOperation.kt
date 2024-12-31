@@ -121,11 +121,11 @@ private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
             }
         }
         frame.triggeredSkills.forEach {
-            val current = skillMap[it.skill.name] ?: return@forEach
+            val current = skillMap[it.invoke.skill.name] ?: return@forEach
             if (current.info.startFrame1 < 0) {
-                skillMap[it.skill.name]?.info = current.info.copy(startFrame1 = index)
+                skillMap[it.invoke.skill.name]?.info = current.info.copy(startFrame1 = index)
             } else {
-                skillMap[it.skill.name]?.info = current.info.copy(startFrame2 = index)
+                skillMap[it.invoke.skill.name]?.info = current.info.copy(startFrame2 = index)
             }
         }
         frame.endedSkills.forEach {
@@ -241,9 +241,9 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
             frameList.forEachIndexed { index, raceFrame ->
                 raceFrame.triggeredSkills.forEach { skill ->
                     val end = searchFrame(frameList, index + 1) { frame ->
-                        frame.endedSkills.any { it.data.skill.id == skill.skill.id }
+                        frame.endedSkills.any { it.data.skill.id == skill.invoke.skill.id }
                     }
-                    add(GraphSkill(index / 15f, end?.div(15f), skill.skill.name))
+                    add(GraphSkill(index / 15f, end?.div(15f), skill.invoke.skill.name, skill))
                 }
                 add(frameList, index, raceFrame, "掛かり") { it.temptation }
 //                add(index, raceFrame, last, "スパート開始") { it.spurting }
@@ -278,7 +278,7 @@ private fun MutableList<GraphSkill>.add(
 ) {
     if (check(raceFrame) && (frame == 0 || !check(frameList[frame - 1]))) {
         val end = searchFrame(frameList, frame + 1) { !check(it) } ?: frameList.lastIndex
-        add(GraphSkill(frame / 15f, end / 15f, label))
+        add(GraphSkill(frame / 15f, end / 15f, label, null))
     }
 }
 

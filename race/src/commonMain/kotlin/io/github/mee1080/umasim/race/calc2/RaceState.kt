@@ -812,7 +812,7 @@ data class RaceFrame(
     val movement: Double = 0.0,
     val consume: Double = 0.0,
     val currentLane: Double = 0.0,
-    val triggeredSkills: List<InvokedSkill> = emptyList(),
+    val triggeredSkills: List<TriggeredSkill> = emptyList(),
     val endedSkills: List<OperatingSkill> = emptyList(),
     val operatingSkills: List<OperatingSkill> = emptyList(),
     val temptation: Boolean = false,
@@ -857,4 +857,11 @@ data class SystemSetting(
     val positionCompetitionRate: Double = 0.8,
     val staminaKeepRate: Double = 0.9,
     val secureLeadRate: Double = 0.3,
+)
+
+class TriggeredSkill(
+    val invoke: InvokedSkill,
+    val operating: OperatingSkill?,
+    val heal: Double?,
+    val waste: Double?,
 )

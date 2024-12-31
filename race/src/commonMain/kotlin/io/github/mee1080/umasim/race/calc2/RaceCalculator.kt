@@ -125,19 +125,17 @@ private fun RaceSetting.applyPassive(system: SystemSetting, simulation: RaceSimu
 }
 
 private fun RaceState.triggerStartSkills() {
-    val skills = mutableListOf<InvokedSkill>()
+    val skills = mutableListOf<TriggeredSkill>()
     setting.passiveBonus.skills.forEach { skill ->
         if (!skill.invoke.isStart) {
-            triggerSkill(skill)
-            skills += skill
+            skills += triggerSkill(skill)
         }
     }
     simulation.invokedSkills.forEach { skill ->
         if (skill.invoke.isStart) {
             simulation.startDelay *= skill.invoke.startMultiply(this)
             simulation.startDelay += skill.invoke.startAdd(this)
-            triggerSkill(skill)
-            skills += skill
+            skills += triggerSkill(skill)
         }
     }
     simulation.frames += RaceFrame(
@@ -351,7 +349,7 @@ private fun RaceState.updateFrame(): Boolean {
     // Remove overtime skills
     val endedSkills = simulation.operatingSkills.filter { operatingSkill ->
         val duration = operatingSkill.duration
-        (simulation.frameElapsed - operatingSkill.startFrame) * secondPerFrame > duration * setting.timeCoef
+        (simulation.frameElapsed - operatingSkill.startFrame) * secondPerFrame > duration
     }
     simulation.operatingSkills.removeAll(endedSkills)
 

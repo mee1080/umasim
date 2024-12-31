@@ -1,10 +1,7 @@
 package io.github.mee1080.umasim.store
 
 import androidx.compose.runtime.Stable
-import io.github.mee1080.umasim.race.calc2.RaceFrame
-import io.github.mee1080.umasim.race.calc2.RaceSetting
-import io.github.mee1080.umasim.race.calc2.RaceSettingWithPassive
-import io.github.mee1080.umasim.race.calc2.UmaStatus
+import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.framework.State
@@ -12,6 +9,7 @@ import io.github.mee1080.umasim.store.operation.updateSetting
 import io.github.mee1080.utility.decodeFromStringOrNull
 import io.github.mee1080.utility.encodeToString
 import io.github.mee1080.utility.persistentSettings
+import io.github.mee1080.utility.roundToString
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -50,7 +48,7 @@ enum class SimulationMode(val label: String) {
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
     val skillCategoryView: Boolean = true,
-    val skillDisplayMinus:Boolean = false,
+    val skillDisplayMinus: Boolean = false,
     val skillIdSet: Set<String> = emptySet(),
     val virtualSkillIdSet: Set<String> = emptySet(),
     val simulationCount: Int = 100,
@@ -183,7 +181,43 @@ data class GraphSkill(
     val start: Float,
     val end: Float?,
     val name: String,
-)
+    val effect: TriggeredSkill?,
+) {
+    val description = buildString {
+        if (effect != null) {
+            val heal = effect.heal
+            if (heal != null) {
+                val waste = effect.waste ?: 0.0
+                if (waste > 0.0) {
+                    appendLine("体力：${heal.roundToString(2)} (溢れ：${waste.roundToString(2)})")
+                } else {
+                    appendLine("体力：${heal.roundToString(2)}")
+                }
+            }
+            val operating = effect.operating
+            if (operating != null) {
+                if (operating.targetSpeed > 0.0) {
+                    appendLine("目標速度：${operating.targetSpeed.roundToString(2)}")
+                }
+                if (operating.speedWithDecel > 0.0) {
+                    appendLine("現在速度：${operating.speedWithDecel.roundToString(2)}")
+                }
+                if (operating.currentSpeed > 0.0) {
+                    appendLine("現在速度：${operating.currentSpeed.roundToString(2)}")
+                }
+                if (operating.acceleration > 0.0) {
+                    appendLine("加速度：${operating.acceleration.roundToString(2)}")
+                }
+                if (operating.laneChangeSpeed > 0.0) {
+                    appendLine("レーン移動速度：${operating.laneChangeSpeed.roundToString(2)}")
+                }
+                if (operating.duration > 0.0) {
+                    appendLine("持続時間：${operating.duration.roundToString(2)}")
+                }
+            }
+        }
+    }.trim()
+}
 
 @Stable
 data class ContributionResult(

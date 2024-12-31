@@ -46,7 +46,7 @@ fun testCalc2() {
     println(result)
     state.simulation.frames.forEachIndexed { index, raceFrame ->
         if (raceFrame.triggeredSkills.isNotEmpty()) {
-            println("$index : ${raceFrame.triggeredSkills.map { it.skill.name }}")
+            println("$index : ${raceFrame.triggeredSkills.map { it.invoke.skill.name }}")
         }
         println(raceFrame.startPosition - (raceFrame.paceMakerFrame?.startPosition ?: 0.0))
     }

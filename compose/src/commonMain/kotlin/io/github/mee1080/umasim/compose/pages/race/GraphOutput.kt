@@ -25,6 +25,7 @@ import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
 import io.github.koalaplot.core.xygraph.*
 import io.github.mee1080.umasim.compose.common.atoms.LabeledCheckbox
 import io.github.mee1080.umasim.compose.common.atoms.TooltipSurface
+import io.github.mee1080.umasim.compose.common.parts.WithTooltip
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.GraphData
 import kotlin.math.max
@@ -133,16 +134,28 @@ private fun GraphArea(graphData: GraphData) {
                 }
                 if (graphData.skillData.isNotEmpty()) {
                     val skillMargin = min(0.1f, 0.8f / graphData.skillData.size)
-                    graphData.skillData.forEachIndexed { index, (start, end, name) ->
+                    graphData.skillData.forEachIndexed { index, skill ->
                         val top = 1f - skillMargin * index
-                        XYAnnotation(Point(start, top), AnchorPoint.TopLeft) {
-                            TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
-                                Text(name)
+                        XYAnnotation(Point(skill.start, top), AnchorPoint.TopLeft) {
+                            if (skill.description.isEmpty()) {
+                                TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
+                                    Text(skill.name)
+                                }
+                            } else {
+                                WithTooltip(
+                                    tooltip = {
+                                        Text(skill.description)
+                                    }
+                                ) {
+                                    TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
+                                        Text(skill.name)
+                                    }
+                                }
                             }
                         }
-                        if (end != null) {
+                        if (skill.end != null) {
                             LinePlot(
-                                data = listOf(Point(start, top - 0.003f), Point(end, top - 0.003f)),
+                                data = listOf(Point(skill.start, top - 0.003f), Point(skill.end, top - 0.003f)),
                                 lineStyle = LineStyle(SolidColor(Color.Red), 2.dp),
                             )
                         }

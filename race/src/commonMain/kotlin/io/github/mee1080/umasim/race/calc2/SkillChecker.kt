@@ -471,8 +471,8 @@ private fun RaceState.isInSpurt(): Boolean {
     return spurtParameters.distance + simulation.position >= setting.courseLength
 }
 
-fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
-    val skillTriggered = mutableListOf<InvokedSkill>()
+fun RaceState.checkSkillTrigger(): List<TriggeredSkill> {
+    val skillTriggered = mutableListOf<TriggeredSkill>()
     val coolDownMap = simulation.coolDownMap
     simulation.invokedSkills.forEach {
         if (!it.preChecked) {
@@ -484,14 +484,12 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
         val coolDownStart = coolDownMap[it.invoke.coolDownId]
         if (coolDownStart == null) {
             if (it.check(this)) {
-                triggerSkill(it)
-                skillTriggered += it
+                skillTriggered += triggerSkill(it)
             }
         } else if (it.invoke.cd > 0.0) {
             if (simulation.frameElapsed - coolDownStart > it.invoke.cd * setting.coolDownBaseFrames) {
                 if (it.check(this)) {
-                    triggerSkill(it)
-                    skillTriggered += it
+                    skillTriggered += triggerSkill(it)
                 }
             }
         }
@@ -499,28 +497,36 @@ fun RaceState.checkSkillTrigger(): List<InvokedSkill> {
     return skillTriggered
 }
 
-fun RaceState.triggerSkill(skill: InvokedSkill) {
-    if (skill.invoke.isHeal) {
+fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
+    val (heal, waste) = if (skill.invoke.isHeal) {
         doHeal(skill.invoke.heal(this))
-    }
-    if (skill.invoke.duration > 0.0) {
-        simulation.operatingSkills += OperatingSkill(
+    } else null to null
+    val operating = if (skill.invoke.duration > 0.0) {
+        OperatingSkill(
             data = skill,
             startFrame = simulation.frameElapsed,
             targetSpeed = skill.invoke.targetSpeed(this),
             speedWithDecel = skill.invoke.speedWithDecel(this),
             currentSpeed = skill.invoke.currentSpeed(this),
             acceleration = skill.invoke.acceleration(this),
-            duration = skill.invoke.calcDuration(this),
+            duration = skill.invoke.calcDuration(this) * setting.timeCoef,
             fixLane = skill.invoke.isFixLane,
             laneChangeSpeed = skill.invoke.laneChangeSpeed(this),
-        )
-    }
+        ).also {
+            simulation.operatingSkills += it
+        }
+    } else null
     if (skill.invoke.isSpeedWithDecel) {
         simulation.currentSpeed += skill.invoke.speedWithDecel(this)
     }
     simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed
+    return TriggeredSkill(
+        invoke = skill,
+        operating = operating,
+        heal = heal,
+        waste = waste,
+    )
 }
 
 fun RaceState.doHeal(value: Double): Pair<Double, Double> {
