@@ -112,12 +112,20 @@ private fun checkCondition(
             baseSetting.initPhaseRandom(condition.value)
         }
 
+        "phase_firsthalf" -> condition.checkInRace {
+            if (isLaterHalf) -1 else currentPhase
+        }
+
         "phase_firsthalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseRandom(condition.value, 0.0 to 0.5)
         }
 
         "phase_firstquarter_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseRandom(condition.value, 0.0 to 0.25)
+        }
+
+        "phase_laterhalf" -> condition.checkInRace {
+            if (isLaterHalf) currentPhase else -1
         }
 
         "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
@@ -171,6 +179,14 @@ private fun checkCondition(
         }
 
         "corner" -> condition.checkInRace { cornerNumber }
+
+        "is_activate_heal_skill" -> condition.withAssert("==", 1) {
+            condition.checkInRaceBool {
+                simulation.frames.last().triggeredSkills.any {
+                    it.heal != null && it.heal > 0.0
+                }
+            }
+        }
 
         "is_activate_any_skill" -> condition.withAssert("==", 1) {
             condition.checkInRaceBool { simulation.frames.last().triggeredSkills.isNotEmpty() }
@@ -236,6 +252,8 @@ private fun checkCondition(
             val key = "is_other_character_activate_advantage_skill${condition.value}"
             { (simulation.specialState[key] ?: 0) > 0 }
         }
+
+        "change_order_up_middle" -> condition.checkSpecialState()
 
         "change_order_up_end_after" -> condition.checkSpecialState()
 

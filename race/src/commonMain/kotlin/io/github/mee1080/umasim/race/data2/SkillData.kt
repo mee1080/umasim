@@ -123,7 +123,7 @@ class ApproximateNone(
     override val displayName: String,
     override val valueOnStart: Int = 0,
 ) : ApproximateCondition {
-    override fun update(state: RaceState, value: Int) = 0
+    override fun update(state: RaceState, value: Int) = value
     override val description = "なし"
 }
 
@@ -186,6 +186,18 @@ val approximateConditions = mapOf(
         "後ろのウマ娘掛かり(トリック&トリートなど、自身への効果のみ反映)",
         0.07, 0.20,
     ),
+    "is_other_character_activate_advantage_skill22" to ApproximateMultiCondition(
+        "他のウマ娘が速度スキル発動(後の先など)",
+        listOf(
+            ApproximateRandomRates("序盤", listOf(1 to 0.1)) to {
+                it.currentPhase == 0
+            },
+            ApproximateRandomRates("中盤", listOf(1 to 0.15)) to {
+                it.currentPhase == 1
+            },
+            ApproximateRandomRates("終盤", listOf(1 to 0.2)) to null,
+        )
+    ),
     "is_other_character_activate_advantage_skill31" to ApproximateMultiCondition(
         "他のウマ娘が加速スキル発動(トランセンド固有)",
         listOf(
@@ -199,6 +211,15 @@ val approximateConditions = mapOf(
                 it.currentPhase == 1
             },
             ApproximateRandomRates("終盤", listOf(1 to 0.9)) to null,
+        )
+    ),
+    "change_order_up_middle" to ApproximateMultiCondition(
+        "中盤追い抜き(クラウン固有/嫁アマ固有など)",
+        listOf(
+            ApproximateCountUp("中盤", 0.05) to {
+                it.currentPhase == 1
+            },
+            ApproximateNone("その他") to null,
         )
     ),
     "change_order_up_end_after" to ApproximateMultiCondition(
@@ -240,6 +261,7 @@ val approximateTypeToState = mapOf(
     "near_infront_count" to "near_infront_count",
     "is_surrounded" to "is_surrounded",
     "temptation_opponent_count_behind" to "temptation_opponent_count_behind",
+    "change_order_up_middle" to "change_order_up_middle",
     "change_order_up_end_after" to "change_order_up_end_after",
     "change_order_up_finalcorner_after" to "change_order_up_finalcorner_after",
     "overtake_target_no_order_up_time" to "overtake_target_no_order_up_time",
@@ -251,8 +273,6 @@ val ignoreConditions = mapOf(
     "season" to "季節条件は無視",
     "weather" to "天候条件は無視",
     "is_dirtgrade" to "交流重賞条件は無視",
-
-    "is_used_skill_id" to "他スキル発動条件は未実装",
 
     "order" to "順位条件は無視",
     "order_rate" to "順位条件は無視",

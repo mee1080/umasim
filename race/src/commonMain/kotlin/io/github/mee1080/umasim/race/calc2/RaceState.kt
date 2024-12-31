@@ -102,9 +102,9 @@ class RaceState(
 ) {
     fun getPhase(position: Double): Int {
         return when {
-            position < setting.trackDetail.distance / 6.0 -> 0
-            position < (setting.trackDetail.distance * 2.0) / 3 -> 1
-            position < (setting.trackDetail.distance * 5.0) / 6 -> 2
+            position < setting.phase1Start -> 0
+            position < setting.phase2Start -> 1
+            position < setting.phase3Start -> 2
             else -> 3
         }
     }
@@ -112,6 +112,18 @@ class RaceState(
     val currentPhase get() = getPhase(simulation.startPosition)
 
     val isLaterHalf get() = simulation.position > setting.trackDetail.distance / 2
+
+    val isPhaseLaterHalf: Boolean
+        get() {
+            val position = simulation.startPosition
+            val phase = getPhase(position)
+            return position >= when (phase) {
+                0 -> setting.phase0Half
+                1 -> setting.phase1Half
+                2 -> setting.phase2Half
+                else -> setting.phase3Half
+            }
+        }
 
     val finalCorner get() = setting.trackDetail.corners.lastOrNull()
 
@@ -380,10 +392,13 @@ interface IRaceSetting {
     val skillActivateRate: Double
     val timeCoef: Double
     val oonige: Boolean
+    val phase0Half: Double
     val phase1Start: Double
     val phase1Half: Double
     val phase2Start: Double
+    val phase2Half: Double
     val phase3Start: Double
+    val phase3Half: Double
     fun getPhaseStartEnd(phase: Int): Pair<Double, Double>
 }
 
@@ -431,13 +446,19 @@ data class RaceSetting(
         umaStatus.style == Style.NIGE && umaStatus.hasSkills.any { skill -> skill.invokes.any { it.oonige } }
     }
 
+    override val phase0Half by lazy { phase1Start / 2.0 }
+
     override val phase1Start by lazy { courseLength / 6.0 }
 
     override val phase1Half by lazy { phase1Start + (phase2Start - phase1Start) / 2.0 }
 
     override val phase2Start by lazy { (courseLength * 2.0) / 3.0 }
 
+    override val phase2Half by lazy { phase2Start + (phase3Start - phase2Start) / 2.0 }
+
     override val phase3Start by lazy { (courseLength * 5.0) / 6.0 }
+
+    override val phase3Half by lazy { phase3Start + (courseLength - phase3Start) / 2.0 }
 
     override fun getPhaseStartEnd(phase: Int): Pair<Double, Double> {
         return when (phase) {
