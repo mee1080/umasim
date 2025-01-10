@@ -28,10 +28,10 @@ data class GraphTarget(
 )
 
 val graphTargetCandidates = listOf(
+    GraphTarget("speed_20241130", StatusType.SPEED, "スピード メカスピ2スタ2パワ1賢さ1"),
     GraphTarget("power_20241227", StatusType.POWER, "パワー メカスピ2スタ2パワ1賢さ1"),
     GraphTarget("guts_20241210", StatusType.GUTS, "根性 畑スピ1パワ1根性2賢さ1"),
     GraphTarget("wisdom_20241202", StatusType.WISDOM, "賢さ メカスピ2スタ2パワ1賢さ1"),
-    GraphTarget("speed_20241130", StatusType.SPEED, "スピード メカスピ2スタ2パワ1賢さ1"),
 )
 
 enum class GraphSortOrder(val displayName: String) {
