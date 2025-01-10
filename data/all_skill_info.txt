@@ -493,7 +493,7 @@ order_rate_out50_continue==1&temptation_count==0&is_finalcorner==1->remain_dista
 
 YEAH☆VIVID TIME!
 [ポップス☆ジョーカー]トーセンジョーダン 固有
-最終直線を走行中に前の方で追い抜こうとするか詰め寄られるとテンションを上げて速度を上げる
+最終直線を走行中に前の方で追い抜こうとするか近寄られるとテンションを上げて速度を上げる
 評価点340、人気:スピード60、確定発動
 ->is_last_straight==1&order_rate<=40&overtake_target_time>=1@is_last_straight==1&order_rate<=40&is_overtake==1
 「最終直線、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「最終直線、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度3500、持続5.0
@@ -768,7 +768,7 @@ phase>=2&order_rate>=50->is_last_straight==1
 
 Silent letter
 [Flare]アストンマーチャン 固有
-残り400mを切って前の方で詰め寄られるとファンの心に残る走りで抜け出しやすくなる
+残り400mを切って前の方で近寄られるとファンの心に残る走りで抜け出しやすくなる
 評価点340、人気:スピード30/パワー30、確定発動
 ->remain_distance<=400&order<=2&overtake_target_time>=1
 「残り距離<=400、順位<=2、追い抜き対象時間>=1」、目標速度2500、加速3000、持続5.0
@@ -1070,7 +1070,7 @@ change_order_up_middle>=3->distance_rate>=60&phase==1&slope==2&order_rate>=50
 
 最強の名を懸けて
 [エンド・オブ・スカイ]メジロマックイーン 固有
-レース終盤かつ最終コーナー以降に前の方で詰め寄られると速度を上げ続ける
+レース終盤かつ最終コーナー以降に前の方で近寄られると速度を上げ続ける
 評価点340、人気:スピード60、確定発動
 ->phase>=2&is_finalcorner==1&order<=4&overtake_target_time>=1
 「終盤、最終コーナー以降、順位<=4、追い抜き対象時間>=1」、目標速度3500、持続6.0
@@ -1492,9 +1492,9 @@ Joy to the World
 レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度が少し上がるゴールまですごく遠いとすごく上がる
 評価点340、人気:スピード60、確定発動
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
-「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度4500、持続5.0
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度4500、持続5.0
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
-「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
 
 Immortal Work
 [Jetblack Automaton]シンボリクリスエス 固有
@@ -1559,6 +1559,15 @@ distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorne
 distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorner_laterhalf==1@phase>=2&is_finalcorner==1&corner==0
 「距離割合>=50、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象時間>=2」の後「終盤、最終コーナー後半」または「終盤、最終コーナー以降、コーナー以外」、目標速度3500、持続5.0
 
+霊験灼然チョベリグ神託
+[祝ひ寿ぐ神速天女]マルゼンスキー 固有
+レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間少し前に出る、マイルレースなら少しの間すごく前に出る
+評価点340、人気:パワー60、確定発動
+->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
+「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度4500、持続4.0
+->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
+「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度2500、持続4.0
+
 Vive la GOLD
 [La mode 564]ゴールドシップ 固有
 中距離か長距離レースで最終コーナー以降に後方から追い抜こうとすると速度が上がる、スタート時に出遅れているとすごく上がる
@@ -1570,7 +1579,7 @@ Vive la GOLD
 
 演舞・撫子大薙刀
 [蒼炎の誉]グラスワンダー 固有
-レース後半で中団にいるとき追い抜こうとするか詰め寄られると残り400m地点で速度が上がる非根幹距離のレースならすごく上がる
+レース後半で中団にいるとき追い抜こうとするか近寄られると残り400m地点で速度が上がる非根幹距離のレースならすごく上がる
 評価点340、人気:スピード60、確定発動
 distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399&is_basis_distance==0
 「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401、非根幹距離」、目標速度4500、持続5.0
@@ -2053,7 +2062,7 @@ order_rate_out50_continue==1&temptation_count==0&is_finalcorner==1->remain_dista
 「終盤、残り距離399～401、順位率40以下（チャンミ～4/LoH～5）」、目標速度1500、持続3.0
 
 YEAH☆VIVID TIME!
-最終直線を走行中に前の方で追い抜こうとするか詰め寄られると速度をわずかに上げる
+最終直線を走行中に前の方で追い抜こうとするか近寄られると速度をわずかに上げる
 評価点180、SP200、人気:スピード15
 ->is_last_straight==1&order_rate<=40&overtake_target_time>=1@is_last_straight==1&order_rate<=40&is_overtake==1
 「最終直線、順位率40以下（チャンミ～4/LoH～5）、追い抜き対象時間>=1」または「最終直線、順位率40以下（チャンミ～4/LoH～5）、追い抜きモード」、目標速度1500、持続3.0
@@ -2287,7 +2296,7 @@ phase>=2&order_rate>=50->is_last_straight==1
 「残り距離999～1001、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、持続3.0
 
 Silent letter
-残り400mを切って前の方で詰め寄られるとちょっと抜け出しやすくなる
+残り400mを切って前の方で近寄られるとちょっと抜け出しやすくなる
 評価点180、SP200、人気:スピード7/パワー7
 ->remain_distance<=400&order<=2&overtake_target_time>=1
 「残り距離<=400、順位<=2、追い抜き対象時間>=1」、目標速度500、加速1000、持続3.0
@@ -2547,7 +2556,7 @@ change_order_up_middle>=3->distance_rate>=60&phase==1&slope==2&order_rate>=50
 「中盤追い抜き>=3」の後「距離割合>=60、中盤、下り坂、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、加速500、持続2.4
 
 最強の名を懸けて
-レース終盤かつ最終コーナー以降に前の方で詰め寄られると速度をわずかに上げ続ける
+レース終盤かつ最終コーナー以降に前の方で近寄られると速度をわずかに上げ続ける
 評価点180、SP200、人気:スピード15
 ->phase>=2&is_finalcorner==1&order<=4&overtake_target_time>=1
 「終盤、最終コーナー以降、順位<=4、追い抜き対象時間>=1」、目標速度1500、持続3.6
@@ -2906,9 +2915,9 @@ Joy to the World
 レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度がちょっと上がるゴールまですごく遠いと少し上がる
 評価点180、SP200、人気:スピード15
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
-「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度2500、持続3.0
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度2500、持続3.0
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
-「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
+「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
 
 Immortal Work
 レース中間地点で中団にいると最終直線で速度がわずかに上がる
@@ -2960,6 +2969,14 @@ distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorne
 distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorner_laterhalf==1@phase>=2&is_finalcorner==1&corner==0
 「距離割合>=50、順位率50以下（チャンミ～5/LoH～6）、追い抜き対象時間>=2」の後「終盤、最終コーナー後半」または「終盤、最終コーナー以降、コーナー以外」、目標速度1500、持続3.0
 
+霊験灼然チョベリグ神託
+レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間ちょっと前に出る、マイルレースなら少しの間少し前に出る
+評価点180、SP200、人気:パワー15
+->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
+「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度2500、持続2.4
+->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
+「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度500、持続2.4
+
 Vive la GOLD
 中距離か長距離レースで最終コーナー以降に後方から追い抜こうとすると速度がわずかに上がる、スタート時に出遅れていると少し上がる
 評価点180、SP200、人気:スピード15
@@ -2969,7 +2986,7 @@ Vive la GOLD
 「中距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」または「長距離、最終コーナー以降、追い抜きモード、順位率50以上（チャンミ5～/LoH6～）」、目標速度1500、持続3.0
 
 演舞・撫子大薙刀
-レース後半で中団にいるとき追い抜こうとするか詰め寄られると残り400m地点で速度がわずかに上がる非根幹距離のレースなら少し上がる
+レース後半で中団にいるとき追い抜こうとするか近寄られると残り400m地点で速度がわずかに上がる非根幹距離のレースなら少し上がる
 評価点180、SP200、人気:スピード15
 distance_rate>=50&order_rate<=70&order_rate>=30&overtake_target_time>=1@distance_rate>=50&order_rate<=70&order_rate>=30&is_overtake==1->remain_distance<=401&remain_distance>=399&is_basis_distance==0
 「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜き対象時間>=1」または「距離割合>=50、順位率30～70（チャンミ3～6/LoH4～8）、追い抜きモード」の後「残り距離399～401、非根幹距離」、目標速度2500、持続3.0
@@ -5992,6 +6009,13 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=201&remain_distance>=
 評価点334、SP120(合計240)、人気:スピード60
 ->distance_type==2&is_overtake==1&accumulatetime>=5
 「マイル、追い抜きモード、経過時間>=5」、目標速度3500、持続2.4
+
+天女の羽衣
+[祝ひ寿ぐ神速天女]マルゼンスキー 進化(姉御肌)
+追い抜こうとするか近寄られるとすごく前に出る＜逃げ・マイル＞
+評価点394、進化元SP240、人気:パワー60
+->running_style==1&distance_type==2&is_overtake==1&accumulatetime>=5@running_style==1&distance_type==2&overtake_target_time>=1&accumulatetime>=5
+「逃げ、マイル、追い抜きモード、経過時間>=5」または「逃げ、マイル、追い抜き対象時間>=1、経過時間>=5」、現在速度4500、持続2.4
 
 輝くトップスタァ
 [シューティンスタァ・ルヴュ]フジキセキ 進化(姉御肌)
@@ -10123,20 +10147,20 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間少し前に出る＜中距離/長距離＞
 評価点508、SP180(合計360)、人気:パワー60
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度2500、持続4.0
+「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度2500、持続4.0
 
 勝機到来
 [蒼炎の誉]グラスワンダー 進化(後の先)
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間前に出る＜中距離/長距離＞
 評価点633、進化元SP360、人気:パワー60
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度3500、持続4.0
+「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度3500、持続4.0
 
 切り返し
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間ちょっと前に出る＜中距離/長距離＞
 評価点217、SP180、人気:パワー20
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
+「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
 
 勝負はここから！
 終盤の最終コーナーで3番手以内にいると加速力が上がる＜逃げ・中距離＞
@@ -10217,6 +10241,31 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点217、SP170、人気:パワー20
 ->running_style==2&distance_type==3&phase_firstquarter_random==2&order_rate<=50
 「先行、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.2
+
+ターニングポイント
+レース終盤始めの方に中団以降にいると加速力がわずかに上がる＜差し・短距離＞
+評価点217、SP170、人気:パワー20
+->running_style==3&distance_type==1&phase_firsthalf_random==2&order_rate>=40
+「差し、短距離、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速2000、持続1.8
+
+傑出
+レース後半に近寄られると速度が上がる＜作戦・逃げ＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==1&distance_rate>=50&overtake_target_time>=1
+「逃げ、距離割合>=50、追い抜き対象時間>=1」、目標速度3500、持続2.4
+
+神薙ダンス
+[祝ひ寿ぐ神速天女]マルゼンスキー 進化(傑出)
+レース後半に近寄られるとすごく前に出る＜逃げ・マイル＞
+評価点633、進化元SP360、人気:パワー60
+->running_style==1&distance_type==2&distance_rate>=50&overtake_target_time>=1
+「逃げ、マイル、距離割合>=50、追い抜き対象時間>=1」、現在速度4500、持続2.4
+
+抜きん出る一歩
+レース後半に近寄られると速度がわずかに上がる＜作戦・逃げ＞
+評価点217、SP180、人気:スピード20
+->running_style==1&distance_rate>=50&overtake_target_time>=1
+「逃げ、距離割合>=50、追い抜き対象時間>=1」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
