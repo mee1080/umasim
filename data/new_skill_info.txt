@@ -1,50 +1,51 @@
-霊験灼然チョベリグ神託
-[祝ひ寿ぐ神速天女]マルゼンスキー 固有
-レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間少し前に出る、マイルレースなら少しの間すごく前に出る
-評価点340、人気:パワー60、確定発動
-->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度4500、持続4.0
-->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度2500、持続4.0
+『船橋最強！』
+[衣錦還郷の瑞星]フリオーソ 固有
+レース中盤に前方で競り合うとレース後半に少しの間速度が上がる大井か川崎か船橋レース場なら上げ続ける
+評価点340、人気:スピード60、確定発動
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50&track_id==10101@distance_rate>=50&track_id==10103@distance_rate>=50&track_id==10104
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50、レース場==10101」または「距離割合>=50、レース場==10103」または「距離割合>=50、レース場==10104」、目標速度3500、持続6.0
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50」、目標速度3500、持続4.0
 
-霊験灼然チョベリグ神託
-レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間ちょっと前に出る、マイルレースなら少しの間少し前に出る
-評価点180、SP200、人気:パワー15
-->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度2500、持続2.4
-->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度500、持続2.4
+『船橋最強！』
+レース中盤に前方で競り合うとレース後半に少しの間速度がわずかに上がる、大井か川崎か船橋レース場ならわずかに上げ続ける
+評価点180、SP200、人気:スピード15
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50&track_id==10101@distance_rate>=50&track_id==10103@distance_rate>=50&track_id==10104
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50、レース場==10101」または「距離割合>=50、レース場==10103」または「距離割合>=50、レース場==10104」、目標速度1500、持続3.6
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50」、目標速度1500、持続2.4
 
-天女の羽衣
-[祝ひ寿ぐ神速天女]マルゼンスキー 進化(姉御肌)
-追い抜こうとするか近寄られるとすごく前に出る＜逃げ・マイル＞
-評価点394、進化元SP240、人気:パワー60
-->running_style==1&distance_type==2&is_overtake==1&accumulatetime>=5@running_style==1&distance_type==2&overtake_target_time>=1&accumulatetime>=5
-「逃げ、マイル、追い抜きモード、経過時間>=5」または「逃げ、マイル、追い抜き対象時間>=1、経過時間>=5」、現在速度4500、持続2.4
+潮風の導き
+[衣錦還郷の瑞星]フリオーソ 進化(優位形成)
+レース中盤の直線で速度が上がるさらにダートレースならしばらくの間速度が上がる＜マイル/中距離＞
+評価点633、進化元SP360、人気:スピード60
+->distance_type==2&phase_straight_random==1&ground_type==2@distance_type==3&phase_straight_random==1&ground_type==2
+「マイル、中盤直線ランダム、ダート」または「中距離、中盤直線ランダム、ダート」、目標速度3500、持続4.0
+->distance_type==2&phase_straight_random==1@distance_type==3&phase_straight_random==1
+「マイル、中盤直線ランダム」または「中距離、中盤直線ランダム」、目標速度3500、持続2.4
 
-ターニングポイント
-レース終盤始めの方に中団以降にいると加速力がわずかに上がる＜差し・短距離＞
-評価点217、SP170、人気:パワー20
-->running_style==3&distance_type==1&phase_firsthalf_random==2&order_rate>=40
-「差し、短距離、終盤前1/4ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速2000、持続1.8
+猛烈激走
+追い比べをしていると残り200mを切ってから前に出る＜逃げ/先行＞
+評価点508、SP180(合計360)、人気:パワー60
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度3500、持続2.4
 
-傑出
-レース後半に近寄られると速度が上がる＜作戦・逃げ＞
-評価点508、SP180(合計360)、人気:スピード60
-->running_style==1&distance_rate>=50&overtake_target_time>=1
-「逃げ、距離割合>=50、追い抜き対象時間>=1」、目標速度3500、持続2.4
-
-神薙ダンス
-[祝ひ寿ぐ神速天女]マルゼンスキー 進化(傑出)
-レース後半に近寄られるとすごく前に出る＜逃げ・マイル＞
+勇船直往
+[衣錦還郷の瑞星]フリオーソ 進化(猛烈激走)
+追い比べをしていると残り200mを切ってからすごく前に出る＜逃げ/先行＞
 評価点633、進化元SP360、人気:パワー60
-->running_style==1&distance_type==2&distance_rate>=50&overtake_target_time>=1
-「逃げ、マイル、距離割合>=50、追い抜き対象時間>=1」、現在速度4500、持続2.4
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度4500、持続2.4
 
-抜きん出る一歩
-レース後半に近寄られると速度がわずかに上がる＜作戦・逃げ＞
-評価点217、SP180、人気:スピード20
-->running_style==1&distance_rate>=50&overtake_target_time>=1
-「逃げ、距離割合>=50、追い抜き対象時間>=1」、目標速度1500、持続2.4
+みなぎる闘志
+追い比べをしていると残り200mを切ってからわずかに前に出る＜逃げ/先行＞
+評価点217、SP180、人気:パワー20
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度1500、持続2.4
 
 
+得意の舞台で中央勢をねじ伏せました、フリオーソ！\n帝王賞を制し、また1つ\nGⅠタイトルを手にしました！
+プレイヤーキャラ=フリオーソ(1079,0),プレイヤー着順=(1,0),レース名=帝王賞(1101,0),?
+
+得意の舞台で中央勢をねじ伏せました、フリオーソ！\n帝王賞を制し、また1つ\nGⅠタイトルを手にしました！
+プレイヤーキャラ=フリオーソ(1079,0),プレイヤー着順=(1,0),レース名=帝王賞(1101,0),?,着差<(2,0)

@@ -716,6 +716,15 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50」、加速1000、持続8.0
 
+『船橋最強！』
+[衣錦還郷の瑞星]フリオーソ 固有
+レース中盤に前方で競り合うとレース後半に少しの間速度が上がる大井か川崎か船橋レース場なら上げ続ける
+評価点340、人気:スピード60、確定発動
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50&track_id==10101@distance_rate>=50&track_id==10103@distance_rate>=50&track_id==10104
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50、レース場==10101」または「距離割合>=50、レース場==10103」または「距離割合>=50、レース場==10104」、目標速度3500、持続6.0
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50」、目標速度3500、持続4.0
+
 Info: Acquired
 [ZOKU-ZOKU GIZMO]トランセンド 固有
 レース後半まで前方をキープしていてライバルのウマ娘が加速スキルを発動すると少し前に出る、URAのダートレースならさらに速度がわずかに上がる
@@ -2254,6 +2263,14 @@ distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&dist
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50、順位==2」、加速700、持続4.8
 distance_rate>=50&order_rate_out20_continue==1->is_finalcorner_laterhalf==1&distance_diff_rate<=50
 「距離割合>=50、順位率20以降維持（チャンミ2～/LoH3～）」の後「最終コーナー後半、相対位置<=50」、加速500、持続4.8
+
+『船橋最強！』
+レース中盤に前方で競り合うとレース後半に少しの間速度がわずかに上がる、大井か川崎か船橋レース場ならわずかに上げ続ける
+評価点180、SP200、人気:スピード15
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50&track_id==10101@distance_rate>=50&track_id==10103@distance_rate>=50&track_id==10104
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50、レース場==10101」または「距離割合>=50、レース場==10103」または「距離割合>=50、レース場==10104」、目標速度1500、持続3.6
+phase==1&order_rate<=50&blocked_side_continuetime>=2->distance_rate>=50
+「中盤、順位率50以下（チャンミ～5/LoH～6）、横ブロック継続>=2」の後「距離割合>=50」、目標速度1500、持続2.4
 
 Info: Acquired
 レース後半まで前方をキープしていてライバルのウマ娘が加速スキルを発動するとちょっと前に出る
@@ -8847,6 +8864,15 @@ distance_rate>=50&change_order_onetime<0->distance_type==3&corner_random==3@dist
 ->distance_type==2&phase_random==1@distance_type==3&phase_random==1
 「マイル、中盤ランダム」または「中距離、中盤ランダム」、目標速度3500、持続2.4
 
+潮風の導き
+[衣錦還郷の瑞星]フリオーソ 進化(優位形成)
+レース中盤の直線で速度が上がるさらにダートレースならしばらくの間速度が上がる＜マイル/中距離＞
+評価点633、進化元SP360、人気:スピード60
+->distance_type==2&phase_straight_random==1&ground_type==2@distance_type==3&phase_straight_random==1&ground_type==2
+「マイル、中盤直線ランダム、ダート」または「中距離、中盤直線ランダム、ダート」、目標速度3500、持続4.0
+->distance_type==2&phase_straight_random==1@distance_type==3&phase_straight_random==1
+「マイル、中盤直線ランダム」または「中距離、中盤直線ランダム」、目標速度3500、持続2.4
+
 高嶺の艶笑
 [オニキス・ライン]メジロラモーヌ 進化(優位形成)
 レース中盤にしばらくの間速度が上がる＜マイル/中距離＞
@@ -10266,6 +10292,25 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点217、SP180、人気:スピード20
 ->running_style==1&distance_rate>=50&overtake_target_time>=1
 「逃げ、距離割合>=50、追い抜き対象時間>=1」、目標速度1500、持続2.4
+
+猛烈激走
+追い比べをしていると残り200mを切ってから前に出る＜逃げ/先行＞
+評価点508、SP180(合計360)、人気:パワー60
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度3500、持続2.4
+
+勇船直往
+[衣錦還郷の瑞星]フリオーソ 進化(猛烈激走)
+追い比べをしていると残り200mを切ってからすごく前に出る＜逃げ/先行＞
+評価点633、進化元SP360、人気:パワー60
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度4500、持続2.4
+
+みなぎる闘志
+追い比べをしていると残り200mを切ってからわずかに前に出る＜逃げ/先行＞
+評価点217、SP180、人気:パワー20
+compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
+「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
