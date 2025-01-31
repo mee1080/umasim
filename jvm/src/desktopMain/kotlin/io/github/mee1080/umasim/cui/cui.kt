@@ -26,7 +26,7 @@ fun openCui(args: Array<String>) {
     simulateMecha()
 //    debugMecha()
 //    debugCook()
-//    simulateCook()
+    simulateCook()
 //    debugUaf()
 //    simulateUaf()
 //    simulateLarc()

@@ -1505,6 +1505,15 @@ phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&o
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
 「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
 
+Breezy Treat
+[Sugary Wind]ヤマニンゼファー 固有
+残り350m地点で前方にいると少しの間前に出る、さらにマイルレースなら速度がわずかに上がる
+評価点340、人気:パワー60、確定発動
+->distance_type==2&remain_distance<=351&remain_distance>=349&order_rate<=50
+「マイル、残り距離349～351、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、目標速度1500、持続4.0
+->remain_distance<=351&remain_distance>=349&order_rate<=50
+「残り距離349～351、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続4.0
+
 Immortal Work
 [Jetblack Automaton]シンボリクリスエス 固有
 レース中間地点で中団にいると最終直線で速度が上がる、中山レース場の中距離レースならものすごく上がる
@@ -1522,6 +1531,15 @@ distance_rate>=50&distance_rate<=51&order_rate>=40&order_rate<=80->is_last_strai
 「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）、マイル」、目標速度3500、持続6.0
 ->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40
 「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）」、目標速度2500、持続5.0
+
+ふわもこアワー
+[溶けない砂糖菓子]アストンマーチャン 固有
+短距離レースのレース中間付近で前方にいると速度が上がる、賢さが十二分に高いとすごく上がる
+評価点340、人気:スピード60、確定発動
+->distance_type==1&distance_rate<=50&distance_rate>=45&order_rate<=30&base_wiz>=1200
+「短距離、距離割合45～50、順位率30以下（チャンミ～3/LoH～4）、基礎賢さ>=1200」、目標速度4500、持続5.0
+->distance_type==1&distance_rate<=50&distance_rate>=45&order_rate<=30
+「短距離、距離割合45～50、順位率30以下（チャンミ～3/LoH～4）」、目標速度3500、持続5.0
 
 とびだせ☆ポッピングシェル
 [パステルマリン・ロコドル]ホッコータルマエ 固有
@@ -2936,6 +2954,14 @@ phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&o
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
 「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
 
+Breezy Treat
+残り350m地点で前方にいると少しの間わずかに前に出る、さらにマイルレースなら速度がほんのわずかに上がる
+評価点180、SP200、人気:パワー15
+->distance_type==2&remain_distance<=351&remain_distance>=349&order_rate<=50
+「マイル、残り距離349～351、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、目標速度350、持続2.4
+->remain_distance<=351&remain_distance>=349&order_rate<=50
+「残り距離349～351、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続2.4
+
 Immortal Work
 レース中間地点で中団にいると最終直線で速度がわずかに上がる
 評価点180、SP200、人気:スピード15
@@ -2949,6 +2975,14 @@ distance_rate>=50&distance_rate<=51&order_rate>=40&order_rate<=80->is_last_strai
 「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）、マイル」、目標速度1500、持続3.6
 ->distance_rate<=50&distance_rate>=45&order_rate<=90&order_rate>=40
 「距離割合45～50、順位率40～90（チャンミ4～8/LoH5～10）」、目標速度500、持続3.0
+
+ふわもこアワー
+短距離レースのレース中間付近で前方にいると速度がわずかに上がる、賢さが十二分に高いと少し上がる
+評価点180、SP200、人気:スピード15
+->distance_type==1&distance_rate<=50&distance_rate>=45&order_rate<=30&base_wiz>=1200
+「短距離、距離割合45～50、順位率30以下（チャンミ～3/LoH～4）、基礎賢さ>=1200」、目標速度2500、持続3.0
+->distance_type==1&distance_rate<=50&distance_rate>=45&order_rate<=30
+「短距離、距離割合45～50、順位率30以下（チャンミ～3/LoH～4）」、目標速度1500、持続3.0
 
 とびだせ☆ポッピングシェル
 レース中間地点で速度がちょっと上がるさらにダートレースでスキル発動時第3コーナーにいない場合加えて速度がほんのわずかに上がる
@@ -8563,6 +8597,13 @@ U.A.F. 進化(破竹の勢い)
 ->running_style==2&order>=3&distance_rate>=50
 「先行、順位>=3、距離割合>=50」、目標速度3500、持続4.0
 
+シルフ・スピリット
+[Sugary Wind]ヤマニンゼファー 進化(風雲の志)
+レース終盤目前以降に先頭か先頭から4バ身以内だとしばらくの間速度が少し上がる＜先行・マイル＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==2&distance_type==2&distance_diff_top<=10&distance_rate>=60
+「先行、マイル、先頭とのバ身差<=10、距離割合>=60」、目標速度2500、持続4.0
+
 俊傑の悠
 [POPPING!]バブルガムフェロー 進化(風雲の志)
 終盤目前でしばらくの間速度がわずかに上がる、マイルか中距離でスキル発動時先頭か先頭から2バ身以内だとしばらくの間速度が上がる＜作戦・先行＞
@@ -9292,6 +9333,13 @@ Enjoy the Flight
 ->distance_type==1&phase_laterhalf_random==1&order_rate>=40@distance_type==2&phase_laterhalf_random==1&order_rate>=40
 「短距離、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」または「マイル、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度4500、持続2.4
 
+一流の在り方
+[Evergreen Identity]キングヘイロー 進化(気骨稜稜)
+レース終盤が迫ったとき中団以降だとしばらくの間速度が上がる＜短距離＞
+評価点633、進化元SP320、人気:スピード60
+->distance_type==1&phase_laterhalf_random==1&order_rate>=40
+「短距離、中盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続4.0
+
 ひたむき前進
 レース終盤が迫ったとき中団以降だと速度がわずかに上がる＜短距離＞
 評価点217、SP160、人気:スピード20
@@ -9303,6 +9351,13 @@ Enjoy the Flight
 評価点508、SP180(合計360)、人気:スピード60
 ->running_style==2&phase_random==1&order_rate<=50
 「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続4.0
+
+塵旋風となりて
+[Sugary Wind]ヤマニンゼファー 進化(かっとばせ！)
+レース中盤に前の方にいるとしばらくの間速度が上がる＜作戦・先行＞
+評価点633、進化元SP360、人気:スピード60
+->running_style==2&phase_random==1&order_rate<=50
+「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続4.0
 
 勝利に向かって
 レース中盤に前の方にいるとしばらくの間速度がちょっと上がる＜作戦・先行＞
@@ -9997,6 +10052,15 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 ->is_activate_other_skill_detail==1&is_last_straight==1
 「上記効果発動後、最終直線」、現在速度1500、持続3.0
 
+辻映りの妙技
+[溶けない砂糖菓子]アストンマーチャン 進化(早業)
+スタート時に加速力がわずかに上がる出遅れていない場合その後レース中盤に前方にいるとしばらくの間速度が上がる＜逃げ・短距離＞
+評価点633、進化元SP360、人気:スピード30/パワー30
+->running_style==1&distance_type==1
+「逃げ、短距離」、加速2000、持続3.0
+->is_activate_other_skill_detail==1&phase_random==1&order_rate<=50&is_badstart==0
+「上記効果発動後、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）、出遅れ無し」、目標速度3500、持続4.0
+
 目にも留まらず
 レース中盤に前方にいるとしばらくの間速度がちょっと上がる＜作戦・逃げ＞
 評価点217、SP180、人気:スピード20
@@ -10311,6 +10375,37 @@ compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&re
 評価点217、SP180、人気:パワー20
 compete_fight_count>0->running_style==1&remain_distance<=200@running_style==2&remain_distance<=200
 「追い比べ」の後「逃げ、残り距離<=200」または「先行、残り距離<=200」、現在速度1500、持続2.4
+
+イニシアチブ
+レース終盤始めの方で前方にいると加速力が上がる＜逃げ・短距離＞
+評価点508、SP170(合計340)、人気:パワー60
+->running_style==1&distance_type==1&phase_firsthalf_random==2&order_rate<=50
+「逃げ、短距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+
+覚えていてくださいね？
+[溶けない砂糖菓子]アストンマーチャン 進化(イニシアチブ)
+レース終盤始めの方早めに前方にいると加速力が上がる＜逃げ・短距離＞
+評価点633、進化元SP340、人気:パワー60
+->running_style==1&distance_type==1&phase_firstquarter_random==2&order_rate<=50
+「逃げ、短距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+
+譲れぬ一歩
+レース終盤始めの方で前方にいると加速力がわずかに上がる＜逃げ・短距離＞
+評価点217、SP170、人気:パワー20
+->running_style==1&distance_type==1&phase_firsthalf_random==2&order_rate<=50
+「逃げ、短距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.8
+
+丁々発止
+レース終盤始めの方で前方にいると加速力が上がる＜先行・短距離＞
+評価点508、SP170(合計340)、人気:パワー60
+->running_style==2&distance_type==1&phase_firsthalf_random==2&order_rate<=50
+「先行、短距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
+
+火花散らして
+レース終盤始めの方で前方にいると加速力がわずかに上がる＜先行・短距離＞
+評価点217、SP170、人気:パワー20
+->running_style==2&distance_type==1&phase_firsthalf_random==2&order_rate<=50
+「先行、短距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.8
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
