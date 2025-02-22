@@ -39,12 +39,9 @@ private class RecentEventTrackEntry(
 
 val recentEventTrackList by lazy {
     listOf(
-        RecentEventTrackEntry("中山", "芝1200", CourseCondition.GOOD, 12),
-        RecentEventTrackEntry("中山", "芝1200", CourseCondition.YAYAOMO, 12),
-        RecentEventTrackEntry("中山", "芝1200", CourseCondition.OMO, 12),
-        RecentEventTrackEntry("中山", "芝1200", CourseCondition.BAD, 12),
-
         RecentEventTrackEntry("阪神", "芝1600m(外)", CourseCondition.GOOD, 9),
+
+        RecentEventTrackEntry("京都", "芝3200m(外)", CourseCondition.GOOD, 9),
     ).mapNotNull { target ->
         val course = trackData.entries.firstOrNull { it.value.name == target.courseName } ?: return@mapNotNull null
         val track = course.value.courses.entries.firstOrNull { it.value.name.startsWith(target.distance) }
