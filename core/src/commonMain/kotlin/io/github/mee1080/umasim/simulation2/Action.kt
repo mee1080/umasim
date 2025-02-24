@@ -387,3 +387,9 @@ class MechaTuning(
 
     constructor(type: MechaChipType, index: Int) : this(MechaTuningResult(type, index))
 }
+
+data class LegendActionParam(
+    val dummy: Int,
+) : ScenarioActionParam {
+    override fun toShortString() = TODO()
+}

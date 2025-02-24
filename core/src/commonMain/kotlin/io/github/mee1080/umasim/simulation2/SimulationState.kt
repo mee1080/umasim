@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.scenario.climax.*
 import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
@@ -63,6 +64,8 @@ data class SimulationState(
     val cookStatus get() = scenarioStatus as? CookStatus
 
     val mechaStatus get() = scenarioStatus as? MechaStatus
+
+    val legendStatus get() = scenarioStatus as? LegendStatus
 
     val supportTypeCount = supportCount.size
 

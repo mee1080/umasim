@@ -28,6 +28,7 @@ import io.github.mee1080.umasim.scenario.gm.Knowledge
 import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
+import io.github.mee1080.umasim.scenario.legend.LegendCalculator
 import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
@@ -577,6 +578,7 @@ private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: 
         is UafScenarioActionParam -> applyUafAction(scenarioAction)
         is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
         is MechaActionParam -> MechaCalculator.applyScenarioAction(this, scenarioAction)
+        is LegendActionParam -> LegendCalculator.applyScenarioAction(this, scenarioAction)
         null -> this
     }
 }

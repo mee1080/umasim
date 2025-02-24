@@ -20,6 +20,9 @@ import io.github.mee1080.umasim.scenario.larc.LArcCalculator
 import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcScenarioEvents
 import io.github.mee1080.umasim.scenario.larc.lArcTrainingData
+import io.github.mee1080.umasim.scenario.legend.LegendCalculator
+import io.github.mee1080.umasim.scenario.legend.LegendScenarioEvents
+import io.github.mee1080.umasim.scenario.legend.legendTrainingData
 import io.github.mee1080.umasim.scenario.live.GrandLiveScenarioEvents
 import io.github.mee1080.umasim.scenario.live.LiveCalculator
 import io.github.mee1080.umasim.scenario.live.liveTrainingData
@@ -167,7 +170,23 @@ enum class Scenario(
             "ビワハヤヒデ", "ナリタタイシン", "エアシャカール", "シンボリクリスエス", "タニノギムレット",
         ),
         calculator = MechaCalculator,
-    )
+    ),
+
+    LEGEND(
+        scenarioNumber = 10,
+        displayName = "The Twinkle Legends (作成中)",
+        trainingData = legendTrainingData,
+        scenarioEvents = { LegendScenarioEvents() },
+        scenarioLink = setOf(
+            "オルフェーヴル",
+            "メジロラモーヌ",
+            "シリウスシンボリ",
+            "スマートファルコン",
+            "ジェンティルドンナ",
+            "伝説の体現者",
+        ),
+        calculator = LegendCalculator,
+    ),
 
     ;
 
