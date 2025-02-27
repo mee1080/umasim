@@ -61,12 +61,13 @@ sealed interface MultipleAction : Action {
 
 sealed interface ActionResult {
     val status: Status get() = Status()
+    val success: Boolean get() = true
 }
 
 data class StatusActionResult(
     override val status: Status,
     val scenarioActionParam: ScenarioActionParam?,
-    val success: Boolean = true,
+    override val success: Boolean = true,
 ) : ActionResult {
     constructor(
         current: Status,

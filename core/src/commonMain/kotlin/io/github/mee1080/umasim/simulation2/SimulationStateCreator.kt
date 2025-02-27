@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.simulation2
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.SupportCard
+import io.github.mee1080.umasim.data.TeamMemberData
 import io.github.mee1080.umasim.scenario.Scenario
 
 fun SupportCard.toMemberState(
@@ -20,7 +23,7 @@ fun SupportCard.toMemberState(
         friendCount = friendCount,
         outingStep = 0,
     ),
-    scenarioState = scenario.memberState(this),
+    scenarioState = scenario.memberState(this, false),
 )
 
 fun List<SupportCard>.toMemberState(scenario: Scenario) =

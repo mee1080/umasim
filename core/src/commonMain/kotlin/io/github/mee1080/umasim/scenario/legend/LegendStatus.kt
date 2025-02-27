@@ -18,20 +18,195 @@
  */
 package io.github.mee1080.umasim.scenario.legend
 
-import io.github.mee1080.umasim.simulation2.ScenarioStatus
-import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.addGuest
+import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.utility.mapIf
 
 fun SimulationState.updateLegendStatus(update: LegendStatus.() -> LegendStatus): SimulationState {
     val legendStatus = legendStatus ?: return this
     return copy(scenarioStatus = legendStatus.update())
 }
 
-data class LegendStatus(
-    val dummy: Int = 0,
-) : ScenarioStatus
+fun LegendStatus.addBuff(buff: LegendBuff, enabled: Boolean? = null): LegendStatus {
+    return copy(buffList = buffList + LegendBuffState(buff, enabled ?: (buff.condition == null)))
+}
 
-enum class LegendMember(val displayName: String) {
-    Blue("セントライト"),
-    Green("スピードシンボリ"),
-    Red("ハイセイコー"),
+fun SimulationState.setLegendMastery(mastery: LegendMember): SimulationState {
+    var state = this
+    if (mastery == LegendMember.Red) {
+        state = state
+            .addGuest(StatusType.SPEED, Scenario.LEGEND)
+            .addGuest(StatusType.STAMINA, Scenario.LEGEND)
+            .addGuest(StatusType.POWER, Scenario.LEGEND)
+            .addGuest(StatusType.GUTS, Scenario.LEGEND)
+            .addGuest(StatusType.WISDOM, Scenario.LEGEND)
+        state = state.copy(
+            member = state.member.mapIf({ !it.outingType }) { member ->
+                member.copy(
+                    scenarioState = (member.scenarioState as LegendMemberState).copy(
+                        bestFriendLevel = 1,
+                        bestFriendGauge = 20,
+                    )
+                )
+            }
+        )
+    }
+    return state.updateLegendStatus {
+        setMastery(mastery)
+    }
+}
+
+fun LegendStatus.setMastery(mastery: LegendMember): LegendStatus {
+    return copy(mastery = mastery, specialStateTurn = if (mastery == LegendMember.Red) 0 else 1)
+}
+
+data class LegendStatus(
+    val buffList: List<LegendBuffState> = emptyList(),
+    val mastery: LegendMember? = null,
+    val specialStateTurn: Int = 0,
+) : ScenarioStatus {
+    fun getBuffEffect(memberCount: Int, friendCount: Int): LegendBuffEffect {
+        val buff = buffList.filter { it.enabled }.fold(LegendBuffEffect()) { acc, it ->
+            acc + it.buff.getEffect(memberCount, friendCount)
+        }
+        return if (specialStateTurn > 0) buff + mastery!!.specialStateEffect else buff
+    }
+}
+
+enum class LegendMember(
+    val color: String,
+    val displayName: String,
+    val specialStateName: String,
+    val specialStateEffect: LegendBuffEffect = LegendBuffEffect(),
+) {
+    Blue("青", "セントライト", "超絶好調"),
+    Green(
+        "緑", "スピードシンボリ", "挑戦ゾーン",
+        LegendBuffEffect(trainingBonus = 30, hpCost = 50),
+    ),
+    Red("赤", "ハイセイコー", ""),
+}
+
+data class LegendBuffState(
+    val buff: LegendBuff,
+    val enabled: Boolean,
+)
+
+data class LegendBuff(
+    val name: String,
+    val description: String,
+    val member: LegendMember,
+    val rank: Int,
+    val effect: LegendBuffEffect,
+    val effectByMemberCount: LegendBuffEffect? = null,
+    val effectBySpecialState: LegendBuffEffect? = null,
+    val condition: LegendBuffCondition? = null,
+) {
+    fun getEffect(memberCount: Int, friendCount: Int): LegendBuffEffect {
+        return if (effectByMemberCount == null) {
+            effect
+        } else {
+            effect + effectByMemberCount * if (effectByMemberCount.friendBonus > 0) friendCount else memberCount
+        }
+    }
+}
+
+data class LegendBuffEffect(
+    val friendBonus: Int = 0,
+    val motivationBonus: Int = 0,
+    val trainingBonus: Int = 0,
+    val hintLevel: Int = 0,
+    val hintFrequency: Int = 0,
+    val specialtyRate: Int = 0,
+    val hpCost: Int = 0,
+    val relationBonus: Int = 0,
+    val motivationUp: Int = 0,
+    val positionRate: Int = 0,
+    val addMember: Int = 0,
+    val forceHint: Int = 0,
+    val relationUp: Int = 0,
+) {
+    operator fun plus(other: LegendBuffEffect) = LegendBuffEffect(
+        friendBonus = friendBonus + other.friendBonus,
+        motivationBonus = motivationBonus + other.motivationBonus,
+        trainingBonus = trainingBonus + other.trainingBonus,
+        hintLevel = hintLevel + other.hintLevel,
+        hintFrequency = hintFrequency + other.hintFrequency,
+        specialtyRate = specialtyRate + other.specialtyRate,
+        hpCost = hpCost + other.hpCost,
+        relationBonus = relationBonus + other.relationBonus,
+        motivationUp = motivationUp + other.motivationUp,
+        positionRate = positionRate + other.positionRate,
+        addMember = addMember + other.addMember,
+        forceHint = forceHint + other.forceHint,
+        relationUp = relationUp + other.relationUp,
+    )
+
+    operator fun times(value: Int) = LegendBuffEffect(
+        friendBonus = friendBonus * value,
+        motivationBonus = motivationBonus * value,
+        trainingBonus = trainingBonus * value,
+        hintLevel = hintLevel * value,
+        hintFrequency = hintFrequency * value,
+        specialtyRate = specialtyRate * value,
+        hpCost = hpCost * value,
+        relationBonus = relationBonus * value,
+        motivationUp = motivationUp * value,
+        positionRate = positionRate * value,
+        addMember = addMember * value,
+        forceHint = forceHint * value,
+        relationUp = relationUp * value,
+    )
+}
+
+interface LegendBuffCondition {
+    fun activateBeforeAction(status: Status): Boolean = false
+    fun activateAfterAction(action: Action, result: ActionResult): Boolean = false
+
+    data object AfterRest : LegendBuffCondition {
+        override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
+            return action is Sleep
+        }
+    }
+
+    data object AfterTraining : LegendBuffCondition {
+        override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
+            return action is Training && result.success
+        }
+    }
+
+    data object AfterFriendTraining : LegendBuffCondition {
+        override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
+            return action is Training && action.friendTraining && result.success
+        }
+    }
+
+    data class AfterSupportCount(val count: Int) : LegendBuffCondition {
+        override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
+            return action is Training && action.member.size >= count
+        }
+    }
+
+    data object Motivation : LegendBuffCondition {
+        override fun activateBeforeAction(status: Status): Boolean {
+            return status.motivation >= 2
+        }
+    }
+}
+
+data class LegendMemberState(
+    val guest: Boolean,
+    val bestFriendLevel: Int = 0,
+    val bestFriendGauge: Int = 0,
+) : ScenarioMemberState(Scenario.LEGEND) {
+    val trainingBonus by lazy {
+        if (guest) bestFriendGuestTrainingBonus[bestFriendLevel] else bestFriendSupportTrainingBonus[bestFriendLevel]
+    }
+
+    val friendBonus by lazy {
+        if (guest) bestFriendGuestFriendBonus[bestFriendLevel] else 0
+    }
 }

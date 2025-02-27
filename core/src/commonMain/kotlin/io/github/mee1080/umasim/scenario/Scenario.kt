@@ -21,6 +21,7 @@ import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcScenarioEvents
 import io.github.mee1080.umasim.scenario.larc.lArcTrainingData
 import io.github.mee1080.umasim.scenario.legend.LegendCalculator
+import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendScenarioEvents
 import io.github.mee1080.umasim.scenario.legend.legendTrainingData
 import io.github.mee1080.umasim.scenario.live.GrandLiveScenarioEvents
@@ -71,7 +72,7 @@ enum class Scenario(
         ),
         calculator = AoharuCalculator,
     ) {
-        override fun memberState(card: SupportCard): ScenarioMemberState {
+        override fun memberState(card: SupportCard, guest: Boolean): ScenarioMemberState {
             return Store.Aoharu.getTeamMember(card.id)?.let { memberState(it) } ?: AoharuNotMemberState
         }
 
@@ -130,7 +131,7 @@ enum class Scenario(
         ),
         calculator = LArcCalculator,
     ) {
-        override fun memberState(card: SupportCard) = LArcMemberState()
+        override fun memberState(card: SupportCard, guest: Boolean) = LArcMemberState()
         override fun memberState(member: TeamMemberData) = LArcMemberState()
     },
 
@@ -186,10 +187,12 @@ enum class Scenario(
             "伝説の体現者",
         ),
         calculator = LegendCalculator,
-    ),
+    ) {
+        override fun memberState(card: SupportCard, guest: Boolean) = LegendMemberState(guest)
+    },
 
     ;
 
-    open fun memberState(card: SupportCard) = ScenarioMemberState(this)
+    open fun memberState(card: SupportCard, guest: Boolean) = ScenarioMemberState(this)
     open fun memberState(member: TeamMemberData) = ScenarioMemberState(this)
 }

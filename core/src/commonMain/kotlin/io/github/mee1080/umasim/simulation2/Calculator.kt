@@ -26,6 +26,7 @@ import io.github.mee1080.umasim.scenario.climax.WeightItem
 import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
@@ -59,6 +60,7 @@ object Calculator {
         val uafStatus get() = scenarioStatus as? UafStatus
         val cookStatus get() = scenarioStatus as? CookStatus
         val mechaStatus get() = scenarioStatus as? MechaStatus
+        val legendStatus get() = scenarioStatus as? LegendStatus
 
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
@@ -101,6 +103,12 @@ object Calculator {
             liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
         }
     }
+
+    data class ScenarioCalcBonus(
+        val friendFactor: Double = 1.0,
+        val motivationBonus: Int = 0,
+        val trainingBonus: Int = 0,
+    )
 
     fun calcTrainingSuccessStatus(
         info: CalcInfo,
@@ -154,6 +162,7 @@ object Calculator {
         targetType: StatusType,
         friendTraining: Boolean,
         ignoreBaseBonus: Boolean = false,
+        bonus: ScenarioCalcBonus? = null,
     ): Double {
         val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0.0
@@ -170,18 +179,23 @@ object Calculator {
             if (info.allFriend || it.isFriendTraining(info.training.type)) {
                 it.card.friendFactor(baseCondition.applyMember(it))
             } else 1.0
-        }.fold(1.0) { acc, d -> acc * d }
+        }.fold(1.0) { acc, d -> acc * d } * (bonus?.friendFactor ?: 1.0)
+        val motivationBase = when (info.motivation) {
+            3 -> 0.55
+            else -> info.motivation / 10.0
+        }
         val motivationBonus =
-            1 + info.motivation / 10.0 * (1 + support.sumOf {
+            1 + motivationBase * (1 + (support.sumOf {
                 it.card.motivationFactor(baseCondition.applyMember(it))
-            } / 100.0)
+            } + (bonus?.motivationBonus ?: 0)) / 100.0)
         val trainingBonus =
-            1 + support.sumOf {
+            1 + (support.sumOf {
                 it.card.trainingFactor(baseCondition.applyMember(it))
-            } / 100.0
+            } + (bonus?.trainingBonus ?: 0)) / 100.0
         val count = 1 + info.member.size * 0.05
-        if (DEBUG) println("$targetType $baseStatus $base $charaBonus $friend $motivationBonus $trainingBonus $count")
-        return min(100.0, base * charaBonus * friend * motivationBonus * trainingBonus * count)
+        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
+        return if (bonus == null) min(100.0, raw + 0.0002) else raw + 0.0002
     }
 
     private fun calcTrainingHp(

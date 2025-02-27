@@ -21,8 +21,10 @@ package io.github.mee1080.umasim.scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
-import io.github.mee1080.umasim.scenario.cook.CookMemberState
-import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.umasim.simulation2.ActionSelector
+import io.github.mee1080.umasim.simulation2.MemberState
+import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.updateStatus
 
 interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
@@ -98,6 +100,16 @@ internal fun SimulationState.addGuest(totalCount: Int, scenario: Scenario): Simu
         .filter { !it.type.outingType && !supportNames.contains(it.chara) }
         .shuffled()
         .take(totalCount - supportNames.size)
-        .map { MemberState(memberIndex++, it, StatusType.NONE, null, scenario.memberState(it)) }
+        .map { MemberState(memberIndex++, it, StatusType.NONE, null, scenario.memberState(it, true)) }
     return copy(member = member + guestMembers)
+}
+
+internal fun SimulationState.addGuest(type: StatusType, scenario: Scenario): SimulationState {
+    val supportNames = member.filter { !it.outingType }.map { it.charaName }.toSet()
+    val guestSupport = Store.guestSupportCardList
+        .filter { it.type == type && !supportNames.contains(it.chara) }
+        .random()
+    val guestMember =
+        MemberState(member.size, guestSupport, StatusType.NONE, null, scenario.memberState(guestSupport, true))
+    return copy(member = member + guestMember)
 }
