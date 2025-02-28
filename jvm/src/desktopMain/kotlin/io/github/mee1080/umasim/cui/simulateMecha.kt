@@ -14,11 +14,11 @@ private fun speed2Stamina2Power1Wisdom1() {
     val chara = Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5)
     var defaultSupport = Store.getSupportByName(
         "[Devilish Whispers]スティルインラブ",
-        "[大望は飛んでいく]エルコンドルパサー",
+//        "[大望は飛んでいく]エルコンドルパサー",
         "[Cocoon]エアシャカール",
         "[そして幕は上がる]ダンツフレーム",
         "[COOL⇔CRAZY/Buddy]シンボリクリスエス",
-//        "[Take Them Down!]ナリタタイシン",
+        "[Take Them Down!]ナリタタイシン",
     ).toTypedArray()
     var targetStatus = StatusType.SPEED
     doSimulation2(
@@ -26,7 +26,7 @@ private fun speed2Stamina2Power1Wisdom1() {
         chara,
         defaultSupport,
 //        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[鉄の乙女も微笑んで]イクノディクタス" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 6),
         testCount = 100000,
