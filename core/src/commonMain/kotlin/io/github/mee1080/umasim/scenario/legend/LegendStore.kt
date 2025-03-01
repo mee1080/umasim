@@ -50,7 +50,7 @@ internal val legendTrainingData = listOf(
     TrainingBase(StatusType.WISDOM, 5, 324, Status(5, 0, 0, 0, 11, 5, 5)),
 )
 
-private val legendBuffList = listOf(
+val legendBuffList = listOf(
     LegendBuff("オーラ", "得意率アップ 30", LegendMember.Blue, 1, LegendBuffEffect(specialtyRate = 30)),
     LegendBuff("学びの姿勢", "ヒント発生率アップ 80%", LegendMember.Blue, 1, LegendBuffEffect(hintFrequency = 80)),
     LegendBuff("社交術", "絆ゲージ上昇量アップ 2", LegendMember.Blue, 1, LegendBuffEffect(relationBonus = 2)),

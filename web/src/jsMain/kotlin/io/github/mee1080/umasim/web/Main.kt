@@ -27,6 +27,7 @@ import io.github.mee1080.umasim.web.components.lib.ROOT_ELEMENT_ID
 import io.github.mee1080.umasim.web.components.lib.dvh
 import io.github.mee1080.umasim.web.components.lib.dvw
 import io.github.mee1080.umasim.web.page.graph.GraphPage
+import io.github.mee1080.umasim.web.page.legends.LegendsCalcPage
 import io.github.mee1080.umasim.web.page.lesson.LessonPage
 import io.github.mee1080.umasim.web.page.rotation.RotationPage
 import io.github.mee1080.umasim.web.page.simulation.SimulationPage
@@ -77,6 +78,7 @@ fun main() {
                     Page.Lesson -> LessonPage(model.lessonViewModel, model.state.lessonState)
                     Page.Simulation -> SimulationPage(model.state)
                     Page.Graph -> GraphPage(model.graphViewModel, model.state.graphState)
+                    Page.LegendsCalc -> LegendsCalcPage()
                 }
             }
             Div({
@@ -91,6 +93,7 @@ fun main() {
                         Page.Top,
                         Page.Simulation,
                         Page.Graph,
+                        Page.LegendsCalc,
                     ),
                     selectedItem = model.state.page,
                     itemToLabel = { it.displayName },

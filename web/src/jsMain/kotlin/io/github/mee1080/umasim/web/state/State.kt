@@ -33,6 +33,7 @@ enum class Page(val path: String, val displayName: String, val icon: String) {
     Lesson("lesson", "レッスン", "queue_music"),
     Simulation("simulation", "シミュレーション", "person_raised_hand"),
     Graph("graph", "グラフ", "bar_chart"),
+    LegendsCalc("legends", "心得計算", "star"),
 }
 
 data class State(
