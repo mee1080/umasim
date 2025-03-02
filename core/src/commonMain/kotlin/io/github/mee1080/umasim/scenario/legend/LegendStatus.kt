@@ -70,7 +70,7 @@ data class LegendStatus(
 ) : ScenarioStatus {
     fun getBuffEffect(memberCount: Int, friendCount: Int): LegendBuffEffect {
         val buff = buffList.filter { it.enabled }.fold(LegendBuffEffect()) { acc, it ->
-            acc + it.buff.getEffect(memberCount, friendCount)
+            acc + it.buff.getEffect(memberCount, friendCount, if (specialStateTurn > 0) mastery else null)
         }
         return if (specialStateTurn > 0) buff + mastery!!.specialStateEffect else buff
     }
@@ -105,11 +105,11 @@ data class LegendBuff(
     val effectBySpecialState: LegendBuffEffect? = null,
     val condition: LegendBuffCondition? = null,
 ) {
-    fun getEffect(memberCount: Int, friendCount: Int): LegendBuffEffect {
-        return if (effectByMemberCount == null) {
-            effect
-        } else {
-            effect + effectByMemberCount * if (effectByMemberCount.friendBonus > 0) friendCount else memberCount
+    fun getEffect(memberCount: Int, friendCount: Int, specialState: LegendMember?): LegendBuffEffect {
+        return effect + effectByMemberCount?.let {
+            it * if (it.friendBonus > 0) friendCount else memberCount
+        } + effectBySpecialState?.let {
+            if (member == specialState) it else null
         }
     }
 }
@@ -129,7 +129,7 @@ data class LegendBuffEffect(
     val forceHint: Int = 0,
     val relationUp: Int = 0,
 ) {
-    operator fun plus(other: LegendBuffEffect) = LegendBuffEffect(
+    operator fun plus(other: LegendBuffEffect?) = if (other == null) this else LegendBuffEffect(
         friendBonus = friendBonus + other.friendBonus,
         motivationBonus = motivationBonus + other.motivationBonus,
         trainingBonus = trainingBonus + other.trainingBonus,
@@ -162,35 +162,46 @@ data class LegendBuffEffect(
     )
 }
 
-interface LegendBuffCondition {
+sealed interface LegendBuffCondition {
+    val shortName: String
     fun activateBeforeAction(status: Status): Boolean = false
     fun activateAfterAction(action: Action, result: ActionResult): Boolean = false
 
     data object AfterRest : LegendBuffCondition {
+        override val shortName = "休憩後"
+
         override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
             return action is Sleep
         }
     }
 
     data object AfterTraining : LegendBuffCondition {
+        override val shortName = "トレ後"
+
         override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
             return action is Training && result.success
         }
     }
 
     data object AfterFriendTraining : LegendBuffCondition {
+        override val shortName = "友情後"
+
         override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
             return action is Training && action.friendTraining && result.success
         }
     }
 
     data class AfterSupportCount(val count: Int) : LegendBuffCondition {
+        override val shortName = "${count}人トレ後"
+
         override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
             return action is Training && action.member.size >= count
         }
     }
 
     data object Motivation : LegendBuffCondition {
+        override val shortName = "絶好調時"
+
         override fun activateBeforeAction(status: Status): Boolean {
             return status.motivation >= 2
         }

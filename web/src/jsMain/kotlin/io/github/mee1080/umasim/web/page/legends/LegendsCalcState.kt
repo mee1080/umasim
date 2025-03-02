@@ -45,7 +45,9 @@ data class LegendsCalcState(
 
     private fun calc(list: List<LegendBuffState>): LegendCalcFactorInfo {
         val status = LegendStatus(
-            buffList = list,
+            buffList = list.filter {
+                it.buff.condition != LegendBuffCondition.Motivation || specialState == LegendMember.Blue || motivation >= 2
+            },
             mastery = specialState,
             specialStateTurn = if (specialState == LegendMember.Blue || specialState == LegendMember.Green) 1 else 0,
         )

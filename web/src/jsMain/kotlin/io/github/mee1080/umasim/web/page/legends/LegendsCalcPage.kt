@@ -9,6 +9,7 @@ import io.github.mee1080.utility.replaced
 import io.github.mee1080.utility.roundToString
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
+import kotlin.math.max
 
 @Composable
 fun LegendsCalcPage() {
@@ -16,6 +17,7 @@ fun LegendsCalcPage() {
     Div({
         style {
             display(DisplayStyle.Flex)
+            flexWrap(FlexWrap.Wrap)
         }
     }) {
         Div({
@@ -26,7 +28,7 @@ fun LegendsCalcPage() {
         }) { SettingPanel(state) { state = it } }
         Div({
             style {
-                width(360.px)
+                width(500.px)
                 padding(8.px)
             }
         }) { BuffPanel(state) { state = it } }
@@ -201,6 +203,52 @@ private fun BuffPanel(state: LegendsCalcState, update: (LegendsCalcState) -> Uni
                     Text("[${buff.buff.member.color}${buff.buff.rank}] ${buff.buff.name}")
                 }
                 Td({
+                    style { fontSize(70.percent) }
+                }) {
+                    val condition = buff.buff.condition
+                    if (condition != null) {
+                        Span({
+                            style {
+                                borderRadius(4.px)
+                                backgroundColor(rgb(192, 192, 192))
+                            }
+                        }) {
+                            Text(condition.shortName)
+                        }
+                    }
+                    val effect = buff.buff.effect
+                    if (effect.friendBonus > 0) {
+                        Span({
+                            style {
+                                borderRadius(4.px)
+                                backgroundColor(rgb(255, 192, 192))
+                            }
+                        }) {
+                            Text("友情")
+                        }
+                    }
+                    if (effect.motivationBonus > 0) {
+                        Span({
+                            style {
+                                borderRadius(4.px)
+                                backgroundColor(rgb(192, 192, 255))
+                            }
+                        }) {
+                            Text("やる気")
+                        }
+                    }
+                    if (effect.trainingBonus > 0) {
+                        Span({
+                            style {
+                                borderRadius(4.px)
+                                backgroundColor(rgb(192, 255, 192))
+                            }
+                        }) {
+                            Text("トレ効果")
+                        }
+                    }
+                }
+                Td({
                     style { width(120.px) }
                 }) {
                     if (buff.checked) {
@@ -208,7 +256,12 @@ private fun BuffPanel(state: LegendsCalcState, update: (LegendsCalcState) -> Uni
                     } else {
                         Div({
                             style {
-                                width(((buff.factor - state.currentFactor.totalFactor) / (state.maxFactor - state.currentFactor.totalFactor) * 100).percent)
+                                width(
+                                    max(
+                                        0.0,
+                                        (buff.factor - state.currentFactor.totalFactor) / (state.maxFactor - state.currentFactor.totalFactor) * 100
+                                    ).percent
+                                )
                                 backgroundColor(rgb(255, 255, 0))
                                 whiteSpace("nowrap")
                             }
