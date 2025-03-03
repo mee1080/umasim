@@ -189,7 +189,7 @@ data class SupportCard(
 
     fun hasSecondPosition(relation: Int) = specialUnique.any { it.hasSecondPosition(relation) }
 
-    fun positionRateUp(relation: Int) = specialUnique.any { it.positionRateUp(relation) }
+    fun positionRateUp(relation: Int) = specialUnique.sumOf { it.positionRateUp(relation) }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

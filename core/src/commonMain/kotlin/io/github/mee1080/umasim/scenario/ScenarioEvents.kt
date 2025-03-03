@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.simulation2.ActionSelector
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.simulation2.updateStatus
+import kotlin.math.min
 
 interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
@@ -112,4 +113,11 @@ internal fun SimulationState.addGuest(type: StatusType, scenario: Scenario): Sim
     val guestMember =
         MemberState(member.size, guestSupport, StatusType.NONE, null, scenario.memberState(guestSupport, true))
     return copy(member = member + guestMember)
+}
+
+fun SimulationState.allTrainingLevelUp(): SimulationState {
+    val newTraining = training.map {
+        it.copy(level = min(5, it.level + 1))
+    }
+    return copy(training = newTraining)
 }

@@ -89,6 +89,8 @@ val legendBuffList = listOf(
         3,
         LegendBuffEffect(motivationUp = 1),
         condition = LegendBuffCondition.AfterFriendTraining,
+        coolTime = 3,
+        instant = true,
     ),
     LegendBuff(
         "慈愛の微笑み",
@@ -112,7 +114,7 @@ val legendBuffList = listOf(
         "休憩時、次のトレーニングのトレーニング効果アップ 60%また、ヒントイベントで獲得するヒント+1",
         LegendMember.Blue,
         3,
-        LegendBuffEffect(trainingBonus = 60, hintLevel = 1),
+        LegendBuffEffect(trainingBonus = 60, hintCount = 1),
         condition = LegendBuffCondition.AfterRest,
     ),
 
@@ -205,7 +207,7 @@ val legendBuffList = listOf(
         "友情トレーニング成功時、次のトレーニングのヒントイベントで獲得するヒント+1",
         LegendMember.Green,
         2,
-        LegendBuffEffect(hintLevel = 1),
+        LegendBuffEffect(hintCount = 1),
         condition = LegendBuffCondition.AfterFriendTraining,
     ),
     LegendBuff(
@@ -242,6 +244,7 @@ val legendBuffList = listOf(
         3,
         LegendBuffEffect(addMember = 3),
         condition = LegendBuffCondition.AfterTraining,
+        coolTime = 2,
     ),
     LegendBuff(
         "百折不撓",
@@ -308,13 +311,14 @@ val legendBuffList = listOf(
         2,
         LegendBuffEffect(addMember = 1),
         condition = LegendBuffCondition.AfterFriendTraining,
+        coolTime = 2,
     ),
     LegendBuff(
         "ヒラメキの連鎖",
         "3人以上のサポートと一緒にトレーニング成功時次のトレーニングのヒントイベントで獲得するヒント+1",
         LegendMember.Red,
         2,
-        LegendBuffEffect(hintLevel = 1),
+        LegendBuffEffect(hintCount = 1),
         condition = LegendBuffCondition.AfterSupportCount(3),
     ),
     LegendBuff(
@@ -387,7 +391,7 @@ val legendBuffList = listOf(
     ),
 )
 
-val legendBuffData = legendBuffList.groupBy { it.member }.mapValues { (_, value) -> value.groupBy { it.rank } }
+val legendBuffData = legendBuffList.groupBy { it.member }
 
 fun getLegendBuff(name: String) = legendBuffList.find { it.name == name }
 

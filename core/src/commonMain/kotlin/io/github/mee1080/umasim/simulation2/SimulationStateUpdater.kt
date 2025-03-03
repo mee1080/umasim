@@ -169,7 +169,7 @@ fun EnableItem.onTurnChange(): EnableItem {
 fun SimulationState.applyAction(action: Action, result: ActionResult): SimulationState {
     if (action is Outing && action.support != null) {
         return applyOutingEvent(action.support).applyIfNotNull((result as? StatusActionResult)?.scenarioActionParam) {
-            applyScenarioAction(action, it)
+            applyScenarioAction(action, result)
         }
     }
     return when (result) {
@@ -196,6 +196,8 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
         MechaOverdriveResult -> applyMechaOverdrive()
 
         is MechaTuningResult -> updateMechaStatus { applyTuning(result) }
+
+        is LegendActionResult -> LegendCalculator.applyScenarioAction(this, result)
     }
 }
 
@@ -238,7 +240,7 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
         copy(status = newStatus)
     }
     // シナリオ別結果反映
-    return newState.applyScenarioAction(action, result.scenarioActionParam)
+    return newState.applyScenarioAction(action, result)
 }
 
 private fun MemberState.applyTraining(
@@ -571,14 +573,15 @@ private fun LiveStatus.applyLive(): LiveStatus {
     )
 }
 
-private fun SimulationState.applyScenarioAction(action: Action, scenarioAction: ScenarioActionParam?): SimulationState {
+private fun SimulationState.applyScenarioAction(action: Action, result: ActionResult): SimulationState {
+    val scenarioAction = (result as? StatusActionResult)?.scenarioActionParam
     return when (scenarioAction) {
         is GmActionParam -> applyGmAction(scenarioAction)
         is LArcActionParam -> applyLArcAction(action, scenarioAction)
         is UafScenarioActionParam -> applyUafAction(scenarioAction)
         is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
         is MechaActionParam -> MechaCalculator.applyScenarioAction(this, scenarioAction)
-        is LegendActionParam -> LegendCalculator.applyScenarioAction(this, scenarioAction)
+        is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, scenarioAction)
         null -> this
     }
 }

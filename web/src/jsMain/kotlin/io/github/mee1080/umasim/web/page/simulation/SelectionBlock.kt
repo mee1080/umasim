@@ -179,6 +179,12 @@ fun SelectionBlock(
                     MechaOverdrive -> {}
 
                     is MechaTuning -> MechaTuningInfo(state, action)
+
+                    is LegendSelectBuff -> {
+                        val buff = action.result.buff
+                        Div { Text("☆${buff.rank} ${buff.member.color}(${buff.member.displayName})") }
+                        Div { Text(buff.description) }
+                    }
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {

@@ -29,6 +29,8 @@ import io.github.mee1080.umasim.scenario.cook.CookStamp
 import io.github.mee1080.umasim.scenario.gm.Founder
 import io.github.mee1080.umasim.scenario.larc.LArcAptitude
 import io.github.mee1080.umasim.scenario.larc.LArcMemberState
+import io.github.mee1080.umasim.scenario.legend.LegendBuff
+import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.live.Lesson
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
@@ -390,7 +392,25 @@ class MechaTuning(
 }
 
 data class LegendActionParam(
-    val dummy: Int,
+    val legendMember: LegendMember,
+    val gauge: Int,
 ) : ScenarioActionParam {
-    override fun toShortString() = TODO()
+    override fun toShortString() = "${legendMember.color}$gauge"
+}
+
+sealed interface LegendActionResult : ActionResult
+
+data class LegendSelectBuffResult(
+    val buff: LegendBuff,
+) : LegendActionResult {
+    override fun toString() = buff.name
+}
+
+data class LegendSelectBuff(
+    override val result: LegendSelectBuffResult,
+) : SingleAction {
+    override val name get() = "心得選択：${result}"
+    override val turnChange get() = false
+
+    constructor(buff: LegendBuff) : this(LegendSelectBuffResult(buff))
 }

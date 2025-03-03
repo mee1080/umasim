@@ -132,6 +132,7 @@ data class SimulationState(
 
     val hintFrequencyUp = gmStatus?.wisdomHintFrequency
         ?: mechaStatus?.hintFrequency
+        ?: legendStatus?.baseBuffEffect?.hintFrequency
 
     val forceHint = uafStatus?.forceHint ?: false
 
@@ -169,6 +170,7 @@ data class SimulationState(
         get() = liveStatus?.specialityRateUp
             ?: cookStatus?.cookPointEffect?.specialityRate
             ?: mechaStatus?.specialityRate
+            ?: legendStatus?.baseBuffEffect?.specialtyRate
             ?: 0
 
     val trainingRelationBonus

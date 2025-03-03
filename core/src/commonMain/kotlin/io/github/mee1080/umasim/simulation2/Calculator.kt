@@ -96,7 +96,8 @@ object Calculator {
         )
 
         val positionRateUp by lazy {
-            support.any { it.card.positionRateUp(it.relation) }
+            support.sumOf { it.card.positionRateUp(it.relation) } +
+                    (legendStatus?.baseBuffEffect?.positionRate ?: 0)
         }
 
         val specialityRateUp by lazy {
@@ -231,17 +232,17 @@ object Calculator {
         val card = member.card
         if (card.type.outingType) {
             return arrayOf(
-                StatusType.SPEED to 2,
-                StatusType.STAMINA to 2,
-                StatusType.POWER to 2,
-                StatusType.GUTS to 2,
-                StatusType.WISDOM to 2,
-                StatusType.NONE to if (rateUp) 1 else 2,
+                StatusType.SPEED to 100,
+                StatusType.STAMINA to 100,
+                StatusType.POWER to 100,
+                StatusType.GUTS to 100,
+                StatusType.WISDOM to 100,
+                StatusType.NONE to (100 - rateUp),
             )
         }
         val mainRate = card.specialtyRate(bonus, info.baseSpecialUniqueCondition(0, false).applyMember(member))
         val otherRate = 10000
-        val noneRate = if (rateUp) 2500 else 5000
+        val noneRate = 50 * (100 - rateUp)
         return arrayOf(
             StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
             StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,

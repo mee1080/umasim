@@ -208,7 +208,7 @@ data class SupportCardSpecialUnique(
 
     fun hasSecondPosition(relation: Int) = type == 118 && relation >= value1
 
-    fun positionRateUp(relation: Int) = type == 119 && relation >= value2
+    fun positionRateUp(relation: Int) = if (type == 119 && relation >= value2) value0 else 0
 
     val trainingRelationAll = if (type == 121) value0 else 0
 

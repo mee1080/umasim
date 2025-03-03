@@ -18,6 +18,7 @@
  */
 package io.github.mee1080.umasim.ai
 
+import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
@@ -150,6 +151,15 @@ class LegendActionSelector(private val options: List<Option>) :
 
     override suspend fun calcScenarioActionScore(context: Context, action: Action, expectedScore: Double): Double? {
         return when (action) {
+            is LegendSelectBuff -> {
+                val buff = action.result.buff
+                buff.rank * 100.0 + when (buff.member) {
+                    LegendMember.Blue -> 0.0
+                    LegendMember.Green -> 50.0
+                    LegendMember.Red -> 0.0
+                }
+            }
+
             else -> null
         }
     }
