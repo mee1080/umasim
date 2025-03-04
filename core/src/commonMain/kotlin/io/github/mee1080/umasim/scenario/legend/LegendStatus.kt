@@ -87,6 +87,10 @@ data class LegendStatus(
         }
         return if (specialStateTurn > 0) buff + mastery!!.specialStateEffect else buff
     }
+
+    val ignoreTrainingFailure get() = mastery == LegendMember.Green && specialStateTurn > 0
+
+    val motivationLimitOver get() = mastery == LegendMember.Blue && specialStateTurn > 0
 }
 
 enum class LegendMember(
@@ -134,18 +138,14 @@ data class LegendBuffEffect(
     val friendBonus: Int = 0,
     val motivationBonus: Int = 0,
     val trainingBonus: Int = 0,
-    // TODO
     val hintCount: Int = 0,
     val hintFrequency: Int = 0,
     val specialtyRate: Int = 0,
     val hpCost: Int = 0,
-    // TODO
     val relationBonus: Int = 0,
     val motivationUp: Int = 0,
     val positionRate: Int = 0,
-    // TODO
     val addMember: Int = 0,
-    // TODO
     val forceHint: Int = 0,
     val relationUp: Int = 0,
 ) {

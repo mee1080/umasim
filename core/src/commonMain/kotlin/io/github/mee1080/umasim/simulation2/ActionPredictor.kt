@@ -105,7 +105,7 @@ fun SimulationState.calcTrainingResult(
         )
     } else listOf(StatusActionResult(successStatus) to 100 - failureRate)
     val failureCandidate = when {
-        failureRate == 0 -> {
+        failureRate == 0 || ignoreTrainingFailure -> {
             emptyList()
         }
 

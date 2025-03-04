@@ -29,9 +29,6 @@ class LegendScenarioEvents(
     private val forceBuffList: List<LegendBuff>? = null,
 ) : CommonScenarioEvents() {
 
-    // TODO: 心得の効果一部
-    // TODO: 緑導きトレ失敗無効
-    // TODO: 青導きやる気低下無効
     // TODO: 赤導き親友ゲージ、強制配置
 
     override fun beforeSimulation(state: SimulationState): SimulationState {

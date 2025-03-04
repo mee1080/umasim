@@ -83,7 +83,10 @@ data class SimulationState(
 
     val support get() = member.filter { !it.guest }
 
-    val charm get() = condition.contains("愛嬌○")
+    val charmBonus by lazy {
+        (if (condition.contains("愛嬌○")) 2 else 0) +
+                (legendStatus?.baseBuffEffect?.relationBonus ?: 0)
+    }
 
     val conditionFailureRate
         get() = arrayOf(
@@ -136,6 +139,15 @@ data class SimulationState(
 
     val forceHint = uafStatus?.forceHint ?: false
 
+    val forceHintCount
+        get() = legendStatus?.baseBuffEffect?.forceHint
+            ?: 0
+
+    val hintCount
+        get() = uafStatus?.let { if (it.forceHint) 2 else 1 }
+            ?: legendStatus?.baseBuffEffect?.hintCount
+            ?: 1
+
     val allSupportHint
         get() = gmStatus?.hintFrequencyUp
             ?: mechaStatus?.allSupportHint
@@ -180,6 +192,18 @@ data class SimulationState(
     val continuousRace by lazy {
         raceTurns.contains(turn - 2) && raceTurns.contains(turn - 1)
     }
+
+    val additionalMemberCount
+        get() = legendStatus?.baseBuffEffect?.addMember
+            ?: 0
+
+    val motivationLimitOver
+        get() = legendStatus?.motivationLimitOver
+            ?: false
+
+    val ignoreTrainingFailure
+        get() = legendStatus?.ignoreTrainingFailure
+            ?: false
 }
 
 data class MemberState(

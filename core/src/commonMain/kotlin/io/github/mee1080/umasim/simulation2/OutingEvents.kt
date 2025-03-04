@@ -29,8 +29,8 @@ fun SimulationState.applyAfterTrainingEvent(target: MemberState): SimulationStat
                 when {
                     turn <= 24 -> {
                         val relationTarget = support.minBy { it.relation }
-                        addRelation(if (charm) 7 else 5, target)
-                            .addRelation(if (charm) 5 else 3, relationTarget)
+                        addRelation(5 + charmBonus, target)
+                            .addRelation(3 + charmBonus, relationTarget)
                     }
 
                     turn <= 48 -> {

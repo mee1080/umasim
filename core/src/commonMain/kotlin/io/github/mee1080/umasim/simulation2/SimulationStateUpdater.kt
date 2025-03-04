@@ -85,6 +85,7 @@ fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
     var supportPosition: Map<StatusType, List<MemberState>>
+    val forceHintCount = min(forceHintCount, support.count { !it.outingType })
     do {
         newMember = member.map { it.onTurnChange(turn, this) }
         supportPosition = trainingType.associateWith { mutableListOf() }
@@ -93,13 +94,34 @@ fun SimulationState.shuffleMember(): SimulationState {
                 supportPosition[status]!!.add(it)
             }
         }
-    } while (supportPosition.any { it.value.size > 5 })
+    } while (supportPosition.any { it.value.size > 5 } || (forceHintCount > 0 && newMember.count { it.hint } < forceHintCount))
+    if (additionalMemberCount > 0) {
+        var positionedSupport = newMember.filter { !it.guest && it.position != StatusType.NONE }.shuffled()
+        if (positionedSupport.isNotEmpty()) {
+            while (positionedSupport.size < additionalMemberCount) {
+                positionedSupport = positionedSupport + positionedSupport.shuffled()
+            }
+            positionedSupport.take(additionalMemberCount).groupBy { it.index }.forEach { (index, members) ->
+                val target = members[0]
+                val additionalPositions = supportPosition.filter {
+                    target.positions.contains(it.key) && it.value.size < 5
+                }.keys.take(members.size).toSet()
+                newMember = newMember.mapIf({ it.index == index }) {
+                    it.copy(additionalPosition = it.additionalPosition + additionalPositions)
+                }
+            }
+        }
+    }
     return copy(
         member = newMember,
     )
 }
 
-fun SimulationState.updateStatus(update: (status: Status) -> Status) = copy(status = update(status).adjustRange())
+fun SimulationState.updateStatus(update: (status: Status) -> Status): SimulationState {
+    return copy(status = update(status).adjustRange().applyIf(motivationLimitOver) {
+        copy(motivation = 3)
+    })
+}
 
 fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
 
@@ -220,7 +242,7 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
                 it.applyTraining(
-                    action, if (charm) 2 else 0, relationBonus,
+                    action, charmBonus, relationBonus,
                     chara, trainingHintIndices.contains(it.index), this
                 )
             } else it
@@ -294,7 +316,7 @@ fun SimulationState.applyFriendEvent(
     val newMember = member.mapIf({ it.index == support.index }) { member ->
         member.copy(supportState = member.supportState?.let {
             it.copy(
-                relation = min(100, it.relation + relation + if (charm) 2 else 0),
+                relation = min(100, it.relation + relation + charmBonus),
                 outingStep = max(outingStep, it.outingStep),
             )
         })
@@ -360,7 +382,7 @@ private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair
         if (hintSupportList.isEmpty()) return Status() to emptyList()
         val hintSupport = hintSupportList.random()
         var status = Status()
-        repeat(if (uafStatus?.forceHint == true) 2 else 1) {
+        repeat(hintCount) {
             val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
             status += if (hintSkill.isEmpty()) {
                 hintSupport.card.hintStatus
