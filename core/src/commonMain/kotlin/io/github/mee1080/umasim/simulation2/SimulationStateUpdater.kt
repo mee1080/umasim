@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
 import io.github.mee1080.umasim.scenario.legend.LegendCalculator
+import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
@@ -145,6 +146,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
                 state.baseCalcInfo,
                 this,
                 state.specialityRateUp,
+                forceSpecialityEnabled = true,
             )
         )
         secondPosition = if (card.hasSecondPosition(relation)) {
@@ -274,8 +276,9 @@ private fun MemberState.applyTraining(
     state: SimulationState,
 ): MemberState {
     // 絆上昇量を反映
+    val relationUp = getTrainingRelation(charmValue, relationBonus, hint)
     val supportState = supportState?.copy(
-        relation = min(100, supportState.relation + getTrainingRelation(charmValue, relationBonus, hint)),
+        relation = min(100, supportState.relation + relationUp),
         // FIXME GMの三女神の情熱ゾーンは欠片獲得と同時確定なので別処理、その他は実装保留
 //        passionTurn = if (card.type == StatusType.GROUP) {
 //            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
@@ -293,6 +296,7 @@ private fun MemberState.applyTraining(
     val scenarioState = when (scenarioState) {
         is AoharuMemberState -> scenarioState.applyTraining(action, chara)
         is LArcMemberState -> scenarioState.applyTraining(action, state.isLevelUpTurn)
+        is LegendMemberState -> scenarioState.applyTraining(relationUp)
         else -> scenarioState
     }
     return copy(

@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.mapIf
+import kotlin.math.min
 
 fun SimulationState.updateLegendStatus(update: LegendStatus.() -> LegendStatus): SimulationState {
     val legendStatus = legendStatus ?: return this
@@ -261,5 +262,22 @@ data class LegendMemberState(
 
     val friendBonus by lazy {
         if (guest) bestFriendGuestFriendBonus[bestFriendLevel] else 0
+    }
+
+    val forceSpeciality get() = bestFriendGauge >= 20
+
+    fun applyTraining(relationUp: Int): LegendMemberState {
+        return when {
+            bestFriendLevel == 0 -> this
+
+            bestFriendGauge >= 20 -> copy(
+                bestFriendLevel = min(9, bestFriendLevel + 1),
+                bestFriendGauge = 0,
+            )
+
+            else -> copy(
+                bestFriendGauge = min(20, bestFriendGauge + relationUp)
+            )
+        }
     }
 }

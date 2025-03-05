@@ -29,7 +29,7 @@ class LegendScenarioEvents(
     private val forceBuffList: List<LegendBuff>? = null,
 ) : CommonScenarioEvents() {
 
-    // TODO: 赤導き親友ゲージ、強制配置
+    // TODO 三伝説
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
         val legendStatus = LegendStatus()

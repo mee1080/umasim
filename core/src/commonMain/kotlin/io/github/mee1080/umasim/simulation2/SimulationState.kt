@@ -25,6 +25,7 @@ import io.github.mee1080.umasim.scenario.climax.*
 import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
+import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
@@ -240,6 +241,10 @@ data class MemberState(
         } else 0
 
     val positions by lazy { (additionalPosition + position).filter { it != StatusType.NONE } }
+
+    val forceSpeciality
+        get() = (scenarioState as? LegendMemberState)?.forceSpeciality
+            ?: false
 }
 
 data class SupportState(

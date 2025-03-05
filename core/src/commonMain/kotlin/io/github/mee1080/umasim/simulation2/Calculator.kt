@@ -227,7 +227,17 @@ object Calculator {
         }
     }
 
-    fun calcCardPositionSelection(info: CalcInfo, member: MemberState, bonus: Int): Array<Pair<StatusType, Int>> {
+    fun calcCardPositionSelection(
+        info: CalcInfo,
+        member: MemberState,
+        bonus: Int,
+        forceSpecialityEnabled: Boolean = false,
+    ): Array<Pair<StatusType, Int>> {
+        if (forceSpecialityEnabled && member.forceSpeciality) {
+            return arrayOf(
+                member.card.type to 100,
+            )
+        }
         val rateUp = info.positionRateUp
         val card = member.card
         if (card.type.outingType) {
