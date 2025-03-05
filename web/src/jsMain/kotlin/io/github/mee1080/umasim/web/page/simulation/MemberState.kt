@@ -1,8 +1,9 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
-import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.larc.LArcMemberState
+import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -49,6 +50,7 @@ fun MemberState(state: MemberState, friend: Boolean = false, training: Boolean =
         }
         when (val scenarioState = state.scenarioState) {
             is LArcMemberState -> LArcMemberState(scenarioState)
+            is LegendMemberState -> LegendMemberStateBlock(scenarioState)
         }
         if (training && state.hint) {
             Div({

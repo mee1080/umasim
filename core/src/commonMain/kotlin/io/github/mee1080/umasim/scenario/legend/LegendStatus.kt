@@ -266,6 +266,8 @@ data class LegendMemberState(
 
     val forceSpeciality get() = bestFriendGauge >= 20
 
+    val friendTrainingEnabled get() = bestFriendGauge >= 20
+
     fun applyTraining(relationUp: Int): LegendMemberState {
         return when {
             bestFriendLevel == 0 -> this

@@ -178,6 +178,7 @@ enum class Scenario(
         displayName = "The Twinkle Legends (作成中)",
         trainingData = legendTrainingData,
         scenarioEvents = { LegendScenarioEvents() },
+        turn = 72,
         scenarioLink = setOf(
             "オルフェーヴル",
             "メジロラモーヌ",

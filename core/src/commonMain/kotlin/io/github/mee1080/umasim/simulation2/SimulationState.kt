@@ -223,7 +223,11 @@ data class MemberState(
     val charaName get() = card.chara
     val guest get() = supportState == null
     val relation get() = supportState?.relation ?: 0
-    val friendTrainingEnabled get() = relation >= 80
+    val friendTrainingEnabled
+        get() = relation >= 80 || (
+                (scenarioState as? LegendMemberState)?.friendTrainingEnabled
+                    ?: false
+                )
     val friendCount get() = supportState?.friendCount ?: 0
     val outingType get() = card.type.outingType
 

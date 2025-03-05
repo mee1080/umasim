@@ -92,10 +92,12 @@ fun SelectionBlock(
 
                     is Outing -> {
                         CookMaterialInfo(action)
+                        LegendInfo(action)
                     }
 
                     is Race -> {
                         CookMaterialInfo(action)
+                        LegendInfo(action)
                     }
 
                     is SSMatch -> {
@@ -110,11 +112,13 @@ fun SelectionBlock(
 
                     is Sleep -> {
                         CookMaterialInfo(action)
+                        LegendInfo(action)
                     }
 
                     is Training -> {
                         CookMaterialInfo(action)
                         MechaInfo(action)
+                        LegendInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
