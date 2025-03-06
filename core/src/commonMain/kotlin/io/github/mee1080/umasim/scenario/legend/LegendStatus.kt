@@ -74,6 +74,14 @@ fun LegendStatus.setMastery(mastery: LegendMember): LegendStatus {
     )
 }
 
+fun LegendStatus.addBuffGauge(gauge: Int, target: LegendMember? = null): LegendStatus {
+    return copy(
+        buffGauge = buffGauge.mapValues { (member, value) ->
+            if (target == null || member == target) min(8, value + gauge) else value
+        }
+    )
+}
+
 data class LegendStatus(
     val buffGauge: Map<LegendMember, Int> = LegendMember.entries.associateWith { 0 },
     val buffList: List<LegendBuffState> = emptyList(),
@@ -268,7 +276,7 @@ data class LegendMemberState(
 
     val friendTrainingEnabled get() = bestFriendGauge >= 20
 
-    fun applyTraining(relationUp: Int): LegendMemberState {
+    override fun addRelation(relation: Int): ScenarioMemberState {
         return when {
             bestFriendLevel == 0 -> this
 
@@ -278,7 +286,7 @@ data class LegendMemberState(
             )
 
             else -> copy(
-                bestFriendGauge = min(20, bestFriendGauge + relationUp)
+                bestFriendGauge = min(20, bestFriendGauge + relation)
             )
         }
     }

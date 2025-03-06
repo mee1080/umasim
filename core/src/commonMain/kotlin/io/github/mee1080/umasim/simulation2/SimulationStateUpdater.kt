@@ -29,7 +29,6 @@ import io.github.mee1080.umasim.scenario.larc.LArcMemberState
 import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.larc.StarEffect
 import io.github.mee1080.umasim.scenario.legend.LegendCalculator
-import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.live.*
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
@@ -275,34 +274,18 @@ private fun MemberState.applyTraining(
     hint: Boolean,
     state: SimulationState,
 ): MemberState {
-    // 絆上昇量を反映
-    val relationUp = getTrainingRelation(charmValue, relationBonus, hint)
-    val supportState = supportState?.copy(
-        relation = min(100, supportState.relation + relationUp),
-        // FIXME GMの三女神の情熱ゾーンは欠片獲得と同時確定なので別処理、その他は実装保留
-//        passionTurn = if (card.type == StatusType.GROUP) {
-//            // FIXME 13T以降に20%で情熱突入と仮定、アプデで情熱ゾーン中に踏むと消えにくくなった件は未反映
-//            if (turn <= 12 || supportState.passion || Random.nextDouble() > 0.2) supportState.passionTurn else {
-//                randomSelect(
-//                    3 to 60,
-//                    4 to 20,
-//                    5 to 10,
-//                    6 to 10,
-//                )
-//            }
-//        } else 0
-    )
-    // アオハル特訓上昇量を反映
     val scenarioState = when (scenarioState) {
         is AoharuMemberState -> scenarioState.applyTraining(action, chara)
         is LArcMemberState -> scenarioState.applyTraining(action, state.isLevelUpTurn)
-        is LegendMemberState -> scenarioState.applyTraining(relationUp)
         else -> scenarioState
     }
+    val relationUp = getTrainingRelation(charmValue, relationBonus, hint)
+    // 20%で情熱突入と仮定
+    val startPassion =
+        supportState != null && (supportState.passionTurn > 0 || (supportState.outingEnabled && Random.nextDouble() < 0.2))
     return copy(
-        supportState = supportState,
         scenarioState = scenarioState,
-    )
+    ).addRelation(relationUp).applyIf(startPassion) { startPassion() }
 }
 
 private fun SimulationState.applyFriendEvent(action: Training): SimulationState {
@@ -433,11 +416,7 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
         is StatusItem -> copy(status = status + item.status)
         is UniqueItem -> when (item.name) {
             "おいしい猫缶" -> this
-            "にんじんBBQセット" -> {
-                val relation = if (condition.contains("愛嬌○")) 7 else 5
-                copy(member = member.map { it.addRelation(relation) })
-            }
-
+            "にんじんBBQセット" -> addRelationAll(5)
             "リセットホイッスル" -> shuffleMember()
             "健康祈願のお守り" -> copy(enableItem = enableItem.copy(unique = item))
             else -> this
@@ -456,20 +435,21 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
     }.copy(possessionItem = possessionItem - item)
 }
 
-fun MemberState.addRelation(relation: Int): MemberState {
+private fun MemberState.addRelation(relation: Int): MemberState {
     return copy(
         supportState = supportState?.copy(
             relation = min(100, supportState.relation + relation)
         ),
+        scenarioState = scenarioState.addRelation(relation),
     )
 }
 
 fun SimulationState.addRelationAll(relation: Int): SimulationState {
-    return copy(member = member.map { it.addRelation(relation) })
+    return copy(member = member.map { it.addRelation(relation + charmBonus) })
 }
 
 fun SimulationState.addRelation(relation: Int, target: (MemberState) -> Boolean): SimulationState {
-    return copy(member = member.mapIf(target) { it.addRelation(relation) })
+    return copy(member = member.mapIf(target) { it.addRelation(relation + charmBonus) })
 }
 
 fun SimulationState.addRelation(relation: Int, target: MemberState): SimulationState {
@@ -681,7 +661,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                 nextStarEffect = newNextStarEffect,
                 supporterPt = memberState.supporterPt + random(300, 500),
             )
-            oldMemver.copy(scenarioState = newMemberState).addRelation(relation)
+            oldMemver.copy(scenarioState = newMemberState).addRelation(relation + charmBonus)
         }
         updateLArcStatus {
             val newTotalSSMatchCount = totalSSMatchCount + ssMatchMemberIndex.size
@@ -709,7 +689,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
     } else {
         val newState = if (lArcAction.mayEventChance && Random.nextDouble() < 0.4) {
             val newMember = member.mapIf({ it.charaName == "佐岳メイ" }) {
-                it.addRelation(if (condition.contains("愛嬌○")) 7 else 5)
+                it.addRelation(5 + charmBonus)
             }
             val addStatus = Status(guts = 3, skillPt = 3, motivation = if (Random.nextDouble() < 0.5) 1 else 0)
             val base = copy(
@@ -804,4 +784,26 @@ private fun SimulationState.applyUafAction(uafAction: UafScenarioActionParam): S
         copy(heatUp = heatUp.mapValues { max(0, it.value - 1) })
     }
     return copy(scenarioStatus = newUafStatus.applyHeatUpFrom(uafStatus))
+}
+
+fun SimulationState.startPassion(target: MemberState): SimulationState {
+    return copy(
+        member = member.mapIf({ it.index == target.index }) { it.startPassion() }
+    )
+}
+
+private fun MemberState.startPassion(): MemberState {
+    val supportState = supportState ?: return this
+    if (card.type != StatusType.GROUP) return this
+    return if (supportState.passion) {
+        // 情熱ゾーン中に踏むと20%の確率で1ターン延長と仮定
+        if (supportState.passionTurn < 6 && Random.nextDouble() < 0.2) {
+            copy(supportState = supportState.copy(passionTurn = supportState.passionTurn + 1))
+        } else this
+    } else {
+        val passionTurn = randomSelect(
+            3 to 60, 4 to 20, 5 to 10, 6 to 10,
+        )
+        copy(supportState = supportState.copy(passionTurn = passionTurn))
+    }
 }

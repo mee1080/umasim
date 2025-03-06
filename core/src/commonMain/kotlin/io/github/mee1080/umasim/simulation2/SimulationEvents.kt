@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.utility.applyIf
-import io.github.mee1080.utility.replaced
 
 open class SimulationEvents(
     val initialStatus: (status: Status) -> Status = { it }
@@ -137,7 +136,7 @@ class RandomEvents(
             state.copy(
                 status = (state.status + event.calcStatus(state.supportEventEffect, continuousEventCount)).adjustRange()
             ).applyIf(event.relationTarget >= 0) {
-                copy(member = state.member.replaced(event.relationTarget) { it.addRelation(7) })
+                addRelation(7, state.member[event.relationTarget])
             }
         } else state
     }

@@ -267,6 +267,7 @@ open class ScenarioMemberState(val scenario: Scenario) {
     val scenarioLink get() = scenario.scenarioLink
     override fun toString() = scenario.name
     open fun toShortString() = toString()
+    open fun addRelation(relation: Int): ScenarioMemberState = this
 }
 
 object GrandLiveMemberState : ScenarioMemberState(Scenario.GRAND_LIVE)

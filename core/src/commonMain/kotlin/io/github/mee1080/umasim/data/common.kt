@@ -180,6 +180,7 @@ enum class RaceRunningStyle(val displayName: String) {
 }
 
 fun motivationToString(motivation: Int) = when (motivation) {
+    3 -> "超絶好調"
     2 -> "絶好調"
     1 -> "好調"
     0 -> "普通"
