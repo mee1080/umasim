@@ -62,18 +62,30 @@ object LegendCalculator : ScenarioCalculator {
             trainingBonus = baseTrainingBonus + bestFriendTrainingBonus,
         )
         return Status(
-            speed = Calculator.calcTrainingStatus(info, StatusType.SPEED, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.speed,
-            stamina = Calculator.calcTrainingStatus(info, StatusType.STAMINA, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.stamina,
-            power = Calculator.calcTrainingStatus(info, StatusType.POWER, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.power,
-            guts = Calculator.calcTrainingStatus(info, StatusType.GUTS, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.guts,
-            wisdom = Calculator.calcTrainingStatus(info, StatusType.WISDOM, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.wisdom,
-            skillPt = Calculator.calcTrainingStatus(info, StatusType.SKILL, friendTrainingReChecked, bonus = bonus)
-                .toInt() - base.skillPt,
+            speed = Calculator.calcTrainingStatus(
+                info, StatusType.SPEED, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.speed,
+            ).toInt() - base.speed,
+            stamina = Calculator.calcTrainingStatus(
+                info, StatusType.STAMINA, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.stamina,
+            ).toInt() - base.stamina,
+            power = Calculator.calcTrainingStatus(
+                info, StatusType.POWER, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.power,
+            ).toInt() - base.power,
+            guts = Calculator.calcTrainingStatus(
+                info, StatusType.GUTS, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.guts,
+            ).toInt() - base.guts,
+            wisdom = Calculator.calcTrainingStatus(
+                info, StatusType.WISDOM, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.wisdom,
+            ).toInt() - base.wisdom,
+            skillPt = Calculator.calcTrainingStatus(
+                info, StatusType.SKILL, friendTrainingReChecked,
+                bonus = bonus, maxValue = 100.0 + base.skillPt,
+            ).toInt() - base.skillPt,
             hp = base.hp * (100 - effect.hpCost) / 100 - base.hp
         )
     }

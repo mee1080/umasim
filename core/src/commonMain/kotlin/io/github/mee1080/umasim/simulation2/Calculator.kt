@@ -164,6 +164,7 @@ object Calculator {
         friendTraining: Boolean,
         ignoreBaseBonus: Boolean = false,
         bonus: ScenarioCalcBonus? = null,
+        maxValue: Double = 100.0,
     ): Double {
         val baseStatus = info.training.status.get(targetType)
         if (baseStatus == 0) return 0.0
@@ -196,7 +197,7 @@ object Calculator {
         val count = 1 + info.member.size * 0.05
         if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
         val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
-        return if (bonus == null) min(100.0, raw + 0.0002) else raw + 0.0002
+        return min(maxValue, raw + 0.0002)
     }
 
     private fun calcTrainingHp(
