@@ -26,11 +26,10 @@ import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
 
 class LegendScenarioEvents(
-    private val forceBuffList: List<LegendBuff>? = null,
+    private val forceBuffList: List<LegendBuff?>? = null,
 ) : CommonScenarioEvents() {
 
     // TODO 三伝説 トレーニング後/お出かけイベント選択肢
-    // TODO 心得削除
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
         val legendStatus = LegendStatus()
@@ -90,7 +89,7 @@ class LegendScenarioEvents(
             // 心得獲得
             54 -> base.getBuff(selector)
             60 -> base.getBuff(selector)
-            66 -> base.getBuff(selector)
+            66 -> base.getBuff(selector).deleteBuff(selector)
 
             // S10後: 金スキル（単純化のため機先の勝負固定）
             68 -> base.addStatus(Status(skillHint = mapOf("機先の勝負" to 1)))
@@ -124,6 +123,13 @@ class LegendScenarioEvents(
                 LegendSelectBuff(it)
             }
         }
+        val action = selector.select(this, selection)
+        return applyAction(action, action.randomSelectResult())
+    }
+
+    private suspend fun SimulationState.deleteBuff(selector: ActionSelector): SimulationState {
+        val legendStatus = legendStatus ?: return this
+        val selection = legendStatus.buffList.map { LegendDeleteBuff(it.buff) }
         val action = selector.select(this, selection)
         return applyAction(action, action.randomSelectResult())
     }

@@ -276,9 +276,11 @@ object LegendCalculator : ScenarioCalculator {
     }
 
     fun applyScenarioAction(state: SimulationState, result: LegendActionResult): SimulationState {
-        val buffResult = result as LegendSelectBuffResult
         return state.updateLegendStatus {
-            addBuff(buffResult.buff)
+            when (result) {
+                is LegendSelectBuffResult -> addBuff(result.buff)
+                is LegendDeleteBuffResult -> deleteBuff(result.buff)
+            }
         }
     }
 }

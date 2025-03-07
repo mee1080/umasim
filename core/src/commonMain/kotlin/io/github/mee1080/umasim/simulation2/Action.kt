@@ -414,3 +414,18 @@ data class LegendSelectBuff(
 
     constructor(buff: LegendBuff) : this(LegendSelectBuffResult(buff))
 }
+
+data class LegendDeleteBuffResult(
+    val buff: LegendBuff,
+) : LegendActionResult {
+    override fun toString() = buff.name
+}
+
+data class LegendDeleteBuff(
+    override val result: LegendDeleteBuffResult,
+) : SingleAction {
+    override val name get() = "心得削除：${result}"
+    override val turnChange get() = false
+
+    constructor(buff: LegendBuff) : this(LegendDeleteBuffResult(buff))
+}

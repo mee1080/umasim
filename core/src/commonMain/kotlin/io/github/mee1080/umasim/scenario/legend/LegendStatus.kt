@@ -34,7 +34,13 @@ fun SimulationState.updateLegendStatus(update: LegendStatus.() -> LegendStatus):
 fun LegendStatus.addBuff(buff: LegendBuff, enabled: Boolean? = null): LegendStatus {
     return copy(
         buffGauge = LegendMember.entries.associateWith { 0 },
-        buffList = (buffList + LegendBuffState(buff, enabled ?: (buff.condition == null))).takeLast(10),
+        buffList = (buffList + LegendBuffState(buff, enabled ?: (buff.condition == null))),
+    )
+}
+
+fun LegendStatus.deleteBuff(buff: LegendBuff): LegendStatus {
+    return copy(
+        buffList = buffList.filter { it.buff != buff },
     )
 }
 
