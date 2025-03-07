@@ -35,7 +35,7 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
         return selection.maxByOrNull { calcScore(state, it) } ?: selection.first()
     }
 
-    private fun calcScore(state: SimulationState, action: Action): Double {
+    private suspend fun calcScore(state: SimulationState, action: Action): Double {
         if (DEBUG) println("${state.turn}: $action")
         val total = action.candidates.sumOf { it.second }.toDouble()
         val score = action.candidates.sumOf {
@@ -46,7 +46,7 @@ class NextStateBasedActionSelector(val option: Option = Option()) : ActionSelect
         return score
     }
 
-    private fun calcScore(state: SimulationState, action: Action, result: ActionResult): Double {
+    private suspend fun calcScore(state: SimulationState, action: Action, result: ActionResult): Double {
         val next = state.applyAction(action, result)
         return calcStatusScore(next) + calcRelationScore(next) + calcAoharuScore(next)
     }

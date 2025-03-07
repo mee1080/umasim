@@ -64,11 +64,12 @@ sealed interface MultipleAction : Action {
 sealed interface ActionResult {
     val status: Status get() = Status()
     val success: Boolean get() = true
+    val scenarioActionParam: ScenarioActionParam? get() = null
 }
 
 data class StatusActionResult(
     override val status: Status,
-    val scenarioActionParam: ScenarioActionParam?,
+    override val scenarioActionParam: ScenarioActionParam?,
     override val success: Boolean = true,
 ) : ActionResult {
     constructor(
@@ -395,7 +396,7 @@ data class LegendActionParam(
     val legendMember: LegendMember,
     val gauge: Int,
 ) : ScenarioActionParam {
-    override fun toShortString() = "${legendMember.color}$gauge"
+    override fun toShortString() = "${legendMember.color}+$gauge"
 }
 
 sealed interface LegendActionResult : ActionResult
@@ -429,3 +430,37 @@ data class LegendDeleteBuff(
 
     constructor(buff: LegendBuff) : this(LegendDeleteBuffResult(buff))
 }
+
+data class FriendActionResult(
+    val support: MemberState,
+    override val status: Status,
+    val relation: Int,
+    val otherRelation: Int = 0,
+    override val scenarioActionParam: ScenarioActionParam? = null,
+    val outingStep: Int = 0,
+) : ActionResult {
+    constructor(
+        current: Status,
+        support: MemberState,
+        status: Status,
+        relation: Int,
+        otherRelation: Int = 0,
+        scenarioActionParam: ScenarioActionParam? = null,
+        outingStep: Int = 0,
+    ) : this(
+        support,
+        (current + status).adjustRange() - current,
+        relation,
+        otherRelation,
+        scenarioActionParam,
+        outingStep,
+    )
+
+    override fun toString() =
+        "FriendActionResult(support=${support.card.name},status=${status.toShortString()},relation=$relation,scenario=${scenarioActionParam?.toShortString()},step=$outingStep)"
+}
+
+data class FriendAction(
+    override val name: String,
+    override val result: FriendActionResult,
+) : SingleAction

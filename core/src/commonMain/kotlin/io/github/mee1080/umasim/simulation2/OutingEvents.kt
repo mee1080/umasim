@@ -10,7 +10,7 @@ import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
 
-fun SimulationState.applyAfterTrainingEvent(target: MemberState): SimulationState {
+suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selector: ActionSelector): SimulationState {
     val isFirst = target.supportState?.outingStep == 0
     return when (target.charaName) {
         "都留岐涼花" -> {
@@ -54,22 +54,30 @@ fun SimulationState.applyAfterTrainingEvent(target: MemberState): SimulationStat
                 applyFriendEvent(target, Status(6, 6, 6, 6, 6), 10, 1)
                     .updateLegendStatus { addBuffGauge(3) }
             } else if ((target.supportState?.passionTurn ?: 0) > 0 || Random.nextDouble() < 0.4) {
-                // TODO 選択
-                val selected = LegendMember.entries.random()
-                when (selected) {
-                    LegendMember.Blue -> applyFriendEvent(target, Status(speed = 6), 5)
-
-                    LegendMember.Green -> applyFriendEvent(target, Status(skillPt = 3, hp = 3), 5)
-
-                    LegendMember.Red -> applyFriendEvent(target, Status(wisdom = 3), 5).run {
-                        val relationTarget = support.filter { it.index != target.index }.minBy { it.relation }
-                        addRelation(1, relationTarget)
-                    }
+                val selection = listOf(
+                    FriendAction(
+                        LegendMember.Blue.displayName, FriendActionResult(
+                            status, target, Status(speed = 6), 5,
+                            scenarioActionParam = LegendActionParam(LegendMember.Blue, 1),
+                        )
+                    ),
+                    FriendAction(
+                        LegendMember.Green.displayName, FriendActionResult(
+                            status, target, Status(skillPt = 3, hp = 3), 5,
+                            scenarioActionParam = LegendActionParam(LegendMember.Green, 1),
+                        )
+                    ),
+                    FriendAction(
+                        LegendMember.Red.displayName, FriendActionResult(
+                            status, target, Status(wisdom = 3), 5, 1,
+                            scenarioActionParam = LegendActionParam(LegendMember.Red, 1),
+                        )
+                    ),
+                )
+                val selected = selector.select(this, selection)
+                applyAction(selected, selected.randomSelectResult()).applyIf(target.supportState?.passion == false) {
+                    startPassion(target)
                 }
-                    .updateLegendStatus { addBuffGauge(1, selected) }
-                    .applyIf(target.supportState?.passion == false) {
-                        startPassion(target)
-                    }
             } else this
         }
 
@@ -78,7 +86,7 @@ fun SimulationState.applyAfterTrainingEvent(target: MemberState): SimulationStat
     }
 }
 
-fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
+suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: ActionSelector): SimulationState {
     val step = support.supportState?.outingStep ?: return this
     return when (support.charaName) {
         "都留岐涼花" -> {
@@ -172,26 +180,49 @@ fun SimulationState.applyOutingEvent(support: MemberState): SimulationState {
                 ).updateLegendStatus { addBuffGauge(3) }
 
                 5 -> {
-                    // TODO 選択
-                    val selected = LegendMember.entries.random()
-                    val status = when (selected) {
-                        LegendMember.Blue -> Status(
-                            speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
-                            hp = 45, motivation = 1, skillHint = mapOf("尻尾上がり" to 2),
-                        )
-
-                        LegendMember.Green -> Status(
-                            stamina = 15, power = 10,
-                            hp = 45, motivation = 1, skillHint = mapOf("闘争心" to 2),
-                        )
-
-                        LegendMember.Red -> Status(
-                            speed = 10, guts = 15,
-                            hp = 45, motivation = 1, skillHint = mapOf("地固め" to 2),
-                        )
-                    }
-                    applyFriendEvent(support, status, 5, 6)
-                        .updateLegendStatus { addBuffGauge(8, selected) }
+                    val selection = listOf(
+                        FriendAction(
+                            LegendMember.Blue.displayName, FriendActionResult(
+                                status, support,
+                                Status(
+                                    speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
+                                    hp = 45, motivation = 1, skillHint = mapOf("尻尾上がり" to 2),
+                                ),
+                                5,
+                                scenarioActionParam = LegendActionParam(LegendMember.Blue, 8),
+                                outingStep = 6,
+                            )
+                        ),
+                        FriendAction(
+                            LegendMember.Green.displayName, FriendActionResult(
+                                status, support,
+                                Status(
+                                    stamina = 15, power = 10,
+                                    hp = 45, motivation = 1, skillHint = mapOf("闘争心" to 2),
+                                ),
+                                5,
+                                scenarioActionParam = LegendActionParam(LegendMember.Green, 8),
+                                outingStep = 6,
+                            )
+                        ),
+                        FriendAction(
+                            LegendMember.Red.displayName, FriendActionResult(
+                                status, support,
+                                Status(
+                                    speed = 10, guts = 15,
+                                    hp = 45, motivation = 1, skillHint = mapOf("地固め" to 2),
+                                ),
+                                5,
+                                scenarioActionParam = LegendActionParam(LegendMember.Red, 8),
+                                outingStep = 6,
+                            )
+                        ),
+                    )
+                    val selected = selector.select(this, selection)
+                    applyAction(
+                        selected,
+                        selected.randomSelectResult()
+                    )
                 }
 
                 6 -> applyFriendEvent(

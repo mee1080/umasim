@@ -43,7 +43,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
-fun SimulationState.onTurnChange(): SimulationState {
+suspend fun SimulationState.onTurnChange(selector: ActionSelector): SimulationState {
     val turn = turn + 1
     val levelOverride = if (levelUpTurns.contains(turn)) {
         if (scenario == Scenario.LARC) 6 else 5
@@ -55,7 +55,7 @@ fun SimulationState.onTurnChange(): SimulationState {
         training = newState.training.map { it.copy(levelOverride = levelOverride) },
         enableItem = newState.enableItem.onTurnChange(),
     )
-    newState = newState.updateOutingStep()
+    newState = newState.updateOutingStep(selector)
     newState = scenario.calculator.updateScenarioTurn(newState)
     return newState
 }
@@ -68,7 +68,7 @@ fun SimulationState.updateRefresh(): SimulationState {
     )
 }
 
-fun SimulationState.updateOutingStep(): SimulationState {
+suspend fun SimulationState.updateOutingStep(selector: ActionSelector): SimulationState {
     val targets = mutableSetOf<MemberState>()
     member.filter { it.outingType && it.supportState?.outingStep == 1 }.forEach {
         val rate = if (it.relation >= 60) 0.25 else 0.05
@@ -76,9 +76,11 @@ fun SimulationState.updateOutingStep(): SimulationState {
             targets.add(it)
         }
     }
-    return targets.fold(this) { state, target ->
-        state.applyOutingEvent(target)
+    var state = this
+    for (target in targets) {
+        state = state.applyOutingEvent(target, selector)
     }
+    return state
 }
 
 fun SimulationState.shuffleMember(): SimulationState {
@@ -189,14 +191,20 @@ fun EnableItem.onTurnChange(): EnableItem {
     } else EnableItem()
 }
 
-fun SimulationState.applyAction(action: Action, result: ActionResult): SimulationState {
+suspend fun SimulationState.applyAction(
+    action: Action,
+    result: ActionResult,
+    selector: ActionSelector = ActionSelector.Random,
+): SimulationState {
     if (action is Outing && action.support != null) {
-        return applyOutingEvent(action.support).applyIfNotNull((result as? StatusActionResult)?.scenarioActionParam) {
+        return applyOutingEvent(action.support, selector).applyIfNotNull(result.scenarioActionParam) {
             applyScenarioAction(action, result)
         }
     }
     return when (result) {
-        is StatusActionResult -> applyStatusAction(action, result)
+        is StatusActionResult -> applyStatusAction(action, result, selector)
+
+        is FriendActionResult -> applyFriendEvent(action, result)
 
         is ClimaxBuyUseItemResult -> applyIfNotNull(result.buyItem) { buyItem(it) }.applyIfNotNull(result.useItem) {
             applyItem(
@@ -224,7 +232,11 @@ fun SimulationState.applyAction(action: Action, result: ActionResult): Simulatio
     }
 }
 
-fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult): SimulationState {
+private suspend fun SimulationState.applyStatusAction(
+    action: Action,
+    result: StatusActionResult,
+    selector: ActionSelector
+): SimulationState {
     // ステータス更新
     val newStatus = status + result.status
     // Action結果反映
@@ -252,7 +264,7 @@ fun SimulationState.applyStatusAction(action: Action, result: StatusActionResult
             member = newMember,
             training = newTraining,
             status = newStatus + trainingHint.first + selectAoharuTrainingHint(action.member),
-        ).applyFriendEvent(action)
+        ).applyFriendEvent(action, selector)
     } else if (action is Race) {
         copy(
             status = newStatus,
@@ -288,10 +300,21 @@ private fun MemberState.applyTraining(
     ).addRelation(relationUp).applyIf(startPassion) { startPassion() }
 }
 
-private fun SimulationState.applyFriendEvent(action: Training): SimulationState {
-    return action.member.filter { !it.guest && it.outingType }.fold(this) { state, support ->
-        state.applyAfterTrainingEvent(support)
+private suspend fun SimulationState.applyFriendEvent(action: Training, selector: ActionSelector): SimulationState {
+    var state = this
+    for (support in action.member.filter { !it.guest && it.outingType }) {
+        state = state.applyAfterTrainingEvent(support, selector)
     }
+    return state
+}
+
+fun SimulationState.applyFriendEvent(action: Action, result: FriendActionResult): SimulationState {
+    return applyFriendEvent(result.support, result.status, result.relation, result.outingStep)
+        .applyIf({ result.otherRelation > 0 }) {
+            val relationTarget = support.filter { it.index != result.support.index }.minBy { it.relation }
+            addRelation(1, relationTarget)
+        }
+        .applyScenarioAction(action, result)
 }
 
 fun SimulationState.applyFriendEvent(
@@ -580,15 +603,14 @@ private fun LiveStatus.applyLive(): LiveStatus {
 }
 
 private fun SimulationState.applyScenarioAction(action: Action, result: ActionResult): SimulationState {
-    val scenarioAction = (result as? StatusActionResult)?.scenarioActionParam
-    return when (scenarioAction) {
-        is GmActionParam -> applyGmAction(scenarioAction)
-        is LArcActionParam -> applyLArcAction(action, scenarioAction)
-        is UafScenarioActionParam -> applyUafAction(scenarioAction)
-        is CookActionParam -> updateCookStatus { addStamp(scenarioAction.stamp) }
-        is MechaActionParam -> MechaCalculator.applyScenarioAction(this, scenarioAction)
-        is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, scenarioAction)
-        null -> this
+    val param = result.scenarioActionParam ?: return this
+    return when (param) {
+        is GmActionParam -> applyGmAction(param)
+        is LArcActionParam -> applyLArcAction(action, param)
+        is UafScenarioActionParam -> applyUafAction(param)
+        is CookActionParam -> updateCookStatus { addStamp(param.stamp) }
+        is MechaActionParam -> MechaCalculator.applyScenarioAction(this, param)
+        is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
     }
 }
 

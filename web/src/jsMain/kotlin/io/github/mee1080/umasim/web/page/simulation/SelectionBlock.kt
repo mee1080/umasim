@@ -150,6 +150,11 @@ fun SelectionBlock(
                         }
                     }
 
+                    is FriendAction -> {
+                        LegendInfo(action)
+                        StatusTable(action.result.status)
+                    }
+
                     is GmActivateWisdom -> {}
 
                     is ClimaxBuyUseItem -> {

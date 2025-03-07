@@ -163,8 +163,9 @@ object LegendCalculator : ScenarioCalculator {
                 applyGreenMasteryAction(action)
             }
             .updateLegendStatus {
-                val newGauge = min(8, buffGauge[params.legendMember]!! + params.gauge)
-                copy(buffGauge = buffGauge.replaced(params.legendMember, newGauge))
+                val member = params.legendMember
+                val newGauge = min(8, buffGauge[member]!! + params.gauge)
+                copy(buffGauge = buffGauge.replaced(member, newGauge))
             }
             .updateAfterActionBuff(action, result)
     }

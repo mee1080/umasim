@@ -24,6 +24,10 @@ import kotlinx.serialization.json.Json
 
 interface ActionSelector {
 
+    object Random : ActionSelector {
+        override suspend fun select(state: SimulationState, selection: List<Action>) = selection.random()
+    }
+
     fun init(state: SimulationState) {}
 
     suspend fun select(state: SimulationState, selection: List<Action>): Action

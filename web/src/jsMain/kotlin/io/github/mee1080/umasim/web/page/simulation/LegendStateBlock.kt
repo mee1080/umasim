@@ -7,7 +7,6 @@ import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.simulation2.Action
 import io.github.mee1080.umasim.simulation2.LegendActionParam
-import io.github.mee1080.umasim.simulation2.StatusActionResult
 import io.github.mee1080.umasim.web.components.atoms.MdDialog
 import io.github.mee1080.umasim.web.components.atoms.MdSysColor
 import org.jetbrains.compose.web.css.*
@@ -38,6 +37,7 @@ fun LegendStateBlock(legendStatus: LegendStatus) {
         style {
             display(DisplayStyle.Flex)
             columnGap(8.px)
+            rowGap(8.px)
             flexWrap(FlexWrap.Wrap)
         }
     }) {
@@ -110,7 +110,7 @@ private fun BuffGauge(member: LegendMember, gauge: Int) {
 
 @Composable
 fun LegendInfo(action: Action) {
-    val target = action.candidates.first().first as? StatusActionResult ?: return
+    val target = action.candidates.first().first
     val param = target.scenarioActionParam as? LegendActionParam ?: return
     Div({
         style {
@@ -119,7 +119,7 @@ fun LegendInfo(action: Action) {
             borderRadius(4.px)
         }
     }) {
-        Text("${param.legendMember.color}+${param.gauge}")
+        Text(param.toShortString())
     }
 }
 

@@ -76,12 +76,12 @@ class Simulator(
 
     suspend fun simulate(
         selector: ActionSelector,
-        eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
+        eventsProducer: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
     ) = simulateWithHistory(selector, eventsProducer).first
 
     suspend fun simulateWithHistory(
         selector: ActionSelector,
-        eventsProducer: (SimulationState) -> SimulationEvents = { SimulationEvents() },
+        eventsProducer: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
     ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
         val turn = min(option.turn, state.scenario.turn)
@@ -94,7 +94,7 @@ class Simulator(
         state = state.copy(status = events.initialStatus(state.status))
         selector.init(state)
         repeat(min(turn, if (state.scenario == Scenario.LARC) 67 else 78)) {
-            state = state.onTurnChange()
+            state = state.onTurnChange(selector)
             state = scenarioEvents.beforeAction(state)
             state = events.beforeAction(state)
             if (state.turn == 25) state.applyOutingNewYearEvent()
@@ -107,7 +107,7 @@ class Simulator(
                 val action = selector.select(state, selection)
                 val result = action.randomSelectResult()
                 selections += Triple(selection, action, result)
-                state = state.applyAction(action, result)
+                state = state.applyAction(action, result, selector)
             } while (!action.turnChange)
             state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)
