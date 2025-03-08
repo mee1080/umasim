@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.ScenarioEvents
 import kotlin.math.min
 
 class Simulator(
@@ -76,17 +77,19 @@ class Simulator(
 
     suspend fun simulate(
         selector: ActionSelector,
+        scenarioEventsProducer: ((SimulationState) -> ScenarioEvents)? = null,
         eventsProducer: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
-    ) = simulateWithHistory(selector, eventsProducer).first
+    ) = simulateWithHistory(selector, scenarioEventsProducer, eventsProducer).first
 
     suspend fun simulateWithHistory(
         selector: ActionSelector,
+        scenarioEventsProducer: ((SimulationState) -> ScenarioEvents)? = null,
         eventsProducer: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
     ): Pair<Summary, List<SimulationHistoryItem>> {
         var state = initialState
         val turn = min(option.turn, state.scenario.turn)
         val history = mutableListOf<SimulationHistoryItem>()
-        val scenarioEvents = state.scenario.scenarioEvents()
+        val scenarioEvents = scenarioEventsProducer?.invoke(state) ?: state.scenario.scenarioEvents()
         val events = eventsProducer(state)
         state = scenarioEvents.beforeSimulation(state)
         state = state.copy(status = scenarioEvents.initialStatus(state.status))

@@ -22,9 +22,10 @@ import androidx.compose.runtime.*
 import io.github.mee1080.umasim.ai.CookActionSelector
 import io.github.mee1080.umasim.ai.MechaActionSelector
 import io.github.mee1080.umasim.ai.UafActionSelector
-import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.ScenarioEvents
+import io.github.mee1080.umasim.scenario.legend.LegendScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -40,12 +41,7 @@ import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun SimulationPage(state: State) {
-    val factorList = remember {
-        mutableStateListOf(
-            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
-            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
-        )
-    }
+    var setting by remember { mutableStateOf(SimulationSetting()) }
     var running by remember { mutableStateOf(false) }
     var aiSelectorOption by remember {
         mutableStateOf(
@@ -98,7 +94,7 @@ fun SimulationPage(state: State) {
             }
         }
         if (running) {
-            RunningSimulation(state, factorList, aiSelector)
+            RunningSimulation(state, setting, aiSelector)
         } else {
             Card({
                 style { margin(16.px) }
@@ -123,10 +119,16 @@ fun SimulationPage(state: State) {
                     Div {
                         MdRadioGroup(
                             statusSelection,
-                            factorList[index].first,
+                            setting.factorList[index].first,
                             itemToLabel = { it.displayName },
-                            onSelect = { factorList[index] = it to factorList[index].second },
+                            onSelect = { setting = setting.setFactor(index, it, 3) },
                         )
+                    }
+                }
+                if (state.scenario == Scenario.LEGEND) {
+                    Div({ style { marginTop(32.px) } }) { Text("心得指定：") }
+                    repeat(11) { row ->
+                        LegendBuffSelect(setting, row) { setting = it }
                     }
                 }
             }
@@ -139,10 +141,27 @@ fun SimulationPage(state: State) {
     }
 }
 
+@Composable
+private fun LegendBuffSelect(setting: SimulationSetting, index: Int, onUpdate: (SimulationSetting) -> Unit) {
+    val selection = when {
+        index >= 4 -> legendBuffList3
+        index >= 2 -> legendBuffList2
+        else -> legendBuffList1
+    }
+    Div {
+        MdOutlinedSelect(
+            selection = selection,
+            selectedItem = setting.legendBuffList[index],
+            onSelect = { onUpdate(setting.setLegendBuff(index, it)) },
+            itemToValue = { it.second },
+        )
+    }
+}
+
 private val emptyAiResult: Triple<Action?, List<Double>, Double> = Triple(null, emptyList(), 0.0)
 
 @Composable
-fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiSelector: ActionSelector?) {
+fun RunningSimulation(state: State, setting: SimulationSetting, aiSelector: ActionSelector?) {
     val scope = rememberCoroutineScope()
     val selector = remember { ManualActionSelector() }
     var aiResult by remember { mutableStateOf(emptyAiResult) }
@@ -163,12 +182,19 @@ fun RunningSimulation(state: State, factorList: List<Pair<StatusType, Int>>, aiS
                 }
             }
             launch {
+                val scenarioEventProducer: ((SimulationState) -> ScenarioEvents)? = when (state.scenario) {
+                    Scenario.LEGEND -> {
+                        { LegendScenarioEvents(setting.legendBuffListOutput) }
+                    }
+
+                    else -> null
+                }
                 result = Simulator(
                     scenario = state.scenario,
                     chara = state.chara,
                     supportCardList = state.supportSelectionList.mapNotNull { it.card },
-                    factorList = factorList,
-                ).simulate(selector)
+                    factorList = setting.factorList,
+                ).simulate(selector, scenarioEventProducer)
                 selection = emptyList()
             }
         }

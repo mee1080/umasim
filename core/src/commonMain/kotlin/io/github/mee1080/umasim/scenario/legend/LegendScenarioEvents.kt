@@ -29,8 +29,6 @@ class LegendScenarioEvents(
     private val forceBuffList: List<LegendBuff?>? = null,
 ) : CommonScenarioEvents() {
 
-    // TODO 三伝説 トレーニング後/お出かけイベント選択肢
-
     override fun beforeSimulation(state: SimulationState): SimulationState {
         val legendStatus = LegendStatus()
         return super.beforeSimulation(state).copy(scenarioStatus = legendStatus)
@@ -105,7 +103,7 @@ class LegendScenarioEvents(
 
     private suspend fun SimulationState.getBuff(selector: ActionSelector): SimulationState {
         val legendStatus = legendStatus ?: return this
-        val forceBuff = forceBuffList?.getOrNull(turn / 6)
+        val forceBuff = forceBuffList?.getOrNull(turn / 6 - 1)
         val selection = if (forceBuff != null) listOf(LegendSelectBuff(forceBuff)) else {
             val currentBuffCount = legendStatus.buffList.size
             val currentBuffSet = legendStatus.buffList.map { it.buff }.toSet()

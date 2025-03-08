@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.ScenarioEvents
 import kotlin.math.roundToInt
 
 object Runner {
@@ -196,10 +197,11 @@ object Runner {
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         evaluateSetting: Map<StatusType, Pair<Double, Int>>,
         evaluateUpperRate: Double = 0.2,
+        scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): Pair<Double, Evaluator> {
-        val summaries = run(count, scenario, chara, supportCardList, factorList, events, selector)
+        val summaries = run(count, scenario, chara, supportCardList, factorList, scenarioEvents, events, selector)
         val evaluator = Evaluator(summaries, evaluateSetting, evaluateUpperRate)
         return (evaluator.upperSum(1.0, evaluateSetting) * 1000).roundToInt() / 1000.0 to evaluator
     }
@@ -210,6 +212,7 @@ object Runner {
         chara: Chara,
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
+        scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
         selector: () -> ActionSelector,
     ): List<Summary> {
@@ -221,7 +224,7 @@ object Runner {
                     chara,
                     supportCardList,
                     factorList,
-                ).simulate(selector(), events)
+                ).simulate(selector(), scenarioEvents, events)
             )
         }
         return summaries
