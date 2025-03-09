@@ -85,9 +85,10 @@ class ApproximateSimulationEvents(
  * 　　FIXME イベント確率アップは考慮しない
  *
  * 　上昇量
- * 　　連続1/非連続：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
+ * 　　連続1：得意ステ10、体力10(60%)orやる気1(40%)、絆7
  * 　　連続2：得意ステ15、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
  * 　　連続3：得意ステ20、ランダムステ10(各1/7)orSP20(2/7)、絆7
+ * 　　非連続：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
  * 　　編成外：ランダムステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)
  * 　　ウマ娘ランダム：各ステ+15or体力10（勝負服と通常ランダム平均したらこれぐらい？）
  * 　　FIXME スキルヒントは考慮しない
@@ -144,6 +145,10 @@ class RandomEvents(
     private sealed class EventEntry(val supportEvent: Boolean, val relationTarget: Int = -1) {
 
         companion object {
+            private val firstRandomStatus = listOf(
+                Status(hp = 10), Status(hp = 10), Status(hp = 10),
+                Status(motivation = 1), Status(motivation = 1),
+            )
             protected val randomStatus = listOf(
                 Status(speed = 5), Status(stamina = 5), Status(power = 5), Status(guts = 5), Status(wisdom = 5),
                 Status(skillPt = 10),
@@ -159,7 +164,7 @@ class RandomEvents(
             override fun baseStatus(continuousEventCount: IntArray): Status {
                 continuousEventCount[relationTarget] += 1
                 return when (continuousEventCount[relationTarget]) {
-                    1 -> randomStatus.random().add(type to 10)
+                    1 -> firstRandomStatus.random().add(type to 10)
                     2 -> randomStatus.random().add(type to 15)
                     3 -> finalRandomStatus.random().add(type to 20)
                     else -> Status()

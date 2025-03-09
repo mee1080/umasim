@@ -241,7 +241,7 @@ object Calculator {
         }
         val rateUp = info.positionRateUp
         val card = member.card
-        if (card.type.outingType) {
+        if (card.type == StatusType.FRIEND) {
             return arrayOf(
                 StatusType.SPEED to 100,
                 StatusType.STAMINA to 100,
