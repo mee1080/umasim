@@ -6,7 +6,6 @@ import io.github.mee1080.umasim.scenario.ScenarioEvents
 import io.github.mee1080.umasim.scenario.updateFactor
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
-import kotlin.math.min
 import kotlin.random.Random
 
 // TODO LArc
@@ -38,7 +37,7 @@ class LArcScenarioEvents : ScenarioEvents {
 
             // クラシック新年
             49 -> state
-                .updateStatus { it.copy(hp = min(it.maxHp, it.hp + 30)) }
+                .addStatus(Status(hp = 30))
 
             // シニア継承
             55 -> state
@@ -275,8 +274,7 @@ class LArcScenarioEvents : ScenarioEvents {
             80 -> Status(5, 5, 5, 5, 5, fanCount = 6000)
             else -> Status(5, 5, 5, 5, 5, fanCount = 8000)
         }
-        return copy(
-            status = status + addStatus,
+        return addStatus(addStatus).copy(
             scenarioStatus = lArcStatus.copy(lastExpectationEvent = eventLevel),
         ).applyIf(eventLevel in arrayOf(20, 60, 100)) { allTrainingLevelUp() }
     }

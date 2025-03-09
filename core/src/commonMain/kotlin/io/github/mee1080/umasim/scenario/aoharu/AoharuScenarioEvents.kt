@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.scenario.aoharu
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.TeamMemberData
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.max
@@ -16,7 +19,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
                 .updateTrainingLevel()
 
             18 -> newState
-                .updateStatus { it.copy(motivation = it.motivation + 1) }
+                .addStatus(Status(motivation = 1))
                 .addMember(9 - newState.teamMember.size)
                 .updateTrainingLevel()
 
@@ -41,7 +44,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
 
             70 -> newState
                 // TODO アオハルヒント、爆発10で+20
-                .updateStatus { it.copy(skillPt = it.skillPt + 15) }
+                .addStatus(Status(skillPt = 15))
                 .updateTrainingLevel()
 
             72 -> newState
@@ -49,7 +52,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
                 .applyRace("S")
 
             78 -> newState
-                .updateStatus { it + newState.raceStatus(0, 0, 50) }
+                .addStatus(newState.raceStatus(0, 0, 50))
 
             else -> newState
                 .updateTrainingLevel()
@@ -79,8 +82,8 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
 
     private fun SimulationState.applyRace(opponentRank: String): SimulationState {
         // 勝ち前提
-        return copy(
-            status = status + when (opponentRank) {
+        return addStatus(
+            when (opponentRank) {
                 "S" -> raceStatus(5, 7, 50)
                 "A" -> raceStatus(5, 5, 25)
                 "B" -> raceStatus(5, 4, 20)
@@ -89,7 +92,8 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
                 "E" -> raceStatus(5, 3, 10)
                 "F" -> raceStatus(5, 2, 10)
                 else -> raceStatus(5, 1, 10)
-            },
+            }
+        ).copy(
             member = teamMember.map {
                 it.addStatus(Status(50, 50, 50, 50, 50))
             }

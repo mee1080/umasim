@@ -57,4 +57,9 @@ interface ScenarioCalculator {
     fun updateScenarioTurn(
         state: SimulationState,
     ): SimulationState = state
+
+    fun updateOnAddStatus(
+        state: SimulationState,
+        status: Status,
+    ): SimulationState = state
 }

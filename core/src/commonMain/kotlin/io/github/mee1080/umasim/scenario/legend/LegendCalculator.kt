@@ -155,49 +155,59 @@ object LegendCalculator : ScenarioCalculator {
         params: LegendActionParam,
     ): SimulationState {
         val legendStatus = state.legendStatus ?: return state
+        println("T${state.turn} applyScenarioActionParam: ${action.toShortString()} $params")
         return state
-            .applyIf(legendStatus.mastery == LegendMember.Blue) {
-                applyBlueMasteryAction(result)
-            }
-            .applyIf(legendStatus.mastery == LegendMember.Green) {
-                applyGreenMasteryAction(action)
+            .applyIf(action.turnChange) {
+                updateAfterActionBuff(action, result)
+                    .applyIf(legendStatus.mastery == LegendMember.Blue) {
+                        applyBlueMasteryAction()
+                    }
+                    .applyIf(legendStatus.mastery == LegendMember.Green) {
+                        applyGreenMasteryAction(action)
+                    }
             }
             .updateLegendStatus {
                 val member = params.legendMember
                 val newGauge = min(8, buffGauge[member]!! + params.gauge)
                 copy(buffGauge = buffGauge.replaced(member, newGauge))
             }
-            .updateAfterActionBuff(action, result)
     }
 
-    private fun SimulationState.applyBlueMasteryAction(result: ActionResult): SimulationState {
-        val newState = applyIf(result.status.motivation > 0) {
-            applyBlueMasteryAddMotivation()
-        }
-        val legendStatus = newState.legendStatus ?: return newState
-        return if (legendStatus.specialStateTurn >= 2) {
-            newState.updateLegendStatus {
+    private fun SimulationState.applyBlueMasteryAction(): SimulationState {
+        val legendStatus = legendStatus ?: return this
+        println("T$turn applyBlueMasteryAction: ${legendStatus.specialStateTurn}")
+        Exception().printStackTrace()
+        return if (legendStatus.specialStateTurn == 1) {
+            updateLegendStatus {
+                copy(specialStateTurn = -3)
+            }.addStatus(Status(motivation = 4), applyScenario = false)
+        } else if (legendStatus.specialStateTurn >= 2 && turn != legendStatus.specialStateStartTurn) {
+            updateLegendStatus {
                 copy(specialStateTurn = specialStateTurn - 1)
             }
-        } else if (legendStatus.specialStateTurn == 1) {
-            newState.copy(status = newState.status.copy(motivation = 2)).updateLegendStatus {
-                copy(specialStateTurn = -3)
-            }
-        } else newState
+        } else this
     }
 
     private fun SimulationState.applyBlueMasteryAddMotivation(): SimulationState {
         val legendStatus = legendStatus ?: return this
+        println("T$turn applyBlueMasteryAddMotivation: ${legendStatus.specialStateTurn}")
+        Exception().printStackTrace()
         return if (legendStatus.specialStateTurn == -1) {
-            copy(status = status.copy(motivation = 3)).updateLegendStatus {
-                copy(specialStateTurn = 3)
-            }
-        } else {
             updateLegendStatus {
-                // TODO: 超絶好調中の延長回数制限
+                copy(specialStateTurn = 3, restContinueCount = 2, specialStateStartTurn = turn)
+            }.addStatus(Status(motivation = 5), applyScenario = false)
+        } else if (legendStatus.specialStateTurn < 0) {
+            updateLegendStatus {
                 copy(specialStateTurn = specialStateTurn + 1)
             }
-        }
+        } else if (legendStatus.restContinueCount > 0 && turn != legendStatus.specialStateStartTurn) {
+            updateLegendStatus {
+                copy(
+                    specialStateTurn = specialStateTurn + 1,
+                    restContinueCount = restContinueCount - 1,
+                )
+            }
+        } else this
     }
 
     private fun SimulationState.updateAfterActionBuff(action: Action, result: ActionResult): SimulationState {
@@ -219,7 +229,11 @@ object LegendCalculator : ScenarioCalculator {
                             action.member.contains(member)
                         }
                     }
-                    copy(enabled = !buff.instant)
+                    if (buff.instant) {
+                        copy(coolTime = buff.coolTime)
+                    } else {
+                        copy(enabled = true)
+                    }
                 }
             }
         }
@@ -283,5 +297,12 @@ object LegendCalculator : ScenarioCalculator {
                 is LegendDeleteBuffResult -> deleteBuff(result.buff)
             }
         }
+    }
+
+    override fun updateOnAddStatus(state: SimulationState, status: Status): SimulationState {
+        val legendStatus = state.legendStatus ?: return state
+        return if (legendStatus.mastery == LegendMember.Blue && status.motivation > 0) {
+            state.applyBlueMasteryAddMotivation()
+        } else state
     }
 }

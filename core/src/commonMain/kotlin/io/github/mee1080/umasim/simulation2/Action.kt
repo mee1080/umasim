@@ -69,16 +69,9 @@ sealed interface ActionResult {
 
 data class StatusActionResult(
     override val status: Status,
-    override val scenarioActionParam: ScenarioActionParam?,
+    override val scenarioActionParam: ScenarioActionParam? = null,
     override val success: Boolean = true,
 ) : ActionResult {
-    constructor(
-        current: Status,
-        status: Status,
-        scenarioActionParam: ScenarioActionParam? = null,
-        success: Boolean = true,
-    ) : this((current + status).adjustRange() - current, scenarioActionParam, success)
-
     override fun toString() =
         "StatusActionResult(status=${status.toShortString()},scenario=${scenarioActionParam?.toShortString()},success=$success)"
 }
@@ -439,23 +432,6 @@ data class FriendActionResult(
     override val scenarioActionParam: ScenarioActionParam? = null,
     val outingStep: Int = 0,
 ) : ActionResult {
-    constructor(
-        current: Status,
-        support: MemberState,
-        status: Status,
-        relation: Int,
-        otherRelation: Int = 0,
-        scenarioActionParam: ScenarioActionParam? = null,
-        outingStep: Int = 0,
-    ) : this(
-        support,
-        (current + status).adjustRange() - current,
-        relation,
-        otherRelation,
-        scenarioActionParam,
-        outingStep,
-    )
-
     override fun toString() =
         "FriendActionResult(support=${support.card.name},status=${status.toShortString()},relation=$relation,scenario=${scenarioActionParam?.toShortString()},step=$outingStep)"
 }
@@ -463,4 +439,6 @@ data class FriendActionResult(
 data class FriendAction(
     override val name: String,
     override val result: FriendActionResult,
-) : SingleAction
+) : SingleAction {
+    override val turnChange get() = false
+}

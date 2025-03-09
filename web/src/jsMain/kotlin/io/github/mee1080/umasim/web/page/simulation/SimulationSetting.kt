@@ -1,10 +1,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.scenario.legend.LegendBuff
-import io.github.mee1080.umasim.scenario.legend.LegendBuffEffect
-import io.github.mee1080.umasim.scenario.legend.LegendMember
-import io.github.mee1080.umasim.scenario.legend.legendBuffList
+import io.github.mee1080.umasim.scenario.legend.*
 import io.github.mee1080.utility.replaced
 
 val emptyBuff = LegendBuff("指定なし", "", LegendMember.Blue, 0, LegendBuffEffect())
@@ -12,6 +9,19 @@ val emptyBuff = LegendBuff("指定なし", "", LegendMember.Blue, 0, LegendBuffE
 val legendBuffList1 = (listOf(emptyBuff) + legendBuffList.filter { it.rank == 1 }).map { it to it.toSelection() }
 val legendBuffList2 = (listOf(emptyBuff) + legendBuffList.filter { it.rank <= 2 }).map { it to it.toSelection() }
 val legendBuffList3 = (listOf(emptyBuff) + legendBuffList).map { it to it.toSelection() }
+
+val legendBuffTemplates = mapOf(
+    "青導き" to listOf(
+        "オーラ", "協力申請", "高潔な矜持", "共に頂へ",
+        "怪物チャンスマイル♪", "Dear friend", "慈愛の微笑み", "Off we go",
+        "愛し子よ、共に栄光へ", "高潔なる魂", "百折不撓",
+    ).map { getLegendBuff(it)!! }.map { it to it.toSelection() },
+    "赤導き" to listOf(
+        "トーク術", "交渉術", "素敵なハーモニー", "極限の集中",
+        "絆が奏でるハーモニー", "怪物チャンスマイル♪", "絆が織りなす光", "集いし理想",
+        "高潔なる魂", "百折不撓", "飽くなき挑戦心",
+    ).map { getLegendBuff(it)!! }.map { it to it.toSelection() },
+)
 
 private fun LegendBuff.toSelection(): String {
     if (this == emptyBuff) return name

@@ -51,7 +51,6 @@ suspend fun SimulationState.onTurnChange(selector: ActionSelector): SimulationSt
     var newState = updateRefresh()
     newState = newState.copy(
         turn = turn,
-        status = newState.status.adjustRange(),
         training = newState.training.map { it.copy(levelOverride = levelOverride) },
         enableItem = newState.enableItem.onTurnChange(),
     )
@@ -62,8 +61,7 @@ suspend fun SimulationState.onTurnChange(selector: ActionSelector): SimulationSt
 
 fun SimulationState.updateRefresh(): SimulationState {
     if (refreshTurn <= 0) return this
-    return copy(
-        status = status + Status(hp = 5),
+    return addStatus(Status(hp = 5)).copy(
         refreshTurn = refreshTurn - 1,
     )
 }
@@ -119,13 +117,17 @@ fun SimulationState.shuffleMember(): SimulationState {
     )
 }
 
-fun SimulationState.updateStatus(update: (status: Status) -> Status): SimulationState {
+private fun SimulationState.updateStatus(update: (status: Status) -> Status): SimulationState {
     return copy(status = update(status).adjustRange().applyIf(motivationLimitOver) {
         copy(motivation = 3)
     })
 }
 
-fun SimulationState.addStatus(status: Status) = updateStatus { it + status }
+fun SimulationState.addStatus(status: Status, applyScenario: Boolean = true): SimulationState {
+    return applyIf(applyScenario) {
+        scenario.calculator.updateOnAddStatus(this, status)
+    }.updateStatus { it + status }
+}
 
 fun SimulationState.addAllStatus(status: Int, skillPt: Int = 0, skillHint: Map<String, Int> = emptyMap()) = addStatus(
     Status(
@@ -198,7 +200,7 @@ suspend fun SimulationState.applyAction(
 ): SimulationState {
     if (action is Outing && action.support != null) {
         return applyOutingEvent(action.support, selector).applyIfNotNull(result.scenarioActionParam) {
-            applyScenarioAction(action, result)
+            applyScenarioActionParam(action, result)
         }
     }
     return when (result) {
@@ -237,8 +239,6 @@ private suspend fun SimulationState.applyStatusAction(
     result: StatusActionResult,
     selector: ActionSelector
 ): SimulationState {
-    // ステータス更新
-    val newStatus = status + result.status
     // Action結果反映
     val newState = if (action is Training) {
         val newTraining = if (result.success) training.map {
@@ -260,22 +260,19 @@ private suspend fun SimulationState.applyStatusAction(
                 )
             } else it
         }
-        copy(
-            member = newMember,
-            training = newTraining,
-            status = newStatus + trainingHint.first + selectAoharuTrainingHint(action.member),
-        ).applyFriendEvent(action, selector)
+        copy(member = newMember, training = newTraining)
+            .addStatus(result.status + trainingHint.first + selectAoharuTrainingHint(action.member))
+            .applyFriendEvent(action, selector)
     } else if (action is Race) {
-        copy(
-            status = newStatus,
+        addStatus(result.status).copy(
             raceTurns = raceTurns + turn,
             shopCoin = if (itemAvailable && action.grade != RaceGrade.FINALS) shopCoin + 100 else shopCoin,
         )
     } else {
-        copy(status = newStatus)
+        addStatus(result.status)
     }
     // シナリオ別結果反映
-    return newState.applyScenarioAction(action, result)
+    return newState.applyScenarioActionParam(action, result)
 }
 
 private fun MemberState.applyTraining(
@@ -314,7 +311,7 @@ fun SimulationState.applyFriendEvent(action: Action, result: FriendActionResult)
             val relationTarget = support.filter { it.index != result.support.index }.minBy { it.relation }
             addRelation(1, relationTarget)
         }
-        .applyScenarioAction(action, result)
+        .applyScenarioActionParam(action, result)
 }
 
 fun SimulationState.applyFriendEvent(
@@ -436,7 +433,7 @@ fun SimulationState.applyItem(itemList: List<ShopItem>): SimulationState {
 
 fun SimulationState.applyItem(item: ShopItem): SimulationState {
     return when (item) {
-        is StatusItem -> copy(status = status + item.status)
+        is StatusItem -> addStatus(item.status)
         is UniqueItem -> when (item.name) {
             "おいしい猫缶" -> this
             "にんじんBBQセット" -> addRelationAll(5)
@@ -513,8 +510,7 @@ fun SimulationState.purchaseLesson(lesson: Lesson): SimulationState {
         is StatusBonus -> learnBonus.status
         is TrainingBonus -> Status()
     }
-    return copy(
-        status = status.copy(performance = performance - lesson.cost) + lessonStatus,
+    return addStatus(Status(performance = -lesson.cost) + lessonStatus).copy(
         scenarioStatus = liveStatus.copy(
             learnedLesson = liveStatus.learnedLesson + lesson,
         ),
@@ -590,8 +586,7 @@ fun SimulationState.applyLive(selector: ActionSelector): SimulationState {
             skillPt = skillPtUp, fanCount = fanCountBase,
         )
     }
-    return state.copy(
-        status = status + statusUp,
+    return state.addStatus(statusUp).copy(
         scenarioStatus = liveStatus.applyLive(),
     )
 }
@@ -602,7 +597,7 @@ private fun LiveStatus.applyLive(): LiveStatus {
     )
 }
 
-private fun SimulationState.applyScenarioAction(action: Action, result: ActionResult): SimulationState {
+private fun SimulationState.applyScenarioActionParam(action: Action, result: ActionResult): SimulationState {
     val param = result.scenarioActionParam ?: return this
     return when (param) {
         is GmActionParam -> applyGmAction(param)
@@ -647,13 +642,13 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
             }
             addKnowledge(Knowledge(founder, trainingTypeOrSkill.random()))
         }
-    return copy(scenarioStatus = newGmStatus, member = newMember, status = status + addStatus)
+    return copy(scenarioStatus = newGmStatus, member = newMember).addStatus(addStatus)
 }
 
 private fun SimulationState.applySelectedGmAction(): SimulationState {
     val gmStatus = gmStatus ?: return this
     val effect = gmStatus.activateWisdom()
-    return copy(scenarioStatus = effect.first, status = status + effect.second)
+    return copy(scenarioStatus = effect.first).addStatus(effect.second)
 }
 
 fun SimulationState.updateLArcStatus(update: LArcStatus.() -> LArcStatus): SimulationState {
@@ -714,10 +709,7 @@ private fun SimulationState.applyLArcAction(action: Action, lArcAction: LArcActi
                 it.addRelation(5 + charmBonus)
             }
             val addStatus = Status(guts = 3, skillPt = 3, motivation = if (Random.nextDouble() < 0.5) 1 else 0)
-            val base = copy(
-                member = newMember,
-                status = (status + addStatus).adjustRange(),
-            )
+            val base = copy(member = newMember).addStatus(addStatus)
             if (isLevelUpTurn) {
                 base.updateLArcStatus { copy(aptitudePt = aptitudePt + 50) }
             } else {

@@ -127,6 +127,18 @@ fun SimulationPage(state: State) {
                 }
                 if (state.scenario == Scenario.LEGEND) {
                     Div({ style { marginTop(32.px) } }) { Text("心得指定：") }
+                    Div({
+                        style {
+                            display(DisplayStyle.Flex)
+                            columnGap(8.px)
+                        }
+                    }) {
+                        legendBuffTemplates.forEach {(name,list) ->
+                            MdFilledButton(name) {
+                                onClick { setting = setting.copy(legendBuffList = list) }
+                            }
+                        }
+                    }
                     repeat(11) { row ->
                         LegendBuffSelect(setting, row) { setting = it }
                     }

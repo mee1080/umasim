@@ -67,7 +67,7 @@ fun LegendStateBlock(legendStatus: LegendStatus) {
             } else if (legendStatus.specialStateTurn > 0) {
                 Text(mastery.specialStateName)
                 if (mastery == LegendMember.Blue) {
-                    Text(" 残り ${legendStatus.specialStateTurn} ターン")
+                    Text(" 残り ${legendStatus.specialStateTurn} ターン / ${legendStatus.restContinueCount} 回延長可")
                 } else {
                     Text(" ${legendStatus.specialStateTurn} ターン目")
                 }

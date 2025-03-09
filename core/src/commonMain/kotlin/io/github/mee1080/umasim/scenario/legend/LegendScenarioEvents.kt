@@ -19,7 +19,7 @@
 package io.github.mee1080.umasim.scenario.legend
 
 import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.scenario.CommonScenarioEvents
+import io.github.mee1080.umasim.scenario.BaseScenarioEvents
 import io.github.mee1080.umasim.scenario.allTrainingLevelUp
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
@@ -27,7 +27,7 @@ import io.github.mee1080.utility.applyIfNotNull
 
 class LegendScenarioEvents(
     private val forceBuffList: List<LegendBuff?>? = null,
-) : CommonScenarioEvents() {
+) : BaseScenarioEvents() {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {
         val legendStatus = LegendStatus()

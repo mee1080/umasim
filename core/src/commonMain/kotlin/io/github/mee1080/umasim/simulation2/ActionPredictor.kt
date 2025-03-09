@@ -51,12 +51,6 @@ fun SimulationState.predictNormal(): List<Action> {
     )
 }
 
-private fun SimulationState.StatusActionResult(
-    status: Status,
-    scenarioActionParam: ScenarioActionParam? = null,
-    success: Boolean = true,
-) = StatusActionResult(this.status, status, scenarioActionParam, success)
-
 fun SimulationState.predictTrainingResult(): Array<Action> {
     val supportPosition = trainingType.associateWith { mutableListOf<MemberState>() }
     member.forEach {

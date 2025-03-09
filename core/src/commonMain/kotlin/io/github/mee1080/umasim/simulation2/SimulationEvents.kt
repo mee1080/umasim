@@ -41,19 +41,19 @@ class ApproximateSimulationEvents(
         return when {
             turn <= 24 -> {
                 if (turn % 3 == 0) {
-                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                    newState.addStatus(Status(4, 4, 4, 4, 4))
                 } else newState
             }
 
             turn <= 48 -> {
                 if (turn % 6 == 0) {
-                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                    newState.addStatus(Status(4, 4, 4, 4, 4))
                 } else newState
             }
 
             turn <= 72 -> {
                 if (turn % 12 == 0) {
-                    newState.updateStatus { it + Status(4, 4, 4, 4, 4) }
+                    newState.addStatus(Status(4, 4, 4, 4, 4))
                 } else newState
             }
 
@@ -133,8 +133,8 @@ class RandomEvents(
         val turn = state.turn
         return if (turn % 2 == 2 && turn !in 37..40 && turn !in 60..63 && turn < 72) {
             val event = eventQueue.removeFirst()
-            state.copy(
-                status = (state.status + event.calcStatus(state.supportEventEffect, continuousEventCount)).adjustRange()
+            state.addStatus(
+                event.calcStatus(state.supportEventEffect, continuousEventCount)
             ).applyIf(event.relationTarget >= 0) {
                 addRelation(7, state.member[event.relationTarget])
             }

@@ -57,19 +57,19 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
                 val selection = listOf(
                     FriendAction(
                         LegendMember.Blue.displayName, FriendActionResult(
-                            status, target, Status(speed = 6), 5,
+                            target, Status(speed = 6), 5,
                             scenarioActionParam = LegendActionParam(LegendMember.Blue, 1),
                         )
                     ),
                     FriendAction(
                         LegendMember.Green.displayName, FriendActionResult(
-                            status, target, Status(skillPt = 3, hp = 3), 5,
+                            target, Status(skillPt = 3, hp = 3), 5,
                             scenarioActionParam = LegendActionParam(LegendMember.Green, 1),
                         )
                     ),
                     FriendAction(
                         LegendMember.Red.displayName, FriendActionResult(
-                            status, target, Status(wisdom = 3), 5, 1,
+                            target, Status(wisdom = 3), 5, 1,
                             scenarioActionParam = LegendActionParam(LegendMember.Red, 1),
                         )
                     ),
@@ -183,7 +183,7 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                     val selection = listOf(
                         FriendAction(
                             LegendMember.Blue.displayName, FriendActionResult(
-                                status, support,
+                                support,
                                 Status(
                                     speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
                                     hp = 45, motivation = 1, skillHint = mapOf("尻尾上がり" to 2),
@@ -195,7 +195,7 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                         ),
                         FriendAction(
                             LegendMember.Green.displayName, FriendActionResult(
-                                status, support,
+                                support,
                                 Status(
                                     stamina = 15, power = 10,
                                     hp = 45, motivation = 1, skillHint = mapOf("闘争心" to 2),
@@ -207,7 +207,7 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                         ),
                         FriendAction(
                             LegendMember.Red.displayName, FriendActionResult(
-                                status, support,
+                                support,
                                 Status(
                                     speed = 10, guts = 15,
                                     hp = 45, motivation = 1, skillHint = mapOf("地固め" to 2),

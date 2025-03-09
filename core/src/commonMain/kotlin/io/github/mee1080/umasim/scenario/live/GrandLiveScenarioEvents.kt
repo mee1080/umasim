@@ -13,10 +13,9 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
         val base = super.afterAction(state, selector)
         return when (base.turn) {
             // 導入
-            4 -> base.copy(
-                scenarioStatus = LiveStatus(),
-                status = state.status.copy(performance = Performance())
-            ).addMember("[トレセン学園]スマートファルコン").purchaseLesson(specialSongs[0])
+            4 -> base.copy(scenarioStatus = LiveStatus())
+                .addStatus(Status(performance = Performance()))
+                .addMember("[トレセン学園]スマートファルコン").purchaseLesson(specialSongs[0])
 
             // ジュニア9月：スマートファルコン編成時加入
             18 -> base.addMember(1)
@@ -77,6 +76,6 @@ class GrandLiveScenarioEvents : CommonScenarioEvents() {
     override fun afterSimulation(state: SimulationState): SimulationState {
         val newState = super.afterSimulation(state)
         // 理事長絆最高
-        return newState.updateStatus { it + Status(15, 15, 15, 15, 15, 50) }
+        return newState.addStatus(Status(15, 15, 15, 15, 15, 50))
     }
 }

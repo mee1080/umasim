@@ -119,6 +119,8 @@ data class Performance(
         )
     }
 
+    operator fun unaryMinus() = Performance(-dance, -passion, -vocal, -visual, -mental)
+
     val totalValue by lazy { dance + passion + vocal + visual + mental }
 
     fun countOver(value: Int) = (if (dance >= value) 1 else 0) + (if (passion >= value) 1 else 0) +

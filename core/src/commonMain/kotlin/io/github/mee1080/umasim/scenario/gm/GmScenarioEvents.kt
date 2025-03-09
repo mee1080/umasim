@@ -4,8 +4,8 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.simulation2.ActionSelector
 import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.addStatus
 import io.github.mee1080.umasim.simulation2.raceFanCount
-import io.github.mee1080.umasim.simulation2.updateStatus
 import io.github.mee1080.utility.applyIf
 
 class GmScenarioEvents : CommonScenarioEvents() {
@@ -57,7 +57,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
 
             // スキル獲得イベント（ステ上昇のみ反映）
             77 -> if (state.gmStatus!!.wisdomLevel.maxOf { it.value } >= 4) {
-                base.updateStatus { it + Status(10, 10, 10, 10, 10, 40) }
+                base.addStatus(Status(10, 10, 10, 10, 10, 40))
             } else base
 
             else -> base
@@ -91,10 +91,8 @@ class GmScenarioEvents : CommonScenarioEvents() {
                 add(*(randomTrainingType(race.updateStatusCount).map { it to 10 }).toTypedArray())
             }
         val raceBonusStatus = baseStatus.multiplyToInt(totalRaceBonus)
-        return updateStatus {
-            val raceStatus = scenario.calculator.applyScenarioRaceBonus(this, raceBonusStatus)
-            it + raceStatus + Status(fanCount = raceFanCount(race.fanCount))
-        }
+        val raceStatus = scenario.calculator.applyScenarioRaceBonus(this, raceBonusStatus)
+        return addStatus(raceStatus + Status(fanCount = raceFanCount(race.fanCount)))
     }
 
     override fun onTurnEnd(state: SimulationState): SimulationState {
@@ -105,8 +103,6 @@ class GmScenarioEvents : CommonScenarioEvents() {
 
     override fun afterSimulation(state: SimulationState): SimulationState {
         // エンディング、良鬼は未反映
-        return super.afterSimulation(state).updateStatus {
-            it + Status(20, 20, 20, 20, 20, 60)
-        }
+        return super.afterSimulation(state).addStatus(Status(20, 20, 20, 20, 20, 60))
     }
 }

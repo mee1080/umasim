@@ -5,9 +5,9 @@ import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.scenario.ScenarioEvents
-import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.scenario.updateFactor
-import io.github.mee1080.umasim.simulation2.updateStatus
+import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.addStatus
 
 class ClimaxScenarioEvents : ScenarioEvents {
 
@@ -29,10 +29,11 @@ class ClimaxScenarioEvents : ScenarioEvents {
                 .updateFactor()
             // クラシック夏合宿
             40 -> state
-                .updateStatus { it + Status(guts = 10) }
+                .addStatus(Status(guts = 10))
             // シニア継承
             55 -> state
                 .updateFactor()
+
             else -> state
         }
     }
@@ -40,8 +41,8 @@ class ClimaxScenarioEvents : ScenarioEvents {
     override fun afterSimulation(state: SimulationState): SimulationState {
         // 余ったコインを秘伝書換算でステータスに加算
         val coinToStatus = state.shopCoin / 10
-        return state.copy(
-            status = state.status + Status(
+        return state.addStatus(
+            Status(
                 speed = coinToStatus,
                 stamina = coinToStatus,
                 power = coinToStatus,

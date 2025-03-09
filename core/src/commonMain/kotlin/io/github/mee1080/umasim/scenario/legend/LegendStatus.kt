@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.mapIf
 import kotlin.math.min
 
@@ -65,18 +66,22 @@ fun SimulationState.setLegendMastery(mastery: LegendMember): SimulationState {
         )
     }
     return state.updateLegendStatus {
-        setMastery(mastery)
+        setMastery(mastery, turn)
+    }.applyIf(mastery == LegendMember.Blue) {
+        addStatus(Status(motivation = 5), applyScenario = false)
     }
 }
 
-fun LegendStatus.setMastery(mastery: LegendMember): LegendStatus {
+fun LegendStatus.setMastery(mastery: LegendMember, turn: Int = 0): LegendStatus {
     return copy(
         mastery = mastery,
         specialStateTurn = when (mastery) {
             LegendMember.Blue -> 3
             LegendMember.Green -> 1
             LegendMember.Red -> 0
-        }
+        },
+        restContinueCount = if (mastery == LegendMember.Blue) 2 else 0,
+        specialStateStartTurn = turn,
     )
 }
 
@@ -93,6 +98,8 @@ data class LegendStatus(
     val buffList: List<LegendBuffState> = emptyList(),
     val mastery: LegendMember? = null,
     val specialStateTurn: Int = 0,
+    val restContinueCount: Int = 0,
+    val specialStateStartTurn: Int = 0,
 ) : ScenarioStatus {
     val baseBuffEffect by lazy { getBuffEffect(0, 0) }
 
@@ -208,7 +215,7 @@ sealed interface LegendBuffCondition {
         override val shortName = "休憩後"
 
         override fun activateAfterAction(action: Action, result: ActionResult): Boolean {
-            return action is Sleep
+            return action is Sleep || action is Outing
         }
 
         override fun deactivateAfterAction(action: Action, result: ActionResult): Boolean {

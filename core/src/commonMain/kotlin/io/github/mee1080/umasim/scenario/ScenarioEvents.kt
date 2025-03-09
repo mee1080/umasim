@@ -24,7 +24,7 @@ import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.simulation2.ActionSelector
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.SimulationState
-import io.github.mee1080.umasim.simulation2.updateStatus
+import io.github.mee1080.umasim.simulation2.addStatus
 import kotlin.math.min
 
 interface ScenarioEvents {
@@ -37,29 +37,17 @@ interface ScenarioEvents {
     fun afterSimulation(state: SimulationState): SimulationState = state
 }
 
-open class CommonScenarioEvents : ScenarioEvents {
+open class BaseScenarioEvents : ScenarioEvents {
 
     override fun beforeAction(state: SimulationState): SimulationState {
         return when (state.turn) {
-            // ジュニア新年
-            25 -> state
-                .updateStatus { it.updateNewYear(20, 20) }
             // クラシック継承
             31 -> state
                 .updateFactor()
-            // クラシック夏合宿
-            40 -> state
-                .updateStatus { it + Status(guts = 10) }
-            // クラシック新年
-            49 -> state
-                .updateStatus { it.updateNewYear(30, 35) }
-            // 福引2等
-            50 -> state
-                .updateStatus { it + Status(5, 5, 5, 5, 5, hp = 20, motivation = 1) }
-            // シニア継承、ファン感謝祭
+
+            // シニア継承
             55 -> state
                 .updateFactor()
-                .updateStatus { it + Status(motivation = 1) }
 
             else -> state
         }
@@ -71,20 +59,50 @@ open class CommonScenarioEvents : ScenarioEvents {
 
     override fun afterSimulation(state: SimulationState): SimulationState {
         // 記者絆4
-        return state.updateStatus { it + Status(3, 3, 3, 3, 3, 10) }
+        return state.addStatus(Status(3, 3, 3, 3, 3, 10))
     }
 }
 
-internal fun Status.updateNewYear(plusHp: Int, plusSkillPt: Int): Status {
-    return if (hp + plusHp > maxHp) {
-        copy(skillPt = skillPt + plusSkillPt)
+open class CommonScenarioEvents : ScenarioEvents {
+
+    override fun beforeAction(state: SimulationState): SimulationState {
+        val base = super.beforeAction(state)
+        return when (base.turn) {
+            // ジュニア新年
+            25 -> base
+                .updateNewYear(20, 20)
+
+            // クラシック夏合宿
+            40 -> base
+                .addStatus(Status(guts = 10))
+
+            // クラシック新年
+            49 -> base
+                .updateNewYear(30, 35)
+
+            // 福引2等
+            50 -> base
+                .addStatus(Status(5, 5, 5, 5, 5, hp = 20, motivation = 1))
+
+            // ファン感謝祭
+            55 -> base
+                .addStatus(Status(motivation = 1))
+
+            else -> base
+        }
+    }
+}
+
+internal fun SimulationState.updateNewYear(plusHp: Int, plusSkillPt: Int): SimulationState {
+    return if (status.hp + plusHp > status.maxHp) {
+        addStatus(Status(skillPt = plusSkillPt))
     } else {
-        copy(hp = hp + plusHp)
+        addStatus(Status(hp = plusHp))
     }
 }
 
-internal fun SimulationState.updateFactor() = updateStatus { status ->
-    status.add(*factor.map {
+internal fun SimulationState.updateFactor() = addStatus(
+    Status().add(*factor.map {
         it.first to when (it.second) {
             3 -> 21
             2 -> 12
@@ -92,7 +110,7 @@ internal fun SimulationState.updateFactor() = updateStatus { status ->
             else -> 0
         }
     }.toTypedArray())
-}
+)
 
 internal fun SimulationState.addGuest(totalCount: Int, scenario: Scenario): SimulationState {
     val supportNames = member.filter { !it.outingType }.map { it.charaName }.toSet()
