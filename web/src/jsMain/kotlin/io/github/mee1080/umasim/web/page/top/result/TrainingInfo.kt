@@ -156,7 +156,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
         DivFlexCenter {
             Text("やる気：")
             MdRadioGroup(
-                listOf(2, 1, 0, -1, -2),
+                if (state.scenario == Scenario.LEGEND) listOf(3, 2, 1, 0, -1, -2) else listOf(2, 1, 0, -1, -2),
                 state.motivation,
                 onSelect = model::updateMotivation,
                 itemToLabel = { WebConstants.motivationMap[it] ?: "" },

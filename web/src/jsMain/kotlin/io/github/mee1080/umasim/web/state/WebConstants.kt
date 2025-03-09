@@ -166,7 +166,7 @@ object WebConstants {
 
     val trainingTypeList = trainingType.toList()
 
-    val motivationMap = mapOf(2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
+    val motivationMap = mapOf(3 to "超絶好調", 2 to "絶好調", 1 to "好調", 0 to "普通", -1 to "不調", -2 to "絶不調")
 
     val trainingInfo = Scenario.entries.associateWith { Store.getTrainingInfo(it) }
 

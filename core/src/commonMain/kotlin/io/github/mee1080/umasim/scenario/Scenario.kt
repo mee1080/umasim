@@ -175,7 +175,7 @@ enum class Scenario(
 
     LEGEND(
         scenarioNumber = 10,
-        displayName = "The Twinkle Legends (作成中)",
+        displayName = "The Twinkle Legends",
         trainingData = legendTrainingData,
         scenarioEvents = { LegendScenarioEvents() },
         turn = 72,
