@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
+import io.github.mee1080.utility.mapIf
 import io.github.mee1080.utility.replaced
 import kotlin.math.min
 import kotlin.random.Random
@@ -96,6 +97,7 @@ object LegendCalculator : ScenarioCalculator {
 
     override fun predictScenarioActionParams(state: SimulationState, baseActions: List<Action>): List<Action> {
         val trainingLegends = selectTrainingLegends()
+        val raceLegend = LegendMember.entries.random()
         return baseActions.map {
             when (it) {
                 is Training -> {
@@ -129,7 +131,7 @@ object LegendCalculator : ScenarioCalculator {
                 is Race -> it.copy(
                     result = it.result.addScenarioActionParam(
                         LegendActionParam(
-                            legendMember = LegendMember.entries.random(),
+                            legendMember = raceLegend,
                             gauge = 1,
                         )
                     )
@@ -164,6 +166,9 @@ object LegendCalculator : ScenarioCalculator {
                     }
                     .applyIf(legendStatus.mastery == LegendMember.Green) {
                         applyGreenMasteryAction(action)
+                    }
+                    .applyIf(legendStatus.mastery == LegendMember.Red) {
+                        applyRedMasteryAction(action, result)
                     }
             }
             .updateLegendStatus {
@@ -263,6 +268,10 @@ object LegendCalculator : ScenarioCalculator {
                         copy(specialStateTurn = specialStateTurn + 1)
                     }
                 }
+            } else if (action is Race && legendStatus.specialStateTurn < 7) {
+                updateLegendStatus {
+                    copy(specialStateTurn = specialStateTurn + 1)
+                }
             } else {
                 when (legendStatus.specialStateTurn) {
                     7 -> addAllStatus(35, 50)
@@ -286,6 +295,24 @@ object LegendCalculator : ScenarioCalculator {
                 }
             } else this
         }
+    }
+
+    private fun SimulationState.applyRedMasteryAction(action: Action, result: ActionResult): SimulationState {
+        if (action !is Training || !result.success) return this
+        var newMember = member
+        action.member.forEach { member ->
+            if (!member.outingType && member.isFriendTraining(action.type)) {
+                newMember = newMember.mapIf({ it.index == member.index }) {
+                    val newScenarioState = (it.scenarioState as LegendMemberState)
+                        .incrementFriendLevel()
+                        .applyIf(member.hint) {
+                            addRelation(5 + charmBonus)
+                        }
+                    it.copy(scenarioState = newScenarioState)
+                }
+            }
+        }
+        return copy(member = newMember)
     }
 
     fun applyScenarioAction(state: SimulationState, result: LegendActionResult): SimulationState {

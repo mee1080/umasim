@@ -75,7 +75,9 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
                     ),
                 )
                 val selected = selector.select(this, selection)
-                applyAction(selected, selected.randomSelectResult()).applyIf(target.supportState?.passion == false) {
+                applyAction(selected, selected.randomSelectResult()).applyIf(
+                    target.supportState != null && target.supportState.outingEnabled && !target.supportState.passion
+                ) {
                     startPassion(target)
                 }
             } else this

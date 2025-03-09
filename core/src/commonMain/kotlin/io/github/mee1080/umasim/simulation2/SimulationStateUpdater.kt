@@ -84,8 +84,7 @@ suspend fun SimulationState.updateOutingStep(selector: ActionSelector): Simulati
 fun SimulationState.shuffleMember(): SimulationState {
     // 各トレーニングの配置数が5以下になるよう調整
     var newMember: List<MemberState>
-    var supportPosition: Map<StatusType, List<MemberState>>
-    val forceHintCount = min(forceHintCount, support.count { !it.outingType })
+    var supportPosition: Map<StatusType, MutableList<MemberState>>
     do {
         newMember = member.map { it.onTurnChange(turn, this) }
         supportPosition = trainingType.associateWith { mutableListOf() }
@@ -94,7 +93,20 @@ fun SimulationState.shuffleMember(): SimulationState {
                 supportPosition[status]!!.add(it)
             }
         }
-    } while (supportPosition.any { it.value.size > 5 } || (forceHintCount > 0 && newMember.count { it.hint } < forceHintCount))
+    } while (supportPosition.any { it.value.size > 5 })
+    val forceHintCount = min(forceHintCount, support.count { !it.outingType })
+    if (forceHintCount > 0) {
+        val positionedSupport = newMember.filter { !it.guest && !it.outingType && it.position != StatusType.NONE }
+        val notHintSupport = positionedSupport.filter { !it.hint }
+        val hintSupportCount = positionedSupport.size - notHintSupport.size
+        if (forceHintCount > hintSupportCount) {
+            notHintSupport.shuffled().take(forceHintCount - hintSupportCount).forEach { member ->
+                newMember = newMember.mapIf({ it.index == member.index }) {
+                    it.copy(supportState = it.supportState?.copy(hintIcon = true))
+                }
+            }
+        }
+    }
     if (additionalMemberCount > 0) {
         var positionedSupport = newMember.filter { !it.guest && it.position != StatusType.NONE }.shuffled()
         if (positionedSupport.isNotEmpty()) {
@@ -104,8 +116,11 @@ fun SimulationState.shuffleMember(): SimulationState {
             positionedSupport.take(additionalMemberCount).groupBy { it.index }.forEach { (index, members) ->
                 val target = members[0]
                 val additionalPositions = supportPosition.filter {
-                    target.positions.contains(it.key) && it.value.size < 5
-                }.keys.take(members.size).toSet()
+                    it.value.size < 5 && !target.positions.contains(it.key)
+                }.keys.shuffled().take(members.size).toSet()
+                additionalPositions.forEach {
+                    supportPosition[it]!!.add(target)
+                }
                 newMember = newMember.mapIf({ it.index == index }) {
                     it.copy(additionalPosition = it.additionalPosition + additionalPositions)
                 }
@@ -173,7 +188,9 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     }
     // ヒントアイコン表示、情熱ゾーン減少
     val supportState = supportState?.copy(
-        hintIcon = !outingType && (state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp))),
+        hintIcon = !outingType && position != StatusType.NONE && (
+                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp))
+                ),
         passionTurn = max(0, supportState.passionTurn - 1),
     )
     return copy(
@@ -308,7 +325,10 @@ private suspend fun SimulationState.applyFriendEvent(action: Training, selector:
 fun SimulationState.applyFriendEvent(action: Action, result: FriendActionResult): SimulationState {
     return applyFriendEvent(result.support, result.status, result.relation, result.outingStep)
         .applyIf({ result.otherRelation > 0 }) {
-            val relationTarget = support.filter { it.index != result.support.index }.minBy { it.relation }
+            val minRelation = support.filter { it.index != result.support.index }.minOf { it.relation }
+            val relationTarget = support.filter {
+                it.index != result.support.index && it.relation == minRelation
+            }.random()
             addRelation(1, relationTarget)
         }
         .applyScenarioActionParam(action, result)
@@ -388,16 +408,18 @@ private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair
         val hintSupportList = support.filter { it.hint }
         if (hintSupportList.isEmpty()) return Status() to emptyList()
         val hintSupport = hintSupportList.random()
-        var status = Status()
-        repeat(hintCount) {
-            val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
-            status += if (hintSkill.isEmpty()) {
+        var result = Status()
+        repeat(1 + hintCountPlus) {
+            val hintSkill = (hintSupport.card.skills.filter {
+                !result.skillHint.containsKey(it) && status.skillHint.getOrElse(it) { 0 } < 5
+            } + "").random()
+            result += if (hintSkill.isEmpty()) {
                 hintSupport.card.hintStatus
             } else {
                 Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
             }
         }
-        status to listOf(hintSupport)
+        result to listOf(hintSupport)
     }
 }
 

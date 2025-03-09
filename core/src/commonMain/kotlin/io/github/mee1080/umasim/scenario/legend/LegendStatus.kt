@@ -290,17 +290,15 @@ data class LegendMemberState(
     val friendTrainingEnabled get() = bestFriendGauge >= 20
 
     override fun addRelation(relation: Int): ScenarioMemberState {
-        return when {
-            bestFriendLevel == 0 -> this
+        return if (bestFriendLevel == 0) this else copy(
+            bestFriendGauge = min(20, bestFriendGauge + relation),
+        )
+    }
 
-            bestFriendGauge >= 20 -> copy(
-                bestFriendLevel = min(9, bestFriendLevel + 1),
-                bestFriendGauge = 0,
-            )
-
-            else -> copy(
-                bestFriendGauge = min(20, bestFriendGauge + relation)
-            )
-        }
+    fun incrementFriendLevel(): ScenarioMemberState {
+        return if (bestFriendLevel == 0) this else copy(
+            bestFriendLevel = min(9, bestFriendLevel + 1),
+            bestFriendGauge = 0,
+        )
     }
 }

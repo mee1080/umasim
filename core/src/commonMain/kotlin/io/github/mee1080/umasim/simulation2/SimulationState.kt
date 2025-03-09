@@ -144,10 +144,10 @@ data class SimulationState(
         get() = legendStatus?.baseBuffEffect?.forceHint
             ?: 0
 
-    val hintCount
-        get() = uafStatus?.let { if (it.forceHint) 2 else 1 }
+    val hintCountPlus
+        get() = uafStatus?.let { if (it.forceHint) 1 else 0 }
             ?: legendStatus?.baseBuffEffect?.hintCount
-            ?: 1
+            ?: 0
 
     val allSupportHint
         get() = gmStatus?.hintFrequencyUp
