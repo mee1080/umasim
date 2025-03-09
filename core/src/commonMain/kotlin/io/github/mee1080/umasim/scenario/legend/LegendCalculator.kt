@@ -155,7 +155,7 @@ object LegendCalculator : ScenarioCalculator {
         params: LegendActionParam,
     ): SimulationState {
         val legendStatus = state.legendStatus ?: return state
-        println("T${state.turn} applyScenarioActionParam: ${action.toShortString()} $params")
+        if (Calculator.DEBUG) println("T${state.turn} applyScenarioActionParam: ${action.toShortString()} $params")
         return state
             .applyIf(action.turnChange) {
                 updateAfterActionBuff(action, result)
@@ -175,8 +175,7 @@ object LegendCalculator : ScenarioCalculator {
 
     private fun SimulationState.applyBlueMasteryAction(): SimulationState {
         val legendStatus = legendStatus ?: return this
-        println("T$turn applyBlueMasteryAction: ${legendStatus.specialStateTurn}")
-        Exception().printStackTrace()
+        if (Calculator.DEBUG) println("T$turn applyBlueMasteryAction: ${legendStatus.specialStateTurn}")
         return if (legendStatus.specialStateTurn == 1) {
             updateLegendStatus {
                 copy(specialStateTurn = -3)
@@ -190,8 +189,7 @@ object LegendCalculator : ScenarioCalculator {
 
     private fun SimulationState.applyBlueMasteryAddMotivation(): SimulationState {
         val legendStatus = legendStatus ?: return this
-        println("T$turn applyBlueMasteryAddMotivation: ${legendStatus.specialStateTurn}")
-        Exception().printStackTrace()
+        if (Calculator.DEBUG) println("T$turn applyBlueMasteryAddMotivation: ${legendStatus.specialStateTurn}")
         return if (legendStatus.specialStateTurn == -1) {
             updateLegendStatus {
                 copy(specialStateTurn = 3, restContinueCount = 2, specialStateStartTurn = turn)
