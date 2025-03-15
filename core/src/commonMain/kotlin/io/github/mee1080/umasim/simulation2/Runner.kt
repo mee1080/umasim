@@ -189,6 +189,15 @@ object Runner {
         StatusType.SKILL to (1.3 to 6000),
     )
 
+    val legendSetting = mapOf(
+        StatusType.SPEED to (1.0 to 2500),
+        StatusType.STAMINA to (1.0 to 2000),
+        StatusType.POWER to (1.0 to 2000),
+        StatusType.GUTS to (1.0 to 1800),
+        StatusType.WISDOM to (1.0 to 1700),
+        StatusType.SKILL to (1.0 to 8000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,

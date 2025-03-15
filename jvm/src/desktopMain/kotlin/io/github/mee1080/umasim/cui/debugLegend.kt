@@ -19,17 +19,22 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.LegendActionSelector
+import io.github.mee1080.umasim.ai.generator
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.legend.LegendScenarioEvents
+import io.github.mee1080.umasim.scenario.legend.getLegendBuff
 import io.github.mee1080.umasim.simulation2.MultipleAction
 import io.github.mee1080.umasim.simulation2.RandomEvents
+import io.github.mee1080.umasim.simulation2.Runner
 import io.github.mee1080.umasim.simulation2.Simulator
 import kotlinx.coroutines.runBlocking
 
 fun debugLegend() {
-    debugLegendSingleSimulation()
+//    debugLegendSingleSimulation()
 //    debugLegendRepeatSimulation(1000)
+    speed2Stamina2Wisdom1()
 }
 
 fun debugLegendSingleSimulation() {
@@ -86,27 +91,70 @@ fun debugLegendSingleSimulation() {
 }
 
 fun debugLegendRepeatSimulation(count: Int) {
-    val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5)
+    val chara = Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5)
     val support = Store.getSupportByName(
+        "[世界を変える眼差し]アーモンドアイ",
         "[Devilish Whispers]スティルインラブ",
-        "[大望は飛んでいく]エルコンドルパサー",
         "[Cocoon]エアシャカール",
-        "[大地と我らのアンサンブル]サウンズオブアース",
-        "[COOL⇔CRAZY/Buddy]シンボリクリスエス",
+        "[そして幕は上がる]ダンツフレーム",
         "[Take Them Down!]ナリタタイシン",
+        "[導きの光]伝説の体現者",
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
     repeat(count) {
-        val selector = LegendActionSelector.Option().generateSelector()
+        val selector = LegendActionSelector.s2h2w1.generator().generateSelector()
         val factor = listOf(
             StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
-            StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
+            StatusType.STAMINA to 3, StatusType.STAMINA to 3, StatusType.STAMINA to 3,
         )
         val result = runBlocking {
             Simulator(Scenario.LEGEND, chara, support, factor)
-                .simulateWithHistory(selector) { RandomEvents(it) }
+                .simulateWithHistory(selector, {
+                    LegendScenarioEvents(
+                        listOf(
+                            "トーク術", "交渉術", "素敵なハーモニー", "極限の集中",
+                            "絆が奏でるハーモニー", "怪物チャンスマイル♪", "絆が織りなす光", "集いし理想",
+                            "高潔なる魂", "百折不撓", "飽くなき挑戦心",
+                        ).map { getLegendBuff(it) }
+                    )
+                }) { RandomEvents(it) }
         }
         println(result.first.status.toShortString())
     }
+}
+
+private fun speed2Stamina2Wisdom1() {
+    val chara = Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5)
+    var defaultSupport = Store.getSupportByName(
+//        "[世界を変える眼差し]アーモンドアイ",
+        "[Devilish Whispers]スティルインラブ",
+        "[Cocoon]エアシャカール",
+        "[そして幕は上がる]ダンツフレーム",
+        "[Take Them Down!]ナリタタイシン",
+        "[導きの光]伝説の体現者",
+    ).toTypedArray()
+    var targetStatus = StatusType.SPEED
+    doSimulation2(
+        Scenario.LEGEND,
+        chara,
+        defaultSupport,
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
+//        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
+        factor = factor(StatusType.SPEED, 2) + factor(StatusType.POWER, 1) + factor(StatusType.STAMINA, 3),
+        testCount = 10000,
+        selector = LegendActionSelector.s2h2w1.generator()::generateSelector,
+        evaluateSetting = Runner.legendSetting,
+        evaluateUpperRate = 0.2,
+        scenarioEvents = {
+            LegendScenarioEvents(
+                listOf(
+                    "トーク術", "交渉術", "素敵なハーモニー", "極限の集中",
+                    "絆が奏でるハーモニー", "怪物チャンスマイル♪", "絆が織りなす光", "集いし理想",
+                    "高潔なる魂", "百折不撓", "飽くなき挑戦心",
+                ).map { getLegendBuff(it) }
+            )
+        },
+    )
 }

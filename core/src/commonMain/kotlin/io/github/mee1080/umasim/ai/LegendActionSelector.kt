@@ -19,105 +19,83 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.scenario.legend.LegendMember
+import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 
-class LegendActionSelector(private val options: List<Option>) :
-    BaseActionSelector<LegendActionSelector.Option, LegendActionSelector.Context>() {
+fun List<LegendActionSelector.Option>.generator() = object : ActionSelectorGenerator {
+    override fun generateSelector(): ActionSelector {
+        return LegendActionSelector(this@generator)
+    }
+}
+
+class LegendActionSelector(
+    private val options: List<Option>,
+) : BaseActionSelector2<LegendActionSelector.Option, LegendActionSelector.Context>() {
 
     companion object {
         private const val DEBUG = false
 
-        val s2h2p1w1Generator = object : ActionSelectorGenerator {
-            override fun generateSelector(): ActionSelector {
-                return LegendActionSelector(s2h2p1w1Options)
-            }
-        }
-
-        val s2h2p1w1 = {
-            LegendActionSelector(s2h2p1w1Options)
-        }
-
-        val s2h2p1w1Options: List<Option>
-
-        init {
-            val option1 = Option(
-                speedFactor = 60,
-                staminaFactor = 60,
-                powerFactor = 80,
-                gutsFactor = 60,
-                wisdomFactor = 80,
-                skillPtFactor = 100,
-                hpFactor = 120,
-                motivationFactor = 6000,
-                relationFactor = 2500,
-                outingRelationFactor = 2000,
-                hpKeepFactor = 100,
-                riskFactor = 100,
-            )
-            val option2 = option1.copy(
-                speedFactor = 80,
-                staminaFactor = 100,
-                powerFactor = 120,
-                gutsFactor = 100,
-                wisdomFactor = 60,
-                skillPtFactor = 100,
-                hpFactor = 120,
-                hpKeepFactor = 100,
-                riskFactor = 100,
-            )
-            val option3 = option1.copy(
-                speedFactor = 120,
-                staminaFactor = 160,
-                powerFactor = 120,
-                gutsFactor = 140,
-                wisdomFactor = 100,
-                skillPtFactor = 100,
-                hpFactor = 150,
-                hpKeepFactor = 200,
-                riskFactor = 300,
-            )
-            val option4 = option1.copy(
-                speedFactor = 60,
-                staminaFactor = 80,
-                powerFactor = 80,
-                gutsFactor = 100,
-                wisdomFactor = 60,
-                skillPtFactor = 80,
-                hpFactor = 150,
-                hpKeepFactor = 100,
-                riskFactor = 300,
-            )
-            val option5 = option1.copy(
-                speedFactor = 80,
-                staminaFactor = 100,
-                powerFactor = 120,
-                gutsFactor = 120,
-                wisdomFactor = 80,
-                skillPtFactor = 80,
-                hpFactor = 180,
-                hpKeepFactor = 200,
-                riskFactor = 200,
-            )
-            s2h2p1w1Options = listOf(option1, option2, option3, option4, option5)
-        }
+        val s2h2w1 = listOf(
+            Option(
+                training = 300,
+                hp = 20,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 15,
+                relation = 30,
+                friend = 300,
+                friendCount = 200,
+                supportCount = 400,
+                guestCount = 150,
+                forcedSupportCount = -200,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 150
+            ),
+            Option(
+                training = 100,
+                hp = 20,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 15,
+                relation = 30,
+                friend = 300,
+                friendCount = 200,
+                supportCount = 400,
+                guestCount = 150,
+                forcedSupportCount = -200,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 150
+            ),
+        )
     }
 
     @Serializable
     data class Option(
-        override val speedFactor: Int = 100,
-        override val staminaFactor: Int = 100,
-        override val powerFactor: Int = 100,
-        override val gutsFactor: Int = 100,
-        override val wisdomFactor: Int = 90,
-        override val skillPtFactor: Int = 60,
-        override val hpFactor: Int = 40,
-        override val motivationFactor: Int = 3000,
-        override val relationFactor: Int = 1000,
-        override val outingRelationFactor: Int = 1000,
-        override val hpKeepFactor: Int = 200,
-        override val riskFactor: Int = 200,
+        override val speed: Int = 100,
+        override val stamina: Int = 110,
+        override val power: Int = 110,
+        override val guts: Int = 100,
+        override val wisdom: Int = 70,
+
+        override val training: Int = 300,
+        override val hp: Int = 20,
+        override val hpKeep: Int = 20,
+        override val motivation: Int = 500,
+        override val risk: Int = 50,
+
+        override val relation: Int = 50,
+        override val outingRelation: Int = 50,
+
+        override val friend: Int = 500,
+        override val friendCount: Int = 400,
+        override val supportCount: Int = 300,
+        override val guestCount: Int = 200,
+
+        val forcedSupportCount: Int = -100,
+        val supportBestFriendGauge: Int = 100,
+        val forcedGuestCount: Int = 200,
     ) : BaseOption {
         override fun generateSelector() = LegendActionSelector(listOf(this))
         override fun serialize() = serializer.encodeToString(this)
@@ -134,37 +112,72 @@ class LegendActionSelector(private val options: List<Option>) :
     override fun getContext(state: SimulationState): Context {
         val option = options.getOrElse(
             when {
-                state.turn >= 60 -> 4
-                state.turn >= 48 -> 3
-                state.turn >= 36 -> 2
-                state.turn >= 24 -> 1
+                state.turn >= 36 -> 1
                 else -> 0
             }
         ) { options[0] }
         return Context(option, state)
     }
 
-    override fun calcExpectedScores(context: Context): Double {
-        // 期待値は計算が複雑になるため使用しない
-        return 0.0
+    override fun calcTrainingAdditionalScore(context: Context, action: Training): Double {
+        val (option, state) = context
+        val mastery = state.legendStatus?.mastery ?: return 0.0
+        var score = 0.0
+        when (mastery) {
+            LegendMember.Blue -> {
+                // TODO
+            }
+
+            LegendMember.Green -> {
+                // TODO
+            }
+
+            LegendMember.Red -> {
+                val support = action.support.filter { !it.outingType }
+                val guest = action.member.filter { it.guest }
+                score += support.count {
+                    it.card.type == action.type && (it.scenarioState as LegendMemberState).forceSpeciality
+                } * option.forcedSupportCount
+                score += support.count {
+                    (it.scenarioState as LegendMemberState).bestFriendGauge < 20
+                } * option.supportBestFriendGauge
+                if (support.any { it.hint && (it.scenarioState as LegendMemberState).bestFriendGauge < 13 - state.charmBonus }) {
+                    score += option.supportBestFriendGauge
+                }
+                score += guest.count {
+                    it.card.type == action.type && (it.scenarioState as LegendMemberState).forceSpeciality
+                } * option.forcedGuestCount
+            }
+        }
+        if (DEBUG) println("  mastery $mastery $score")
+        return score
     }
 
-    override suspend fun calcScenarioActionScore(context: Context, action: Action, expectedScore: Double): Double? {
+    override suspend fun calcScenarioActionScore(context: Context, action: Action): Double? {
         return when (action) {
             is LegendSelectBuff -> {
                 val buff = action.result.buff
                 buff.rank * 100.0 + when (buff.member) {
                     LegendMember.Blue -> 0.0
-                    LegendMember.Green -> 50.0
+                    LegendMember.Green -> 0.0
                     LegendMember.Red -> 0.0
                 }
+            }
+
+            is LegendDeleteBuff -> {
+                val buff = action.result.buff
+                -buff.rank * 100.0
             }
 
             else -> null
         }
     }
 
-    override fun actionParamScore(option: Option, scenarioActionParam: ScenarioActionParam?): Double {
+    override fun calcScenarioActionParamScore(
+        context: Context,
+        action: Action,
+        scenarioActionParam: ScenarioActionParam,
+    ): Double {
         val param = scenarioActionParam as? LegendActionParam ?: return 0.0
         return 0.0
     }

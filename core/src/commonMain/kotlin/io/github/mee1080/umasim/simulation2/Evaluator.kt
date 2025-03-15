@@ -124,7 +124,7 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun toSummaryString(): String {
         val skillFactor = 1.0
-        return arrayOf(
+        return arrayOf<Any>(
             // ステータス
             average(StatusType.SPEED),
             average(StatusType.STAMINA),

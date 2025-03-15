@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.ScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -97,6 +98,7 @@ fun doSimulation2(
     selector: () -> ActionSelector,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
     evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
 ) {
     println(chara.name)
     defaultSupport.forEach { println(it.name) }
@@ -114,6 +116,7 @@ fun doSimulation2(
                     factor,
                     evaluateSetting,
                     evaluateUpperRate,
+                    scenarioEvents,
 //                    events = ApproximateSimulationEvents(
 //                        beforeActionEvents = {
 //                            return@ApproximateSimulationEvents if (it.turn == 13) {
