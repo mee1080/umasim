@@ -39,34 +39,32 @@ class LegendActionSelector(
 
         val s2h2w1 = listOf(
             Option(
-                training = 300,
-                hp = 20,
+                training = 350,
                 hpKeep = 10,
                 motivation = 1000,
-                risk = 15,
-                relation = 30,
-                friend = 300,
-                friendCount = 200,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
                 supportCount = 400,
-                guestCount = 150,
-                forcedSupportCount = -200,
+                guestCount = 250,
+                forcedSupportCount = -250,
                 supportBestFriendGauge = 50,
-                forcedGuestCount = 150
+                forcedGuestCount = 100
             ),
             Option(
-                training = 100,
-                hp = 20,
+                training = 0,
                 hpKeep = 10,
                 motivation = 1000,
-                risk = 15,
-                relation = 30,
-                friend = 300,
-                friendCount = 200,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
                 supportCount = 400,
-                guestCount = 150,
-                forcedSupportCount = -200,
+                guestCount = 250,
+                forcedSupportCount = -250,
                 supportBestFriendGauge = 50,
-                forcedGuestCount = 150
+                forcedGuestCount = 100
             ),
         )
     }

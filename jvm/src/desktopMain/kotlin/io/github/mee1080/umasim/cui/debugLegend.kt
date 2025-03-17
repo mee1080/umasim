@@ -34,7 +34,6 @@ import kotlinx.coroutines.runBlocking
 fun debugLegend() {
 //    debugLegendSingleSimulation()
 //    debugLegendRepeatSimulation(1000)
-    speed2Stamina2Wisdom1()
 }
 
 fun debugLegendSingleSimulation() {
@@ -122,39 +121,4 @@ fun debugLegendRepeatSimulation(count: Int) {
         }
         println(result.first.status.toShortString())
     }
-}
-
-private fun speed2Stamina2Wisdom1() {
-    val chara = Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5)
-    var defaultSupport = Store.getSupportByName(
-//        "[世界を変える眼差し]アーモンドアイ",
-        "[Devilish Whispers]スティルインラブ",
-        "[Cocoon]エアシャカール",
-        "[そして幕は上がる]ダンツフレーム",
-        "[Take Them Down!]ナリタタイシン",
-        "[導きの光]伝説の体現者",
-    ).toTypedArray()
-    var targetStatus = StatusType.SPEED
-    doSimulation2(
-        Scenario.LEGEND,
-        chara,
-        defaultSupport,
-//        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
-//        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
-        factor = factor(StatusType.SPEED, 2) + factor(StatusType.POWER, 1) + factor(StatusType.STAMINA, 3),
-        testCount = 10000,
-        selector = LegendActionSelector.s2h2w1.generator()::generateSelector,
-        evaluateSetting = Runner.legendSetting,
-        evaluateUpperRate = 0.2,
-        scenarioEvents = {
-            LegendScenarioEvents(
-                listOf(
-                    "トーク術", "交渉術", "素敵なハーモニー", "極限の集中",
-                    "絆が奏でるハーモニー", "怪物チャンスマイル♪", "絆が織りなす光", "集いし理想",
-                    "高潔なる魂", "百折不撓", "飽くなき挑戦心",
-                ).map { getLegendBuff(it) }
-            )
-        },
-    )
 }

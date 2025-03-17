@@ -20,6 +20,7 @@ fun doSimulation2(
     option: ActionSelectorGenerator,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
     evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
 ) {
     doSimulation2(
         scenario,
@@ -33,6 +34,7 @@ fun doSimulation2(
         { option.generateSelector() },
         evaluateSetting,
         evaluateUpperRate,
+        scenarioEvents,
     )
 }
 
@@ -48,6 +50,7 @@ fun doSimulation2(
     selector: () -> ActionSelector,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
     evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
 ) {
     doSimulation2(
         scenario,
@@ -61,6 +64,7 @@ fun doSimulation2(
         selector,
         evaluateSetting,
         evaluateUpperRate,
+        scenarioEvents,
     )
 }
 
@@ -74,6 +78,7 @@ fun doSimulation2(
     option: ActionSelectorGenerator,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
     evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
 ) {
     doSimulation2(
         scenario,
@@ -85,6 +90,7 @@ fun doSimulation2(
         { option.generateSelector() },
         evaluateSetting,
         evaluateUpperRate,
+        scenarioEvents,
     )
 }
 
