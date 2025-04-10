@@ -1512,6 +1512,15 @@ jingle all the way
 phase==1&blocked_side_continuetime>=2->remain_distance<=651&remain_distance>=649&order_rate<=40&order_rate>=30
 「中盤、横ブロック継続>=2」の後「残り距離649～651、順位率30～40（チャンミ3～4/LoH4～5）」、加速4000、持続5.0
 
+駆るは光、狩るは星々
+[Louve stellaire]シリウスシンボリ 固有
+レース中間付近で中団にいると速度を少し上げ続ける中距離レースでパワーが十二分に高いと長めに速度を少し上げ続ける
+評価点340、人気:スピード60、確定発動
+->distance_rate>=40&distance_rate<=50&order_rate>=30&order_rate<=80&distance_type==3&base_power>=1200
+「距離割合40～50、順位率30～80（チャンミ3～7/LoH4～9）、中距離、基礎パワー>=1200」、目標速度2500、持続7.0
+->distance_rate>=40&distance_rate<=50&order_rate>=30&order_rate<=80
+「距離割合40～50、順位率30～80（チャンミ3～7/LoH4～9）」、目標速度2500、持続6.0
+
 Danser le présent
 [Neige Émeraude]メジロアルダン 固有
 終盤の最終直線で好位置にいるとき後ろのウマ娘と近いと持久力を使って速度を上げさらにわずかに前に出る
@@ -3019,6 +3028,14 @@ jingle all the way
 phase==1&blocked_side_continuetime>=2->remain_distance<=651&remain_distance>=649&order_rate<=40&order_rate>=30
 「中盤、横ブロック継続>=2」の後「残り距離649～651、順位率30～40（チャンミ3～4/LoH4～5）」、加速2000、持続3.0
 
+駆るは光、狩るは星々
+レース中間付近で中団にいると速度をちょっと上げ続ける中距離レースでパワーが十二分に高いと長めに速度をちょっと上げ続ける
+評価点180、SP200、人気:スピード15
+->distance_rate>=40&distance_rate<=50&order_rate>=30&order_rate<=80&distance_type==3&base_power>=1200
+「距離割合40～50、順位率30～80（チャンミ3～7/LoH4～9）、中距離、基礎パワー>=1200」、目標速度500、持続4.2
+->distance_rate>=40&distance_rate<=50&order_rate>=30&order_rate<=80
+「距離割合40～50、順位率30～80（チャンミ3～7/LoH4～9）」、目標速度500、持続3.6
+
 Danser le présent
 終盤の最終直線で好位置にいるとき後ろのウマ娘と近いと持久力を使って速度をわずかに上げさらにほんのわずかに前に出る
 評価点180、SP200、人気:スピード7/パワー7
@@ -3717,6 +3734,15 @@ Ritter von Fuchu
 評価点508、進化元SP330、人気:スピード30/パワー30、確定発動
 ->ground_condition==2@ground_condition==3@ground_condition==4
 「稍重」または「重」または「不良」、出遅れ時間1000、パワー80、スピード80、持続0
+
+悪路のほうが好みでね
+[Louve stellaire]シリウスシンボリ 進化(道悪の鬼)
+パワーとスピードが上がる「稍重」「重」「不良」のバ場状態ならすごく上がる＜芝＞
+評価点508、進化元SP330、人気:スピード30/パワー30、確定発動
+->ground_condition==2&ground_type==1@ground_condition==3&ground_type==1@ground_condition==4&ground_type==1
+「稍重、芝」または「重、芝」または「不良、芝」、パワー80、スピード80、持続0
+->ground_condition==1&ground_type==1
+「良、芝」、パワー60、スピード60、持続0
 
 道悪◎
 「稍重」「重」「不良」のバ場状態が得意になる
@@ -9365,6 +9391,15 @@ Dreamer's Path
 ->distance_type==3&phase_firsthalf_random==2&order_rate>=30&order_rate<=80@distance_type==4&phase_firsthalf_random==2&order_rate>=30&order_rate<=80
 「中距離、終盤前1/4ランダム、順位率30～80（チャンミ3～7/LoH4～9）」または「長距離、終盤前1/4ランダム、順位率30～80（チャンミ3～7/LoH4～9）」、現在速度3500、持続3.0
 
+Beat the Stars
+[Louve stellaire]シリウスシンボリ 進化(昂る鼓動)
+レース終盤始めの方早めに中団にいると前に出る、さらに「稍重」「重」「不良」のバ場状態なら加速力がちょっと上がる＜中距離＞
+評価点633、進化元SP360、人気:パワー60
+ground_condition==2@ground_condition==3@ground_condition==4->distance_type==3&phase_firstquarter_random==2&order_rate>=30&order_rate<=80
+「稍重」または「重」または「不良」の後「中距離、終盤前1/8ランダム、順位率30～80（チャンミ3～7/LoH4～9）」、現在速度3500、加速1000、持続3.0
+ground_condition==1->distance_type==3&phase_firstquarter_random==2&order_rate>=30&order_rate<=80
+「良」の後「中距離、終盤前1/8ランダム、順位率30～80（チャンミ3～7/LoH4～9）」、現在速度3500、持続3.0
+
 闘叫の鬼
 [王者の喊声]ジャングルポケット 進化(昂る鼓動)
 東京レース場ならレース終盤始めの方にしばらくの間前に出て、加速力がちょっと上がる＜中距離＞
@@ -10805,6 +10840,18 @@ Legends 進化(英俊豪傑)
 「追込、中盤ランダム、先頭とのバ身差>=20」、目標速度2500、持続3.0
 ->running_style==4&phase_random==1
 「追込、中盤ランダム」、目標速度1500、持続3.0
+
+独立独歩
+ラストスパートの最中に速度が上がる＜作戦・差し＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==3&is_lastspurt==1&phase_firsthalf_random==3
+「差し、ラストスパート、終盤1/2～3/4ランダム」、目標速度3500、持続3.0
+
+押し通る！
+ラストスパートの最中に速度がわずかに上がる＜作戦・差し＞
+評価点217、SP180、人気:スピード20
+->running_style==3&is_lastspurt==1&phase_firsthalf_random==3
+「差し、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
