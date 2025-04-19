@@ -23,9 +23,7 @@
 package io.github.mee1080.umasim.race.data
 
 import io.github.mee1080.umasim.race.calc2.Track
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import io.github.mee1080.utility.fetchFromUrl
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -41,9 +39,10 @@ val recentEventTrackList by lazy {
 
 suspend fun loadRecentEventTrackList() {
     val list = mutableListOf<Pair<String, Track>>()
-    val text = HttpClient()
-        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
-        .bodyAsText()
+//    val text = HttpClient()
+//        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
+//        .bodyAsText()
+    val text = fetchFromUrl("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
     text.split("\n").forEach { line ->
         val data = line.trim().split(",")
         if (data.size >= 4) {

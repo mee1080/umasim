@@ -4,10 +4,8 @@ import io.github.mee1080.umasim.race.calc2.RaceState
 import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
+import io.github.mee1080.utility.fetchFromUrl
 import io.github.mee1080.utility.toPercentString
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -18,9 +16,11 @@ import kotlin.random.Random
 private val jsonParser = Json { allowTrailingComma = true }
 
 suspend fun loadSkillData() {
-    val skillDataString = HttpClient()
-        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/skill_data.txt")
-        .bodyAsText()
+//    val skillDataString = HttpClient()
+//        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/skill_data.txt")
+//        .bodyAsText()
+    val skillDataString =
+        fetchFromUrl("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/skill_data.txt")
     skillData2 = jsonParser.decodeFromString<List<SkillData>>(skillDataString)
 }
 

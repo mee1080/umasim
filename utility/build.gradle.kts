@@ -27,6 +27,7 @@ kotlin {
             dependencies {
                 implementation(libs.multiplatform.settings)
                 implementation(libs.kotlinx.serializationJson)
+                implementation(libs.kotlinx.coroutinesCore)
             }
         }
 
@@ -34,6 +35,12 @@ kotlin {
             dependencies {
                 implementation(libs.test.common)
                 implementation(libs.test.annotations)
+            }
+        }
+
+        val jvmMain by getting {
+            dependencies {
+                implementation(libs.ktor.clientCio)
             }
         }
 
