@@ -39,8 +39,6 @@ private class RecentEventTrackEntry(
 
 val recentEventTrackList by lazy {
     listOf(
-        RecentEventTrackEntry("阪神", "芝1600m(外)", CourseCondition.GOOD, 9),
-
         RecentEventTrackEntry("京都", "芝3200m(外)", CourseCondition.GOOD, 9),
 
         RecentEventTrackEntry("大井", "ダート2000m", CourseCondition.GOOD, 12),

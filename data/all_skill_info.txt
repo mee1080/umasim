@@ -1551,9 +1551,9 @@ Joy to the World
 レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度が少し上がるゴールまですごく遠いとすごく上がる
 評価点340、人気:スピード60、確定発動
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
-「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度4500、持続5.0
+「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度4500、持続5.0
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
-「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
+「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度2500、持続5.0
 
 Breezy Treat
 [Sugary Wind]ヤマニンゼファー 固有
@@ -1659,9 +1659,9 @@ distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorne
 レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間少し前に出る、マイルレースなら少しの間すごく前に出る
 評価点340、人気:パワー60、確定発動
 ->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度4500、持続4.0
+「中盤前半、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「中盤前半、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度4500、持続4.0
 ->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度2500、持続4.0
+「中盤前半、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「中盤前半、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度2500、持続4.0
 
 Vive la GOLD
 [La mode 564]ゴールドシップ 固有
@@ -3060,9 +3060,9 @@ Joy to the World
 レース中盤始めにスキルで持久力を回復していて、レース中間付近以降で好位置にいると速度がちょっと上がるゴールまですごく遠いと少し上がる
 評価点180、SP200、人気:スピード15
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50&remain_distance>=1000
-「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度2500、持続3.0
+「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）、残り距離>=1000」、目標速度2500、持続3.0
 phase_firsthalf==1&is_activate_heal_skill==1->distance_rate>=45&order_rate>=20&order_rate<=50
-「phase_firsthalf==1、is_activate_heal_skill==1」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
+「中盤前半、回復スキル発動」の後「距離割合>=45、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度500、持続3.0
 
 Breezy Treat
 残り350m地点で前方にいると少しの間わずかに前に出る、さらにマイルレースなら速度がほんのわずかに上がる
@@ -3148,9 +3148,9 @@ distance_rate>=50&order_rate<=50&overtake_target_time>=2->phase>=2&is_finalcorne
 レース中盤始めに前方にいるとき追い抜こうとするか近寄られると少しの間ちょっと前に出る、マイルレースなら少しの間少し前に出る
 評価点180、SP200、人気:パワー15
 ->phase_firsthalf==1&is_overtake==1&order_rate<=30&distance_type==2@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30&distance_type==2
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度2500、持続2.4
+「中盤前半、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）、マイル」または「中盤前半、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）、マイル」、現在速度2500、持続2.4
 ->phase_firsthalf==1&is_overtake==1&order_rate<=30@phase_firsthalf==1&overtake_target_time>=1&order_rate<=30
-「phase_firsthalf==1、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「phase_firsthalf==1、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度500、持続2.4
+「中盤前半、追い抜きモード、順位率30以下（チャンミ～3/LoH～4）」または「中盤前半、追い抜き対象時間>=1、順位率30以下（チャンミ～3/LoH～4）」、現在速度500、持続2.4
 
 Vive la GOLD
 中距離か長距離レースで最終コーナー以降に後方から追い抜こうとすると速度がわずかに上がる、スタート時に出遅れていると少し上がる
@@ -10553,20 +10553,20 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間少し前に出る＜中距離/長距離＞
 評価点508、SP180(合計360)、人気:パワー60
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度2500、持続4.0
+「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度2500、持続4.0
 
 勝機到来
 [蒼炎の誉]グラスワンダー 進化(後の先)
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間前に出る＜中距離/長距離＞
 評価点633、進化元SP360、人気:パワー60
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度3500、持続4.0
+「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度3500、持続4.0
 
 切り返し
 終盤の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間ちょっと前に出る＜中距離/長距離＞
 評価点217、SP180、人気:パワー20
 ->distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==27@distance_type==3&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22@distance_type==4&phase>=2&is_finalcorner==1&is_other_character_activate_advantage_skill==22
-「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「長距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==27」または「中距離、終盤、最終コーナー以降、is_other_character_activate_advantage_skill==22」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
+「中距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が目標速度スキル発動」または「中距離、終盤、最終コーナー以降、相手が現在速度スキル発動」または「長距離、終盤、最終コーナー以降、相手が現在速度スキル発動」、現在速度500、持続4.0
 
 勝負はここから！
 終盤の最終コーナーで3番手以内にいると加速力が上がる＜逃げ・中距離＞
