@@ -5,6 +5,9 @@ import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
 import io.github.mee1080.utility.toPercentString
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
@@ -14,9 +17,15 @@ import kotlin.random.Random
 @OptIn(ExperimentalSerializationApi::class)
 private val jsonParser = Json { allowTrailingComma = true }
 
-val skillData2 by lazy {
-    jsonParser.decodeFromString<List<SkillData>>(rawSkillData)
+suspend fun loadSkillData() {
+    val skillDataString = HttpClient()
+        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/skill_data.txt")
+        .bodyAsText()
+    skillData2 = jsonParser.decodeFromString<List<SkillData>>(skillDataString)
 }
+
+lateinit var skillData2: List<SkillData>
+    private set
 
 val skillDataMap2 by lazy {
     skillData2.groupBy { it.name }

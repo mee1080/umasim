@@ -8,31 +8,42 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import io.github.mee1080.umasim.compose.common.lib.asyncDispatcher
 import io.github.mee1080.umasim.compose.common.lib.mainDispatcher
 import io.github.mee1080.umasim.compose.pages.race.RacePage
 import io.github.mee1080.umasim.compose.theme.AppTheme
+import io.github.mee1080.umasim.race.data.loadRecentEventTrackList
+import io.github.mee1080.umasim.race.data2.loadSkillData
 import io.github.mee1080.umasim.store.AppContextImpl
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.framework.StateHolder
 import io.github.mee1080.umasim.store.loadSetting
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 @Composable
 fun App() {
-    val stateHolder = remember {
-        StateHolder(AppContextImpl(), mainDispatcher, asyncDispatcher, AppState().loadSetting())
+    var loading by remember { mutableStateOf(true) }
+    LaunchedEffect(Unit) {
+        listOf(
+            launch(asyncDispatcher) { loadRecentEventTrackList() },
+            launch(asyncDispatcher) { loadSkillData() },
+        ).forEach {
+            it.join()
+        }
+        loading = false
     }
-    val coroutineScope = rememberCoroutineScope()
-    val dispatch = remember { OperationDispatcher(stateHolder, coroutineScope) }
-    val state = stateHolder.state.collectAsState().value
+    AppTheme(loading, darkTheme = false) {
+        val stateHolder = remember {
+            StateHolder(AppContextImpl(), mainDispatcher, asyncDispatcher, AppState().loadSetting())
+        }
+        val coroutineScope = rememberCoroutineScope()
+        val dispatch = remember { OperationDispatcher(stateHolder, coroutineScope) }
+        val state = stateHolder.state.collectAsState().value
 
-    AppTheme(darkTheme = false) {
         val scrollState = rememberScrollState()
         Row(Modifier.fillMaxSize()) {
             Column(

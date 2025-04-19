@@ -23,6 +23,9 @@
 package io.github.mee1080.umasim.race.data
 
 import io.github.mee1080.umasim.race.calc2.Track
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -30,27 +33,41 @@ val trackData by lazy {
     Json.decodeFromString<Map<Int, RaceTrack>>(rawCourseData)
 }
 
-private class RecentEventTrackEntry(
-    val courseName: String,
-    val distance: String,
-    val condition: CourseCondition,
-    val gateCount: Int,
-)
+private lateinit var recentEventTrackData: List<Pair<String, Track>>
 
 val recentEventTrackList by lazy {
-    listOf(
-        RecentEventTrackEntry("京都", "芝3200m(外)", CourseCondition.GOOD, 9),
+    recentEventTrackData.map { it.second }
+}
 
-        RecentEventTrackEntry("大井", "ダート2000m", CourseCondition.GOOD, 12),
-        RecentEventTrackEntry("大井", "ダート2000m", CourseCondition.YAYAOMO, 12),
-        RecentEventTrackEntry("大井", "ダート2000m", CourseCondition.OMO, 12),
-        RecentEventTrackEntry("大井", "ダート2000m", CourseCondition.BAD, 12),
-    ).mapNotNull { target ->
-        val course = trackData.entries.firstOrNull { it.value.name == target.courseName } ?: return@mapNotNull null
-        val track = course.value.courses.entries.firstOrNull { it.value.name.startsWith(target.distance) }
-            ?: return@mapNotNull null
-        Track(course.key, track.key, target.condition, target.gateCount)
+suspend fun loadRecentEventTrackList() {
+    val list = mutableListOf<Pair<String, Track>>()
+    val text = HttpClient()
+        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
+        .bodyAsText()
+    text.split("\n").forEach { line ->
+        val data = line.trim().split(",")
+        if (data.size >= 4) {
+            try {
+                val month = data[0].toInt()
+                val type = if (data[1] == "L") "リーグオブヒーローズ" else "チャンピオンズミーティング"
+                val label = "${month}月$type"
+                val courseName = data[2]
+                val distance = data[3]
+                val conditions = if (data.size < 5) CourseCondition.entries else {
+                    listOf(CourseCondition.valueOf(data[4]))
+                }
+                val gateCount = if (data[1] == "L") 12 else 9
+                val course = trackData.entries.first { it.value.name == courseName }
+                val track = course.value.courses.entries.first { it.value.name.startsWith(distance) }
+                conditions.forEach {
+                    list.add(label to Track(course.key, track.key, it, gateCount))
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
     }
+    recentEventTrackData = list
 }
 
 @Serializable

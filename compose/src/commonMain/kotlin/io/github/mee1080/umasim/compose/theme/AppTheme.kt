@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.compose.theme
 
 import androidx.compose.foundation.LocalScrollbarStyle
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
@@ -15,12 +14,12 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.platform.LoadedFont
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.lib.defaultFontResource
-import org.jetbrains.compose.resources.ExperimentalResourceApi
 import org.jetbrains.compose.resources.Font
 import org.jetbrains.compose.resources.FontResource
 
 @Composable
 fun AppTheme(
+    loading: Boolean = false,
     fontResource: FontResource = defaultFontResource,
     darkTheme: Boolean = false,
     content: @Composable () -> Unit
@@ -30,7 +29,7 @@ fun AppTheme(
         else -> LightColorScheme
     }
     val font = Font(fontResource)
-    if (font is LoadedFont && font.identity != "org.jetbrains.compose.emptyFont") {
+    if (!loading && font is LoadedFont && font.identity != "org.jetbrains.compose.emptyFont") {
         val fontFamily = FontFamily(font)
         val typography = Typography(
             displayLarge = MaterialTheme.typography.displayLarge.copy(fontFamily = fontFamily),

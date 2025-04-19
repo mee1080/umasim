@@ -36,6 +36,13 @@ kotlin {
                 implementation(project(":utility"))
                 implementation(libs.kotlinx.coroutinesCore)
                 implementation(libs.kotlinx.serializationJson)
+                implementation(libs.ktor.clientCio)
+            }
+        }
+
+        val desktopMain by getting {
+            dependencies {
+                implementation(libs.slf4j.nop)
             }
         }
 
