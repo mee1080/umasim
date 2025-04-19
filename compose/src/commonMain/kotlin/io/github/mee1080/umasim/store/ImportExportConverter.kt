@@ -4,19 +4,14 @@ import io.github.mee1080.umasim.race.calc2.NOT_SELECTED
 import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.race.data.FitRank
 import io.github.mee1080.umasim.race.data2.SkillData
+import io.github.mee1080.umasim.race.data2.findSkills
 import io.github.mee1080.umasim.race.data2.skillData2
 
 object ImportExportConverter {
 
     private val charaSet = skillData2.mapNotNull { it.holder }.distinct().toSet()
 
-    private val skillMap = skillData2.groupBy { it.name }
-
     private val fitRankMap = FitRank.entries.associateBy { it.name }
-
-    private const val CANDIDATE_THRESHOLD = 0.3
-
-    private const val DEBUG = false
 
     fun exportChara(chara: UmaStatus): String {
         return buildList {
@@ -58,7 +53,7 @@ object ImportExportConverter {
                 charaName = it
                 return@forEach
             }
-            val skill = findSkill(it)
+            val skill = findSkills(it)
             if (skill != null) {
                 if (charaName != null && skill.size >= 2 && skill[0].holder != null && skill[0].holder != charaName) {
                     skills += skill[1]
@@ -84,44 +79,4 @@ object ImportExportConverter {
             hasSkills = skills
         )
     }
-
-    private fun findSkill(input: String): List<SkillData>? {
-        val matched = skillMap[input]
-        if (matched != null) return matched
-        val candidate = skillMap.keys.minBy { normalizedLevenshteinDistance(it, input) }
-        val distance = normalizedLevenshteinDistance(candidate, input)
-        if (DEBUG) println("input: $input candidate: $candidate distance: $distance")
-        return if (distance > CANDIDATE_THRESHOLD) null else skillMap[candidate]
-    }
-
-    private fun normalizedLevenshteinDistance(s1: String, s2: String): Double {
-        return levenshteinDistance(s1, s2).toDouble() / maxOf(s1.length, s2.length)
-    }
-
-    private fun levenshteinDistance(s1: String, s2: String): Int {
-        val len1 = s1.length
-        val len2 = s2.length
-
-        val dp = Array(len1 + 1) { IntArray(len2 + 1) }
-        for (i in 0..len1) {
-            dp[i][0] = i
-        }
-        for (j in 0..len2) {
-            dp[0][j] = j
-        }
-
-        for (i in 1..len1) {
-            for (j in 1..len2) {
-                val cost = if (s1[i - 1] == s2[j - 1]) 0 else 1
-                dp[i][j] = minOf(
-                    dp[i - 1][j] + 1,       // 削除
-                    dp[i][j - 1] + 1,       // 挿入
-                    dp[i - 1][j - 1] + cost // 置換
-                )
-            }
-        }
-
-        return dp[len1][len2]
-    }
-
 }

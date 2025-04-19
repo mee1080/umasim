@@ -19,3 +19,5 @@ include("desktop")
 include("cli")
 include("race")
 include("compose")
+
+include("mcp")

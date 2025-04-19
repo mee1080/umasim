@@ -21,7 +21,6 @@ import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.framework.StateHolder
 import io.github.mee1080.umasim.store.loadSetting
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @Composable

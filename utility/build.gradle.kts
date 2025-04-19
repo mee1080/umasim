@@ -40,7 +40,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
-                implementation(libs.ktor.clientCio)
+//                implementation(libs.ktor.clientCio)
             }
         }
 

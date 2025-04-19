@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
 import io.github.mee1080.utility.fetchFromUrl
+import io.github.mee1080.utility.normalizedLevenshteinDistance
 import io.github.mee1080.utility.toPercentString
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.Serializable
@@ -36,6 +37,16 @@ fun getSkill(name: String): SkillData {
         throw IllegalArgumentException("skill $name duplicated")
     }
     return skills.first()
+}
+
+private const val CANDIDATE_THRESHOLD = 0.3
+
+fun findSkills(input: String): List<SkillData>? {
+    val matched = skillDataMap2[input]
+    if (matched != null) return matched
+    val candidate = skillDataMap2.keys.minBy { normalizedLevenshteinDistance(it, input) }
+    val distance = normalizedLevenshteinDistance(candidate, input)
+    return if (distance > CANDIDATE_THRESHOLD) null else skillDataMap2[candidate]
 }
 
 interface ApproximateCondition {

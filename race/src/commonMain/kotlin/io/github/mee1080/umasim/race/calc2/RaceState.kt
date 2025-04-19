@@ -35,11 +35,11 @@ const val NOT_SELECTED = "(未選択)"
 @Serializable
 data class UmaStatus(
     val charaName: String = NOT_SELECTED,
-    val speed: Int = 1700,
-    val stamina: Int = 1300,
+    val speed: Int = 1800,
+    val stamina: Int = 1600,
     val power: Int = 1300,
     val guts: Int = 1200,
-    val wisdom: Int = 1200,
+    val wisdom: Int = 1300,
     val condition: Condition = Condition.BEST,
     val style: Style = Style.NIGE,
     val distanceFit: FitRank = FitRank.S,

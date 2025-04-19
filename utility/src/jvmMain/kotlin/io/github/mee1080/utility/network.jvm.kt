@@ -1,9 +1,19 @@
 package io.github.mee1080.utility
 
-import io.ktor.client.*
-import io.ktor.client.request.*
-import io.ktor.client.statement.*
+import java.net.HttpURLConnection
+import java.net.URL
 
 actual suspend fun fetchFromUrl(url: String): String {
-    return HttpClient().get(url).bodyAsText()
+//    return HttpClient().get(url).bodyAsText()
+    val url = URL(url)
+    val connection = url.openConnection() as HttpURLConnection
+
+    try {
+        connection.requestMethod = "GET"
+        return connection.inputStream.bufferedReader().use {
+            it.readText()
+        }
+    } finally {
+        connection.disconnect()
+    }
 }

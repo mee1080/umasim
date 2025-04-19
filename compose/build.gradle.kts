@@ -51,6 +51,7 @@ kotlin {
 
         val jvmMain by getting {
             dependencies {
+                implementation(project(":mcp"))
                 implementation(compose.desktop.currentOs)
             }
         }
