@@ -11,7 +11,7 @@ import kotlinx.io.asSink
 import kotlinx.io.asSource
 import kotlinx.io.buffered
 
-fun runStdioMcpServer() {
+fun runStdioMcpServer(simulationThreadCount: Int) {
     runBlocking {
         listOf(
             launch(Dispatchers.Default) { loadRecentEventTrackList() },
@@ -20,7 +20,7 @@ fun runStdioMcpServer() {
             it.join()
         }
 
-        val server = createMcpServer()
+        val server = createMcpServer(simulationThreadCount)
 
         val transport = StdioServerTransport(
             System.`in`.asSource().buffered(),

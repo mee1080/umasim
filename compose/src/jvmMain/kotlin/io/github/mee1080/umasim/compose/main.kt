@@ -4,11 +4,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
+import io.github.mee1080.umasim.compose.common.lib.defaultThreadCount
 import io.github.mee1080.umasim.mcp.runStdioMcpServer
 
 fun main(args: Array<String>) {
     if (args.getOrNull(0) == "mcp") {
-        runStdioMcpServer()
+        val simulationThreadCount = args.getOrNull(1)?.toIntOrNull() ?: defaultThreadCount
+        runStdioMcpServer(simulationThreadCount)
     }
     application {
         Window(

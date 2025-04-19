@@ -22,3 +22,9 @@ actual val mainDispatcher = Dispatchers.Default.limitedParallelism(1)
 actual val asyncDispatcher = Dispatchers.Default
 
 actual val defaultFontResource = Res.font.LINESeedJP_A_TTF_Rg
+
+actual val defaultThreadCount = 4
+
+actual val progressReportInterval = 100
+
+actual val progressReportDelay = 1L

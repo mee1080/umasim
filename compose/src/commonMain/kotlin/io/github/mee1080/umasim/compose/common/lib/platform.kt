@@ -10,3 +10,9 @@ expect val mainDispatcher: CoroutineDispatcher
 expect val asyncDispatcher: CoroutineDispatcher
 
 expect val defaultFontResource: FontResource
+
+expect val defaultThreadCount: Int
+
+expect val progressReportInterval: Int
+
+expect val progressReportDelay: Long

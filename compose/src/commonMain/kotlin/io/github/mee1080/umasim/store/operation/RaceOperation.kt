@@ -1,5 +1,8 @@
 package io.github.mee1080.umasim.store.operation
 
+import io.github.mee1080.umasim.compose.common.lib.asyncDispatcher
+import io.github.mee1080.umasim.compose.common.lib.progressReportDelay
+import io.github.mee1080.umasim.compose.common.lib.progressReportInterval
 import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data.PositionKeepState
 import io.github.mee1080.umasim.race.data.horseLane
@@ -10,7 +13,10 @@ import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlin.coroutines.coroutineContext
 import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
@@ -18,10 +24,6 @@ private val simulationTag = OnRunning.Tag()
 private val simulationPolicy = OnRunning.Ignore(simulationTag)
 
 private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
-
-private const val progressReportInterval = 50
-
-private const val progressReportDelay = 10L
 
 fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
     emit { it.clearSimulationResult() }
@@ -43,20 +45,27 @@ private fun AppState.clearSimulationResult() = copy(
 private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState, overrideCount: Int? = null) {
     val simulationCount = overrideCount ?: state.simulationCount
     if (simulationCount <= 0) return
-    val calculator = RaceCalculator()
     val results = mutableListOf<RaceSimulationResult>()
     val skillSummaries = state.hasSkills(false).associate {
         it.name to mutableListOf<SimulationSkillInfo>()
     }
     var lastRaceState: RaceState? = null
-    repeat(simulationCount) { count ->
-        if (count % progressReportInterval == 0) {
+    val scope = CoroutineScope(coroutineContext + asyncDispatcher.limitedParallelism(state.threadCount))
+    var count = 0
+    List(simulationCount) { index ->
+        scope.async {
+            val result = RaceCalculator().simulate(state.setting)
+            val skillMap = createSkillMap(result.second)
+            result to skillMap
+        }
+    }.forEach { deferred ->
+        if (count++ % progressReportInterval == 0) {
             emit { it.copy(simulationProgress = count + 1) }
             delay(progressReportDelay)
         }
-        val result = calculator.simulate(state.setting)
+        val (result, skillMap) = deferred.await()
         results += result.first
-        createSkillMap(result.second).forEach {
+        skillMap.forEach {
             skillSummaries[it.key]?.add(it.value)
         }
         lastRaceState = result.second
@@ -410,17 +419,21 @@ private class CalculateState(
     val state: AppState,
     val setCount: Int,
 ) {
+
     var progress: Int = 0
 
     suspend fun calculateTimes(setting: RaceSetting): List<Double> {
-        val calculator = RaceCalculator()
+        val scope = CoroutineScope(coroutineContext + asyncDispatcher.limitedParallelism(state.threadCount))
         return List(state.simulationCount) {
-            progress++
-            if (progress % progressReportInterval == 0) {
+            scope.async {
+                RaceCalculator().simulate(setting).first.raceTime
+            }
+        }.map { deferred ->
+            if (progress++ % progressReportInterval == 0) {
                 context.emit { it.copy(simulationProgress = progress / setCount) }
                 delay(progressReportDelay)
             }
-            calculator.simulate(setting).first.raceTime
+            deferred.await()
         }.sorted()
     }
 

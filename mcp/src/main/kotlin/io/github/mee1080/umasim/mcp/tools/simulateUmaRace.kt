@@ -11,11 +11,16 @@ import io.github.mee1080.umasim.race.data2.findSkills
 import io.github.mee1080.utility.averageOf
 import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.serialization.json.*
 
 private const val defaultSimulateCount = 10000
 
-fun Server.simulateUmaRace() {
+fun Server.simulateUmaRace(threadCount: Int) {
     val sampleStatus = UmaStatus()
     addTool(
         name = "simulate_uma_race",
@@ -110,10 +115,18 @@ fun Server.simulateUmaRace() {
         val calculator = RaceCalculator()
 
         val results = mutableListOf<RaceSimulationResult>()
-        repeat(count) {
-            val result = calculator.simulate(setting)
-            results += result.first
-        }
+        val mutex = Mutex()
+        val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(threadCount))
+        List(threadCount) { index ->
+            scope.launch {
+                repeat(count / threadCount + (if (index < count % threadCount) 1 else 0)) {
+                    val result = calculator.simulate(setting)
+                    mutex.withLock {
+                        results += result.first
+                    }
+                }
+            }
+        }.forEach { it.join() }
 
         val result = buildJsonObject {
             put("平均タイム", results.averageOf { it.raceTime })

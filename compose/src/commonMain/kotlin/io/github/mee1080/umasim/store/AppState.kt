@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.store
 
 import androidx.compose.runtime.Stable
+import io.github.mee1080.umasim.compose.common.lib.defaultThreadCount
 import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
@@ -54,6 +55,7 @@ data class AppState(
     val simulationCount: Int = 100,
     val simulationMode: SimulationMode = SimulationMode.NORMAL,
     val contributionTargets: Set<String> = emptySet(),
+    val threadCount: Int = defaultThreadCount,
     @Transient
     val simulationProgress: Int = 0,
     @Transient

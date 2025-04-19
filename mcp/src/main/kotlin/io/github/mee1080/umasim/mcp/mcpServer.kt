@@ -9,7 +9,7 @@ import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
 
-fun createMcpServer(): Server {
+fun createMcpServer(simulationThreadCount: Int): Server {
     val server = Server(
         serverInfo = Implementation(
             name = "umasim",
@@ -24,7 +24,7 @@ fun createMcpServer(): Server {
         )
     )
 
-    server.simulateUmaRace()
+    server.simulateUmaRace(simulationThreadCount)
     server.getUmaRaceSkillData()
 
     return server

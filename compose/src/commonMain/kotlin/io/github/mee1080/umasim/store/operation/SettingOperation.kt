@@ -39,3 +39,7 @@ fun setPositionKeepMode(value: PositionKeepMode) = DirectOperation<AppState> { s
 fun setPositionKeepRate(value: Int) = DirectOperation<AppState> { state ->
     state.updateSetting { it.copy(positionKeepRate = value) }
 }
+
+fun setThreadCount(value: Int) = DirectOperation<AppState> { state ->
+    state.copy(threadCount = value).also { it.saveSetting() }
+}

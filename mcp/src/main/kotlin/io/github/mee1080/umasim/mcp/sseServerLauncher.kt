@@ -21,7 +21,7 @@ fun main() {
 
     embeddedServer(CIO, port = 22223) {
         mcp {
-            return@mcp createMcpServer()
+            return@mcp createMcpServer(4)
         }
     }.start(wait = true)
 }

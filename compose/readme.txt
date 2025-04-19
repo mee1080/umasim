@@ -17,6 +17,7 @@ MCPサーバ版：以下のような設定を行います。
     }
 　対応機能
 　・simulate_uma_race：シミュレーションの実行
+　　（直近のチャンミorLOHのみ対応です）
 　・get_uma_race_skill_data：スキル情報の取得
 
 

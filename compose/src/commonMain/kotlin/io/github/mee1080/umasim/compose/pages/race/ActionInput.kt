@@ -1,20 +1,20 @@
 package io.github.mee1080.umasim.compose.pages.race
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.IntTextField
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
+import io.github.mee1080.umasim.compose.common.lib.defaultThreadCount
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationMode
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.operation.runSimulation
+import io.github.mee1080.umasim.store.operation.setThreadCount
 import io.github.mee1080.utility.toPercentString
 
 @Composable
@@ -22,6 +22,16 @@ fun ActionInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        if (defaultThreadCount > 1) {
+            Row {
+                IntTextField(
+                    value = state.threadCount,
+                    modifier = Modifier.width(128.dp),
+                    label = { Text("スレッド数") },
+                    onValueChange = { dispatch(setThreadCount(it)) }
+                )
+            }
+        }
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
