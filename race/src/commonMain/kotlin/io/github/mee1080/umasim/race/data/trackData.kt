@@ -39,9 +39,6 @@ val recentEventTrackList by lazy {
 
 suspend fun loadRecentEventTrackList() {
     val list = mutableListOf<Pair<String, Track>>()
-//    val text = HttpClient()
-//        .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
-//        .bodyAsText()
     val text = fetchFromUrl("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/event_track.txt")
     text.split("\n").forEach { line ->
         val data = line.trim().split(",")

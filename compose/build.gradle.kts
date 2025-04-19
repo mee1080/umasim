@@ -19,7 +19,7 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "wasm"
+        outputModuleName = "wasm"
         browser {
             commonWebpackConfig {
                 outputFileName = "wasm.js"
@@ -65,6 +65,10 @@ kotlin {
 
 compose.desktop {
     application {
-        mainClass = "MainKt"
+        mainClass = "io.github.mee1080.umasim.compose.MainKt"
+        nativeDistributions {
+            packageName = "umasim"
+            packageVersion = "2.0.0"
+        }
     }
 }
