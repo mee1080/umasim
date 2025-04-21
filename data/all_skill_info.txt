@@ -1017,6 +1017,15 @@ is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
 ->phase_laterhalf_random==1&order_rate<=50
 「中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続5.0
 
+対象捕捉！正義遂行！
+[義心の黒焔]フェノーメノ 固有
+レース後半の直線で中団にいると速度が上がる、長距離レースなら効果が増える
+評価点340、人気:スピード60、確定発動
+->distance_rate>=50&corner==0&order_rate<=70&order_rate>=30&distance_type==4
+「距離割合>=50、コーナー以外、順位率30～70（チャンミ3～6/LoH4～8）、長距離」、目標速度4000、持続5.0
+->distance_rate>=50&corner==0&order_rate<=70&order_rate>=30
+「距離割合>=50、コーナー以外、順位率30～70（チャンミ3～6/LoH4～8）」、目標速度3500、持続5.0
+
 ¡Qué alegría!
 [すまいる・まい・うぇい！]グランアレグリア 固有
 レース中間地点で中団以降にいると短い間前に出る、短距離かマイルレースならその後ラストスパートで短い間すごく前に出る
@@ -2603,6 +2612,14 @@ is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
 評価点180、SP200、人気:スピード15
 ->phase_laterhalf_random==1&order_rate<=50
 「中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続3.0
+
+対象捕捉！正義遂行！
+レース後半の直線で中団にいると速度がわずかに上がる、長距離レースなら効果が増える
+評価点180、SP200、人気:スピード15
+->distance_rate>=50&corner==0&order_rate<=70&order_rate>=30&distance_type==4
+「距離割合>=50、コーナー以外、順位率30～70（チャンミ3～6/LoH4～8）、長距離」、目標速度2000、持続3.0
+->distance_rate>=50&corner==0&order_rate<=70&order_rate>=30
+「距離割合>=50、コーナー以外、順位率30～70（チャンミ3～6/LoH4～8）」、目標速度1500、持続3.0
 
 ¡Qué alegría!
 レース中間地点で中団以降にいると短い間わずかに前に出る、短距離かマイルレースならその後ラストスパートで短い間少し前に出る
@@ -5766,6 +5783,15 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=201&remain_distance>=
 評価点633、進化元SP320、人気:スタミナ60
 ->distance_type==4&phase_random==1
 「長距離、中盤ランダム」、体力550、目標速度1500、持続3.0
+
+あんぱんと牛乳
+[義心の黒焔]フェノーメノ 進化(クールダウン)
+レース中盤始めの方で持久力をすごく回復する、3200m以上のレースならさらに速度がわずかに上がる＜長距離＞
+評価点633、進化元SP320、人気:スタミナ60
+->distance_type==4&phase_firsthalf_random==1&course_distance>=3200
+「長距離、中盤前半ランダム、距離>=3200」、体力750、目標速度1500、持続2.4
+->distance_type==4&phase_firsthalf_random==1
+「長距離、中盤前半ランダム」、体力750、持続0.0
 
 深呼吸
 レース中盤に息を入れてわずかに疲れにくくなる＜長距離＞
@@ -9057,6 +9083,15 @@ distance_diff_top<=10&distance_rate>=60&phase==1->distance_type==4&running_style
 評価点633、進化元SP360、人気:パワー60
 distance_diff_top<=15&distance_rate>=60&phase==1->distance_type==4&running_style==2&phase==2
 「先頭とのバ身差<=15、距離割合>=60、中盤」の後「長距離、先行、終盤前半」、加速4000、持続1.2
+
+猛き獣は太陽に吼える
+[義心の黒焔]フェノーメノ 進化(怪物)
+3200m以上のレースならレース終盤に加速力が上がる、その後最終直線で速度がわずかに上がる＜先行・長距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==4&running_style==2&phase==2&course_distance>=3200
+「長距離、先行、終盤前半、距離>=3200」、加速4000、持続1.2
+->is_activate_other_skill_detail==1&is_last_straight==1
+「上記効果発動後、最終直線」、目標速度1500、持続3.0
 
 本領発揮
 レース終盤目前に先頭か先頭から4バ身以内につけると、レース終盤に加速力がわずかに上がる＜先行・長距離＞
