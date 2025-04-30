@@ -13,9 +13,9 @@ def objective(trial):
     evaluateSkillPt = '1.0 8000'
 
     speed = 100
-    stamina = 110
-    power = 120
-    guts = 80
+    stamina = 100
+    power = 100
+    guts = 100
     wisdom = 70
 
     training = [
@@ -43,11 +43,13 @@ def objective(trial):
           f' --chara "[リアライズ・ルーン]スイープトウショウ" 5 5'\
           f' --support "[世界を変える眼差し]アーモンドアイ" 4'\
           f' --support "[Devilish Whispers]スティルインラブ" 4'\
-          f' --support "[Cocoon]エアシャカール" 4'\
-          f' --support "[そして幕は上がる]ダンツフレーム" 4'\
+          f' --support "[誘うは夢心地]ドリームジャーニー" 4'\
+#          f' --support "[Cocoon]エアシャカール" 4'\
+#          f' --support "[そして幕は上がる]ダンツフレーム" 4'\
+          f' --support "[繋がれパレード・ノーツ♪]トランセンド" 4'\
           f' --support "[Take Them Down!]ナリタタイシン" 4' \
           f' --support "[導きの光]伝説の体現者" 4' \
-          f' --factor SPEED 3 --factor SPEED 3 --factor POWER 3'\
+          f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
           f' --factor STAMINA 3 --factor STAMINA 3 --factor STAMINA 3'\
           f' --evaluate SPEED {evaluateSpeed}'\
           f' --evaluate STAMINA {evaluateStamina}'\
@@ -80,7 +82,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='legend_red_s2h2w1_4',
+    study_name='legend_red_s2h2w1_5',
     storage='sqlite:///optuna_study_legend.db',
     load_if_exists=True,
     direction='maximize'

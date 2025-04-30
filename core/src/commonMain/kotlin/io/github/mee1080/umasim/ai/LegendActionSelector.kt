@@ -22,7 +22,6 @@ import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 fun List<LegendActionSelector.Option>.generator() = object : ActionSelectorGenerator {
     override fun generateSelector(): ActionSelector {
@@ -53,6 +52,88 @@ class LegendActionSelector(
                 forcedGuestCount = 100
             ),
             Option(
+                training = 0,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
+                supportCount = 400,
+                guestCount = 250,
+                forcedSupportCount = -250,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 100
+            ),
+        )
+
+        val s3g1w1 = listOf(
+            Option(
+                speed = 90,
+                stamina = 90,
+                power = 100,
+                guts = 110,
+                wisdom = 70,
+                training = 350,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
+                supportCount = 400,
+                guestCount = 250,
+                forcedSupportCount = -250,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 100
+            ),
+            Option(
+                speed = 90,
+                stamina = 90,
+                power = 100,
+                guts = 110,
+                wisdom = 70,
+                training = 0,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
+                supportCount = 400,
+                guestCount = 250,
+                forcedSupportCount = -250,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 100
+            ),
+        )
+
+        val s2p1g1w1 = listOf(
+            Option(
+                speed = 90,
+                stamina = 100,
+                power = 100,
+                guts = 90,
+                wisdom = 70,
+                training = 350,
+                hpKeep = 10,
+                motivation = 1000,
+                risk = 10,
+                relation = 10,
+                friend = 100,
+                friendCount = 300,
+                supportCount = 400,
+                guestCount = 250,
+                forcedSupportCount = -250,
+                supportBestFriendGauge = 50,
+                forcedGuestCount = 100
+            ),
+            Option(
+                speed = 90,
+                stamina = 100,
+                power = 100,
+                guts = 90,
+                wisdom = 70,
                 training = 0,
                 hpKeep = 10,
                 motivation = 1000,
