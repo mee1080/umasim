@@ -30,8 +30,8 @@ data class GraphTarget(
 val graphTargetCandidates = listOf(
     GraphTarget("legend_r_speed", StatusType.SPEED, "スピード 伝説赤スピ2スタ2賢さ1"),
     GraphTarget("legend_r_stamina", StatusType.STAMINA, "スタミナ 伝説赤スピ2スタ2賢さ1"),
-    GraphTarget("legend_r_power", StatusType.POWER, "スタミナ 伝説赤スピ2パワ1根性1賢さ1"),
-    GraphTarget("legend_r_guts", StatusType.GUTS, "スタミナ 伝説赤スピ3根性1賢さ1"),
+    GraphTarget("legend_r_power", StatusType.POWER, "パワー 伝説赤スピ2パワ1根性1賢さ1"),
+    GraphTarget("legend_r_guts", StatusType.GUTS, "根性 伝説赤スピ3根性1賢さ1"),
     GraphTarget("legend_r_wisdom", StatusType.WISDOM, "賢さ 伝説赤スピ2スタ2賢さ1"),
 
     GraphTarget("speed_20241130", StatusType.SPEED, "スピード メカスピ2スタ2パワ1賢さ1"),
