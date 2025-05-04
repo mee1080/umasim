@@ -39,7 +39,7 @@ jobs:
 
       # 3. Gradle キャッシュの設定
       - name: Setup Gradle Cache
-        uses: actions/setup-gradle@v3
+        uses: gradle/actions/setup-gradle@v4
 
       # 4. Gradle Wrapper を実行可能にする (Windows では不要なので、if 条件により実行されない)
       - name: Grant execute permission for gradlew
