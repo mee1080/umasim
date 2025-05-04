@@ -1,0 +1,86 @@
+name: Desktop Release
+
+# 手動実行を可能にする (workflow_dispatch)
+on:
+  workflow_dispatch:
+
+# ジョブのパーミッション設定
+permissions:
+  contents: write
+
+jobs:
+  build-and-create-draft-release:
+    # 環境は Windows
+    runs-on: windows-latest
+
+    steps:
+      # 選択されたのがタグであることを確認
+      - name: Check if triggered from a tag
+        # github.ref_type は 'tag' または 'branch'
+        if: github.ref_type != 'tag'
+        run: |
+          echo "Error: This workflow must be triggered by selecting a TAG from the 'Use workflow from' dropdown."
+          echo "Selected ref (${{ github.ref }}) is not a tag."
+          exit 1
+
+      # 1. 選択されたタグのコードをチェックアウト
+      - name: Checkout code at selected tag
+        uses: actions/checkout@v4
+        with:
+          # 「Use workflow from」で選択されたブランチ/タグの完全なref (例: refs/tags/v1.0.0)
+          ref: ${{ github.ref }}
+
+      # 2. JDK セットアップ
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      # 3. Gradle キャッシュの設定
+      - name: Setup Gradle Cache
+        uses: actions/setup-gradle@v3
+
+      # 4. Gradle Wrapper を実行可能にする (Windows では不要なので、if 条件により実行されない)
+      - name: Grant execute permission for gradlew
+        if: runner.os != 'Windows'
+        run: chmod +x gradlew
+
+      # 5. Gradle で createDistributions を実行
+      #    Windows環境に合わせて gradlew.bat を使用
+      #    タグ名を環境変数 APP_VERSION として渡す (github.ref_name を使用)
+      - name: Build with Gradle (createDistributions)
+        env:
+          # github.ref_name には選択されたタグ名 (例: v1.0.0) が入る
+          APP_VERSION: ${{ github.ref_name }}
+        # Windows では gradlew.bat を実行
+        run: ./gradlew.bat :compose:createDistributions
+
+      # 6. readme.txt をビルド成果物ディレクトリにコピーする
+      - name: Copy readme.txt to distribution directory
+        run: |
+          # PowerShell の Copy-Item コマンドを使用
+          Copy-Item -Path compose/readme.txt -Destination compose/build/compose/binaries/main/app/umasim/
+
+      # 7. 成果物ディレクトリをzip圧縮する
+      - name: Zip application directory
+        run: |
+          # PowerShell の Compress-Archive コマンドを使用
+          Compress-Archive -Path compose/build/compose/binaries/main/app/umasim -DestinationPath umasim.zip
+
+      # 8. ドラフトリリースを作成し、成果物 (zipファイル) をアップロード
+      #    tag_name と name に github.ref_name を使用
+      - name: Create Draft Release and Upload Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          # 選択されたタグ名をそのまま使用
+          tag_name: ${{ github.ref_name }}
+          # リリース名 (タグ名から生成する例)
+          name: Release ${{ github.ref_name }}
+          draft: true
+          prerelease: false
+          # 添付ファイルとして、圧縮した zip ファイルを指定
+          files: |
+            umasim.zip
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
