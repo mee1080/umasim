@@ -46,15 +46,15 @@ jobs:
         if: runner.os != 'Windows'
         run: chmod +x gradlew
 
-      # 5. Gradle で createDistributions を実行
+      # 5. Gradle で createDistributable を実行
       #    Windows環境に合わせて gradlew.bat を使用
-      #    タグ名を環境変数 APP_VERSION として渡す (github.ref_name を使用)
-      - name: Build with Gradle (createDistributions)
+      #    タグ名を環境変数 APP_VERSION として渡す (github.ref_name を使用)
+      - name: Build with Gradle (createDistributable)
         env:
           # github.ref_name には選択されたタグ名 (例: v1.0.0) が入る
           APP_VERSION: ${{ github.ref_name }}
         # Windows では gradlew.bat を実行
-        run: ./gradlew.bat :compose:createDistributions
+        run: ./gradlew.bat :compose:createDistributable
 
       # 6. readme.txt をビルド成果物ディレクトリにコピーする
       - name: Copy readme.txt to distribution directory

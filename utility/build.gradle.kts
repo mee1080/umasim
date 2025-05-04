@@ -5,6 +5,8 @@ plugins {
 }
 
 kotlin {
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+
     jvm()
 
     js(IR) {
