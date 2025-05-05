@@ -112,6 +112,8 @@ data class TrackDetail(
 
     // FIXME 新潟1000以外に直線のみのコースが実装されたら要確認
     val moveLanePoint = corners.firstOrNull()?.start ?: 30.0
+
+    val isDirtGrade = raceTrackId >= 10101
 }
 
 @Serializable

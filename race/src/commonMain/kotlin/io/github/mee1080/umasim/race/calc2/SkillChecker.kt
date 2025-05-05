@@ -106,6 +106,7 @@ private fun checkCondition(
         "ground_condition" -> condition.preChecked(baseSetting.track.surfaceCondition)
         "distance_type" -> condition.preChecked(baseSetting.trackDetail.distanceType)
         "track_id" -> condition.preChecked(baseSetting.trackDetail.raceTrackId)
+        "is_dirtgrade" -> condition.preChecked(if (baseSetting.trackDetail.isDirtGrade) 1 else 0)
         "is_basis_distance" -> condition.preChecked(baseSetting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / baseSetting.courseLength).toInt() }
         "phase_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {

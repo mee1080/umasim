@@ -289,7 +289,7 @@ val ignoreConditions = mapOf(
     "time" to "ナイター条件は無視",
     "season" to "季節条件は無視",
     "weather" to "天候条件は無視",
-    "is_dirtgrade" to "交流重賞条件は無視",
+    "is_dirtgrade" to "交流重賞条件はレース場のみ判定、重賞かどうかは無視",
 
     "order" to "順位条件は無視",
     "order_rate" to "順位条件は無視",
