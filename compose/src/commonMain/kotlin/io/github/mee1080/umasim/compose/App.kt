@@ -1,16 +1,19 @@
 package io.github.mee1080.umasim.compose
 
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.MyButton
+import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
 import io.github.mee1080.umasim.compose.common.lib.asyncDispatcher
+import io.github.mee1080.umasim.compose.common.lib.launchCheckUpdate
 import io.github.mee1080.umasim.compose.common.lib.mainDispatcher
 import io.github.mee1080.umasim.compose.pages.race.RacePage
 import io.github.mee1080.umasim.compose.theme.AppTheme
@@ -26,7 +29,11 @@ import kotlinx.coroutines.launch
 @Composable
 fun App() {
     var loading by remember { mutableStateOf(true) }
+    var updateRequired by remember { mutableStateOf(false) }
     LaunchedEffect(Unit) {
+        launchCheckUpdate {
+            updateRequired = true
+        }
         listOf(
             launch(asyncDispatcher) { loadRecentEventTrackList() },
             launch(asyncDispatcher) { loadSkillData() },
@@ -51,6 +58,28 @@ fun App() {
                 RacePage(state, dispatch)
             }
             VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.fillMaxHeight())
+        }
+        if (updateRequired) {
+            AlertDialog(
+                onDismissRequest = { updateRequired = false },
+                text = {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text("プログラムの更新があります。以下のURLからダウンロードしてください。")
+                        TextWithLink("https://github.com/mee1080/umasim/releases/latest")
+                    }
+                },
+                confirmButton = {
+                    MyButton(
+                        onClick = {
+                            updateRequired = false
+                        },
+                    ) {
+                        Text("閉じる")
+                    }
+                },
+            )
         }
     }
 }

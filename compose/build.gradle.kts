@@ -1,7 +1,8 @@
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
+import com.codingfeline.buildkonfig.compiler.FieldSpec
 import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 
 plugins {
+    alias(libs.plugins.buildkonfig)
     alias(libs.plugins.compose)
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.kotlin.serialization)
@@ -71,5 +72,12 @@ compose.desktop {
             packageName = "umasim"
             packageVersion = "2.0.0"
         }
+    }
+}
+
+buildkonfig {
+    packageName = "io.github.mee1080.umasim"
+    defaultConfigs {
+        buildConfigField(FieldSpec.Type.STRING, "APP_VERSION", System.getenv("APP_VERSION") ?: "")
     }
 }

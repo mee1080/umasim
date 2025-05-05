@@ -1,5 +1,6 @@
 [versions]
 
+buildkonfig = "0.17.1"
 clikt = "5.0.1"
 compose = "1.7.3"
 jvmTarget = "17"
@@ -37,6 +38,7 @@ test-annotations = { module = "org.jetbrains.kotlin:kotlin-test-annotations-comm
 test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 
 [plugins]
+buildkonfig = { id = "com.codingfeline.buildkonfig", version.ref = "buildkonfig" }
 compose = { id = "org.jetbrains.compose", version.ref = "compose" }
 kotlin-js = { id = "org.jetbrains.kotlin.js", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }

@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.compose.common.lib
 import io.github.mee1080.umasim.compose.generated.resources.LINESeedJP_OTF_Rg
 import io.github.mee1080.umasim.compose.generated.resources.Res
 import kotlinx.browser.window
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 
@@ -22,3 +23,7 @@ actual val defaultThreadCount = 1
 actual val progressReportInterval = 50
 
 actual val progressReportDelay = 10L
+
+actual fun CoroutineScope.launchCheckUpdate(onUpdate: () -> Unit) {
+    // Web版は更新確認不要
+}
