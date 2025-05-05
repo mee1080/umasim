@@ -37,7 +37,7 @@ actual val progressReportDelay = 1L
 
 private val jsonDecoder = Json { ignoreUnknownKeys = true }
 
-actual fun CoroutineScope.launchCheckUpdate(onUpdate: () -> Unit) {
+actual fun CoroutineScope.launchCheckUpdate(onUpdate: (newVersion: String) -> Unit) {
     if (BuildKonfig.APP_VERSION.isEmpty()) return
     launch(asyncDispatcher) {
         runCatching {
@@ -45,7 +45,7 @@ actual fun CoroutineScope.launchCheckUpdate(onUpdate: () -> Unit) {
             val data = jsonDecoder.decodeFromString<GitHubReleaseData>(json)
             println("${BuildKonfig.APP_VERSION} -> ${data.tag_name}")
             if (BuildKonfig.APP_VERSION != data.tag_name) {
-                onUpdate()
+                onUpdate(data.tag_name)
             }
         }.onFailure {
             it.printStackTrace()

@@ -1,7 +1,10 @@
 package io.github.mee1080.umasim.compose
 
 import androidx.compose.foundation.VerticalScrollbar
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.foundation.verticalScroll
@@ -9,7 +12,7 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.BuildKonfig
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
 import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
 import io.github.mee1080.umasim.compose.common.lib.asyncDispatcher
@@ -29,10 +32,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun App() {
     var loading by remember { mutableStateOf(true) }
-    var updateRequired by remember { mutableStateOf(false) }
+    var newVersion by remember { mutableStateOf<String?>(null) }
     LaunchedEffect(Unit) {
         launchCheckUpdate {
-            updateRequired = true
+            newVersion = it
         }
         listOf(
             launch(asyncDispatcher) { loadRecentEventTrackList() },
@@ -59,21 +62,22 @@ fun App() {
             }
             VerticalScrollbar(rememberScrollbarAdapter(scrollState), Modifier.fillMaxHeight())
         }
-        if (updateRequired) {
+        if (newVersion != null) {
             AlertDialog(
-                onDismissRequest = { updateRequired = false },
+                onDismissRequest = { newVersion = null },
                 text = {
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(16.dp)
-                    ) {
-                        Text("プログラムの更新があります。以下のURLからダウンロードしてください。")
+                    Column {
+                        Text("プログラムの更新があります。")
+                        Text("　現在のバージョン：${BuildKonfig.APP_VERSION}")
+                        Text("　最新のバージョン：$newVersion")
+                        Text("以下のURLからダウンロードしてください。")
                         TextWithLink("https://github.com/mee1080/umasim/releases/latest")
                     }
                 },
                 confirmButton = {
                     MyButton(
                         onClick = {
-                            updateRequired = false
+                            newVersion = null
                         },
                     ) {
                         Text("閉じる")

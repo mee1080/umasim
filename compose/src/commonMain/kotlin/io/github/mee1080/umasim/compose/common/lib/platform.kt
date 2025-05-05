@@ -18,4 +18,4 @@ expect val progressReportInterval: Int
 
 expect val progressReportDelay: Long
 
-expect fun CoroutineScope.launchCheckUpdate(onUpdate: () -> Unit)
+expect fun CoroutineScope.launchCheckUpdate(onUpdate: (newVersion: String) -> Unit)

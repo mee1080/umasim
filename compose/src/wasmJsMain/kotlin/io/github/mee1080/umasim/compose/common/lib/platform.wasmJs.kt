@@ -24,6 +24,6 @@ actual val progressReportInterval = 50
 
 actual val progressReportDelay = 10L
 
-actual fun CoroutineScope.launchCheckUpdate(onUpdate: () -> Unit) {
+actual fun CoroutineScope.launchCheckUpdate(onUpdate: (newVersion: String) -> Unit) {
     // Web版は更新確認不要
 }
