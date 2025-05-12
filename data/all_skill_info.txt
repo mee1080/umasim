@@ -814,6 +814,15 @@ Celeste Oath
 ->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50
 「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、体力150、持続5.0
 
+Queen's Rebirth
+[Le beau sommet]ヴィルシーナ 固有
+レース前半のコーナーで前方だと短い間速度が上がる、マイルか中距離レースならその後終盤の最終直線で近寄られると少しの間少し前に出る＜芝＞
+評価点340、人気:スピード30/パワー30、確定発動
+->distance_rate<=50&corner!=0&order_rate<=50&ground_type==1
+「距離割合<=50、コーナー、順位率50以下（チャンミ～5/LoH～6）、芝」、目標速度3500、持続3.0
+->is_activate_other_skill_detail==1&phase>=2&is_last_straight==1&overtake_target_time>=1&distance_type==2@is_activate_other_skill_detail==1&phase>=2&is_last_straight==1&overtake_target_time>=1&distance_type==3
+「上記効果発動後、終盤、最終直線、追い抜き対象時間>=1、マイル」または「上記効果発動後、終盤、最終直線、追い抜き対象時間>=1、中距離」、現在速度2500、持続4.0
+
 デラックス☆ファウンテン
 [Voyage étincelant]ヴィブロス 固有
 レース終盤の最終直線に入ったとき中団にいると残り300ｍを切ってから速度が少し上がる、レースを冷静に運べていたならすごく上がる
@@ -2456,6 +2465,14 @@ Celeste Oath
 「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）、距離>=2400」、目標速度1500、体力50、持続3.0
 ->distance_rate>=45&distance_rate<=55&order_rate>=20&order_rate<=50
 「距離割合45～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、体力35、持続3.0
+
+Queen's Rebirth
+前半のコーナーで前方だと短い間速度がわずかに上がる、マイルか中距離レースならその後終盤の最終直線で近寄られると少しの間ちょっと前に出る＜芝＞
+評価点180、SP200、人気:スピード7/パワー7
+->distance_rate<=50&corner!=0&order_rate<=50&ground_type==1
+「距離割合<=50、コーナー、順位率50以下（チャンミ～5/LoH～6）、芝」、目標速度1500、持続1.8
+->is_activate_other_skill_detail==1&phase>=2&is_last_straight==1&overtake_target_time>=1&distance_type==2@is_activate_other_skill_detail==1&phase>=2&is_last_straight==1&overtake_target_time>=1&distance_type==3
+「上記効果発動後、終盤、最終直線、追い抜き対象時間>=1、マイル」または「上記効果発動後、終盤、最終直線、追い抜き対象時間>=1、中距離」、現在速度500、持続2.4
 
 デラックス☆ファウンテン
 レース終盤の最終直線に入ったとき中団にいると残り300ｍを切ってから速度がちょっと上がる、レースを冷静に運べていたなら少し上がる
@@ -4136,7 +4153,7 @@ GⅠなどの大舞台のレースが少し苦手になる
 ->is_dirtgrade==1
 「交流重賞」、スピード80、パワー80、持続0
 ->ground_type==2&is_dirtgrade!=1
-「ダート、交流重賞以外」、スピード60、パワー60、持続0
+「ダート、is_dirtgrade!=1」、スピード60、パワー60、持続0
 
 交流重賞◎
 交流重賞のレースが得意になる
@@ -7666,6 +7683,15 @@ Lose Myself
 ->distance_type==1&activate_count_start>=3@distance_type==4&activate_count_start>=3
 「短距離、序盤スキル発動回数>=3」または「長距離、序盤スキル発動回数>=3」、加速4000、持続3.0
 
+『お姉ちゃん、だもの』
+[Le beau sommet]ヴィルシーナ 進化(盤石の構え)
+レース序盤にスキルを発動すると加速力が上がる、マイルレースならすごく上がる
+評価点633、進化元SP280、人気:パワー60
+->distance_type==2&activate_count_start>=1
+「マイル、序盤スキル発動回数>=1」、加速5000、持続3.0
+->distance_type!=2&activate_count_start>=1
+「距離!=2、序盤スキル発動回数>=1」、加速4000、持続3.0
+
 地固め
 レース序盤にスキルを多く発動すると加速力がわずかに上がる
 評価点217、SP100、人気:パワー20
@@ -9644,6 +9670,15 @@ Legends 進化(王手)
 「中盤コーナーランダム、最終コーナー以降、コーナー、短距離」または「中盤コーナーランダム、最終コーナー以降、コーナー、マイル」、目標速度4500、持続4.0
 ->phase_corner_random==1&distance_type==1@phase_corner_random==1&distance_type==2
 「中盤コーナーランダム、短距離」または「中盤コーナーランダム、マイル」、目標速度2500、持続4.0
+
+不撓不屈の女王
+[Le beau sommet]ヴィルシーナ 進化(ネバーギブアップ)
+レース中盤のコーナーでしばらくの間速度が少し上がる、マイルレースならその後最終直線で持久力を少し使って少し前に出る
+評価点633、進化元SP360、人気:スピード30/パワー30
+->phase_corner_random==1
+「中盤コーナーランダム」、目標速度2500、持続4.0
+->is_activate_other_skill_detail==1&is_last_straight==1&distance_type==2
+「上記効果発動後、最終直線、マイル」、現在速度2500、体力-200、持続2.4
 
 磨穿鉄硯
 [Red in Black]ドゥラメンテ 進化(ネバーギブアップ)
