@@ -1,14 +1,28 @@
 package io.github.mee1080.umasim.web.page.legends
 
 import io.github.mee1080.umasim.scenario.legend.*
+import io.github.mee1080.utility.decodeFromStringOrNull
+import io.github.mee1080.utility.encodeToString
+import kotlinx.browser.localStorage
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
+private const val KEY_LEGEND_CALC_STATE = "umasim.legendCalcState"
+
+@Serializable
 data class LegendsCalcState(
+    @Transient
     val buffList: List<LegendsCalcBuffState> = legendBuffList.filter {
         it.effect.friendBonus > 0 || it.effect.trainingBonus > 0 || it.effect.motivationBonus > 0
     }.map { LegendsCalcBuffState(it) },
+
+    @Transient
     val sortedBuffList: List<LegendsCalcBuffState> = emptyList(),
 
+    @Transient
     val currentFactor: LegendCalcFactorInfo = LegendCalcFactorInfo(1.0, 1.0, 1.0),
+
+    @Transient
     val maxFactor: Double = 1.0,
 
     val motivation: Int = 2,
@@ -35,6 +49,7 @@ data class LegendsCalcState(
             (if (it.checked) 10000.0 else 0.0) + it.factor
         }
         val newMaxFactor = newBuffList.maxOf { it.factor }
+        saveLegendsCalcState(this)
         return copy(
             buffList = newBuffList,
             sortedBuffList = newSortedBuffList,
@@ -93,14 +108,29 @@ data class LegendCalcFactorInfo(
     val totalFactor = friendFactor * motivationFactor * trainingFactor
 }
 
+@Serializable
 data class LegendsCalcBestFriendState(
-    val member: LegendMemberState = LegendMemberState(
-        guest = false,
-        bestFriendLevel = 1,
-        bestFriendGauge = 20,
-    ),
     val join: Boolean = false,
     val friend: Boolean = false,
-)
+    val guest: Boolean = false,
+    val bestFriendLevel: Int = 1,
+) {
+    @Transient
+    val member: LegendMemberState = LegendMemberState(
+        guest = guest,
+        bestFriendLevel = bestFriendLevel,
+        bestFriendGauge = 20,
+    )
+}
 
 val specialStateSelection = listOf("なし" to null) + LegendMember.entries.map { it.displayName to it }
+
+fun loadLegendsCalcState(): LegendsCalcState {
+    return localStorage.getItem(KEY_LEGEND_CALC_STATE)?.let {
+        decodeFromStringOrNull<LegendsCalcState>(it)
+    } ?: LegendsCalcState()
+}
+
+fun saveLegendsCalcState(state: LegendsCalcState) {
+    localStorage.setItem(KEY_LEGEND_CALC_STATE, encodeToString(state))
+}

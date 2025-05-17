@@ -13,7 +13,7 @@ import kotlin.math.max
 
 @Composable
 fun LegendsCalcPage() {
-    var state by remember { mutableStateOf(LegendsCalcState().calcRate()) }
+    var state by remember { mutableStateOf(loadLegendsCalcState().calcRate()) }
     Div({
         style {
             display(DisplayStyle.Flex)
@@ -79,7 +79,7 @@ private fun SettingPanel(state: LegendsCalcState, update: (LegendsCalcState) -> 
                         copy(
                             bestFriendList = bestFriendList.replaced(
                                 index,
-                                friend.copy(member = friend.member.copy(bestFriendLevel = it.toInt())),
+                                friend.copy(bestFriendLevel = it.toInt()),
                             )
                         )
                     })
@@ -92,7 +92,7 @@ private fun SettingPanel(state: LegendsCalcState, update: (LegendsCalcState) -> 
                             copy(
                                 bestFriendList = bestFriendList.replaced(
                                     index,
-                                    friend.copy(member = friend.member.copy(guest = it)),
+                                    friend.copy(guest = it),
                                 )
                             )
                         })
