@@ -1,7 +1,7 @@
 [versions]
 
 buildkonfig = "0.17.1"
-clikt = "5.0.1"
+clikt = "5.0.3"
 compose = "1.7.3"
 jvmTarget = "17"
 koalaplot = "0.8.0"
