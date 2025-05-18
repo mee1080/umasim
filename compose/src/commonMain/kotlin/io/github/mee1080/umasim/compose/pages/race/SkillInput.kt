@@ -71,9 +71,8 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
             val skills = notUniqueSkills.filter { it.name.contains(filter) }
             SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
         } else if (!state.skillCategoryView) {
-            val skills = notUniqueSkills.filterBySetting(virtual, setting).applyIf(!state.skillDisplayMinus) {
-                filter { it.rarity != "minus" }
-            }
+            val skills = notUniqueSkills.filterBySetting(virtual, setting, skillIdSet)
+                .applyIf(!state.skillDisplayMinus) { filter { it.rarity != "minus" } }
             SkillFlowRow(virtual, "", skills, skillIdSet, dispatch)
         } else {
             val passiveSkills = groupedSkills["passive"]
@@ -104,7 +103,6 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SkillFilter(
     value: String,
@@ -264,27 +262,27 @@ private fun TypeSkillSetting(
         Column(
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            val inheritSkills = skills["inherit"]?.filterBySetting(virtual, setting)
+            val inheritSkills = skills["inherit"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!inheritSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "継承", inheritSkills, skillIdSet, dispatch)
             }
-            val scenarioSkills = skills["scenario"]?.filterBySetting(virtual, setting)
+            val scenarioSkills = skills["scenario"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!scenarioSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "シナリオ進化", scenarioSkills, skillIdSet, dispatch)
             }
-            val rareSkills = skills["rare"]?.filterBySetting(virtual, setting)
+            val rareSkills = skills["rare"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!rareSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "レア", rareSkills, skillIdSet, dispatch)
             }
-            val normalSkills = skills["normal"]?.filterBySetting(virtual, setting)
+            val normalSkills = skills["normal"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!normalSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "通常", normalSkills, skillIdSet, dispatch)
             }
-            val specialSkills = skills["special"]?.filterBySetting(virtual, setting)
+            val specialSkills = skills["special"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!specialSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "特殊", specialSkills, skillIdSet, dispatch)
             }
-            val minusSkills = skills["minus"]?.filterBySetting(virtual, setting)
+            val minusSkills = skills["minus"]?.filterBySetting(virtual, setting, skillIdSet)
             if (!minusSkills.isNullOrEmpty()) {
                 SkillFlowRow(virtual, "マイナス", minusSkills, skillIdSet, dispatch)
             }
@@ -293,11 +291,15 @@ private fun TypeSkillSetting(
 }
 
 @Composable
-private fun List<SkillData>.filterBySetting(virtual: Boolean, setting: RaceSetting): List<SkillData> {
+private fun List<SkillData>.filterBySetting(
+    virtual: Boolean,
+    setting: RaceSetting,
+    skillIdSet: Set<String>,
+): List<SkillData> {
     val style by derivedStateOf { if (virtual) setting.virtualLeader.basicRunningStyle else setting.basicRunningStyle }
     val track by derivedStateOf { setting.trackDetail }
     return filter { skill ->
-        skill.invokes.any {
+        skillIdSet.contains(skill.id) || skill.invokes.any {
             it.targetRunningStyle.emptyOrContains(style.value)
                     && it.targetRotation.emptyOrContains(track.turn)
                     && it.targetGroundType.emptyOrContains(track.surface)
@@ -311,7 +313,6 @@ private fun List<SkillData>.filterBySetting(virtual: Boolean, setting: RaceSetti
 
 private fun Set<Int>.emptyOrContains(value: Int) = isEmpty() || contains(value)
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun SkillFlowRow(
     virtual: Boolean,
