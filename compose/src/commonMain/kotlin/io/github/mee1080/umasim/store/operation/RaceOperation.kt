@@ -54,7 +54,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
     var count = 0
     List(simulationCount) { index ->
         scope.async {
-            val result = RaceCalculator().simulate(state.setting)
+            val result = RaceCalculator(state.systemSetting).simulate(state.setting)
             val skillMap = createSkillMap(result.second)
             result to skillMap
         }
@@ -426,7 +426,7 @@ private class CalculateState(
         val scope = CoroutineScope(coroutineContext + asyncDispatcher.limitedParallelism(state.threadCount))
         return List(state.simulationCount) {
             scope.async {
-                RaceCalculator().simulate(setting).first.raceTime
+                RaceCalculator(state.systemSetting).simulate(setting).first.raceTime
             }
         }.map { deferred ->
             if (progress++ % progressReportInterval == 0) {

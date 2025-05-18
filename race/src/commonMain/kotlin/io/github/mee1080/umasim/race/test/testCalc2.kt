@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.race.test
 
 import io.github.mee1080.umasim.race.calc2.RaceCalculator
 import io.github.mee1080.umasim.race.calc2.RaceSetting
+import io.github.mee1080.umasim.race.calc2.SystemSetting
 import io.github.mee1080.umasim.race.calc2.Track
 import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.race.data.PositionKeepMode
@@ -36,7 +37,7 @@ fun testCalc2() {
     println(setting)
     println(setting.trackDetail)
     setting.umaStatus.hasSkills.forEach { println("${it.name} ${it.messages}") }
-    val calculator = RaceCalculator()
+    val calculator = RaceCalculator(SystemSetting())
 //    repeat(10) {
 //        val (result, state) = calculator.simulate()
 //        println("$result")

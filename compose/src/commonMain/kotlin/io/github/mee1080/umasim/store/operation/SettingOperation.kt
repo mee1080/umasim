@@ -43,3 +43,7 @@ fun setPositionKeepRate(value: Int) = DirectOperation<AppState> { state ->
 fun setThreadCount(value: Int) = DirectOperation<AppState> { state ->
     state.copy(threadCount = value).also { it.saveSetting() }
 }
+
+fun setSkillLaneChangeRate(value: Double) = DirectOperation<AppState> { state ->
+    state.updateSystemSetting { it.copy(skillLaneChangeRate = value) }
+}

@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
@@ -55,6 +56,17 @@ private fun OtherSetting(state: AppState, dispatch: OperationDispatcher<AppState
                 modifier = Modifier.width(256.dp),
                 label = { Text("ランダム区間") },
                 itemToString = { it.label },
+            )
+        }
+        Column {
+            val intValue = (state.systemSetting.skillLaneChangeRate * 100).toInt()
+            Text("速度スキル発動時レーン移動率： $intValue %")
+            Slider(
+                value = intValue.toFloat(),
+                onValueChange = { dispatch(setSkillLaneChangeRate(it / 100.0)) },
+                valueRange = 0f..100f,
+                steps = 100,
+                modifier = Modifier.fillMaxWidth(),
             )
         }
     }

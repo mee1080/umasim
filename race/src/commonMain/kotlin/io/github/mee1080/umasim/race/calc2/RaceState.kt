@@ -142,6 +142,8 @@ class RaceState(
         return position >= lastStraight.start
     }
 
+    val isAfterFinalCornerOrInFinalStraight get() = isAfterFinalCorner || isInFinalStraight()
+
     fun getSection(position: Double): Int {
         return floor((position * 24.0) / setting.courseLength).toInt()
     }
@@ -869,16 +871,34 @@ class InvokedSkill(
     var preChecked: Boolean = false,
 )
 
+@Serializable
 data class SystemSetting(
-    val positionKeepSectionSen: List<Boolean> = List(10) { it == 0 },
-    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 0 || it == 3 },
-    val positionKeepSectionOi: List<Boolean> = List(10) { it == 0 || it == 2 || it == 7 },
-    val leadCompetitionPosition: Int = 200,
-    val competeFightRate: Double = 0.4,
-    val positionCompetitionRate: Double = 0.8,
-    val staminaKeepRate: Double = 0.9,
-    val secureLeadRate: Double = 0.3,
-)
+    val skillLaneChangeRate: Double = 0.4,
+) {
+    @Transient
+    val positionKeepSectionSen: List<Boolean> = List(10) { it == 0 }
+
+    @Transient
+    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 0 || it == 3 }
+
+    @Transient
+    val positionKeepSectionOi: List<Boolean> = List(10) { it == 0 || it == 2 || it == 7 }
+
+    @Transient
+    val leadCompetitionPosition: Int = 200
+
+    @Transient
+    val competeFightRate: Double = 0.4
+
+    @Transient
+    val positionCompetitionRate: Double = 0.8
+
+    @Transient
+    val staminaKeepRate: Double = 0.9
+
+    @Transient
+    val secureLeadRate: Double = 0.3
+}
 
 class TriggeredSkill(
     val invoke: InvokedSkill,

@@ -29,7 +29,7 @@ import kotlin.random.Random
 import kotlin.random.nextInt
 
 class RaceCalculator(
-    private val system: SystemSetting = SystemSetting(),
+    private val system: SystemSetting,
 ) {
 
     fun simulate(setting: RaceSetting): Pair<RaceSimulationResult, RaceState> {
@@ -550,27 +550,32 @@ fun RaceState.applyMoveLane() {
     val currentLane = simulation.currentLane
 
     // 最終コーナー/最終直線での目標レーン計算
-    if (simulation.extraMoveLane < 0.0 && (isAfterFinalCorner || isInFinalStraight())) {
+    if (simulation.extraMoveLane < 0.0 && isAfterFinalCornerOrInFinalStraight) {
         simulation.extraMoveLane =
             min(currentLane / 0.1, setting.trackDetail.maxLaneDistance) * 0.5 + Random.nextDouble(0.1)
     }
+
+    // 固定モード（危険回避）
+    val fixLane = simulation.operatingSkills.any { it.fixLane }
+
+    // 追い抜きモード
+    val overtake = (simulation.specialState["overtake"] ?: 0) > 0
 
     // 横ブロック
     val sideBlocked = (simulation.specialState["blocked_side"] ?: 0) > 0
 
     // 目標レーン計算
-    // TODO 追い抜きモードは未実装
-    simulation.targetLane = if (simulation.operatingSkills.any { it.fixLane }) {
-        // 危険回避
-        9.5 * horseLane
-    } else {
-        when {
-            simulation.sp <= 0.0 -> currentLane
-            simulation.positionKeepState == PositionKeepState.PACE_DOWN -> 0.18
-            simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
-            currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
-            else -> currentLane
-        }
+    simulation.targetLane = when {
+        fixLane -> 9.5 * horseLane
+
+        // 追い抜きモードの場合、内側から1人分外側扱いとする
+        overtake -> maxOf(simulation.targetLane, horseLane, simulation.extraMoveLane)
+
+        simulation.sp <= 0.0 -> currentLane
+        simulation.positionKeepState == PositionKeepState.PACE_DOWN -> 0.18
+        simulation.extraMoveLane > currentLane -> simulation.extraMoveLane
+        currentPhase <= 1 && !sideBlocked -> max(0.0, currentLane - 0.05)
+        else -> currentLane
     }
 
     if ((sideBlocked && simulation.targetLane < currentLane) || abs(simulation.targetLane - currentLane) < 0.00001) {

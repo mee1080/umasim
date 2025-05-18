@@ -48,6 +48,7 @@ enum class SimulationMode(val label: String) {
 @Serializable
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
+    val systemSetting: SystemSetting = SystemSetting(),
     val skillCategoryView: Boolean = true,
     val skillDisplayMinus: Boolean = false,
     val skillIdSet: Set<String> = emptySet(),

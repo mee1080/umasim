@@ -11,7 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
-import io.github.mee1080.umasim.race.calc2.SystemSetting
 import io.github.mee1080.umasim.race.data.PositionKeepMode
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
@@ -28,8 +27,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        // TODO 編集
-        val systemSetting = SystemSetting()
+        val systemSetting = state.systemSetting
         Column {
             Text("近似条件", style = MaterialTheme.typography.headlineSmall)
             Text("以下の項目は、シミュレーションが難しいため、近似処理を行っています")
@@ -114,8 +112,9 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
         Column {
             Text("走行レーン", style = MaterialTheme.typography.titleLarge)
-            Text("追い越しモードによるレーン移動は未実装です")
-            Text("横ブロックによる移動停止は近似処理を行っています（スキル発動の欄を参照）")
+            Text("追い越しモード判定と横ブロックによる移動停止は近似処理を行っています（スキル発動の欄を参照）")
+            Text("追い越しモードの場合、内ラチから1人分空けた位置を走ります")
+            Text("目標速度または現在速度のスキルを発動した時に、速度スキル発動時レーン移動率の確率で、外に1人分移動します")
             Text("外回りロスは全てのコーナーが90度として計算しています（いつか正確に計算したい）")
         }
 

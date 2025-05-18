@@ -24,6 +24,7 @@ package io.github.mee1080.umasim.race.calc2
 
 import io.github.mee1080.umasim.race.data.Corner
 import io.github.mee1080.umasim.race.data.RandomPosition
+import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data2.SkillCondition
 import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.approximateTypeToState
@@ -533,6 +534,11 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
             laneChangeSpeed = skill.invoke.laneChangeSpeed(this),
         ).also {
             simulation.operatingSkills += it
+            if (it.totalSpeed > 0.0 && !isAfterFinalCornerOrInFinalStraight && Random.nextDouble() < system.skillLaneChangeRate) {
+                // レーン移動
+                simulation.targetLane += horseLane
+                simulation.specialState["overtake"] = max(1, simulation.specialState["blocked_side"] ?: 0)
+            }
         }
     } else null
     if (skill.invoke.isSpeedWithDecel) {

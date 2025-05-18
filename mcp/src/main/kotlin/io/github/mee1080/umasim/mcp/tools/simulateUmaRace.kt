@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.mcp.textResult
 import io.github.mee1080.umasim.race.calc2.RaceCalculator
 import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.race.calc2.RaceSimulationResult
+import io.github.mee1080.umasim.race.calc2.SystemSetting
 import io.github.mee1080.umasim.race.calc2.UmaStatus
 import io.github.mee1080.umasim.race.data.Condition
 import io.github.mee1080.umasim.race.data.Style
@@ -112,7 +113,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
         val setting = RaceSetting(status)
 
         val count = request.arguments["count"]?.jsonPrimitive?.int ?: defaultSimulateCount
-        val calculator = RaceCalculator()
+        val calculator = RaceCalculator(SystemSetting())
 
         val results = mutableListOf<RaceSimulationResult>()
         val mutex = Mutex()

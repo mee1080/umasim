@@ -151,7 +151,18 @@ val approximateConditions = mapOf(
         "追い抜き/追い抜かれ(アガッてきたなど多数)",
         listOf(-1 to 0.2, 1 to 0.2)
     ),
-    "overtake" to ApproximateStartContinue("追い抜きモード(電光石火など多数)", 0.20, 0.50),
+    "overtake" to ApproximateMultiCondition(
+        "追い抜きモード(電光石火など多数、レーン移動にも影響)",
+        listOf(
+            ApproximateStartContinue("逃げ", 0.05, 0.50) to {
+                it.setting.basicRunningStyle == Style.NIGE
+            },
+            ApproximateStartContinue("先行", 0.15, 0.55) to {
+                it.setting.basicRunningStyle == Style.SEN
+            },
+            ApproximateStartContinue("その他", 0.20, 0.60) to null,
+        )
+    ),
     "overtaken" to ApproximateMultiCondition(
         "詰め寄られ(勝利への執念など)",
         listOf(
