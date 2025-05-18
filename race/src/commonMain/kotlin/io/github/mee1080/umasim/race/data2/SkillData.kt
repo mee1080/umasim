@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.race.data2
 
 import io.github.mee1080.umasim.race.calc2.RaceState
+import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data.skillLevelValueDefault
 import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
@@ -151,7 +152,15 @@ val approximateConditions = mapOf(
         listOf(-1 to 0.2, 1 to 0.2)
     ),
     "overtake" to ApproximateStartContinue("追い抜きモード(電光石火など多数)", 0.20, 0.50),
-    "overtaken" to ApproximateStartContinue("詰め寄られ(勝利への執念など)", 0.15, 0.50),
+    "overtaken" to ApproximateMultiCondition(
+        "詰め寄られ(勝利への執念など)",
+        listOf(
+            ApproximateStartContinue("逃げ/先行", 0.30, 0.70) to {
+                it.setting.basicRunningStyle == Style.NIGE || it.setting.basicRunningStyle == Style.SEN
+            },
+            ApproximateStartContinue("差し/追込", 0.15, 0.50) to null,
+        ),
+    ),
     "blocked_front" to ApproximateStartContinue("前方ブロック(鋼の意志など)", 0.07, 0.50),
     "blocked_side" to ApproximateMultiCondition(
         "横ブロック(つぼみなど)",
