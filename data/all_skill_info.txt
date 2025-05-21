@@ -1044,6 +1044,15 @@ is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
 ->distance_type==1&is_activate_other_skill_detail==1&phase==3&is_lastspurt==1@distance_type==2&is_activate_other_skill_detail==1&phase==3&is_lastspurt==1
 「短距離、上記効果発動後、終盤後半、ラストスパート」または「マイル、上記効果発動後、終盤後半、ラストスパート」、現在速度4500、持続3.0
 
+Circulating Love♡
+[9927 Wishes]ラヴズオンリーユー 固有
+終盤が迫ったどこかで速度がわずかに上がる、中距離レースならファンから受け取ったラヴに応じて最大3倍まで効果が増える＜差し・芝＞
+評価点340、人気:スピード60、確定発動
+distance_type==3&running_style==3&ground_type==1->phase_laterhalf_random==1
+「中距離、差し、芝」の後「中盤後半ランダム」、目標速度1500(特殊30)、持続5.0
+->running_style==3&ground_type==1&phase_laterhalf_random==1
+「差し、芝、中盤後半ランダム」、目標速度1500、持続5.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復しさらに速度が少し上がる
@@ -2661,6 +2670,12 @@ is_finalcorner==1&corner!=0&change_order_onetime<0->is_lastspurt==1&phase==3
 「距離割合50～51、順位率40以上（チャンミ4～/LoH5～）」、現在速度1500、持続1.8
 ->distance_type==1&is_activate_other_skill_detail==1&phase==3&is_lastspurt==1@distance_type==2&is_activate_other_skill_detail==1&phase==3&is_lastspurt==1
 「短距離、上記効果発動後、終盤後半、ラストスパート」または「マイル、上記効果発動後、終盤後半、ラストスパート」、現在速度2500、持続1.8
+
+Circulating Love♡
+終盤が迫ったどこかで速度がほんのわずかに上がる＜差し・芝＞
+評価点180、SP200、人気:スピード15
+->running_style==3&ground_type==1&phase_laterhalf_random==1
+「差し、芝、中盤後半ランダム」、目標速度350、持続3.0
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復しさらに速度がちょっと上がる
@@ -11021,6 +11036,46 @@ Legends 進化(英俊豪傑)
 評価点217、SP170、人気:スピード20
 ->ground_type==2&is_lastspurt==1&phase_firsthalf_random==3
 「ダート、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
+
+ストレートハート
+レース中盤の直線で中団以降にいるとしばらくの間速度が少し上がる＜差し・中距離＞
+評価点508、SP160(合計320)、人気:スピード60
+->distance_type==3&running_style==3&phase_straight_random==1&order_rate>=40
+「中距離、差し、中盤直線ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度2500、持続4.0
+
+ストリーミング♡ラッシュ
+[9927 Wishes]ラヴズオンリーユー 進化(ストレートハート)
+レース中盤の直線でしばらくの間速度が上がる＜差し・中距離＞
+評価点633、進化元SP320、人気:スピード60
+->distance_type==3&running_style==3&phase_straight_random==1
+「中距離、差し、中盤直線ランダム」、目標速度3500、持続4.0
+
+真っ直ぐな走り
+レース中盤の直線で中団以降にいるとしばらくの間速度がちょっと上がる＜差し・中距離＞
+評価点217、SP160、人気:スピード20
+->distance_type==3&running_style==3&phase_straight_random==1&order_rate>=40
+「中距離、差し、中盤直線ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度500、持続4.0
+
+唯一無二
+レース後半に前に出る＜中距離＞
+評価点508、SP180(合計360)、人気:パワー60
+->distance_type==3&distance_rate_after_random==50
+「中距離、距離50%以降」、現在速度3500、持続3.0
+
+応援コメントよろしく！
+[9927 Wishes]ラヴズオンリーユー 進化(唯一無二)
+レース後半にしばらくの間前に出る賢さが十二分に高いと効果が増える＜差し・中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&distance_rate_after_random==50&running_style==3&base_wiz>=1200
+「中距離、距離50%以降、差し、基礎賢さ>=1200」、現在速度4000、持続4.0
+->distance_type==3&distance_rate_after_random==50&running_style==3
+「中距離、距離50%以降、差し」、現在速度3500、持続4.0
+
+夢への挑戦
+レース後半にわずかに前に出る＜中距離＞
+評価点217、SP180、人気:パワー20
+->distance_type==3&distance_rate_after_random==50
+「中距離、距離50%以降」、現在速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
