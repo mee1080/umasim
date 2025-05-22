@@ -19,7 +19,7 @@ private val jsonParser = Json { allowTrailingComma = true }
 
 suspend fun loadSkillData() {
     val skillDataString =
-        fetchFromUrl("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/skill_data.txt")
+        fetchFromUrl("https://mee1080.github.com/umasim/data/skill_data.txt")
     skillData2 = jsonParser.decodeFromString<List<SkillData>>(skillDataString)
 }
 

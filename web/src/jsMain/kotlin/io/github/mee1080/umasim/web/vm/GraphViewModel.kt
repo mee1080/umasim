@@ -156,7 +156,7 @@ class GraphViewModel(private val root: ViewModel) {
 
     private suspend fun loadCsv(path: String): Map<Int, List<Map<String, Double>>>? = kotlin.runCatching {
         val text = HttpClient(Js)
-            .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/simulation/$path.csv")
+            .get("https://mee1080.github.com/umasim/data/simulation/$path.csv")
             .bodyAsText()
         val lines = text.split("\n")
         val result = mutableMapOf<Int, MutableList<Map<String, Double>>>()

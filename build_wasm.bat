@@ -6,4 +6,5 @@ rmdir /s /q web\src\jsMain\resources\race
 echo D | xcopy /E compose\build\dist\wasmJs\productionExecutable web\src\jsMain\resources\race
 rmdir /s /q docs\race
 echo D | xcopy /E compose\build\dist\wasmJs\productionExecutable docs\race
+echo D | xcopy /E /I /Y data docs\data
 pause
