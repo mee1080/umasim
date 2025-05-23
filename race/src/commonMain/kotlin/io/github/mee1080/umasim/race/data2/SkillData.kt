@@ -79,12 +79,17 @@ class ApproximateStartContinue(
     val start: Double,
     val continuation: Double,
     override val valueOnStart: Int = 0,
+    private val minDuration: Int = 0, // Changed default value to 0
 ) : ApproximateCondition {
     override fun update(state: RaceState, value: Int): Int {
-        return if (value == 0) {
+        return if (value == 0) { // Not in overtake mode
             if (Random.nextDouble() < start) 1 else 0
-        } else {
-            if (Random.nextDouble() < continuation) value + 1 else 0
+        } else { // In overtake mode
+            if (value < minDuration) { // Use minDuration
+                value + 1 // Always increment if value < minDuration
+            } else {
+                if (Random.nextDouble() < continuation) value + 1 else 0 // Increment with continuation probability if value >= minDuration
+            }
         }
     }
 
@@ -154,13 +159,13 @@ val approximateConditions = mapOf(
     "overtake" to ApproximateMultiCondition(
         "追い抜きモード(電光石火など多数、レーン移動にも影響)",
         listOf(
-            ApproximateStartContinue("逃げ", 0.05, 0.50) to {
+            ApproximateStartContinue("逃げ", 0.05, 0.50, minDuration = 3) to {
                 it.setting.basicRunningStyle == Style.NIGE
             },
-            ApproximateStartContinue("先行", 0.15, 0.55) to {
+            ApproximateStartContinue("先行", 0.15, 0.55, minDuration = 3) to {
                 it.setting.basicRunningStyle == Style.SEN
             },
-            ApproximateStartContinue("その他", 0.20, 0.60) to null,
+            ApproximateStartContinue("その他", 0.20, 0.60, minDuration = 3) to null,
         )
     ),
     "overtaken" to ApproximateMultiCondition(
