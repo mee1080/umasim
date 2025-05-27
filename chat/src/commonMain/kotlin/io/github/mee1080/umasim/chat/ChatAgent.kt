@@ -5,7 +5,7 @@ import ai.koog.koog_agents.api.*
 import ai.koog.koog_agents.model.*
 import io.github.mee1080.umasim.chat.BuildKonfig
 
-class ChatAgent(apiKey: String) {
+class ChatAgent(apiKey: String, private val modelName: String) {
 
     private val client: GeminiApi
 
@@ -15,7 +15,7 @@ class ChatAgent(apiKey: String) {
     }
 
     suspend fun sendMessage(message: String): String {
-        val modelName = "gemini-1.5-flash-latest"
+        val modelName = if (this.modelName.isNotBlank()) this.modelName else "gemini-1.5-flash-latest"
         val request = GenerateContentRequest(
             contents = listOf(
                 Content(

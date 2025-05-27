@@ -14,6 +14,7 @@ import androidx.compose.material.CircularProgressIndicator // Keep if used, thou
 import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -35,21 +36,34 @@ fun ChatScreen() {
     var currentApiKey by remember { mutableStateOf("") }
     // State for the text field where user types the API key
     var apiKeyInput by remember { mutableStateOf("") }
+    // State for the model name
+    var currentModelName by remember { mutableStateOf("") }
+    var selectedModelInBox by remember { mutableStateOf<String?>(null) }
 
-    // Load the API key when the composable is first launched
+    // Load the API key and model name when the composable is first launched
     LaunchedEffect(Unit) {
         val storedApiKey = ApiKeyStore.getApiKey()
         if (storedApiKey != null) {
             currentApiKey = storedApiKey
             apiKeyInput = storedApiKey // Pre-fill input field if key exists
         }
+        val storedModelName = ModelNameStore.getModelName()
+        if (storedModelName != null) {
+            currentModelName = storedModelName
+            selectedModelInBox = storedModelName // Pre-select in dropdown
+        }
     }
 
-    // Re-initialize ChatAgent if currentApiKey changes
-    val chatAgent = remember(currentApiKey) {
-        if (currentApiKey.isNotBlank()) ChatAgent(currentApiKey) else null
+    // Re-initialize ChatAgent if currentApiKey or currentModelName changes
+    val chatAgent = remember(currentApiKey, currentModelName) {
+        if (currentApiKey.isNotBlank()) {
+            ChatAgent(currentApiKey, if (currentModelName.isNotBlank()) currentModelName else "gemini-1.5-flash-latest")
+        } else {
+            null
+        }
     }
 
+    val modelOptions = listOf("Model A", "Model B", "Model C")
     val messages = remember { mutableStateListOf<String>() }
     var inputText by remember { mutableStateOf("") }
     var isLoading by remember { mutableStateOf(false) }
@@ -78,6 +92,25 @@ fun ChatScreen() {
             }) {
                 Text("Save Key")
             }
+        }
+
+        // Model Selection Section
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            SelectBox(
+                label = "Select Model",
+                items = modelOptions,
+                selectedItem = selectedModelInBox,
+                onItemSelected = { modelName ->
+                    selectedModelInBox = modelName
+                    ModelNameStore.saveModelName(modelName)
+                    currentModelName = modelName
+                    messages.add("System: Model changed to $modelName.")
+                },
+                modifier = Modifier.weight(1f)
+            )
         }
 
         // Display a message if API key is not set
