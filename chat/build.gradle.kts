@@ -2,6 +2,12 @@ plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
     alias(libs.plugins.compose.compiler) // Added compose compiler plugin
+    id("com.github.gmazzo.buildconfig") version "5.6.5"
+}
+
+buildKonfig {
+    packageName = "io.github.mee1080.umasim.chat"
+    exposeSecret("GEMINI_API_KEY")
 }
 
 group = "io.github.mee1080.umasim" // Assuming same group as 'core' module
