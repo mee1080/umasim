@@ -32,6 +32,7 @@ kotlin {
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.ui) // Added compose.ui for completeness
+                implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
                 // Potentially add: implementation(compose.components.resources)
                 // Potentially add: implementation(compose.components.uiToolingPreview)
             }

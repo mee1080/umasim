@@ -5,12 +5,12 @@ import ai.koog.koog_agents.api.*
 import ai.koog.koog_agents.model.*
 import io.github.mee1080.umasim.chat.BuildKonfig
 
-class ChatAgent {
+class ChatAgent(apiKey: String) {
 
     private val client: GeminiApi
 
     init {
-        val apiKey = BuildKonfig.GEMINI_API_KEY
+        // val apiKey = BuildKonfig.GEMINI_API_KEY
         this.client = GeminiApi(apiKey)
     }
 
