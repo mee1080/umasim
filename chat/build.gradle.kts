@@ -1,40 +1,41 @@
+import com.codingfeline.buildkonfig.compiler.FieldSpec.Type.STRING
+
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
-    alias(libs.plugins.compose.compiler) // Added compose compiler plugin
-    id("com.github.gmazzo.buildconfig") version "5.6.5"
+    alias(libs.plugins.compose.compiler)
+    alias(libs.plugins.buildkonfig) // This is com.codingfeline.buildkonfig
 }
 
-buildKonfig {
+buildkonfig { // Corrected from buildConfig to buildkonfig
     packageName = "io.github.mee1080.umasim.chat"
-    exposeSecret("GEMINI_API_KEY")
+    defaultConfigs { // buildkonfig typically uses a nested defaultConfigs block
+        buildConfigField(STRING, "GEMINI_API_KEY", "\"YOUR_API_KEY_HERE_OR_READ_FROM_ENV\"")
+    }
 }
 
-group = "io.github.mee1080.umasim" // Assuming same group as 'core' module
-version = "1.0" // Assuming same version as 'core' module
+group = "io.github.mee1080.umasim"
+version = "1.0"
 
 kotlin {
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
-    // Define your targets here. For example:
     jvm("desktop")
     js("web", IR) {
         browser()
-        useCommonJs() // Or useEsModules()
+        useCommonJs()
     }
-    // Add other targets like native, android, etc. as needed
 
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("ai.koog:koog-agents:LATEST_VERSION")
+                implementation("ai.koog:koog-agents:0.1.0")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
-                implementation(compose.ui) // Added compose.ui for completeness
+                implementation(compose.ui)
                 implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
-                // Potentially add: implementation(compose.components.resources)
-                // Potentially add: implementation(compose.components.uiToolingPreview)
+                implementation(project(":compose"))
             }
         }
         val commonTest by getting {
@@ -44,16 +45,5 @@ kotlin {
                 implementation(libs.test.annotations)
             }
         }
-        // Define source sets for specific targets if needed
-        // val desktopMain by getting {
-        //     dependencies {
-        //         // Desktop-specific dependencies
-        //     }
-        // }
-        // val webMain by getting {
-        //     dependencies {
-        //         // Web-specific dependencies
-        //     }
-        // }
     }
 }

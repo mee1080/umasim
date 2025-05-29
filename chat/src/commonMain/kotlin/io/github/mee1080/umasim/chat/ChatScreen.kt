@@ -100,10 +100,10 @@ fun ChatScreen() {
             verticalAlignment = Alignment.CenterVertically
         ) {
             SelectBox(
-                label = "Select Model",
+                label = { Text("Select Model") },
                 items = modelOptions,
                 selectedItem = selectedModelInBox,
-                onItemSelected = { modelName ->
+                onSelect = { modelName ->
                     selectedModelInBox = modelName
                     ModelNameStore.saveModelName(modelName)
                     currentModelName = modelName

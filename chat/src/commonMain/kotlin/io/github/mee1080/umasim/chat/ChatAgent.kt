@@ -1,28 +1,48 @@
 package io.github.mee1080.umasim.chat
 
-import ai.koog.koog_agents.SimpleSingleRunAgent
-import ai.koog.koog_agents.simpleSingleRunAgent
-import ai.koog.koog_agents.text.SimpleGoogleExecutor
+// Corrected imports based on all findings:
+import ai.koog.agents.core.agent.AIAgent // Corrected package for AIAgent
+import ai.koog.agents.ext.agent.simpleSingleRunAgent
+import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor // Correct way to get a PromptExecutor for Google
+import ai.koog.prompt.llm.LLModel
+import ai.koog.prompt.executor.clients.google.GoogleModels // For predefined Google LLModel instances
+import ai.koog.prompt.llm.LLMCapability // For constructing a generic LLModel if needed
+import ai.koog.prompt.llm.LLMProvider // For constructing a generic LLModel
 
-class ChatAgent(apiKey: String, private val modelName: String) {
+class ChatAgent(apiKey: String, private val modelNameString: String) {
 
-    private val agent: SimpleSingleRunAgent
+    private val agent: AIAgent
 
     init {
-        val currentModelName = if (this.modelName.isNotBlank()) this.modelName else "gemini-1.5-flash-latest"
+        val currentModelId = if (this.modelNameString.isNotBlank()) this.modelNameString else "gemini-1.5-flash-latest"
+
+        val selectedLLModel: LLModel = when (currentModelId) {
+            "gemini-1.5-flash-latest" -> GoogleModels.Gemini1_5FlashLatest
+            "gemini-1.5-pro-latest" -> GoogleModels.Gemini1_5ProLatest
+            // Add more mappings as needed
+            else -> {
+                println("Warning: Model string '$currentModelId' not explicitly mapped. Using generic LLModel instance.")
+                LLModel(
+                    provider = LLMProvider.Google, // Assuming Google
+                    id = currentModelId,
+                    capabilities = listOf(LLMCapability.Completion, LLMCapability.Temperature) // Default capabilities
+                )
+            }
+        }
+
         agent = simpleSingleRunAgent(
-            executor = SimpleGoogleExecutor(apiKey),
+            executor = simpleGoogleAIExecutor(apiToken = apiKey), // Use the helper function
             systemPrompt = "You are a helpful assistant.",
-            llmModel = currentModelName
+            llmModel = selectedLLModel
         )
     }
 
     suspend fun sendMessage(message: String): String {
         return try {
-            agent.runAndGetResult(message)
+            agent.runAndGetResult(message) ?: "No response from agent."
         } catch (e: Exception) {
-            // Log the exception or handle it more gracefully
-            println("Error calling Gemini API: ${e.message}")
+            println("Error calling agent: ${e.message}")
+            e.printStackTrace()
             "Error: Could not connect to the chat service. Please try again later."
         }
     }
