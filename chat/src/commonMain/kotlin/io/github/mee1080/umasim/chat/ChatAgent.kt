@@ -1,33 +1,25 @@
 package io.github.mee1080.umasim.chat
 
-import ai.koog.koog_agents.*
-import ai.koog.koog_agents.api.*
-import ai.koog.koog_agents.model.*
-import io.github.mee1080.umasim.chat.BuildKonfig
+import ai.koog.koog_agents.SimpleSingleRunAgent
+import ai.koog.koog_agents.simpleSingleRunAgent
+import ai.koog.koog_agents.text.SimpleGoogleExecutor
 
 class ChatAgent(apiKey: String, private val modelName: String) {
 
-    private val client: GeminiApi
+    private val agent: SimpleSingleRunAgent
 
     init {
-        // val apiKey = BuildKonfig.GEMINI_API_KEY
-        this.client = GeminiApi(apiKey)
+        val currentModelName = if (this.modelName.isNotBlank()) this.modelName else "gemini-1.5-flash-latest"
+        agent = simpleSingleRunAgent(
+            executor = SimpleGoogleExecutor(apiKey),
+            systemPrompt = "You are a helpful assistant.",
+            llmModel = currentModelName
+        )
     }
 
     suspend fun sendMessage(message: String): String {
-        val modelName = if (this.modelName.isNotBlank()) this.modelName else "gemini-1.5-flash-latest"
-        val request = GenerateContentRequest(
-            contents = listOf(
-                Content(
-                    parts = listOf(Part(text = message)),
-                    role = "user"
-                )
-            )
-        )
-
         return try {
-            val response = client.generateContent(modelName, request)
-            response.candidates?.firstOrNull()?.content?.parts?.firstOrNull()?.text ?: "No response from model."
+            agent.runAndGetResult(message)
         } catch (e: Exception) {
             // Log the exception or handle it more gracefully
             println("Error calling Gemini API: ${e.message}")
