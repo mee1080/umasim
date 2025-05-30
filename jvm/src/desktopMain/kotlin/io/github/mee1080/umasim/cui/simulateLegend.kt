@@ -10,12 +10,12 @@ import io.github.mee1080.umasim.scenario.legend.getLegendBuff
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateLegend() {
-//    speed2Stamina2Wisdom1Speed()
+    speed2Stamina2Wisdom1Speed()
 //    speed2Stamina2Wisdom1Stamina()
-//    speed2Stamina2Wisdom1Wisdom()
+    speed2Stamina2Wisdom1Wisdom()
 //    speed2Power1Guts1Wisdom1Power()
 //    speed3Guts1Wisdom1Guts()
-    speed2Stamina1Guts1Wisdom1Guts()
+//    speed2Stamina1Guts1Wisdom1Guts()
 }
 
 private fun speed2Stamina2Wisdom1Speed() {
@@ -35,7 +35,7 @@ private fun speed2Stamina2Wisdom1Speed() {
         chara,
         defaultSupport,
 //        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[誘うは夢心地]ドリームジャーニー" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[Unveiled Dream]ラインクラフト" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.POWER, 1) + factor(StatusType.STAMINA, 3),
         testCount = 100000,
@@ -107,7 +107,7 @@ private fun speed2Stamina2Wisdom1Wisdom() {
         chara,
         defaultSupport,
 //        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[無垢の白妙]デアリングタクト" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[Blooming Buds]デアリングハート" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.POWER, 1) + factor(StatusType.STAMINA, 3),
         testCount = 100000,
