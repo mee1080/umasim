@@ -1053,6 +1053,15 @@ distance_type==3&running_style==3&ground_type==1->phase_laterhalf_random==1
 ->running_style==3&ground_type==1&phase_laterhalf_random==1
 「差し、芝、中盤後半ランダム」、目標速度1500、持続5.0
 
+Weaving History
+[陸離の編纂者]クロノジェネシス 固有
+レース中間付近で少しの間速度を少し上げる、中距離か長距離レースならこのスキルと覚醒スキル進化をしたスキルの効果時間が2倍になる＜先行・芝＞
+評価点340、人気:スピード60、確定発動
+->distance_type==3&ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41@distance_type==4&ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41
+「中距離、芝、先行、距離割合40～41」または「長距離、芝、先行、距離割合40～41」、目標速度2500、(42)20000(レベル効果2)、持続8.0
+->ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41
+「芝、先行、距離割合40～41」、目標速度2500、持続4.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復しさらに速度が少し上がる
@@ -2694,6 +2703,12 @@ Circulating Love♡
 評価点180、SP200、人気:スピード15
 ->running_style==3&ground_type==1&phase_laterhalf_random==1
 「差し、芝、中盤後半ランダム」、目標速度350、持続3.0
+
+Weaving History
+レース中間付近で少しの間速度をちょっと上げる＜先行・芝＞
+評価点180、SP200、人気:スピード15
+->ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41
+「芝、先行、距離割合40～41」、目標速度500、持続2.4
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復しさらに速度がちょっと上がる
@@ -10247,6 +10262,13 @@ Legends 進化(飛翔脚)
 ->running_style==2&phase_laterhalf_random==1&order_rate<=50
 「先行、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度4500、持続2.4
 
+永永無窮
+[陸離の編纂者]クロノジェネシス 進化(流星光底)
+レース終盤が迫ったとき前に出る＜作戦・先行＞
+評価点633、進化元SP360、人気:パワー60
+->running_style==2&phase_laterhalf_random==1
+「先行、中盤後半ランダム」、現在速度3500、持続2.4
+
 飛躍の予感
 レース終盤が迫ったとき前方にいると速度がわずかに上がる＜作戦・先行＞
 評価点217、SP180、人気:スピード20
@@ -10868,6 +10890,19 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 ->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3
 「中距離、ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続3.0
 
+夢の舞台へ
+レース終盤始めの方早めに前方にいると加速力が上がる＜先行・中距離＞
+評価点508、SP170(合計340)、人気:パワー60
+->running_style==2&distance_type==3&phase_firstquarter_random==2&order_rate<=50
+「先行、中距離、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.2
+
+創世の一頁
+[陸離の編纂者]クロノジェネシス 進化(夢の舞台へ)
+2000m～2500mのレースで、終盤始めの早めに追い抜こうとするときまたは終盤始めの方早めに加速力が上がる＜作戦・先行＞
+評価点633、進化元SP340、人気:パワー60
+->running_style==2&course_distance>=2000&course_distance<=2500&is_overtake==1&phase_firstquarter==2@running_style==2&course_distance>=2000&course_distance<=2500&phase_firstquarter_random==2
+「先行、距離>=2000、距離<=2500、追い抜きモード、終盤前1/8」または「先行、距離>=2000、距離<=2500、終盤前1/8ランダム」、加速4000、持続1.2
+
 憧れを越えて
 レース終盤始めの方早めに前方にいると加速力がわずかに上がる＜先行・中距離＞
 評価点217、SP170、人気:パワー20
@@ -11143,6 +11178,12 @@ Legends 進化(英俊豪傑)
 評価点217、SP180、人気:パワー20
 ->distance_type==3&distance_rate_after_random==50
 「中距離、距離50%以降」、現在速度1500、持続3.0
+
+光明
+レース終盤始めの方に前方にいるとわずかに前に出る＜中距離/長距離＞
+評価点217、SP180、人気:パワー20
+->distance_type==3&phase_firsthalf_random==2&order_rate<=50@distance_type==4&phase_firsthalf_random==2&order_rate<=50
+「中距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」または「長距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
