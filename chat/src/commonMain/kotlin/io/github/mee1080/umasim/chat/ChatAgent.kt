@@ -1,20 +1,19 @@
 package io.github.mee1080.umasim.chat
 
 // Corrected imports based on all findings:
-import ai.koog.agents.core.agent.AIAgent // Corrected package for AIAgent
-import ai.koog.agents.ext.agent.simpleSingleRunAgent
-import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor // Correct way to get a PromptExecutor for Google
+import ai.koog.agents.core.agent.AIAgent
+import ai.koog.prompt.executor.clients.google.GoogleModels
+import ai.koog.prompt.executor.llms.all.simpleGoogleAIExecutor
+import ai.koog.prompt.llm.LLMCapability
+import ai.koog.prompt.llm.LLMProvider
 import ai.koog.prompt.llm.LLModel
-import ai.koog.prompt.executor.clients.google.GoogleModels // For predefined Google LLModel instances
-import ai.koog.prompt.llm.LLMCapability // For constructing a generic LLModel if needed
-import ai.koog.prompt.llm.LLMProvider // For constructing a generic LLModel
 
 class ChatAgent(apiKey: String, private val modelNameString: String) {
 
     private val agent: AIAgent
 
     init {
-        val currentModelId = if (this.modelNameString.isNotBlank()) this.modelNameString else "gemini-1.5-flash-latest"
+        val currentModelId = this.modelNameString.ifBlank { "gemini-1.5-flash-latest" }
 
         val selectedLLModel: LLModel = when (currentModelId) {
             "gemini-1.5-flash-latest" -> GoogleModels.Gemini1_5FlashLatest
@@ -30,8 +29,8 @@ class ChatAgent(apiKey: String, private val modelNameString: String) {
             }
         }
 
-        agent = simpleSingleRunAgent(
-            executor = simpleGoogleAIExecutor(apiToken = apiKey), // Use the helper function
+        agent = AIAgent(
+            executor = simpleGoogleAIExecutor(apiKey = apiKey), // Use the helper function
             systemPrompt = "You are a helpful assistant.",
             llmModel = selectedLLModel
         )

@@ -21,10 +21,6 @@ kotlin {
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
     jvm("desktop")
-    js("web", IR) {
-        browser()
-        useCommonJs()
-    }
 
     sourceSets {
         val commonMain by getting {
