@@ -29,7 +29,7 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("ai.koog:koog-agents:0.1.0")
+                implementation("ai.koog:koog-agents:0.2.1")
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
