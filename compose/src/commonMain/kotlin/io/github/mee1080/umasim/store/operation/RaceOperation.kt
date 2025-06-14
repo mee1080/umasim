@@ -132,9 +132,15 @@ private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
         frame.triggeredSkills.forEach {
             val current = skillMap[it.invoke.skill.name] ?: return@forEach
             if (current.info.startFrame1 < 0) {
-                skillMap[it.invoke.skill.name]?.info = current.info.copy(startFrame1 = index)
+                skillMap[it.invoke.skill.name]?.info = current.info.copy(
+                    startFrame1 = index,
+                    startPosition1 = frame.startPosition,
+                )
             } else {
-                skillMap[it.invoke.skill.name]?.info = current.info.copy(startFrame2 = index)
+                skillMap[it.invoke.skill.name]?.info = current.info.copy(
+                    startFrame2 = index,
+                    startPosition2 = frame.startPosition,
+                )
             }
         }
         frame.endedSkills.forEach {
@@ -183,8 +189,10 @@ private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
         count = triggeredList.size,
         triggerRate = if (list.isEmpty()) 0.0 else triggeredList.size.toDouble() / list.size,
         averageStartFrame1 = triggeredList.averageOf { it.startFrame1.toDouble() },
+        averageStartPosition1 = triggeredList.averageOf { it.startPosition1 },
         doubleTriggerRate = if (list.isEmpty()) 0.0 else secondTriggeredList.size.toDouble() / list.size,
         averageStartFrame2 = secondTriggeredList.averageOf { it.startFrame2.toDouble() },
+        averageStartPosition2 = secondTriggeredList.averageOf { it.startPosition2 },
         phase0TriggeredRate = if (triggeredList.isEmpty()) 0.0 else {
             triggeredList.count { it.triggeredPhase == 0 }.toDouble() / triggeredList.size
         },

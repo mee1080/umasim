@@ -150,9 +150,11 @@ private fun toTableData(entry: SimulationSkillSummary): List<String> {
         listOf(
             entry.count.toString(),
             entry.triggerRate.toPercentString(1),
-            (entry.averageStartFrame1 / 15.0).roundToString(2, "s"),
+            (entry.averageStartFrame1 / 15.0).roundToString(2, "s") + "/" +
+                    entry.averageStartPosition1.roundToString(2, "m"),
             entry.doubleTriggerRate.toPercentString(1),
-            (entry.averageStartFrame2 / 15.0).roundToString(2, "s"),
+            (entry.averageStartFrame2 / 15.0).roundToString(2, "s") + "/" +
+                    entry.averageStartPosition2.roundToString(2, "m"),
             entry.phase0TriggeredRate.toPercentString(1),
             entry.phase1ConnectionRate.toPercentString(1),
             (entry.averagePhase1ConnectionFrame / 15.0).roundToString(2, "s"),
