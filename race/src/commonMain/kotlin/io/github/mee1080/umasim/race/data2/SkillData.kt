@@ -202,6 +202,7 @@ val approximateConditions = mapOf(
         ),
     ),
     "behind_near_lane" to ApproximateStartContinue("後にウマ娘(お先など)", 0.15, 0.50),
+    "behind_near_lane_time_set1" to ApproximateStartContinue("少し抜け出ていると(ヴォードヴィル)", 0.20, 0.60),
     "near_count" to ApproximateMultiCondition(
         "近くのウマ娘人数(ウマ好み/ワクワククライマックスなど)",
         listOf(
@@ -290,7 +291,7 @@ val approximateTypeToState = mapOf(
     "blocked_side_continuetime" to "blocked_side",
     "infront_near_lane_time" to "infront_near_lane",
     "behind_near_lane_time" to "behind_near_lane",
-    "behind_near_lane_time_set1" to "behind_near_lane",
+    "behind_near_lane_time_set1" to "behind_near_lane_time_set1",
     "near_count" to "near_count",
     "near_infront_count" to "near_infront_count",
     "is_surrounded" to "is_surrounded",
