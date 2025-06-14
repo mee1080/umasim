@@ -1,10 +1,7 @@
 package io.github.mee1080.umasim.race.data2
 
 import io.github.mee1080.umasim.race.calc2.RaceState
-import io.github.mee1080.umasim.race.data.Style
-import io.github.mee1080.umasim.race.data.horseLane
-import io.github.mee1080.umasim.race.data.skillLevelValueDefault
-import io.github.mee1080.umasim.race.data.skillLevelValueSpeed
+import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.utility.fetchFromUrl
 import io.github.mee1080.utility.normalizedLevenshteinDistance
 import io.github.mee1080.utility.toPercentString
@@ -583,6 +580,14 @@ data class Invoke(
         effectsByTypeMap.containsKey("fixLane")
     }
 
+    val isEvoDurationUp by lazy {
+        effectsByTypeMap.containsKey("evoDurationUp")
+    }
+
+    fun evoDurationUp(state: RaceState): Double {
+        return totalEffect(state, "evoDurationUp") / 10000.0
+    }
+
     private val durationMessage by lazy {
         buildList {
             when (durationSpecial) {
@@ -673,7 +678,11 @@ data class SkillEffect(
     val additional: Int = 0,
 ) {
     fun applyLevel(level: Int): SkillEffect {
-        val values = if (type == "targetSpeed") skillLevelValueSpeed else skillLevelValueDefault
+        val values = when (type) {
+            "targetSpeed" -> skillLevelValueSpeed
+            "evoDurationUp" -> skillLevelValueFixed
+            else -> skillLevelValueDefault
+        }
         return copy(value = (value * values[level]).toInt())
     }
 

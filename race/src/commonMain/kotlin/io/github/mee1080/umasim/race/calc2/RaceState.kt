@@ -762,6 +762,7 @@ class RaceSimulationState(
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
     var sectionTargetSpeedRandoms: List<Double> = emptyList(),
+    var evoDurationMultiplier: Double = 1.0,
 
     var positionCompetitionCount: Int = 0,
     var staminaKeepStart: Double = 0.0,
@@ -869,7 +870,13 @@ class InvokedSkill(
     val preCheck: RaceState.() -> Boolean,
     val check: RaceState.() -> Boolean,
     var preChecked: Boolean = false,
-)
+) {
+    fun calcDuration(state: RaceState): Double {
+        return invoke.calcDuration(state) * if (skill.rarity == "evo") {
+            state.simulation.evoDurationMultiplier
+        } else 1.0
+    }
+}
 
 @Serializable
 data class SystemSetting(

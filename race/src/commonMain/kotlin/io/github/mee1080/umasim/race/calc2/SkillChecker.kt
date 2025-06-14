@@ -529,7 +529,7 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
             speedWithDecel = skill.invoke.speedWithDecel(this),
             currentSpeed = skill.invoke.currentSpeed(this),
             acceleration = skill.invoke.acceleration(this),
-            duration = skill.invoke.calcDuration(this) * setting.timeCoef,
+            duration = skill.calcDuration(this) * setting.timeCoef,
             fixLane = skill.invoke.isFixLane,
             laneChangeSpeed = skill.invoke.laneChangeSpeed(this),
         ).also {
@@ -543,6 +543,9 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
     } else null
     if (skill.invoke.isSpeedWithDecel) {
         simulation.currentSpeed += skill.invoke.speedWithDecel(this)
+    }
+    if (skill.invoke.isEvoDurationUp) {
+        simulation.evoDurationMultiplier = max(simulation.evoDurationMultiplier, skill.invoke.evoDurationUp(this))
     }
     simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed

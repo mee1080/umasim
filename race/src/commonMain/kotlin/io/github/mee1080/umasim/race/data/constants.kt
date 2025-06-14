@@ -308,6 +308,8 @@ internal val skillLevelValueDefault = listOf(1.0, 1.0, 1.02, 1.04, 1.06, 1.08, 1
 
 internal val skillLevelValueSpeed = listOf(1.0, 1.0, 1.01, 1.04, 1.07, 1.1, 1.13)
 
+internal val skillLevelValueFixed = listOf(1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0)
+
 /**
  * ベース脚質->距離->脚色十分加速度補正倍率
  */
