@@ -21,3 +21,4 @@ include("race")
 include("compose")
 
 include("mcp")
+include("chat")
