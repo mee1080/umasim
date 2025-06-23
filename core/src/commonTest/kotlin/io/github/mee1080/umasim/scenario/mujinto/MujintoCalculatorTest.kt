@@ -1,13 +1,6 @@
 package io.github.mee1080.umasim.scenario.mujinto
 
-import org.junit.jupiter.api.Test
-// import io.github.mee1080.umasim.data.ExpectedStatus // Uncomment if needed for tests
-// import io.github.mee1080.umasim.data.RaceEntry // Uncomment if needed for tests
-// import io.github.mee1080.umasim.data.Status // Uncomment if needed for tests
-// import io.github.mee1080.umasim.simulation2.Action // Uncomment if needed for tests
-// import io.github.mee1080.umasim.simulation2.Calculator // Uncomment if needed for tests
-// import io.github.mee1080.umasim.simulation2.ScenarioActionParam // Uncomment if needed for tests
-// import io.github.mee1080.umasim.simulation2.SimulationState // Uncomment if needed for tests
+import kotlin.test.Test
 
 class MujintoCalculatorTest {
 
