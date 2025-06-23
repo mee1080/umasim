@@ -35,6 +35,9 @@ import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
 import io.github.mee1080.umasim.scenario.ura.UraScenarioEvents
 import io.github.mee1080.umasim.scenario.ura.uraTrainingData
+import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
+import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
+import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
 import io.github.mee1080.umasim.simulation2.AoharuMemberState
 import io.github.mee1080.umasim.simulation2.AoharuNotMemberState
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
@@ -191,6 +194,19 @@ enum class Scenario(
     ) {
         override fun memberState(card: SupportCard, guest: Boolean) = LegendMemberState(guest)
     },
+
+    MUJINTO(
+        scenarioNumber = 11,
+        displayName = "無人島シナリオ（仮）",
+        trainingData = mujintoTrainingData, // TODO: 無人島シナリオ
+        scenarioEvents = { MujintoScenarioEvents() }, // TODO: 無人島シナリオ
+        // Copied from URA scenario
+        turn = 78, // TODO: 無人島シナリオ
+        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64), // TODO: 無人島シナリオ
+        hasSecondTrainingStatus = false, // TODO: 無人島シナリオ
+        scenarioLink = emptySet(), // TODO: 無人島シナリオ
+        calculator = MujintoCalculator, // TODO: 無人島シナリオ
+    ),
 
     ;
 
