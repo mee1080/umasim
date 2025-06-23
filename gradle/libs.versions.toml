@@ -2,9 +2,9 @@
 
 buildkonfig = "0.17.1"
 clikt = "5.0.3"
-compose = "1.8.1"
+compose = "1.8.2"
 jvmTarget = "17"
-koalaplot = "0.8.0"
+koalaplot = "0.9.0"
 kotlin = "2.1.21"
 kotlinx-browser = "0.3"
 kotlinx-coroutines = "1.10.2"
