@@ -1,16 +1,14 @@
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.ai.MujintoActionSelector // Assuming a MujintoActionSelector exists or will be created
+import io.github.mee1080.umasim.ai.MujintoActionSelector
+import io.github.mee1080.umasim.ai.generator
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
-// import io.github.mee1080.umasim.scenario.uaf.ColorFactor // Removed UAF specific import
-// import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator // Removed UAF specific import
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlin.math.roundToInt
-import kotlin.system.measureTimeMillis
 import kotlin.time.measureTime
 
 fun debugMujinto() {
@@ -23,7 +21,8 @@ fun debugMujinto() {
 
 fun debugMujintoRunSimulation() {
     val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5) // Placeholder character
-    val support = Store.getSupportByName( // Placeholder supports
+    val support = Store.getSupportByName(
+        // Placeholder supports
         "[血脈の胎動]ドゥラメンテ",
         "[大望は飛んでいく]エルコンドルパサー",
         "[冬溶かす熾火]メジロラモーヌ",
@@ -33,26 +32,28 @@ fun debugMujintoRunSimulation() {
     )
     println(chara)
     println(support)
-    val factor = listOf( // Placeholder factors
+    val factor = listOf(
+        // Placeholder factors
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
         StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
     runBlocking {
         repeat(8) { index ->
             // Assuming a MujintoActionSelector exists or will be created
-            val selector = MujintoActionSelector.speed2Power1Guts1Wisdom1Mile
+            val selector = MujintoActionSelector.s2h2w1
             launch(context) {
                 val summary = Runner.run(
                     1000,
-                    Scenario.Mujinto, // Changed to Mujinto Scenario
+                    Scenario.MUJINTO, // Changed to Mujinto Scenario
                     chara,
                     support,
                     factor,
-                    selector = selector,
+                    selector = { selector.generator().generateSelector() },
                 )
                 // Assuming Runner.mujintoMileEvaluateSetting exists or will be created
-                val evaluator = Evaluator(summary, Runner.mujintoMileEvaluateSetting, 0.2)
-                val score = (evaluator.upperSum(1.0, Runner.mujintoMileEvaluateSetting) * 1000).roundToInt() / 1000.0
+                // TODO Add Mujinto specific evaluate setting
+                val evaluator = Evaluator(summary, Runner.legendSetting, 0.2)
+                val score = (evaluator.upperSum(1.0, Runner.legendSetting) * 1000).roundToInt() / 1000.0
                 println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }
@@ -61,7 +62,8 @@ fun debugMujintoRunSimulation() {
 
 fun debugMujintoSingleSimulation() {
     val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5) // Placeholder character
-    val support = Store.getSupportByName( // Placeholder supports
+    val support = Store.getSupportByName(
+        // Placeholder supports
         "[血脈の胎動]ドゥラメンテ",
         "[大望は飛んでいく]エルコンドルパサー",
         "[冬溶かす熾火]メジロラモーヌ",
@@ -72,13 +74,14 @@ fun debugMujintoSingleSimulation() {
     println(chara.name)
     println(support.joinToString(", ") { it.name })
     // Assuming a MujintoActionSelector exists or will be created
-    val selector = MujintoActionSelector.speed2Power1Guts1Wisdom1Mile()
-    val factor = listOf( // Placeholder factors
+    val selector = MujintoActionSelector.s2h2w1.generator().generateSelector()
+    val factor = listOf(
+        // Placeholder factors
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
         StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     )
     val result = runBlocking {
-        Simulator(Scenario.Mujinto, chara, support, factor) // Changed to Mujinto Scenario
+        Simulator(Scenario.MUJINTO, chara, support, factor) // Changed to Mujinto Scenario
             .simulateWithHistory(selector) { RandomEvents(it) }
     }
     result.second.forEachIndexed { index, history ->
