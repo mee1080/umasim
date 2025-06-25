@@ -196,17 +196,29 @@ enum class Scenario(
     },
 
     MUJINTO(
-        scenarioNumber = 11,
-        displayName = "無人島シナリオ（仮）",
-        trainingData = mujintoTrainingData, // TODO: 無人島シナリオ
-        scenarioEvents = { MujintoScenarioEvents() }, // TODO: 無人島シナリオ
-        // Copied from URA scenario
-        turn = 78, // TODO: 無人島シナリオ
-        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64), // TODO: 無人島シナリオ
-        hasSecondTrainingStatus = false, // TODO: 無人島シナリオ
-        scenarioLink = emptySet(), // TODO: 無人島シナリオ
-        calculator = MujintoCalculator, // TODO: 無人島シナリオ
-    ),
+        scenarioNumber = 11, // Assuming next available number
+        displayName = "無人島へようこそ -DESIGN YOUR ISLAND-", // From memo title
+        trainingData = mujintoTrainingData,
+        scenarioEvents = { MujintoScenarioEvents() },
+        // Values below are placeholders or based on common patterns, update with actual data.
+        turn = 78, // Standard turn count, confirm if different for Mujinto
+        // levelUpTurns: Unknown, typically related to summer training camps if applicable
+        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64), // Placeholder from URA
+        guestMember = true, // Tucker Bligh is a new friend card, implies guest mechanics
+        hasSecondTrainingStatus = true, // Common for newer scenarios, "Island Training" might use it
+        scenarioLink = setOf(
+            "タマモクロス",
+            "メジロライアン",
+            "アイネスフウジン",
+            "ゴールドシチー",
+            "サクラチヨノオー",
+            "タッカーブライン"
+        ), // From mujinto_memo.md
+        calculator = MujintoCalculator,
+    ) {
+        override fun memberState(card: SupportCard, guest: Boolean) = io.github.mee1080.umasim.scenario.mujinto.MujintoMemberState() // Ensure MujintoMemberState is used
+        override fun memberState(member: TeamMemberData) = io.github.mee1080.umasim.scenario.mujinto.MujintoMemberState()
+    },
 
     ;
 
