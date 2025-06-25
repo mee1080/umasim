@@ -30,14 +30,14 @@ import io.github.mee1080.umasim.scenario.live.liveTrainingData
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.MechaScenarioEvents
 import io.github.mee1080.umasim.scenario.mecha.mechaTrainingData
+import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
+import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
+import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
 import io.github.mee1080.umasim.scenario.ura.UraScenarioEvents
 import io.github.mee1080.umasim.scenario.ura.uraTrainingData
-import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
-import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
-import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
 import io.github.mee1080.umasim.simulation2.AoharuMemberState
 import io.github.mee1080.umasim.simulation2.AoharuNotMemberState
 import io.github.mee1080.umasim.simulation2.ScenarioMemberState
@@ -196,16 +196,13 @@ enum class Scenario(
     },
 
     MUJINTO(
-        scenarioNumber = 11, // Assuming next available number
-        displayName = "無人島へようこそ -DESIGN YOUR ISLAND-", // From memo title
+        scenarioNumber = 11,
+        displayName = "無人島へようこそ -DESIGN YOUR ISLAND-",
         trainingData = mujintoTrainingData,
         scenarioEvents = { MujintoScenarioEvents() },
-        // Values below are placeholders or based on common patterns, update with actual data.
-        turn = 78, // Standard turn count, confirm if different for Mujinto
-        // levelUpTurns: Unknown, typically related to summer training camps if applicable
-        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64), // Placeholder from URA
-        guestMember = true, // Tucker Bligh is a new friend card, implies guest mechanics
-        hasSecondTrainingStatus = true, // Common for newer scenarios, "Island Training" might use it
+        turn = 78,
+        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64),
+        guestMember = true,
         scenarioLink = setOf(
             "タマモクロス",
             "メジロライアン",
@@ -213,12 +210,9 @@ enum class Scenario(
             "ゴールドシチー",
             "サクラチヨノオー",
             "タッカーブライン"
-        ), // From mujinto_memo.md
+        ),
         calculator = MujintoCalculator,
-    ) {
-        override fun memberState(card: SupportCard, guest: Boolean) = io.github.mee1080.umasim.scenario.mujinto.MujintoMemberState() // Ensure MujintoMemberState is used
-        override fun memberState(member: TeamMemberData) = io.github.mee1080.umasim.scenario.mujinto.MujintoMemberState()
-    },
+    ),
 
     ;
 

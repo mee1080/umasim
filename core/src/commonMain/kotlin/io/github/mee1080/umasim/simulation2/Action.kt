@@ -442,3 +442,17 @@ data class FriendAction(
 ) : SingleAction {
     override val turnChange get() = false
 }
+
+data class MujintoTrainingResult(
+    val member: List<MemberState>,
+    override val status: Status,
+) : ActionResult {
+    override fun toString() = "島トレーニング ${status.toShortString()}"
+}
+
+data class MujintoTraining(
+    override val result: MujintoTrainingResult,
+) : SingleAction {
+    override val name get() = "島トレーニング"
+    override val turnChange get() = false
+}

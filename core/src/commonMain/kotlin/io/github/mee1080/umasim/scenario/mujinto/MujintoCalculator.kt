@@ -6,8 +6,6 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
-import io.github.mee1080.umasim.utility.applyIf
-import kotlin.math.min
 
 object MujintoCalculator : ScenarioCalculator {
 
@@ -34,19 +32,6 @@ object MujintoCalculator : ScenarioCalculator {
         // TODO: Add similar logic for STAMINA, POWER, GUTS, WISDOM facilities.
         // TODO: Implement effects of SPECIAL facilities.
 
-        // Apply "Island Training" (島トレ) specific bonuses if this training is an island training.
-        // This requires identifying if the current `info.training` is an "Island Training".
-        // We might need a new Action type or a flag in `Training` action.
-        // For now, assume a generic training.
-        if (isIslandTraining(info.training)) {
-            // TODO: Implement "Island Training" stat calculation.
-            // "全パラメータアップ"
-            // "無人島の各施設にサポカとゲストを配置、得意トレの施設なら友情"
-            // "サポカタイプに応じた能力が上がる、得意トレがバラバラの方が強い？"
-            // This will be complex and needs access to facility levels, support card placements for island training.
-            scenarioBonus += Status(speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5) // Placeholder
-        }
-
         // TODO: Apply bonuses from "Evaluation Meetings" (評価会) if any are active.
         // "通常トレ効果アップありそう"
 
@@ -55,13 +40,6 @@ object MujintoCalculator : ScenarioCalculator {
         // For now, this is handled by the core calculator, but might need adjustments.
 
         return scenarioBonus
-    }
-
-    // Helper to check if a training is an "Island Training" - needs proper implementation
-    private fun isIslandTraining(training: Training): Boolean {
-        // Placeholder: This needs a proper way to identify Island Training.
-        // Maybe a specific ActionParam or a new Action type.
-        return (training.actionParam as? MujintoActionParam)?.isIslandTraining ?: false
     }
 
     override fun calcBaseRaceStatus(
@@ -134,20 +112,14 @@ object MujintoCalculator : ScenarioCalculator {
 
         // Predict "Island Training" (島トレ) if a ticket is available
         if (mujintoStatus.islandTrainingTickets > 0) {
-            // TODO: Create a proper "IslandTraining" action.
-            // This needs to define how stats are gained, which depends on facility levels and support card placements.
-            // For now, a placeholder Training action with a special param.
-            // The actual stat calculation will happen in `calcScenarioStatus` when this action is chosen.
-            val islandTrainingAction = Training(
-                type = StatusType.SPEED, // Placeholder, actual Island Training affects all stats
-                level = 1, // Placeholder
-                base = Status(speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5), // Placeholder base gain
-                failureRate = 0,
-                turn = state.turn,
-                actionParam = MujintoActionParam(isIslandTraining = true)
-                // `member` for island training would be complex, involving all placed supports.
+            // TODO: 上昇量
+            // "全パラメータアップ"
+            // "無人島の各施設にサポカとゲストを配置、得意トレの施設なら友情"
+            // "サポカタイプに応じた能力が上がる、得意トレがバラバラの方が強い？"
+            val islandTrainingAction = MujintoTraining(
+                MujintoTrainingResult(state.member, Status()),
             )
-            // scenarioActions.add(islandTrainingAction) // Needs a proper Action definition
+            scenarioActions.add(islandTrainingAction) // Needs a proper Action definition
         }
 
         // TODO: Predict "Facility Construction" (施設建設) actions.
@@ -195,7 +167,11 @@ object MujintoCalculator : ScenarioCalculator {
 
     // --- Helper functions and specific logic for Mujinto ---
 
-    fun applyFacilityConstruction(state: SimulationState, facilityType: FacilityType, pointsSpent: Int): SimulationState {
+    fun applyFacilityConstruction(
+        state: SimulationState,
+        facilityType: FacilityType,
+        pointsSpent: Int
+    ): SimulationState {
         val mujintoStatus = state.mujintoStatus ?: return state
         val facility = mujintoStatus.facilities[facilityType] ?: return state
 
@@ -222,26 +198,20 @@ object MujintoCalculator : ScenarioCalculator {
         return state.updateMujintoStatus {
             copy(
                 facilities = facilities.toMutableMap().apply {
-                    this[facilityType] = facility.copy(level = newLevel, constructionProgress = facility.constructionProgress)
+                    this[facilityType] =
+                        facility.copy(level = newLevel, constructionProgress = facility.constructionProgress)
                 },
                 developmentPoints = developmentPoints - pointsSpent // Assuming points are spent from total
             )
         }
     }
 
-    // ActionParam for Mujinto specific actions like Island Training
-    data class MujintoActionParam(
-        val isIslandTraining: Boolean = false,
-        // TODO: Add other params like facility to construct, Tucker Bligh outing choice, etc.
-    ) : ScenarioActionParam(Scenario.MUJINTO)
+    fun applyScenarioAction(state: SimulationState, action: MujintoTrainingResult): SimulationState {
+        // TODO
+        return state
+    }
 }
 
 // Extension property for easier access to MujintoStatus from SimulationState
 val SimulationState.mujintoStatus: MujintoStatus?
     get() = scenarioStatus as? MujintoStatus
-
-// Extension property for easier access to MujintoMemberState from MemberState
-val MemberState.mujintoMemberState: MujintoMemberState?
-    get() = scenarioState as? MujintoMemberState
-
-[end of core/src/commonMain/kotlin/io/github/mee1080/umasim/scenario/mujinto/MujintoCalculator.kt]

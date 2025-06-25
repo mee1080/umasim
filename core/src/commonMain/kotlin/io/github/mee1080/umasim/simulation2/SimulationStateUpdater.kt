@@ -34,6 +34,7 @@ import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
+import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -248,6 +249,8 @@ suspend fun SimulationState.applyAction(
         is MechaTuningResult -> updateMechaStatus { applyTuning(result) }
 
         is LegendActionResult -> LegendCalculator.applyScenarioAction(this, result)
+
+        is MujintoTrainingResult -> MujintoCalculator.applyScenarioAction(this, result)
     }
 }
 
