@@ -200,6 +200,14 @@ fun SelectionBlock(
                         Div { Text("☆${buff.rank} ${buff.member.color}(${buff.member.displayName})") }
                         Div { Text(buff.description) }
                     }
+
+                    is MujintoTraining -> {
+                        // TODO
+                    }
+
+                    is MujintoAddPlan -> {
+                        // TODO
+                    }
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
