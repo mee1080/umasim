@@ -1,64 +1,23 @@
 package io.github.mee1080.umasim.scenario.mujinto
 
-import kotlin.test.Test
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.CalculatorTestBase
+import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.utility.mapValuesIf
 
-class MujintoCalculatorTest {
+abstract class MujintoCalculatorTest(
+    chara: Triple<String, Int, Int>,
+    supportCardList: List<Pair<String, Int>>,
+) : CalculatorTestBase(Scenario.MUJINTO, chara, supportCardList) {
 
-    // TODO: 必要に応じてMujintoCalculatorのインスタンスを初期化
-
-    @Test
-    fun calcScenarioStatus_test() {
-        // TODO: 無人島シナリオにおける calcScenarioStatus の具体的なテストケースを記述
-        // 例: val calculator = MujintoCalculator
-        //     val info = Calculator.CalcInfo(...)
-        //     val baseStatus = Status(...)
-        //     val rawStatus = ExpectedStatus(...)
-        //     val result = calculator.calcScenarioStatus(info, baseStatus, rawStatus, false)
-        //     assertEquals(expected, result) // JUnitのassertEqualsなどを使用
+    protected fun Calculator.CalcInfo.updateMujintoStatus(action: MujintoStatus.() -> MujintoStatus): Calculator.CalcInfo {
+        return copy(scenarioStatus = mujintoStatus?.run { action() })
     }
 
-    @Test
-    fun calcBaseRaceStatus_test() {
-        // TODO: 無人島シナリオにおける calcBaseRaceStatus の具体的なテストケースを記述
-    }
-
-    @Test
-    fun applyScenarioRaceBonus_test() {
-        // TODO: 無人島シナリオにおける applyScenarioRaceBonus の具体的なテストケースを記述
-    }
-
-    @Test
-    fun raceScenarioActionParam_test() {
-        // TODO: 無人島シナリオにおける raceScenarioActionParam の具体的なテストケースを記述
-    }
-
-    @Test
-    fun predictSleep_test() {
-        // TODO: 無人島シナリオにおける predictSleep の具体的なテストケースを記述
-    }
-
-    @Test
-    fun predictScenarioActionParams_test() {
-        // TODO: 無人島シナリオにおける predictScenarioActionParams の具体的なテストケースを記述
-    }
-
-    @Test
-    fun predictScenarioAction_test() {
-        // TODO: 無人島シナリオにおける predictScenarioAction の具体的なテストケースを記述
-    }
-
-    @Test
-    fun normalRaceBlocked_test() {
-        // TODO: 無人島シナリオにおける normalRaceBlocked の具体的なテストケースを記述
-    }
-
-    @Test
-    fun updateScenarioTurn_test() {
-        // TODO: 無人島シナリオにおける updateScenarioTurn の具体的なテストケースを記述
-    }
-
-    @Test
-    fun updateOnAddStatus_test() {
-        // TODO: 無人島シナリオにおける updateOnAddStatus の具体的なテストケースを記述
+    protected fun Calculator.CalcInfo.setFacilityLevel(type: StatusType, level: Int): Calculator.CalcInfo {
+        return updateMujintoStatus {
+            copy(facilityLevel = facilityLevel.mapValuesIf({ it.key == type }) { level })
+        }
     }
 }

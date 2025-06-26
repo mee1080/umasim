@@ -3,7 +3,6 @@ package io.github.mee1080.umasim.scenario.mujinto
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.RaceEntry
 import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 
@@ -21,14 +20,14 @@ object MujintoCalculator : ScenarioCalculator {
         // Apply facility bonuses
         // TODO: Refine this based on how "島トレ効果" and specific facility level effects work.
         // This is a very simplified placeholder.
-        val speedFacility = mujintoStatus.facilities[FacilityType.SPEED]
-        if (speedFacility != null && speedFacility.level > 0) {
-            // Example: "スピードLv1: 島トレ・島スピードにスピボ1", "島スピードのトレ効果5%"
-            // Assuming direct status bonus for now if it's a speed training.
-            if (info.training.type == StatusType.SPEED) {
-                scenarioBonus += Status(speed = speedFacility.level * 2) // Placeholder
-            }
-        }
+//        val speedFacility = mujintoStatus.facilities[FacilityType.SPEED]
+//        if (speedFacility != null && speedFacility.level > 0) {
+//            // Example: "スピードLv1: 島トレ・島スピードにスピボ1", "島スピードのトレ効果5%"
+//            // Assuming direct status bonus for now if it's a speed training.
+//            if (info.training.type == StatusType.SPEED) {
+//                scenarioBonus += Status(speed = speedFacility.level * 2) // Placeholder
+//            }
+//        }
         // TODO: Add similar logic for STAMINA, POWER, GUTS, WISDOM facilities.
         // TODO: Implement effects of SPECIAL facilities.
 
@@ -111,7 +110,7 @@ object MujintoCalculator : ScenarioCalculator {
         val scenarioActions = mutableListOf<Action>()
 
         // Predict "Island Training" (島トレ) if a ticket is available
-        if (mujintoStatus.islandTrainingTickets > 0) {
+        if (mujintoStatus.mujintoTrainingTicket > 0) {
             // TODO: 上昇量
             // "全パラメータアップ"
             // "無人島の各施設にサポカとゲストを配置、得意トレの施設なら友情"
@@ -165,53 +164,19 @@ object MujintoCalculator : ScenarioCalculator {
         return super.updateOnAddStatus(state, status)
     }
 
-    // --- Helper functions and specific logic for Mujinto ---
-
-    fun applyFacilityConstruction(
-        state: SimulationState,
-        facilityType: FacilityType,
-        pointsSpent: Int
-    ): SimulationState {
-        val mujintoStatus = state.mujintoStatus ?: return state
-        val facility = mujintoStatus.facilities[facilityType] ?: return state
-
-        // Assuming 100 points for 1 "mass" of progress.
-        // Facility levels might require different amounts of "masses".
-        // TODO: Refine based on actual construction mechanics.
-        val newProgress = facility.constructionProgress + pointsSpent
-        var newLevel = facility.level
-        // Placeholder: assume each level needs 100 progress points (1 mass) for simplicity
-        val pointsPerLevel = 100
-        if (newProgress >= pointsPerLevel) {
-            // Level up logic
-            // newLevel = min(5, newLevel + newProgress / pointsPerLevel) // Max level 5
-            // facility.constructionProgress = newProgress % pointsPerLevel
-            // This needs more details on how levels and "masses" (マス) work.
-            // "Lv1～3：1マス、Lv4：2マス、Lv5：3マス"
-        } else {
-            // facility.constructionProgress = newProgress
-        }
-
-        // TODO: "建設2枠と5枠？で島トレ券を獲得し、同時に施設効果発動？"
-        // This implies tracking total construction "枠" (slots/masses) filled.
-
-        return state.updateMujintoStatus {
-            copy(
-                facilities = facilities.toMutableMap().apply {
-                    this[facilityType] =
-                        facility.copy(level = newLevel, constructionProgress = facility.constructionProgress)
-                },
-                developmentPoints = developmentPoints - pointsSpent // Assuming points are spent from total
-            )
-        }
-    }
-
-    fun applyScenarioAction(state: SimulationState, action: MujintoTrainingResult): SimulationState {
+    fun applyScenarioAction(state: SimulationState, action: MujintoActionResult): SimulationState {
         // TODO
         return state
     }
-}
 
-// Extension property for easier access to MujintoStatus from SimulationState
-val SimulationState.mujintoStatus: MujintoStatus?
-    get() = scenarioStatus as? MujintoStatus
+    fun applyScenarioActionParam(
+        state: SimulationState,
+        action: Action,
+        result: ActionResult,
+        params: MujintoActionParam,
+    ): SimulationState {
+        val mujintoStatus = state.mujintoStatus ?: return state
+        if (!result.success) return state
+        return state.updateMujintoStatus { addPioneerPoint(params.pioneerPoint) }
+    }
+}

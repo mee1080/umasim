@@ -7,6 +7,7 @@ import io.github.mee1080.umasim.scenario.cook.updateCookStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
+import io.github.mee1080.umasim.scenario.mujinto.updateMujintoStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
 
@@ -79,6 +80,21 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
                     target.supportState != null && target.supportState.outingEnabled && !target.supportState.passion
                 ) {
                     startPassion(target)
+                }
+            } else this
+        }
+
+        "タッカーブライン" -> {
+            if (isFirst) {
+                // TODO
+                applyFriendEvent(target, Status(6, 6, 6, 6, 6), 10, 1)
+            } else if (Random.nextDouble() < 0.4) {
+                if (Random.nextDouble() < 0.1) {
+                    applyFriendEvent(target, Status(stamina = 5, motivation = 1), 5)
+                } else {
+                    applyFriendEvent(target, Status(stamina = 5), 5)
+                }.updateMujintoStatus {
+                    copy(nextTurnSpecialtyBuff = 20)
                 }
             } else this
         }
@@ -240,6 +256,43 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
             }
         }
 
+        "タッカーブライン" -> {
+            when (step) {
+                // TODO
+                1 -> applyFriendEvent(support, Status(hp = 20, maxHp = 4, motivation = 1), 5, 2)
+
+                // TODO
+                2 -> applyFriendEvent(support, Status(speed = 15, hp = 35, motivation = 1), 5, 3)
+
+                // TODO
+                3 -> applyFriendEvent(support, Status(speed = 10, wisdom = 10, hp = 30, motivation = 1), 5, 4)
+
+                4 -> if (status.hp < 80) {
+                    applyFriendEvent(support, Status(hp = 50, motivation = 1), 5, 5)
+                } else {
+                    applyFriendEvent(
+                        support,
+                        Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                        5, 5,
+                    )
+                }.updateMujintoStatus {
+                    copy(nextTurnSpecialtyBuff = 30)
+                }
+
+                // TODO
+                5 -> applyFriendEvent(support, Status(speed = 25, hp = 30, motivation = 1), 5, 6)
+
+                6 -> applyFriendEvent(
+                    support, Status(power = 30, hp = 30, motivation = 1, skillHint = mapOf("パスファインダー" to 1)),
+                    5, 7,
+                ).updateMujintoStatus {
+                    copy(nextTurnSpecialtyBuff = 120)
+                }
+
+                else -> this
+            }
+        }
+
         else -> this
     }
 }
@@ -284,6 +337,13 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             ).updateLegendStatus { addBuffGauge(2) }
 
+            // TODO
+            "タッカーブライン" -> state.applyFriendEvent(
+                support,
+                Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                5, 0,
+            )
+
             else -> this
         }
     }
@@ -306,6 +366,13 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 support,
                 Status(speed = 14, stamina = 14, power = 14, guts = 14, wisdom = 14, skillPt = 14),
                 0, 0,
+            )
+
+            // TODO
+            "タッカーブライン" -> state.applyFriendEvent(
+                support,
+                Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                5, 0,
             )
 
             else -> this

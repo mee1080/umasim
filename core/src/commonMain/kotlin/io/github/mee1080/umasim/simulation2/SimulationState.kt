@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
+import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
@@ -67,6 +68,8 @@ data class SimulationState(
     val mechaStatus get() = scenarioStatus as? MechaStatus
 
     val legendStatus get() = scenarioStatus as? LegendStatus
+
+    val mujintoStatus get() = scenarioStatus as? MujintoStatus
 
     val supportTypeCount = supportCount.size
 

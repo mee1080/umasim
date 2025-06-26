@@ -52,8 +52,8 @@ fun debugMujintoRunSimulation() {
                 )
                 // Assuming Runner.mujintoMileEvaluateSetting exists or will be created
                 // TODO Add Mujinto specific evaluate setting
-                val evaluator = Evaluator(summary, Runner.legendSetting, 0.2)
-                val score = (evaluator.upperSum(1.0, Runner.legendSetting) * 1000).roundToInt() / 1000.0
+                val evaluator = Evaluator(summary, Runner.mujintoSetting, 0.2)
+                val score = (evaluator.upperSum(1.0, Runner.mujintoSetting) * 1000).roundToInt() / 1000.0
                 println("0,$index,0,${evaluator.toSummaryString()},$score")
             }
         }
