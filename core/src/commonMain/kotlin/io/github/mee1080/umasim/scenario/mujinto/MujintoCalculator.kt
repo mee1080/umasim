@@ -1,10 +1,11 @@
 package io.github.mee1080.umasim.scenario.mujinto
 
-import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.RaceEntry
-import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.umasim.simulation2.Calculator.CalcInfo
+import io.github.mee1080.umasim.simulation2.Calculator.applyMember
+import kotlin.math.min
 
 object MujintoCalculator : ScenarioCalculator {
 
@@ -110,7 +111,7 @@ object MujintoCalculator : ScenarioCalculator {
         val scenarioActions = mutableListOf<Action>()
 
         // Predict "Island Training" (島トレ) if a ticket is available
-        if (mujintoStatus.mujintoTrainingTicket > 0) {
+        if (mujintoStatus.islandTrainingTicket > 0) {
             // TODO: 上昇量
             // "全パラメータアップ"
             // "無人島の各施設にサポカとゲストを配置、得意トレの施設なら友情"
@@ -129,14 +130,6 @@ object MujintoCalculator : ScenarioCalculator {
         // Her outings have choices, which would need to be modeled as different actions or results.
 
         return scenarioActions.toTypedArray()
-    }
-
-
-    override fun normalRaceBlocked(
-        state: SimulationState,
-    ): Boolean {
-        // TODO: 無人島シナリオ固有の通常レースブロック条件があれば実装
-        return super.normalRaceBlocked(state)
     }
 
     override fun updateScenarioTurn(
@@ -178,5 +171,113 @@ object MujintoCalculator : ScenarioCalculator {
         val mujintoStatus = state.mujintoStatus ?: return state
         if (!result.success) return state
         return state.updateMujintoStatus { addPioneerPoint(params.pioneerPoint) }
+    }
+
+    fun calcIslandTrainingStatusSeparated(
+        info: CalcInfo,
+    ): Triple<Pair<Status, ExpectedStatus>, Status, Boolean> {
+        val mujintoStatus = info.mujintoStatus!!
+        val friendCount = info.support.count { it.isFriendTraining(info.training.type) }
+        val member = if (mujintoStatus.facilities.containsKey(StatusType.FRIEND)) info.member else {
+            info.member.filter { member ->
+                member.positions.any {
+                    mujintoStatus.facilities.containsKey(it)
+                }
+            }
+        }
+        if (Calculator.DEBUG) {
+            member.forEach {
+                println("${it.positions} ${it.charaName}")
+            }
+        }
+        val raw = ExpectedStatus(
+            speed = calcIslandTrainingStatus(info, member, StatusType.SPEED, friendCount),
+            stamina = calcIslandTrainingStatus(info, member, StatusType.STAMINA, friendCount),
+            power = calcIslandTrainingStatus(info, member, StatusType.POWER, friendCount),
+            guts = calcIslandTrainingStatus(info, member, StatusType.GUTS, friendCount),
+            wisdom = calcIslandTrainingStatus(info, member, StatusType.WISDOM, friendCount),
+            skillPt = calcIslandTrainingStatus(info, member, StatusType.SKILL, friendCount),
+        )
+        val base = Status(
+            speed = raw.speed.toInt(),
+            stamina = raw.stamina.toInt(),
+            power = raw.power.toInt(),
+            guts = raw.guts.toInt(),
+            wisdom = raw.wisdom.toInt(),
+            skillPt = raw.skillPt.toInt(),
+        )
+        return Triple(
+            base to raw,
+            info.scenario.calculator.calcScenarioStatus(info, base, raw, friendCount > 0),
+            friendCount > 0,
+        )
+    }
+
+    internal fun calcIslandTrainingStatus(
+        info: CalcInfo,
+        member: List<MemberState>,
+        targetType: StatusType,
+        friendCount: Int,
+    ): Double {
+        val mujintoStatus = info.mujintoStatus ?: return 0.0
+        val support = member.filter { !it.guest }
+        val positionedSupport = support.filter { it.positions.contains(targetType) }
+        val upTrainingSupport = support.filter { member ->
+            member.positions.any {
+                upInTraining(it, targetType)
+            }
+        }
+        val baseStatus = mujintoIslandTrainingBase.status.get(targetType)
+        val baseCondition = info.baseSpecialUniqueCondition(
+            trainingSupportCount = support.size,
+            friendTraining = friendCount > 0,
+        )
+        val base = baseStatus + support.sumOf {
+            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
+        } + mujintoStatus.islandTrainingBonus.get(targetType)
+
+        val charaBonus = info.chara.getBonus(targetType) / 100.0
+//        val charaBonus = 1.0
+
+//        val friend = support.map {
+//            if (info.allFriend || it.isFriendTraining(info.training.type)) {
+//                it.card.friendFactor(baseCondition.applyMember(it))
+//            } else 1.0
+//        }.fold(1.0) { acc, d -> acc * d }
+        val friend = 1.0
+
+        val motivationBase = when (info.motivation) {
+            3 -> 0.55
+            else -> info.motivation / 10.0
+        }
+        val motivationBonus =
+            1 + motivationBase * (1 + (support.sumOf {
+                it.card.motivationFactor(baseCondition.applyMember(it))
+            }) / 100.0)
+//        val motivationBonus = 1.0
+
+//        val trainingFactor = if (mujintoStatus.facilities.keys.any { upInTraining(it, targetType) }) 0.6 else 0.3
+        val trainingFactor = 1.0
+        val trainingBonus =
+            1 + (support.sumOf {
+                it.card.trainingFactor(baseCondition.applyMember(it))
+            } * trainingFactor) / 100.0
+
+        val count = when {
+            targetType == StatusType.SKILL -> 1.0 + member.size * 0.05
+
+            mujintoStatus.facilities.containsKey(targetType) -> {
+                1 + member.count { it.positions.contains(targetType) } * 0.05
+            }
+
+            else -> 1.0
+        }
+//        val count = 1.0 + member.size * 0.05
+        val adjust = 1.00
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * adjust
+        if (Calculator.DEBUG) {
+            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
+        }
+        return min(100.0, raw + 0.0002)
     }
 }

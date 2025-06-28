@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.scenario
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.Simulator
@@ -23,14 +24,14 @@ abstract class CalculatorTestBase(
     }
 
     protected val state = Simulator(
-        scenario = Scenario.LEGEND,
+        scenario = scenario,
         chara = Store.getChara(chara.first, chara.second, chara.third),
         supportCardList = Store.getSupportByName(*supportCardList.toTypedArray()),
     ).initialState.let {
         scenario.scenarioEvents().beforeSimulation(it)
     }
 
-    private fun assertStatus(
+    protected fun assertStatus(
         expected: Status,
         result: Status,
         message: String,
@@ -52,6 +53,24 @@ abstract class CalculatorTestBase(
         base: Status? = null,
         scenario: Status? = null,
     ) {
+        testTraining(
+            baseCalcInfo,
+            state.training[type.ordinal].base[level - 1],
+            guestCount,
+            *supportIndices,
+            base = base,
+            scenario = scenario,
+        )
+    }
+
+    protected fun testTraining(
+        baseCalcInfo: Calculator.CalcInfo,
+        training: TrainingBase,
+        guestCount: Int,
+        vararg supportIndices: Int,
+        base: Status? = null,
+        scenario: Status? = null,
+    ) {
         val memberNames = supportCardList.filterIndexed { index, _ ->
             supportIndices.contains(index)
         }.map { it.first }.toSet() + if (baseCalcInfo.member.size > 6) {
@@ -61,7 +80,7 @@ abstract class CalculatorTestBase(
         } else emptySet()
         println(memberNames)
         val info = baseCalcInfo.copy(
-            training = state.training[type.ordinal].base[level - 1],
+            training = training,
             member = baseCalcInfo.member.filter { memberNames.contains(it.name) },
         ).setTeamMember(guestCount)
         val result = Calculator.calcTrainingSuccessStatusSeparated(info)

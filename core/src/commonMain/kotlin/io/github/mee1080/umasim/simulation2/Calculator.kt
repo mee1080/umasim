@@ -155,7 +155,7 @@ object Calculator {
         )
     }
 
-    private fun SpecialUniqueCondition.applyMember(member: MemberState) = copy(
+    fun SpecialUniqueCondition.applyMember(member: MemberState) = copy(
         relation = member.relation,
         friendCount = member.friendCount,
     )
