@@ -176,27 +176,20 @@ object MujintoCalculator : ScenarioCalculator {
     fun calcIslandTrainingStatusSeparated(
         info: CalcInfo,
     ): Triple<Pair<Status, ExpectedStatus>, Status, Boolean> {
-        val mujintoStatus = info.mujintoStatus!!
         val friendCount = info.support.count { it.isFriendTraining(info.training.type) }
-        val member = if (mujintoStatus.facilities.containsKey(StatusType.FRIEND)) info.member else {
-            info.member.filter { member ->
-                member.positions.any {
-                    mujintoStatus.facilities.containsKey(it)
-                }
-            }
-        }
+        val member = info.member
         if (Calculator.DEBUG) {
             member.forEach {
-                println("${it.positions} ${it.charaName}")
+                println("${it.position} ${it.charaName}")
             }
         }
         val raw = ExpectedStatus(
-            speed = calcIslandTrainingStatus(info, member, StatusType.SPEED, friendCount),
-            stamina = calcIslandTrainingStatus(info, member, StatusType.STAMINA, friendCount),
-            power = calcIslandTrainingStatus(info, member, StatusType.POWER, friendCount),
-            guts = calcIslandTrainingStatus(info, member, StatusType.GUTS, friendCount),
-            wisdom = calcIslandTrainingStatus(info, member, StatusType.WISDOM, friendCount),
-            skillPt = calcIslandTrainingStatus(info, member, StatusType.SKILL, friendCount),
+            speed = calcIslandTrainingStatus(info, StatusType.SPEED, friendCount),
+            stamina = calcIslandTrainingStatus(info, StatusType.STAMINA, friendCount),
+            power = calcIslandTrainingStatus(info, StatusType.POWER, friendCount),
+            guts = calcIslandTrainingStatus(info, StatusType.GUTS, friendCount),
+            wisdom = calcIslandTrainingStatus(info, StatusType.WISDOM, friendCount),
+            skillPt = calcIslandTrainingStatus(info, StatusType.SKILL, friendCount),
         )
         val base = Status(
             speed = raw.speed.toInt(),
@@ -215,29 +208,44 @@ object MujintoCalculator : ScenarioCalculator {
 
     internal fun calcIslandTrainingStatus(
         info: CalcInfo,
-        member: List<MemberState>,
         targetType: StatusType,
         friendCount: Int,
     ): Double {
         val mujintoStatus = info.mujintoStatus ?: return 0.0
-        val support = member.filter { !it.guest }
-        val positionedSupport = support.filter { it.positions.contains(targetType) }
-        val upTrainingSupport = support.filter { member ->
-            member.positions.any {
-                upInTraining(it, targetType)
+        val support = info.member.filter { !it.guest }
+        val mainRate = if (targetType == StatusType.SKILL) 0.9 else 1.0
+        val subRate = 0.6
+        val otherRate = 0.45
+        val mainSupport = mutableListOf<MemberState>()
+        val subSupport = mutableListOf<MemberState>()
+        val otherSupport = mutableListOf<MemberState>()
+        if (targetType == StatusType.SKILL) {
+            mainSupport.addAll(support)
+        } else {
+            support.forEach { member ->
+                when {
+                    member.position == targetType -> mainSupport.add(member)
+                    upInTraining(member.position, targetType) -> subSupport.add(member)
+                    else -> otherSupport.add(member)
+                }
             }
         }
+//        val positionedSupport = support.filter { it.position == targetType }
+//        val upTrainingSupport = support.filter { upInTraining(it.position, targetType) }
         val baseStatus = mujintoIslandTrainingBase.status.get(targetType)
         val baseCondition = info.baseSpecialUniqueCondition(
             trainingSupportCount = support.size,
             friendTraining = friendCount > 0,
         )
-        val base = baseStatus + support.sumOf {
+        val base = baseStatus + mainSupport.sumOf {
             it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
-        } + mujintoStatus.islandTrainingBonus.get(targetType)
+        } * mainRate + subSupport.sumOf {
+            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
+        } * subRate + otherSupport.sumOf {
+            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
+        } * otherRate + mujintoStatus.islandTrainingBonus.get(targetType)
 
         val charaBonus = info.chara.getBonus(targetType) / 100.0
-//        val charaBonus = 1.0
 
 //        val friend = support.map {
 //            if (info.allFriend || it.isFriendTraining(info.training.type)) {
@@ -246,37 +254,29 @@ object MujintoCalculator : ScenarioCalculator {
 //        }.fold(1.0) { acc, d -> acc * d }
         val friend = 1.0
 
-        val motivationBase = when (info.motivation) {
-            3 -> 0.55
-            else -> info.motivation / 10.0
-        }
+        val motivationBase = info.motivation / 10.0
         val motivationBonus =
-            1 + motivationBase * (1 + (support.sumOf {
+            1 + motivationBase * (1 + (mainSupport.sumOf {
                 it.card.motivationFactor(baseCondition.applyMember(it))
-            }) / 100.0)
-//        val motivationBonus = 1.0
+            } * mainRate + subSupport.sumOf {
+                it.card.motivationFactor(baseCondition.applyMember(it))
+            } * subRate + otherSupport.sumOf {
+                it.card.motivationFactor(baseCondition.applyMember(it))
+            } * otherRate) / 100.0)
 
-//        val trainingFactor = if (mujintoStatus.facilities.keys.any { upInTraining(it, targetType) }) 0.6 else 0.3
-        val trainingFactor = 1.0
         val trainingBonus =
-            1 + (support.sumOf {
+            1 + (mainSupport.sumOf {
                 it.card.trainingFactor(baseCondition.applyMember(it))
-            } * trainingFactor) / 100.0
+            } * mainRate + subSupport.sumOf {
+                it.card.trainingFactor(baseCondition.applyMember(it))
+            } * subRate + otherSupport.sumOf {
+                it.card.trainingFactor(baseCondition.applyMember(it))
+            } * otherRate) / 100.0
 
-        val count = when {
-            targetType == StatusType.SKILL -> 1.0 + member.size * 0.05
-
-            mujintoStatus.facilities.containsKey(targetType) -> {
-                1 + member.count { it.positions.contains(targetType) } * 0.05
-            }
-
-            else -> 1.0
-        }
-//        val count = 1.0 + member.size * 0.05
-        val adjust = 1.00
-        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * adjust
+        val count = 1.0 + info.member.size * 0.02
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
         if (Calculator.DEBUG) {
-            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
+            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count main=${mainSupport.joinToString { it.charaName }} sub=${subSupport.joinToString { it.charaName }} other=${otherSupport.joinToString { it.charaName }}")
         }
         return min(100.0, raw + 0.0002)
     }

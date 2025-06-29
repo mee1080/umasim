@@ -6,7 +6,6 @@ import io.github.mee1080.umasim.scenario.CalculatorTestBase
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.Calculator
 import io.github.mee1080.umasim.simulation2.createTeamMemberState
-import io.github.mee1080.utility.mapIf
 
 abstract class MujintoCalculatorTest(
     chara: Triple<String, Int, Int>,
@@ -32,10 +31,10 @@ abstract class MujintoCalculatorTest(
         position: List<Triple<StatusType, List<Int>, Int>> = emptyList(),
         base: Status? = null,
         scenario: Status? = null,
-        pioneerPt: Int,
+        pioneerPt: Int = 0,
     ) {
         var info = baseCalcInfo.copy(
-            member = baseCalcInfo.member.map { it.copy(position = StatusType.NONE) }
+            member = emptyList()
         )
         position.forEach { (type, supportIndices, guestCount) ->
             val memberNames = supportCardList.filterIndexed { index, _ ->
@@ -43,12 +42,8 @@ abstract class MujintoCalculatorTest(
             }.map { it.first }.toSet()
             println("$type : $memberNames + $guestCount")
             info = info.copy(
-                member = info.member.mapIf({ memberNames.contains(it.name) }) {
-                    if (it.position == StatusType.NONE) {
-                        it.copy(position = type)
-                    } else {
-                        it.copy(additionalPosition = it.additionalPosition + type)
-                    }
+                member = info.member + baseCalcInfo.member.filter { memberNames.contains(it.name) }.map {
+                    it.copy(position = type)
                 } + createTeamMemberState(guestCount, Scenario.MUJINTO).map {
                     it.copy(position = type)
                 },
