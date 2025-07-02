@@ -28,7 +28,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(3), 1),
+                Triple(StatusType.SPEED, listOf(), 0),
             ),
             base = Status(10, 7, 5, 5, 12, 8),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -38,7 +38,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(3), 1),
+                Triple(StatusType.SPEED, listOf(), 1),
             ),
             base = Status(11, 7, 5, 5, 12, 8),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -48,7 +48,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(3), 2),
+                Triple(StatusType.SPEED, listOf(), 2),
             ),
             base = Status(11, 7, 5, 5, 12, 8),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -68,7 +68,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(3), 0),
+                Triple(StatusType.SPEED, listOf(2), 0),
             ),
             base = Status(14, 7, 8, 5, 12, 9),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -78,7 +78,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(3), 1),
+                Triple(StatusType.SPEED, listOf(2), 1),
             ),
             base = Status(14, 7, 8, 5, 12, 9),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -224,11 +224,11 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
             scenario = Status(0, 0, 0, 0, 0, 0),
         )
 
-        // 12 ヴィブ+エル+1
+        // 12 ヴィブ+ポケ+1
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(2, 5), 1),
+                Triple(StatusType.SPEED, listOf(2, 4), 1),
             ),
             base = Status(15, 8, 10, 5, 13, 12),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -324,7 +324,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(0, 3), 3),
+                Triple(StatusType.SPEED, listOf(0), 1),
             ),
             base = Status(17, 7, 9, 5, 12, 14),
             scenario = Status(0, 0, 0, 0, 0, 0),
@@ -334,7 +334,7 @@ class MujintoCalculatorTest9 : MujintoCalculatorTest(
         testIslandTraining(
             baseCalcInfo,
             listOf(
-                Triple(StatusType.SPEED, listOf(0, 3), 3),
+                Triple(StatusType.SPEED, listOf(0), 2),
             ),
             base = Status(17, 7, 9, 5, 13, 15),
             scenario = Status(0, 0, 0, 0, 0, 0),
