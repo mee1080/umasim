@@ -206,7 +206,7 @@ object MujintoCalculator : ScenarioCalculator {
         )
     }
 
-    internal fun calcIslandTrainingStatus(
+    private fun calcIslandTrainingStatus(
         info: CalcInfo,
         targetType: StatusType,
         friendCount: Int,
@@ -308,4 +308,20 @@ object MujintoCalculator : ScenarioCalculator {
         (100 + (card.status.friend * rate).toInt()) * (100 + (card.unique.friend * rate).toInt()) * (100 + (card.specialUnique.sumOf {
             it.friendFactor(card, condition)
         } * rate).toInt()) / 1000000.0
+
+    private fun calcIslandTrainingBonus(
+        info: CalcInfo,
+        friendCount: Int,
+        base: Status,
+    ): Status {
+        val mujintoStatus = info.mujintoStatus ?: return Status()
+        return Status(
+            speed = base.speed * mujintoStatus.islandTrainingEffect(StatusType.SPEED, friendCount) / 100,
+            stamina = base.stamina * mujintoStatus.islandTrainingEffect(StatusType.STAMINA, friendCount) / 100,
+            power = base.power * mujintoStatus.islandTrainingEffect(StatusType.POWER, friendCount) / 100,
+            guts = base.guts * mujintoStatus.islandTrainingEffect(StatusType.GUTS, friendCount) / 100,
+            wisdom = base.wisdom * mujintoStatus.islandTrainingEffect(StatusType.WISDOM, friendCount) / 100,
+            skillPt = base.skillPt * mujintoStatus.islandTrainingEffect(StatusType.SKILL, friendCount) / 100
+        )
+    }
 }
