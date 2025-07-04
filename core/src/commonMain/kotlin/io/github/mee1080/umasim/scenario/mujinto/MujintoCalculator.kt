@@ -292,7 +292,12 @@ object MujintoCalculator : ScenarioCalculator {
                 (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingOtherRate).toInt()
             }) / 100.0
 
-        val count = 1.0 + support.size * 0.05 + (info.member.size - support.size) * 0.02
+        val trainingSupportCount = support.count { it.position != StatusType.FRIEND }
+        val otherSupportCount = support.size - trainingSupportCount
+        val trainingGuestCount = info.member.count { it.guest && it.position != StatusType.FRIEND }
+        val otherGuestCount = info.member.size - support.size - trainingGuestCount
+        val count =
+            1.0 + trainingSupportCount * 0.05 + trainingGuestCount * 0.02 + otherSupportCount * 0.01 + otherGuestCount * 0.01
         val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
         if (Calculator.DEBUG) {
             println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count main=${mainSupport.joinToString { it.charaName }} sub=${subSupport.joinToString { it.charaName }} other=${otherSupport.joinToString { it.charaName }}")
