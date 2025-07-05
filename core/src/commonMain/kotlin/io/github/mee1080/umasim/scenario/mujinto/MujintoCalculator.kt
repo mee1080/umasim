@@ -176,7 +176,7 @@ object MujintoCalculator : ScenarioCalculator {
     fun calcIslandTrainingStatusSeparated(
         info: CalcInfo,
     ): Triple<Pair<Status, ExpectedStatus>, Status, Boolean> {
-        val friendCount = info.support.count { it.isFriendTraining(info.training.type) }
+        val friendCount = info.support.count { it.isFriendTraining(it.position) }
         val member = info.member
         if (Calculator.DEBUG) {
             member.forEach {
@@ -205,52 +205,6 @@ object MujintoCalculator : ScenarioCalculator {
             friendCount > 0,
         )
     }
-
-    /**
-     * 配置→ステータス→倍率
-     */
-    private val islandTrainingRate = mapOf(
-        StatusType.SPEED to mapOf(
-            StatusType.SPEED to 0.6,
-            StatusType.STAMINA to 0.0,
-            StatusType.POWER to 0.4,
-            StatusType.GUTS to 0.0,
-            StatusType.WISDOM to 0.0,
-            StatusType.SKILL to 0.5,
-        ),
-        StatusType.STAMINA to mapOf(
-            StatusType.SPEED to 0.0,
-            StatusType.STAMINA to 0.6,
-            StatusType.POWER to 0.0,
-            StatusType.GUTS to 0.4,
-            StatusType.WISDOM to 0.0,
-            StatusType.SKILL to 0.5,
-        ),
-        StatusType.POWER to mapOf(
-            StatusType.SPEED to 0.0,
-            StatusType.STAMINA to 0.3,
-            StatusType.POWER to 0.6,
-            StatusType.GUTS to 0.0,
-            StatusType.WISDOM to 0.0,
-            StatusType.SKILL to 0.7,
-        ),
-        StatusType.GUTS to mapOf(
-            StatusType.SPEED to 0.2,
-            StatusType.STAMINA to 0.0,
-            StatusType.POWER to 0.2,
-            StatusType.GUTS to 0.6,
-            StatusType.WISDOM to 0.0,
-            StatusType.SKILL to 0.5,
-        ),
-        StatusType.WISDOM to mapOf(
-            StatusType.SPEED to 0.4,
-            StatusType.STAMINA to 0.0,
-            StatusType.POWER to 0.0,
-            StatusType.GUTS to 0.0,
-            StatusType.WISDOM to 0.6,
-            StatusType.SKILL to 0.5,
-        ),
-    )
 
     private fun calcIslandTrainingStatus(
         info: CalcInfo,
@@ -305,8 +259,8 @@ object MujintoCalculator : ScenarioCalculator {
 //            } else 1.0
 //        }.fold(1.0) { acc, d -> acc * d }
         val friend = support.map {
-            if (it.isFriendTraining(info.training.type)) {
-                val rate = islandTrainingRate[it.position]!![targetType]!!
+            if (it.isFriendTraining(it.position)) {
+                val rate = mujintoIslandTrainingRate(it.card.type, it.position, targetType)
                 calcFriendFactor(it.card, baseCondition.applyMember(it), rate)
             } else 1.0
         }.fold(1.0) { acc, d -> acc * d }
@@ -326,7 +280,7 @@ object MujintoCalculator : ScenarioCalculator {
 //            }) / 100.0)
         val motivationBase = info.motivation / 10.0
         val motivationBonus = 1 + motivationBase * (1 + (support.sumOf {
-            val rate = islandTrainingRate[it.position]!![targetType]!!
+            val rate = mujintoIslandTrainingRate(it.card.type, it.position, targetType)
             (it.card.motivationFactor(baseCondition.applyMember(it)) * rate).toInt()
         }) / 100.0)
 
@@ -344,9 +298,9 @@ object MujintoCalculator : ScenarioCalculator {
 //            }) / 100.0
         val trainingBonus =
             1 + (support.sumOf {
-                val rate = islandTrainingRate[it.position]!![targetType]!!
+                val rate = mujintoIslandTrainingRate(it.card.type, it.position, targetType)
                 (it.card.trainingFactor(baseCondition.applyMember(it)) * rate).toInt()
-            }) / 100.0
+            } + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0
 
         val trainingSupportCount = support.count { it.position != StatusType.FRIEND }
         val otherSupportCount = support.size - trainingSupportCount

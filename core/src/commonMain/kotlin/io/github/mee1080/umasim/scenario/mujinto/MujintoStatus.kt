@@ -99,7 +99,7 @@ class MujintoFacility(
      */
     fun islandTrainingEffect(targetType: StatusType, friendCount: Int): Int {
         return if (type == StatusType.FRIEND || upInTraining(type, targetType)) {
-            islandTrainingEffectValue + friendCount * trainingEffectByFriend
+            islandTrainingEffectValue
         } else 0
     }
 
@@ -181,7 +181,10 @@ class MujintoFacility(
         return campHintAllValue && applyInCamp(targetType)
     }
 
-    private val trainingEffectByFriend = if (type == StatusType.FRIEND) 5 else 0
+    /**
+     * 友情数によるトレーニング効果
+     */
+    val trainingEffectByFriend = if (type == StatusType.FRIEND) 5 else 0
 
     /**
      * サポカ出現率
@@ -214,6 +217,12 @@ data class MujintoStatus(
     fun addPioneerPoint(point: Int): MujintoStatus {
         // TODO 施設、チケット獲得
         return copy(pioneerPoint = pioneerPoint + point)
+    }
+
+    val trainingEffectByFriend by lazy {
+        facilities.values.sumOf {
+            it.trainingEffectByFriend
+        }
     }
 
     val islandTrainingBonus by lazy {

@@ -68,3 +68,105 @@ val mujintoFacilities = (trainingType + StatusType.FRIEND).associateWith { type 
 fun mujintoFacility(type: StatusType, level: Int, jukuren: Boolean = false): MujintoFacility {
     return mujintoFacilities[type]!![level]!![jukuren]!!
 }
+
+fun mujintoIslandTrainingRate(support: StatusType, position: StatusType, target: StatusType): Double {
+    return if (position == StatusType.FRIEND) {
+        mujintoIslandTrainingRateHouse[support]!![target]!!
+    } else {
+        mujintoIslandTrainingRateStatus[position]!![target]!!
+    }
+}
+
+/**
+ * 島トレのスピ～賢さの倍率
+ * 配置→ステータス→倍率
+ */
+private val mujintoIslandTrainingRateStatus = mapOf(
+    StatusType.SPEED to mapOf(
+        StatusType.SPEED to 0.6,
+        StatusType.STAMINA to 0.0,
+        StatusType.POWER to 0.4,
+        StatusType.GUTS to 0.0,
+        StatusType.WISDOM to 0.0,
+        StatusType.SKILL to 0.5,
+    ),
+    StatusType.STAMINA to mapOf(
+        StatusType.SPEED to 0.0,
+        StatusType.STAMINA to 0.6,
+        StatusType.POWER to 0.0,
+        StatusType.GUTS to 0.4,
+        StatusType.WISDOM to 0.0,
+        StatusType.SKILL to 0.5,
+    ),
+    StatusType.POWER to mapOf(
+        StatusType.SPEED to 0.0,
+        StatusType.STAMINA to 0.3,
+        StatusType.POWER to 0.6,
+        StatusType.GUTS to 0.0,
+        StatusType.WISDOM to 0.0,
+        StatusType.SKILL to 0.7,
+    ),
+    StatusType.GUTS to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.0,
+        StatusType.POWER to 0.2,
+        StatusType.GUTS to 0.6,
+        StatusType.WISDOM to 0.0,
+        StatusType.SKILL to 0.5,
+    ),
+    StatusType.WISDOM to mapOf(
+        StatusType.SPEED to 0.4,
+        StatusType.STAMINA to 0.0,
+        StatusType.POWER to 0.0,
+        StatusType.GUTS to 0.0,
+        StatusType.WISDOM to 0.6,
+        StatusType.SKILL to 0.5,
+    ),
+)
+
+/**
+ * 島トレの海の家の倍率
+ * サポカタイプ→ステータス→倍率
+ */
+private val mujintoIslandTrainingRateHouse = mapOf(
+    StatusType.SPEED to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.1,
+        StatusType.POWER to 0.1,
+        StatusType.GUTS to 0.1,
+        StatusType.WISDOM to 0.1,
+        StatusType.SKILL to 0.7,
+    ),
+    StatusType.STAMINA to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.1,
+        StatusType.POWER to 0.1,
+        StatusType.GUTS to 0.1,
+        StatusType.WISDOM to 0.1,
+        StatusType.SKILL to 0.7,
+    ),
+    StatusType.POWER to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.1,
+        StatusType.POWER to 0.1,
+        StatusType.GUTS to 0.1,
+        StatusType.WISDOM to 0.1,
+        StatusType.SKILL to 0.7,
+    ),
+    StatusType.GUTS to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.1,
+        StatusType.POWER to 0.1,
+        StatusType.GUTS to 0.1,
+        StatusType.WISDOM to 0.1,
+        StatusType.SKILL to 0.7,
+    ),
+    StatusType.WISDOM to mapOf(
+        StatusType.SPEED to 0.2,
+        StatusType.STAMINA to 0.1,
+        StatusType.POWER to 0.1,
+        StatusType.GUTS to 0.1,
+        StatusType.WISDOM to 0.1,
+        StatusType.SKILL to 0.7,
+    ),
+)
