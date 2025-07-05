@@ -201,10 +201,56 @@ object MujintoCalculator : ScenarioCalculator {
         )
         return Triple(
             base to raw,
-            info.scenario.calculator.calcScenarioStatus(info, base, raw, friendCount > 0),
+            calcIslandTrainingBonus(info, friendCount, base),
             friendCount > 0,
         )
     }
+
+    /**
+     * 配置→ステータス→倍率
+     */
+    private val islandTrainingRate = mapOf(
+        StatusType.SPEED to mapOf(
+            StatusType.SPEED to 0.6,
+            StatusType.STAMINA to 0.0,
+            StatusType.POWER to 0.4,
+            StatusType.GUTS to 0.0,
+            StatusType.WISDOM to 0.0,
+            StatusType.SKILL to 0.5,
+        ),
+        StatusType.STAMINA to mapOf(
+            StatusType.SPEED to 0.0,
+            StatusType.STAMINA to 0.6,
+            StatusType.POWER to 0.0,
+            StatusType.GUTS to 0.4,
+            StatusType.WISDOM to 0.0,
+            StatusType.SKILL to 0.5,
+        ),
+        StatusType.POWER to mapOf(
+            StatusType.SPEED to 0.0,
+            StatusType.STAMINA to 0.3,
+            StatusType.POWER to 0.6,
+            StatusType.GUTS to 0.0,
+            StatusType.WISDOM to 0.0,
+            StatusType.SKILL to 0.7,
+        ),
+        StatusType.GUTS to mapOf(
+            StatusType.SPEED to 0.2,
+            StatusType.STAMINA to 0.0,
+            StatusType.POWER to 0.2,
+            StatusType.GUTS to 0.6,
+            StatusType.WISDOM to 0.0,
+            StatusType.SKILL to 0.5,
+        ),
+        StatusType.WISDOM to mapOf(
+            StatusType.SPEED to 0.4,
+            StatusType.STAMINA to 0.0,
+            StatusType.POWER to 0.0,
+            StatusType.GUTS to 0.0,
+            StatusType.WISDOM to 0.6,
+            StatusType.SKILL to 0.5,
+        ),
+    )
 
     private fun calcIslandTrainingStatus(
         info: CalcInfo,
@@ -213,83 +259,93 @@ object MujintoCalculator : ScenarioCalculator {
     ): Double {
         val mujintoStatus = info.mujintoStatus ?: return 0.0
         val support = info.member.filter { !it.guest }
-        val mainRate = if (targetType == StatusType.SKILL) 0.5 else 0.6
-        val subRate = 0.4
-        val otherRate = 0.0
-        val mainSupport = mutableListOf<MemberState>()
-        val subSupport = mutableListOf<MemberState>()
-        val otherSupport = mutableListOf<MemberState>()
-        if (targetType == StatusType.SKILL) {
-            mainSupport.addAll(support)
-        } else {
-            support.forEach { member ->
-                when {
-                    member.position == targetType -> mainSupport.add(member)
-                    upInTraining(member.position, targetType) -> subSupport.add(member)
-                    else -> otherSupport.add(member)
-                }
-            }
-        }
-//        val positionedSupport = support.filter { it.position == targetType }
-//        val upTrainingSupport = support.filter { upInTraining(it.position, targetType) }
+//        val mainRate = if (targetType == StatusType.SKILL) 0.5 else 0.6
+//        val subRate = 0.4
+//        val otherRate = 0.0
+//        val mainSupport = mutableListOf<MemberState>()
+//        val subSupport = mutableListOf<MemberState>()
+//        val otherSupport = mutableListOf<MemberState>()
+//        if (targetType == StatusType.SKILL) {
+//            mainSupport.addAll(support)
+//        } else {
+//            support.forEach { member ->
+//                when {
+//                    member.position == targetType -> mainSupport.add(member)
+//                    upInTraining(member.position, targetType) -> subSupport.add(member)
+//                    else -> otherSupport.add(member)
+//                }
+//            }
+//        }
         val baseStatus = mujintoIslandTrainingBase.status.get(targetType)
         val baseCondition = info.baseSpecialUniqueCondition(
             trainingSupportCount = support.size,
             friendTraining = friendCount > 0,
         )
-//        val base = baseStatus + mainSupport.sumOf {
-//            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
-//        } * mainRate + subSupport.sumOf {
-//            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
-//        } * subRate + otherSupport.sumOf {
-//            it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
-//        } * otherRate + mujintoStatus.islandTrainingBonus.get(targetType)
+
+        // ステータスボーナス
         val base = baseStatus + support.sumOf {
             it.card.getBaseBonus(targetType, baseCondition.applyMember(it))
         } + mujintoStatus.islandTrainingBonus.get(targetType)
 
+        // キャラボーナス
         val charaBonus = info.chara.getBonus(targetType) / 100.0
 
-        val friendMainRate = mainRate
-        val friendSubRate = subRate
-        val friendOtherRate = otherRate
-        val friend = mainSupport.map {
+        // 友情
+//        val friend = mainSupport.map {
+//            if (it.isFriendTraining(info.training.type)) {
+//                calcFriendFactor(it.card, baseCondition.applyMember(it), friendMainRate)
+//            } else 1.0
+//        }.fold(1.0) { acc, d -> acc * d } * subSupport.map {
+//            if (it.isFriendTraining(info.training.type)) {
+//                calcFriendFactor(it.card, baseCondition.applyMember(it), friendSubRate)
+//            } else 1.0
+//        }.fold(1.0) { acc, d -> acc * d } * otherSupport.map {
+//            if (it.isFriendTraining(info.training.type)) {
+//                calcFriendFactor(it.card, baseCondition.applyMember(it), friendOtherRate)
+//            } else 1.0
+//        }.fold(1.0) { acc, d -> acc * d }
+        val friend = support.map {
             if (it.isFriendTraining(info.training.type)) {
-                calcFriendFactor(it.card, baseCondition.applyMember(it), friendMainRate)
-            } else 1.0
-        }.fold(1.0) { acc, d -> acc * d } * subSupport.map {
-            if (it.isFriendTraining(info.training.type)) {
-                calcFriendFactor(it.card, baseCondition.applyMember(it), friendSubRate)
-            } else 1.0
-        }.fold(1.0) { acc, d -> acc * d } * otherSupport.map {
-            if (it.isFriendTraining(info.training.type)) {
-                calcFriendFactor(it.card, baseCondition.applyMember(it), friendOtherRate)
+                val rate = islandTrainingRate[it.position]!![targetType]!!
+                calcFriendFactor(it.card, baseCondition.applyMember(it), rate)
             } else 1.0
         }.fold(1.0) { acc, d -> acc * d }
 
-        val motivationMainRate = mainRate
-        val motivationSubRate = subRate
-        val motivationOtherRate = otherRate
+        // やる気
+//        val motivationMainRate = mainRate
+//        val motivationSubRate = subRate
+//        val motivationOtherRate = otherRate
+//        val motivationBase = info.motivation / 10.0
+//        val motivationBonus =
+//            1 + motivationBase * (1 + (mainSupport.sumOf {
+//                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationMainRate).toInt()
+//            } + subSupport.sumOf {
+//                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationSubRate).toInt()
+//            } + otherSupport.sumOf {
+//                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationOtherRate).toInt()
+//            }) / 100.0)
         val motivationBase = info.motivation / 10.0
-        val motivationBonus =
-            1 + motivationBase * (1 + (mainSupport.sumOf {
-                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationMainRate).toInt()
-            } + subSupport.sumOf {
-                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationSubRate).toInt()
-            } + otherSupport.sumOf {
-                (it.card.motivationFactor(baseCondition.applyMember(it)) * motivationOtherRate).toInt()
-            }) / 100.0)
+        val motivationBonus = 1 + motivationBase * (1 + (support.sumOf {
+            val rate = islandTrainingRate[it.position]!![targetType]!!
+            (it.card.motivationFactor(baseCondition.applyMember(it)) * rate).toInt()
+        }) / 100.0)
 
-        val trainingMainRate = mainRate
-        val trainingSubRate = subRate
-        val trainingOtherRate = otherRate
+        // トレ効果
+//        val trainingMainRate = mainRate
+//        val trainingSubRate = subRate
+//        val trainingOtherRate = otherRate
+//        val trainingBonus =
+//            1 + (mainSupport.sumOf {
+//                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingMainRate).toInt()
+//            } + subSupport.sumOf {
+//                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingSubRate).toInt()
+//            } + otherSupport.sumOf {
+//                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingOtherRate).toInt()
+//            }) / 100.0
         val trainingBonus =
-            1 + (mainSupport.sumOf {
-                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingMainRate).toInt()
-            } + subSupport.sumOf {
-                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingSubRate).toInt()
-            } + otherSupport.sumOf {
-                (it.card.trainingFactor(baseCondition.applyMember(it)) * trainingOtherRate).toInt()
+            1 + (support.sumOf {
+                val rate = islandTrainingRate[it.position]!![targetType]!!
+                (it.card.trainingFactor(baseCondition.applyMember(it)) * rate).toInt()
             }) / 100.0
 
         val trainingSupportCount = support.count { it.position != StatusType.FRIEND }
@@ -300,7 +356,7 @@ object MujintoCalculator : ScenarioCalculator {
             1.0 + trainingSupportCount * 0.05 + trainingGuestCount * 0.02 + otherSupportCount * 0.01 + otherGuestCount * 0.01
         val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
         if (Calculator.DEBUG) {
-            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count main=${mainSupport.joinToString { it.charaName }} sub=${subSupport.joinToString { it.charaName }} other=${otherSupport.joinToString { it.charaName }}")
+            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
         }
         return min(100.0, raw + 0.0002)
     }
