@@ -92,11 +92,11 @@ private val mujintoIslandTrainingRateStatus = mapOf(
     ),
     StatusType.STAMINA to mapOf(
         StatusType.SPEED to 0.0,
-        StatusType.STAMINA to 0.6,
+        StatusType.STAMINA to 0.5,
         StatusType.POWER to 0.0,
-        StatusType.GUTS to 0.4,
+        StatusType.GUTS to 0.3,
         StatusType.WISDOM to 0.0,
-        StatusType.SKILL to 0.5,
+        StatusType.SKILL to 0.7,
     ),
     StatusType.POWER to mapOf(
         StatusType.SPEED to 0.0,
@@ -107,20 +107,20 @@ private val mujintoIslandTrainingRateStatus = mapOf(
         StatusType.SKILL to 0.7,
     ),
     StatusType.GUTS to mapOf(
-        StatusType.SPEED to 0.2,
+        StatusType.SPEED to 0.3,
         StatusType.STAMINA to 0.0,
-        StatusType.POWER to 0.2,
-        StatusType.GUTS to 0.6,
+        StatusType.POWER to 0.3,
+        StatusType.GUTS to 0.5,
         StatusType.WISDOM to 0.0,
-        StatusType.SKILL to 0.5,
+        StatusType.SKILL to 0.7,
     ),
     StatusType.WISDOM to mapOf(
-        StatusType.SPEED to 0.4,
+        StatusType.SPEED to 0.45,
         StatusType.STAMINA to 0.0,
         StatusType.POWER to 0.0,
         StatusType.GUTS to 0.0,
-        StatusType.WISDOM to 0.6,
-        StatusType.SKILL to 0.5,
+        StatusType.WISDOM to 1.0,
+        StatusType.SKILL to 0.7,
     ),
 )
 
