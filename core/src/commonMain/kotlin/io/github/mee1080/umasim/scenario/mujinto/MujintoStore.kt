@@ -132,7 +132,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.SPEED to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.25,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -140,7 +140,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.STAMINA to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.1,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -148,7 +148,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.POWER to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.1,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -156,7 +156,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.GUTS to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.1,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -164,7 +164,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.WISDOM to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.15,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -172,7 +172,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.FRIEND to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.15,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,
@@ -180,7 +180,7 @@ private val mujintoIslandTrainingRateHouse = mapOf(
     StatusType.GROUP to mapOf(
         StatusType.SPEED to 0.2,
         StatusType.STAMINA to 0.15,
-        StatusType.POWER to 0.15,
+        StatusType.POWER to 0.2,
         StatusType.GUTS to 0.15,
         StatusType.WISDOM to 0.15,
         StatusType.SKILL to 0.7,

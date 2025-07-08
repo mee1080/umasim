@@ -300,17 +300,18 @@ object MujintoCalculator : ScenarioCalculator {
             1 + (support.sumOf {
                 val rate = mujintoIslandTrainingRate(it.card.type, it.position, targetType)
                 (it.card.trainingFactor(baseCondition.applyMember(it)) * rate).toInt()
-            } + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0
+            }) / 100.0
 
         val trainingSupportCount = support.count { it.position != StatusType.FRIEND }
         val otherSupportCount = support.size - trainingSupportCount
         val trainingGuestCount = info.member.count { it.guest && it.position != StatusType.FRIEND }
         val otherGuestCount = info.member.size - support.size - trainingGuestCount
         val count =
-            1.0 + trainingSupportCount * 0.05 + trainingGuestCount * 0.02 + otherSupportCount * 0.01 + otherGuestCount * 0.01
-        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
+            1.0 + trainingSupportCount * 0.05 + trainingGuestCount * 0.02 + otherSupportCount * 0.01 + otherGuestCount * 0.00
+        val mujintoFriendBonus = (100 + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * mujintoFriendBonus
         if (Calculator.DEBUG) {
-            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
+            println("$targetType $raw base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count mujintoFriend=$mujintoFriendBonus")
         }
         return min(100.0, raw + 0.0002)
     }
