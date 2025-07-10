@@ -234,10 +234,10 @@ data class MemberState(
     val friendCount get() = supportState?.friendCount ?: 0
     val outingType get() = card.type.outingType
 
-    fun isFriendTraining(type: StatusType) = if (card.type == StatusType.GROUP) {
-        supportState?.passion == true
-    } else {
-        friendTrainingEnabled && type == card.type
+    fun isFriendTraining(type: StatusType) = when (card.type) {
+        StatusType.GROUP -> supportState?.passion == true
+        StatusType.FRIEND -> false
+        else -> friendTrainingEnabled && type == card.type
     }
 
     val hint = supportState?.hintIcon == true

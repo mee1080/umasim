@@ -118,6 +118,10 @@ class MujintoCalculatorTest19 : MujintoCalculatorTest(
             scenario = Status(14, 9, 14, 4, 7, 25),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setFacility(StatusType.SPEED, 3)
+            .setFacility(StatusType.STAMINA, 2)
+
         // 8
         testIslandTraining(
             baseCalcInfo,
