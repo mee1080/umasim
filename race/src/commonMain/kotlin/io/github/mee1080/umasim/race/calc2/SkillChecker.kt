@@ -115,7 +115,8 @@ private fun checkCondition(
         }
 
         "phase_firsthalf" -> condition.checkInRace {
-            if (isLaterHalf) -1 else currentPhase
+            val (start, end) = setting.getPhaseStartEnd(currentPhase)
+            if (simulation.startPosition < (start + end) / 2) currentPhase else -1
         }
 
         "phase_firsthalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
@@ -127,7 +128,8 @@ private fun checkCondition(
         }
 
         "phase_laterhalf" -> condition.checkInRace {
-            if (isLaterHalf) currentPhase else -1
+            val (start, end) = setting.getPhaseStartEnd(currentPhase)
+            if (simulation.startPosition >= (start + end) / 2) currentPhase else -1
         }
 
         "phase_laterhalf_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
