@@ -144,7 +144,6 @@ class MujintoCalculatorTest19 : MujintoCalculatorTest(
             .setFacility(StatusType.GUTS, 1)
             .updateMujintoStatus { copy(facilities = facilities - StatusType.WISDOM) }
             .setFacility(StatusType.FRIEND, 1)
-        println(baseCalcInfo.mujintoStatus?.facilities?.map { it.key to it.value.level })
 
         // 17
         testIslandTraining(
@@ -158,6 +157,29 @@ class MujintoCalculatorTest19 : MujintoCalculatorTest(
             ),
             base = Status(42, 21, 27, 24, 23, 61),
             scenario = Status(12, 6, 8, 7, 6, 18),
+        )
+
+        baseCalcInfo = baseCalcInfo
+            .setFacility(StatusType.SPEED, 2)
+            .setFacility(StatusType.STAMINA, 1)
+            .setFacility(StatusType.POWER, 1)
+            .setFacility(StatusType.GUTS, 2)
+            .setFacility(StatusType.WISDOM, 1)
+            .setFacility(StatusType.FRIEND, 1)
+
+        // 17
+        testIslandTraining(
+            baseCalcInfo,
+            listOf(
+                Triple(StatusType.SPEED, listOf(1, 2), 3),
+                Triple(StatusType.STAMINA, listOf(5), 0),
+                Triple(StatusType.POWER, listOf(), 1),
+                Triple(StatusType.GUTS, listOf(0, 3), 0),
+                Triple(StatusType.WISDOM, listOf(), 1),
+                Triple(StatusType.FRIEND, listOf(4), 1),
+            ),
+            base = Status(34, 22, 21, 23, 24, 49),
+            scenario = Status(5, 1, 3, 2, 1, 7),
         )
     }
 }
