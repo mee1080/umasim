@@ -702,6 +702,7 @@ data class SkillEffect(
                 27 -> add("お料理Ptは16000以上（1.2倍）前提")
                 28 -> add("総研究Lvは最大前提")
                 30 -> add("ラヴは最大前提")
+                31 -> add("総発展Ptは最大前提")
             }
             when (additional) {
                 2 -> add("同時に別のスキルを2つ発動する条件で近似")
@@ -844,6 +845,11 @@ data class SkillEffect(
             30 -> {
                 // 受け取ったラヴに応じて最大3倍まで効果が増える（Circulating Love♡）
                 value * 3.0
+            }
+
+            31 -> {
+                // 総発展Ptが高いほど効果が高まる（本能の懸け橋）
+                value * 1.2
             }
 
             else -> value.toDouble()
