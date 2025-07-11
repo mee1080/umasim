@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.parts.LinedTable
 import io.github.mee1080.umasim.compose.common.parts.Table
+import io.github.mee1080.umasim.race.calc2.RaceSetting
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationSkillSummary
 import io.github.mee1080.umasim.store.SimulationSummary
@@ -20,6 +21,7 @@ import io.github.mee1080.umasim.store.SimulationSummaryEntry
 import io.github.mee1080.utility.roundToString
 import io.github.mee1080.utility.secondToTimeString
 import io.github.mee1080.utility.toPercentString
+import kotlin.math.roundToInt
 
 @Composable
 fun SummaryOutput(state: AppState) {
@@ -123,7 +125,7 @@ private fun SkillTable(summary: SimulationSummary) {
                 "速度上昇無効割合",
             )
         )
-        summaries.forEach { add(toTableData(it.second)) }
+        summaries.forEach { add(toTableData(summary.setting, it.second)) }
     }
     Text("スキル情報", modifier = Modifier.padding(top = 8.dp))
     Row {
@@ -136,14 +138,18 @@ private fun SkillTable(summary: SimulationSummary) {
         Table(tableData.size, 14, scrollable = true) { row, col ->
             Text(
                 tableData[row][col], Modifier.padding(4.dp).align(
-                    if (row == 0) Alignment.Center else Alignment.CenterEnd
+                    when {
+                        row == 0 -> Alignment.Center
+                        col == 2 || col == 4 -> Alignment.CenterStart
+                        else -> Alignment.CenterEnd
+                    }
                 )
             )
         }
     }
 }
 
-private fun toTableData(entry: SimulationSkillSummary): List<String> {
+private fun toTableData(setting: RaceSetting, entry: SimulationSkillSummary): List<String> {
     return if (entry.count == 0) {
         listOf("0") + List(13) { "-" }
     } else {
@@ -151,10 +157,12 @@ private fun toTableData(entry: SimulationSkillSummary): List<String> {
             entry.count.toString(),
             entry.triggerRate.toPercentString(1),
             (entry.averageStartFrame1 / 15.0).roundToString(2, "s") + "/" +
-                    entry.averageStartPosition1.roundToString(2, "m"),
+                    entry.averageStartPosition1.roundToString(2, "m") +
+                    toPositionString(setting, entry.averageStartPosition1),
             entry.doubleTriggerRate.toPercentString(1),
             (entry.averageStartFrame2 / 15.0).roundToString(2, "s") + "/" +
-                    entry.averageStartPosition2.roundToString(2, "m"),
+                    entry.averageStartPosition2.roundToString(2, "m") +
+                    toPositionString(setting, entry.averageStartPosition2),
             entry.phase0TriggeredRate.toPercentString(1),
             entry.phase1ConnectionRate.toPercentString(1),
             (entry.averagePhase1ConnectionFrame / 15.0).roundToString(2, "s"),
@@ -165,5 +173,17 @@ private fun toTableData(entry: SimulationSkillSummary): List<String> {
             (entry.averagePhase2DelayFrame / 15.0).roundToString(2, "s"),
             entry.invalidRate.toPercentString(1),
         )
+    }
+}
+
+private fun toPositionString(setting: RaceSetting, position: Double): String {
+    return when {
+        position.isNaN() || position.isInfinite() -> ""
+        position < setting.phase0Half -> ""
+        position < setting.phase1Start -> "(中盤入り前${(setting.phase1Start - position).roundToInt()}m)"
+        position < setting.phase1Half -> "(中盤開始${(position - setting.phase1Start).roundToInt()}m)"
+        position < setting.phase2Start -> "(終盤入り前${(setting.phase2Start - position).roundToInt()}m)"
+        position < setting.phase2Half -> "(終盤開始${(position - setting.phase2Start).roundToInt()}m)"
+        else -> "(ゴール前${(setting.courseLength - position).roundToInt()}m)"
     }
 }
