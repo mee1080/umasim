@@ -37,7 +37,6 @@ import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 
 @Stable
@@ -499,7 +498,10 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             friendProbability = friendProbability,
             mechaState = state.mechaState.applyIfNotNull(mechaLearningGain) {
                 copy(learningLevelGain = it)
-            }
+            },
+            mujintoState = state.mujintoState.applyIf(state.scenario == Scenario.MUJINTO) {
+                calcAndUpdateTrainingResult(allSupportList, trainingCalcInfo)
+            },
         )
     }
 
@@ -833,5 +835,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
     fun updateMecha(update: MechaState.() -> MechaState) {
         update { copy(mechaState = mechaState.update()) }
+    }
+
+    fun updateMujinto(update: MujintoState.() -> MujintoState) {
+        update { copy(mujintoState = mujintoState.update()) }
     }
 }

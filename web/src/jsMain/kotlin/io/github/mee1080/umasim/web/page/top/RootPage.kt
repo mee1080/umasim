@@ -85,6 +85,9 @@ private fun RootPageContent(model: ViewModel, state: State) {
     CharaSelect(model, state)
     SupportSelect(model, state)
     TrainingSetting(model, state)
+    if (state.scenario == Scenario.MUJINTO) {
+        MujintoTrainingInfo(model, state)
+    }
     TrainingInfo(model, state)
     if (state.scenario != Scenario.UAF) {
         ExpectedStatusDisplay(model, state)

@@ -293,24 +293,36 @@ object MujintoCalculator : ScenarioCalculator {
             println("friendPositionCount=$friendPositionCount friendPositionBonus=$friendPositionBonus")
         }
         return Status(
-            speed = base.speed * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.SPEED, friendCount
-            )) / 100,
-            stamina = base.stamina * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.STAMINA, friendCount
-            )) / 100,
-            power = base.power * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.POWER, friendCount
-            )) / 100,
-            guts = base.guts * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.GUTS, friendCount
-            )) / 100,
-            wisdom = base.wisdom * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.WISDOM, friendCount
-            )) / 100,
-            skillPt = base.skillPt * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
-                StatusType.SKILL, friendCount
-            )) / 100
+            speed = min(
+                100, base.speed * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.SPEED, friendCount
+                )) / 100
+            ),
+            stamina = min(
+                100, base.stamina * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.STAMINA, friendCount
+                )) / 100
+            ),
+            power = min(
+                100, base.power * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.POWER, friendCount
+                )) / 100
+            ),
+            guts = min(
+                100, base.guts * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.GUTS, friendCount
+                )) / 100
+            ),
+            wisdom = min(
+                100, base.wisdom * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.WISDOM, friendCount
+                )) / 100
+            ),
+            skillPt = min(
+                100, base.skillPt * (friendPositionBonus + mujintoStatus.islandTrainingEffect(
+                    StatusType.SKILL, friendCount
+                )) / 100
+            ),
         )
     }
 }

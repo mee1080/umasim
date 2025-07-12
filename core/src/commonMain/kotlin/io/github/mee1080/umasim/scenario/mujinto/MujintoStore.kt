@@ -65,6 +65,10 @@ val mujintoFacilities = (trainingType + StatusType.FRIEND).associateWith { type 
     }
 }
 
+fun mujintoFacilityOrNull(type: StatusType, level: Int, jukuren: Boolean = false): MujintoFacility? {
+    return mujintoFacilities[type]?.get(level)?.get(jukuren)
+}
+
 fun mujintoFacility(type: StatusType, level: Int, jukuren: Boolean = false): MujintoFacility {
     return mujintoFacilities[type]!![level]!![jukuren]!!
 }
