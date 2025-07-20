@@ -111,6 +111,7 @@ object Calculator {
         val friendFactor: Double = 1.0,
         val motivationBonus: Int = 0,
         val trainingBonus: Int = 0,
+        val additionalFactor: Double = 1.0,
     )
 
     fun calcTrainingSuccessStatus(
@@ -119,10 +120,14 @@ object Calculator {
 
     fun calcTrainingSuccessStatusAndFriendEnabled(
         info: CalcInfo,
-    ): Pair<Status, Boolean> = calcTrainingSuccessStatusSeparated(info).let { it.first.first + it.second to it.third }
+        bonus: ScenarioCalcBonus? = null,
+    ): Pair<Status, Boolean> = calcTrainingSuccessStatusSeparated(info, bonus).let {
+        it.first.first + it.second to it.third
+    }
 
     fun calcTrainingSuccessStatusSeparated(
         info: CalcInfo,
+        bonus: ScenarioCalcBonus? = null,
     ): Triple<Pair<Status, ExpectedStatus>, Status, Boolean> {
         val friendTraining = if (info.allFriend) {
             info.support.any { it.card.type != StatusType.FRIEND }
@@ -131,12 +136,12 @@ object Calculator {
         }
         val hp = calcTrainingHp(info, friendTraining)
         val raw = ExpectedStatus(
-            speed = calcTrainingStatus(info, StatusType.SPEED, friendTraining),
-            stamina = calcTrainingStatus(info, StatusType.STAMINA, friendTraining),
-            power = calcTrainingStatus(info, StatusType.POWER, friendTraining),
-            guts = calcTrainingStatus(info, StatusType.GUTS, friendTraining),
-            wisdom = calcTrainingStatus(info, StatusType.WISDOM, friendTraining),
-            skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining),
+            speed = calcTrainingStatus(info, StatusType.SPEED, friendTraining, bonus = bonus),
+            stamina = calcTrainingStatus(info, StatusType.STAMINA, friendTraining, bonus = bonus),
+            power = calcTrainingStatus(info, StatusType.POWER, friendTraining, bonus = bonus),
+            guts = calcTrainingStatus(info, StatusType.GUTS, friendTraining, bonus = bonus),
+            wisdom = calcTrainingStatus(info, StatusType.WISDOM, friendTraining, bonus = bonus),
+            skillPt = calcTrainingStatus(info, StatusType.SKILL, friendTraining, bonus = bonus),
             hp = hp.toDouble(),
         )
         val base = Status(
@@ -197,8 +202,9 @@ object Calculator {
                 it.card.trainingFactor(baseCondition.applyMember(it))
             } + (bonus?.trainingBonus ?: 0)) / 100.0
         val count = 1 + info.member.size * 0.05
-        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count")
-        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count
+        val scenarioFactor = bonus?.additionalFactor ?: 1.0
+        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor")
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor
         return min(maxValue, raw + 0.0002)
     }
 

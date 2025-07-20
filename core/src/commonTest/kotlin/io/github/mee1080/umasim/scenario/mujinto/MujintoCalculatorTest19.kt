@@ -33,41 +33,41 @@ class MujintoCalculatorTest19 : MujintoCalculatorTest(
             .setRelation(4, 80)
             .setRelation(5, 80)
             .copy(motivation = 2)
+            .updateMujintoStatus { updateTurn(13) }
 
         // 0
         testTraining(
             baseCalcInfo, StatusType.SPEED, 1, 0, 1,
             base = Status(19, 0, 1, 0, 0, 10),
-            // TODO
-//            scenario = Status(1, 0, 0, 0, 0, 1),
+            scenario = Status(1, 0, 0, 0, 0, 1),
         )
 
         // 1
         testTraining(
             baseCalcInfo, StatusType.STAMINA, 1, 1, 0, 5,
             base = Status(0, 30, 0, 16, 0, 17),
-//            scenario = Status(0, 3, 0, 1, 0, 1),
+            scenario = Status(0, 3, 0, 1, 0, 1),
         )
 
         // 2
         testTraining(
             baseCalcInfo, StatusType.POWER, 1, 0, 2, 3,
             base = Status(0, 12, 34, 0, 0, 19),
-//            scenario = Status(0, 1, 3, 0, 0, 1),
+            scenario = Status(0, 1, 3, 0, 0, 1),
         )
 
         // 3
         testTraining(
             baseCalcInfo, StatusType.GUTS, 2, 2,
             base = Status(2, 0, 2, 15, 0, 7),
-//            scenario = Status(0, 0, 0, 1, 0, 0),
+            scenario = Status(0, 0, 0, 1, 0, 0),
         )
 
         // 4
         testTraining(
             baseCalcInfo, StatusType.WISDOM, 2, 3, 4,
             base = Status(11, 0, 0, 0, 15, 13),
-//            scenario = Status(1, 0, 0, 0, 1, 1),
+            scenario = Status(1, 0, 0, 0, 1, 1),
         )
 
         // 5

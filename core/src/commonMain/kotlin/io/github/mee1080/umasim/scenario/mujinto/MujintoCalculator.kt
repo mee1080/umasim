@@ -6,98 +6,70 @@ import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.simulation2.Calculator.CalcInfo
 import io.github.mee1080.umasim.simulation2.Calculator.applyMember
 import kotlin.math.min
+import kotlin.random.Random
 
 object MujintoCalculator : ScenarioCalculator {
 
     override fun calcScenarioStatus(
-        info: Calculator.CalcInfo,
+        info: CalcInfo,
         base: Status,
         raw: ExpectedStatus,
         friendTraining: Boolean,
     ): Status {
         val mujintoStatus = info.mujintoStatus ?: return Status()
-        var scenarioBonus = Status()
-
-        // Apply facility bonuses
-        // TODO: Refine this based on how "島トレ効果" and specific facility level effects work.
-        // This is a very simplified placeholder.
-//        val speedFacility = mujintoStatus.facilities[FacilityType.SPEED]
-//        if (speedFacility != null && speedFacility.level > 0) {
-//            // Example: "スピードLv1: 島トレ・島スピードにスピボ1", "島スピードのトレ効果5%"
-//            // Assuming direct status bonus for now if it's a speed training.
-//            if (info.training.type == StatusType.SPEED) {
-//                scenarioBonus += Status(speed = speedFacility.level * 2) // Placeholder
-//            }
-//        }
-        // TODO: Add similar logic for STAMINA, POWER, GUTS, WISDOM facilities.
-        // TODO: Implement effects of SPECIAL facilities.
-
-        // TODO: Apply bonuses from "Evaluation Meetings" (評価会) if any are active.
-        // "通常トレ効果アップありそう"
-
-        // The `mujinto_memo.md` mentions "ゲストあり、最大11人？" for training.
-        // This might influence existing `Calculator.calcTrainingStatus` through member count or specific guest mechanics.
-        // For now, this is handled by the core calculator, but might need adjustments.
-
-        return scenarioBonus
-    }
-
-    override fun calcBaseRaceStatus(
-        state: SimulationState,
-        race: RaceEntry,
-        goal: Boolean,
-    ): Status? {
-        // TODO: 無人島シナリオ固有のレースステータス計算があれば実装
-        // "レース後能力アップ TODO" in memo.
-        // This might be a fixed bonus or depend on race performance/facilities.
-        if (goal) {
-            return Status(skillPt = 10) // Placeholder
+        val trainingEffect = if (info.isLevelUpTurn) {
+            mujintoStatus.campTrainingEffect(info.training.type)
+        } else {
+            mujintoStatus.evaluationBonus.trainingEffect
         }
-        return super.calcBaseRaceStatus(state, race, goal)
-    }
-
-    override fun applyScenarioRaceBonus(
-        state: SimulationState,
-        base: Status,
-    ): Status {
-        // TODO: 無人島シナリオ固有のレースボーナス適用があれば実装
-        // This could also be where "レース後能力アップ" is applied.
-        return super.applyScenarioRaceBonus(state, base)
-    }
-
-    override fun raceScenarioActionParam(
-        state: SimulationState,
-        race: RaceEntry,
-        goal: Boolean,
-    ): ScenarioActionParam? {
-        // TODO: 無人島シナリオ固有のレースアクションパラメータがあれば実装
-        return super.raceScenarioActionParam(state, race, goal)
-    }
-
-    override fun predictSleep(
-        state: SimulationState,
-    ): Array<Action>? {
-        // TODO: 無人島シナリオ固有の睡眠予測があれば実装
-        // Tucker Bligh outing effects might be relevant here if outings are predicted similarly to sleep.
-        return super.predictSleep(state)
+        return Status(
+            speed = base.speed * trainingEffect / 100,
+            stamina = base.stamina * trainingEffect / 100,
+            power = base.power * trainingEffect / 100,
+            guts = base.guts * trainingEffect / 100,
+            wisdom = base.wisdom * trainingEffect / 100,
+            skillPt = base.skillPt * trainingEffect / 100,
+        )
     }
 
     override fun predictScenarioActionParams(
         state: SimulationState,
         baseActions: List<Action>,
     ): List<Action> {
-        // This is where we might add `MujintoActionParam` for Island Training.
         val mujintoStatus = state.mujintoStatus ?: return baseActions
 
         return baseActions.map { action ->
             when (action) {
+                // トレーニング
                 is Training -> {
-                    // For now, no specific params for normal training, but could be added.
-                    // If Island Training is an option, it should be one of the `baseActions`
-                    // or generated here based on `mujintoStatus.islandTrainingTickets > 0`.
-                    action
+                    val bonus = mujintoStatus.evaluationBonus.pioneerPointBonus + if (action.friendTraining) 20 else 0
+                    val pioneerPoint = ((60 + action.member.size * 6) * (100 + bonus) / 100)
+                    action.copy(
+                        candidates = action.addScenarioActionParam(
+                            MujintoActionParam(pioneerPoint = pioneerPoint)
+                        )
+                    )
                 }
-                // TODO: Add params for Tucker Bligh outings if they have choices.
+
+                // 島トレ
+                is MujintoTraining -> {
+                    val bonus = mujintoStatus.evaluationBonus.pioneerPointBonus + if (action.friendTraining) 20 else 0
+                    val pioneerPoint = ((60 + action.member.size * 6) * (100 + bonus) / 100)
+                    action.copy(result = action.result.copy(pioneerPoint = pioneerPoint))
+                }
+
+                // レース
+                is Race -> {
+                    val bonus = mujintoStatus.evaluationBonus.pioneerPointBonus +
+                            if (action.goal || mujintoStatus.notGoalRacePioneerPtBonusEnabled()) 200 else 0
+                    val pioneerPoint = 20 * (100 + bonus) / 100
+                    action.copy(
+                        result = action.result.addScenarioActionParam(
+                            MujintoActionParam(pioneerPoint = pioneerPoint)
+                        )
+                    )
+                }
+
                 else -> action
             }
         }
@@ -110,65 +82,65 @@ object MujintoCalculator : ScenarioCalculator {
         val mujintoStatus = state.mujintoStatus ?: return emptyArray()
         val scenarioActions = mutableListOf<Action>()
 
-        // Predict "Island Training" (島トレ) if a ticket is available
-        if (mujintoStatus.islandTrainingTicket > 0) {
-            // TODO: 上昇量
-            // "全パラメータアップ"
-            // "無人島の各施設にサポカとゲストを配置、得意トレの施設なら友情"
-            // "サポカタイプに応じた能力が上がる、得意トレがバラバラの方が強い？"
-            val islandTrainingAction = MujintoTraining(
-                MujintoTrainingResult(state.member, Status()),
-            )
-            scenarioActions.add(islandTrainingAction) // Needs a proper Action definition
+        if (!state.isLevelUpTurn && mujintoStatus.islandTrainingTicket > 0) {
+            scenarioActions.add(predictIslandTraining(state))
         }
 
-        // TODO: Predict "Facility Construction" (施設建設) actions.
-        // "建設計画で順番を選ぶ" - implies an action to choose/start construction.
-        // This would likely depend on `mujintoStatus.developmentPoints`.
-
-        // TODO: Predict Tucker Bligh outing actions if she's a friend card and outings are available.
-        // Her outings have choices, which would need to be modeled as different actions or results.
-
         return scenarioActions.toTypedArray()
+    }
+
+    /**
+     * 島トレ
+     */
+    private fun predictIslandTraining(
+        state: SimulationState,
+    ): Action {
+        val noPositionMember = state.member
+            .filter { it.position == StatusType.NONE }
+            .map {
+                it to when {
+                    it.guest -> 2000
+                    it.card.type == StatusType.FRIEND -> 0
+                    else -> 1000
+                } + Random.nextDouble(1000.0)
+            }
+            .sortedBy { it.second }
+            .take(5)
+            .map { it.first.copy(position = StatusType.FRIEND) }
+        val calcInfo = state.baseCalcInfo.copy(
+            member = state.member.filter { it.position != StatusType.NONE } + noPositionMember,
+        )
+        val (base, scenario, friend) = calcIslandTrainingStatusSeparated(calcInfo)
+        return MujintoTraining(
+            member = calcInfo.member,
+            friendTraining = friend,
+            result = MujintoTrainingResult(base.first + scenario),
+        )
     }
 
     override fun updateScenarioTurn(
         state: SimulationState,
     ): SimulationState {
-        var newState = state
-        // Apply Tucker Bligh's "次のターンに得意率アップ" effect
-        // This needs tracking of which support cards were affected.
-        // Could be stored in `MujintoMemberState` or a temporary list in `MujintoStatus`.
-        // TODO: Implement Tucker Bligh's next-turn specialty rate up.
-
-        // Handle construction progress if facilities are being built.
-        // "建設には発展Ptが必要"
-        // "建設進捗度が上がる 100Ptで1マス"
-        // This might be better handled in `afterAction` when development points are gained.
-
-        return super.updateScenarioTurn(newState)
+        return state.updateMujintoStatus {
+            updateTurn(state.turn)
+        }
     }
 
-    override fun updateOnAddStatus(
-        state: SimulationState,
-        status: Status,
-    ): SimulationState {
-        // TODO: 無人島シナリオ固有のステータス加算時処理があれば実装
-        return super.updateOnAddStatus(state, status)
-    }
+    fun applyScenarioAction(state: SimulationState, result: MujintoActionResult): SimulationState {
+        return when {
+            result is MujintoTrainingResult -> state
+                .addStatus(result.status)
+                .updateMujintoStatus { addPioneerPoint(result.pioneerPoint) }
 
-    fun applyScenarioAction(state: SimulationState, action: MujintoActionResult): SimulationState {
-        // TODO
-        return state
+            else -> state
+        }
     }
 
     fun applyScenarioActionParam(
         state: SimulationState,
-        action: Action,
         result: ActionResult,
         params: MujintoActionParam,
     ): SimulationState {
-        val mujintoStatus = state.mujintoStatus ?: return state
         if (!result.success) return state
         return state.updateMujintoStatus { addPioneerPoint(params.pioneerPoint) }
     }
@@ -282,13 +254,13 @@ object MujintoCalculator : ScenarioCalculator {
             .filter { it.isFriendTraining(it.position) }
             .groupBy { it.position }
             .size
-        val friendPositionBonus = when (friendPositionCount) {
+        val friendPositionBonus = if (mujintoStatus.friendFacilityCountBonusEnabled()) when (friendPositionCount) {
             5 -> 80
             4 -> 70
             3 -> 65
             2 -> 25
             else -> 0
-        }
+        } else 0
         if (Calculator.DEBUG) {
             println("friendPositionCount=$friendPositionCount friendPositionBonus=$friendPositionBonus")
         }
@@ -324,5 +296,35 @@ object MujintoCalculator : ScenarioCalculator {
                 )) / 100
             ),
         )
+    }
+
+    override fun getTraining(
+        state: SimulationState,
+        trainingType: StatusType
+    ): TrainingBase? {
+        if (!state.isLevelUpTurn) return null
+        val mujintoStatus = state.mujintoStatus ?: return null
+        val training = getMujintoCampTrainingData(trainingType, mujintoStatus.getFacilityLevel(trainingType))
+        val bonus = mujintoStatus.islandTrainingBonus
+        val baseStatus = training.status + Status(
+            speed = if (training.status.speed > 0) bonus.speed else 0,
+            stamina = if (training.status.stamina > 0) bonus.stamina else 0,
+            power = if (training.status.power > 0) bonus.power else 0,
+            guts = if (training.status.guts > 0) bonus.guts else 0,
+            wisdom = if (training.status.wisdom > 0) bonus.wisdom else 0,
+            skillPt = bonus.skillPt,
+        )
+        return training.copy(status = baseStatus)
+    }
+
+    override fun getScenarioCalcBonus(
+        state: SimulationState,
+        baseInfo: CalcInfo,
+    ): Calculator.ScenarioCalcBonus? {
+        if (!state.isLevelUpTurn) return null
+        val mujintoStatus = baseInfo.mujintoStatus ?: return null
+        val friendCount = baseInfo.member.count { it.isFriendTraining(baseInfo.training.type) }
+        val mujintoFriendBonus = (100 + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0
+        return Calculator.ScenarioCalcBonus(additionalFactor = mujintoFriendBonus)
     }
 }

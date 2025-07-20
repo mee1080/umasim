@@ -455,13 +455,15 @@ data class MujintoActionParam(
 sealed interface MujintoActionResult : ActionResult
 
 data class MujintoTrainingResult(
-    val member: List<MemberState>,
     override val status: Status,
+    val pioneerPoint: Int = 0,
 ) : MujintoActionResult {
     override fun toString() = "島トレーニング ${status.toShortString()}"
 }
 
 data class MujintoTraining(
+    val member: List<MemberState>,
+    val friendTraining: Boolean,
     override val result: MujintoTrainingResult,
 ) : SingleAction {
     override val name get() = "島トレーニング"

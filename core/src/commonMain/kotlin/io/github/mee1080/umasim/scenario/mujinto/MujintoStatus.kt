@@ -13,6 +13,10 @@ fun SimulationState.updateMujintoStatus(update: MujintoStatus.() -> MujintoStatu
     return copy(scenarioStatus = mujintoStatus.update())
 }
 
+fun MujintoStatus.updateTurn(turn: Int): MujintoStatus {
+    return copy(evaluationBonus = mujintoEvaluationBonus(turn))
+}
+
 class MujintoFacility(
     val type: StatusType,
     val level: Int,
@@ -57,7 +61,7 @@ class MujintoFacility(
     }
 
     /**
-     * 島合宿でステータスボーナスとトレ効果を反映するかどうか
+     * 島合宿でトレ効果を反映するかどうか
      */
     private fun applyInCamp(trainingType: StatusType): Boolean {
         return type == trainingType || type == StatusType.FRIEND
@@ -74,13 +78,6 @@ class MujintoFacility(
         calcIslandTrainingBonus(StatusType.WISDOM),
         calcIslandTrainingBonus(StatusType.SKILL),
     )
-
-    /**
-     * 島合宿のステータスボーナス
-     */
-    fun campTrainingBonus(trainingType: StatusType): Status {
-        return if (applyInCamp(trainingType)) islandTrainingBonus else Status()
-    }
 
     private val islandTrainingEffectValue = if (type == StatusType.FRIEND) when (level) {
         3 -> 15
@@ -131,21 +128,31 @@ class MujintoFacility(
         return if (type == cardType) campSpecialityRateValue else 0
     }
 
-    private val campTrainingEffectValue = if (type == StatusType.FRIEND) 0 else when (level) {
-        5 -> if (jukuren) 25 else 50
-        4 -> if (jukuren) 15 else 30
-        3 -> if (jukuren) 10 else 20
-        2 -> 10
-        else -> 5
+    private val campTrainingEffectValue = when (type) {
+        StatusType.FRIEND -> 0
+
+        StatusType.SPEED -> when (level) {
+            5 -> if (jukuren) 25 else 50
+            4 -> if (jukuren) 15 else 30
+            3 -> if (jukuren) 10 else 20
+            2 -> 10
+            else -> 5
+        }
+
+        else -> when (level) {
+            5 -> if (jukuren) 30 else 60
+            4 -> if (jukuren) 25 else 40
+            3 -> if (jukuren) 20 else 30
+            2 -> 20
+            else -> 10
+        }
     }
 
     /**
      * 島合宿のトレーニング効果
      */
-    fun campTrainingEffect(targetType: StatusType, friendCount: Int): Int {
-        return if (applyInCamp(targetType)) {
-            campTrainingEffectValue + friendCount * trainingEffectByFriend
-        } else 0
+    fun campTrainingEffect(targetType: StatusType): Int {
+        return if (applyInCamp(targetType)) campTrainingEffectValue else 0
     }
 
     /**
@@ -195,15 +202,12 @@ class MujintoFacility(
     } else {
         0
     }
-
-    /**
-     * 目標外レース発展Pt
-     */
-    val notGoalRacePioneerPtBonus = if (type == StatusType.FRIEND && level == 3) 200 else 0
 }
 
 data class MujintoEvaluationBonus(
     val trainingEffect: Int,
+    val hintRateUp: Int,
+    val pioneerPointBonus: Int,
 )
 
 data class MujintoStatus(
@@ -211,7 +215,7 @@ data class MujintoStatus(
     val facilityPlan: List<MujintoFacility> = emptyList(),
     val pioneerPoint: Int = 0,
     val islandTrainingTicket: Int = 0,
-    val evaluationBonus: List<MujintoEvaluationBonus> = emptyList(),
+    val evaluationBonus: MujintoEvaluationBonus = mujintoEvaluationBonus(1),
     val nextTurnSpecialtyBuff: Int = 0,
 ) : ScenarioStatus {
     fun addPioneerPoint(point: Int): MujintoStatus {
@@ -235,12 +239,8 @@ data class MujintoStatus(
         it.islandTrainingEffect(targetType, friendCount)
     }
 
-    fun campTrainingBonus(trainingType: StatusType) = facilities.values.fold(Status()) { acc, facility ->
-        acc + facility.campTrainingBonus(trainingType)
-    }
-
-    fun campTrainingEffect(targetType: StatusType, friendCount: Int) = facilities.values.sumOf {
-        it.campTrainingEffect(targetType, friendCount)
+    fun campTrainingEffect(trainingType: StatusType) = facilities.values.sumOf {
+        it.campTrainingEffect(trainingType)
     }
 
     fun specialityRate(cardType: StatusType) = facilities.values.sumOf {
@@ -267,9 +267,11 @@ data class MujintoStatus(
         it.positionRateUp
     }
 
-    fun notGoalRacePioneerPtBonus() = facilities.values.sumOf {
-        it.notGoalRacePioneerPtBonus
-    }
+    fun getFacilityLevel(facilityType: StatusType) = facilities[facilityType]?.level ?: 0
+
+    fun notGoalRacePioneerPtBonusEnabled() = getFacilityLevel(StatusType.FRIEND) >= 3
+
+    fun friendFacilityCountBonusEnabled() = getFacilityLevel(StatusType.FRIEND) >= 1
 }
 
 // Scenario-specific state for support cards, especially for Tucker Bligh

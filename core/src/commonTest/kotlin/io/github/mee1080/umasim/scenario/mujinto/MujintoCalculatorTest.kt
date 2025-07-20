@@ -31,7 +31,6 @@ abstract class MujintoCalculatorTest(
         position: List<Triple<StatusType, List<Int>, Int>> = emptyList(),
         base: Status? = null,
         scenario: Status? = null,
-        pioneerPt: Int = 0,
     ) {
         var info = baseCalcInfo.copy(
             member = emptyList()
@@ -66,4 +65,47 @@ abstract class MujintoCalculatorTest(
         base?.let { assertStatus(it, result.first.first, message) }
         scenario?.let { assertStatus(it, result.second, message) }
     }
+
+    protected fun testCampTraining(
+        baseCalcInfo: Calculator.CalcInfo,
+        type: StatusType,
+        guestCount: Int,
+        vararg supportIndices: Int,
+        base: Status? = null,
+        scenario: Status? = null,
+    ) {
+        val memberNames = supportCardList.filterIndexed { index, _ ->
+            supportIndices.contains(index)
+        }.map { it.first }.toSet() + if (baseCalcInfo.member.size > 6) {
+            baseCalcInfo.member.filterIndexed { index, memberState ->
+                index >= 6 && supportIndices.contains(index)
+            }.map { it.name }
+        } else emptySet()
+        println(memberNames)
+        val newState = state.copy(turn = 37, scenarioStatus = baseCalcInfo.mujintoStatus)
+        val training = MujintoCalculator.getTraining(newState, type)!!
+        val info = baseCalcInfo.copy(
+            training = training,
+            member = baseCalcInfo.member.filter { memberNames.contains(it.name) },
+        ).setTeamMember(guestCount)
+        val scenarioCalcBonus = MujintoCalculator.getScenarioCalcBonus(newState, info)
+
+        val result = Calculator.calcTrainingSuccessStatusSeparated(info, scenarioCalcBonus)
+        val message = buildString {
+            appendLine("expected:")
+            appendLine(base)
+            appendLine(scenario)
+            appendLine("actual:")
+            appendLine(result.first.first)
+            appendLine(result.second)
+            appendLine("params:")
+            appendLine(info.chara.name)
+            appendLine(info.member.joinToString { "${it.name} ${it.relation}" })
+            appendLine(info.training)
+            appendLine("motivation=${info.motivation}")
+        }
+        base?.let { assertStatus(it, result.first.first, message) }
+        scenario?.let { assertStatus(it, result.second, message) }
+    }
+
 }

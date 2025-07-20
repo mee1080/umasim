@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.scenario.uaf
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.min
@@ -143,4 +146,10 @@ object UafCalculator : ScenarioCalculator {
         }.toTypedArray()
     }
 
+    override fun getTraining(
+        state: SimulationState,
+        trainingType: StatusType
+    ): TrainingBase? {
+        return state.uafStatus?.getTraining(trainingType, state.isLevelUpTurn)
+    }
 }

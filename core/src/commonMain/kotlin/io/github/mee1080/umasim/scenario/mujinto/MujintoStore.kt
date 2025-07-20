@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.data.trainingType
+import kotlin.math.min
 
 val mujintoTrainingData: List<TrainingBase> = listOf(
     TrainingBase(StatusType.SPEED, 1, 520, Status(12, 0, 1, 0, 0, 6, -20)),
@@ -36,12 +37,12 @@ val mujintoTrainingData: List<TrainingBase> = listOf(
 val mujintoIslandTrainingBase = TrainingBase(StatusType.FRIEND, 0, 0, Status(8, 6, 4, 4, 10, 7, 0))
 
 val mujintoCampTrainingDataNoFacility = listOf(
-    TrainingBase(StatusType.SPEED, 5, 536, Status(14, 0, 1, 0, 0, 8, -15)),
-    TrainingBase(StatusType.STAMINA, 5, 523, Status(0, 14, 0, 5, 0, 16, -15)),
-    TrainingBase(StatusType.POWER, 5, 532, Status(0, 5, 14, 0, 0, 16, -15)),
-    TrainingBase(StatusType.GUTS, 5, 548, Status(5, 0, 4, 14, 0, 16, -15)),
-    TrainingBase(StatusType.WISDOM, 5, 324, Status(7, 0, 0, 0, 12, 16, 5)),
-)
+    TrainingBase(StatusType.SPEED, 1, 536, Status(14, 0, 1, 0, 0, 8, -15)),
+    TrainingBase(StatusType.STAMINA, 1, 523, Status(0, 14, 0, 5, 0, 16, -15)),
+    TrainingBase(StatusType.POWER, 1, 532, Status(0, 5, 14, 0, 0, 16, -15)),
+    TrainingBase(StatusType.GUTS, 1, 548, Status(5, 0, 4, 14, 0, 16, -15)),
+    TrainingBase(StatusType.WISDOM, 1, 324, Status(7, 0, 0, 0, 12, 16, 5)),
+).associateBy { it.type }
 
 val mujintoCampTrainingData = listOf(
     TrainingBase(StatusType.SPEED, 5, 536, Status(14, 1, 1, 1, 1, 8, -15)),
@@ -49,7 +50,15 @@ val mujintoCampTrainingData = listOf(
     TrainingBase(StatusType.POWER, 5, 532, Status(2, 5, 14, 2, 2, 16, -15)),
     TrainingBase(StatusType.GUTS, 5, 548, Status(5, 2, 4, 14, 2, 16, -15)),
     TrainingBase(StatusType.WISDOM, 5, 324, Status(7, 2, 2, 2, 12, 16, 5)),
-)
+).associateBy { it.type }
+
+fun getMujintoCampTrainingData(type: StatusType, facilityLevel: Int): TrainingBase {
+    return if (facilityLevel == 0) {
+        mujintoCampTrainingDataNoFacility[type]!!
+    } else {
+        mujintoCampTrainingData[type]!!.copy(level = facilityLevel)
+    }
+}
 
 val mujintoFacilities = (trainingType + StatusType.FRIEND).associateWith { type ->
     when (type) {
@@ -190,3 +199,16 @@ private val mujintoIslandTrainingRateHouse = mapOf(
         StatusType.SKILL to 0.7,
     ),
 )
+
+val mujintoEvaluationBonuses = listOf(
+    MujintoEvaluationBonus(0, 0, 0),
+    MujintoEvaluationBonus(10, 20, 5),
+    MujintoEvaluationBonus(20, 40, 10),
+    MujintoEvaluationBonus(30, 60, 10),
+    MujintoEvaluationBonus(45, 80, 15),
+    MujintoEvaluationBonus(60, 120, 0),
+)
+
+fun mujintoEvaluationBonus(turn: Int): MujintoEvaluationBonus {
+    return mujintoEvaluationBonuses[min((turn - 1) / 12, 5)]
+}

@@ -631,7 +631,7 @@ private fun SimulationState.applyScenarioActionParam(action: Action, result: Act
         is CookActionParam -> updateCookStatus { addStamp(param.stamp) }
         is MechaActionParam -> MechaCalculator.applyScenarioAction(this, param)
         is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
-        is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, action, result, param)
+        is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
     }
 }
 

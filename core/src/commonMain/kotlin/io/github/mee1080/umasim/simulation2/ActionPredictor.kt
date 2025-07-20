@@ -67,7 +67,7 @@ private fun SimulationState.calcTrainingResult(
     training: TrainingState,
     support: List<MemberState>,
 ): Action {
-    val currentTraining = uafStatus?.getTraining(training.type, isLevelUpTurn) ?: training.current
+    val currentTraining = scenario.calculator.getTraining(this, training.type) ?: training.current
     return calcTrainingResult(currentTraining, support)
 }
 
@@ -76,12 +76,12 @@ fun SimulationState.calcTrainingResult(
     support: List<MemberState>,
 ): Action {
     val failureRate = calcTrainingFailureRate(training, support)
-    val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(
-        baseCalcInfo.copy(
-            training = training,
-            member = support,
-        )
+    val info = baseCalcInfo.copy(
+        training = training,
+        member = support,
     )
+    val scenarioCalcBonus = scenario.calculator.getScenarioCalcBonus(this, info)
+    val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(info, scenarioCalcBonus)
     val successStatus = if (itemAvailable) {
         baseStatus + Calculator.calcItemBonus(
             training.type,
