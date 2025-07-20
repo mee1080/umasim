@@ -94,7 +94,7 @@ object GmCalculator : ScenarioCalculator {
                 (it as Race).copy(
                     result = it.result.addScenarioActionParam(
                         GmActionParam(
-                            Founder.entries.random(), trainingTypeOrSkill.random(), predictKnowledgeCount(state,1.0),
+                            Founder.entries.random(), trainingTypeOrSkill.random(), predictKnowledgeCount(state, 1.0),
                         )
                     ),
                 )
@@ -117,7 +117,7 @@ object GmCalculator : ScenarioCalculator {
                                 GmActionParam(
                                     trainingFounders[it.type.ordinal],
                                     randomSelectDouble(knowledgeTypeRate),
-                                    predictKnowledgeCount(state,doubleRate),
+                                    predictKnowledgeCount(state, doubleRate),
                                 ).applyIf(it.support.any { support -> support.charaName == "ダーレーアラビアン" }) {
                                     val eventRate =
                                         if (it.support.first { support -> support.charaName == "ダーレーアラビアン" }.supportState?.passion == true) {
@@ -134,7 +134,7 @@ object GmCalculator : ScenarioCalculator {
                     is Sleep -> it.copy(
                         candidates = it.addScenarioActionParam(
                             GmActionParam(
-                                sleepFounders[0], trainingTypeOrSkill.random(), predictKnowledgeCount(state,0.2)
+                                sleepFounders[0], trainingTypeOrSkill.random(), predictKnowledgeCount(state, 0.2)
                             )
                         ),
                     )
@@ -142,7 +142,7 @@ object GmCalculator : ScenarioCalculator {
                     is Outing -> it.copy(
                         candidates = it.addScenarioActionParam(
                             GmActionParam(
-                                sleepFounders[1], trainingTypeOrSkill.random(), predictKnowledgeCount(state,0.2)
+                                sleepFounders[1], trainingTypeOrSkill.random(), predictKnowledgeCount(state, 0.2)
                             )
                         ),
                     )
@@ -150,7 +150,7 @@ object GmCalculator : ScenarioCalculator {
                     is Race -> it.copy(
                         result = it.result.addScenarioActionParam(
                             GmActionParam(
-                                sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(state,0.2)
+                                sleepFounders[2], raceKnowledgeType, predictKnowledgeCount(state, 0.2)
                             ),
                         )
                     )
@@ -181,5 +181,19 @@ object GmCalculator : ScenarioCalculator {
                 }
             }
         }
+    }
+
+    override fun getHintFrequencyUp(
+        state: SimulationState,
+        position: StatusType
+    ): Int {
+        return state.gmStatus?.wisdomHintFrequency ?: 0
+    }
+
+    override fun isAllSupportHint(
+        state: SimulationState,
+        position: StatusType
+    ): Boolean {
+        return state.gmStatus?.hintFrequencyUp ?: false
     }
 }

@@ -132,4 +132,11 @@ object CookCalculator : ScenarioCalculator {
             updateTurn(state.isGoalRaceTurn, state.isLevelUpTurn, state.isLevelUpTurn || state.turn > 72)
         }
     }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        return state.cookStatus?.cookPointEffect?.specialityRate ?: 0
+    }
 }

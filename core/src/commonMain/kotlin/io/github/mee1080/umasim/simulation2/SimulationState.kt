@@ -137,9 +137,9 @@ data class SimulationState(
         uafStatus?.totalTrainingLevel ?: training.sumOf { it.currentLevel }
     }
 
-    val hintFrequencyUp = gmStatus?.wisdomHintFrequency
-        ?: mechaStatus?.hintFrequency
-        ?: legendStatus?.baseBuffEffect?.hintFrequency
+    fun hintFrequencyUp(position: StatusType): Int {
+        return scenario.calculator.getHintFrequencyUp(this, position)
+    }
 
     val forceHint = uafStatus?.forceHint ?: false
 
@@ -152,10 +152,9 @@ data class SimulationState(
             ?: legendStatus?.baseBuffEffect?.hintCount
             ?: 0
 
-    val allSupportHint
-        get() = gmStatus?.hintFrequencyUp
-            ?: mechaStatus?.allSupportHint
-            ?: false
+    fun allSupportHint(position: StatusType): Boolean {
+        return scenario.calculator.isAllSupportHint(this, position)
+    }
 
     val supportEventEffect = gmStatus?.wisdomSupportEventEffect
 
@@ -182,12 +181,11 @@ data class SimulationState(
         scenarioStatus = scenarioStatus,
     )
 
-    val specialityRateUp
-        get() = liveStatus?.specialityRateUp
-            ?: cookStatus?.cookPointEffect?.specialityRate
-            ?: mechaStatus?.specialityRate
-            ?: legendStatus?.baseBuffEffect?.specialtyRate
-            ?: 0
+    fun specialityRateUp(cardType: StatusType) = scenario.calculator.getSpecialityRateUp(this, cardType)
+
+    val positionRateUp by lazy {
+        support.sumOf { it.card.positionRateUp(it.relation) } + scenario.calculator.getPositionRateUp(this)
+    }
 
     val trainingRelationBonus
         get() = mechaStatus?.trainingRelationBonus

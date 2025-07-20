@@ -96,15 +96,6 @@ object Calculator {
             friendTraining = friendTraining,
             friendCount = 0,
         )
-
-        val positionRateUp by lazy {
-            support.sumOf { it.card.positionRateUp(it.relation) } +
-                    (legendStatus?.baseBuffEffect?.positionRate ?: 0)
-        }
-
-        val specialityRateUp by lazy {
-            liveStatus?.specialityRateUp ?: cookStatus?.cookPointEffect?.specialityRate ?: 0
-        }
     }
 
     data class ScenarioCalcBonus(
@@ -239,7 +230,8 @@ object Calculator {
     fun calcCardPositionSelection(
         info: CalcInfo,
         member: MemberState,
-        bonus: Int,
+        specialityRateUp: Int,
+        positionRateUp: Int,
         forceSpecialityEnabled: Boolean = false,
     ): Array<Pair<StatusType, Int>> {
         if (forceSpecialityEnabled && member.forceSpeciality) {
@@ -247,7 +239,6 @@ object Calculator {
                 member.card.type to 100,
             )
         }
-        val rateUp = info.positionRateUp
         val card = member.card
         if (card.type == StatusType.FRIEND) {
             return arrayOf(
@@ -256,12 +247,13 @@ object Calculator {
                 StatusType.POWER to 100,
                 StatusType.GUTS to 100,
                 StatusType.WISDOM to 100,
-                StatusType.NONE to (100 - rateUp),
+                StatusType.NONE to (100 - positionRateUp),
             )
         }
-        val mainRate = card.specialtyRate(bonus, info.baseSpecialUniqueCondition(0, false).applyMember(member))
+        val mainRate =
+            card.specialtyRate(specialityRateUp, info.baseSpecialUniqueCondition(0, false).applyMember(member))
         val otherRate = 10000
-        val noneRate = 50 * (100 - rateUp)
+        val noneRate = 50 * (100 - positionRateUp)
         return arrayOf(
             StatusType.SPEED to if (card.type == StatusType.SPEED) mainRate else otherRate,
             StatusType.STAMINA to if (card.type == StatusType.STAMINA) mainRate else otherRate,
@@ -275,13 +267,17 @@ object Calculator {
     fun calcExpectedTrainingStatus(
         info: CalcInfo,
         teamJoinCount: Int,
+        specialityRateUp: (type: StatusType) -> Int,
+        positionRateUp: Int,
     ) = calcExpectedTrainingStatus(
-        info.copy(
+        info = info.copy(
             member = info.member + if (info.scenario.guestMember) createTeamMemberState(
                 teamJoinCount,
                 info.scenario
             ) else emptyList(),
         ),
+        specialityRateUp = specialityRateUp,
+        positionRateUp = positionRateUp,
     )
 
     private data class ExpectedStatusKey(
@@ -302,6 +298,8 @@ object Calculator {
 
     fun calcExpectedTrainingStatus(
         info: CalcInfo,
+        specialityRateUp: (type: StatusType) -> Int,
+        positionRateUp: Int,
         noCache: Boolean = false,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
         var key: ExpectedStatusKey? = null
@@ -333,9 +331,11 @@ object Calculator {
                 calcTrainingSuccessStatus(info)
             )
         } else {
-            val specialityRateBonus = info.specialityRateUp
             val joinRate = info.member.map {
-                calcRate(info.training.type, *calcCardPositionSelection(info, it, specialityRateBonus))
+                calcRate(
+                    info.training.type,
+                    *calcCardPositionSelection(info, it, specialityRateUp(it.card.type), positionRateUp)
+                )
             }
             val allJoinRate = if (info.member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }
             var patterns = mutableListOf(arrayOf(true), arrayOf(false))

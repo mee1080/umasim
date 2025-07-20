@@ -421,6 +421,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 scenarioStatus,
             ),
             state.teamJoinCount,
+            // TODO ScenarioCalculator使用
+            specialityRateUp = { 0 },
+            positionRateUp = 0,
         )
         val total = trainingResult.first.first.statusTotal
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
@@ -462,7 +465,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                     *Calculator.calcCardPositionSelection(
                         trainingCalcInfo,
                         memberState,
+                        // TODO ScenarioCalculatorで計算
                         state.specialityRateUp,
+                        0,
                     )
                 )
             }
@@ -474,7 +479,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 *Calculator.calcCardPositionSelection(
                     trainingCalcInfo.copy(member = allSupportList),
                     memberState,
+                    // TODO ScenarioCalculatorで計算
                     state.specialityRateUp,
+                    0,
                 )
             )
             supportSelectionList[memberState.index] = supportSelectionList[memberState.index].copy(

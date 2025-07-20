@@ -110,9 +110,11 @@ abstract class BaseActionSelector<Option : BaseActionSelector.BaseOption, Contex
                 return expectedStatusCacheNonNull.second
             }
         }
-        val max = trainingType.maxOf {
+        val max = trainingType.maxOf { _ ->
             val expectedStatus = Calculator.calcExpectedTrainingStatus(
                 state.baseCalcInfo,
+                specialityRateUp = { state.specialityRateUp(it) },
+                positionRateUp = state.positionRateUp,
                 noCache = true,
             ).first
             calcScore(option, expectedStatus, state.status)

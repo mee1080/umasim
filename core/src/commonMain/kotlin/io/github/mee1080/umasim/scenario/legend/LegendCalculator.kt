@@ -330,4 +330,22 @@ object LegendCalculator : ScenarioCalculator {
             state.applyBlueMasteryAddMotivation()
         } else state
     }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        return state.legendStatus?.baseBuffEffect?.specialtyRate ?: 0
+    }
+
+    override fun getPositionRateUp(state: SimulationState): Int {
+        return state.legendStatus?.baseBuffEffect?.positionRate ?: 0
+    }
+
+    override fun getHintFrequencyUp(
+        state: SimulationState,
+        position: StatusType
+    ): Int {
+        return state.legendStatus?.baseBuffEffect?.hintFrequency ?: 0
+    }
 }

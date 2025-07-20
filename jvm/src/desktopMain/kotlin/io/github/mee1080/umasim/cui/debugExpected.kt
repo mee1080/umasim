@@ -77,13 +77,13 @@ fun testExpected() {
     println(current.toString())
     println(current.statusTotal + current.skillPt)
 
-    val calcInfo = Calculator.CalcInfo(
-        chara, training[StatusType.SPEED]!!, motivation, member, scenario,
-        member.groupBy { it.card.type }.mapValues { it.value.size }, fanCount, currentStatus, totalRelation,
-        0, 0, 0, 5,
-        false, liveStatus,
-    )
-    val old = Calculator.calcExpectedTrainingStatus(calcInfo)
-    println(old.first.toString())
-    println(old.first.statusTotal + old.first.skillPt)
+//    val calcInfo = Calculator.CalcInfo(
+//        chara, training[StatusType.SPEED]!!, motivation, member, scenario,
+//        member.groupBy { it.card.type }.mapValues { it.value.size }, fanCount, currentStatus, totalRelation,
+//        0, 0, 0, 5,
+//        false, liveStatus,
+//    )
+//    val old = Calculator.calcExpectedTrainingStatus(calcInfo)
+//    println(old.first.toString())
+//    println(old.first.statusTotal + old.first.skillPt)
 }

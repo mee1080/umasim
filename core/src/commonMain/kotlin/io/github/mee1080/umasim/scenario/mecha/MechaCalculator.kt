@@ -180,4 +180,25 @@ object MechaCalculator : ScenarioCalculator {
             updateTurn(state.turn)
         }
     }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        return state.mechaStatus?.specialityRate ?: 0
+    }
+
+    override fun getHintFrequencyUp(
+        state: SimulationState,
+        position: StatusType
+    ): Int {
+        return state.mechaStatus?.hintFrequency ?: 0
+    }
+
+    override fun isAllSupportHint(
+        state: SimulationState,
+        position: StatusType
+    ): Boolean {
+        return state.mechaStatus?.allSupportHint ?: false
+    }
 }

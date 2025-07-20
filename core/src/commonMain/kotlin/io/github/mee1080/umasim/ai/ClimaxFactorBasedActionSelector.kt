@@ -331,6 +331,8 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 state.isLevelUpTurn,
                 null,
             ),
+            specialityRateUp = { state.specialityRateUp(it) },
+            positionRateUp = state.positionRateUp,
         ).first
         return expectedStatus.speed * option.speedFactor +
                 expectedStatus.stamina * option.staminaFactor +

@@ -155,6 +155,7 @@ fun SimulationState.addAllStatus(status: Int, skillPt: Int = 0, skillHint: Map<S
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
     // シナリオ友人不在判定
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
+    if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
 
     // 各トレーニングに配置
     var position: StatusType
@@ -164,7 +165,8 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
             *Calculator.calcCardPositionSelection(
                 state.baseCalcInfo,
                 this,
-                state.specialityRateUp,
+                if (guest) 0 else state.specialityRateUp(card.type),
+                state.positionRateUp,
                 forceSpecialityEnabled = true,
             )
         )
@@ -173,7 +175,8 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
                 *Calculator.calcCardPositionSelection(
                     state.baseCalcInfo,
                     this,
-                    state.specialityRateUp,
+                    if (guest) 0 else state.specialityRateUp(card.type),
+                    state.positionRateUp,
                 )
             )
         } else StatusType.NONE
@@ -189,8 +192,8 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     }
     // ヒントアイコン表示、情熱ゾーン減少
     val supportState = supportState?.copy(
-        hintIcon = !outingType && position != StatusType.NONE && (
-                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp))
+        hintIcon = !outingType && (
+                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp(position)))
                 ),
         passionTurn = max(0, supportState.passionTurn - 1),
     )
@@ -267,7 +270,7 @@ private suspend fun SimulationState.applyStatusAction(
             } else it
         } else training
         val memberIndices = action.member.map { it.index }
-        val trainingHint = selectTrainingHint(action.member)
+        val trainingHint = selectTrainingHint(action.member, action.type)
         val trainingHintIndices = trainingHint.second.map { it.index }
         val relationBonus = support.sumOf { it.card.trainingRelationAll } +
                 action.support.sumOf { it.card.trainingRelationJoin } +
@@ -395,8 +398,11 @@ private fun TrainingState.applyAction(action: Training, autoLevelUp: Boolean): T
     }
 }
 
-private fun SimulationState.selectTrainingHint(support: List<MemberState>): Pair<Status, List<MemberState>> {
-    return if (allSupportHint) {
+private fun SimulationState.selectTrainingHint(
+    support: List<MemberState>,
+    position: StatusType,
+): Pair<Status, List<MemberState>> {
+    return if (allSupportHint(position)) {
         // ステータス上昇はCalculatorで計算済み
         val hintSupportList = support.filter { !it.outingType }
         hintSupportList.map { hintSupport ->

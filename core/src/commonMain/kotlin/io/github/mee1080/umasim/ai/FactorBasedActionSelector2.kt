@@ -374,6 +374,8 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         state.isLevelUpTurn,
                         state.scenarioStatus,
                     ),
+                    specialityRateUp = { state.specialityRateUp(it) },
+                    positionRateUp = state.positionRateUp,
                 ).first
                 expectedStatus.speed * option.speedFactor +
                         expectedStatus.stamina * option.staminaFactor +

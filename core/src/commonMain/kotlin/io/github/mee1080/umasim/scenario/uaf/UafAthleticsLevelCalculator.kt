@@ -30,7 +30,7 @@ object UafAthleticsLevelCalculator {
         bonus: Boolean,
     ): DoubleArray {
         val factors = info.member.map { member ->
-            val positions = Calculator.calcCardPositionSelection(info, member, 0)
+            val positions = Calculator.calcCardPositionSelection(info, member, 0, 0)
             val restRate = calcRate(StatusType.NONE, *positions)
             val link = info.scenario.scenarioLink.contains(member.charaName)
             val typeInt = member.card.type.ordinal

@@ -327,4 +327,37 @@ object MujintoCalculator : ScenarioCalculator {
         val mujintoFriendBonus = (100 + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0
         return Calculator.ScenarioCalcBonus(additionalFactor = mujintoFriendBonus)
     }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        val mujintoStatus = state.mujintoStatus ?: return 0
+        return if (state.isLevelUpTurn) {
+            mujintoStatus.campSpecialityRate(cardType)
+        } else {
+            mujintoStatus.specialityRate(cardType)
+        }
+    }
+
+    override fun getPositionRateUp(state: SimulationState): Int {
+        return state.mujintoStatus?.positionRateUp() ?: 0
+    }
+
+    override fun getHintFrequencyUp(
+        state: SimulationState,
+        position: StatusType
+    ): Int {
+        val mujintoStatus = state.mujintoStatus ?: return 0
+        return mujintoStatus.hintUp() + if (state.isLevelUpTurn) {
+            mujintoStatus.campHintUp(position)
+        } else 0
+    }
+
+    override fun isAllSupportHint(
+        state: SimulationState,
+        position: StatusType
+    ): Boolean {
+        return state.isLevelUpTurn && state.mujintoStatus?.campHintAll(position) ?: false
+    }
 }

@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.scenario.live
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.umasim.simulation2.SimulationState
 import kotlin.random.Random
 
 object LiveCalculator : ScenarioCalculator {
@@ -87,5 +88,12 @@ object LiveCalculator : ScenarioCalculator {
         } else {
             return randomSelect(firstPerformanceRate[info.training.type]!!.filterNot { it.first == firstType })
         }
+    }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        return state.liveStatus?.specialityRateUp ?: 0
     }
 }

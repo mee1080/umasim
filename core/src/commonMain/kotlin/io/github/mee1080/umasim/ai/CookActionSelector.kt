@@ -219,6 +219,8 @@ class CookActionSelector(private val options: List<Option>) : ActionSelector {
         val max = trainingType.maxOf {
             val expectedStatus = Calculator.calcExpectedTrainingStatus(
                 state.baseCalcInfo,
+                specialityRateUp = { state.specialityRateUp(it) },
+                positionRateUp = state.positionRateUp,
                 noCache = true,
             ).first
             calcScore(option, expectedStatus, state.status)

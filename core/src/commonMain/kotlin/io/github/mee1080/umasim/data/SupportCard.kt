@@ -146,13 +146,13 @@ data class SupportCard(
 
     val hintLevel = status.hintLevel + unique.hintLevel
 
-    // ボーナスはカード数値に加算
+    // ボーナスは乗算
     fun specialtyRate(
         bonus: Int,
         condition: SpecialUniqueCondition,
-    ) = (100 + status.specialtyRate + bonus) * (100 + unique.specialtyRate) * (100 + specialUnique.sumOf {
+    ) = (100 + status.specialtyRate) * (100 + unique.specialtyRate) * (100 + specialUnique.sumOf {
         it.specialityRate(this, condition)
-    }) / 100
+    }) * (100 + bonus) / 10000
 
     fun wisdomFriendRecovery(
         condition: SpecialUniqueCondition,
