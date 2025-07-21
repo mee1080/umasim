@@ -106,6 +106,8 @@ data class SupportCard(
 
     val trainingRelationJoin = specialUnique.sumOf { it.trainingRelationJoin }
 
+    val trainingNextTurnSpecialityRateUp = specialUnique.sumOf { it.trainingNextTurnSpecialityRateUp }
+
     fun friendFactor(
         condition: SpecialUniqueCondition,
     ) = (100 + status.friend) * (100 + unique.friend) * (100 + specialUnique.sumOf {

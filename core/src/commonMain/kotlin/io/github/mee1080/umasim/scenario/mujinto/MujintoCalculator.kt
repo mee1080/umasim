@@ -114,7 +114,11 @@ object MujintoCalculator : ScenarioCalculator {
         return MujintoTraining(
             member = calcInfo.member,
             friendTraining = friend,
-            result = MujintoTrainingResult(base.first + scenario),
+            result = MujintoTrainingResult(
+                status = base.first + scenario,
+                member = calcInfo.member,
+                friendTraining = friend,
+            ),
         )
     }
 
@@ -126,13 +130,31 @@ object MujintoCalculator : ScenarioCalculator {
         }
     }
 
-    fun applyScenarioAction(state: SimulationState, result: MujintoActionResult): SimulationState {
-        return when {
-            result is MujintoTrainingResult -> state
-                .addStatus(result.status)
-                .updateMujintoStatus { addPioneerPoint(result.pioneerPoint) }
+    suspend fun applyScenarioAction(
+        state: SimulationState,
+        result: MujintoActionResult,
+        selector: ActionSelector,
+    ): SimulationState {
+        return when (result) {
+            is MujintoTrainingResult -> {
+                val dummyResult = StatusActionResult(
+                    status = result.status,
+                    scenarioActionParam = MujintoActionParam(pioneerPoint = result.pioneerPoint),
+                    success = true,
+                )
+                val dummyTraining = Training(
+                    type = StatusType.FRIEND,
+                    failureRate = 0,
+                    level = 0,
+                    member = result.member,
+                    candidates = listOf(dummyResult to 1),
+                    baseStatus = result.status,
+                    friendTraining = result.friendTraining,
+                )
+                state.applyStatusAction(dummyTraining, dummyResult, selector, 3)
+            }
 
-            else -> state
+            is MujintoAddPlanResult -> TODO()
         }
     }
 

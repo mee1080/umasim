@@ -52,6 +52,7 @@ suspend fun SimulationState.onTurnChange(selector: ActionSelector): SimulationSt
     var newState = updateRefresh()
     newState = newState.copy(
         turn = turn,
+        member = member.map { it.onTurnChange(turn, newState) },
         training = newState.training.map { it.copy(levelOverride = levelOverride) },
         enableItem = newState.enableItem.onTurnChange(),
     )
@@ -87,7 +88,7 @@ fun SimulationState.shuffleMember(): SimulationState {
     var newMember: List<MemberState>
     var supportPosition: Map<StatusType, MutableList<MemberState>>
     do {
-        newMember = member.map { it.onTurnChange(turn, this) }
+        newMember = member.map { it.selectPosition(turn, this) }
         supportPosition = trainingType.associateWith { mutableListOf() }
         newMember.forEach {
             it.positions.forEach { status ->
@@ -153,6 +154,30 @@ fun SimulationState.addAllStatus(status: Int, skillPt: Int = 0, skillHint: Map<S
 )
 
 private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberState {
+    val scenarioState = when (scenarioState) {
+        is AoharuMemberState -> scenarioState.copy(
+            // アオハルアイコン表示
+            aoharuIcon = turn >= 3 && Random.nextDouble() < 0.4
+        )
+
+        else -> scenarioState
+    }
+    // ヒントアイコン表示、情熱ゾーン減少
+    val supportState = supportState?.copy(
+        hintIcon = !outingType && (
+                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp(position)))
+                ),
+        passionTurn = max(0, supportState.passionTurn - 1),
+        currentTurnSpecialityUp = supportState.nextTurnSpecialityUp,
+        nextTurnSpecialityUp = 0,
+    )
+    return copy(
+        supportState = supportState,
+        scenarioState = scenarioState,
+    )
+}
+
+private fun MemberState.selectPosition(turn: Int, state: SimulationState): MemberState {
     // シナリオ友人不在判定
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
     if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
@@ -175,32 +200,17 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
                 *Calculator.calcCardPositionSelection(
                     state.baseCalcInfo,
                     this,
-                    if (guest) 0 else state.specialityRateUp(card.type),
+                    supportState?.let {
+                        it.currentTurnSpecialityUp + state.specialityRateUp(card.type)
+                    } ?: 0,
                     state.positionRateUp,
                 )
             )
         } else StatusType.NONE
     } while (position == secondPosition && position != StatusType.NONE)
 
-    val scenarioState = when (scenarioState) {
-        is AoharuMemberState -> scenarioState.copy(
-            // アオハルアイコン表示
-            aoharuIcon = turn >= 3 && Random.nextDouble() < 0.4
-        )
-
-        else -> scenarioState
-    }
-    // ヒントアイコン表示、情熱ゾーン減少
-    val supportState = supportState?.copy(
-        hintIcon = !outingType && (
-                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp(position)))
-                ),
-        passionTurn = max(0, supportState.passionTurn - 1),
-    )
     return copy(
         position = position,
-        supportState = supportState,
-        scenarioState = scenarioState,
         additionalPosition = if (secondPosition == StatusType.NONE) emptySet() else setOf(secondPosition),
     )
 }
@@ -253,18 +263,19 @@ suspend fun SimulationState.applyAction(
 
         is LegendActionResult -> LegendCalculator.applyScenarioAction(this, result)
 
-        is MujintoActionResult -> MujintoCalculator.applyScenarioAction(this, result)
+        is MujintoActionResult -> MujintoCalculator.applyScenarioAction(this, result, selector)
     }
 }
 
-private suspend fun SimulationState.applyStatusAction(
+suspend fun SimulationState.applyStatusAction(
     action: Action,
     result: StatusActionResult,
-    selector: ActionSelector
+    selector: ActionSelector,
+    baseRelationBonus: Int = 0,
 ): SimulationState {
     // Action結果反映
     val newState = if (action is Training) {
-        val newTraining = if (result.success) training.map {
+        val newTraining = if (result.success && !isLevelUpTurn) training.map {
             if (action.type == it.type) {
                 it.applyAction(action, scenario.trainingAutoLevelUp)
             } else it
@@ -272,13 +283,15 @@ private suspend fun SimulationState.applyStatusAction(
         val memberIndices = action.member.map { it.index }
         val trainingHint = selectTrainingHint(action.member, action.type)
         val trainingHintIndices = trainingHint.second.map { it.index }
-        val relationBonus = support.sumOf { it.card.trainingRelationAll } +
+        val relationBonus = baseRelationBonus +
+                support.sumOf { it.card.trainingRelationAll } +
                 action.support.sumOf { it.card.trainingRelationJoin } +
                 trainingRelationBonus
+        val nextTurnSpecialityRateUp = action.support.sumOf { it.card.trainingNextTurnSpecialityRateUp }
         val newMember = member.map {
             if (memberIndices.contains(it.index)) {
                 it.applyTraining(
-                    action, charmBonus, relationBonus,
+                    action, charmBonus, relationBonus, nextTurnSpecialityRateUp,
                     chara, trainingHintIndices.contains(it.index), this
                 )
             } else it
@@ -302,6 +315,7 @@ private fun MemberState.applyTraining(
     action: Training,
     charmValue: Int,
     relationBonus: Int,
+    nextTurnSpecialityRateUp: Int,
     chara: Chara,
     hint: Boolean,
     state: SimulationState,
@@ -315,9 +329,13 @@ private fun MemberState.applyTraining(
     // 20%で情熱突入と仮定
     val startPassion =
         supportState != null && (supportState.passionTurn > 0 || (supportState.outingEnabled && Random.nextDouble() < 0.2))
-    return copy(
-        scenarioState = scenarioState,
-    ).addRelation(relationUp).applyIf(startPassion) { startPassion() }
+    return copy(scenarioState = scenarioState)
+        .addRelation(relationUp)
+        .applyIf(startPassion) { startPassion() }
+        .applyIf({ action.friendTraining }) {
+            copy(supportState = supportState?.copy(friendCount = supportState.friendCount + 1))
+        }
+        .addNextTurnSpecialityRateUp(nextTurnSpecialityRateUp)
 }
 
 private suspend fun SimulationState.applyFriendEvent(action: Training, selector: ActionSelector): SimulationState {
@@ -852,4 +870,17 @@ private fun MemberState.startPassion(): MemberState {
         )
         copy(supportState = supportState.copy(passionTurn = passionTurn))
     }
+}
+
+fun MemberState.addNextTurnSpecialityRateUp(rate: Int): MemberState {
+    val supportState = supportState ?: return this
+    return copy(
+        supportState = supportState.copy(
+            nextTurnSpecialityUp = supportState.nextTurnSpecialityUp + rate,
+        )
+    )
+}
+
+fun SimulationState.addNextTurnSpecialityRateUpAll(rate: Int): SimulationState {
+    return copy(member = member.map { it.addNextTurnSpecialityRateUp(rate) })
 }

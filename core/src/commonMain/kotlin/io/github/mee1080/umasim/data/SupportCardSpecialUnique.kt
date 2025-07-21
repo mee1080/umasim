@@ -35,6 +35,7 @@ data class SupportCardSpecialUnique(
             119 -> "絆${value2}以上でサポカ配置率アップ"
             120 -> "絆${value1}以上で編成サポカに応じたステータス/スキルボーナス（各最大${value3}）"
             121 -> "トレーニングの全員の絆上昇量常時+$value0、このサポカが参加した場合さらに+$value1"
+            122 -> "一緒にトレーニングした他のサポカの次のターンの${supportEffectName[value0]}+$value1"
             else -> if (supportEffectName.containsKey(type)) {
                 "${supportEffectName[type]}$value0"
             } else "不明（${type},${value0},${value1},${value2},${value3},${value4}）"
@@ -213,6 +214,8 @@ data class SupportCardSpecialUnique(
     val trainingRelationAll = if (type == 121) value0 else 0
 
     val trainingRelationJoin = if (type == 121) value1 else 0
+
+    val trainingNextTurnSpecialityRateUp = if (type == 122 && value0 == 19) value1 else 0
 
     private fun getValue(
         card: SupportCard,

@@ -258,6 +258,8 @@ data class SupportState(
     val passionTurn: Int,
     val friendCount: Int,
     val outingStep: Int = 0,
+    val nextTurnSpecialityUp: Int = 0,
+    val currentTurnSpecialityUp: Int = 0,
 ) {
     val passion get() = passionTurn > 0
     val outingEnabled = outingStep >= 2

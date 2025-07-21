@@ -456,6 +456,8 @@ sealed interface MujintoActionResult : ActionResult
 
 data class MujintoTrainingResult(
     override val status: Status,
+    val member: List<MemberState>,
+    val friendTraining: Boolean,
     val pioneerPoint: Int = 0,
 ) : MujintoActionResult {
     override fun toString() = "島トレーニング ${status.toShortString()}"

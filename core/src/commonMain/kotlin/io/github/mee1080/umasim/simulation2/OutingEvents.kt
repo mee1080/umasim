@@ -7,7 +7,6 @@ import io.github.mee1080.umasim.scenario.cook.updateCookStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
-import io.github.mee1080.umasim.scenario.mujinto.updateMujintoStatus
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
 
@@ -86,15 +85,14 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
 
         "タッカーブライン" -> {
             if (isFirst) {
-                // TODO
-                applyFriendEvent(target, Status(6, 6, 6, 6, 6), 10, 1)
+                applyFriendEvent(target, Status(speed = 5, stamina = 5, power = 5, maxHp = 4, motivation = 1), 10, 1)
             } else if (Random.nextDouble() < 0.4) {
                 if (Random.nextDouble() < 0.1) {
                     applyFriendEvent(target, Status(stamina = 5, motivation = 1), 5)
+                        .addNextTurnSpecialityRateUpAll(20)
                 } else {
                     applyFriendEvent(target, Status(stamina = 5), 5)
-                }.updateMujintoStatus {
-                    copy(nextTurnSpecialtyBuff = 20)
+                        .addNextTurnSpecialityRateUpAll(20)
                 }
             } else this
         }
@@ -258,36 +256,36 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
 
         "タッカーブライン" -> {
             when (step) {
-                // TODO
-                1 -> applyFriendEvent(support, Status(hp = 20, maxHp = 4, motivation = 1), 5, 2)
+                1 -> applyFriendEvent(support, Status(hp = 20, motivation = 1, skillPt = 10), 5, 2)
+                    .copy(condition = condition + "幸運体質")
 
-                // TODO
-                2 -> applyFriendEvent(support, Status(speed = 15, hp = 35, motivation = 1), 5, 3)
+                2 -> applyFriendEvent(support, Status(maxHp = 4, hp = 20, motivation = 1, stamina = 35), 5, 3)
+                    .addNextTurnSpecialityRateUpAll(20)
 
-                // TODO
-                3 -> applyFriendEvent(support, Status(speed = 10, wisdom = 10, hp = 30, motivation = 1), 5, 4)
+                3 -> applyFriendEvent(
+                    support,
+                    Status(hp = 20, motivation = 1, speed = 30, skillHint = mapOf("活路を拓く！" to 2)),
+                    5, 4,
+                ).addNextTurnSpecialityRateUpAll(20)
 
-                4 -> if (status.hp < 80) {
+                4 -> if (status.maxHp - status.hp >= 20) {
                     applyFriendEvent(support, Status(hp = 50, motivation = 1), 5, 5)
+                        .addNextTurnSpecialityRateUpAll(30)
                 } else {
                     applyFriendEvent(
                         support,
                         Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
                         5, 5,
-                    )
-                }.updateMujintoStatus {
-                    copy(nextTurnSpecialtyBuff = 30)
+                    ).addNextTurnSpecialityRateUpAll(30)
                 }
 
-                // TODO
-                5 -> applyFriendEvent(support, Status(speed = 25, hp = 30, motivation = 1), 5, 6)
+                5 -> applyFriendEvent(support, Status(hp = 25, motivation = 1, stamina = 15, guts = 15), 5, 6)
+                    .addNextTurnSpecialityRateUpAll(20)
 
                 6 -> applyFriendEvent(
-                    support, Status(power = 30, hp = 30, motivation = 1, skillHint = mapOf("パスファインダー" to 1)),
+                    support, Status(power = 30, hp = 30, motivation = 1, skillHint = mapOf("パスファインダー" to 3)),
                     5, 7,
-                ).updateMujintoStatus {
-                    copy(nextTurnSpecialtyBuff = 120)
-                }
+                ).addNextTurnSpecialityRateUpAll(120)
 
                 else -> this
             }

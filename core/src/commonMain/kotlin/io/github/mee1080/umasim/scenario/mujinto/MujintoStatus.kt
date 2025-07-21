@@ -216,7 +216,6 @@ data class MujintoStatus(
     val pioneerPoint: Int = 0,
     val islandTrainingTicket: Int = 0,
     val evaluationBonus: MujintoEvaluationBonus = mujintoEvaluationBonus(1),
-    val nextTurnSpecialtyBuff: Int = 0,
 ) : ScenarioStatus {
     fun addPioneerPoint(point: Int): MujintoStatus {
         // TODO 施設、チケット獲得
