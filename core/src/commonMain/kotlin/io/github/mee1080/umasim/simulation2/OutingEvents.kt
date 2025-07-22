@@ -255,6 +255,20 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
         }
 
         "タッカーブライン" -> {
+            val selection = listOf(
+                FriendAction(
+                    "発展Pt+80", FriendActionResult(
+                        support, Status(skillPt = 3), 0,
+                        scenarioActionParam = MujintoActionParam(80),
+                    )
+                ),
+                FriendAction(
+                    "発展Pt+0", FriendActionResult(
+                        support, Status(skillPt = 3), 0,
+                    )
+                )
+            )
+            val selected = selector.select(this, selection)
             when (step) {
                 1 -> applyFriendEvent(support, Status(hp = 20, motivation = 1, skillPt = 10), 5, 2)
                     .copy(condition = condition + "幸運体質")
@@ -288,7 +302,10 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                 ).addNextTurnSpecialityRateUpAll(120)
 
                 else -> this
-            }
+            }.applyAction(
+                selected,
+                selected.randomSelectResult()
+            )
         }
 
         else -> this
@@ -335,10 +352,9 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             ).updateLegendStatus { addBuffGauge(2) }
 
-            // TODO
             "タッカーブライン" -> state.applyFriendEvent(
                 support,
-                Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                Status(hp = 15, motivation = 1, speed = 10, skillHint = mapOf("端緒" to 3)),
                 5, 0,
             )
 
@@ -366,10 +382,9 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 0, 0,
             )
 
-            // TODO
             "タッカーブライン" -> state.applyFriendEvent(
                 support,
-                Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                Status(speed = 18, stamina = 18, guts = 18, skillPt = 65),
                 5, 0,
             )
 
