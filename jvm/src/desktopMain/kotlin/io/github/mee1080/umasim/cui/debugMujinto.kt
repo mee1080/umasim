@@ -22,13 +22,12 @@ fun debugMujinto() {
 fun debugMujintoRunSimulation() {
     val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5) // Placeholder character
     val support = Store.getSupportByName(
-        // Placeholder supports
-        "[血脈の胎動]ドゥラメンテ",
-        "[大望は飛んでいく]エルコンドルパサー",
-        "[冬溶かす熾火]メジロラモーヌ",
-        "[只、君臨す。]オルフェーヴル",
-        "[かっとばせー！ですわ！？]メジロマックイーン",
-        "[共に描くキラメキ]都留岐涼花",
+        "[Cocoon]エアシャカール" to 4,
+        "[Take Them Down!]ナリタタイシン" to 4,
+        "[白き稲妻の如く]タマモクロス" to 4,
+        "[只、君臨す。]オルフェーヴル" to 4,
+        "[世界を変える眼差し]アーモンドアイ" to 4,
+        "[本能は吼えているか！？]タッカーブライン" to 4,
     )
     println(chara)
     println(support)
@@ -63,17 +62,15 @@ fun debugMujintoRunSimulation() {
 fun debugMujintoSingleSimulation() {
     val chara = Store.getChara("[プラタナス・ウィッチ]スイープトウショウ", 5, 5) // Placeholder character
     val support = Store.getSupportByName(
-        // Placeholder supports
-        "[血脈の胎動]ドゥラメンテ",
-        "[大望は飛んでいく]エルコンドルパサー",
-        "[冬溶かす熾火]メジロラモーヌ",
-        "[只、君臨す。]オルフェーヴル",
-        "[かっとばせー！ですわ！？]メジロマックイーン",
-        "[共に描くキラメキ]都留岐涼花",
+        "[Cocoon]エアシャカール" to 4,
+        "[Take Them Down!]ナリタタイシン" to 4,
+        "[白き稲妻の如く]タマモクロス" to 4,
+        "[只、君臨す。]オルフェーヴル" to 4,
+        "[世界を変える眼差し]アーモンドアイ" to 4,
+        "[本能は吼えているか！？]タッカーブライン" to 4,
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    // Assuming a MujintoActionSelector exists or will be created
     val selector = MujintoActionSelector.s2h2w1.generator().generateSelector()
     val factor = listOf(
         // Placeholder factors
@@ -89,8 +86,7 @@ fun debugMujintoSingleSimulation() {
         println("${index + 1}:")
         println("  開始時: ${history.beforeActionState.status.toShortString()}")
         println("  トレLv: ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")
-        // Removed UAF specific status print
-        // println("  UAF: ${history.beforeActionState.uafStatus?.toShortString()}")
+        println("  無人島: ${history.beforeActionState.mujintoStatus?.toShortString()}")
         history.selections.forEach { (selection, selectedAction, result) ->
             println()
             selection.forEach { action ->
@@ -111,11 +107,8 @@ fun debugMujintoSingleSimulation() {
         }
         println()
         println("  終了時: ${(history.afterTurnState.status).toShortString()}")
-        // Removed UAF specific status print
-        // println("  UAF: ${history.beforeActionState.uafStatus?.toShortString()}")
+        println("  無人島: ${history.afterTurnState.mujintoStatus?.toShortString()}")
     }
     println(result.first)
     println(result.first.status.toShortString())
 }
-
-// Removed debugUafAthleticsLevelCalculator function as it's UAF specific

@@ -85,10 +85,3 @@ data class MujintoState(
         facilityJukuren = facilityJukuren.replaced(type, jukuren),
     )
 }
-
-val StatusType.facilityName
-    get() = when (this) {
-        StatusType.NONE -> "配置なし"
-        StatusType.FRIEND -> "海の家"
-        else -> displayName
-    }

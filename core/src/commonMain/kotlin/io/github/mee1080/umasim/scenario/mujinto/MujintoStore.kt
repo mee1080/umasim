@@ -74,6 +74,13 @@ val mujintoFacilities = (trainingType + StatusType.FRIEND).associateWith { type 
     }
 }
 
+val StatusType.facilityName
+    get() = when (this) {
+        StatusType.NONE -> "配置なし"
+        StatusType.FRIEND -> "海の家"
+        else -> displayName
+    }
+
 fun mujintoFacilityOrNull(type: StatusType, level: Int, jukuren: Boolean = false): MujintoFacility? {
     return mujintoFacilities[type]?.get(level)?.get(jukuren)
 }
@@ -212,3 +219,17 @@ val mujintoEvaluationBonuses = listOf(
 fun mujintoEvaluationBonus(turn: Int): MujintoEvaluationBonus {
     return mujintoEvaluationBonuses[min((turn - 1) / 12, 5)]
 }
+
+val mujintoFacilitySpace = listOf(
+    listOf(3, 3, 4, 4, 6, 0),
+    listOf(3, 4, 5, 5, 7, 0),
+    listOf(4, 5, 6, 6, 8, 0),
+)
+
+val mujintoEvaluationStatusUp = listOf(0, 10, 15, 20, 25, 35)
+
+val mujintoEvaluationSkillPt = listOf(0, 60, 120, 150, 200, 300)
+
+val mujintoEvaluationHpDivider = listOf(1, 10, 10, 10, 10, 8)
+
+val mujintoEvaluationHpMax = listOf(0, 20, 20, 25, 25, 30)

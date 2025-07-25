@@ -8,6 +8,7 @@ import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
 import io.github.mee1080.utility.applyIf
+import io.github.mee1080.utility.applyIfNotNull
 import kotlin.random.Random
 
 suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selector: ActionSelector): SimulationState {
@@ -255,20 +256,22 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
         }
 
         "タッカーブライン" -> {
-            val selection = listOf(
-                FriendAction(
-                    "発展Pt+80", FriendActionResult(
-                        support, Status(skillPt = 3), 0,
-                        scenarioActionParam = MujintoActionParam(80),
-                    )
-                ),
-                FriendAction(
-                    "発展Pt+0", FriendActionResult(
-                        support, Status(skillPt = 3), 0,
+            val selected = if (step == 1) null else {
+                val selection = listOf(
+                    FriendAction(
+                        "発展Pt+80", FriendActionResult(
+                            support, Status(skillPt = 3), 0,
+                            scenarioActionParam = MujintoActionParam(80),
+                        )
+                    ),
+                    FriendAction(
+                        "発展Pt+0", FriendActionResult(
+                            support, Status(skillPt = 3), 0,
+                        )
                     )
                 )
-            )
-            val selected = selector.select(this, selection)
+                selector.select(this, selection)
+            }
             when (step) {
                 1 -> applyFriendEvent(support, Status(hp = 20, motivation = 1, skillPt = 10), 5, 2)
                     .copy(condition = condition + "幸運体質")
@@ -302,10 +305,9 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                 ).addNextTurnSpecialityRateUpAll(120)
 
                 else -> this
-            }.applyAction(
-                selected,
-                selected.randomSelectResult()
-            )
+            }.applyIfNotNull(selected) {
+                applyAction(it, it.randomSelectResult())
+            }
         }
 
         else -> this

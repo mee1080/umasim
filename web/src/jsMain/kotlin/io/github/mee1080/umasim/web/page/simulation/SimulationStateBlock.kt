@@ -22,7 +22,6 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.data.turnToString
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
-import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.scenario.mecha.maxLearningLevel
 import io.github.mee1080.umasim.scenario.uaf.UafAthletic
@@ -173,6 +172,9 @@ fun SimulationStateBlock(state: SimulationState) {
         }
         state.legendStatus?.let {
             LegendStateBlock(it)
+        }
+        state.mujintoStatus?.let {
+            MujintoStateBlock(it)
         }
         HideBlock("サポートカード") {
             state.support.forEach {

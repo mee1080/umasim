@@ -2,12 +2,16 @@ package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.scenario.mujinto.facilityName
 import io.github.mee1080.umasim.web.components.atoms.MdOutlinedSelect
 import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
-import io.github.mee1080.umasim.web.state.*
+import io.github.mee1080.umasim.web.state.MujintoState
+import io.github.mee1080.umasim.web.state.State
+import io.github.mee1080.umasim.web.state.mujintoFacilityType
+import io.github.mee1080.umasim.web.state.mujintoPositionSelection
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.vm.ViewModel
 import io.github.mee1080.utility.roundToString

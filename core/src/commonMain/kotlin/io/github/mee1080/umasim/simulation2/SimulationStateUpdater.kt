@@ -146,10 +146,15 @@ fun SimulationState.addStatus(status: Status, applyScenario: Boolean = true): Si
     }.updateStatus { it + status }
 }
 
-fun SimulationState.addAllStatus(status: Int, skillPt: Int = 0, skillHint: Map<String, Int> = emptyMap()) = addStatus(
+fun SimulationState.addAllStatus(
+    status: Int,
+    skillPt: Int = 0,
+    skillHint: Map<String, Int> = emptyMap(),
+    hp: Int = 0,
+) = addStatus(
     Status(
         speed = status, stamina = status, power = status, guts = status, wisdom = status,
-        skillPt = skillPt, skillHint = skillHint,
+        skillPt = skillPt, skillHint = skillHint, hp = hp,
     )
 )
 
@@ -435,19 +440,23 @@ private fun SimulationState.selectTrainingHint(
         val hintSupportList = support.filter { it.hint }
         if (hintSupportList.isEmpty()) return Status() to emptyList()
         val hintSupport = hintSupportList.random()
-        var result = Status()
-        repeat(1 + hintCountPlus) {
-            val hintSkill = (hintSupport.card.skills.filter {
-                !result.skillHint.containsKey(it) && status.skillHint.getOrElse(it) { 0 } < 5
-            } + "").random()
-            result += if (hintSkill.isEmpty()) {
-                hintSupport.card.hintStatus
-            } else {
-                Status(skillHint = mapOf(hintSkill to 1 + hintSupport.card.hintLevel))
-            }
-        }
-        result to listOf(hintSupport)
+        hintSupport.selectHint(status, 1 + hintCountPlus) to listOf(hintSupport)
     }
+}
+
+private fun MemberState.selectHint(currentStatus: Status, count: Int = 1): Status {
+    var result = Status()
+    repeat(count) {
+        val hintSkill = (card.skills.filter {
+            !result.skillHint.containsKey(it) && currentStatus.skillHint.getOrElse(it) { 0 } < 5
+        } + "").random()
+        result += if (hintSkill.isEmpty()) {
+            card.hintStatus
+        } else {
+            Status(skillHint = mapOf(hintSkill to 1 + card.hintLevel))
+        }
+    }
+    return result
 }
 
 private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>): Status {
@@ -883,4 +892,9 @@ fun MemberState.addNextTurnSpecialityRateUp(rate: Int): MemberState {
 
 fun SimulationState.addNextTurnSpecialityRateUpAll(rate: Int): SimulationState {
     return copy(member = member.map { it.addNextTurnSpecialityRateUp(rate) })
+}
+
+fun SimulationState.addRandomSupportHint(): SimulationState {
+    val target = support.filter { !it.outingType }.randomOrNull() ?: return this
+    return addStatus(target.selectHint(status))
 }

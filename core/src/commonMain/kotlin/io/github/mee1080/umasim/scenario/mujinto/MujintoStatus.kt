@@ -1,10 +1,6 @@
 package io.github.mee1080.umasim.scenario.mujinto
 
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.upInTraining
-import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.simulation2.ScenarioMemberState
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
 
@@ -13,8 +9,23 @@ fun SimulationState.updateMujintoStatus(update: MujintoStatus.() -> MujintoStatu
     return copy(scenarioStatus = mujintoStatus.update())
 }
 
-fun MujintoStatus.updateTurn(turn: Int): MujintoStatus {
-    return copy(evaluationBonus = mujintoEvaluationBonus(turn))
+/**
+ * 0: 3T～
+ * 1: 13T～
+ * 2: 25T～
+ * 3: 37T～
+ * 4: 49T～
+ * 5: 61T～
+ */
+fun MujintoStatus.updatePhase(phase: Int, facilityPlan: List<MujintoFacility> = emptyList()): MujintoStatus {
+    val maxSpace = mujintoFacilitySpace[linkMode][phase]
+    return copy(
+        facilityPlan = facilityPlan,
+        pioneerPoint = 0,
+        requiredPoint1 = maxSpace / 2 * 100,
+        requiredPoint2 = maxSpace * 100,
+        evaluationBonus = mujintoEvaluationBonuses[phase],
+    )
 }
 
 class MujintoFacility(
@@ -29,8 +40,6 @@ class MujintoFacility(
         4, 3 -> if (jukuren) 1 else 2
         else -> 1
     }
-
-    val cost = space * 100
 
     private fun calcIslandTrainingBonus(targetType: StatusType): Int {
         return if (type == StatusType.FRIEND) {
@@ -214,12 +223,93 @@ data class MujintoStatus(
     val facilities: Map<StatusType, MujintoFacility> = emptyMap(),
     val facilityPlan: List<MujintoFacility> = emptyList(),
     val pioneerPoint: Int = 0,
+    val requiredPoint1: Int = 0,
+    val requiredPoint2: Int = 0,
     val islandTrainingTicket: Int = 0,
     val evaluationBonus: MujintoEvaluationBonus = mujintoEvaluationBonus(1),
+    val linkMode: Int = 2,
 ) : ScenarioStatus {
-    fun addPioneerPoint(point: Int): MujintoStatus {
-        // TODO 施設、チケット獲得
-        return copy(pioneerPoint = pioneerPoint + point)
+
+    constructor(support: List<SupportCard>) : this(
+        linkMode = support.firstOrNull { it.chara == "タッカーブライン" }?.let {
+            if (it.maxLevel >= 41) 2 else 1
+        } ?: 0
+    )
+
+    fun toShortString() = buildString {
+        append("施設：")
+        trainingType.forEach {
+            val facility = facilities[it]
+            if (facility != null && facility.level >= 3 && it != StatusType.FRIEND) {
+                append(if (facility.jukuren) "熟練" else "本能")
+            }
+            append(facility?.level ?: 0)
+            append("/")
+        }
+        append(facilities[StatusType.FRIEND]?.level ?: 0)
+        append(" 発展Pt：")
+        append(pioneerPoint)
+        append("/")
+        append(requiredPoint1)
+        append("/")
+        append(requiredPoint2)
+        append(" 島チケ：")
+        append(islandTrainingTicket)
+    }
+
+    fun addPioneerPoint(point: Int, upgradeFacility: Boolean = true): MujintoStatus {
+        val newFacilities = facilities.toMutableMap()
+        val newPlan = facilityPlan.toMutableList()
+        var newIslandTrainingTicket = islandTrainingTicket
+        if (upgradeFacility) {
+            if (pioneerPoint < requiredPoint1) {
+                if (pioneerPoint + point >= requiredPoint1) {
+                    var totalCost = 0
+                    while (totalCost < requiredPoint1) {
+                        val facility = newPlan.removeFirstOrNull() ?: break
+                        newFacilities[facility.type] = facility
+                        totalCost += facility.space * 100
+                    }
+                    newIslandTrainingTicket = 1
+                }
+            } else if (pioneerPoint < requiredPoint2) {
+                if (pioneerPoint + point >= requiredPoint2) {
+                    newPlan.forEach { newFacilities[it.type] = it }
+                    newPlan.clear()
+                    newIslandTrainingTicket = 1
+                }
+            }
+        }
+        return copy(
+            facilities = newFacilities,
+            facilityPlan = newPlan,
+            pioneerPoint = pioneerPoint + point,
+            islandTrainingTicket = newIslandTrainingTicket,
+        )
+    }
+
+    fun upgradeFacilityAfterCamp(): MujintoStatus {
+        val newFacilities = facilities.toMutableMap()
+        val newPlan = facilityPlan.toMutableList()
+        var newIslandTrainingTicket = islandTrainingTicket
+        if (pioneerPoint >= requiredPoint2) {
+            newPlan.forEach { newFacilities[it.type] = it }
+            newPlan.clear()
+            newIslandTrainingTicket = 1
+        } else if (pioneerPoint >= requiredPoint1) {
+            var totalCost = 0
+            while (totalCost < requiredPoint1) {
+                val facility = newPlan.removeFirstOrNull() ?: break
+                newFacilities[facility.type] = facility
+                totalCost += facility.space * 100
+            }
+            newIslandTrainingTicket = 1
+        }
+        return copy(
+            facilities = newFacilities,
+            facilityPlan = newPlan,
+            islandTrainingTicket = newIslandTrainingTicket,
+        )
     }
 
     val trainingEffectByFriend by lazy {
@@ -271,16 +361,4 @@ data class MujintoStatus(
     fun notGoalRacePioneerPtBonusEnabled() = getFacilityLevel(StatusType.FRIEND) >= 3
 
     fun friendFacilityCountBonusEnabled() = getFacilityLevel(StatusType.FRIEND) >= 1
-}
-
-// Scenario-specific state for support cards, especially for Tucker Bligh
-data class MujintoMemberState(
-    val exampleField: Int = 0 // Placeholder for Tucker Bligh specific mechanics
-    // TODO: Define fields relevant to Tucker Bligh's unique interactions if any,
-    // e.g., tracking her "得意率アップ" buff for other cards.
-) : ScenarioMemberState(Scenario.MUJINTO) {
-    override fun addRelation(relation: Int): ScenarioMemberState {
-        // TODO: Implement if Tucker Bligh or other cards have special relation gain mechanics
-        return this
-    }
 }

@@ -28,7 +28,7 @@ abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Cont
     : ActionSelector {
 
     companion object {
-        private const val DEBUG = false
+        private const val DEBUG = true
     }
 
     abstract fun getContext(state: SimulationState): Context

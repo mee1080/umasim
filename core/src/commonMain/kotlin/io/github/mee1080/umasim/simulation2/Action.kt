@@ -34,6 +34,7 @@ import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.live.Lesson
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.scenario.mujinto.MujintoFacility
+import io.github.mee1080.umasim.scenario.mujinto.facilityName
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 
 sealed interface Action {
@@ -142,7 +143,17 @@ data class Race(
     val grade: RaceGrade,
     override val result: ActionResult,
 ) : SingleAction {
-    override val name = raceName + if (goal) "(目標)" else ""
+    override val name = buildString {
+        if (grade != RaceGrade.DEBUT && grade != RaceGrade.FINALS) {
+            append('[')
+            append(grade.displayName)
+            append("] ")
+        }
+        append(raceName)
+        if (goal) {
+            append(" (目標)")
+        }
+    }
 }
 
 sealed interface ScenarioActionParam {
@@ -446,6 +457,7 @@ data class FriendAction(
 
 data class MujintoActionParam(
     val pioneerPoint: Int,
+    val upgradeFacility: Boolean = true,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
         append("Mujinto pioneerPoint=$pioneerPoint")
@@ -460,7 +472,7 @@ data class MujintoTrainingResult(
     val friendTraining: Boolean,
     val pioneerPoint: Int = 0,
 ) : MujintoActionResult {
-    override fun toString() = "島トレーニング ${status.toShortString()}"
+    override fun toString() = "島トレ ${status.toShortString()}"
 }
 
 data class MujintoTraining(
@@ -468,14 +480,22 @@ data class MujintoTraining(
     val friendTraining: Boolean,
     override val result: MujintoTrainingResult,
 ) : SingleAction {
-    override val name get() = "島トレーニング"
-    override val turnChange get() = false
+    override val name get() = "島トレ"
+    override val turnChange get() = true
 }
 
 data class MujintoAddPlanResult(
     val facility: MujintoFacility,
 ) : MujintoActionResult {
-    override fun toString() = "${facility.type} Lv${facility.level}"
+    override fun toString() = buildString {
+        append(facility.type.facilityName)
+        append(" ")
+        if (facility.level >= 3 && facility.type != StatusType.FRIEND) {
+            append(if (facility.jukuren) "熟練" else "本能")
+        }
+        append("Lv")
+        append(facility.level)
+    }
 }
 
 data class MujintoAddPlan(

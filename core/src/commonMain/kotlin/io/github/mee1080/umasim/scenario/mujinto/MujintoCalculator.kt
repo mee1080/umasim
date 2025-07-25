@@ -37,6 +37,7 @@ object MujintoCalculator : ScenarioCalculator {
         baseActions: List<Action>,
     ): List<Action> {
         val mujintoStatus = state.mujintoStatus ?: return baseActions
+        if (state.turn <= 2 || state.turn >= 61) return baseActions
 
         return baseActions.map { action ->
             when (action) {
@@ -46,7 +47,10 @@ object MujintoCalculator : ScenarioCalculator {
                     val pioneerPoint = ((60 + action.member.size * 6) * (100 + bonus) / 100)
                     action.copy(
                         candidates = action.addScenarioActionParam(
-                            MujintoActionParam(pioneerPoint = pioneerPoint)
+                            MujintoActionParam(
+                                pioneerPoint = pioneerPoint,
+                                upgradeFacility = !state.isLevelUpTurn,
+                            )
                         )
                     )
                 }
@@ -65,7 +69,10 @@ object MujintoCalculator : ScenarioCalculator {
                     val pioneerPoint = 20 * (100 + bonus) / 100
                     action.copy(
                         result = action.result.addScenarioActionParam(
-                            MujintoActionParam(pioneerPoint = pioneerPoint)
+                            MujintoActionParam(
+                                pioneerPoint = pioneerPoint,
+                                upgradeFacility = !state.isLevelUpTurn,
+                            )
                         )
                     )
                 }
@@ -82,7 +89,7 @@ object MujintoCalculator : ScenarioCalculator {
         val mujintoStatus = state.mujintoStatus ?: return emptyArray()
         val scenarioActions = mutableListOf<Action>()
 
-        if (!state.isLevelUpTurn && mujintoStatus.islandTrainingTicket > 0) {
+        if (!goal && !state.isLevelUpTurn && mujintoStatus.islandTrainingTicket > 0) {
             scenarioActions.add(predictIslandTraining(state))
         }
 
@@ -122,14 +129,6 @@ object MujintoCalculator : ScenarioCalculator {
         )
     }
 
-    override fun updateScenarioTurn(
-        state: SimulationState,
-    ): SimulationState {
-        return state.updateMujintoStatus {
-            updateTurn(state.turn)
-        }
-    }
-
     suspend fun applyScenarioAction(
         state: SimulationState,
         result: MujintoActionResult,
@@ -151,10 +150,13 @@ object MujintoCalculator : ScenarioCalculator {
                     baseStatus = result.status,
                     friendTraining = result.friendTraining,
                 )
-                state.applyStatusAction(dummyTraining, dummyResult, selector, 3)
+                state.updateMujintoStatus { copy(islandTrainingTicket = islandTrainingTicket - 1) }
+                    .applyStatusAction(dummyTraining, dummyResult, selector, 3)
             }
 
-            is MujintoAddPlanResult -> TODO()
+            is MujintoAddPlanResult -> {
+                throw NotImplementedError("MujintoScenarioEventsで処理")
+            }
         }
     }
 
@@ -164,7 +166,9 @@ object MujintoCalculator : ScenarioCalculator {
         params: MujintoActionParam,
     ): SimulationState {
         if (!result.success) return state
-        return state.updateMujintoStatus { addPioneerPoint(params.pioneerPoint) }
+        return state.updateMujintoStatus {
+            addPioneerPoint(params.pioneerPoint, params.upgradeFacility)
+        }
     }
 
     fun calcIslandTrainingStatusSeparated(

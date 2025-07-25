@@ -22,6 +22,7 @@ import androidx.compose.runtime.*
 import io.github.mee1080.umasim.ai.CookActionSelector
 import io.github.mee1080.umasim.ai.LegendActionSelector
 import io.github.mee1080.umasim.ai.MechaActionSelector
+import io.github.mee1080.umasim.ai.MujintoActionSelector
 import io.github.mee1080.umasim.ai.UafActionSelector
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
@@ -51,6 +52,7 @@ fun SimulationPage(state: State) {
                 Scenario.COOK -> CookActionSelector.Option()
                 Scenario.MECHA -> MechaActionSelector.s2h2p1w1Generator
                 Scenario.LEGEND -> LegendActionSelector.Option()
+                Scenario.MUJINTO -> MujintoActionSelector.Option()
                 else -> null
             }
         )

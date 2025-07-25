@@ -34,7 +34,7 @@ class MujintoCalculatorTest20 : MujintoCalculatorTest(
             .setRelation(4, 100)
             .setRelation(5, 100)
             .copy(motivation = 2, isLevelUpTurn = true)
-            .updateMujintoStatus { updateTurn(37) }
+            .updateMujintoStatus { updatePhase(3) }
 
         // 0
         testCampTraining(

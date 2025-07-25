@@ -18,8 +18,7 @@
  */
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.scenario.legend.LegendMember
-import io.github.mee1080.umasim.scenario.legend.LegendMemberState
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
@@ -34,7 +33,7 @@ class MujintoActionSelector(
 ) : BaseActionSelector2<MujintoActionSelector.Option, MujintoActionSelector.Context>() {
 
     companion object {
-        private const val DEBUG = false
+        private const val DEBUG = true
 
         val s2h2w1 = listOf(
             Option(
@@ -239,54 +238,123 @@ class MujintoActionSelector(
         return Context(option, state)
     }
 
-    override fun calcTrainingAdditionalScore(context: Context, action: Training): Double {
-        val (option, state) = context
-        val mastery = state.legendStatus?.mastery ?: return 0.0
-        var score = 0.0
-        when (mastery) {
-            LegendMember.Blue -> {
-                // TODO
-            }
+    override suspend fun selectWithScore(
+        state: SimulationState,
+        selection: List<Action>
+    ): Triple<Action, List<Double>, Double> {
+        val result = super.selectWithScore(state, selection)
 
-            LegendMember.Green -> {
-                // TODO
-            }
+        val mujintoStatus = state.mujintoStatus ?: return result
+        if (mujintoStatus.islandTrainingTicket == 0) return result
+        val islandTraining = selection.firstOrNull { it is MujintoTraining } ?: return result
 
-            LegendMember.Red -> {
-                val support = action.support.filter { !it.outingType }
-                val guest = action.member.filter { it.guest }
-                score += support.count {
-                    it.card.type == action.type && (it.scenarioState as LegendMemberState).forceSpeciality
-                } * option.forcedSupportCount
-                score += support.count {
-                    (it.scenarioState as LegendMemberState).bestFriendGauge < 20
-                } * option.supportBestFriendGauge
-                if (support.any { it.hint && (it.scenarioState as LegendMemberState).bestFriendGauge < 13 - state.charmBonus }) {
-                    score += option.supportBestFriendGauge
-                }
-                score += guest.count {
-                    it.card.type == action.type && (it.scenarioState as LegendMemberState).forceSpeciality
-                } * option.forcedGuestCount
+        // クラシック合宿直前で島トレ券がある場合は島トレ
+        if (state.turn >= 34 && state.turn <= 36) {
+            val restTurn = 37 - state.turn - state.goalRace.count { it.turn <= 36 && it.turn >= state.turn }
+            if (restTurn <= mujintoStatus.islandTrainingTicket) {
+                return Triple(islandTraining, result.second, 1000000.0)
             }
         }
-        if (DEBUG) println("  mastery $mastery $score")
-        return score
+
+        // ファイナルズ直前で島トレ券が残る場合は島トレ
+        if (state.turn >= 64) {
+            val restTurn = 73 - state.turn - state.goalRace.count { it.turn >= state.turn }
+            if (restTurn <= mujintoStatus.islandTrainingTicket) {
+                return Triple(islandTraining, result.second, 1000000.0)
+            }
+        }
+
+        // 選択中の行動で島トレ券を獲得する場合は島トレ
+        // TODO レースで回避
+        if (state.turn <= 60) {
+            if (mujintoStatus.pioneerPoint >= mujintoStatus.requiredPoint2) return result
+            val maxPioneerPoint = result.first.candidates.maxOf {
+                (it.first.scenarioActionParam as? MujintoActionParam)?.pioneerPoint ?: 0
+            }
+            if (mujintoStatus.pioneerPoint >= mujintoStatus.requiredPoint1) {
+                if (mujintoStatus.pioneerPoint + maxPioneerPoint >= mujintoStatus.requiredPoint2) {
+                    return Triple(islandTraining, result.second, 1000000.0)
+                }
+            } else {
+                if (mujintoStatus.pioneerPoint + maxPioneerPoint >= mujintoStatus.requiredPoint1) {
+                    return Triple(islandTraining, result.second, 1000000.0)
+                }
+            }
+        }
+        return result
     }
 
     override suspend fun calcScenarioActionScore(context: Context, action: Action): Double? {
+        val (_, state) = context
         return when (action) {
-            is LegendSelectBuff -> {
-                val buff = action.result.buff
-                buff.rank * 100.0 + when (buff.member) {
-                    LegendMember.Blue -> 0.0
-                    LegendMember.Green -> 0.0
-                    LegendMember.Red -> 0.0
-                }
+            is MujintoTraining -> {
+                if (DEBUG) println("${state.turn}: ${action.toShortString()} ${action.result.status.toShortString()}")
+                // TODO 絆たまる前
+                val friendFacilityCount = action.result.member
+                    .groupBy { it.position }
+                    .count { position -> position.value.any { it.isFriendTraining(position.key) } }
+                if (DEBUG) println("  friendFacilityCount: $friendFacilityCount")
+                if (friendFacilityCount >= 3) {
+                    // 3施設以上は最優先で実行
+                    100000.0
+                } else 0.0
             }
 
-            is LegendDeleteBuff -> {
-                val buff = action.result.buff
-                -buff.rank * 100.0
+            is MujintoAddPlan -> {
+                if (DEBUG) println("${state.turn}: ${action.toShortString()}")
+                val facility = action.result.facility
+                when (state.turn) {
+                    2 -> {
+                        // ジュニア前半：海/スピスタ
+                        when (facility.type) {
+                            StatusType.FRIEND -> 2.0
+                            StatusType.SPEED, StatusType.STAMINA -> 1.0
+                            else -> 0.0
+                        }
+                    }
+
+                    12 -> {
+                        // ジュニア後半：パワ賢さ/根性スピスタ
+                        when (facility.type) {
+                            StatusType.POWER, StatusType.WISDOM -> 2.0
+                            StatusType.SPEED, StatusType.STAMINA, StatusType.GUTS -> 1.0
+                            else -> 0.0
+                        }
+                    }
+
+                    24 -> {
+                        // クラシック前半：スピパワ/スタ根性
+                        when (facility.type) {
+                            StatusType.SPEED if (!facility.jukuren) -> 2.0
+                            StatusType.POWER -> 2.0
+                            StatusType.STAMINA if (!facility.jukuren) -> 1.0
+                            StatusType.GUTS -> 1.0
+                            else -> 0.0
+                        }
+                    }
+
+                    36 -> {
+                        // クラシック後半：スピ/スタパワ
+                        when (facility.type) {
+                            StatusType.SPEED -> 2.0
+                            StatusType.STAMINA -> 1.0
+                            StatusType.POWER if (!facility.jukuren) -> 1.0
+                            else -> 0.0
+                        }
+                    }
+
+                    48 -> {
+                        // クラシック後半：スピ/スタ根性
+                        when (facility.type) {
+                            StatusType.SPEED -> 2.0
+                            StatusType.STAMINA -> 1.0
+                            StatusType.GUTS if (!facility.jukuren) -> 1.0
+                            else -> 0.0
+                        }
+                    }
+
+                    else -> 0.0
+                }
             }
 
             else -> null
@@ -298,7 +366,7 @@ class MujintoActionSelector(
         action: Action,
         scenarioActionParam: ScenarioActionParam,
     ): Double {
-        val param = scenarioActionParam as? LegendActionParam ?: return 0.0
+        val param = scenarioActionParam as? MujintoActionParam ?: return 0.0
         return 0.0
     }
 }

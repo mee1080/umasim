@@ -201,7 +201,7 @@ enum class Scenario(
         trainingData = mujintoTrainingData,
         scenarioEvents = { MujintoScenarioEvents() },
         turn = 78,
-        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64),
+        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64, 73, 74, 75, 76, 77, 78),
         guestMember = true,
         scenarioLink = setOf(
             "タマモクロス",

@@ -19,9 +19,11 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.Composable
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.larc.LArcAptitude
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
+import io.github.mee1080.umasim.scenario.mujinto.facilityName
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -98,6 +100,8 @@ fun SelectionBlock(
                     is Race -> {
                         CookMaterialInfo(action)
                         LegendInfo(action)
+                        MujintoInfo(action)
+                        StatusTable(action.result.status)
                     }
 
                     is SSMatch -> {
@@ -119,6 +123,7 @@ fun SelectionBlock(
                         CookMaterialInfo(action)
                         MechaInfo(action)
                         LegendInfo(action)
+                        MujintoInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -202,12 +207,25 @@ fun SelectionBlock(
                     }
 
                     is MujintoTraining -> {
-                        // TODO
+                        val mujintoStatus = state.mujintoStatus!!
+                        val result = action.result
+                        Div {
+                            Text("発展Pt: ${result.pioneerPoint}")
+                        }
+                        val memberMap = result.member.groupBy { it.position }.mapValues { entry ->
+                            entry.value.joinToString(", ") {
+                                (if (it.isFriendTraining(entry.key)) "【友情】" else "") + it.name
+                            }
+                        }
+                        (trainingType + StatusType.FRIEND).filter {
+                            mujintoStatus.getFacilityLevel(it) >= 1
+                        }.forEach { type ->
+                            Div { Text("${type.facilityName}: ${memberMap[type] ?: ""}") }
+                        }
+                        StatusTable(result.status)
                     }
 
-                    is MujintoAddPlan -> {
-                        // TODO
-                    }
+                    is MujintoAddPlan -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
@@ -271,5 +289,14 @@ private fun MechaTuningInfo(state: SimulationState, action: MechaTuning) {
         MechaChipType.entries.forEach {
             Text("${it.displayName} ${mechaStatus.chipLevels[it]!!.sum()}pt ${if (it == action.result.type) "(+1)" else ""} / ")
         }
+    }
+}
+
+@Composable
+private fun MujintoInfo(action: Action) {
+    val param = action.candidates.firstOrNull { it.first.success }
+        ?.first?.scenarioActionParam as? MujintoActionParam ?: return
+    Div {
+        Text("発展Pt: ${param.pioneerPoint}")
     }
 }
