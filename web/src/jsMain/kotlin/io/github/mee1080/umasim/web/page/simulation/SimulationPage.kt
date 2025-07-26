@@ -19,11 +19,7 @@
 package io.github.mee1080.umasim.web.page.simulation
 
 import androidx.compose.runtime.*
-import io.github.mee1080.umasim.ai.CookActionSelector
-import io.github.mee1080.umasim.ai.LegendActionSelector
-import io.github.mee1080.umasim.ai.MechaActionSelector
-import io.github.mee1080.umasim.ai.MujintoActionSelector
-import io.github.mee1080.umasim.ai.UafActionSelector
+import io.github.mee1080.umasim.ai.*
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.ScenarioEvents
@@ -137,7 +133,7 @@ fun SimulationPage(state: State) {
                             columnGap(8.px)
                         }
                     }) {
-                        legendBuffTemplates.forEach {(name,list) ->
+                        legendBuffTemplates.forEach { (name, list) ->
                             MdFilledButton(name) {
                                 onClick { setting = setting.copy(legendBuffList = list) }
                             }

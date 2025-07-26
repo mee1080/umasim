@@ -13,8 +13,8 @@ import kotlin.time.measureTime
 
 fun debugMujinto() {
     val time = measureTime {
-        debugMujintoSingleSimulation()
-//        debugMujintoRunSimulation()
+//        debugMujintoSingleSimulation()
+        debugMujintoRunSimulation()
     }
     println("time: $time")
 }
@@ -32,25 +32,21 @@ fun debugMujintoRunSimulation() {
     println(chara)
     println(support)
     val factor = listOf(
-        // Placeholder factors
-        StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
-        StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,
+        StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
+        StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
     )
     runBlocking {
         repeat(8) { index ->
-            // Assuming a MujintoActionSelector exists or will be created
-            val selector = MujintoActionSelector.s2h2w1
+            val selector = MujintoActionSelector.defaultOption
             launch(context) {
                 val summary = Runner.run(
-                    1000,
+                    10000,
                     Scenario.MUJINTO, // Changed to Mujinto Scenario
                     chara,
                     support,
                     factor,
                     selector = { selector.generator().generateSelector() },
                 )
-                // Assuming Runner.mujintoMileEvaluateSetting exists or will be created
-                // TODO Add Mujinto specific evaluate setting
                 val evaluator = Evaluator(summary, Runner.mujintoSetting, 0.2)
                 val score = (evaluator.upperSum(1.0, Runner.mujintoSetting) * 1000).roundToInt() / 1000.0
                 println("0,$index,0,${evaluator.toSummaryString()},$score")
@@ -71,7 +67,7 @@ fun debugMujintoSingleSimulation() {
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = MujintoActionSelector.s2h2w1.generator().generateSelector()
+    val selector = MujintoActionSelector.defaultOption.generator().generateSelector()
     val factor = listOf(
         // Placeholder factors
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,

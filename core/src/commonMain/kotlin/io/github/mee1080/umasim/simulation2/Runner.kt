@@ -204,7 +204,7 @@ object Runner {
         StatusType.POWER to (1.0 to 2200),
         StatusType.GUTS to (1.0 to 2000),
         StatusType.WISDOM to (1.0 to 1500),
-        StatusType.SKILL to (1.0 to 10000),
+        StatusType.SKILL to (2.0 to 10000),
     )
 
     suspend fun runAndEvaluate(

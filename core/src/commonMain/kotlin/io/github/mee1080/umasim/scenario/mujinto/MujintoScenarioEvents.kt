@@ -68,7 +68,7 @@ class MujintoScenarioEvents : BaseScenarioEvents() {
                     if (plan.all { it.type != StatusType.FRIEND }) {
                         val nextLevel = (mujintoStatus.facilities[StatusType.FRIEND]?.level ?: 0) + 1
                         if (nextLevel <= 3) {
-                            add(mujintoFacility(StatusType.FRIEND, 1, false))
+                            add(mujintoFacility(StatusType.FRIEND, nextLevel, false))
                         }
                     }
                 }.filter { it.space <= restSpace }.map { MujintoAddPlan(MujintoAddPlanResult(it)) }

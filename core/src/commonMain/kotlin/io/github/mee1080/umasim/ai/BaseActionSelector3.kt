@@ -19,13 +19,13 @@
 package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.min
 
 @Suppress("unused")
-abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Context : BaseActionSelector2.BaseContext<Option>>
-    : ActionSelector {
+abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Context : BaseActionSelector3.BaseContext<Option>> :
+    ActionSelector {
 
     companion object {
         private const val DEBUG = false
@@ -39,20 +39,14 @@ abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Cont
         val power: Int
         val guts: Int
         val wisdom: Int
-
-        val training: Int
+        val skillPt: Int
         val hp: Int
-        val hpKeep: Int
         val motivation: Int
-        val risk: Int
-
         val relation: Int
         val outingRelation: Int
-
-        val friend: Int
-        val friendCount: Int
-        val supportCount: Int
-        val guestCount: Int
+        val hpKeep: Int
+        val risk: Int
+        val maxSleep: Int
     }
 
     open class BaseContext<Option : BaseOption>(
@@ -100,7 +94,19 @@ abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Cont
     }
 
     protected open fun selectFromScore(context: Context): Pair<Action, Double> {
+        val (_, state) = context
         var selected = context.selectionWithScore.maxBy { it.second }
+
+        // レースで体力50以下になる場合はお休み
+        (selected.first as? Race)?.let { race ->
+            if (state.status.hp + race.result.status.hp <= 50) {
+                context.selectionWithScore.firstOrNull { it.first is Sleep }?.let {
+                    selected = it
+                }
+            }
+        }
+
+        // お休みで友人お出かけが可能な場合は友人お出かけ
         if (selected.first is Sleep) {
             val supportOuting = context.selectionWithScore.firstOrNull {
                 (it.first as? Outing)?.support != null
@@ -119,67 +125,23 @@ abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Cont
     }
 
     fun calcBaseScore(context: Context, action: Action): Double {
-        if (action is FriendAction) return calcFriendActionScore(context, action)
         if (!action.turnChange) return Double.MIN_VALUE
-        if (DEBUG) println("${context.state.turn}: ${action.toShortString()}")
-        val score = if (action is Training) {
-            calcTrainingBaseScore(context, action)
-        } else {
-            calcCandidatesScore(context, action)
+        val (option, state) = context
+        val hpKeepFactor = if (state.turn == 36) 20 * option.hpKeep else option.hpKeep
+        if (DEBUG) println("${state.turn}: ${action.toShortString()}")
+        val total = action.candidates.sumOf { it.second }.toDouble()
+        val score = action.candidates.sumOf {
+            if (DEBUG) println("  ${it.second.toDouble() / total * 100}%")
+            val result = it.first as? StatusActionResult ?: return@sumOf 0.0
+            var score = calcScore(option, calcExpectedHintStatus(action) + result.status, state.status, hpKeepFactor)
+            if (result.success) {
+                score += calcRelationScore(option, action)
+            }
+            score += calcScenarioScore(context, action, result.scenarioActionParam)
+            score * it.second / total
         }
         if (DEBUG) println("total $score")
         return score
-    }
-
-    protected open fun calcTrainingBaseScore(context: Context, action: Training): Double {
-        val (option, _) = context
-        var score = option.training.toDouble()
-        if (action.friendTraining) {
-            score += option.friend
-        }
-        val support = action.support
-        score += support.count { it.isFriendTraining(action.type) } * option.friendCount
-        score += support.count() * option.supportCount
-        score += (action.member.count() - support.count()) * option.guestCount
-        score -= action.failureRate * option.risk
-        if (DEBUG) println("  base $score")
-        score += calcCandidatesScore(context, action)
-        score += calcTrainingAdditionalScore(context, action)
-        score *= when (action.type) {
-            StatusType.SPEED -> option.speed
-            StatusType.STAMINA -> option.stamina
-            StatusType.POWER -> option.power
-            StatusType.GUTS -> option.guts
-            StatusType.WISDOM -> option.wisdom
-            else -> 100
-        } / 100.0
-        return score
-    }
-
-    protected open fun calcTrainingAdditionalScore(context: Context, action: Training): Double {
-        return 0.0
-    }
-
-    protected fun calcCandidatesScore(
-        context: Context,
-        action: Action,
-    ): Double {
-        val totalRate = action.candidates.sumOf { it.second }.toDouble()
-        val (option, state) = context
-        return action.candidates.sumOf { (result, rate) ->
-            var subScore = 0.0
-            subScore += min(state.status.maxHp - state.status.hp, result.status.hp) * option.hp
-            subScore += min(2 - state.status.motivation, result.status.motivation) * option.motivation
-            subScore += min(0, state.status.hp + result.status.hp - 50) * option.hpKeep
-            result.scenarioActionParam?.let {
-                subScore += calcScenarioActionParamScore(context, action, it)
-            }
-            if (result.success) {
-                subScore += calcRelationScore(option, action)
-            }
-            if (DEBUG) println("  $rate $subScore $result")
-            subScore * rate / totalRate
-        }
     }
 
     private fun calcExpectedHintStatus(action: Action): ExpectedStatus {
@@ -190,48 +152,54 @@ abstract class BaseActionSelector2<Option : BaseActionSelector2.BaseOption, Cont
         return target.fold(ExpectedStatus()) { acc, status -> acc.add(rate, status) }
     }
 
+    private fun calcScore(
+        option: Option,
+        status: ExpectedStatus,
+        currentStatus: Status,
+        hpKeepFactor: Int,
+    ): Double {
+        val score = status.speed * option.speed +
+                status.stamina * option.stamina +
+                status.power * option.power +
+                status.guts * option.guts +
+                status.wisdom * option.wisdom +
+                status.skillPt * option.skillPt +
+                status.hp * option.hp +
+                status.motivation * option.motivation +
+                min(0.0, currentStatus.hp + status.hp - 50.0) * hpKeepFactor +
+                if (currentStatus.hp + status.hp <= currentStatus.maxHp) option.maxSleep else 0
+        if (DEBUG) println("  $score $status")
+        return score * (if (score < 0) option.risk / 100.0 else 1.0)
+    }
+
     private fun calcRelationScore(option: Option, action: Action): Double {
         if (action !is Training) return 0.0
         val score = action.support.sumOf {
-            val relationUp = min(7 + (if (it.hint) 5 else 0), it.card.requiredRelation - it.relation)
-            if (relationUp <= 0) 0 else {
-                if (it.outingType) option.outingRelation * relationUp else option.relation * relationUp
+            when {
+                it.relation >= it.card.requiredRelation -> 0
+                it.outingType -> option.outingRelation
+                else -> option.relation
             }
         }.toDouble()
         if (DEBUG) println("  relation $score")
         return score
     }
 
-    protected open fun calcScenarioActionParamScore(
+    /**
+     * 通常アクションのシナリオ固有スコア計算
+     */
+    protected open fun calcScenarioScore(
         context: Context,
         action: Action,
-        scenarioActionParam: ScenarioActionParam,
+        scenarioActionParam: ScenarioActionParam?,
     ): Double {
         return 0.0
     }
 
+    /**
+     * シナリオ固有アクションのスコア計算
+     */
     protected open suspend fun calcScenarioActionScore(context: Context, action: Action): Double? {
         return null
-    }
-
-    protected fun calcFriendActionScore(context: Context, action: FriendAction): Double {
-        val state = context.state
-        val result = action.result
-        if (result.status.motivation > 0) {
-            if (state.status.motivation < 2) {
-                return 3000.0
-            }
-        }
-        if (result.otherRelation > 0) {
-            if (state.support.any { it.relation < it.card.requiredRelation }) {
-                return 2000.0
-            }
-        }
-        if (result.status.hp > 0) {
-            if (state.status.hp > 0) {
-                return 1000.0
-            }
-        }
-        return result.status.totalPlusSkillPt.toDouble()
     }
 }
