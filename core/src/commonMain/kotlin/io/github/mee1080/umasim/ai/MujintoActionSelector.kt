@@ -24,12 +24,6 @@ import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
-fun List<MujintoActionSelector.Option>.generator() = object : ActionSelectorGenerator {
-    override fun generateSelector(): ActionSelector {
-        return MujintoActionSelector(this@generator)
-    }
-}
-
 class MujintoActionSelector(
     private val options: List<Option>,
 ) : ActionSelector {
@@ -37,9 +31,7 @@ class MujintoActionSelector(
     companion object {
         private const val DEBUG = false
 
-        val defaultOption = listOf(
-            Option(),
-        )
+        val defaultOption = Option()
     }
 
     @Serializable
@@ -212,7 +204,7 @@ class MujintoActionSelector(
         // レースor失敗率の高いトレーニング選択時は体力一定以下でお休み
         if (
             (selected.first is Race && state.status.maxHp - state.status.hp >= option.sleepHp)
-            || ((selected.first as? Training)?.failureRate ?: 0) >= option.ignoreFailureRate
+            || ((selected.first as? Training)?.failureRate ?: 0) > option.ignoreFailureRate
         ) {
             selectSleep(list)?.let {
                 selected = it
@@ -280,7 +272,7 @@ class MujintoActionSelector(
         val (option, state) = context
         if (
             (selected.first is Race && state.status.maxHp - state.status.hp >= option.sleepHp)
-            || ((selected.first as? Training)?.failureRate ?: 0) >= option.ignoreFailureRate
+            || ((selected.first as? Training)?.failureRate ?: 0) > option.ignoreFailureRate
         ) {
             selectSleep(list)?.let {
                 selected = it

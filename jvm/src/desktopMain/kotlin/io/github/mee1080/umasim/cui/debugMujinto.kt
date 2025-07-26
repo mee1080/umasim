@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.MujintoActionSelector
-import io.github.mee1080.umasim.ai.generator
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
@@ -45,7 +44,7 @@ fun debugMujintoRunSimulation() {
                     chara,
                     support,
                     factor,
-                    selector = { selector.generator().generateSelector() },
+                    selector = { selector.generateSelector() },
                 )
                 val evaluator = Evaluator(summary, Runner.mujintoSetting, 0.2)
                 val score = (evaluator.upperSum(1.0, Runner.mujintoSetting) * 1000).roundToInt() / 1000.0
@@ -67,7 +66,7 @@ fun debugMujintoSingleSimulation() {
     )
     println(chara.name)
     println(support.joinToString(", ") { it.name })
-    val selector = MujintoActionSelector.defaultOption.generator().generateSelector()
+    val selector = MujintoActionSelector.defaultOption.generateSelector()
     val factor = listOf(
         // Placeholder factors
         StatusType.SPEED to 3, StatusType.STAMINA to 3, StatusType.POWER to 3,
