@@ -279,38 +279,45 @@ suspend fun SimulationState.applyStatusAction(
     baseRelationBonus: Int = 0,
 ): SimulationState {
     // Action結果反映
-    val newState = if (action is Training) {
-        val newTraining = if (result.success && !isLevelUpTurn) training.map {
-            if (action.type == it.type) {
-                it.applyAction(action, scenario.trainingAutoLevelUp)
-            } else it
-        } else training
-        val memberIndices = action.member.map { it.index }
-        val trainingHint = selectTrainingHint(action.member, action.type)
-        val trainingHintIndices = trainingHint.second.map { it.index }
-        val relationBonus = baseRelationBonus +
-                support.sumOf { it.card.trainingRelationAll } +
-                action.support.sumOf { it.card.trainingRelationJoin } +
-                trainingRelationBonus
-        val nextTurnSpecialityRateUp = action.support.sumOf { it.card.trainingNextTurnSpecialityRateUp }
-        val newMember = member.map {
-            if (memberIndices.contains(it.index)) {
-                it.applyTraining(
-                    action, charmBonus, relationBonus, nextTurnSpecialityRateUp,
-                    chara, trainingHintIndices.contains(it.index), this
-                )
-            } else it
+    val newState = when (action) {
+        is Training -> {
+            val newTraining = if (result.success && !isLevelUpTurn) training.map {
+                if (action.type == it.type) {
+                    it.applyAction(action, scenario.trainingAutoLevelUp)
+                } else it
+            } else training
+            val memberIndices = action.member.map { it.index }
+            val trainingHint = selectTrainingHint(action.member, action.type)
+            val trainingHintIndices = trainingHint.second.map { it.index }
+            val relationBonus = baseRelationBonus +
+                    support.sumOf { it.card.trainingRelationAll } +
+                    action.support.sumOf { it.card.trainingRelationJoin } +
+                    trainingRelationBonus
+            val nextTurnSpecialityRateUp = action.support.sumOf { it.card.trainingNextTurnSpecialityRateUp }
+            val newMember = member.map {
+                if (memberIndices.contains(it.index)) {
+                    it.applyTraining(
+                        action, charmBonus, relationBonus, nextTurnSpecialityRateUp,
+                        chara, trainingHintIndices.contains(it.index), this
+                    )
+                } else it
+            }
+            copy(member = newMember, training = newTraining)
+                .addStatus(result.status + trainingHint.first + selectAoharuTrainingHint(action.member))
+                .applyFriendEvent(action, selector)
+                .applyAfterTrainingEvent(action)
         }
-        copy(member = newMember, training = newTraining)
-            .addStatus(result.status + trainingHint.first + selectAoharuTrainingHint(action.member))
-            .applyFriendEvent(action, selector)
-    } else if (action is Race) {
-        addStatus(result.status).copy(
-            raceTurns = raceTurns + turn,
-            shopCoin = if (itemAvailable && action.grade != RaceGrade.FINALS) shopCoin + 100 else shopCoin,
-        )
-    } else {
-        addStatus(result.status)
+
+        is Race -> {
+            addStatus(result.status).copy(
+                raceTurns = raceTurns + turn,
+                shopCoin = if (itemAvailable && action.grade != RaceGrade.FINALS) shopCoin + 100 else shopCoin,
+            )
+        }
+
+        else -> {
+            addStatus(result.status)
+        }
     }
     // シナリオ別結果反映
     return newState.applyScenarioActionParam(action, result)
@@ -472,6 +479,14 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     if (skillList.isEmpty()) return Status()
     val target = skillList.random()
     return Status(skillHint = mapOf(target.second to 1 + if (!target.first.guest) target.first.card.hintLevel else 0))
+}
+
+/**
+ * トレーニング後汎用イベント
+ * 20%の確率で体力+5
+ */
+private fun SimulationState.applyAfterTrainingEvent(action: Training): SimulationState {
+    return if (Random.nextDouble() > 0.2) this else addStatus(Status(hp = 5))
 }
 
 fun SimulationState.buyItem(itemList: List<ShopItem>): SimulationState {

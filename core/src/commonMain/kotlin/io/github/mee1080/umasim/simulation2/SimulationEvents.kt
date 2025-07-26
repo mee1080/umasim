@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.utility.applyIf
+import kotlin.random.Random
 
 open class SimulationEvents(
     val initialStatus: (status: Status) -> Status = { it }
@@ -84,14 +85,8 @@ class ApproximateSimulationEvents(
  * 　　夏合宿、ファイナルズ以外の2nターン（合計32回）に、ランダムな順番で発生
  * 　　FIXME イベント確率アップは考慮しない
  *
- * 　上昇量
- * 　　連続1：得意ステ10、体力10(60%)orやる気1(40%)、絆7
- * 　　連続2：得意ステ15、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
- * 　　連続3：得意ステ20、ランダムステ10(各1/7)orSP20(2/7)、絆7
- * 　　非連続：得意ステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)、絆7
- * 　　編成外：ランダムステ10、ランダムステ5(各10%)orSP10(10%)or体力10(20%)orやる気1(20%)
- * 　　ウマ娘ランダム：各ステ+15or体力10（勝負服と通常ランダム平均したらこれぐらい？）
- * 　　FIXME スキルヒントは考慮しない
+ * 行動後イベント
+ *     5%の確率で体力+30、スキルPt+10（大食い）
  */
 class RandomEvents(
     state: SimulationState,
@@ -146,17 +141,20 @@ class RandomEvents(
 
         companion object {
             private val firstRandomStatus = listOf(
-                Status(hp = 10), Status(hp = 10), Status(hp = 10),
-                Status(motivation = 1), Status(motivation = 1),
+                Status(hp = 20), Status(hp = 10),
+                Status(hp = 10, motivation = 1), Status(hp = 10, motivation = 1),
+                Status(motivation = 1),
             )
             protected val randomStatus = listOf(
                 Status(speed = 5), Status(stamina = 5), Status(power = 5), Status(guts = 5), Status(wisdom = 5),
-                Status(skillPt = 10),
-                Status(hp = 10), Status(hp = 10), Status(motivation = 1), Status(motivation = 1),
+                Status(skillPt = 10), Status(skillPt = 10),
+                Status(hp = 20), Status(hp = 10), Status(hp = 10),
+                Status(hp = 10, motivation = 1), Status(motivation = 1),
             )
             protected val finalRandomStatus = listOf(
                 Status(speed = 10), Status(stamina = 10), Status(power = 10), Status(guts = 10), Status(wisdom = 10),
                 Status(skillPt = 20), Status(skillPt = 20),
+                Status(hp = 30), Status(hp = 20), Status(hp = 10), Status(hp = 10), Status(hp = 10),
             )
         }
 
@@ -198,5 +196,9 @@ class RandomEvents(
                 status.multiplyToInt(supportEventEffect)
             }
         }
+    }
+
+    override fun afterAction(state: SimulationState): SimulationState {
+        return if (Random.nextDouble() > 0.05) state else state.addStatus(Status(hp = 30, skillPt = 10))
     }
 }

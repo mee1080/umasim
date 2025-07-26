@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.scenario.mujinto
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.BaseScenarioEvents
@@ -29,6 +30,9 @@ class MujintoScenarioEvents : BaseScenarioEvents() {
 
             // シニア後半の島トレ券獲得
             64 -> base.updateMujintoStatus { copy(islandTrainingTicket = islandTrainingTicket + 2) }
+
+            // シナリオ金スキル（タッカー固定）
+            65 -> base.addStatus(Status(skillHint = mapOf("アガッてきた！" to 1)))
 
             else -> base
         }
@@ -90,5 +94,9 @@ class MujintoScenarioEvents : BaseScenarioEvents() {
             .applyIf({ phase == 4 }) {
                 allTrainingLevelUp().addGuest(16, Scenario.MUJINTO)
             }
+    }
+
+    override fun afterSimulation(state: SimulationState): SimulationState {
+        return state.addAllStatus(status = 55, skillPt = 540, skillHint = mapOf("本能の懸け橋" to 1))
     }
 }
