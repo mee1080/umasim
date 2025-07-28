@@ -12,12 +12,12 @@ def objective(trial):
     training = 100
     race = trial.suggest_int ('race', 50, 100, step=10)
     relation = trial.suggest_int ('relation', 1000, 3000, step=200)
-    risk = trial.suggest_int ('risk', 100, 300, step=20)
-    ignoreFailureRate = trial.suggest_int ('ignoreFailureRate', 0, 20, step=5)
-    sleepHp = trial.suggest_int ('sleepHp', 30, 60, step=5)
-    restPointBuffer = trial.suggest_int ('restPointBuffer', 0, 50, step=10)
-    keepRestPoint = trial.suggest_int ('keepRestPoint', 100, 200, step=20)
-    baseIslandTraining = trial.suggest_int ('baseIslandTraining', 1000, 5000, step=500)
+    risk = trial.suggest_int ('risk', 100, 200, step=20)
+    ignoreFailureRate = 0
+    sleepHp = trial.suggest_int ('sleepHp', 40, 70, step=5)
+    restPointBuffer = trial.suggest_int ('restPointBuffer', 20, 70, step=10)
+    keepRestPoint = trial.suggest_int ('keepRestPoint', 200, 300, step=20)
+    baseIslandTraining = trial.suggest_int ('baseIslandTraining', 3000, 7000, step=500)
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count {count}'\
@@ -44,7 +44,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='mujinto_s1h1p1g1w1_1',
+    study_name='mujinto_s1h1p1g1w1_2',
     storage='sqlite:///optuna_study_mujinto.db',
     load_if_exists=True,
     direction='maximize'

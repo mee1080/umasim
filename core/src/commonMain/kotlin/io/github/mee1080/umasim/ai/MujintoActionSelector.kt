@@ -42,17 +42,17 @@ class MujintoActionSelector(
         val motivation: Int = 10000,
 
         val training: Int = 100,
-        val race: Int = 70,
+        val race: Int = 60,
 
-        val relation: Int = 2000,
-        val risk: Int = 200,
-        val ignoreFailureRate: Int = 10,
-        val sleepHp: Int = 40,
+        val relation: Int = 2200,
+        val risk: Int = 120,
+        val ignoreFailureRate: Int = 0,
+        val sleepHp: Int = 60,
 
-        val restPointBuffer: Int = 20,
-        val keepRestPoint: Int = 100,
+        val restPointBuffer: Int = 70,
+        val keepRestPoint: Int = 300,
 
-        val baseIslandTraining: Int = 3000,
+        val baseIslandTraining: Int = 6500,
     ) : SerializableActionSelectorGenerator {
         override fun generateSelector() = MujintoActionSelector(listOf(this))
         override fun serialize() = serializer.encodeToString(this)
