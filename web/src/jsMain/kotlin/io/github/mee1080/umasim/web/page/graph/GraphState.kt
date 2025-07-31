@@ -5,13 +5,15 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.utility.Expression
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
+import kotlinx.serialization.json.Json
 
 @Immutable
 data class GraphState(
     val loading: Boolean = true,
     val loadError: Boolean = false,
-    val targetPath: String = graphTargetCandidates.first().path,
-    val target:GraphTarget = graphTargetCandidates.first(),
+    val targetCandidates: List<GraphTarget> = emptyList(),
+    val targetPath: String = "",
+    val target: GraphTarget = GraphTarget("", StatusType.SPEED, ""),
     val baseData: List<GraphRowData> = emptyList(),
     val factorList: List<GraphFactor> = emptyList(),
     val displayData: List<GraphRowDisplayData> = emptyList(),
@@ -21,24 +23,20 @@ data class GraphState(
     val sortOrder: GraphSortOrder = GraphSortOrder.ID,
 )
 
+@Suppress("unused")
+@Serializable
 data class GraphTarget(
     val path: String,
     val type: StatusType,
     val displayName: String,
-)
+) {
+    companion object {
+        fun fromJson(json: String) = Json.decodeFromString<GraphTarget>(json)
+        fun fromJsonList(json: String) = Json.decodeFromString<List<GraphTarget>>(json)
+    }
 
-val graphTargetCandidates = listOf(
-    GraphTarget("legend_r_speed", StatusType.SPEED, "スピード 伝説赤スピ2スタ2賢さ1"),
-    GraphTarget("legend_r_stamina", StatusType.STAMINA, "スタミナ 伝説赤スピ2スタ2賢さ1"),
-    GraphTarget("legend_r_power", StatusType.POWER, "パワー 伝説赤スピ2パワ1根性1賢さ1"),
-    GraphTarget("legend_r_guts", StatusType.GUTS, "根性 伝説赤スピ3根性1賢さ1"),
-    GraphTarget("legend_r_wisdom", StatusType.WISDOM, "賢さ 伝説赤スピ2スタ2賢さ1"),
-
-    GraphTarget("speed_20241130", StatusType.SPEED, "スピード メカスピ2スタ2パワ1賢さ1"),
-    GraphTarget("power_20241227", StatusType.POWER, "パワー メカスピ2スタ2パワ1賢さ1"),
-    GraphTarget("guts_20241210", StatusType.GUTS, "根性 畑スピ1パワ1根性2賢さ1"),
-    GraphTarget("wisdom_20241202", StatusType.WISDOM, "賢さ メカスピ2スタ2パワ1賢さ1"),
-)
+    fun toJson() = Json.encodeToString(this)
+}
 
 enum class GraphSortOrder(val displayName: String) {
     ID("ID順"),
@@ -108,6 +106,11 @@ val graphFactorTemplates = listOf(
         "5ステSP合計+ヒント×5",
         "speed + stamina + power + guts + wisdom + skillPt + totalHintLevel * 5"
     ),
+    GraphFactorTemplate(
+        13,
+        "5ステ合計+SP×2+ヒント×5",
+        "speed + stamina + power + guts + wisdom + skillPt * 2 + totalHintLevel * 5"
+    ),
 
     GraphFactorTemplate(21, "スピード得意性能", "speed + power + skillPt"),
     GraphFactorTemplate(31, "スタミナ得意性能", "stamina + guts + skillPt"),
@@ -116,7 +119,6 @@ val graphFactorTemplates = listOf(
     GraphFactorTemplate(61, "賢さ得意性能", "wisdom + speed + skillPt"),
 )
 
-val defaultGraphFactors = List(7) {
-    val template = graphFactorTemplates[it + 1]
-    GraphFactor(templateId = template.id, template = template)
-}
+val defaultGraphFactors = listOf(
+    GraphFactor(templateId = 13, template = graphFactorTemplates.first { it.id == 13 })
+)

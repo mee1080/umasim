@@ -71,7 +71,7 @@ private fun MainArea(
     Div({ classes(S.wrapper) }) {
         Div({ classes(S.header) }) {
             MdOutlinedSelect(
-                selection = graphTargetCandidates,
+                selection = state.targetCandidates,
                 selectedItem = state.target,
                 onSelect = { viewModel.setGraphTarget(it) },
                 itemToValue = { it.path },
@@ -112,7 +112,7 @@ private fun MainArea(
             }
             Div({
                 classes(S.dividedFactor)
-                style { height(dividerValue.px + 50.percent) }
+                style { height(dividerValue.px + 20.percent) }
             }) {
                 FactorInput(viewModel, state.factorList)
             }

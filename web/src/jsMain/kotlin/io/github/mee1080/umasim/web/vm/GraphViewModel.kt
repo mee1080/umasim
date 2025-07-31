@@ -32,7 +32,6 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.launch
-import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlin.math.max
 
@@ -127,8 +126,15 @@ class GraphViewModel(private val root: ViewModel) {
 
     suspend fun generateGraphData() {
         updateState { copy(loading = true, loadError = false) }
-        val target = if (state.target.path == state.targetPath) state.target else {
-            graphTargetCandidates.firstOrNull { it.path == state.targetPath } ?: graphTargetCandidates[0]
+        val targetCandidates = state.targetCandidates.ifEmpty {
+            val json = HttpClient(Js)
+                .get("https://raw.githubusercontent.com/mee1080/umasim/refs/heads/main/data/simulation/list.json")
+                .bodyAsText()
+            GraphTarget.fromJsonList(json)
+        }
+        val targetPath = state.targetPath.ifEmpty { targetCandidates[0].path }
+        val target = if (state.target.path == targetPath) state.target else {
+            targetCandidates.firstOrNull { it.path == targetPath } ?: targetCandidates[0]
         }
         val simulationResults = loadCsv(target.path)
         if (simulationResults == null) {
@@ -148,6 +154,8 @@ class GraphViewModel(private val root: ViewModel) {
         updateState {
             copy(
                 loading = false,
+                targetCandidates = targetCandidates,
+                targetPath = targetPath,
                 target = target,
                 baseData = baseData,
             ).calcDisplayData()
