@@ -1,0 +1,15 @@
+[
+{"path":"mujinto_speed","type":"SPEED","displayName":"スピード 無人島6色"},
+{"path":"mujinto_wisdom","type":"WISDOM","displayName":"賢さ 無人島6色"},
+
+{"path":"legend_r_speed","type":"SPEED","displayName":"スピード 伝説赤スピ2スタ2賢さ1"},
+{"path":"legend_r_stamina","type":"STAMINA","displayName":"スタミナ 伝説赤スピ2スタ2賢さ1"},
+{"path":"legend_r_power","type":"POWER","displayName":"パワー 伝説赤スピ2パワ1根性1賢さ1"},
+{"path":"legend_r_guts","type":"GUTS","displayName":"根性 伝説赤スピ3根性1賢さ1"},
+{"path":"legend_r_wisdom","type":"WISDOM","displayName":"賢さ 伝説赤スピ2スタ2賢さ1"},
+
+{"path":"speed_20241130","type":"SPEED","displayName":"スピード メカスピ2スタ2パワ1賢さ1"},
+{"path":"power_20241227","type":"POWER","displayName":"パワー メカスピ2スタ2パワ1賢さ1"},
+{"path":"guts_20241210","type":"GUTS","displayName":"根性 畑スピ1パワ1根性2賢さ1"},
+{"path":"wisdom_20241202","type":"WISDOM","displayName":"賢さ メカスピ2スタ2パワ1賢さ1"}
+]
