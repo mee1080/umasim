@@ -1,5 +1,6 @@
 [
 {"path":"mujinto_speed","type":"SPEED","displayName":"スピード 無人島6色"},
+{"path":"mujinto_stamina","type":"STAMINA","displayName":"スタミナ 無人島6色"},
 {"path":"mujinto_wisdom","type":"WISDOM","displayName":"賢さ 無人島6色"},
 
 {"path":"legend_r_speed","type":"SPEED","displayName":"スピード 伝説赤スピ2スタ2賢さ1"},

@@ -68,7 +68,7 @@ class Expression private constructor(private val tokens: List<TokenOrBracket>) {
             "max" to { it.max() },
             "min" to { it.min() },
             "sqrt" to { sqrt(it.first()) },
-            "log" to { log(it.first(), it.getOrElse(1) { 10.0 }) },
+            "log" to { log(it.first(), it.getOrElse(1) { E }) },
             "log10" to { log10(it.first()) },
             "log2" to { log2(it.first()) },
             "floor" to { floor(it.first()) },
