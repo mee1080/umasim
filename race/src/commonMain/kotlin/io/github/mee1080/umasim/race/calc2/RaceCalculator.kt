@@ -56,6 +56,9 @@ class RaceCalculator(
         )
         val settingWithPassive = applyPassive(system, simulationState)
         simulationState.passiveTriggered = settingWithPassive.passiveBonus.skills.size
+        settingWithPassive.passiveBonus.skills.forEach {
+            simulationState.coolDownMap[it.invoke.coolDownId] = 0
+        }
 
         val virtualLeader = if (positionKeepMode == PositionKeepMode.VIRTUAL) {
             copy(umaStatus = virtualLeader, positionKeepMode = PositionKeepMode.SPEED_UP).initializeState()
