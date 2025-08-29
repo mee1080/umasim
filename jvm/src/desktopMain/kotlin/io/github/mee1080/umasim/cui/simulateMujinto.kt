@@ -10,8 +10,8 @@ fun simulateMujinto() {
     speed1Stamina1power1guts1Wisdom1Speed()
 //    speed1Stamina1power1guts1Wisdom1Stamina()
 //    speed1Stamina1power1guts1Wisdom1Power()
-    speed1Stamina1power1guts1Wisdom1Guts()
-//    speed1Stamina1power1guts1Wisdom1Wisdom()
+//    speed1Stamina1power1guts1Wisdom1Guts()
+    speed1Stamina1power1guts1Wisdom1Wisdom()
 }
 
 private fun speed1Stamina1power1guts1Wisdom1Speed() {
@@ -31,7 +31,7 @@ private fun speed1Stamina1power1guts1Wisdom1Speed() {
         chara,
         defaultSupport,
 //        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[氷結晶の静域]アドマイヤグルーヴ" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[カルストンライトオ、猫です]カルストンライトオ" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 6),
         testCount = 100000,
@@ -138,8 +138,8 @@ private fun speed1Stamina1power1guts1Wisdom1Wisdom() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[今宵、我が君のために]デュランダル" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 6),
         testCount = 100000,
