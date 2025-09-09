@@ -748,6 +748,15 @@ distance_rate>=50&order_rate_in20_continue==1&track_id>=10001&track_id<=10010&gr
 distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
 「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）」の後「相手が加速スキル発動」、現在速度2500、持続5.0
 
+Punkish Bite
+[Red Devil Gear]エスポワールシチー 固有
+レース終盤のコーナーで少しの間少し前に出る、ダートレースなら効果が増えてさらに加速力がちょっと上がる＜逃げ/先行＞
+評価点340、人気:パワー60、確定発動
+->running_style==1&phase>=2&corner!=0&ground_type==2@running_style==2&phase>=2&corner!=0&ground_type==2
+「逃げ、終盤、コーナー、ダート」または「先行、終盤、コーナー、ダート」、現在速度3500、加速1000、持続4.0
+->running_style==1&phase>=2&corner!=0@running_style==2&phase>=2&corner!=0
+「逃げ、終盤、コーナー」または「先行、終盤、コーナー」、現在速度2500、持続4.0
+
 Shining Runway
 [Looking Fly!]ノースフライト 固有
 最終コーナーで好位置にいると少しの間速度が上がるマイルレースなら効果時間が増える
@@ -2541,6 +2550,12 @@ Info: Acquired
 評価点180、SP200、人気:パワー15
 distance_rate>=50&order_rate_in20_continue==1->is_other_character_activate_advantage_skill==31
 「距離割合>=50、順位率20以前維持（チャンミ～2/LoH～3）」の後「相手が加速スキル発動」、現在速度500、持続3.0
+
+Punkish Bite
+レース終盤のコーナーで少しの間ちょっと前に出る＜逃げ/先行＞
+評価点180、SP200、人気:パワー15
+->running_style==1&phase>=2&corner!=0@running_style==2&phase>=2&corner!=0
+「逃げ、終盤、コーナー」または「先行、終盤、コーナー」、現在速度500、持続2.4
 
 Shining Runway
 最終コーナーで好位置にいると少しの間速度がわずかに上がるマイルレースなら効果時間が増える
@@ -10744,6 +10759,15 @@ Legends 進化(飛翔脚)
 ->ground_type==2&running_style==2&phase_firsthalf_random==2&order_rate<=50
 「ダート、先行、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
 
+ベッコベコに凹ます！
+[Red Devil Gear]エスポワールシチー 進化(踏みしめる大地)
+レース終盤始めの方で前方にいると加速力が上がる、1800m以下のレースなら終盤始めの方早めに加速力が上がる＜ダート＞
+評価点633、進化元SP340、人気:パワー60
+->order_rate<=50&ground_type==2&phase_firstquarter_random==2&course_distance<=1800
+「順位率50以下（チャンミ～5/LoH～6）、ダート、終盤前1/8ランダム、距離<=1800」、加速4000、持続1.8
+->order_rate<=50&ground_type==2&phase_firsthalf_random==2&course_distance>1800
+「順位率50以下（チャンミ～5/LoH～6）、ダート、終盤前1/4ランダム、距離>1800」、加速4000、持続1.8
+
 突き進め北の海
 [パステルマリン・ロコドル]ホッコータルマエ 進化(踏みしめる大地)
 レース終盤始めの方で加速力が上がる、1800m以上のレースなら終盤始めの方早めに加速力が上がる＜先行・ダート＞
@@ -10938,6 +10962,13 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 評価点508、SP190(合計380)、人気:スピード30/スタミナ30
 ->ground_type==2&phase_random==1
 「ダート、中盤ランダム」、目標速度3500、体力350、持続2.4
+
+相手が誰でも関係ねーし！
+[Red Devil Gear]エスポワールシチー 進化(清濁併呑)
+レース中盤に持久力を少し使ってしばらくの間速度がすごく上がる＜ダート＞
+評価点633、進化元SP380、人気:スピード60
+->ground_type==2&phase_random==1
+「ダート、中盤ランダム」、目標速度4500、体力-200、持続4.0
 
 裏腹なキモチ
 レース中盤に速度がわずかに上がり持久力をちょっと回復する＜ダート＞
@@ -11898,6 +11929,36 @@ distance_rate>=66&order_rate_out40_continue==1->running_style==3&distance_type==
 評価点217、SP120、人気:パワー20
 ->running_style==4&down_slope_random==1
 「追込、下り坂ランダム」、加速2000、持続3.0
+
+至宝の輝き
+レース中盤に中団以降にいると速度が上がる＜差し・短距離＞
+評価点508、SP170(合計340)、人気:スピード60
+->phase_random==1&running_style==3&distance_type==1&order_rate>=40
+「中盤ランダム、差し、短距離、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続3.0
+
+誇りを抱いて
+レース中盤に中団以降にいると速度がわずかに上がる＜差し・短距離＞
+評価点217、SP170、人気:スピード20
+->phase_random==1&running_style==3&distance_type==1&order_rate>=40
+「中盤ランダム、差し、短距離、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続3.0
+
+プレリュード
+レース中盤に中団以降にいると速度がわずかに上がる＜短距離＞
+評価点217、SP160、人気:スピード20
+->distance_type==1&phase_random==1&order_rate>=40
+「短距離、中盤ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度1500、持続2.4
+
+なりふり構わず
+レース中盤に前方にいると持久力を少し使って速度が少し上がる＜ダート＞
+評価点217、SP160、人気:スピード20
+->ground_type==2&order_rate<=50&phase_random==1
+「ダート、順位率50以下（チャンミ～5/LoH～6）、中盤ランダム」、目標速度2500、体力-200、持続2.4
+
+バイタリティ
+最終コーナー前の第3コーナーで前方にいるとわずかに前に出る＜ダート＞
+評価点217、SP180、人気:パワー20
+->ground_type==2&corner_random==3&order_rate<=50
+「ダート、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
