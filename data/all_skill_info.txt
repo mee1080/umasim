@@ -1945,6 +1945,13 @@ Forward March!
 ->ground_type==2&distance_rate>=50
 「ダート、距離割合>=50」、目標速度3500、持続5.0
 
+ヤバ技☆ジャグルビート
+[Highkey☆Hallowed]トーセンジョーダン 固有
+中盤以降下り坂で中団だと下った後長めに速度をわずかに、加速力をほんのちょっと上げ続ける、効果中スキル発動3回まで加速力が増える＜中距離/長距離＞
+評価点340、人気:スピード30/パワー30、確定発動
+phase>=1&slope==2&order_rate>=30&order_rate<=70->slope==0&distance_type==3@slope==1&distance_type==3@slope==0&distance_type==4@slope==1&distance_type==4
+「中盤以降、下り坂、順位率30～70（チャンミ3～6/LoH4～8）」の後「坂以外、中距離」または「上り坂、中距離」または「坂以外、長距離」または「上り坂、長距離」、目標速度1500、加速500、加速500(追加効果2)、持続7.0
+
 Overdrive Speed
 [迷光オーヴァライド]ナリタタイシン 固有
 レース終盤のコーナーで後方にいるときゴールまで遠いと少しの間前に出る中山レース場の中距離レースなら効果が増えてさらに加速力がちょっと上がる
@@ -3577,6 +3584,12 @@ Forward March!
 評価点180、SP200、人気:スピード15
 ->ground_type==2&distance_rate>=50
 「ダート、距離割合>=50」、目標速度1500、持続3.0
+
+ヤバ技☆ジャグルビート
+中盤以降下り坂で中団だと下った後長めに速度をほんのわずかに上げ続ける＜中距離/長距離＞
+評価点180、SP200、人気:スピード15
+phase>=1&slope==2&order_rate>=30&order_rate<=70->slope==0&distance_type==3@slope==1&distance_type==3@slope==0&distance_type==4@slope==1&distance_type==4
+「中盤以降、下り坂、順位率30～70（チャンミ3～6/LoH4～8）」の後「坂以外、中距離」または「上り坂、中距離」または「坂以外、長距離」または「上り坂、長距離」、目標速度350、持続4.2
 
 Overdrive Speed
 レース終盤のコーナーで後方にいるときゴールまで遠いと少しの間わずかに前に出る
@@ -10163,6 +10176,15 @@ Legends 進化(王手)
 ->is_activate_other_skill_detail==1&is_last_straight==1
 「上記効果発動後、最終直線」、現在速度1500、持続2.4
 
+ここ、カマしどきっしょ！
+[Highkey☆Hallowed]トーセンジョーダン 進化(王手)
+2000m以上のレースなら終盤の最終コーナーで加速力がすごく上がる長距離レースでは効果が変わりしばらくの間少し前に出る＜先行/差し＞
+評価点633、進化元SP360、人気:パワー60
+->running_style==2&phase>=2&is_finalcorner==1&corner!=0&course_distance>=2000&distance_type!=4@running_style==3&phase>=2&is_finalcorner==1&corner!=0&course_distance>=2000&distance_type!=4
+「先行、終盤、最終コーナー以降、コーナー、距離>=2000、距離!=4」または「差し、終盤、最終コーナー以降、コーナー、距離>=2000、距離!=4」、加速5000、持続0.9
+->running_style==2&phase>=2&is_finalcorner==1&corner!=0&course_distance>=2000&distance_type==4@running_style==3&phase>=2&is_finalcorner==1&corner!=0&course_distance>=2000&distance_type==4
+「先行、終盤、最終コーナー以降、コーナー、距離>=2000、長距離」または「差し、終盤、最終コーナー以降、コーナー、距離>=2000、長距離」、現在速度2500、持続4.0
+
 将の疾刃
 [黒将Zen]ヤエノムテキ 進化(王手)
 終盤の最終コーナーで中団以前にいる時ゴールまで遠いと加速力が上がるその後ラストスパートの最中に速度がわずかに上がる＜先行/差し＞
@@ -11631,6 +11653,15 @@ Legends 進化(英俊豪傑)
 ->distance_type==3&running_style==3&phase_straight_random==1&order_rate>=40
 「中距離、差し、中盤直線ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度2500、持続4.0
 
+乗っとけ☆ぶち上げペース
+[Highkey☆Hallowed]トーセンジョーダン 進化(ストレートハート)
+レース中盤の直線でしばらくの間速度が上がる、スキル発動時先頭から4バ身以上離れていると効果が増える＜中距離/長距離＞
+評価点633、進化元SP320、人気:スピード60
+->distance_type==3&phase_straight_random==1&distance_diff_top>=10@distance_type==4&phase_straight_random==1&distance_diff_top>=10
+「中距離、中盤直線ランダム、先頭とのバ身差>=10」または「長距離、中盤直線ランダム、先頭とのバ身差>=10」、目標速度4000、持続4.0
+->distance_type==3&phase_straight_random==1@distance_type==4&phase_straight_random==1
+「中距離、中盤直線ランダム」または「長距離、中盤直線ランダム」、目標速度3500、持続4.0
+
 ストリーミング♡ラッシュ
 [9927 Wishes]ラヴズオンリーユー 進化(ストレートハート)
 レース中盤の直線でしばらくの間速度が上がる＜差し・中距離＞
@@ -12113,6 +12144,22 @@ distance_rate>=66&order_rate_out40_continue==1->running_style==3&distance_type==
 評価点217、SP180、人気:パワー20
 ->ground_type==2&corner_random==3&order_rate<=50
 「ダート、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続3.0
+
+開花
+レース中盤に速度が上がるスキル発動時、前方にいると効果が変わり前に出る＜作戦・先行＞
+評価点508、SP180(合計360)、人気:スピード30/パワー30
+->running_style==2&phase_random==1&order_rate<=50
+「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続2.4
+->running_style==2&phase_random==1
+「先行、中盤ランダム」、目標速度3500、持続2.4
+
+目覚めの時
+レース中盤に速度がわずかに上がるスキル発動時、前方にいると効果が変わりわずかに前に出る＜作戦・先行＞
+評価点217、SP180、人気:スピード10/パワー10
+->running_style==2&phase_random==1&order_rate<=50
+「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続2.4
+->running_style==2&phase_random==1
+「先行、中盤ランダム」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
