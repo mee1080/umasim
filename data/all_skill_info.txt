@@ -841,6 +841,15 @@ phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70&temptation_co
 phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70->remain_distance<=300
 「終盤、最終直線に入った時、順位率30～70（チャンミ3～6/LoH4～8）」の後「残り距離<=300」、目標速度2500、持続5.0
 
+照らすのはわたしの焔
+[まんなか◎スポットライト]ダンツフレーム 固有
+レース中間付近で好位置にいると速度が上がる中距離レースなら効果が増える
+評価点340、人気:スピード60、確定発動
+->distance_rate>=50&distance_rate<=55&order_rate<=50&order_rate>=20&distance_type==3
+「距離割合50～55、順位率20～50（チャンミ2～5/LoH3～6）、中距離」、目標速度4000、持続5.0
+->distance_rate>=50&distance_rate<=55&order_rate<=50&order_rate>=20
+「距離割合50～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度3500、持続5.0
+
 幸せの青い光
 [Prism]ケイエスミラクル 固有
 終盤始めのどこかで前方にいると少し前に出る、短距離かマイルレースの場合は効果が増える
@@ -2662,6 +2671,12 @@ phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70&temptation_co
 「終盤、最終直線に入った時、順位率30～70（チャンミ3～6/LoH4～8）、掛かり無し」の後「残り距離<=300」、目標速度2500、持続3.0
 phase>=2&is_last_straight_onetime==1&order_rate>=30&order_rate<=70->remain_distance<=300
 「終盤、最終直線に入った時、順位率30～70（チャンミ3～6/LoH4～8）」の後「残り距離<=300」、目標速度500、持続3.0
+
+照らすのはわたしの焔
+レース中間付近で好位置にいると速度がわずかに上がる
+評価点180、SP200、人気:スピード15
+->distance_rate>=50&distance_rate<=55&order_rate<=50&order_rate>=20
+「距離割合50～55、順位率20～50（チャンミ2～5/LoH3～6）」、目標速度1500、持続3.0
 
 幸せの青い光
 終盤始めのどこかで前方にいるとちょっと前に出る、短距離かマイルレースの場合は効果が増える
@@ -10829,6 +10844,15 @@ Legends 進化(飛翔脚)
 ->distance_type==3&phase_laterhalf_random==1&order_rate<=50
 「中距離、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続2.4
 
+わたしだって、勝ちたい！！
+[まんなか◎スポットライト]ダンツフレーム 進化(初志貫徹)
+レース終盤が迫ったとき前方にいると速度が上がる、中距離レースならその後追い比べをしていると少し前に出る＜作戦・先行＞
+評価点633、進化元SP320、人気:スピード30/パワー30
+->running_style==2&phase_laterhalf_random==1&order_rate<=50
+「先行、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続2.4
+->distance_type==3&is_activate_other_skill_detail==1&compete_fight_count>0
+「中距離、上記効果発動後、追い比べ」、現在速度2500、持続2.4
+
 白妙の約定
 [Twinbell Queen]シーザリオ 進化(初志貫徹)
 レース終盤が迫ったとき速度がすごく上がる＜中距離＞
@@ -12160,6 +12184,27 @@ distance_rate>=66&order_rate_out40_continue==1->running_style==3&distance_type==
 「先行、中盤ランダム、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続2.4
 ->running_style==2&phase_random==1
 「先行、中盤ランダム」、目標速度1500、持続2.4
+
+燃ゆる魂
+レース終盤始めの方に前に出る＜マイル/中距離＞
+評価点508、SP180(合計360)、人気:パワー60
+->distance_type==2&phase_firsthalf_random==2@distance_type==3&phase_firsthalf_random==2
+「マイル、終盤前1/4ランダム」または「中距離、終盤前1/4ランダム」、現在速度3500、持続2.4
+
+Ignite this Stage
+[まんなか◎スポットライト]ダンツフレーム 進化(燃ゆる魂)
+レース終盤始めの方に前に出るさらに中距離レースなら加速力がわずかに上がる＜マイル/中距離＞
+評価点633、進化元SP360、人気:パワー60
+->distance_type==3&phase_firsthalf_random==2
+「中距離、終盤前1/4ランダム」、現在速度3500、加速2000、持続2.4
+->distance_type==2&phase_firsthalf_random==2
+「マイル、終盤前1/4ランダム」、現在速度3500、持続2.4
+
+灯を胸に
+レース終盤始めの方にわずかに前に出る＜マイル/中距離＞
+評価点217、SP180、人気:パワー20
+->distance_type==2&phase_firsthalf_random==2@distance_type==3&phase_firsthalf_random==2
+「マイル、終盤前1/4ランダム」または「中距離、終盤前1/4ランダム」、現在速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
