@@ -222,16 +222,9 @@ enum class Scenario(
         displayName = "ごくらく♪ゆこま温泉郷",
         trainingData = onsenTrainingData,
         scenarioEvents = { OnsenScenarioEvents() },
-        turn = 78,
-        levelUpTurns = listOf(37, 38, 39, 40, 61, 62, 63, 64),
         guestMember = true,
         scenarioLink = setOf(
-            "トウカイテイオー",
-            "ミホノブルボン",
-            "トランセンド",
-            "ホッコータルマエ",
-            "ワンダーアキュート",
-            "保科健子"
+            "トウカイテイオー", "ミホノブルボン", "トランセンド", "ホッコータルマエ", "ワンダーアキュート", "保科健子",
         ),
         calculator = OnsenCalculator,
     ),

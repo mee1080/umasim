@@ -1,28 +1,11 @@
 package io.github.mee1080.umasim.scenario.onsen
 
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
-import kotlin.math.roundToInt
-
-data class OnsenActionParam(
-    val excavationProgress: Map<StrataType, Int>
-) : ScenarioActionParam
-
-data class PRActivityResult(
-    override val status: Status,
-    val tickets: Int,
-    val excavationProgress: Map<StrataType, Int>,
-    override val success: Boolean = true,
-) : ActionResult, ScenarioActionResult
-
-data class PRActivity(
-    override val result: PRActivityResult
-) : Action, ScenarioAction
+import kotlin.math.floor
 
 object OnsenCalculator : ScenarioCalculator {
-
     override fun calcScenarioStatus(
         info: Calculator.CalcInfo,
         base: Status,
@@ -30,8 +13,9 @@ object OnsenCalculator : ScenarioCalculator {
         friendTraining: Boolean,
     ): Status {
         val onsenStatus = info.onsenStatus ?: return Status()
-        val innRankBonus = innRankBonuses.getOrElse(onsenStatus.innRank - 1) { innRankBonuses.last() }
-        val trainingEffect = innRankBonus.trainingEffectUp
+        val gensenEffect = onsenStatus.selectedGensen?.continuousEffect ?: return Status()
+
+        val trainingEffect = gensenEffect.trainingEffect
         return Status(
             speed = base.speed * trainingEffect / 100,
             stamina = base.stamina * trainingEffect / 100,
@@ -42,123 +26,88 @@ object OnsenCalculator : ScenarioCalculator {
         )
     }
 
-    private fun calcExcavationPower(state: SimulationState, trainingType: StatusType?): Map<StrataType, Int> {
-        val onsenStatus = state.onsenStatus ?: return emptyMap()
-        val chara = state.chara
-        val blueFactorBonus = (chara.speedFactor + chara.staminaFactor + chara.powerFactor + chara.gutsFactor + chara.wisdomFactor) / 20.0
-
-        val powerMap = mutableMapOf<StrataType, Double>()
-
-        fun getStatForPower(type: EquipmentType): Double {
-            val stats = equipmentTrainingType[type]!!
-            return (chara.status.get(stats[0]) + chara.status.get(stats[1]) + chara.status.get(stats[2])) / 3.0
-        }
-
-        val holeDiggerPower = (getStatForPower(EquipmentType.HOLE_DIGGER) / 10.0) * (1 + onsenStatus.equipmentLevel[EquipmentType.HOLE_DIGGER]!! * 0.1) + onsenStatus.sandPower + blueFactorBonus
-        powerMap[StrataType.SAND] = holeDiggerPower
-
-        val earthDrillPower = (getStatForPower(EquipmentType.EARTH_DRILL) / 10.0) * (1 + onsenStatus.equipmentLevel[EquipmentType.EARTH_DRILL]!! * 0.1) + onsenStatus.earthPower + blueFactorBonus
-        powerMap[StrataType.EARTH] = earthDrillPower
-
-        val metalCrownPower = (getStatForPower(EquipmentType.METAL_CROWN) / 10.0) * (1 + onsenStatus.equipmentLevel[EquipmentType.METAL_CROWN]!! * 0.1) + onsenStatus.rockPower + blueFactorBonus
-        powerMap[StrataType.ROCK] = metalCrownPower
-
-        // Training type bonus
-        if (trainingType != null) {
-            equipmentTrainingType.forEach { (eq, types) ->
-                if (trainingType in types) {
-                    val strata = equipmentStrata[eq]!!
-                    powerMap[strata] = powerMap[strata]!! * 1.2
-                }
-            }
-        }
-
-        return powerMap.mapValues { it.value.roundToInt() }
-    }
-
-    override fun predictScenarioActionParams(state: SimulationState, baseActions: List<Action>): List<Action> {
-        if (state.isLevelUpTurn) return baseActions // No excavation during summer camp
-
-        val onsenStatus = state.onsenStatus ?: return baseActions
-        if (onsenStatus.activeGensen == null) return baseActions
-
+    override fun predictScenarioActionParams(
+        state: SimulationState,
+        baseActions: List<Action>,
+    ): List<Action> {
         return baseActions.map { action ->
-            when (action) {
-                is Training -> {
-                    val progress = calcExcavationPower(state, action.type)
-                    action.copy(candidates = action.addScenarioActionParam(OnsenActionParam(progress)))
-                }
-                is Race -> {
-                    val progress = calcExcavationPower(state, null)
-                    action.copy(result = action.result.addScenarioActionParam(OnsenActionParam(progress)))
-                }
-                is Rest, is GoOut -> {
-                     val progress = calcExcavationPower(state, null).mapValues { (it.value * 0.5).roundToInt() }
-                     action.copy(result = action.result.addScenarioActionParam(OnsenActionParam(progress)))
-                }
-                else -> action
-            }
+            val excavationPoint = calcExcavationPoint(state, action)
+            action.addScenarioActionParam(OnsenActionParam(excavationPoint))
         }
     }
 
-    override fun predictScenarioAction(state: SimulationState, goal: Boolean): Array<Action> {
-        val onsenStatus = state.onsenStatus ?: return emptyArray()
-        if (goal || state.isLevelUpTurn || onsenStatus.activeGensen == null) return emptyArray()
+    private fun calcExcavationPoint(state: SimulationState, action: Action): Int {
+        val basePoint = when (action) {
+            is Training -> 25 + action.member.count { !it.guest }
+            is Race -> if (action.goal) 25 else 15
+            is Rest -> 15
+            is GoOut -> if (action.charaName == "保科健子") 25 else 15
+            is PrAction -> 10 + action.member.size
+            else -> 0
+        }
+        if (state.isSummerCamp) return 0
 
-        // PR活動
-        val progress = calcExcavationPower(state, null)
-        val tickets = if (state.support.any { it.card.chara == "保科健子" }) 2 else 1
-        val result = PRActivityResult(
-            status = Status(all = 5, hp = -10),
-            tickets = tickets,
-            excavationProgress = progress,
-        )
-        return arrayOf(PRActivity(result))
+        val power = StratumType.values().sumOf { type ->
+            calcExcavationPower(state, type)
+        }
+
+        return floor(basePoint * (1 + power / 100.0)).toInt()
     }
 
-    suspend fun applyScenarioAction(state: SimulationState, result: OnsenActionResult, selector: ActionSelector): SimulationState {
+    private fun calcExcavationPower(state: SimulationState, type: StratumType): Int {
+        val onsenStatus = state.onsenStatus ?: return 0
+        val stats = stratumToBaseStats[type] ?: return 0
+
+        val statPower = stats.mapIndexed { index, statusType ->
+            val rank = getStatRank(state.status.get(statusType))
+            statToExcavationPower[rank][index]
+        }.sum()
+
+        val equipmentPower = equipmentLevelBonus[onsenStatus.equipmentLevel[type] ?: 0]
+
+        val factorPower = state.deck.blueFactor.count { it in stats } * 10 // Simplified
+
+        return statPower + equipmentPower + factorPower
+    }
+
+    private fun getStatRank(value: Int): Int {
+        return when {
+            value >= 1200 -> 7
+            value >= 1100 -> 6
+            value >= 900 -> 5
+            value >= 600 -> 4
+            value >= 400 -> 3
+            value >= 300 -> 2
+            value >= 150 -> 1
+            else -> 0
+        }
+    }
+
+
+    override fun predictScenarioAction(
+        state: SimulationState,
+        goal: Boolean,
+    ): Array<Action> {
+        val onsenStatus = state.onsenStatus ?: return emptyArray()
+        if (onsenStatus.bathingTickets > 0) {
+            return arrayOf(OnsenBathing())
+        }
+        return emptyArray()
+    }
+
+    suspend fun applyScenarioAction(
+        state: SimulationState,
+        result: OnsenActionResult,
+        selector: ActionSelector,
+    ): SimulationState {
         return when (result) {
-            is PRActivityResult -> {
-                state.updateOnsenStatus {
-                    copy(bathTickets = (bathTickets + result.tickets).coerceAtMost(3))
-                }.applyStatusAction(
-                    PRActivity(result),
-                    result,
-                    selector
-                )
+            is OnsenBathingResult -> {
+                val onsenStatus = state.onsenStatus ?: return state
+                val gensen = onsenStatus.selectedGensen ?: return state
+                state.updateOnsenStatus { copy(bathingTickets = bathingTickets - 1) }
+                    .addStatus(gensen.immediateEffect)
             }
             else -> state
-        }
-    }
-
-    fun applyScenarioActionParam(state: SimulationState, result: ActionResult, params: OnsenActionParam): SimulationState {
-        if (!result.success) return state
-        val onsenStatus = state.onsenStatus ?: return state
-        val activeGensenType = onsenStatus.activeGensen ?: return state
-
-        // Determine which strata to excavate based on active gensen
-        val targetStrata = when (activeGensenType) {
-            GensenType.SHIKKU -> StrataType.SAND
-            GensenType.KENNIN -> StrataType.EARTH
-            GensenType.MEISEKI -> StrataType.ROCK
-        }
-
-        val progress = params.excavationProgress[targetStrata] ?: 0
-        val currentGensen = onsenStatus.gensen[activeGensenType]!!
-        val newProgress = currentGensen.progress + progress
-
-        val threshold = (100 * Math.pow(1.5, currentGensen.level.toDouble())).toInt()
-
-        return if (newProgress >= threshold) {
-            val newGensen = currentGensen.copy(level = currentGensen.level + 1, progress = newProgress - threshold)
-            val newGensenMap = onsenStatus.gensen + (activeGensenType to newGensen)
-            state.updateOnsenStatus {
-                copy(gensen = newGensenMap).updateInnRank()
-            }
-        } else {
-            val newGensen = currentGensen.copy(progress = newProgress)
-            val newGensenMap = onsenStatus.gensen + (activeGensenType to newGensen)
-            state.updateOnsenStatus { copy(gensen = newGensenMap) }
         }
     }
 }
