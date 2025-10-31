@@ -33,6 +33,9 @@ import io.github.mee1080.umasim.scenario.mecha.mechaTrainingData
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
 import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
+import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
+import io.github.mee1080.umasim.scenario.onsen.OnsenScenarioEvents
+import io.github.mee1080.umasim.scenario.onsen.onsenTrainingData
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
@@ -212,6 +215,17 @@ enum class Scenario(
             "タッカーブライン"
         ),
         calculator = MujintoCalculator,
+    ),
+
+    ONSEN(
+        scenarioNumber = 12,
+        displayName = "ごくらく♪ゆこま温泉郷",
+        trainingData = onsenTrainingData,
+        scenarioEvents = { OnsenScenarioEvents() },
+        scenarioLink = setOf(
+            "トウカイテイオー", "ミホノブルボン", "トランセンド", "ホッコータルマエ", "ワンダーアキュート", "保科健子",
+        ),
+        calculator = OnsenCalculator,
     ),
 
     ;

@@ -35,6 +35,7 @@ import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
+import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -269,6 +270,8 @@ suspend fun SimulationState.applyAction(
         is LegendActionResult -> LegendCalculator.applyScenarioAction(this, result)
 
         is MujintoActionResult -> MujintoCalculator.applyScenarioAction(this, result, selector)
+
+        is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result, selector)
     }
 }
 
@@ -680,6 +683,7 @@ private fun SimulationState.applyScenarioActionParam(action: Action, result: Act
         is MechaActionParam -> MechaCalculator.applyScenarioAction(this, param)
         is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
         is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
+        is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param)
     }
 }
 

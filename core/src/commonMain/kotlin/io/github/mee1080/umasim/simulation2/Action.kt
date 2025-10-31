@@ -504,3 +504,55 @@ data class MujintoAddPlan(
     override val name get() = "施設計画：${result}"
     override val turnChange get() = false
 }
+
+sealed interface OnsenActionResult : ActionResult
+
+data class OnsenActionParam(
+    val digPoint: Int = 0,
+    val onsenTicket: Int = 0,
+) : ScenarioActionParam {
+    override fun toShortString() = buildList {
+        if (digPoint > 0) {
+            add("掘削Pt:$digPoint")
+        }
+        if (onsenTicket > 0) {
+            add("入浴券:$onsenTicket")
+        }
+    }.joinToString(", ")
+}
+
+data class OnsenPR(
+    val member: List<MemberState>,
+    val digPoint: Int,
+    val onsenTicket: Int,
+    val digBonus: Status,
+) : SingleAction {
+    override val name = "PR活動"
+    override val result = StatusActionResult(
+        status = Status(6, 6, 6, 6, 6, 15, -20) + digBonus,
+        scenarioActionParam = OnsenActionParam(digPoint, onsenTicket)
+    )
+}
+
+data class OnsenBathing(
+    val status: Status,
+) : SingleAction {
+    override val name = "入浴"
+    override val turnChange = false
+    override val result = StatusActionResult(
+        status = status,
+        scenarioActionParam = OnsenActionParam(onsenTicket = -1),
+    )
+}
+
+data class OnsenSelectGensenResult(
+    val gensen: String,
+) : OnsenActionResult
+
+data class OnsenSelectGensen(
+    val gensen: String,
+) : SingleAction {
+    override val name = "源泉選択 $gensen"
+    override val turnChange = false
+    override val result = OnsenSelectGensenResult(gensen)
+}
