@@ -308,35 +308,35 @@ class OnsenCalculatorTest1 : OnsenCalculatorTest(
 
         // 118
         testOnsenTraining(
-            baseCalcInfo, StatusType.SPEED, 6, 0, 1, 2, 4,
+            baseCalcInfo, StatusType.SPEED, 5, 0, 1, 2, 4,
             base = Status(100, 0, 50, 0, 0, 60),
             scenario = Status(54, 0, 27, 0, 0, 32),
         )
 
         // 119
         testOnsenTraining(
-            baseCalcInfo, StatusType.STAMINA, 6,
+            baseCalcInfo, StatusType.STAMINA, 5,
             base = Status(0, 27, 0, 10, 0, 8),
             scenario = Status(0, 2, 0, 1, 0, 0),
         )
 
         // 120
         testOnsenTraining(
-            baseCalcInfo, StatusType.POWER, 6,
+            baseCalcInfo, StatusType.POWER, 5,
             base = Status(0, 9, 33, 0, 0, 8),
             scenario = Status(0, 0, 3, 0, 0, 0),
         )
 
         // 120
         testOnsenTraining(
-            baseCalcInfo, StatusType.GUTS, 6,
+            baseCalcInfo, StatusType.GUTS, 5,
             base = Status(4, 0, 4, 31, 0, 8),
             scenario = Status(0, 0, 0, 3, 0, 0),
         )
 
         // 121
         testOnsenTraining(
-            baseCalcInfo, StatusType.WISDOM, 6, 3,
+            baseCalcInfo, StatusType.WISDOM, 5, 3,
             base = Status(8, 0, 0, 0, 34, 18),
             scenario = Status(2, 0, 0, 0, 10, 5),
         )
