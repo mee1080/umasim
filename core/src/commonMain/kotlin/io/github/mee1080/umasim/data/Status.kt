@@ -90,6 +90,17 @@ data class Status(
         performance?.minus(other.performance),
     )
 
+    operator fun times(value: Int) = copy(
+        speed = speed * value,
+        stamina = stamina * value,
+        power = power * value,
+        guts = guts * value,
+        wisdom = wisdom * value,
+        skillPt = skillPt * value,
+        hp = hp * value,
+        motivation = motivation * value,
+    )
+
     private fun diffSkillHint(first: Map<String, Int>, second: Map<String, Int>): Map<String, Int> {
         val result = mutableMapOf<String, Int>()
         first.entries.forEach {

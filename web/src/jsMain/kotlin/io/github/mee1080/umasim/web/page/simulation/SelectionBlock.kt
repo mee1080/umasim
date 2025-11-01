@@ -226,6 +226,14 @@ fun SelectionBlock(
                     }
 
                     is MujintoAddPlan -> {}
+
+                    is OnsenBathing -> {}
+
+                    is OnsenPR -> {}
+
+                    is OnsenSelectGensen -> {}
+
+                    is OnsenSelectEquipment -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {

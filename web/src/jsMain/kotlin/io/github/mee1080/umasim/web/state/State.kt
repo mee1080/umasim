@@ -43,7 +43,7 @@ data class State(
     val graphState: GraphState = GraphState(),
 
     val divideMode: Boolean = false,
-    val scenario: Scenario = Scenario.MUJINTO,
+    val scenario: Scenario = Scenario.ONSEN,
     val chara: Chara = WebConstants.charaList[0],
     val supportSaveName: String = "",
     val supportLoadList: List<String> = emptyList(),

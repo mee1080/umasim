@@ -2,83 +2,58 @@ package io.github.mee1080.umasim.scenario.onsen
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.scenario.BaseScenarioEvents
-import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
+import kotlin.math.min
 
 class OnsenScenarioEvents : BaseScenarioEvents() {
     override fun beforeSimulation(state: SimulationState): SimulationState {
-        val onsenStatus = OnsenStatus(state.support.map { it.card })
+        val onsenStatus = OnsenStatus(state.support.map { it.card }, state.factor)
         return super.beforeSimulation(state).copy(scenarioStatus = onsenStatus)
     }
 
-    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
-        var base = super.afterAction(state, selector)
-        base = checkExcavationComplete(base)
+    override fun beforeAction(state: SimulationState): SimulationState {
+        val base = super.beforeAction(state)
+        val onsenStatus = state.onsenStatus ?: return base
         return when (base.turn) {
-            3 -> base.selectGensen(selector).addGuest(6, Scenario.ONSEN)
-            24 -> base.yuamiKai(1, selector)
-            31 -> base.addBathingTickets()
-            48 -> base.yuamiKai(2, selector)
-            55 -> base.addBathingTickets()
-            61 -> base.selectGensen(selector)
-            72 -> base.yuamiKai(3, selector)
-            73 -> base.addStatus(Status(skillHint = mapOf("全身全霊" to 1)))
+            37, 61 -> base.addBathingTickets(onsenTicketOnDig[onsenStatus.hoshinaRarity])
             else -> base
         }
     }
 
-    private fun checkExcavationComplete(state: SimulationState): SimulationState {
-        val onsenStatus = state.onsenStatus ?: return state
-        val gensen = onsenStatus.selectedGensen ?: return state
-        if (gensen.strata.all { (type, required) -> (onsenStatus.excavationProgress[type] ?: 0) >= required }) {
-            val newProgress = onsenStatus.excavationProgress.toMutableMap()
-            gensen.strata.keys.forEach { newProgress[it] = 0 }
-            val ticketBonus = when (onsenStatus.hoshinaRank) {
-                2 -> 2
-                1 -> 1
-                else -> 0
-            }
-            return state.updateOnsenStatus {
-                copy(
-                    excavatedGensen = excavatedGensen + gensen.name,
-                    excavationProgress = newProgress,
-                    onsenTicket = onsenTicket + ticketBonus
-                )
-            }
+    override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.afterAction(state, selector)
+        return when (base.turn) {
+            3 -> base
+                .copy(scenarioStatus = OnsenStatus(state.support.map { it.card }, state.factor))
+                .selectGensen(selector)
+
+            24 -> base
+                .addAllStatus(10, 150)
+                .allTrainingLevelUp()
+                .selectGensen(selector)
+
+            48 -> base
+                .addAllStatus(30, 200, mapOf("機先の勝負" to 1))
+                .allTrainingLevelUp()
+                .selectGensen(selector)
+
+            65 -> base.selectGensen(selector)
+
+            72 -> base
+                .addAllStatus(40, 300, mapOf("時中の妙" to 3, "本気で休んで、もう一度" to 3))
+                .addBathingTickets(1)
+
+            73 -> base
+                .addStatus(Status(skillHint = mapOf("全身全霊" to 1)))
+
+            else -> base
         }
-        return state
     }
 
-    private suspend fun SimulationState.selectGensen(selector: ActionSelector): SimulationState {
-        val onsenStatus = onsenStatus ?: return this
-        val candidates = gensenData.values
-            .filter { it.name !in onsenStatus.excavatedGensen }
-            .map { OnsenSelectGensen(it.name) }
-        val selected = selector.select(this, candidates) as OnsenSelectGensen
-        return updateOnsenStatus { copy(selectedGensen = gensenData[selected.gensen]) }
-    }
-
-    private suspend fun SimulationState.yuamiKai(count: Int, selector: ActionSelector): SimulationState {
-        val (status, skillPt, skillHint) = when (count) {
-            1 -> Triple(10, 150, emptyMap())
-            2 -> Triple(30, 200, mapOf("機先の勝負" to 1))
-            3 -> Triple(40, 300, mapOf("時中の妙" to 3, "本気で休んで、もう一度" to 3))
-            else -> Triple(0, 0, emptyMap())
+    private fun SimulationState.addBathingTickets(count: Int): SimulationState {
+        return updateOnsenStatus {
+            copy(onsenTicket = min(3, onsenTicket + count))
         }
-        return addAllStatus(status, skillPt, skillHint)
-            .allTrainingLevelUp()
-            .run { if (count < 3) selectGensen(selector) else this }
-    }
-
-    private fun SimulationState.addBathingTickets(): SimulationState {
-        val onsenStatus = onsenStatus ?: return this
-        val amount = when (onsenStatus.hoshinaRank) {
-            2 -> 2
-            1 -> 1
-            else -> 0
-        }
-        return updateOnsenStatus { copy(onsenTicket = onsenTicket + amount) }
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {

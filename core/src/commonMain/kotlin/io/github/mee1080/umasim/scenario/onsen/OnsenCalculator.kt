@@ -4,7 +4,13 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.utility.mapIf
+import io.github.mee1080.utility.replaced
+import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.min
+import kotlin.random.Random
+import kotlin.random.nextInt
 
 object OnsenCalculator : ScenarioCalculator {
     override fun calcScenarioStatus(
@@ -14,40 +20,57 @@ object OnsenCalculator : ScenarioCalculator {
         friendTraining: Boolean,
     ): Status {
         val onsenStatus = info.onsenStatus ?: return Status()
-        val gensenEffect = onsenStatus.selectedGensen?.continuousEffect ?: return Status()
+        if (onsenStatus.onsenActiveTurn == 0) return Status()
+        val gensenEffect = onsenStatus.totalGensenContinuousEffect
 
         val trainingEffect = gensenEffect.trainingEffect
+        val friendBonus = if (friendTraining) gensenEffect.friendBonus[info.training.type] ?: 0 else 0
+        if (Calculator.DEBUG) {
+            println("trainingEffect: $trainingEffect, friendBonus: $friendBonus")
+        }
         return Status(
-            speed = base.speed * trainingEffect / 100,
-            stamina = base.stamina * trainingEffect / 100,
-            power = base.power * trainingEffect / 100,
-            guts = base.guts * trainingEffect / 100,
-            wisdom = base.wisdom * trainingEffect / 100,
-            skillPt = base.skillPt * trainingEffect / 100,
+            speed = calcSingleStatus(base.speed, trainingEffect, friendBonus),
+            stamina = calcSingleStatus(base.stamina, trainingEffect, friendBonus),
+            power = calcSingleStatus(base.power, trainingEffect, friendBonus),
+            guts = calcSingleStatus(base.guts, trainingEffect, friendBonus),
+            wisdom = calcSingleStatus(base.wisdom, trainingEffect, friendBonus),
+            skillPt = calcSingleStatus(base.skillPt, trainingEffect, friendBonus),
         )
+    }
+
+    private fun calcSingleStatus(base: Int, trainingEffect: Int, friendBonus: Int): Int {
+        return base * (100 + trainingEffect) * (100 + friendBonus) / 10000 - base
     }
 
     override fun predictScenarioActionParams(
         state: SimulationState,
         baseActions: List<Action>,
     ): List<Action> {
+        val onsenStatus = state.onsenStatus ?: return baseActions
         return baseActions.map { action ->
             when (action) {
                 // トレーニング
                 is Training -> {
+                    val digResult = calcDigResult(state, 25 + action.member.size)
                     action.copy(
                         candidates = action.addScenarioActionParam(
-                            OnsenActionParam(
-                                digPoint = calcDigPoint(state, 25 + action.member.size)
-                            )
-                        )
+                            digResult.copy(digBonus = Status())
+                        ).mapIf({ it.first.success }) {
+                            (it.first as StatusActionResult).copy(
+                                status = it.first.status + digResult.digBonus
+                            ) to it.second
+                        }
                     )
                 }
 
                 // PR活動
                 is OnsenPR -> {
                     action.copy(
-                        digPoint = calcDigPoint(state, 10 + action.member.size),
+                        result = action.result.addScenarioActionParam(
+                            calcDigResult(state, 10 + action.memberCount).copy(
+                                onsenTicket = if (onsenStatus.onsenTicket >= 3) 0 else 1,
+                            )
+                        ),
                     )
                 }
 
@@ -55,9 +78,7 @@ object OnsenCalculator : ScenarioCalculator {
                 is Race -> {
                     action.copy(
                         result = action.result.addScenarioActionParam(
-                            OnsenActionParam(
-                                digPoint = calcDigPoint(state, if (action.goal) 25 else 15)
-                            )
+                            calcDigResult(state, if (action.goal) 25 else 15)
                         )
                     )
                 }
@@ -66,9 +87,7 @@ object OnsenCalculator : ScenarioCalculator {
                 is Sleep -> {
                     action.copy(
                         candidates = action.addScenarioActionParam(
-                            OnsenActionParam(
-                                digPoint = calcDigPoint(state, 15)
-                            )
+                            calcDigResult(state, 15)
                         )
                     )
                 }
@@ -77,9 +96,7 @@ object OnsenCalculator : ScenarioCalculator {
                 is Outing -> {
                     action.copy(
                         candidates = action.addScenarioActionParam(
-                            OnsenActionParam(
-                                digPoint = calcDigPoint(state, if (action.support?.charaName == "保科健子") 25 else 15),
-                            )
+                            calcDigResult(state, if (action.support?.charaName == "保科健子") 25 else 15),
                         )
                     )
                 }
@@ -89,77 +106,145 @@ object OnsenCalculator : ScenarioCalculator {
         }
     }
 
-    private fun calcDigPoint(state: SimulationState, basePoint: Int): Int {
-        if (state.isLevelUpTurn) return 0
+    private fun calcDigResult(state: SimulationState, basePoint: Int): OnsenActionParam {
+        if (state.isLevelUpTurn) return OnsenActionParam()
+        val onsenStatus = state.onsenStatus ?: return OnsenActionParam()
+        val (stratumType, progress, rest) = onsenStatus.currentStratum ?: return OnsenActionParam()
 
-        val power = StratumType.entries.sumOf { type ->
-            calcDigPower(state, type)
+        val power = calcDigPower(state, stratumType)
+        var digPoint = floor(basePoint * (100 + power) / 100.0).toInt()
+        var digBonus = calcDigBonus(stratumType, progress, rest, digPoint)
+        if (digPoint > rest) {
+            val next = onsenStatus.nextStratumType
+            if (next == null) {
+                digPoint = rest
+            } else {
+                val usedBasePoint = ceil(rest * 100 / (100.0 + power)).toInt()
+                val nextBasePoint = basePoint - usedBasePoint
+                val nextPower = calcDigPower(state, next)
+                val nextDigPoint = floor(nextBasePoint * (100 + nextPower) / 100.0).toInt()
+                digPoint = rest + nextDigPoint
+                digBonus += calcDigBonus(next, 0, Int.MAX_VALUE, nextDigPoint)
+            }
         }
 
-        return floor(basePoint * (1 + power / 100.0)).toInt()
+        return OnsenActionParam(
+            digPoint = digPoint,
+            digBonus = digBonus,
+        )
     }
 
     private fun calcDigPower(state: SimulationState, type: StratumType): Int {
         val onsenStatus = state.onsenStatus ?: return 0
-        val stats = stratumToBaseStats[type] ?: return 0
+        val stats = stratumToStatus[type] ?: return 0
 
-        val statPower = stats.mapIndexed { index, statusType ->
-            val rank = getStatRank(state.status.get(statusType))
-            statToExcavationPower[rank][index]
+        val statusPower = stats.mapIndexed { index, statusType ->
+            val rank = getStatusRank(state.status.get(statusType))
+            statusToDigPower[rank][index]
         }.sum()
 
         val equipmentPower = equipmentLevelBonus[onsenStatus.equipmentLevel[type] ?: 0]
 
-        val factorPower = state.factor.count { it.first in stats } * 10 // Simplified
+        val factorPower = onsenStatus.factorDigPower[type] ?: 0
 
-        return statPower + equipmentPower + factorPower
+        return statusPower + equipmentPower + factorPower
     }
 
-    private fun getStatRank(value: Int): Int {
+    fun calcDigBonus(type: StratumType, progress: Int, rest: Int, point: Int): Status {
+        val count = (progress + min(rest, point)) / 30 - progress / 30
+        return if (count == 0) Status() else digBonus[type]!! * count
+    }
+
+    private fun getStatusRank(value: Int): Int {
         return when {
-            value >= 1200 -> 7
-            value >= 1100 -> 6
-            value >= 900 -> 5
-            value >= 600 -> 4
-            value >= 400 -> 3
-            value >= 300 -> 2
-            value >= 150 -> 1
-            else -> 0
+            value >= 1200 -> 7 // UG-
+            value >= 1000 -> 6 // S-SS
+            value >= 600 -> 5 // B-A
+            value >= 400 -> 4 // C
+            value >= 300 -> 3 // D
+            value >= 200 -> 2 // E
+            value >= 100 -> 1 // F
+            else -> 0 // G
         }
     }
-
 
     override fun predictScenarioAction(
         state: SimulationState,
         goal: Boolean,
     ): Array<Action> {
         val onsenStatus = state.onsenStatus ?: return emptyArray()
-        if (onsenStatus.onsenTicket > 0) {
-            return arrayOf(OnsenBathing(Status()))
-        }
-        return emptyArray()
+        return buildList {
+            if (state.turn >= 3) {
+                add(OnsenPR(Random.nextInt(0..5), StatusActionResult(Status(6, 6, 6, 6, 6, 15, -20))))
+            }
+            if (onsenStatus.onsenTicket > 0 && onsenStatus.onsenActiveTurn == 0) {
+                add(OnsenBathing(Status()))
+            }
+        }.toTypedArray()
     }
 
-    suspend fun applyScenarioAction(
+    fun applyScenarioAction(
         state: SimulationState,
         result: OnsenActionResult,
-        selector: ActionSelector,
     ): SimulationState {
-        // TODO
-        return state
+        return when (result) {
+            is OnsenSelectGensenResult -> {
+                state.updateOnsenStatus {
+                    val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
+                        suspendedGensen + (selectedGensen to digProgress)
+                    } else suspendedGensen
+                    val progress = suspendedGensen[result.gensen] ?: 0
+                    copy(
+                        selectedGensen = result.gensen,
+                        digProgress = progress,
+                        suspendedGensen = newSuspendedGensen,
+                        onsenTicket = min(3, onsenTicket + onsenTicketOnDig[hoshinaRarity]),
+                    )
+                }
+            }
+
+            is OnsenSelectEquipmentResult -> {
+                state.updateOnsenStatus {
+                    copy(equipmentLevel = equipmentLevel.replaced(result.equipment) {
+                        equipmentLevel[result.equipment]!! + 1
+                    })
+                }
+            }
+        }
     }
 
-    fun applyScenarioActionParam(
+    suspend fun applyScenarioActionParam(
         state: SimulationState,
         result: ActionResult,
         params: OnsenActionParam,
+        selector: ActionSelector,
     ): SimulationState {
         if (!result.success) return state
-        val onsenStatus = state.onsenStatus ?: return state
-        val newProgress = onsenStatus.excavationProgress.toMutableMap()
-        onsenStatus.selectedGensen?.strata?.keys?.forEach {
-            newProgress[it] = (newProgress[it] ?: 0) + params.digPoint
+        var newState = state
+            .updateOnsenStatus {
+                copy(
+                    onsenTicket = min(3, onsenTicket + params.onsenTicket),
+                    digProgress = digProgress + params.digPoint,
+                )
+            }
+            .addStatus(params.digBonus)
+        val newOnsenStatus = newState.onsenStatus ?: return newState
+        if (newOnsenStatus.digProgress >= (newOnsenStatus.selectedGensen?.totalProgress ?: Int.MAX_VALUE)) {
+            // TODO 入浴1ターン目に掘削完了しても、2ターン目の効果は追加されない
+            newState = newState.selectGensen(selector)
         }
-        return state.updateOnsenStatus { copy(excavationProgress = newProgress) }
+        return newState
+    }
+
+    override fun updateOnAddStatus(
+        state: SimulationState,
+        status: Status
+    ): SimulationState {
+        // TODO 超回復判定修正
+        return if (status.hp != 0 && Random.nextDouble() < 0.05) {
+            state.updateOnsenStatus {
+                copy(superRecoveryAvailable = true)
+            }
+        } else state
     }
 }

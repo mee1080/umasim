@@ -3,39 +3,66 @@ package io.github.mee1080.umasim.scenario.onsen
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
+enum class StratumType {
+    SAND,
+    SOIL,
+    ROCK
+}
+
 data class Gensen(
     val name: String,
-    val turns: Int,
-    val strata: Map<StratumType, Int>,
-    val immediateEffect: Status,
-    val continuousEffect: GensenContinuousEffect
-)
+    val turn: Int,
+    val strata: List<Pair<StratumType, Int>>,
+    val immediateEffectHp: Int,
+    val continuousEffect: GensenContinuousEffect,
+) {
+    val totalProgress = strata.sumOf { it.second }
+    override fun hashCode() = name.hashCode()
+    override fun equals(other: Any?) = name == (other as? Gensen)?.name
+}
 
 data class GensenContinuousEffect(
     val trainingEffect: Int = 0,
     val failureRateDown: Int = 0,
-    val friendshipBonus: Map<StatusType, Int> = emptyMap(),
+    val friendBonus: Map<StatusType, Int> = emptyMap(),
     val hintRateUp: Int = 0,
-    val statBonusOnRaceWin: Int = 0,
-    val staminaConsumptionDown: Int = 0,
-    val extraSupportInTraining: Boolean = false
-)
+    val goalBonus: Int = 0,
+    val hpCost: Int = 0,
+    val extraSupportInTraining: Boolean = false,
+) {
+    operator fun plus(other: GensenContinuousEffect): GensenContinuousEffect {
+        return GensenContinuousEffect(
+            trainingEffect = trainingEffect + other.trainingEffect,
+            failureRateDown = failureRateDown + other.failureRateDown,
+            friendBonus = buildMap {
+                putAll(friendBonus)
+                other.friendBonus.forEach {
+                    put(it.key, it.value + getOrElse(it.key) { 0 })
+                }
+            },
+            hintRateUp = hintRateUp + other.hintRateUp,
+            goalBonus = goalBonus + other.goalBonus,
+            hpCost = hpCost + other.hpCost,
+            extraSupportInTraining = extraSupportInTraining || other.extraSupportInTraining
+        )
+    }
+}
 
 val gensenData = mapOf(
     "ゆこまの湯" to Gensen(
         name = "ゆこまの湯",
-        turns = 3,
-        strata = emptyMap(),
-        immediateEffect = Status(hp = 35), // and other effects
+        turn = 3,
+        strata = emptyList(),
+        immediateEffectHp = 35,
         continuousEffect = GensenContinuousEffect(trainingEffect = 10, failureRateDown = 20)
     ),
     "疾駆の湯" to Gensen(
         name = "疾駆の湯",
-        turns = 3,
-        strata = mapOf(StratumType.SAND to 400),
-        immediateEffect = Status(hp = 5),
+        turn = 3,
+        strata = listOf(StratumType.SAND to 400),
+        immediateEffectHp = 5,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(
+            friendBonus = mapOf(
                 StatusType.SPEED to 15,
                 StatusType.POWER to 20
             )
@@ -43,11 +70,11 @@ val gensenData = mapOf(
     ),
     "堅忍の湯" to Gensen(
         name = "堅忍の湯",
-        turns = 3,
-        strata = mapOf(StratumType.SOIL to 400),
-        immediateEffect = Status(hp = 5),
+        turn = 3,
+        strata = listOf(StratumType.SOIL to 400),
+        immediateEffectHp = 5,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(
+            friendBonus = mapOf(
                 StatusType.STAMINA to 20,
                 StatusType.GUTS to 20
             )
@@ -55,28 +82,28 @@ val gensenData = mapOf(
     ),
     "明晰の湯" to Gensen(
         name = "明晰の湯",
-        turns = 3,
-        strata = mapOf(StratumType.ROCK to 400),
-        immediateEffect = Status(hp = 5),
+        turn = 3,
+        strata = listOf(StratumType.ROCK to 400),
+        immediateEffectHp = 5,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(StatusType.WISDOM to 20),
-            statBonusOnRaceWin = 30
+            friendBonus = mapOf(StatusType.WISDOM to 20),
+            goalBonus = 30
         )
     ),
     "駿閃の古湯" to Gensen(
         name = "駿閃の古湯",
-        turns = 24,
-        strata = mapOf(StratumType.SAND to 300, StratumType.SOIL to 150),
-        immediateEffect = Status(hp = 15),
-        continuousEffect = GensenContinuousEffect(friendshipBonus = mapOf(StatusType.SPEED to 25), hintRateUp = 100)
+        turn = 24,
+        strata = listOf(StratumType.SAND to 300, StratumType.SOIL to 150),
+        immediateEffectHp = 15,
+        continuousEffect = GensenContinuousEffect(friendBonus = mapOf(StatusType.SPEED to 25), hintRateUp = 100)
     ),
     "剛脚の古湯" to Gensen(
         name = "剛脚の古湯",
-        turns = 24,
-        strata = mapOf(StratumType.SAND to 300, StratumType.ROCK to 150),
-        immediateEffect = Status(hp = 15),
+        turn = 24,
+        strata = listOf(StratumType.SAND to 300, StratumType.ROCK to 150),
+        immediateEffectHp = 15,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(
+            friendBonus = mapOf(
                 StatusType.POWER to 40,
                 StatusType.GUTS to 40
             )
@@ -84,51 +111,52 @@ val gensenData = mapOf(
     ),
     "健壮の古湯" to Gensen(
         name = "健壮の古湯",
-        turns = 24,
-        strata = mapOf(StratumType.SOIL to 180, StratumType.ROCK to 270),
-        immediateEffect = Status(hp = 15),
+        turn = 24,
+        strata = listOf(StratumType.SOIL to 180, StratumType.ROCK to 270),
+        immediateEffectHp = 15,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(StatusType.STAMINA to 40),
-            staminaConsumptionDown = 10
+            friendBonus = mapOf(StatusType.STAMINA to 40),
+            hpCost = 10
         )
     ),
     "天翔の古湯" to Gensen(
         name = "天翔の古湯",
-        turns = 24,
-        strata = mapOf(StratumType.SOIL to 270, StratumType.ROCK to 180),
-        immediateEffect = Status(hp = 15),
+        turn = 24,
+        strata = listOf(StratumType.SOIL to 270, StratumType.ROCK to 180),
+        immediateEffectHp = 15,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(StatusType.WISDOM to 40),
-            statBonusOnRaceWin = 60
+            friendBonus = mapOf(StatusType.WISDOM to 40),
+            goalBonus = 60
         )
     ),
     "秘湯ゆこま" to Gensen(
         name = "秘湯ゆこま",
-        turns = 48,
-        strata = mapOf(StratumType.SAND to 180, StratumType.SOIL to 180, StratumType.ROCK to 180),
-        immediateEffect = Status(hp = 30),
+        turn = 48,
+        strata = listOf(StratumType.SAND to 180, StratumType.SOIL to 180, StratumType.ROCK to 180),
+        immediateEffectHp = 30,
         continuousEffect = GensenContinuousEffect(
-            friendshipBonus = mapOf(
+            friendBonus = mapOf(
                 StatusType.SPEED to 45,
                 StatusType.STAMINA to 60,
                 StatusType.POWER to 60,
                 StatusType.GUTS to 60,
                 StatusType.WISDOM to 60
-            ), extraSupportInTraining = true
+            ),
+            extraSupportInTraining = true
         )
     ),
     "伝説の秘湯" to Gensen(
         name = "伝説の秘湯",
-        turns = 65,
-        strata = mapOf(StratumType.SAND to 90, StratumType.SOIL to 90, StratumType.ROCK to 90),
-        immediateEffect = Status(),
-        continuousEffect = GensenContinuousEffect(statBonusOnRaceWin = 80)
+        turn = 65,
+        strata = listOf(StratumType.SAND to 90, StratumType.SOIL to 90, StratumType.ROCK to 90),
+        immediateEffectHp = 0,
+        continuousEffect = GensenContinuousEffect(goalBonus = 80)
     )
 )
 
 val equipmentLevelBonus = listOf(0, 30, 50, 70, 100, 130)
 
-val statToExcavationPower = listOf(
+val statusToDigPower = listOf(
     // 1st, 2nd, 3rd
     listOf(5, 3, 0),     // G
     listOf(8, 5, 3),     // F
@@ -140,14 +168,16 @@ val statToExcavationPower = listOf(
     listOf(35, 25, 15)   // UG+
 )
 
-val stratumToBaseStats = mapOf(
+val factorToDigPower = listOf(10, 6, 3)
+
+val stratumToStatus = mapOf(
     StratumType.SAND to listOf(StatusType.SPEED, StatusType.WISDOM, StatusType.STAMINA),
     StratumType.SOIL to listOf(StatusType.GUTS, StatusType.SPEED, StatusType.POWER),
     StratumType.ROCK to listOf(StatusType.POWER, StatusType.WISDOM, StatusType.STAMINA)
 )
 
 val ryokanRankBonus = listOf(
-    null,
+    RyokanRankBonus(specialityRate = 0, superRecoveryHintBonus = 0),
     RyokanRankBonus(specialityRate = 40, superRecoveryHintBonus = 1),
     RyokanRankBonus(specialityRate = 70, superRecoveryHintBonus = 1),
     RyokanRankBonus(specialityRate = 100, superRecoveryHintBonus = 1),
@@ -161,7 +191,9 @@ data class RyokanRankBonus(
 )
 
 val digBonus = mapOf(
-    StratumType.SAND to Status(speed = 2, power = 1, wisdom = 2),
-    StratumType.SOIL to Status(speed = 2, guts = 1, power = 2),
-    StratumType.ROCK to Status(stamina = 1, power = 2, wisdom = 2)
+    StratumType.SAND to Status(speed = 2, stamina = 1, wisdom = 2, hp = -3),
+    StratumType.SOIL to Status(speed = 2, power = 1, guts = 2, hp = -3),
+    StratumType.ROCK to Status(stamina = 1, power = 2, wisdom = 2, hp = -3)
 )
+
+val onsenTicketOnDig = listOf(0, 1, 1, 2)

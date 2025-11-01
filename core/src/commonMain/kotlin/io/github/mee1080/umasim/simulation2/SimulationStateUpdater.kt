@@ -237,13 +237,13 @@ suspend fun SimulationState.applyAction(
 ): SimulationState {
     if (action is Outing && action.support != null) {
         return applyOutingEvent(action.support, selector).applyIfNotNull(result.scenarioActionParam) {
-            applyScenarioActionParam(action, result)
+            applyScenarioActionParam(action, result, selector)
         }
     }
     return when (result) {
         is StatusActionResult -> applyStatusAction(action, result, selector)
 
-        is FriendActionResult -> applyFriendEvent(action, result)
+        is FriendActionResult -> applyFriendEvent(action, result, selector)
 
         is ClimaxBuyUseItemResult -> applyIfNotNull(result.buyItem) { buyItem(it) }.applyIfNotNull(result.useItem) {
             applyItem(
@@ -271,7 +271,7 @@ suspend fun SimulationState.applyAction(
 
         is MujintoActionResult -> MujintoCalculator.applyScenarioAction(this, result, selector)
 
-        is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result, selector)
+        is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result)
     }
 }
 
@@ -323,7 +323,7 @@ suspend fun SimulationState.applyStatusAction(
         }
     }
     // シナリオ別結果反映
-    return newState.applyScenarioActionParam(action, result)
+    return newState.applyScenarioActionParam(action, result, selector)
 }
 
 private fun MemberState.applyTraining(
@@ -361,7 +361,11 @@ private suspend fun SimulationState.applyFriendEvent(action: Training, selector:
     return state
 }
 
-fun SimulationState.applyFriendEvent(action: Action, result: FriendActionResult): SimulationState {
+private suspend fun SimulationState.applyFriendEvent(
+    action: Action,
+    result: FriendActionResult,
+    selector: ActionSelector,
+): SimulationState {
     return applyFriendEvent(result.support, result.status, result.relation, result.outingStep)
         .applyIf({ result.otherRelation > 0 }) {
             val minRelation = support.filter { it.index != result.support.index }.minOf { it.relation }
@@ -370,7 +374,7 @@ fun SimulationState.applyFriendEvent(action: Action, result: FriendActionResult)
             }.random()
             addRelation(1, relationTarget)
         }
-        .applyScenarioActionParam(action, result)
+        .applyScenarioActionParam(action, result, selector)
 }
 
 fun SimulationState.applyFriendEvent(
@@ -673,7 +677,11 @@ private fun LiveStatus.applyLive(): LiveStatus {
     )
 }
 
-private fun SimulationState.applyScenarioActionParam(action: Action, result: ActionResult): SimulationState {
+private suspend fun SimulationState.applyScenarioActionParam(
+    action: Action,
+    result: ActionResult,
+    selector: ActionSelector,
+): SimulationState {
     val param = result.scenarioActionParam ?: return this
     return when (param) {
         is GmActionParam -> applyGmAction(param)
@@ -683,7 +691,7 @@ private fun SimulationState.applyScenarioActionParam(action: Action, result: Act
         is MechaActionParam -> MechaCalculator.applyScenarioAction(this, param)
         is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
         is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
-        is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param)
+        is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
     }
 }
 

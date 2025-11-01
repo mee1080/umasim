@@ -35,6 +35,8 @@ import io.github.mee1080.umasim.scenario.live.Lesson
 import io.github.mee1080.umasim.scenario.mecha.MechaChipType
 import io.github.mee1080.umasim.scenario.mujinto.MujintoFacility
 import io.github.mee1080.umasim.scenario.mujinto.facilityName
+import io.github.mee1080.umasim.scenario.onsen.Gensen
+import io.github.mee1080.umasim.scenario.onsen.StratumType
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 
 sealed interface Action {
@@ -510,6 +512,7 @@ sealed interface OnsenActionResult : ActionResult
 data class OnsenActionParam(
     val digPoint: Int = 0,
     val onsenTicket: Int = 0,
+    val digBonus: Status = Status(),
 ) : ScenarioActionParam {
     override fun toShortString() = buildList {
         if (digPoint > 0) {
@@ -522,16 +525,10 @@ data class OnsenActionParam(
 }
 
 data class OnsenPR(
-    val member: List<MemberState>,
-    val digPoint: Int,
-    val onsenTicket: Int,
-    val digBonus: Status,
+    val memberCount: Int,
+    override val result: ActionResult,
 ) : SingleAction {
-    override val name = "PR活動"
-    override val result = StatusActionResult(
-        status = Status(6, 6, 6, 6, 6, 15, -20) + digBonus,
-        scenarioActionParam = OnsenActionParam(digPoint, onsenTicket)
-    )
+    override val name = "PR活動 $memberCount 人"
 }
 
 data class OnsenBathing(
@@ -546,13 +543,25 @@ data class OnsenBathing(
 }
 
 data class OnsenSelectGensenResult(
-    val gensen: String,
+    val gensen: Gensen,
 ) : OnsenActionResult
 
 data class OnsenSelectGensen(
-    val gensen: String,
+    val gensen: Gensen,
 ) : SingleAction {
     override val name = "源泉選択 $gensen"
     override val turnChange = false
     override val result = OnsenSelectGensenResult(gensen)
+}
+
+data class OnsenSelectEquipmentResult(
+    val equipment: StratumType,
+) : OnsenActionResult
+
+data class OnsenSelectEquipment(
+    val equipment: StratumType,
+) : SingleAction {
+    override val name = "装備選択 $equipment"
+    override val turnChange = false
+    override val result = OnsenSelectEquipmentResult(equipment)
 }
