@@ -1,13 +1,13 @@
 package io.github.mee1080.umasim.scenario.onsen
 
-import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.mapIf
 import io.github.mee1080.utility.replaced
 import kotlin.math.ceil
 import kotlin.math.floor
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 import kotlin.random.nextInt
@@ -26,7 +26,7 @@ object OnsenCalculator : ScenarioCalculator {
         val trainingEffect = gensenEffect.trainingEffect
         val friendBonus = if (friendTraining) gensenEffect.friendBonus[info.training.type] ?: 0 else 0
         if (Calculator.DEBUG) {
-            println("trainingEffect: $trainingEffect, friendBonus: $friendBonus")
+            println("onsen trainingEffect: $trainingEffect, friendBonus: $friendBonus")
         }
         return Status(
             speed = calcSingleStatus(base.speed, trainingEffect, friendBonus),
@@ -178,7 +178,7 @@ object OnsenCalculator : ScenarioCalculator {
                 add(OnsenPR(Random.nextInt(0..5), StatusActionResult(Status(6, 6, 6, 6, 6, 15, -20))))
             }
             if (onsenStatus.onsenTicket > 0 && onsenStatus.onsenActiveTurn == 0) {
-                add(OnsenBathing(Status()))
+                add(OnsenBathing)
             }
         }.toTypedArray()
     }
@@ -188,6 +188,39 @@ object OnsenCalculator : ScenarioCalculator {
         result: OnsenActionResult,
     ): SimulationState {
         return when (result) {
+            is OnsenBathingResult -> {
+                val onsenStatus = state.onsenStatus ?: return state
+                var newState = state
+                if (onsenStatus.superRecoveryAvailable) {
+                    // 体力+20、スキルPt+100、ランダムヒント2個、TODO 体力最大値一時的に150
+                    newState = newState
+                        .addStatus(Status(hp = 20, skillPt = 100))
+                        .addRandomSupportHint()
+                        .addRandomSupportHint()
+                    repeat(onsenStatus.ryokanBonus.superRecoveryHintBonus) {
+                        newState = newState.addRandomSupportHint()
+                    }
+                }
+                // HP+X、絆低い3人10、バステ解除、やる気1
+                // バステ解除は発生イベントを実装していないため無視
+                newState = newState.addStatus(Status(hp = onsenStatus.totalGensenImmediateEffectHp, motivation = 1))
+                state.support.shuffled().sortedBy { it.relation }.take(3).forEach {
+                    newState = newState.addRelation(10, it)
+                }
+                // 温泉チケット消費、ターン数更新、継続効果追加
+                newState = newState.updateOnsenStatus {
+                    copy(
+                        onsenTicket = onsenTicket - 1,
+                        onsenActiveTurn = 2,
+                        totalGensenContinuousEffect = excavatedGensen.fold(GensenContinuousEffect()) { acc, gensen ->
+                            acc + gensen.continuousEffect
+                        },
+                    )
+                }
+
+                newState
+            }
+
             is OnsenSelectGensenResult -> {
                 state.updateOnsenStatus {
                     val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
@@ -198,7 +231,6 @@ object OnsenCalculator : ScenarioCalculator {
                         selectedGensen = result.gensen,
                         digProgress = progress,
                         suspendedGensen = newSuspendedGensen,
-                        onsenTicket = min(3, onsenTicket + onsenTicketOnDig[hoshinaRarity]),
                     )
                 }
             }
@@ -230,7 +262,12 @@ object OnsenCalculator : ScenarioCalculator {
             .addStatus(params.digBonus)
         val newOnsenStatus = newState.onsenStatus ?: return newState
         if (newOnsenStatus.digProgress >= (newOnsenStatus.selectedGensen?.totalProgress ?: Int.MAX_VALUE)) {
-            // TODO 入浴1ターン目に掘削完了しても、2ターン目の効果は追加されない
+            newState = newState.updateOnsenStatus {
+                copy(
+                    excavatedGensen = excavatedGensen + selectedGensen!!,
+                    onsenTicket = min(3, onsenTicket + onsenTicketOnDig[hoshinaRarity]),
+                )
+            }
             newState = newState.selectGensen(selector)
         }
         return newState
@@ -246,5 +283,59 @@ object OnsenCalculator : ScenarioCalculator {
                 copy(superRecoveryAvailable = true)
             }
         } else state
+    }
+
+    override fun calcBaseRaceStatus(
+        state: SimulationState,
+        race: RaceEntry,
+        goal: Boolean
+    ): Status? {
+        if (!goal) return null
+        return when (race.grade) {
+            RaceGrade.DEBUT -> state.onsenRaceStatus(3, 3, 30)
+            RaceGrade.PRE_OPEN -> state.onsenRaceStatus(3, 3, 30)
+            RaceGrade.OPEN -> state.onsenRaceStatus(3, 3, 30)
+            RaceGrade.G3 -> state.onsenRaceStatus(4, 3, 35)
+            RaceGrade.G2 -> state.onsenRaceStatus(4, 3, 35)
+            RaceGrade.G1 -> state.onsenRaceStatus(5, 3, 45)
+            else -> null
+        }
+    }
+
+    private fun SimulationState.onsenRaceStatus(count: Int, value: Int, skillPt: Int): Status {
+        val bonusValue = value * 150 * (100 + totalRaceBonus) / 10000
+        val targets = randomTrainingType(count).map { it to bonusValue }.toTypedArray()
+        return Status(skillPt = skillPt * 150 * (100 + totalRaceBonus) / 10000).add(*targets)
+    }
+
+    override fun applyScenarioRaceBonus(
+        state: SimulationState,
+        base: Status
+    ): Status {
+        val onsenStatus = state.onsenStatus ?: return base
+        if (onsenStatus.onsenActiveTurn == 0) return base
+        val bonus = onsenStatus.totalGensenContinuousEffect.goalBonus
+        if (bonus == 0) return base
+        return base.copy(
+            speed = base.speed * (100 + bonus) / 100,
+            stamina = base.stamina * (100 + bonus) / 100,
+            power = base.power * (100 + bonus) / 100,
+            guts = base.guts * (100 + bonus) / 100,
+            wisdom = base.wisdom * (100 + bonus) / 100,
+            skillPt = base.skillPt * (100 + bonus) / 100,
+        )
+    }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType
+    ): Int {
+        return state.onsenStatus?.ryokanBonus?.specialityRate ?: 0
+    }
+
+    override fun updateScenarioTurn(state: SimulationState): SimulationState {
+        return state.updateOnsenStatus {
+            copy(onsenActiveTurn = max(0, onsenActiveTurn - 1))
+        }
     }
 }

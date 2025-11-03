@@ -531,15 +531,12 @@ data class OnsenPR(
     override val name = "PR活動 $memberCount 人"
 }
 
-data class OnsenBathing(
-    val status: Status,
-) : SingleAction {
+data object OnsenBathingResult : OnsenActionResult
+
+data object OnsenBathing : SingleAction {
     override val name = "入浴"
     override val turnChange = false
-    override val result = StatusActionResult(
-        status = status,
-        scenarioActionParam = OnsenActionParam(onsenTicket = -1),
-    )
+    override val result = OnsenBathingResult
 }
 
 data class OnsenSelectGensenResult(

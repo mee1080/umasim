@@ -44,6 +44,7 @@ data class OnsenStatus(
     val onsenActiveTurn: Int = 0,
     val hoshinaRarity: Int = 0,
     val factorDigPower: Map<StratumType, Int> = emptyMap(),
+    val totalGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect()
 ) : ScenarioStatus {
 
     constructor(support: List<SupportCard>, factor: List<Pair<StatusType, Int>>) : this(
@@ -55,7 +56,7 @@ data class OnsenStatus(
         },
     )
 
-    val ryokanRank: Int = when (excavatedGensen.size) {
+    val ryokanRank get() = when (excavatedGensen.size) {
         7 -> if (excavatedGensen.any { it.name == "伝説の秘湯" }) 5 else 4
         6 -> 4
         5 -> 3
@@ -63,7 +64,7 @@ data class OnsenStatus(
         else -> 1
     }
 
-    val ryokanBonus = ryokanRankBonus[ryokanRank]
+    val ryokanBonus get() = ryokanRankBonus[ryokanRank]
 
     val currentStratum by lazy {
         if (selectedGensen == null) return@lazy null
@@ -84,9 +85,7 @@ data class OnsenStatus(
         strata.getOrNull(strata.indexOfFirst { it.first == current } + 1)?.first
     }
 
-    val totalGensenContinuousEffect by lazy {
-        excavatedGensen.fold(GensenContinuousEffect()) { acc, gensen ->
-            acc + gensen.continuousEffect
-        }
+    val totalGensenImmediateEffectHp by lazy {
+        excavatedGensen.sumOf { it.immediateEffectHp }
     }
 }

@@ -15,7 +15,7 @@ class OnsenScenarioEvents : BaseScenarioEvents() {
         val base = super.beforeAction(state)
         val onsenStatus = state.onsenStatus ?: return base
         return when (base.turn) {
-            37, 61 -> base.addBathingTickets(onsenTicketOnDig[onsenStatus.hoshinaRarity])
+            37, 61 -> base.addOnsenTicket(onsenTicketOnDig[onsenStatus.hoshinaRarity])
             else -> base
         }
     }
@@ -41,7 +41,7 @@ class OnsenScenarioEvents : BaseScenarioEvents() {
 
             72 -> base
                 .addAllStatus(40, 300, mapOf("時中の妙" to 3, "本気で休んで、もう一度" to 3))
-                .addBathingTickets(1)
+                .addOnsenTicket(min(1, onsenTicketOnDig[base.onsenStatus?.hoshinaRarity ?: 0]))
 
             73 -> base
                 .addStatus(Status(skillHint = mapOf("全身全霊" to 1)))
@@ -50,7 +50,7 @@ class OnsenScenarioEvents : BaseScenarioEvents() {
         }
     }
 
-    private fun SimulationState.addBathingTickets(count: Int): SimulationState {
+    private fun SimulationState.addOnsenTicket(count: Int): SimulationState {
         return updateOnsenStatus {
             copy(onsenTicket = min(3, onsenTicket + count))
         }
