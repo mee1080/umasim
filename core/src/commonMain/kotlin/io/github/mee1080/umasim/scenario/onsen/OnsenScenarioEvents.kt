@@ -6,10 +6,6 @@ import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.min
 
 class OnsenScenarioEvents : BaseScenarioEvents() {
-    override fun beforeSimulation(state: SimulationState): SimulationState {
-        val onsenStatus = OnsenStatus(state.support.map { it.card }, state.factor)
-        return super.beforeSimulation(state).copy(scenarioStatus = onsenStatus)
-    }
 
     override fun beforeAction(state: SimulationState): SimulationState {
         val base = super.beforeAction(state)
@@ -23,7 +19,7 @@ class OnsenScenarioEvents : BaseScenarioEvents() {
     override suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.afterAction(state, selector)
         return when (base.turn) {
-            3 -> base
+            2 -> base
                 .copy(scenarioStatus = OnsenStatus(state.support.map { it.card }, state.factor))
                 .selectGensen(selector)
 

@@ -17,13 +17,13 @@ suspend fun SimulationState.selectGensen(selector: ActionSelector): SimulationSt
     val onsenStatus = onsenStatus ?: return this
 
     val gensenCandidates = gensenData.values
-        .filter { it.turn >= turn && it !in onsenStatus.excavatedGensen }
+        .filter { it.turn <= turn && it !in onsenStatus.excavatedGensen }
         .map { OnsenSelectGensen(it) }
     val selectedGensen = selector.select(this, gensenCandidates) as OnsenSelectGensen
     val newState = OnsenCalculator.applyScenarioAction(this, selectedGensen.result)
 
     val equipmentCandidates = StratumType.entries
-        .filter { (onsenStatus.equipmentLevel[it] ?: 0) < 5 }
+        .filter { (onsenStatus.equipmentLevel[it] ?: 0) < 6 }
         .map { OnsenSelectEquipment(it) }
     val selectedEquipment = selector.select(this, equipmentCandidates) as OnsenSelectEquipment
     return OnsenCalculator.applyScenarioAction(newState, selectedEquipment.result)
@@ -40,6 +40,7 @@ data class OnsenStatus(
         StratumType.ROCK to 1
     ),
     val onsenTicket: Int = 2,
+    val superRecoveryUsedHp: Int = 0,
     val superRecoveryAvailable: Boolean = false,
     val onsenActiveTurn: Int = 0,
     val hoshinaRarity: Int = 0,

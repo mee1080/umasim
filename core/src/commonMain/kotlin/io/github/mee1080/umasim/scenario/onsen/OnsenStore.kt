@@ -3,10 +3,10 @@ package io.github.mee1080.umasim.scenario.onsen
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
-enum class StratumType {
-    SAND,
-    SOIL,
-    ROCK
+enum class StratumType(val displayName: String) {
+    SAND("砂"),
+    SOIL("土"),
+    ROCK("岩"),
 }
 
 data class Gensen(
@@ -46,48 +46,62 @@ data class GensenContinuousEffect(
             extraSupportInTraining = extraSupportInTraining || other.extraSupportInTraining
         )
     }
+
+    override fun toString() = buildString {
+        if (trainingEffect > 0) {
+            append("トレ効果：")
+            append(trainingEffect)
+        }
+        if (failureRateDown > 0) {
+            append(" 失敗率低下：")
+            append(failureRateDown)
+        }
+        friendBonus.forEach { (type, value) ->
+            append(" ")
+            append(type.displayName)
+            append("友情ボーナス：")
+            append(value)
+        }
+        if (hintRateUp > 0) {
+            append(" ヒント率上昇：")
+            append(hintRateUp)
+        }
+        if (goalBonus > 0) {
+            append(" 目標ボーナス：")
+            append(goalBonus)
+        }
+        if (hpCost > 0) {
+            append(" 体力消費軽減：")
+            append(hpCost)
+        }
+        if (extraSupportInTraining) {
+            append(" 参加サポカ追加")
+        }
+    }
 }
 
 val gensenData = mapOf(
-    "ゆこまの湯" to Gensen(
-        name = "ゆこまの湯",
-        turn = 3,
-        strata = emptyList(),
-        immediateEffectHp = 35,
-        continuousEffect = GensenContinuousEffect(trainingEffect = 10, failureRateDown = 20)
+    "伝説の秘湯" to Gensen(
+        name = "伝説の秘湯",
+        turn = 65,
+        strata = listOf(StratumType.SAND to 90, StratumType.SOIL to 90, StratumType.ROCK to 90),
+        immediateEffectHp = 0,
+        continuousEffect = GensenContinuousEffect(goalBonus = 80)
     ),
-    "疾駆の湯" to Gensen(
-        name = "疾駆の湯",
-        turn = 3,
-        strata = listOf(StratumType.SAND to 400),
-        immediateEffectHp = 5,
+    "秘湯ゆこま" to Gensen(
+        name = "秘湯ゆこま",
+        turn = 48,
+        strata = listOf(StratumType.SAND to 180, StratumType.SOIL to 180, StratumType.ROCK to 180),
+        immediateEffectHp = 30,
         continuousEffect = GensenContinuousEffect(
             friendBonus = mapOf(
-                StatusType.SPEED to 15,
-                StatusType.POWER to 20
-            )
-        )
-    ),
-    "堅忍の湯" to Gensen(
-        name = "堅忍の湯",
-        turn = 3,
-        strata = listOf(StratumType.SOIL to 400),
-        immediateEffectHp = 5,
-        continuousEffect = GensenContinuousEffect(
-            friendBonus = mapOf(
-                StatusType.STAMINA to 20,
-                StatusType.GUTS to 20
-            )
-        )
-    ),
-    "明晰の湯" to Gensen(
-        name = "明晰の湯",
-        turn = 3,
-        strata = listOf(StratumType.ROCK to 400),
-        immediateEffectHp = 5,
-        continuousEffect = GensenContinuousEffect(
-            friendBonus = mapOf(StatusType.WISDOM to 20),
-            goalBonus = 30
+                StatusType.SPEED to 45,
+                StatusType.STAMINA to 60,
+                StatusType.POWER to 60,
+                StatusType.GUTS to 60,
+                StatusType.WISDOM to 60
+            ),
+            extraSupportInTraining = true
         )
     ),
     "駿閃の古湯" to Gensen(
@@ -129,32 +143,50 @@ val gensenData = mapOf(
             goalBonus = 60
         )
     ),
-    "秘湯ゆこま" to Gensen(
-        name = "秘湯ゆこま",
-        turn = 48,
-        strata = listOf(StratumType.SAND to 180, StratumType.SOIL to 180, StratumType.ROCK to 180),
-        immediateEffectHp = 30,
+    "疾駆の湯" to Gensen(
+        name = "疾駆の湯",
+        turn = 2,
+        strata = listOf(StratumType.SAND to 400),
+        immediateEffectHp = 5,
         continuousEffect = GensenContinuousEffect(
             friendBonus = mapOf(
-                StatusType.SPEED to 45,
-                StatusType.STAMINA to 60,
-                StatusType.POWER to 60,
-                StatusType.GUTS to 60,
-                StatusType.WISDOM to 60
-            ),
-            extraSupportInTraining = true
+                StatusType.SPEED to 15,
+                StatusType.POWER to 20
+            )
         )
     ),
-    "伝説の秘湯" to Gensen(
-        name = "伝説の秘湯",
-        turn = 65,
-        strata = listOf(StratumType.SAND to 90, StratumType.SOIL to 90, StratumType.ROCK to 90),
-        immediateEffectHp = 0,
-        continuousEffect = GensenContinuousEffect(goalBonus = 80)
-    )
+    "堅忍の湯" to Gensen(
+        name = "堅忍の湯",
+        turn = 2,
+        strata = listOf(StratumType.SOIL to 400),
+        immediateEffectHp = 5,
+        continuousEffect = GensenContinuousEffect(
+            friendBonus = mapOf(
+                StatusType.STAMINA to 20,
+                StatusType.GUTS to 20
+            )
+        )
+    ),
+    "明晰の湯" to Gensen(
+        name = "明晰の湯",
+        turn = 2,
+        strata = listOf(StratumType.ROCK to 400),
+        immediateEffectHp = 5,
+        continuousEffect = GensenContinuousEffect(
+            friendBonus = mapOf(StatusType.WISDOM to 20),
+            goalBonus = 30
+        )
+    ),
+    "ゆこまの湯" to Gensen(
+        name = "ゆこまの湯",
+        turn = 2,
+        strata = emptyList(),
+        immediateEffectHp = 35,
+        continuousEffect = GensenContinuousEffect(trainingEffect = 10, failureRateDown = 20)
+    ),
 )
 
-val equipmentLevelBonus = listOf(0, 30, 50, 70, 100, 130)
+val equipmentLevelBonus = listOf(0, 0, 30, 50, 70, 100, 130)
 
 val statusToDigPower = listOf(
     // 1st, 2nd, 3rd

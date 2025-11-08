@@ -107,7 +107,7 @@ object OnsenCalculator : ScenarioCalculator {
     }
 
     private fun calcDigResult(state: SimulationState, basePoint: Int): OnsenActionParam {
-        if (state.isLevelUpTurn) return OnsenActionParam()
+        if (state.isLevelUpTurn || state.turn >= 73) return OnsenActionParam()
         val onsenStatus = state.onsenStatus ?: return OnsenActionParam()
         val (stratumType, progress, rest) = onsenStatus.currentStratum ?: return OnsenActionParam()
 
@@ -136,10 +136,15 @@ object OnsenCalculator : ScenarioCalculator {
 
     private fun calcDigPower(state: SimulationState, type: StratumType): Int {
         val onsenStatus = state.onsenStatus ?: return 0
+        val status = state.status
+        return calcDigPower(onsenStatus, status, type)
+    }
+
+    fun calcDigPower(onsenStatus: OnsenStatus, status: Status, type: StratumType): Int {
         val stats = stratumToStatus[type] ?: return 0
 
         val statusPower = stats.mapIndexed { index, statusType ->
-            val rank = getStatusRank(state.status.get(statusType))
+            val rank = getStatusRank(status.get(statusType))
             statusToDigPower[rank][index]
         }.sum()
 
@@ -174,7 +179,7 @@ object OnsenCalculator : ScenarioCalculator {
     ): Array<Action> {
         val onsenStatus = state.onsenStatus ?: return emptyArray()
         return buildList {
-            if (state.turn >= 3) {
+            if (state.turn >= 3 && !state.isGoalRaceTurn) {
                 add(OnsenPR(Random.nextInt(0..5), StatusActionResult(Status(6, 6, 6, 6, 6, 15, -20))))
             }
             if (onsenStatus.onsenTicket > 0 && onsenStatus.onsenActiveTurn == 0) {
@@ -191,22 +196,28 @@ object OnsenCalculator : ScenarioCalculator {
             is OnsenBathingResult -> {
                 val onsenStatus = state.onsenStatus ?: return state
                 var newState = state
+                // HP+X、絆低い3人10、バステ解除、やる気1
+                // バステ解除は発生イベントを実装していないため無視
+                state.support.shuffled().sortedBy { it.relation }.take(3).forEach {
+                    newState = newState.addRelation(10, it)
+                }
+                var status = Status(hp = onsenStatus.totalGensenImmediateEffectHp, motivation = 1)
+                var maxHp: Int? = null
                 if (onsenStatus.superRecoveryAvailable) {
-                    // 体力+20、スキルPt+100、ランダムヒント2個、TODO 体力最大値一時的に150
+                    // 超回復時：体力+20、スキルPt+100、ランダムヒント2個、体力最大値一時的に150
+                    status += Status(hp = 20, skillPt = 100)
+                    maxHp = 150
                     newState = newState
-                        .addStatus(Status(hp = 20, skillPt = 100))
+                        .updateOnsenStatus {
+                            copy(superRecoveryAvailable = false, superRecoveryUsedHp = 0)
+                        }
                         .addRandomSupportHint()
                         .addRandomSupportHint()
                     repeat(onsenStatus.ryokanBonus.superRecoveryHintBonus) {
                         newState = newState.addRandomSupportHint()
                     }
                 }
-                // HP+X、絆低い3人10、バステ解除、やる気1
-                // バステ解除は発生イベントを実装していないため無視
-                newState = newState.addStatus(Status(hp = onsenStatus.totalGensenImmediateEffectHp, motivation = 1))
-                state.support.shuffled().sortedBy { it.relation }.take(3).forEach {
-                    newState = newState.addRelation(10, it)
-                }
+                newState = newState.addStatus(status, overrideMaxHp = maxHp)
                 // 温泉チケット消費、ターン数更新、継続効果追加
                 newState = newState.updateOnsenStatus {
                     copy(
@@ -277,12 +288,19 @@ object OnsenCalculator : ScenarioCalculator {
         state: SimulationState,
         status: Status
     ): SimulationState {
-        // TODO 超回復判定修正
-        return if (status.hp != 0 && Random.nextDouble() < 0.05) {
+        val onsenStatus = state.onsenStatus ?: return state
+        if (status.hp >= 0 || onsenStatus.superRecoveryAvailable) return state
+        val usedHp = min(-status.hp, state.status.hp)
+        // 超回復判定条件は仮実装
+        return if ((onsenStatus.superRecoveryUsedHp + usedHp - 100) / 200.0 > Random.nextDouble()) {
             state.updateOnsenStatus {
                 copy(superRecoveryAvailable = true)
             }
-        } else state
+        } else {
+            state.updateOnsenStatus {
+                copy(superRecoveryUsedHp = superRecoveryUsedHp + usedHp)
+            }
+        }
     }
 
     override fun calcBaseRaceStatus(

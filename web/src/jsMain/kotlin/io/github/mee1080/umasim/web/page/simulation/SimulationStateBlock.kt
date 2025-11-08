@@ -176,6 +176,9 @@ fun SimulationStateBlock(state: SimulationState) {
         state.mujintoStatus?.let {
             MujintoStateBlock(it)
         }
+        state.onsenStatus?.let {
+            OnsenStateBlock(it, state.status)
+        }
         HideBlock("サポートカード") {
             state.support.forEach {
                 MemberState(it)

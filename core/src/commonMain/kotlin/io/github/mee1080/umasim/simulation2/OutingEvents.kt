@@ -7,8 +7,10 @@ import io.github.mee1080.umasim.scenario.cook.updateCookStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
+import io.github.mee1080.umasim.scenario.onsen.updateOnsenStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
+import kotlin.math.min
 import kotlin.random.Random
 
 suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selector: ActionSelector): SimulationState {
@@ -95,6 +97,14 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
                     applyFriendEvent(target, Status(stamina = 5), 5)
                         .addNextTurnSpecialityRateUpAll(20)
                 }
+            } else this
+        }
+
+        "保科健子" -> {
+            if (isFirst) {
+                applyFriendEvent(target, Status(skillPt = 3), 5, 1)
+            } else if (Random.nextDouble() < 0.4) {
+                applyFriendEvent(target, Status(skillPt = 5), 5)
             } else this
         }
 
@@ -310,6 +320,55 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
             }
         }
 
+        "保科健子" -> {
+            when (step) {
+                1 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 3, stamina = 3, power = 3, guts = 3, wisdom = 3, motivation = 1,
+                        skillHint = mapOf("序盤巧者" to 5),
+                    ),
+                    5, 2,
+                ).copy(refreshTurn = refreshTurn + selectRefreshTurn())
+
+                2 -> applyFriendEvent(
+                    support,
+                    Status(speed = 10, power = 10, wisdom = 10, skillPt = 15, maxHp = 4, motivation = 1),
+                    5, 3,
+                ).updateOnsenStatus { copy(superRecoveryAvailable = true, onsenTicket = min(3, onsenTicket + 1)) }
+
+                3 -> applyFriendEvent(
+                    support,
+                    Status(stamina = 25, skillPt = 20, motivation = 1, skillHint = mapOf("遊びはおしまいっ！" to 2)),
+                    5, 4,
+                ).updateOnsenStatus { copy(superRecoveryAvailable = true, onsenTicket = min(3, onsenTicket + 1)) }
+
+                4 -> applyFriendEvent(
+                    support,
+                    Status(speed = 8, stamina = 8, power = 8, guts = 8, wisdom = 8, skillPt = 10, motivation = 1),
+                    5, 5,
+                ).updateOnsenStatus { copy(superRecoveryAvailable = true, onsenTicket = min(3, onsenTicket + 1)) }
+
+                5 -> applyFriendEvent(
+                    support,
+                    Status(speed = 15, power = 20, skillPt = 25, motivation = 1),
+                    5, 6,
+                ).updateOnsenStatus { copy(superRecoveryAvailable = true, onsenTicket = min(3, onsenTicket + 1)) }
+
+                6 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 20, guts = 25, skillPt = 30, motivation = 1,
+                        skillHint = mapOf("お先に失礼っ！" to 3),
+                    ),
+                    5, 7,
+                ).updateOnsenStatus { copy(superRecoveryAvailable = true, onsenTicket = min(3, onsenTicket + 2)) }
+
+                else -> this
+            }
+        }
+
+        // TODO 他の友人
         else -> this
     }
 }
@@ -360,6 +419,16 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             )
 
+            "保科健子" -> state.applyFriendEvent(
+                support,
+                Status(
+                    stamina = 8, power = 8, guts = 8, motivation = 1, maxHp = 4,
+                    skillHint = mapOf("中盤巧者" to 3),
+                ),
+                5, 0,
+            )
+
+            // TODO 他の友人
             else -> this
         }
     }
@@ -390,6 +459,12 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 5, 0,
             )
 
+            "保科健子" -> state.applyFriendEvent(
+                support, Status(power = 10, guts = 10, wisdom = 10, skillPt = 40),
+                0, 0,
+            )
+
+            // TODO 他の友人
             else -> this
         }
     }

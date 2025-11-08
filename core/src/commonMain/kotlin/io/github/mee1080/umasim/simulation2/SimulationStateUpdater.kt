@@ -135,16 +135,27 @@ fun SimulationState.shuffleMember(): SimulationState {
     )
 }
 
-private fun SimulationState.updateStatus(update: (status: Status) -> Status): SimulationState {
-    return copy(status = update(status).adjustRange().applyIf(motivationLimitOver) {
-        copy(motivation = 3)
-    })
-}
-
-fun SimulationState.addStatus(status: Status, applyScenario: Boolean = true): SimulationState {
-    return applyIf(applyScenario) {
-        scenario.calculator.updateOnAddStatus(this, status)
-    }.updateStatus { it + status }
+fun SimulationState.addStatus(
+    status: Status,
+    applyScenario: Boolean = true,
+    overrideMaxHp: Int? = null,
+): SimulationState {
+    var newState = this
+    if (applyScenario) {
+        newState = scenario.calculator.updateOnAddStatus(this, status)
+    }
+    val currentStatus = newState.status
+    val maxHp = max(currentStatus.hp, overrideMaxHp ?: (currentStatus.maxHp + status.maxHp))
+    val newHp = max(0, min(maxHp, currentStatus.hp + status.hp))
+    val newMotivation = if (newState.motivationLimitOver) 3 else {
+        max(-2, min(2, currentStatus.motivation + status.motivation))
+    }
+    return newState.copy(
+        status = (currentStatus + status).copy(
+            hp = newHp,
+            motivation = newMotivation,
+        )
+    )
 }
 
 fun SimulationState.addAllStatus(
@@ -187,6 +198,7 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
     // シナリオ友人不在判定
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
     if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
+    if (state.scenario == Scenario.ONSEN && turn < 3 && charaName == "保科健子") return this
 
     // 各トレーニングに配置
     var position: StatusType

@@ -95,12 +95,14 @@ fun SelectionBlock(
                     is Outing -> {
                         CookMaterialInfo(action)
                         LegendInfo(action)
+                        OnsenInfo(action)
                     }
 
                     is Race -> {
                         CookMaterialInfo(action)
                         LegendInfo(action)
                         MujintoInfo(action)
+                        OnsenInfo(action)
                         StatusTable(action.result.status)
                     }
 
@@ -117,6 +119,7 @@ fun SelectionBlock(
                     is Sleep -> {
                         CookMaterialInfo(action)
                         LegendInfo(action)
+                        OnsenInfo(action)
                     }
 
                     is Training -> {
@@ -124,6 +127,7 @@ fun SelectionBlock(
                         MechaInfo(action)
                         LegendInfo(action)
                         MujintoInfo(action)
+                        OnsenInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -229,7 +233,9 @@ fun SelectionBlock(
 
                     is OnsenBathing -> {}
 
-                    is OnsenPR -> {}
+                    is OnsenPR -> {
+                        OnsenInfo(action)
+                    }
 
                     is OnsenSelectGensen -> {}
 
@@ -306,5 +312,20 @@ private fun MujintoInfo(action: Action) {
         ?.first?.scenarioActionParam as? MujintoActionParam ?: return
     Div {
         Text("発展Pt: ${param.pioneerPoint}")
+    }
+}
+
+@Composable
+private fun OnsenInfo(action: Action) {
+    val param = action.candidates.firstOrNull { it.first.success }
+        ?.first?.scenarioActionParam as? OnsenActionParam ?: return
+    Div {
+        val dig = if (param.digPoint == 0) "" else "掘削量：${param.digPoint}"
+        val status = if (param.digBonus.hp == 0) "" else {
+            val values = with(param.digBonus) { "$speed/$stamina/$power/$guts/$wisdom" }
+            " パラメータ上昇：$values 体力：${param.digBonus.hp}"
+        }
+        val ticket = if (param.onsenTicket == 0) "" else " 入浴券：${param.onsenTicket}枚"
+        Text("$dig$status$ticket")
     }
 }

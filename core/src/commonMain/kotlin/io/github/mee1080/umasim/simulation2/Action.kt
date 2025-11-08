@@ -546,7 +546,23 @@ data class OnsenSelectGensenResult(
 data class OnsenSelectGensen(
     val gensen: Gensen,
 ) : SingleAction {
-    override val name = "源泉選択 $gensen"
+    override val name = buildString {
+        append("源泉選択 ")
+        append(gensen.name)
+        append("(")
+        append(
+            gensen.strata.joinToString(", ") { (type, size) ->
+                "${type.displayName} $size"
+            }
+        )
+        if (gensen.immediateEffectHp > 0) {
+            append(" / 即時効果：体力+")
+            append(gensen.immediateEffectHp)
+        }
+        append(" / 継続効果：")
+        append(gensen.continuousEffect)
+        append(")")
+    }
     override val turnChange = false
     override val result = OnsenSelectGensenResult(gensen)
 }
@@ -558,7 +574,7 @@ data class OnsenSelectEquipmentResult(
 data class OnsenSelectEquipment(
     val equipment: StratumType,
 ) : SingleAction {
-    override val name = "装備選択 $equipment"
+    override val name = "装備選択 ${equipment.displayName}"
     override val turnChange = false
     override val result = OnsenSelectEquipmentResult(equipment)
 }
