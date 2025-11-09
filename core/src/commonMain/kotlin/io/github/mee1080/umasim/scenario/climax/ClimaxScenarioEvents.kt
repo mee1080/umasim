@@ -6,6 +6,7 @@ import io.github.mee1080.umasim.data.RaceGround
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.scenario.ScenarioEvents
 import io.github.mee1080.umasim.scenario.updateFactor
+import io.github.mee1080.umasim.simulation2.ActionSelector
 import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.umasim.simulation2.addStatus
 
@@ -22,7 +23,7 @@ class ClimaxScenarioEvents : ScenarioEvents {
         )
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState {
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
         return when (state.turn) {
             // クラシック継承
             31 -> state

@@ -34,7 +34,8 @@ fun OnsenStateBlock(onsenStatus: OnsenStatus, status: Status) {
         }
     }
     Div {
-        Text("掘削済み：${onsenStatus.excavatedGensen.joinToString(", ") { it.name }}")
+        val excavated = onsenStatus.excavatedGensen.joinToString(", ") { it.name }
+        Text("得意率+${onsenStatus.ryokanBonus.specialityRate} / 超回復ヒント+${onsenStatus.ryokanBonus.superRecoveryHintBonus} / 掘削済み：${excavated}")
     }
     Div {
         val onsenActive = if (onsenStatus.onsenActiveTurn > 0) "【入浴中 ${onsenStatus.onsenActiveTurn}ターン】" else ""

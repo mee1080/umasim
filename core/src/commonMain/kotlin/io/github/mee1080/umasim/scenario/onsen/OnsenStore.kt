@@ -202,6 +202,12 @@ val statusToDigPower = listOf(
 
 val factorToDigPower = listOf(10, 6, 3)
 
+val stratumToScenarioLink = mapOf(
+    StratumType.SAND to listOf("トウカイテイオー"),
+    StratumType.SOIL to listOf("ミホノブルボン", "トランセンド"),
+    StratumType.ROCK to listOf("ホッコータルマエ", "ワンダーアキュート"),
+)
+
 val stratumToStatus = mapOf(
     StratumType.SAND to listOf(StatusType.SPEED, StatusType.WISDOM, StatusType.STAMINA),
     StratumType.SOIL to listOf(StatusType.GUTS, StatusType.SPEED, StatusType.POWER),

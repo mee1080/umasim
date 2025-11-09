@@ -98,7 +98,7 @@ class Simulator(
         selector.init(state)
         repeat(min(turn, if (state.scenario == Scenario.LARC) 67 else 78)) {
             state = state.onTurnChange(selector)
-            state = scenarioEvents.beforeAction(state)
+            state = scenarioEvents.beforeAction(state, selector)
             state = events.beforeAction(state)
             if (state.turn == 25) state.applyOutingNewYearEvent()
             state = state.shuffleMember()

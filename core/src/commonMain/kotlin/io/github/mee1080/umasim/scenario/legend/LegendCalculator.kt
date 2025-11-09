@@ -348,4 +348,8 @@ object LegendCalculator : ScenarioCalculator {
     ): Int {
         return state.legendStatus?.baseBuffEffect?.hintFrequency ?: 0
     }
+
+    override fun getAdditionalMemberCount(state: SimulationState): Int {
+        return state.legendStatus?.baseBuffEffect?.addMember ?: 0
+    }
 }

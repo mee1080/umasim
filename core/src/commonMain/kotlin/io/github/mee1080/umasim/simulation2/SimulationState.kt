@@ -173,12 +173,12 @@ data class SimulationState(
         fanCount = status.fanCount,
         currentStatus = status,
         totalRelation = totalRelation,
-        // TODO スキルPt160ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
-        speedSkillCount = min(5, status.skillPt / 160),
-        // TODO スキルPt160ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
-        healSkillCount = min(3, status.skillPt / 160),
-        // TODO スキルPt160ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
-        accelSkillCount = min(3, status.skillPt / 160),
+        // TODO スキルPt140ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
+        speedSkillCount = min(5, status.skillPt / 140),
+        // TODO スキルPt140ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
+        healSkillCount = min(3, status.skillPt / 140),
+        // TODO スキルPt140ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
+        accelSkillCount = min(3, status.skillPt / 140),
         totalTrainingLevel = totalTrainingLevel,
         isLevelUpTurn = isLevelUpTurn,
         scenarioStatus = scenarioStatus,
@@ -198,9 +198,7 @@ data class SimulationState(
         raceTurns.contains(turn - 2) && raceTurns.contains(turn - 1)
     }
 
-    val additionalMemberCount
-        get() = legendStatus?.baseBuffEffect?.addMember
-            ?: 0
+    val additionalMemberCount get() = scenario.calculator.getAdditionalMemberCount(this)
 
     val motivationLimitOver
         get() = legendStatus?.motivationLimitOver

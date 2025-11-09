@@ -1,16 +1,18 @@
 package io.github.mee1080.umasim.scenario.onsen
 
 import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.scenario.BaseScenarioEvents
+import io.github.mee1080.umasim.scenario.CommonScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
+import kotlin.math.max
 import kotlin.math.min
 
-class OnsenScenarioEvents : BaseScenarioEvents() {
+class OnsenScenarioEvents : CommonScenarioEvents() {
 
-    override fun beforeAction(state: SimulationState): SimulationState {
-        val base = super.beforeAction(state)
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.beforeAction(state, selector)
         val onsenStatus = state.onsenStatus ?: return base
         return when (base.turn) {
+            3, 25, 49, 66 -> base.selectGensen(selector)
             37, 61 -> base.addOnsenTicket(onsenTicketOnDig[onsenStatus.hoshinaRarity])
             else -> base
         }
@@ -21,23 +23,18 @@ class OnsenScenarioEvents : BaseScenarioEvents() {
         return when (base.turn) {
             2 -> base
                 .copy(scenarioStatus = OnsenStatus(state.support.map { it.card }, state.factor))
-                .selectGensen(selector)
 
             24 -> base
                 .addAllStatus(10, 150)
                 .allTrainingLevelUp()
-                .selectGensen(selector)
 
             48 -> base
                 .addAllStatus(30, 200, mapOf("機先の勝負" to 1))
                 .allTrainingLevelUp()
-                .selectGensen(selector)
-
-            65 -> base.selectGensen(selector)
 
             72 -> base
                 .addAllStatus(40, 300, mapOf("時中の妙" to 3, "本気で休んで、もう一度" to 3))
-                .addOnsenTicket(min(1, onsenTicketOnDig[base.onsenStatus?.hoshinaRarity ?: 0]))
+                .addOnsenTicket(max(1, onsenTicketOnDig[base.onsenStatus?.hoshinaRarity ?: 0]))
 
             73 -> base
                 .addStatus(Status(skillHint = mapOf("全身全霊" to 1)))

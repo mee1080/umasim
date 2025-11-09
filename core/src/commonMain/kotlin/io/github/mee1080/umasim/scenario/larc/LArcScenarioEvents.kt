@@ -25,7 +25,7 @@ class LArcScenarioEvents : ScenarioEvents {
         )
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState {
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = state.turnUpdate()
         return when (base.turn) {
             // 3T行動前 メイちゃん/理事長参加、L'Arcメンバー加入

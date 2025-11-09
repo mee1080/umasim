@@ -30,7 +30,7 @@ import kotlin.math.min
 interface ScenarioEvents {
     fun beforeSimulation(state: SimulationState): SimulationState = state
     fun initialStatus(status: Status): Status = status
-    fun beforeAction(state: SimulationState): SimulationState = state
+    suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState = state
     fun beforePredict(state: SimulationState): SimulationState = state
     suspend fun afterAction(state: SimulationState, selector: ActionSelector): SimulationState = state
     fun onTurnEnd(state: SimulationState): SimulationState = state
@@ -39,7 +39,7 @@ interface ScenarioEvents {
 
 open class BaseScenarioEvents : ScenarioEvents {
 
-    override fun beforeAction(state: SimulationState): SimulationState {
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
         return when (state.turn) {
             // クラシック継承
             31 -> state
@@ -63,10 +63,10 @@ open class BaseScenarioEvents : ScenarioEvents {
     }
 }
 
-open class CommonScenarioEvents : ScenarioEvents {
+open class CommonScenarioEvents : BaseScenarioEvents() {
 
-    override fun beforeAction(state: SimulationState): SimulationState {
-        val base = super.beforeAction(state)
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.beforeAction(state, selector)
         return when (base.turn) {
             // ジュニア新年
             25 -> base

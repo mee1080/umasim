@@ -222,9 +222,13 @@ object Calculator {
             }
 
             else -> {
-                baseHp - (baseHp * info.support.sumOf {
+                val supportHpCost = info.support.sumOf {
                     it.card.hpCost(baseCondition.applyMember(it))
-                } / 100.0).toInt()
+                }
+                val scenarioHpCost = info.scenarioStatus?.let {
+                    info.scenario.calculator.getHpCostDown(info.scenarioStatus)
+                } ?: 0
+                baseHp - (baseHp * (supportHpCost + scenarioHpCost) / 100.0).toInt()
             }
         }
     }

@@ -35,8 +35,8 @@ class MechaScenarioEvents : CommonScenarioEvents() {
         return super.beforeSimulation(state).copy(scenarioStatus = mechaStatus)
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState {
-        val base = super.beforeAction(state)
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.beforeAction(state, selector)
         val mechaStatus = base.mechaStatus ?: return base
         return when (base.turn) {
 

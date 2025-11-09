@@ -1,11 +1,8 @@
 package io.github.mee1080.umasim.scenario
 
 import io.github.mee1080.umasim.data.*
-import io.github.mee1080.umasim.simulation2.Action
-import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.simulation2.Calculator.CalcInfo
-import io.github.mee1080.umasim.simulation2.ScenarioActionParam
-import io.github.mee1080.umasim.simulation2.SimulationState
 
 interface ScenarioCalculator {
 
@@ -138,4 +135,25 @@ interface ScenarioCalculator {
         state: SimulationState,
         position: StatusType
     ): Boolean = false
+
+    /**
+     * 失敗率低下
+     */
+    fun getFailureRateDown(
+        state: SimulationState,
+    ): Int = 0
+
+    /**
+     * 体力消費軽減
+     */
+    fun getHpCostDown(
+        scenarioStatus: ScenarioStatus,
+    ): Int = 0
+
+    /**
+     * 追加配置人数
+     */
+    fun getAdditionalMemberCount(
+        state: SimulationState,
+    ): Int = 0
 }

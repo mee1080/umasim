@@ -229,15 +229,19 @@ object OnsenCalculator : ScenarioCalculator {
                     )
                 }
 
+                // TODO 参加人数追加
+
                 newState
             }
 
             is OnsenSelectGensenResult -> {
                 state.updateOnsenStatus {
+                    println(selectedGensen)
+                    println("$digProgress < ${selectedGensen?.totalProgress}?")
                     val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
-                        suspendedGensen + (selectedGensen to digProgress)
+                        suspendedGensen + (selectedGensen.name to digProgress)
                     } else suspendedGensen
-                    val progress = suspendedGensen[result.gensen] ?: 0
+                    val progress = newSuspendedGensen[result.gensen.name] ?: 0
                     copy(
                         selectedGensen = result.gensen,
                         digProgress = progress,
@@ -353,7 +357,34 @@ object OnsenCalculator : ScenarioCalculator {
 
     override fun updateScenarioTurn(state: SimulationState): SimulationState {
         return state.updateOnsenStatus {
-            copy(onsenActiveTurn = max(0, onsenActiveTurn - 1))
+            copy(
+                onsenActiveTurn = max(0, onsenActiveTurn - 1),
+                superRecoveryAvailable = superRecoveryAvailable || ryokanBonus.superRecoveryGuaranteed,
+            )
         }
+    }
+
+    override fun getFailureRateDown(state: SimulationState): Int {
+        val onsenStatus = state.onsenStatus ?: return 0
+        if (onsenStatus.onsenActiveTurn == 0) return 0
+        return onsenStatus.totalGensenContinuousEffect.failureRateDown
+    }
+
+    override fun getHintFrequencyUp(state: SimulationState, position: StatusType): Int {
+        val onsenStatus = state.onsenStatus ?: return 0
+        if (onsenStatus.onsenActiveTurn == 0) return 0
+        return onsenStatus.totalGensenContinuousEffect.hintRateUp
+    }
+
+    override fun getHpCostDown(scenarioStatus: ScenarioStatus): Int {
+        val onsenStatus = scenarioStatus as? OnsenStatus ?: return 0
+        if (onsenStatus.onsenActiveTurn == 0) return 0
+        return onsenStatus.totalGensenContinuousEffect.hpCost
+    }
+
+    override fun getAdditionalMemberCount(state: SimulationState): Int {
+        val onsenStatus = state.onsenStatus ?: return 0
+        if (onsenStatus.onsenActiveTurn == 0) return 0
+        return if (onsenStatus.totalGensenContinuousEffect.extraSupportInTraining) 3 else 0
     }
 }

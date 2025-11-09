@@ -17,8 +17,8 @@ class GmScenarioEvents : CommonScenarioEvents() {
         )
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState {
-        return super.beforeAction(state).updateTrainingLevel()
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        return super.beforeAction(state, selector).updateTrainingLevel()
     }
 
     private fun SimulationState.updateTrainingLevel(): SimulationState {

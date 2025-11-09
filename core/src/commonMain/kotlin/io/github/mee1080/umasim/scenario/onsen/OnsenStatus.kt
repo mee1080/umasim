@@ -2,11 +2,7 @@ package io.github.mee1080.umasim.scenario.onsen
 
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.SupportCard
-import io.github.mee1080.umasim.simulation2.ActionSelector
-import io.github.mee1080.umasim.simulation2.OnsenSelectEquipment
-import io.github.mee1080.umasim.simulation2.OnsenSelectGensen
-import io.github.mee1080.umasim.simulation2.ScenarioStatus
-import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.*
 
 fun SimulationState.updateOnsenStatus(update: OnsenStatus.() -> OnsenStatus): SimulationState {
     val onsenStatus = this.onsenStatus ?: return this
@@ -17,7 +13,7 @@ suspend fun SimulationState.selectGensen(selector: ActionSelector): SimulationSt
     val onsenStatus = onsenStatus ?: return this
 
     val gensenCandidates = gensenData.values
-        .filter { it.turn <= turn && it !in onsenStatus.excavatedGensen }
+        .filter { it.turn < turn && it !in onsenStatus.excavatedGensen }
         .map { OnsenSelectGensen(it) }
     val selectedGensen = selector.select(this, gensenCandidates) as OnsenSelectGensen
     val newState = OnsenCalculator.applyScenarioAction(this, selectedGensen.result)
@@ -33,7 +29,7 @@ data class OnsenStatus(
     val selectedGensen: Gensen? = null,
     val digProgress: Int = 0,
     val excavatedGensen: Set<Gensen> = setOf(gensenData["ゆこまの湯"]!!),
-    val suspendedGensen: Map<Gensen, Int> = emptyMap(),
+    val suspendedGensen: Map<String, Int> = emptyMap(),
     val equipmentLevel: Map<StratumType, Int> = mapOf(
         StratumType.SAND to 1,
         StratumType.SOIL to 1,
@@ -53,17 +49,20 @@ data class OnsenStatus(
         factorDigPower = StratumType.entries.associateWith { stratumType ->
             stratumToStatus[stratumType]!!.mapIndexed { index, type ->
                 factor.count { it.first == type } * factorToDigPower[index]
-            }.sum()
+            }.sum() + stratumToScenarioLink[stratumType]!!.count { name ->
+                support.any { it.chara == name }
+            } * 10
         },
     )
 
-    val ryokanRank get() = when (excavatedGensen.size) {
-        7 -> if (excavatedGensen.any { it.name == "伝説の秘湯" }) 5 else 4
-        6 -> 4
-        5 -> 3
-        4, 3 -> 2
-        else -> 1
-    }
+    val ryokanRank
+        get() = when (excavatedGensen.size) {
+            7 -> if (excavatedGensen.any { it.name == "伝説の秘湯" }) 4 else 3
+            6 -> 3
+            5 -> 2
+            4, 3 -> 1
+            else -> 0
+        }
 
     val ryokanBonus get() = ryokanRankBonus[ryokanRank]
 

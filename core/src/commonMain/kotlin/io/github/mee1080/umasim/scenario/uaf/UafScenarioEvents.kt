@@ -23,8 +23,8 @@ class UafScenarioEvents : CommonScenarioEvents() {
         return base.copy(member = newMember, scenarioStatus = UafStatus())
     }
 
-    override fun beforeAction(state: SimulationState): SimulationState {
-        val base = super.beforeAction(state)
+    override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
+        val base = super.beforeAction(state, selector)
         val uafStatus = state.uafStatus ?: return base
         val newUafStatus = when (state.turn) {
             1, 13, 25, 37, 49, 61, 73 -> uafStatus.copy(consultCount = 3)
