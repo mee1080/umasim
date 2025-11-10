@@ -1769,6 +1769,15 @@ phase==1&order_rate<=70&order_rate>=20&blocked_side_continuetime>=2->phase==3&is
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度2500、持続5.0
 
+湯守の和心
+[柔灯・湯の香の装い]ワンダーアキュート 固有
+レース中盤始めに3番手以降ですぐ前かすぐ後ろにウマ娘が長くいると少しの間前に出るダートレースなら前に出続ける
+評価点340、人気:パワー60、確定発動
+->ground_type==2&phase_firsthalf==1&order>=3&infront_near_lane_time>=3@ground_type==2&phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「ダート、中盤前半、順位>=3、前にウマ娘>=3」または「ダート、中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度3500、持続6.0
+->phase_firsthalf==1&order>=3&infront_near_lane_time>=3@phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「中盤前半、順位>=3、前にウマ娘>=3」または「中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度3500、持続4.0
+
 決意一筆
 [雅号・墨龍]カツラギエース 固有
 レース後半まで前方をキープしていると長時間速度を少し上げ続ける「大逃げ」が発動していると効果が変わり持久力をすごく回復する＜中距離＞
@@ -3460,6 +3469,12 @@ phase==1&order_rate<=70&order_rate>=20&blocked_side_continuetime>=2->phase==3&is
 「距離割合50～51、ダート、corner!=3」、目標速度500、目標速度350、持続3.0
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度500、持続3.0
+
+湯守の和心
+レース中盤始めに3番手以降ですぐ前かすぐ後ろにウマ娘が長くいると少しの間わずかに前に出る
+評価点180、SP200、人気:パワー15
+->phase_firsthalf==1&order>=3&infront_near_lane_time>=3@phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「中盤前半、順位>=3、前にウマ娘>=3」または「中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度1500、持続2.4
 
 決意一筆
 レース後半まで前方をキープしていると長時間速度をちょっと上げ続ける＜中距離＞
@@ -12302,6 +12317,52 @@ Ignite this Stage
 評価点217、SP180、人気:パワー20
 ->running_style==2&phase<=1&change_order_onetime>0&accumulatetime>=5@running_style==2&phase<=1&blocked_side_continuetime>=2&accumulatetime>=5
 「先行、序盤または中盤、追い抜かれ、経過時間>=5」または「先行、序盤または中盤、横ブロック継続>=2、経過時間>=5」、現在速度1500、持続3.0
+
+逃げるが勝ち！
+レース中盤に速度がわずかに上がる＜作戦・逃げ＞
+評価点217、SP180、人気:スピード20
+->running_style==1&phase_random==1
+「逃げ、中盤ランダム」、目標速度1500、持続2.4
+
+震天動地
+ラストスパートで追い抜くか競り合うと前に出る＜ダート＞
+評価点508、SP170(合計340)、人気:パワー60
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度3500、持続3.0
+
+大地轟く大噴湯
+[柔灯・湯の香の装い]ワンダーアキュート 進化(震天動地)
+ラストスパートで追い抜くか競り合うとすごく前に出る＜ダート＞
+評価点633、進化元SP340、人気:パワー60
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度4500、持続3.0
+
+轟く足音
+ラストスパートで追い抜くか競り合うとわずかに前に出る＜ダート＞
+評価点217、SP170、人気:パワー20
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度1500、持続3.0
+
+行雲流水
+レース中盤に速度が上がる＜先行/差し＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度3500、持続2.4
+
+風まかせ、お湯まかせ
+[柔灯・湯の香の装い]ワンダーアキュート 進化(行雲流水)
+レース中盤に速度がすごく上がるダートレースで根性が十二分に高いとものすごく上がる＜先行/差し＞
+評価点633、進化元SP360、人気:スピード60
+->ground_type==2&running_style==2&phase_random==1&base_guts>=1200@ground_type==2&running_style==3&phase_random==1&base_guts>=1200
+「ダート、先行、中盤ランダム、基礎根性>=1200」または「ダート、差し、中盤ランダム、基礎根性>=1200」、目標速度5500、持続2.4
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度4500、持続2.4
+
+淀みなし
+レース中盤に速度がわずかに上がる＜先行/差し＞
+評価点217、SP180、人気:スピード20
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる

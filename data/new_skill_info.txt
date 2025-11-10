@@ -1,110 +1,62 @@
-地熱解放オーヴァードライブ
-[宵闇ネオカグラ]トランセンド 固有
-中盤が迫ったとき前方にいると短い間速度がすごく上がる、その後レース中間付近で詰め寄られると少し前に出る＜ダート＞
-評価点340、人気:スピード30/パワー30、確定発動
-->ground_type==2&phase_laterhalf==0&order_rate<=30
-「ダート、序盤後半、順位率30以下（チャンミ～3/LoH～4）」、目標速度4500、持続3.0
-->is_activate_other_skill_detail==1&distance_rate>=40&distance_rate<=50&overtake_target_time>=2
-「上記効果発動後、距離割合40～50、追い抜き対象時間>=2」、現在速度2500、持続5.0
+湯守の和心
+[柔灯・湯の香の装い]ワンダーアキュート 固有
+レース中盤始めに3番手以降ですぐ前かすぐ後ろにウマ娘が長くいると少しの間前に出るダートレースなら前に出続ける
+評価点340、人気:パワー60、確定発動
+->ground_type==2&phase_firsthalf==1&order>=3&infront_near_lane_time>=3@ground_type==2&phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「ダート、中盤前半、順位>=3、前にウマ娘>=3」または「ダート、中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度3500、持続6.0
+->phase_firsthalf==1&order>=3&infront_near_lane_time>=3@phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「中盤前半、順位>=3、前にウマ娘>=3」または「中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度3500、持続4.0
 
-地熱解放オーヴァードライブ
-中盤が迫ったとき前方にいると短い間速度が少し上がる、その後レース中間付近で詰め寄られるとちょっと前に出る＜ダート＞
-評価点180、SP200、人気:スピード7/パワー7
-->ground_type==2&phase_laterhalf==0&order_rate<=30
-「ダート、序盤後半、順位率30以下（チャンミ～3/LoH～4）」、目標速度2500、持続1.8
-->is_activate_other_skill_detail==1&distance_rate>=40&distance_rate<=50&overtake_target_time>=2
-「上記効果発動後、距離割合40～50、追い抜き対象時間>=2」、現在速度500、持続3.0
+湯守の和心
+レース中盤始めに3番手以降ですぐ前かすぐ後ろにウマ娘が長くいると少しの間わずかに前に出る
+評価点180、SP200、人気:パワー15
+->phase_firsthalf==1&order>=3&infront_near_lane_time>=3@phase_firsthalf==1&order>=3&behind_near_lane_time>=3
+「中盤前半、順位>=3、前にウマ娘>=3」または「中盤前半、順位>=3、すぐ後ろに相手がいる時間>=3」、現在速度1500、持続2.4
 
-一番風呂いただきます！
-温泉郷 進化(先手必勝)
-スタート時に加速力が上がるその後レース中盤に速度がわずかに上がる＜作戦・逃げ＞
-評価点394、進化元SP240、人気:スピード30/パワー30
-->running_style==1&phase==0
-「逃げ、序盤」、加速4000、持続1.2
-->is_activate_other_skill_detail==1&phase_random==1
-「上記効果発動後、中盤ランダム」、目標速度1500、持続2.4
+逃げるが勝ち！
+レース中盤に速度がわずかに上がる＜作戦・逃げ＞
+評価点217、SP180、人気:スピード20
+->running_style==1&phase_random==1
+「逃げ、中盤ランダム」、目標速度1500、持続2.4
 
-レッドゾーンを突き抜けて
-[フォーミュラオブルージュ]マルゼンスキー 進化(アクセル全開！)
-レース終盤に近寄られるとしばらくの間前に出る＜マイル＞
-評価点633、進化元SP320、人気:パワー60
-->phase>=2&overtake_target_time>=1&distance_type==2
-「終盤、追い抜き対象時間>=1、マイル」、現在速度3500、持続4.0
+震天動地
+ラストスパートで追い抜くか競り合うと前に出る＜ダート＞
+評価点508、SP170(合計340)、人気:パワー60
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度3500、持続3.0
 
-勝ち筋ドミネーション
-[宵闇ネオカグラ]トランセンド 進化(盤石の構え)
-レース序盤にスキルを多く発動すると加速力が上がる、出遅れていない場合その後ラストスパートで加速力がちょっと上がる＜マイル/中距離＞
-評価点633、進化元SP280、人気:パワー60
-->activate_count_start>=3&distance_type==2@activate_count_start>=3&distance_type==3
-「序盤スキル発動回数>=3、マイル」または「序盤スキル発動回数>=3、中距離」、加速4000、持続3.0
-->is_activate_other_skill_detail==1&is_badstart==0&is_lastspurt==1
-「上記効果発動後、出遅れ無し、ラストスパート」、加速1000、持続3.0
+大地轟く大噴湯
+[柔灯・湯の香の装い]ワンダーアキュート 進化(震天動地)
+ラストスパートで追い抜くか競り合うとすごく前に出る＜ダート＞
+評価点633、進化元SP340、人気:パワー60
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度4500、持続3.0
 
-走り湯ダッシュ
-温泉郷 進化(お先に失礼っ！)
-すぐ後ろにウマ娘が長くいると速度がすごく上がる
-評価点633、進化元SP320、人気:スピード60
-->behind_near_lane_time>=3&accumulatetime>=10
-「すぐ後ろに相手がいる時間>=3、経過時間>=10」、目標速度4500、持続3.0
+轟く足音
+ラストスパートで追い抜くか競り合うとわずかに前に出る＜ダート＞
+評価点217、SP170、人気:パワー20
+->ground_type==2&is_lastspurt==1&change_order_onetime<0@ground_type==2&is_lastspurt==1&blocked_side_continuetime>=2
+「ダート、ラストスパート、追い抜き」または「ダート、ラストスパート、横ブロック継続>=2」、現在速度1500、持続3.0
 
-湯に入りて湯に入らざれ
-温泉郷 進化(時中の妙)
-レース中盤に速度がすごく上がる
-評価点633、進化元SP320、人気:スピード60
-->phase_random==1
-「中盤ランダム」、目標速度4500、持続1.8
+行雲流水
+レース中盤に速度が上がる＜先行/差し＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度3500、持続2.4
 
-秘湯より湧くチカラ
-温泉郷 進化(真骨頂)
-レース中盤にしばらくの間速度が上がる＜差し/追込＞
+風まかせ、お湯まかせ
+[柔灯・湯の香の装い]ワンダーアキュート 進化(行雲流水)
+レース中盤に速度がすごく上がるダートレースで根性が十二分に高いとものすごく上がる＜先行/差し＞
 評価点633、進化元SP360、人気:スピード60
-->running_style==3&phase_random==1@running_style==4&phase_random==1
-「差し、中盤ランダム」または「追込、中盤ランダム」、目標速度3500、持続4.0
+->ground_type==2&running_style==2&phase_random==1&base_guts>=1200@ground_type==2&running_style==3&phase_random==1&base_guts>=1200
+「ダート、先行、中盤ランダム、基礎根性>=1200」または「ダート、差し、中盤ランダム、基礎根性>=1200」、目標速度5500、持続2.4
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度4500、持続2.4
 
-勇壮活発
-最終コーナー前の第3コーナーで前方にいると前に出る＜ダート＞
-評価点508、SP180(合計360)、人気:パワー60
-->ground_type==2&corner_random==3&order_rate<=50
-「ダート、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続3.0
-
-ここ、逃す手はないってね☆
-[宵闇ネオカグラ]トランセンド 進化(勇壮活発)
-最終コーナー前の第3コーナーで前方にいると前に出る、その後ライバルのウマ娘が速度スキルを発動するとわずかに前に出る＜ダート＞
-評価点633、進化元SP360、人気:パワー60
-->ground_type==2&corner_random==3&order_rate<=50
-「ダート、最初のコーナーランダム==3、順位率50以下（チャンミ～5/LoH～6）」、現在速度3500、持続3.0
-->is_activate_other_skill_detail==1&is_other_character_activate_advantage_skill==27@is_activate_other_skill_detail==1&is_other_character_activate_advantage_skill==22
-「上記効果発動後、相手が目標速度スキル発動」または「上記効果発動後、相手が現在速度スキル発動」、現在速度1500、持続3.0
-
-迸る気迫
-レース序盤または中盤に追い抜かれるか競り合うと前に出る＜作戦・先行＞
-評価点508、SP180(合計360)、人気:パワー60
-->running_style==2&phase<=1&change_order_onetime>0&accumulatetime>=5@running_style==2&phase<=1&blocked_side_continuetime>=2&accumulatetime>=5
-「先行、序盤または中盤、追い抜かれ、経過時間>=5」または「先行、序盤または中盤、横ブロック継続>=2、経過時間>=5」、現在速度3500、持続3.0
-
-噴泉スピリット
-温泉郷 進化(迸る気迫)
-レース序盤または中盤に追い抜かれるか競り合うとすごく前に出る＜作戦・先行＞
-評価点633、進化元SP360、人気:パワー60
-->running_style==2&phase<=1&change_order_onetime>0&accumulatetime>=5@running_style==2&phase<=1&blocked_side_continuetime>=2&accumulatetime>=5
-「先行、序盤または中盤、追い抜かれ、経過時間>=5」または「先行、序盤または中盤、横ブロック継続>=2、経過時間>=5」、現在速度4500、持続3.0
-
-意地っ張り
-レース序盤または中盤に追い抜かれるか競り合うとわずかに前に出る＜作戦・先行＞
-評価点217、SP180、人気:パワー20
-->running_style==2&phase<=1&change_order_onetime>0&accumulatetime>=5@running_style==2&phase<=1&blocked_side_continuetime>=2&accumulatetime>=5
-「先行、序盤または中盤、追い抜かれ、経過時間>=5」または「先行、序盤または中盤、横ブロック継続>=2、経過時間>=5」、現在速度1500、持続3.0
-
-保養が導く奇跡
-ラストスパートの最中に速度が上がる旅館ランクが伝説の宿なら効果が増える
-評価点633、SP200(合計400)、人気:スピード60
-->is_lastspurt==1&phase_firsthalf_random==3
-「ラストスパート、終盤1/2～3/4ランダム」、目標速度3500(特殊32)、持続2.4
-
-本気で休んで、もう一度
-ラストスパートの最中に速度がわずかに上がる
-評価点263、SP200、人気:スピード30
-->is_lastspurt==1&phase_firsthalf_random==3
-「ラストスパート、終盤1/2～3/4ランダム」、目標速度1500、持続2.4
+淀みなし
+レース中盤に速度がわずかに上がる＜先行/差し＞
+評価点217、SP180、人気:スピード20
+->running_style==2&phase_random==1@running_style==3&phase_random==1
+「先行、中盤ランダム」または「差し、中盤ランダム」、目標速度1500、持続2.4
 
 
