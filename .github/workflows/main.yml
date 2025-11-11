@@ -25,7 +25,7 @@ jobs:
 
       # 1. 選択されたタグのコードをチェックアウト
       - name: Checkout code at selected tag
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           # 「Use workflow from」で選択されたブランチ/タグの完全なref (例: refs/tags/v1.0.0)
           ref: ${{ github.ref }}
