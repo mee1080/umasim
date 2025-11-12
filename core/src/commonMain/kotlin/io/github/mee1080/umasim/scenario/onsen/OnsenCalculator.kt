@@ -229,7 +229,20 @@ object OnsenCalculator : ScenarioCalculator {
                     )
                 }
 
-                // TODO 参加人数追加
+                // 参加人数追加
+                if (newState.onsenStatus?.totalGensenContinuousEffect?.extraSupportInTraining == true) {
+                    val targets = newState.support
+                        .filter { it.positions.isNotEmpty() }
+                        .map { it.index }
+                        .shuffled()
+                        .take(3)
+                    newState = newState.copy(
+                        member = newState.member.mapIf({ targets.contains(it.index) }) { member ->
+                            val position = trainingType.filter { !member.positions.contains(it) }.random()
+                            member.copy(additionalPosition = member.additionalPosition + position)
+                        }
+                    )
+                }
 
                 newState
             }
