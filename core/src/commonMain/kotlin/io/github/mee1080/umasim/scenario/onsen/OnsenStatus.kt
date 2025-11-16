@@ -41,6 +41,7 @@ data class OnsenStatus(
     val onsenActiveTurn: Int = 0,
     val hoshinaRarity: Int = 0,
     val factorDigPower: Map<StratumType, Int> = emptyMap(),
+    val excavatedGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect(),
     val totalGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect()
 ) : ScenarioStatus {
 

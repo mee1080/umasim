@@ -13,7 +13,9 @@ def objective(trial):
     relation = trial.suggest_int ('relation', 1000, 2000, step=100)
     risk = trial.suggest_int ('risk', 100, 150, step=5)
     keepHp = trial.suggest_int ('keepHp', 80, 100, step=2)
-    dig = trial.suggest_int ('dig', 100, 1000, step=50)
+    dig = trial.suggest_int ('dig', 0, 500, step=50)
+
+    bathThreshold = trial.suggest_int ('bathThreshold', 100, 150, step=5)
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count {count}'\
@@ -29,6 +31,7 @@ def objective(trial):
           \
           f' --status {status} --skill-pt {skillPt} --hp {hp} --motivation {motivation}' \
           f' --relation {relation} --risk {risk} --keep-hp {keepHp} --dig {dig}' \
+          f' --mode 2 --bath-threshold {bathThreshold}'\
           f''
 
     print(cmd)
@@ -37,7 +40,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='onsen_s2p1g1w1_2',
+    study_name='onsen_s2p1g1w1_mode2_1',
     storage='sqlite:///optuna_study_onsen.db',
     load_if_exists=True,
     direction='maximize'

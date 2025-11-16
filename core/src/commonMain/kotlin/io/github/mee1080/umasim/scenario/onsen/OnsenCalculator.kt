@@ -223,9 +223,7 @@ object OnsenCalculator : ScenarioCalculator {
                     copy(
                         onsenTicket = onsenTicket - 1,
                         onsenActiveTurn = 2,
-                        totalGensenContinuousEffect = excavatedGensen.fold(GensenContinuousEffect()) { acc, gensen ->
-                            acc + gensen.continuousEffect
-                        },
+                        totalGensenContinuousEffect = excavatedGensenContinuousEffect,
                     )
                 }
 
@@ -300,6 +298,7 @@ object OnsenCalculator : ScenarioCalculator {
             newState = newState.updateOnsenStatus {
                 copy(
                     excavatedGensen = excavatedGensen + selectedGensen!!,
+                    excavatedGensenContinuousEffect = excavatedGensenContinuousEffect + selectedGensen.continuousEffect,
                     onsenTicket = min(3, onsenTicket + onsenTicketOnDig[hoshinaRarity]),
                 )
             }

@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.cui
 
 import io.github.mee1080.umasim.ai.OnsenActionSelector
+import io.github.mee1080.umasim.ai.OnsenActionSelector2
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
@@ -34,7 +35,7 @@ private fun speed2power1guts1Wisdom1Speed() {
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.SPEED, 2),
         testCount = 1000,
-        selector = OnsenActionSelector.Option()::generateSelector,
+        selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
     )

@@ -5,6 +5,7 @@ import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.OnsenActionSelector
+import io.github.mee1080.umasim.ai.OnsenActionSelector2
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
@@ -14,7 +15,7 @@ import kotlinx.coroutines.runBlocking
 
 class OnsenCli : CliktCommand() {
 
-    private val defaultOption = OnsenActionSelector.Option()
+    private val defaultOption = OnsenActionSelector2.Option()
 
     private val dataDir by option().required()
 
@@ -26,6 +27,8 @@ class OnsenCli : CliktCommand() {
 
     private val count by option(help = "実行回数").int().default(100)
 
+    private val mode by option().int().default(1)
+
     private val status by option().int().default(defaultOption.status)
     private val skillPt by option().int().default(defaultOption.skillPt)
     private val hp by option().int().default(defaultOption.hp)
@@ -36,20 +39,36 @@ class OnsenCli : CliktCommand() {
     private val keepHp by option().int().default(defaultOption.keepHp)
     private val dig by option().int().default(defaultOption.dig)
 
+    private val bathThreshold by option().int().default(defaultOption.bathThreshold)
+
     override fun run() {
         StoreLoader.load(dataDir)
         val charaData = Store.getChara(chara.first, chara.second.toInt(), chara.third.toInt())
         val supportList = support.map { Store.getSupportByName(it.first, it.second.toInt()) }
-        val option = OnsenActionSelector.Option(
-            status = status,
-            skillPt = skillPt,
-            hp = hp,
-            motivation = motivation,
-            relation = relation,
-            risk = risk,
-            keepHp = keepHp,
-            dig = dig,
-        )
+        val option = when (mode) {
+            2 -> OnsenActionSelector2.Option(
+                status = status,
+                skillPt = skillPt,
+                hp = hp,
+                motivation = motivation,
+                relation = relation,
+                risk = risk,
+                keepHp = keepHp,
+                dig = dig,
+                bathThreshold = bathThreshold,
+            )
+
+            else -> OnsenActionSelector.Option(
+                status = status,
+                skillPt = skillPt,
+                hp = hp,
+                motivation = motivation,
+                relation = relation,
+                risk = risk,
+                keepHp = keepHp,
+                dig = dig,
+            )
+        }
         val factorList = factor.map { StatusType.valueOf(it.first) to it.second.toInt() }
         val evaluateSetting = Runner.onsenSetting
         System.err.println(option)
