@@ -63,7 +63,7 @@ private fun LegendBuff.toSelection(): String {
 data class SimulationSetting(
     val factorList: List<Pair<StatusType, Int>> = listOf(
         StatusType.SPEED to 3, StatusType.SPEED to 3, StatusType.SPEED to 3,
-        StatusType.POWER to 3, StatusType.POWER to 3, StatusType.POWER to 3,
+        StatusType.SPEED to 3, StatusType.POWER to 3, StatusType.POWER to 3,
     ),
     val legendBuffList: List<Pair<LegendBuff, String>> = List(11) { emptyBuff to emptyBuff.toSelection() },
 ) {

@@ -236,9 +236,18 @@ object OnsenCalculator : ScenarioCalculator {
                         .map { it.index }
                         .shuffled()
                         .take(3)
+                    val memberCounts = mutableMapOf<StatusType, Int>()
+                    newState.support.forEach {
+                        if (it.position != StatusType.NONE) {
+                            memberCounts[it.position] = memberCounts.getOrElse(it.position) { 0 } + 1
+                        }
+                    }
                     newState = newState.copy(
                         member = newState.member.mapIf({ targets.contains(it.index) }) { member ->
-                            val position = trainingType.filter { !member.positions.contains(it) }.random()
+                            val position = trainingType.filter {
+                                !member.positions.contains(it) && memberCounts.getOrElse(it) { 0 } < 5
+                            }.random()
+                            memberCounts[position] = memberCounts.getOrElse(position) { 0 } + 1
                             member.copy(additionalPosition = member.additionalPosition + position)
                         }
                     )
@@ -249,8 +258,6 @@ object OnsenCalculator : ScenarioCalculator {
 
             is OnsenSelectGensenResult -> {
                 state.updateOnsenStatus {
-                    println(selectedGensen)
-                    println("$digProgress < ${selectedGensen?.totalProgress}?")
                     val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
                         suspendedGensen + (selectedGensen.name to digProgress)
                     } else suspendedGensen
@@ -348,6 +355,7 @@ object OnsenCalculator : ScenarioCalculator {
         base: Status
     ): Status {
         val onsenStatus = state.onsenStatus ?: return base
+        if (!state.isGoalRaceTurn || state.turn >= 73) return base
         if (onsenStatus.onsenActiveTurn == 0) return base
         val bonus = onsenStatus.totalGensenContinuousEffect.goalBonus
         if (bonus == 0) return base

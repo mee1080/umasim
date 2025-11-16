@@ -35,7 +35,7 @@ interface ActionSelector {
     suspend fun selectWithScore(state: SimulationState, selection: List<Action>): Triple<Action, List<Double>, Double> =
         Triple(select(state, selection), emptyList(), 0.0)
 
-    fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } ?: selectSleep(selection)
+    fun selectOuting(selection: List<Action>) = selection.firstOrNull { it is Outing } as? Outing
 
     fun selectSleep(selection: List<Action>) = selection.first { it is Sleep } as Sleep
 

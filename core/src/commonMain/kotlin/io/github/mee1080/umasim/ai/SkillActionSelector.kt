@@ -47,7 +47,7 @@ class SkillActionSelector(targetSkills: Array<String>) : ActionSelector {
             .sortedByDescending { it.second }
         return when {
             byRate.isNotEmpty() -> byRate.first().first
-            state.status.motivation < 2 -> selectOuting(selection)
+            state.status.motivation < 2 -> selectOuting(selection) ?: selectSleep(selection)
             state.status.hp >= 95 -> selectTraining(selection, StatusType.SPEED)
             state.status.hp >= 60 -> selectTraining(selection, StatusType.WISDOM)
             else -> selectSleep(selection)

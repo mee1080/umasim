@@ -49,6 +49,7 @@ fun SimulationPage(state: State) {
                 Scenario.MECHA -> MechaActionSelector.s2h2p1w1Generator
                 Scenario.LEGEND -> LegendActionSelector.Option()
                 Scenario.MUJINTO -> MujintoActionSelector.Option()
+                Scenario.ONSEN -> OnsenActionSelector.Option()
                 else -> null
             }
         )
