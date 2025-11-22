@@ -49,6 +49,8 @@ private fun SkillSetting(virtual: Boolean, state: AppState, dispatch: OperationD
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
+        val totalSp = state.hasSkills(virtual).sumOf { it.sp }
+        Text("合計SP: $totalSp(ヒント0) ～ ${(totalSp * 0.6).toInt()}(ヒント5)")
         MyButton({ dispatch(clearSkill(virtual)) }) { Text("すべてのスキルを削除") }
         UniqueSkillSetting(virtual, chara.charaName, chara.uniqueLevel, skillIdSet, dispatch)
         SkillFilter(filter) { filter = it }
