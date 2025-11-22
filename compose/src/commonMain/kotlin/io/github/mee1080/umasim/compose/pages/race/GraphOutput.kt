@@ -17,8 +17,8 @@ import io.github.koalaplot.core.Symbol
 import io.github.koalaplot.core.legend.FlowLegend
 import io.github.koalaplot.core.legend.LegendLocation
 import io.github.koalaplot.core.line.AreaBaseline
-import io.github.koalaplot.core.line.AreaPlot
-import io.github.koalaplot.core.line.LinePlot
+import io.github.koalaplot.core.line.AreaPlot2
+import io.github.koalaplot.core.line.LinePlot2
 import io.github.koalaplot.core.style.AreaStyle
 import io.github.koalaplot.core.style.LineStyle
 import io.github.koalaplot.core.util.ExperimentalKoalaPlotApi
@@ -77,22 +77,22 @@ private fun GraphArea(graphData: GraphData) {
                 yAxisModel = rememberFloatLinearAxisModel(0f..1f),
                 yAxisLabels = { "" },
             ) {
-                AreaPlot(
+                AreaPlot2(
                     data = graphData.straightData.map { Point(it.first, it.second) },
                     areaBaseline = AreaBaseline.ConstantLine(0f),
                     areaStyle = AreaStyle(SolidColor(Color(0, 128, 255)), 0.15f),
                 )
-                AreaPlot(
+                AreaPlot2(
                     data = graphData.cornerData.map { Point(it.first, it.second) },
                     areaBaseline = AreaBaseline.ConstantLine(0f),
                     areaStyle = AreaStyle(SolidColor(Color(128, 0, 255)), 0.15f),
                 )
-                AreaPlot(
+                AreaPlot2(
                     data = graphData.upSlopeData.map { Point(it.first, it.second + 0.1f) },
                     areaBaseline = AreaBaseline.ConstantLine(0.1f),
                     areaStyle = AreaStyle(SolidColor(Color(0, 255, 128)), 0.15f),
                 )
-                AreaPlot(
+                AreaPlot2(
                     data = graphData.downSlopeData.map { Point(it.first, it.second + 0.1f) },
                     areaBaseline = AreaBaseline.ConstantLine(0.1f),
                     areaStyle = AreaStyle(SolidColor(Color(255, 255, 0)), 0.15f),
@@ -100,25 +100,25 @@ private fun GraphArea(graphData: GraphData) {
                 VerticalLineAnnotation(graphData.phase1Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
                 VerticalLineAnnotation(graphData.phase2Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
                 HorizontalLineAnnotation(graphData.staminaZero, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
-                LinePlot(
+                LinePlot2(
                     data = graphData.laneData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color.Green), 2.dp),
                 )
                 if (graphData.paceMakerData.isNotEmpty()) {
-                    LinePlot(
+                    LinePlot2(
                         data = graphData.paceMakerData.map { Point(it.first, it.second) },
                         lineStyle = LineStyle(SolidColor(Color(0, 255, 255)), 2.dp),
                     )
                 }
-                LinePlot(
+                LinePlot2(
                     data = graphData.speedData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color.Blue), 2.dp),
                 )
-                LinePlot(
+                LinePlot2(
                     data = graphData.staminaData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color(255, 128, 100)), 2.dp),
                 )
-                LinePlot(
+                LinePlot2(
                     data = graphData.staminaOverData.map { Point(it.first, it.second) },
                     lineStyle = LineStyle(SolidColor(Color.Red), 2.dp),
                 )
@@ -154,7 +154,7 @@ private fun GraphArea(graphData: GraphData) {
                             }
                         }
                         if (skill.end != null) {
-                            LinePlot(
+                            LinePlot2(
                                 data = listOf(Point(skill.start, top - 0.003f), Point(skill.end, top - 0.003f)),
                                 lineStyle = LineStyle(SolidColor(Color.Red), 2.dp),
                             )

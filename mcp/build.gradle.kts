@@ -13,6 +13,7 @@ dependencies {
     implementation(project(":utility"))
     implementation(project(":race"))
     implementation(libs.kotlinx.coroutinesCore)
+    implementation(libs.ktor.serverCio)
     implementation(libs.mcp)
     implementation(libs.slf4j.simple)
     testImplementation(kotlin("test"))

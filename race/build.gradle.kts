@@ -14,19 +14,12 @@ kotlin {
 
     jvm("desktop")
 
-    js("web", IR) {
-        useCommonJs()
-        browser()
-        binaries.executable()
-    }
-
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         browser()
         binaries.executable()
         compilerOptions {
             freeCompilerArgs.add("-Xwasm-debugger-custom-formatters")
-            freeCompilerArgs.add("-Xwasm-attach-js-exception")
         }
     }
 

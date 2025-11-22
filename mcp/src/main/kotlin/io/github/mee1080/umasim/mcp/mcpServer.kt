@@ -2,12 +2,12 @@ package io.github.mee1080.umasim.mcp
 
 import io.github.mee1080.umasim.mcp.tools.getUmaRaceSkillData
 import io.github.mee1080.umasim.mcp.tools.simulateUmaRace
-import io.modelcontextprotocol.kotlin.sdk.CallToolResult
-import io.modelcontextprotocol.kotlin.sdk.Implementation
-import io.modelcontextprotocol.kotlin.sdk.ServerCapabilities
-import io.modelcontextprotocol.kotlin.sdk.TextContent
 import io.modelcontextprotocol.kotlin.sdk.server.Server
 import io.modelcontextprotocol.kotlin.sdk.server.ServerOptions
+import io.modelcontextprotocol.kotlin.sdk.types.CallToolResult
+import io.modelcontextprotocol.kotlin.sdk.types.Implementation
+import io.modelcontextprotocol.kotlin.sdk.types.ServerCapabilities
+import io.modelcontextprotocol.kotlin.sdk.types.TextContent
 
 fun createMcpServer(simulationThreadCount: Int): Server {
     val server = Server(

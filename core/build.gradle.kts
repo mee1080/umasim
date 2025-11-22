@@ -12,7 +12,7 @@ kotlin {
 
     jvm("desktop")
 
-    js("web", IR) {
+    js(IR) {
         useCommonJs()
         browser()
     }

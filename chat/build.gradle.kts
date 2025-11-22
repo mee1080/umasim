@@ -25,12 +25,12 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
-                implementation("ai.koog:koog-agents:0.2.1")
+                implementation(libs.koog.agents)
                 implementation(compose.runtime)
                 implementation(compose.foundation)
                 implementation(compose.material)
                 implementation(compose.ui)
-                implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+                implementation(libs.multiplatform.settings.noarg)
                 implementation(project(":compose"))
             }
         }

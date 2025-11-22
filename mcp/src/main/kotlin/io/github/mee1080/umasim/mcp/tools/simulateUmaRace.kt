@@ -1,19 +1,16 @@
 package io.github.mee1080.umasim.mcp.tools
 
 import io.github.mee1080.umasim.mcp.textResult
-import io.github.mee1080.umasim.race.calc2.RaceCalculator
-import io.github.mee1080.umasim.race.calc2.RaceSetting
-import io.github.mee1080.umasim.race.calc2.RaceSimulationResult
-import io.github.mee1080.umasim.race.calc2.SystemSetting
-import io.github.mee1080.umasim.race.calc2.UmaStatus
+import io.github.mee1080.umasim.race.calc2.*
 import io.github.mee1080.umasim.race.data.Condition
 import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.race.data2.findSkills
 import io.github.mee1080.utility.averageOf
-import io.modelcontextprotocol.kotlin.sdk.Tool
 import io.modelcontextprotocol.kotlin.sdk.server.Server
+import io.modelcontextprotocol.kotlin.sdk.types.ToolSchema
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -26,7 +23,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
     addTool(
         name = "simulate_uma_race",
         description = "ウマ娘のレースをシミュレートして、平均タイム、最速タイム、最遅タイム、平均余剰体力、持久力温存発生率を取得します",
-        inputSchema = Tool.Input(
+        inputSchema = ToolSchema(
             properties = buildJsonObject {
                 putJsonObject("speed") {
                     put("type", "number")
@@ -76,12 +73,13 @@ fun Server.simulateUmaRace(threadCount: Int) {
     ) { request ->
         var status = UmaStatus()
         val errors = mutableListOf<String>()
-        request.arguments["speed"]?.let { status = status.copy(speed = it.jsonPrimitive.int) }
-        request.arguments["stamina"]?.let { status = status.copy(stamina = it.jsonPrimitive.int) }
-        request.arguments["power"]?.let { status = status.copy(power = it.jsonPrimitive.int) }
-        request.arguments["guts"]?.let { status = status.copy(guts = it.jsonPrimitive.int) }
-        request.arguments["wisdom"]?.let { status = status.copy(wisdom = it.jsonPrimitive.int) }
-        request.arguments["condition"]?.let { e ->
+        val arguments = request.arguments ?: return@addTool textResult("入力パラメータがありません")
+        arguments["speed"]?.let { status = status.copy(speed = it.jsonPrimitive.int) }
+        arguments["stamina"]?.let { status = status.copy(stamina = it.jsonPrimitive.int) }
+        arguments["power"]?.let { status = status.copy(power = it.jsonPrimitive.int) }
+        arguments["guts"]?.let { status = status.copy(guts = it.jsonPrimitive.int) }
+        arguments["wisdom"]?.let { status = status.copy(wisdom = it.jsonPrimitive.int) }
+        arguments["condition"]?.let { e ->
             val condition = Condition.entries.firstOrNull { it.label == e.jsonPrimitive.content }
             if (condition == null) {
                 errors += "やる気の設定が不正です"
@@ -89,7 +87,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
                 status = status.copy(condition = condition)
             }
         }
-        request.arguments["style"]?.let { e ->
+        arguments["style"]?.let { e ->
             val style = Style.entries.firstOrNull { it.text == e.jsonPrimitive.content }
             if (style == null) {
                 errors += "作戦の設定が不正です"
@@ -97,7 +95,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
                 status = status.copy(style = style)
             }
         }
-        request.arguments["skill_names"]?.let { e ->
+        arguments["skill_names"]?.let { e ->
             val hasSkills = e.jsonArray.mapNotNull {
                 val name = it.jsonPrimitive.content
                 val skills = findSkills(name)
@@ -112,7 +110,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
         }
         val setting = RaceSetting(status)
 
-        val count = request.arguments["count"]?.jsonPrimitive?.int ?: defaultSimulateCount
+        val count = arguments["count"]?.jsonPrimitive?.int ?: defaultSimulateCount
         val calculator = RaceCalculator(SystemSetting())
 
         val results = mutableListOf<RaceSimulationResult>()
@@ -127,7 +125,7 @@ fun Server.simulateUmaRace(threadCount: Int) {
                     }
                 }
             }
-        }.forEach { it.join() }
+        }.joinAll()
 
         val result = buildJsonObject {
             put("平均タイム", results.averageOf { it.raceTime })

@@ -6,6 +6,7 @@ import io.ktor.server.cio.*
 import io.ktor.server.engine.*
 import io.modelcontextprotocol.kotlin.sdk.server.mcp
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -14,9 +15,7 @@ fun main() {
         listOf(
             launch(Dispatchers.Default) { loadRecentEventTrackList() },
             launch(Dispatchers.Default) { loadSkillData() },
-        ).forEach {
-            it.join()
-        }
+        ).joinAll()
     }
 
     embeddedServer(CIO, port = 22223) {

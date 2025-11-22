@@ -25,7 +25,9 @@ fun WithTooltip(
 ) {
     Box(modifier) {
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberPlainTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above,
+            ),
             tooltip = { PlainTooltip(content = tooltip) },
             state = rememberTooltipState(isPersistent = isPersistent),
             modifier = modifier,
@@ -46,7 +48,9 @@ fun WithRichTooltip(
 ) {
     Box(modifier) {
         TooltipBox(
-            positionProvider = TooltipDefaults.rememberRichTooltipPositionProvider(),
+            positionProvider = TooltipDefaults.rememberTooltipPositionProvider(
+                TooltipAnchorPosition.Above,
+            ),
             state = rememberTooltipState(isPersistent = isPersistent),
             tooltip = {
                 RichTooltip(
