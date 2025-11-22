@@ -4,6 +4,7 @@ import io.github.mee1080.umasim.compose.common.lib.asyncDispatcher
 import io.github.mee1080.umasim.compose.common.lib.progressReportDelay
 import io.github.mee1080.umasim.compose.common.lib.progressReportInterval
 import io.github.mee1080.umasim.race.calc2.*
+import io.github.mee1080.umasim.race.data.FitRank
 import io.github.mee1080.umasim.race.data.PositionKeepState
 import io.github.mee1080.umasim.race.data.horseLane
 import io.github.mee1080.umasim.race.data2.SkillData
@@ -14,6 +15,7 @@ import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
 import kotlinx.coroutines.*
+import kotlin.math.abs
 import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
@@ -342,26 +344,159 @@ fun cancelSimulation() = AsyncOperation<AppState>({
     send { it.clearSimulationResult() }
 }, simulationCancelPolicy)
 
+private sealed interface ContributionTarget {
+    fun applySetting(setting: RaceSetting): RaceSetting
+    fun addResults(targetResults: MutableList<ContributionResult>, baseResult: ContributionResult, times: List<Double>)
+}
+
+private class ContributionSkillNotExist(
+    val target: SkillData,
+) : ContributionTarget {
+
+    override fun applySetting(setting: RaceSetting): RaceSetting {
+        return setting.copy(
+            umaStatus = setting.umaStatus.copy(
+                hasSkills = setting.umaStatus.hasSkills.filterNot { it.id == target.id }
+            )
+        )
+    }
+
+    override fun addResults(
+        targetResults: MutableList<ContributionResult>,
+        baseResult: ContributionResult,
+        times: List<Double>,
+    ) {
+        targetResults.add(
+            calcContributionResult(
+                target.name, target.sp, baseResult, times, false,
+            )
+        )
+    }
+}
+
+private class ContributionSkillSelect(
+    val target: SkillData,
+    val compareSkills: List<SkillData>,
+) : ContributionTarget {
+
+    override fun applySetting(setting: RaceSetting): RaceSetting {
+        return setting.copy(
+            umaStatus = setting.umaStatus.copy(
+                hasSkills = setting.umaStatus.hasSkills + target
+            )
+        )
+    }
+
+    override fun addResults(
+        targetResults: MutableList<ContributionResult>,
+        baseResult: ContributionResult,
+        times: List<Double>,
+    ) {
+        targetResults.add(
+            calcContributionResult(
+                target.name, target.sp, baseResult, times, true,
+            )
+        )
+        compareSkills.forEach { compareSkill ->
+            val compareResult = targetResults.first { it.name == compareSkill.name }
+            targetResults.add(
+                calcContributionResult(
+                    target.name, target.sp - compareSkill.sp, compareResult, times, true,
+                )
+            )
+        }
+    }
+}
+
+private class ContributionStatus(
+    val target: String,
+    val value: Int,
+) : ContributionTarget {
+    private val label = if (value >= 0) "$target+$value" else "$target$value"
+
+    override fun applySetting(setting: RaceSetting): RaceSetting {
+        return setting.copy(
+            umaStatus = setting.umaStatus.copy(
+                speed = if (target == "スピード") setting.umaStatus.speed + value else setting.umaStatus.speed,
+                stamina = if (target == "スタミナ") setting.umaStatus.stamina + value else setting.umaStatus.stamina,
+                power = if (target == "パワー") setting.umaStatus.power + value else setting.umaStatus.power,
+                guts = if (target == "根性") setting.umaStatus.guts + value else setting.umaStatus.guts,
+                wisdom = if (target == "賢さ") setting.umaStatus.wisdom + value else setting.umaStatus.wisdom,
+            )
+        )
+    }
+
+    override fun addResults(
+        targetResults: MutableList<ContributionResult>,
+        baseResult: ContributionResult,
+        times: List<Double>
+    ) {
+        targetResults.add(
+            calcContributionResult(
+                label, abs(value), baseResult, times, value > 0, 0,
+            )
+        )
+    }
+}
+
+class ContributionFit(
+    val target: String,
+    val fromRank: FitRank,
+    val toRank: FitRank,
+) : ContributionTarget {
+    private val label = "$target $fromRank->$toRank"
+
+    override fun applySetting(setting: RaceSetting): RaceSetting {
+        return setting.copy(
+            umaStatus = setting.umaStatus.copy(
+                surfaceFit = if (target == "バ場") toRank else setting.umaStatus.surfaceFit,
+                distanceFit = if (target == "距離") toRank else setting.umaStatus.distanceFit,
+                styleFit = if (target == "脚質") toRank else setting.umaStatus.styleFit,
+            )
+        )
+    }
+
+    override fun addResults(
+        targetResults: MutableList<ContributionResult>,
+        baseResult: ContributionResult,
+        times: List<Double>
+    ) {
+        targetResults.add(
+            calcContributionResult(
+                label, 0, baseResult, times, toRank < fromRank, 0,
+            )
+        )
+    }
+}
+
 /**
  * @param selectMode
  *  true:選択スキルのうち1つを獲得した場合の短縮タイム
  *  false:各スキルを所持していない場合の増加タイム
  */
 private suspend fun ActionContext<AppState>.runSimulationContribution(state: AppState, selectMode: Boolean) {
-    val targets = state.contributionTargets.intersect(state.skillIdSet)
+    val targets = state.contributionTargets
     val targetSkills = targets.flatMap { target ->
-        val skill = state.hasSkills(false).firstOrNull { it.id == target } ?: return@flatMap emptyList()
-        if (selectMode) {
-            val groupSkills = skillData2.filter {
-                it.group == skill.group && it.rarity == "normal" && it.sp < skill.sp
-            }.sortedBy { it.sp } + skill
-            buildList {
-                groupSkills.forEachIndexed { index, groupSkill ->
-                    add(groupSkill to groupSkills.subList(0, index))
-                }
-            }
+        if (target.startsWith("/status")) {
+            val data = target.split("_")
+            if (data.size < 3) return@flatMap emptyList()
+            listOf(ContributionStatus(data[1], data[2].toInt()))
+        } else if (target.startsWith("/fit")) {
+            val data = target.split("_")
+            if (data.size < 4) return@flatMap emptyList()
+            listOf(ContributionFit(data[1], FitRank.entries[data[2].toInt()], FitRank.entries[data[3].toInt()]))
         } else {
-            listOf(skill to emptyList<SkillData>())
+            val skill = state.hasSkills(false).firstOrNull { it.id == target } ?: return@flatMap emptyList()
+            if (selectMode) {
+                val groupSkills = skillData2.filter {
+                    it.group == skill.group && it.rarity == "normal" && it.sp < skill.sp
+                }.sortedBy { it.sp } + skill
+                groupSkills.mapIndexed { index, groupSkill ->
+                    ContributionSkillSelect(groupSkill, groupSkills.subList(0, index))
+                }
+            } else {
+                listOf(ContributionSkillNotExist(skill))
+            }
         }
     }
     if (state.simulationCount < 5 || targetSkills.isEmpty()) return
@@ -383,42 +518,54 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         upperDiff = Double.NaN,
         lowerTime = baseTimes.subList(baseTimes.size * 4 / 5, baseTimes.size).average(),
         lowerDiff = Double.NaN,
-        efficiency = List(6) { Double.NaN },
+        efficiency = listOf(Double.NaN),
     )
     val targetResults = mutableListOf<ContributionResult>()
     targetSkills.forEach { target ->
-        val targetSkill = target.first
-        val setting = state.setting.copy(
-            umaStatus = state.setting.umaStatus.copy(
-                hasSkills = if (selectMode) {
-                    baseSetting.umaStatus.hasSkills + targetSkill
-                } else {
-                    state.setting.umaStatus.hasSkills.filterNot { it.id == targetSkill.id }
-                },
-            )
-        )
+        val setting = target.applySetting(baseSetting)
         val times = calculateState.calculateTimes(setting)
-        targetResults.add(
-            calculateState.calcContributionResult(
-                targetSkill.name, targetSkill.sp, baseResult, times, selectMode,
-            )
-        )
-        target.second.forEach { compareSkill ->
-            val compareResult = targetResults.first { it.name == compareSkill.name }
-            targetResults.add(
-                calculateState.calcContributionResult(
-                    targetSkill.name, targetSkill.sp - compareSkill.sp, compareResult, times, selectMode,
-                )
-            )
-        }
+        target.addResults(targetResults, baseResult, times)
     }
-    val sortedResults = targetResults.sortedByDescending { it.efficiency[0] }
+    val sortedResults = targetResults.sortedByDescending { it.efficiency.last() }
     send {
         it.copy(
             simulationProgress = 0,
             contributionResults = listOf(baseResult) + sortedResults,
         )
     }
+}
+
+private fun calcContributionResult(
+    name: String,
+    sp: Int,
+    baseResult: ContributionResult,
+    times: List<Double>,
+    selectMode: Boolean,
+    maxLevel: Int = 5,
+): ContributionResult {
+    val averageTime = times.average()
+    val upperTime = times.subList(0, times.size / 5).average()
+    val lowerTime = times.subList(times.size * 4 / 5, times.size).average()
+    return ContributionResult(
+        name = name,
+        compareName = if (baseResult.name == "基本値") null else baseResult.name,
+        averageTime = averageTime,
+        averageDiff = averageTime - baseResult.averageTime,
+        upperTime = upperTime,
+        upperDiff = upperTime - baseResult.upperTime,
+        lowerTime = lowerTime,
+        lowerDiff = lowerTime - baseResult.lowerTime,
+        efficiency = if (sp == 0) {
+            listOf(Double.NaN)
+        } else {
+            val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / sp
+            if (maxLevel == 5) {
+                listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
+            } else {
+                listOf(base)
+            }
+        },
+    )
 }
 
 private class CalculateState(
@@ -440,31 +587,5 @@ private class CalculateState(
                 RaceCalculator(state.systemSetting).simulate(setting).first.raceTime
             }
         }.awaitAll().sorted()
-    }
-
-    fun calcContributionResult(
-        name: String,
-        sp: Int,
-        baseResult: ContributionResult,
-        times: List<Double>,
-        selectMode: Boolean,
-    ): ContributionResult {
-        val averageTime = times.average()
-        val upperTime = times.subList(0, times.size / 5).average()
-        val lowerTime = times.subList(times.size * 4 / 5, times.size).average()
-        return ContributionResult(
-            name = name,
-            compareName = if (baseResult.name == "基本値") null else baseResult.name,
-            averageTime = averageTime,
-            averageDiff = averageTime - baseResult.averageTime,
-            upperTime = upperTime,
-            upperDiff = upperTime - baseResult.upperTime,
-            lowerTime = lowerTime,
-            lowerDiff = lowerTime - baseResult.lowerTime,
-            efficiency = if (sp == 0) List(6) { Double.NaN } else {
-                val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / sp
-                listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
-            },
-        )
     }
 }

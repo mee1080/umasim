@@ -33,14 +33,68 @@ fun ModeInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
 @Composable
 private fun ContributionSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     Column {
-        state.hasSkills(false).forEach { skill ->
-            val id = skill.id
-            LabeledCheckbox(
-                selected = state.contributionTargets.contains(id),
-                onCheckedChange = { dispatch(setContributionTarget(id, it)) },
-            ) {
-                Text(skill.name)
+        val statusValue = if (state.simulationMode == SimulationMode.CONTRIBUTION) -100 else 100
+        listOf("スピード", "スタミナ", "パワー", "根性", "賢さ").forEach { target ->
+            val id = "/status_${target}_$statusValue"
+            val text = if (statusValue >= 0) "$target+$statusValue" else "$target$statusValue"
+            ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+        }
+        if (state.simulationMode == SimulationMode.CONTRIBUTION) {
+            state.setting.umaStatus.surfaceFit.down()?.let {
+                val from = state.setting.umaStatus.surfaceFit
+                val id = "/fit_バ場_${from.ordinal}_${it.ordinal}"
+                val text = "バ場 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+            }
+            state.setting.umaStatus.distanceFit.down()?.let {
+                val from = state.setting.umaStatus.distanceFit
+                val id = "/fit_距離_${from.ordinal}_${it.ordinal}"
+                val text = "距離 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+            }
+            state.setting.umaStatus.styleFit.down()?.let {
+                val from = state.setting.umaStatus.styleFit
+                val id = "/fit_脚質_${from.ordinal}_${it.ordinal}"
+                val text = "脚質 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+            }
+        } else {
+            state.setting.umaStatus.surfaceFit.up()?.let {
+                val from = state.setting.umaStatus.surfaceFit
+                val id = "/fit_バ場_${from.ordinal}_${it.ordinal}"
+                val text = "バ場 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+            }
+            state.setting.umaStatus.distanceFit.up()?.let {
+                val from = state.setting.umaStatus.distanceFit
+                val id = "/fit_距離_${from.ordinal}_${it.ordinal}"
+                val text = "距離 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
+            }
+            state.setting.umaStatus.styleFit.up()?.let {
+                val from = state.setting.umaStatus.styleFit
+                val id = "/fit_脚質_${from.ordinal}_${it.ordinal}"
+                val text = "脚質 ${from.name}->${it.name}"
+                ContributionSettingEntry(state.contributionTargets, dispatch, id, text)
             }
         }
+        state.hasSkills(false).forEach { skill ->
+            ContributionSettingEntry(state.contributionTargets, dispatch, skill.id, skill.name)
+        }
+    }
+}
+
+@Composable
+fun ContributionSettingEntry(
+    contributionTargets: Set<String>,
+    dispatch: OperationDispatcher<AppState>,
+    id: String,
+    text: String,
+) {
+    LabeledCheckbox(
+        selected = contributionTargets.contains(id),
+        onCheckedChange = { dispatch(setContributionTarget(id, it)) },
+    ) {
+        Text(text)
     }
 }

@@ -21,7 +21,10 @@ fun setRandomPosition(value: RandomPosition) = DirectOperation<AppState> { state
 }
 
 fun setSimulationMode(value: SimulationMode) = DirectOperation<AppState> { state ->
-    state.copy(simulationMode = value).also { it.saveSetting() }
+    state.copy(
+        simulationMode = value,
+        contributionTargets = state.contributionTargets.filterNot { it.startsWith("/") }.toSet(),
+    ).also { it.saveSetting() }
 }
 
 fun setContributionTarget(id: String, value: Boolean) = DirectOperation<AppState> { state ->

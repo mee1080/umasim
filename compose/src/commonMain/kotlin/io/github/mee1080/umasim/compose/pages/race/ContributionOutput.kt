@@ -18,11 +18,11 @@ import io.github.mee1080.utility.secondToTimeString
 
 val efficiencyColors = listOf(
     Color.LightGray,
-    Color.Blue,
-    Color.Green,
-    Color(255, 128, 0),
-    Color.Yellow,
-    Color.Red,
+    Color(192, 192, 255),
+    Color(192, 255, 192),
+    Color(255, 192, 128),
+    Color(255, 255, 128),
+    Color(255, 192, 192),
 )
 
 @Composable
@@ -50,7 +50,11 @@ fun ContributionOutput(state: AppState) {
                 entry.averageDiff.roundToString(3, displayPlus = true),
                 entry.upperDiff.roundToString(3, displayPlus = true),
                 entry.lowerDiff.roundToString(3, displayPlus = true),
-                entry.efficiency[0].roundToString(4),
+                if (entry.efficiency.size >= 2) {
+                    "${entry.efficiency[0].roundToString(4)} ～ ${entry.efficiency.last().roundToString(4)}"
+                } else {
+                    entry.efficiency[0].roundToString(4)
+                },
                 skill?.notice?.joinToString(", ") ?: "",
             )
         }
@@ -75,17 +79,18 @@ fun ContributionOutput(state: AppState) {
                     }
                 }
             }
+            val maxEfficiency = results.map { it.efficiency.last() }.filter { !it.isNaN() }.max()
             Table(results.size + 1, 5, scrollable = true) { row, col ->
                 if (row != 0 && col == 3) {
                     Box(Modifier.padding(4.dp).align(Alignment.CenterStart)) {
                         val efficiency = results[row - 1].efficiency
                         if (!efficiency[0].isNaN()) {
                             Row(Modifier.height(16.dp).align(Alignment.CenterStart)) {
-                                for (i in 0..5) {
-                                    val width = efficiency[i] - efficiency.getOrElse(i - 1) { 0.0 }
+                                efficiency.forEachIndexed { index, value ->
+                                    val width = value - efficiency.getOrElse(index - 1) { 0.0 }
                                     Box(
-                                        Modifier.fillMaxHeight().width((width * 2000).dp)
-                                            .background(efficiencyColors[i])
+                                        Modifier.fillMaxHeight().width((width / maxEfficiency * 300).dp)
+                                            .background(efficiencyColors[index])
                                     )
                                 }
                             }

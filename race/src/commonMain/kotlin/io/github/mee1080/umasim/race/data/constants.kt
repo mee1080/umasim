@@ -54,6 +54,10 @@ enum class Condition(val value: Int, val label: String) {
 
 enum class FitRank {
     S, A, B, C, D, E, F, G,
+    ;
+
+    fun up() = entries.getOrNull(ordinal - 1)
+    fun down() = entries.getOrNull(ordinal + 1)
 }
 
 enum class CourseCondition(val value: Int, val label: String) {
