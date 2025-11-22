@@ -13,10 +13,7 @@ import io.github.mee1080.umasim.store.framework.ActionContext
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.currentCoroutineContext
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.*
 import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
@@ -26,7 +23,7 @@ private val simulationPolicy = OnRunning.Ignore(simulationTag)
 private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
 
 fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
-    emit { it.clearSimulationResult() }
+    send { it.clearSimulationResult() }
     when (state.simulationMode) {
         SimulationMode.NORMAL -> runSimulationNormal(state, overrideCount)
         SimulationMode.CONTRIBUTION -> runSimulationContribution(state, false)
@@ -54,21 +51,23 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
     var count = 0
     List(simulationCount) {
         scope.async {
+            if (count++ % progressReportInterval == 0) {
+                send { it.copy(simulationProgress = count + 1) }
+                delay(progressReportDelay)
+            }
             val result = RaceCalculator(state.systemSetting).simulate(state.setting)
             val skillMap = createSkillMap(result.second)
             result to skillMap
         }
     }.forEach { deferred ->
-        if (count++ % progressReportInterval == 0) {
-            emit { it.copy(simulationProgress = count + 1) }
-            delay(progressReportDelay)
-        }
         val (result, skillMap) = deferred.await()
         results += result.first
         skillMap.forEach {
             skillSummaries[it.key]?.add(it.value)
         }
-        lastRaceState = result.second
+        if (lastRaceState == null) {
+            lastRaceState = result.second
+        }
     }
     val graphData = toGraphData(state.setting, lastRaceState?.simulation?.frames)
     val spurtResults = results.filter { it.maxSpurt }
@@ -81,7 +80,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
         spurtRate = spurtResults.size.toDouble() / results.size,
         skillSummaries = skillSummaries.map { it.key to toSummary(it.value) },
     )
-    emit {
+    send {
         it.copy(
             simulationProgress = 0,
             simulationSummary = summary,
@@ -340,7 +339,7 @@ private fun toGraphData(
 }
 
 fun cancelSimulation() = AsyncOperation<AppState>({
-    emit { it.clearSimulationResult() }
+    send { it.clearSimulationResult() }
 }, simulationCancelPolicy)
 
 /**
@@ -414,7 +413,7 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         }
     }
     val sortedResults = targetResults.sortedByDescending { it.efficiency[0] }
-    emit {
+    send {
         it.copy(
             simulationProgress = 0,
             contributionResults = listOf(baseResult) + sortedResults,
@@ -434,15 +433,13 @@ private class CalculateState(
         val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
         return List(state.simulationCount) {
             scope.async {
+                if (progress++ % progressReportInterval == 0) {
+                    context.send { it.copy(simulationProgress = progress / setCount) }
+                    delay(progressReportDelay)
+                }
                 RaceCalculator(state.systemSetting).simulate(setting).first.raceTime
             }
-        }.map { deferred ->
-            if (progress++ % progressReportInterval == 0) {
-                context.emit { it.copy(simulationProgress = progress / setCount) }
-                delay(progressReportDelay)
-            }
-            deferred.await()
-        }.sorted()
+        }.awaitAll().sorted()
     }
 
     fun calcContributionResult(

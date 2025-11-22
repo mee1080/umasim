@@ -164,7 +164,8 @@ val approximateConditions = mapOf(
         "詰め寄られ(勝利への執念など)",
         listOf(
             ApproximateStartContinue("逃げ/先行", 0.30, 0.70) to {
-                it.setting.basicRunningStyle == Style.NIGE || it.setting.basicRunningStyle == Style.SEN
+                val basicRunningStyle = it.setting.basicRunningStyle
+                basicRunningStyle == Style.NIGE || basicRunningStyle == Style.SEN
             },
             ApproximateStartContinue("差し/追込", 0.15, 0.50) to null,
         ),

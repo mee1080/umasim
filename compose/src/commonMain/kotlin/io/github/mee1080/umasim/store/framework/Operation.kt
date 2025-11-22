@@ -2,9 +2,9 @@ package io.github.mee1080.umasim.store.framework
 
 
 import io.github.mee1080.umasim.store.AppContext
+import kotlinx.coroutines.channels.ProducerScope
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.FlowCollector
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.channelFlow
 import kotlin.reflect.KClass
 
 /**
@@ -20,8 +20,8 @@ operator fun <S> Reducer<S>.plus(other: Reducer<S>): Reducer<S> = {
     other(this(it))
 }
 
-class ActionContext<S>(appContext: AppContext, collector: FlowCollector<Reducer<S>>) : AppContext by appContext,
-    FlowCollector<Reducer<S>> by collector
+class ActionContext<S>(appContext: AppContext, collector: ProducerScope<Reducer<S>>) : AppContext by appContext,
+    ProducerScope<Reducer<S>> by collector
 
 /**
  * 二重起動時の処理
@@ -92,7 +92,7 @@ private class AsyncOperationImpl<S>(
     override val onRunningPolicy: OnRunning,
 ) : AsyncOperation<S> {
 
-    override suspend fun execute(appContext: AppContext, state: S) = flow<Reducer<S>> {
+    override suspend fun execute(appContext: AppContext, state: S) = channelFlow<Reducer<S>> {
         ActionContext(appContext, this).action(state)
     }
 }
