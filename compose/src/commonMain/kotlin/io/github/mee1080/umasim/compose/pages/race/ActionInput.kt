@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.LinearProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -9,10 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.IntTextField
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
+import io.github.mee1080.umasim.compose.common.atoms.errorButtonColors
 import io.github.mee1080.umasim.compose.common.lib.defaultThreadCount
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationMode
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
+import io.github.mee1080.umasim.store.operation.cancelSimulation
 import io.github.mee1080.umasim.store.operation.runSimulation
 import io.github.mee1080.umasim.store.operation.setThreadCount
 import io.github.mee1080.utility.toPercentString
@@ -34,12 +37,21 @@ fun ActionInput(state: AppState, dispatch: OperationDispatcher<AppState>) {
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             MyButton(
                 onClick = { dispatch(runSimulation()) },
                 enabled = state.simulationCount > 0 && state.simulationProgress == 0,
             ) {
                 Text("エミュレート開始")
+            }
+            MaterialTheme.colorScheme.error
+            MyButton(
+                onClick = { dispatch(cancelSimulation()) },
+                enabled = state.simulationProgress > 0,
+                colors = errorButtonColors(),
+            ) {
+                Text("中止")
             }
             if (state.simulationMode == SimulationMode.NORMAL) {
                 MyButton(

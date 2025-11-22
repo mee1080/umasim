@@ -15,8 +15,8 @@ import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
 import kotlinx.coroutines.delay
-import kotlin.coroutines.coroutineContext
 import kotlin.math.max
 
 private val simulationTag = OnRunning.Tag()
@@ -50,9 +50,9 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
         it.name to mutableListOf<SimulationSkillInfo>()
     }
     var lastRaceState: RaceState? = null
-    val scope = CoroutineScope(coroutineContext + asyncDispatcher.limitedParallelism(state.threadCount))
+    val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
     var count = 0
-    List(simulationCount) { index ->
+    List(simulationCount) {
         scope.async {
             val result = RaceCalculator(state.systemSetting).simulate(state.setting)
             val skillMap = createSkillMap(result.second)
@@ -339,7 +339,7 @@ private fun toGraphData(
     }
 }
 
-fun cancelSimulation() = AsyncOperation<AppState>({ state ->
+fun cancelSimulation() = AsyncOperation<AppState>({
     emit { it.clearSimulationResult() }
 }, simulationCancelPolicy)
 
@@ -431,7 +431,7 @@ private class CalculateState(
     var progress: Int = 0
 
     suspend fun calculateTimes(setting: RaceSetting): List<Double> {
-        val scope = CoroutineScope(coroutineContext + asyncDispatcher.limitedParallelism(state.threadCount))
+        val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
         return List(state.simulationCount) {
             scope.async {
                 RaceCalculator(state.systemSetting).simulate(setting).first.raceTime

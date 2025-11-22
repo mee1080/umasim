@@ -4,10 +4,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -42,3 +39,11 @@ fun MyButton(
     interactionSource = interactionSource,
     content = content,
 )
+
+private var cachedErrorButtonColors: ButtonColors? = null
+
+@Composable
+fun errorButtonColors() = cachedErrorButtonColors ?: ButtonDefaults.buttonColors(
+    containerColor = MaterialTheme.colorScheme.error,
+    contentColor = MaterialTheme.colorScheme.onError,
+).also { cachedErrorButtonColors = it }
