@@ -315,7 +315,7 @@ object OnsenCalculator : ScenarioCalculator {
         if (status.hp >= 0 || onsenStatus.superRecoveryAvailable) return state
         val usedHp = min(-status.hp, state.status.hp)
         // 超回復判定条件は仮実装
-        return if ((onsenStatus.superRecoveryUsedHp + usedHp - 100) / 200.0 > Random.nextDouble()) {
+        return if (calcSuperRecoveryAvailable(onsenStatus, usedHp)) {
             state.updateOnsenStatus {
                 copy(superRecoveryAvailable = true)
             }
@@ -324,6 +324,15 @@ object OnsenCalculator : ScenarioCalculator {
                 copy(superRecoveryUsedHp = superRecoveryUsedHp + usedHp)
             }
         }
+    }
+
+    private fun calcSuperRecoveryAvailable(onsenStatus: OnsenStatus, usedHp: Int): Boolean {
+        val threshold = if (onsenStatus.hoshinaRarity > 0) 42.5 else 50.0
+        val oldRank = (onsenStatus.superRecoveryUsedHp / threshold).toInt()
+        val newRank = ((onsenStatus.superRecoveryUsedHp + usedHp) / threshold).toInt()
+        val rate = superRecoveryRate.getOrElse(newRank) { superRecoveryRate.last() }
+        if (newRank > oldRank && Random.nextInt(99) < rate) return true
+        return Random.nextDouble() < rate / 400.0
     }
 
     override fun calcBaseRaceStatus(

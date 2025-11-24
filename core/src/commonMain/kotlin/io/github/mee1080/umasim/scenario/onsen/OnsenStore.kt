@@ -235,3 +235,5 @@ val digBonus = mapOf(
 )
 
 val onsenTicketOnDig = listOf(0, 1, 1, 2)
+
+val superRecoveryRate = listOf(0, 0, 10, 20, 30, 40, 100)
