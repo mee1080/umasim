@@ -1,4 +1,6 @@
 [
+{"path":"onsen_1_speed","type":"SPEED","displayName":"スピード 温泉追加出走なし"},
+{"path":"onsen_2_speed","type":"SPEED","displayName":"スピード 温泉追加8戦程度"},
 {"path":"mujinto_speed","type":"SPEED","displayName":"スピード 無人島6色"},
 {"path":"mujinto_stamina","type":"STAMINA","displayName":"スタミナ 無人島6色"},
 {"path":"mujinto_power","type":"POWER","displayName":"パワー 無人島6色"},
