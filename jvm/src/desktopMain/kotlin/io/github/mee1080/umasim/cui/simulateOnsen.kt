@@ -9,10 +9,10 @@ import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateOnsen() {
 //    speed2power1guts1Wisdom1Speed()
-//    speed2stamina1power1Wisdom1Stamina()
+    speed2stamina1power1Wisdom1Stamina()
 //    speed2power1guts1Wisdom1Power()
 //    speed2power1guts1Wisdom1Guts()
-    speed2power1guts1Wisdom1Wisdom()
+//    speed2power1guts1Wisdom1Wisdom()
 }
 
 private fun speed2power1guts1Wisdom1Speed() {
@@ -74,9 +74,9 @@ private fun speed2stamina1power1Wisdom1Stamina() {
 //        targetStatus, rarity = 2..3, talent = 0..4,
         Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
-        factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
+        factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
-        selector = OnsenActionSelector.Option()::generateSelector,
+        selector = OnsenActionSelector.stamina::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
     )
@@ -87,9 +87,9 @@ private fun speed2stamina1power1Wisdom1Stamina() {
 //        targetStatus, rarity = 2..3, talent = 0..4,
         Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
-        factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
+        factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
-        selector = OnsenActionSelector2.Option()::generateSelector,
+        selector = OnsenActionSelector2.stamina::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
     )

@@ -17,6 +17,32 @@ class OnsenActionSelector2(
     companion object {
         const val DEBUG = false
         const val FORCE = 10000000.0
+
+        val stamina = Option(
+            gensenOrder = listOf(
+                "伝説の秘湯" to 69,
+                "秘湯ゆこま" to 57,
+                "堅忍の湯" to 10,
+                "明晰の湯" to 21,
+                "天翔の古湯" to 33,
+                "健壮の古湯" to 48,
+                "駿閃の古湯" to 99,
+                "疾駆の湯" to 65,
+                "剛脚の古湯" to 99,
+            ),
+
+            equipmentOrder = listOf(
+                StratumType.SOIL to 2,
+                StratumType.ROCK to 2,
+                StratumType.SAND to 2,
+                StratumType.SOIL to 3,
+                StratumType.SAND to 4,
+                StratumType.ROCK to 3,
+                StratumType.SOIL to 6,
+                StratumType.SAND to 6,
+                StratumType.ROCK to 6,
+            ),
+        )
     }
 
     @Serializable
