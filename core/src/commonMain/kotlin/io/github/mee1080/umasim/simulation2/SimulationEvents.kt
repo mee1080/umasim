@@ -88,7 +88,7 @@ class ApproximateSimulationEvents(
  * 行動後イベント
  *     5%の確率で体力+30、スキルPt+10（大食い）
  */
-class RandomEvents(
+open class RandomEvents(
     state: SimulationState,
     initialStatus: (status: Status) -> Status = { it },
 ) : SimulationEvents(initialStatus) {

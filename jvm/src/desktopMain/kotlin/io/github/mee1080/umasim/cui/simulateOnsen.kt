@@ -5,14 +5,18 @@ import io.github.mee1080.umasim.ai.OnsenActionSelector2
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.onsen.updateOnsenStatus
+import io.github.mee1080.umasim.simulation2.RandomEvents
 import io.github.mee1080.umasim.simulation2.Runner
+import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.utility.applyIf
 
 fun simulateOnsen() {
 //    speed2power1guts1Wisdom1Speed()
-    speed2stamina1power1Wisdom1Stamina()
+//    speed2stamina1power1Wisdom1Stamina()
 //    speed2power1guts1Wisdom1Power()
 //    speed2power1guts1Wisdom1Guts()
-//    speed2power1guts1Wisdom1Wisdom()
+    speed2power1guts1Wisdom1Wisdom()
 }
 
 private fun speed2power1guts1Wisdom1Speed() {
@@ -39,6 +43,7 @@ private fun speed2power1guts1Wisdom1Speed() {
         selector = OnsenActionSelector.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 20, 27, 35, 47, 56, 65, 69)) }
     )
     doSimulation2(
         scenario,
@@ -52,6 +57,7 @@ private fun speed2power1guts1Wisdom1Speed() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -73,12 +79,13 @@ private fun speed2stamina1power1Wisdom1Stamina() {
         defaultSupport,
         targetStatus, rarity = 2..3, talent = 0..4,
 //        Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
-//        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
+//        Store.getSupportByName("[Cocoon]エアシャカール" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
         selector = OnsenActionSelector.stamina::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 20, 27, 35, 47, 56, 65, 69)) }
     )
     doSimulation2(
         scenario,
@@ -86,12 +93,13 @@ private fun speed2stamina1power1Wisdom1Stamina() {
         defaultSupport,
         targetStatus, rarity = 2..3, talent = 0..4,
 //        Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
-//        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
+//        Store.getSupportByName("[Cocoon]エアシャカール" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
         selector = OnsenActionSelector2.stamina::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -119,6 +127,7 @@ private fun speed2power1guts1Wisdom1Power() {
         selector = OnsenActionSelector.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 20, 27, 35, 47, 56, 65, 69)) }
     )
     doSimulation2(
         scenario,
@@ -132,6 +141,7 @@ private fun speed2power1guts1Wisdom1Power() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -159,6 +169,7 @@ private fun speed2power1guts1Wisdom1Guts() {
         selector = OnsenActionSelector.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 20, 27, 35, 47, 56, 65, 69)) }
     )
     doSimulation2(
         scenario,
@@ -172,6 +183,7 @@ private fun speed2power1guts1Wisdom1Guts() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -193,12 +205,13 @@ private fun speed2power1guts1Wisdom1Wisdom() {
         defaultSupport,
         targetStatus, rarity = 2..3, talent = 0..4,
 //        Store.getSupportByName(*((0..4).map { "[今宵、我が君のために]デュランダル" to it }.toTypedArray())),
-//        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
+//        Store.getSupportByName("[ミッション『心の栄養補給』]ミホノブルボン" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
         selector = OnsenActionSelector.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 20, 27, 35, 47, 56, 65, 69)) }
     )
     doSimulation2(
         scenario,
@@ -206,11 +219,24 @@ private fun speed2power1guts1Wisdom1Wisdom() {
         defaultSupport,
         targetStatus, rarity = 2..3, talent = 0..4,
 //        Store.getSupportByName(*((0..4).map { "[今宵、我が君のために]デュランダル" to it }.toTypedArray())),
-//        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
+//        Store.getSupportByName("[ミッション『心の栄養補給』]ミホノブルボン" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
+        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
+}
+
+private class FixedDigEvents(state: SimulationState, val turns: List<Int>) : RandomEvents(state) {
+    override fun beforeAction(state: SimulationState): SimulationState {
+        return super.beforeAction(state).applyIf({
+            it.onsenStatus != null && it.onsenStatus?.fixedDigFinishTurns == null
+        }) {
+            updateOnsenStatus {
+                copy(fixedDigFinishTurns = turns)
+            }
+        }
+    }
 }

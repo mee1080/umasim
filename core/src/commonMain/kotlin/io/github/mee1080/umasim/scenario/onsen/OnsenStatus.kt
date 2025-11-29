@@ -42,7 +42,8 @@ data class OnsenStatus(
     val hoshinaRarity: Int = 0,
     val factorDigPower: Map<StratumType, Int> = emptyMap(),
     val excavatedGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect(),
-    val totalGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect()
+    val totalGensenContinuousEffect: GensenContinuousEffect = GensenContinuousEffect(),
+    val fixedDigFinishTurns: List<Int>? = null,
 ) : ScenarioStatus {
 
     constructor(support: List<SupportCard>, factor: List<Pair<StatusType, Int>>) : this(
@@ -89,4 +90,7 @@ data class OnsenStatus(
     val totalGensenImmediateEffectHp by lazy {
         excavatedGensen.sumOf { it.immediateEffectHp }
     }
+
+    fun digFinished(turn: Int) = fixedDigFinishTurns?.firstOrNull()?.let { turn >= it }
+        ?: (digProgress >= (selectedGensen?.totalProgress ?: 0))
 }

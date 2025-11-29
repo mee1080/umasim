@@ -14,6 +14,7 @@ kotlin {
     sourceSets {
         val desktopMain by getting {
             dependencies {
+                implementation(project(":utility"))
                 implementation(project(":core"))
                 implementation(kotlin("stdlib"))
                 implementation(libs.kotlinx.coroutinesCore)

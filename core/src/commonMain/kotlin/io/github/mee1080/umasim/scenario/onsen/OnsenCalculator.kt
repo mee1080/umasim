@@ -294,12 +294,13 @@ object OnsenCalculator : ScenarioCalculator {
             }
             .addStatus(params.digBonus)
         val newOnsenStatus = newState.onsenStatus ?: return newState
-        if (newOnsenStatus.digProgress >= (newOnsenStatus.selectedGensen?.totalProgress ?: Int.MAX_VALUE)) {
+        if (newOnsenStatus.digFinished(state.turn)) {
             newState = newState.updateOnsenStatus {
                 copy(
                     excavatedGensen = excavatedGensen + selectedGensen!!,
                     excavatedGensenContinuousEffect = excavatedGensenContinuousEffect + selectedGensen.continuousEffect,
                     onsenTicket = min(3, onsenTicket + onsenTicketOnDig[hoshinaRarity]),
+                    fixedDigFinishTurns = fixedDigFinishTurns?.drop(1),
                 )
             }
             newState = newState.selectGensen(selector)
