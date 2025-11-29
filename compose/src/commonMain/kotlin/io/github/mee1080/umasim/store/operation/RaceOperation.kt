@@ -48,6 +48,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
     val skillSummaries = state.hasSkills(false).associate {
         it.name to mutableListOf<SimulationSkillInfo>()
     }
+    val skillDataMap = state.hasSkills(false).associateBy { it.name }
     var lastRaceState: RaceState? = null
     val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
     var count = 0
@@ -80,7 +81,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
         spurtSummary = toSummary(spurtResults),
         notSpurtSummary = toSummary(notSpurtResult),
         spurtRate = spurtResults.size.toDouble() / results.size,
-        skillSummaries = skillSummaries.map { it.key to toSummary(it.value) },
+        skillSummaries = skillSummaries.map { it.key to toSummary(skillDataMap[it.key]!!, it.value) },
     )
     send {
         it.copy(
@@ -181,11 +182,20 @@ private fun getPhaseChangeFrames(state: RaceState): Pair<Int, Int> {
     return phase1 to phase2
 }
 
-private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
+private fun toSummary(skill: SkillData, list: List<SimulationSkillInfo>): SimulationSkillSummary {
     val triggeredList = list.filter { it.startFrame1 >= 0 }
     val secondTriggeredList = triggeredList.filter { it.startFrame2 >= 0 }
     val phase1ConnectedList = triggeredList.mapNotNull { it.phase1ConnectionFrame }
     val phase2ConnectedList = triggeredList.mapNotNull { it.phase2ConnectionFrame }
+    val premiseSkillPt = skillData2.filter {
+        it.group == skill.group && it.rarity == "normal" && it.sp < skill.sp
+    }.map { it.sp }.sortedDescending()
+    val isRare = skill.rarity == "rare" || skill.rarity == "evo"
+    val rareSkillPt = if (isRare) skill.sp - premiseSkillPt.sum() else 0
+    val normalSkillPt = if (isRare) mutableListOf() else mutableListOf(skill.sp - premiseSkillPt.sum())
+    premiseSkillPt.forEachIndexed { index, value ->
+        normalSkillPt += value - premiseSkillPt.subList(index + 1, premiseSkillPt.size).sum()
+    }
     return SimulationSkillSummary(
         count = triggeredList.size,
         triggerRate = if (list.isEmpty()) 0.0 else triggeredList.size.toDouble() / list.size,
@@ -211,6 +221,8 @@ private fun toSummary(list: List<SimulationSkillInfo>): SimulationSkillSummary {
         invalidRate = if (list.isEmpty()) 0.0 else list.filter { it.invalidRate != null }.averageOf {
             it.invalidRate ?: 0.0
         },
+        rareSkillPt = rareSkillPt,
+        normalSkillPt = normalSkillPt,
     )
 }
 
@@ -560,7 +572,7 @@ private fun calcContributionResult(
         } else {
             val base = (if (selectMode) -1 else 1) * (averageTime - baseResult.averageTime) * 100.0 / sp
             if (maxLevel == 5) {
-                listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6).map { base / it }
+                skillLvToFactor.map { base / it }
             } else {
                 listOf(base)
             }

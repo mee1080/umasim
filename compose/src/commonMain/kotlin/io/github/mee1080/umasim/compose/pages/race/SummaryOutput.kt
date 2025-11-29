@@ -7,17 +7,18 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.rememberScrollbarAdapter
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import io.github.mee1080.umasim.compose.common.atoms.LabeledCheckbox
 import io.github.mee1080.umasim.compose.common.parts.LinedTable
+import io.github.mee1080.umasim.compose.common.parts.NumberInput
 import io.github.mee1080.umasim.compose.common.parts.Table
 import io.github.mee1080.umasim.race.calc2.RaceSetting
-import io.github.mee1080.umasim.store.AppState
-import io.github.mee1080.umasim.store.SimulationSkillSummary
-import io.github.mee1080.umasim.store.SimulationSummary
-import io.github.mee1080.umasim.store.SimulationSummaryEntry
+import io.github.mee1080.umasim.store.*
 import io.github.mee1080.utility.roundToString
 import io.github.mee1080.utility.secondToTimeString
 import io.github.mee1080.utility.toPercentString
@@ -127,7 +128,32 @@ private fun SkillTable(summary: SimulationSummary) {
         )
         summaries.forEach { add(toTableData(summary.setting, it.second)) }
     }
-    Text("スキル情報", modifier = Modifier.padding(top = 8.dp))
+    var calcSp by remember { mutableStateOf(true) }
+    var kire by remember { mutableStateOf(false) }
+    val rareHintLvList = remember {
+        SnapshotStateList(summaries.size) { 2 }
+    }
+    val normalHintLvList = remember {
+        SnapshotStateList(summaries.size) { 4 }
+    }
+    val skillPtList by derivedStateOf {
+        val kireFactor = if (kire) 0.1 else 0.0
+        summaries.mapIndexed { index, (_, skill) ->
+            val rareFactor = skillLvToFactor[rareHintLvList[index]] - kireFactor
+            val normalFactor = skillLvToFactor[normalHintLvList[index]] - kireFactor
+            (skill.rareSkillPt * rareFactor).toInt() + skill.normalSkillPt.sumOf { (it * normalFactor).toInt() }
+        }
+    }
+    Row(
+        modifier = Modifier.padding(top = 8.dp).fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        Text("スキル情報")
+        LabeledCheckbox(calcSp, { calcSp = it }) {
+            Text("SP計算")
+        }
+    }
     Row {
         Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
             Text("", Modifier.padding(4.dp))
@@ -135,7 +161,10 @@ private fun SkillTable(summary: SimulationSummary) {
                 Text(it.first, Modifier.padding(4.dp))
             }
         }
-        Table(tableData.size, 14, scrollable = true) { row, col ->
+        Table(
+            tableData.size, 14, scrollable = true,
+            modifier = Modifier.weight(1f),
+        ) { row, col ->
             Text(
                 tableData[row][col], Modifier.padding(4.dp).align(
                     when {
@@ -145,6 +174,47 @@ private fun SkillTable(summary: SimulationSummary) {
                     }
                 )
             )
+        }
+        if (calcSp) {
+            Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                Text("SP / ヒントLv / 下位", Modifier.padding(4.dp))
+                summaries.forEachIndexed { index, (_, skill) ->
+                    Row(
+                        modifier = Modifier.padding(4.dp),
+                        horizontalArrangement = Arrangement.spacedBy(4.dp)
+                    ) {
+                        Text(
+                            text = skillPtList[index].toString(),
+                            modifier = Modifier.width(40.dp),
+                            textAlign = TextAlign.End,
+                        )
+                        if (skill.rareSkillPt > 0) {
+                            Text("/")
+                            NumberInput(
+                                value = rareHintLvList[index], onValueChange = { rareHintLvList[index] = it },
+                                min = 0, max = 5,
+                            )
+                        }
+                        if (skill.normalSkillPt.isNotEmpty()) {
+                            Text("/")
+                            NumberInput(
+                                value = normalHintLvList[index], onValueChange = { normalHintLvList[index] = it },
+                                min = 0, max = 5,
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+    if (calcSp) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.End),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text("合計SP: ${skillPtList.sum()}")
+            LabeledCheckbox(kire, { kire = it }) { Text("切れ者") }
         }
     }
 }

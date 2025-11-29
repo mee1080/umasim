@@ -16,6 +16,8 @@ import kotlinx.serialization.Transient
 
 private const val KEY_APP_STATE_AUTO_SAVE = "race.appStateAutoSave"
 
+val skillLvToFactor = listOf(1.0, 0.9, 0.8, 0.7, 0.65, 0.6)
+
 fun AppState.loadSetting(): AppState {
     val savedSetting = persistentSettings.getStringOrNull(KEY_APP_STATE_AUTO_SAVE)?.let {
         decodeFromStringOrNull<AppState>(it)
@@ -163,6 +165,8 @@ data class SimulationSkillSummary(
     val phase2TriggeredRate: Double,
     val averagePhase2DelayFrame: Double,
     val invalidRate: Double,
+    val rareSkillPt: Int,
+    val normalSkillPt: List<Int>,
 )
 
 @Stable

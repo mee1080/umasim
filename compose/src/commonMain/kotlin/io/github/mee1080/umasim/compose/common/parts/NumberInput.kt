@@ -1,7 +1,10 @@
 package io.github.mee1080.umasim.compose.common.parts
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,10 +30,21 @@ fun NumberInput(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
+//        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
     ) {
-        MyButton({ onValueChange(max(min, value - 1)) }, enabled = enabled && value > min) { Text("-") }
+        val contentPadding = PaddingValues(0.dp)
+        MyButton(
+            onClick = { onValueChange(max(min, value - 1)) },
+            enabled = enabled && value > min,
+            modifier = Modifier.size(24.dp),
+            contentPadding = contentPadding,
+        ) { Text("-") }
         Text(value.toString(), Modifier.width(numberWidth), textAlign = TextAlign.Center)
-        MyButton({ onValueChange(min(max, value + 1)) }, enabled = enabled && value < max) { Text("+") }
+        MyButton(
+            onClick = { onValueChange(min(max, value + 1)) },
+            enabled = enabled && value < max,
+            modifier = Modifier.size(24.dp),
+            contentPadding = contentPadding,
+        ) { Text("+") }
     }
 }
