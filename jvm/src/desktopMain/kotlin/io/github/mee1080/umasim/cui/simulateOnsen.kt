@@ -14,9 +14,9 @@ import io.github.mee1080.utility.applyIf
 fun simulateOnsen() {
 //    speed2power1guts1Wisdom1Speed()
 //    speed2stamina1power1Wisdom1Stamina()
-//    speed2power1guts1Wisdom1Power()
+    speed2power1guts1Wisdom1Power()
 //    speed2power1guts1Wisdom1Guts()
-    speed2power1guts1Wisdom1Wisdom()
+//    speed2power1guts1Wisdom1Wisdom()
 }
 
 private fun speed2power1guts1Wisdom1Speed() {
@@ -57,7 +57,6 @@ private fun speed2power1guts1Wisdom1Speed() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
-        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -99,7 +98,6 @@ private fun speed2stamina1power1Wisdom1Stamina() {
         selector = OnsenActionSelector2.stamina::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
-        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -141,7 +139,6 @@ private fun speed2power1guts1Wisdom1Power() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
-        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -183,7 +180,6 @@ private fun speed2power1guts1Wisdom1Guts() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
-        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
@@ -225,7 +221,6 @@ private fun speed2power1guts1Wisdom1Wisdom() {
         selector = OnsenActionSelector2.Option()::generateSelector,
         evaluateSetting = Runner.onsenSetting,
         evaluateUpperRate = 0.2,
-        events = { FixedDigEvents(it, listOf(11, 22, 33, 45, 57, 65, 69)) }
     )
 }
 
