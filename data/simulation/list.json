@@ -3,6 +3,8 @@
 {"path":"onsen_2_speed","type":"SPEED","displayName":"スピード 温泉追加8戦程度"},
 {"path":"onsen_1_stamina","type":"STAMINA","displayName":"スタミナ 温泉追加出走なし"},
 {"path":"onsen_2_stamina","type":"STAMINA","displayName":"スタミナ 温泉追加8戦程度"},
+{"path":"onsen_1_power","type":"POWER","displayName":"パワー 温泉追加出走なし"},
+{"path":"onsen_2_power","type":"POWER","displayName":"パワー 温泉追加8戦程度"},
 {"path":"onsen_1_guts","type":"GUTS","displayName":"根性 温泉追加出走なし"},
 {"path":"onsen_2_guts","type":"GUTS","displayName":"根性 温泉追加8戦程度"},
 {"path":"onsen_1_wisdom","type":"WISDOM","displayName":"賢さ 温泉追加出走なし"},
