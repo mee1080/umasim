@@ -59,7 +59,7 @@ data class OnsenStatus(
 
     val ryokanRank
         get() = when (excavatedGensen.size) {
-            7 -> if (excavatedGensen.any { it.name == "伝説の秘湯" }) 4 else 3
+            7, 8, 9, 10 -> if (excavatedGensen.any { it.name == "伝説の秘湯" }) 4 else 3
             6 -> 3
             5 -> 2
             4, 3 -> 1

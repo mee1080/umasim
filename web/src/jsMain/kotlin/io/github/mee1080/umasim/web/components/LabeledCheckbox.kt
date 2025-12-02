@@ -19,19 +19,27 @@
 package io.github.mee1080.umasim.web.components
 
 import androidx.compose.runtime.Composable
+import org.jetbrains.compose.web.attributes.builders.InputAttrsScope
 import org.jetbrains.compose.web.attributes.name
 import org.jetbrains.compose.web.dom.CheckboxInput
 import org.jetbrains.compose.web.dom.Label
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-fun LabeledCheckbox(name: String, label: String, checked: Boolean, onCheckedChanged: (Boolean) -> Unit) {
+fun LabeledCheckbox(
+    name: String,
+    label: String,
+    checked: Boolean,
+    attrs: (InputAttrsScope<Boolean>.() -> Unit)? = null,
+    onCheckedChanged: (Boolean) -> Unit,
+) {
     Label {
         CheckboxInput {
             value("1")
             name(name)
             onInput { onCheckedChanged(it.value) }
             checked(checked)
+            attrs?.invoke(this)
         }
         Text(label)
     }

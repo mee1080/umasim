@@ -109,19 +109,30 @@ object OnsenCalculator : ScenarioCalculator {
     private fun calcDigResult(state: SimulationState, basePoint: Int): OnsenActionParam {
         if (state.isLevelUpTurn || state.turn >= 73) return OnsenActionParam()
         val onsenStatus = state.onsenStatus ?: return OnsenActionParam()
-        val (stratumType, progress, rest) = onsenStatus.currentStratum ?: return OnsenActionParam()
+        val status = state.status
+        return calcDigResult(onsenStatus, status, basePoint)
+    }
 
-        val power = calcDigPower(state, stratumType)
+    fun calcDigResult(
+        onsenStatus: OnsenStatus,
+        status: Status,
+        basePoint: Int,
+        noLimit: Boolean = false,
+    ): OnsenActionParam {
+        val (stratumType, progress, rest) = onsenStatus.currentStratum ?: return OnsenActionParam()
+        val power = calcDigPower(onsenStatus, status, stratumType)
         var digPoint = floor(basePoint * (100 + power) / 100.0).toInt()
         var digBonus = calcDigBonus(stratumType, progress, rest, digPoint)
         if (digPoint > rest) {
             val next = onsenStatus.nextStratumType
             if (next == null) {
-                digPoint = rest
+                if (!noLimit) {
+                    digPoint = rest
+                }
             } else {
                 val usedBasePoint = ceil(rest * 100 / (100.0 + power)).toInt()
                 val nextBasePoint = basePoint - usedBasePoint
-                val nextPower = calcDigPower(state, next)
+                val nextPower = calcDigPower(onsenStatus, status, next)
                 val nextDigPoint = floor(nextBasePoint * (100 + nextPower) / 100.0).toInt()
                 digPoint = rest + nextDigPoint
                 digBonus += calcDigBonus(next, 0, Int.MAX_VALUE, nextDigPoint)
@@ -132,12 +143,6 @@ object OnsenCalculator : ScenarioCalculator {
             digPoint = digPoint,
             digBonus = digBonus,
         )
-    }
-
-    private fun calcDigPower(state: SimulationState, type: StratumType): Int {
-        val onsenStatus = state.onsenStatus ?: return 0
-        val status = state.status
-        return calcDigPower(onsenStatus, status, type)
     }
 
     fun calcDigPower(onsenStatus: OnsenStatus, status: Status, type: StratumType): Int {
@@ -256,26 +261,37 @@ object OnsenCalculator : ScenarioCalculator {
 
             is OnsenSelectGensenResult -> {
                 state.updateOnsenStatus {
-                    val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
-                        suspendedGensen + (selectedGensen.name to digProgress)
-                    } else suspendedGensen
-                    val progress = newSuspendedGensen[result.gensen.name] ?: 0
-                    copy(
-                        selectedGensen = result.gensen,
-                        digProgress = progress,
-                        suspendedGensen = newSuspendedGensen,
-                    )
+                    selectGensen(this, result.gensen)
                 }
             }
 
             is OnsenSelectEquipmentResult -> {
                 state.updateOnsenStatus {
-                    copy(equipmentLevel = equipmentLevel.replaced(result.equipment) {
-                        equipmentLevel[result.equipment]!! + 1
-                    })
+                    selectEquipment(this, result.equipment)
                 }
             }
         }
+    }
+
+    fun selectGensen(onsenStatus: OnsenStatus, gensen: Gensen): OnsenStatus {
+        val selectedGensen = onsenStatus.selectedGensen
+        val digProgress = onsenStatus.digProgress
+        val suspendedGensen = onsenStatus.suspendedGensen
+        val newSuspendedGensen = if (selectedGensen != null && digProgress < selectedGensen.totalProgress) {
+            suspendedGensen + (selectedGensen.name to digProgress)
+        } else suspendedGensen
+        val progress = newSuspendedGensen[gensen.name] ?: 0
+        return onsenStatus.copy(
+            selectedGensen = gensen,
+            digProgress = progress,
+            suspendedGensen = newSuspendedGensen,
+        )
+    }
+
+    fun selectEquipment(onsenStatus: OnsenStatus, equipment: StratumType): OnsenStatus {
+        return onsenStatus.copy(equipmentLevel = onsenStatus.equipmentLevel.replaced(equipment) {
+            onsenStatus.equipmentLevel[equipment]!! + 1
+        })
     }
 
     suspend fun applyScenarioActionParam(

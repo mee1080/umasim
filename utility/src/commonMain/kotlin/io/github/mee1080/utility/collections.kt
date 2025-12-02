@@ -27,6 +27,10 @@ fun <T> List<T>.replaceItem(
     to: T,
 ) = mapIf({ it == from }) { to }
 
+fun <T> List<T>.removedAt(
+    index: Int,
+) = toMutableList().apply { removeAt(index) } as List<T>
+
 fun <K, V> Map<K, V>.mapValuesIf(
     condition: (Map.Entry<K, V>) -> Boolean,
     action: (V) -> V,

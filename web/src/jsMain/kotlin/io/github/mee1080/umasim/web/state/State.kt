@@ -34,6 +34,7 @@ enum class Page(val path: String, val displayName: String, val icon: String) {
     Simulation("simulation", "シミュレーション", "person_raised_hand"),
     Graph("graph", "グラフ", "bar_chart"),
     LegendsCalc("legends", "心得計算", "star"),
+    OnsenDig("onsen", "温泉プランナー", "onsen"),
 }
 
 data class State(
