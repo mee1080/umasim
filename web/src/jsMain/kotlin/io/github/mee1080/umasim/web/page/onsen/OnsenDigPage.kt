@@ -55,7 +55,7 @@ fun OnsenDigPage() {
             classes(S.calendarArea)
             style { height(divider.px + 60.percent) }
         }) {
-            Calendar(state.turns) { index, data ->
+            Calendar(state.turns, state.results) { index, data ->
                 state = state.copy(turns = state.turns.replaced(index, data)).calc()
             }
         }
@@ -237,7 +237,11 @@ private fun GensenSelect(
 }
 
 @Composable
-private fun Calendar(turns: List<OnsenDigTurn>, update: (Int, OnsenDigTurn) -> Unit) {
+private fun Calendar(
+    turns: List<OnsenDigTurnSetting>,
+    results: List<OnsenDigTurnResult>,
+    update: (Int, OnsenDigTurnSetting) -> Unit
+) {
     var digOnly by remember { mutableStateOf(false) }
     Div {
         MdCheckbox("掘削スケジュールのみ表示", digOnly) {
@@ -254,7 +258,8 @@ private fun Calendar(turns: List<OnsenDigTurn>, update: (Int, OnsenDigTurn) -> U
         }
         Div()
         Div()
-        turns.forEachIndexed { index, data ->
+        turns.forEachIndexed { index, setting ->
+            val result = results[index]
             if (index % 4 == 2) {
                 when (index) {
                     22 -> Div({ classes(S.calendarHeader) }) { Text("クラシック") }
@@ -269,7 +274,7 @@ private fun Calendar(turns: List<OnsenDigTurn>, update: (Int, OnsenDigTurn) -> U
                     Div({ classes(S.calendarMonth) })
                 }
             }
-            Turn(data) {
+            Turn(setting, result) {
                 update(index, it)
             }
         }
@@ -277,97 +282,104 @@ private fun Calendar(turns: List<OnsenDigTurn>, update: (Int, OnsenDigTurn) -> U
 }
 
 @Composable
-private fun Turn(data: OnsenDigTurn, update: (OnsenDigTurn) -> Unit) {
+private fun Turn(setting: OnsenDigTurnSetting, result: OnsenDigTurnResult, update: (OnsenDigTurnSetting) -> Unit) {
+    val displayAction = result.fixedAction ?: setting.action
     Div({
         classes(S.turnBox)
-        if (data.goal) classes(S.turnBoxGoal)
+        if (displayAction == OnsenDigTurnAction.Goal) classes(S.turnBoxGoal)
     }) {
         Div({
             classes(S.turnRow)
-            actionColor[data.displayAction]?.let { actionColor ->
+            actionColor[displayAction]?.let { actionColor ->
                 style { backgroundColor(actionColor) }
             }
         }) {
-            if (data.goal) {
-                Text(data.displayAction.label)
+            if (result.fixedAction != null) {
+                Text(displayAction.label)
             } else {
                 Select({
                     onChange {
                         val value = it.value ?: return@onChange
-                        update(data.copy(action = OnsenDigTurnAction.valueOf(value)))
+                        update(setting.copy(action = OnsenDigTurnAction.valueOf(value)))
                     }
                 }) {
                     selectableTurnActions.forEach { action ->
                         Option(action.name, {
-                            if (data.action == action) selected()
+                            if (setting.action == action) selected()
                         }) { Text(action.label) }
                     }
                 }
             }
         }
         Div({ classes(S.turnRow) }) {
-            Text("人数")
-            Button({
-                onClick { update(data.copy(memberCount = data.memberCount - 1)) }
-                if (!data.displayAction.hasMember || data.memberCount <= 0) disabled()
-            }) { Text("-") }
-            Text(data.memberCount.toString())
-            Button({
-                onClick { update(data.copy(memberCount = data.memberCount + 1)) }
-                if (!data.displayAction.hasMember || data.memberCount >= 5) disabled()
-            }) { Text("+") }
+            if (displayAction.hasMember) {
+                Text("人数")
+                Button({
+                    onClick { update(setting.copy(memberCount = setting.memberCount - 1)) }
+                    if (setting.memberCount <= 0) disabled()
+                }) { Text("-") }
+                Text(setting.memberCount.toString())
+                Button({
+                    onClick { update(setting.copy(memberCount = setting.memberCount + 1)) }
+                    if (setting.memberCount >= 5) disabled()
+                }) { Text("+") }
+            }
         }
         Div({
             classes(S.turnRow)
-            if (data.bathing) {
+            if (setting.bathing) {
                 style {
                     val backgroundColor = when {
-                        data.ticket <= 0 -> rgba(255, 0, 0, 0.6)
-                        data.superRecoveryBathing -> rgba(255, 163, 41, 0.4)
+                        result.ticket <= 0 -> rgba(255, 0, 0, 0.6)
+                        result.superRecoveryBathing -> rgba(255, 163, 41, 0.4)
                         else -> rgba(58, 219, 64, 0.4)
                     }
                     backgroundColor(backgroundColor)
                 }
             }
         }) {
-            LabeledCheckbox("bathing", "入浴", data.bathing) {
-                update(data.copy(bathing = it))
+            LabeledCheckbox("bathing", "入浴", setting.bathing) {
+                update(setting.copy(bathing = it))
             }
-            repeat(data.ticket) {
+            repeat(result.ticket) {
                 Div({ classes(S.ticket) })
             }
-            if (data.ticketChange > 0) Div { Text("+${data.ticketChange}") }
-            if (data.ticketChange < 0) Div { Text("${data.ticketChange}") }
+            if (result.ticketChange > 0) Div { Text("+${result.ticketChange}") }
+            if (result.ticketChange < 0) Div { Text("${result.ticketChange}") }
         }
         Div({
             classes(S.digTurnRow)
-            if (data.gensen != null) {
-                style { backgroundColor(gensenColor[data.gensen]!!) }
+            if (result.gensen != null) {
+                style { backgroundColor(gensenColor[result.gensen]!!) }
             }
         }) {
-            if (data.gensen != null) {
-                if (data.digFirstTurn) {
-                    Text(data.gensen)
+            if (result.gensen != null) {
+                if (result.digFirstTurn) {
+                    Text(result.gensen)
                     Text(" / ")
                 }
-                if (data.gensenRest > 0) {
-                    Text("残 ${data.gensenRest}")
+                if (result.gensenRest > 0) {
+                    Text("残 ${result.gensenRest}")
                 } else {
                     Text("掘削完了")
-                    Text(" 余剰${-data.gensenRest}")
+                    Text(" 余剰${-result.gensenRest}")
                 }
             }
         }
         Div({
             classes(S.turnRow)
-            style { backgroundColor(hsla(max(0, 250 - data.usedHp), 100, 50, 0.4)) }
+            style { backgroundColor(hsla(max(0, 250 - result.usedHp), 100, 50, 0.4)) }
         }) {
-            if (data.superRecoveryAvailable) {
+            if (result.superRecoveryTrigger != null) {
+                Text(result.superRecoveryTrigger.label)
+            } else if (result.superRecoveryAvailable) {
                 Text("超回復可能")
             } else {
-                Text("消費 ${data.usedHp}")
-                LabeledCheckbox("superRecovery", "超回復", data.superRecoveryTriggered) {
-                    update(data.copy(superRecoveryTriggered = it))
+                Text("消費 ${result.usedHp}")
+                if (displayAction != OnsenDigTurnAction.Goal) {
+                    LabeledCheckbox("superRecovery", "超回復", setting.superRecoveryTriggered) {
+                        update(setting.copy(superRecoveryTriggered = it))
+                    }
                 }
             }
         }

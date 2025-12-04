@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.web.page.onsen
 
+import io.github.mee1080.umasim.data.Chara
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
@@ -38,6 +39,25 @@ val gensenNames = List(3) { stage ->
     gensenData.values.filter { it.turn < (stage + 1) * 24 }.map { it.name }
 }
 
+private val fixedActionsCache = mutableMapOf<Int, Map<Int, OnsenDigTurnAction>>()
+
+fun getFixedActions(chara: Chara): Map<Int, OnsenDigTurnAction> {
+    val cached = fixedActionsCache[chara.charaId]
+    if (cached != null) return cached
+    val result = Store.getGoalRaceList(chara.charaId)
+        .associate { it.turn to OnsenDigTurnAction.Goal }
+        .toMutableMap()
+    fixedActions[chara.charaName]?.forEach { (turn, action) ->
+        if (action == null) {
+            result.remove(turn)
+        } else {
+            result[turn] = action
+        }
+    }
+    fixedActionsCache[chara.charaId] = result
+    return result
+}
+
 enum class OnsenDigTurnAction(
     val label: String,
     val dig: Int,
@@ -52,16 +72,18 @@ enum class OnsenDigTurnAction(
     Outing("お出かけ", 25, 0),
     PR("PR活動", 10, 20, hasMember = true),
     Goal("目標レース", 25, 0),
+    Sleep("お休み", 0, 0),
 }
 
-val selectableTurnActions = OnsenDigTurnAction.entries.dropLast(1)
+val selectableTurnActions = OnsenDigTurnAction.entries
 
 data class OnsenDigState(
     val initial: OnsenDigInitialState = OnsenDigInitialState(),
     val schedules: List<OnsenDigSchedule> = listOf(
         OnsenDigSchedule.junior, OnsenDigSchedule.classic, OnsenDigSchedule.senior,
     ),
-    val turns: List<OnsenDigTurn> = List(76) { OnsenDigTurn() },
+    val turns: List<OnsenDigTurnSetting> = List(76) { OnsenDigTurnSetting() },
+    val results: List<OnsenDigTurnResult> = List(76) { OnsenDigTurnResult() },
 ) {
     @Serializable
     class SaveData(
@@ -75,7 +97,7 @@ data class OnsenDigState(
     constructor(saveData: SaveData) : this(
         initial = OnsenDigInitialState(saveData.i),
         schedules = saveData.s.map { OnsenDigSchedule(it) },
-        turns = saveData.t.map { OnsenDigTurn(it) },
+        turns = saveData.t.map { OnsenDigTurnSetting(it) },
     )
 }
 
@@ -215,22 +237,13 @@ data class OnsenDigGensen(
     )
 }
 
-data class OnsenDigTurn(
+data class OnsenDigTurnSetting(
     val action: OnsenDigTurnAction = OnsenDigTurnAction.Training,
     val memberCount: Int = 2,
     val bathing: Boolean = false,
     val superRecoveryTriggered: Boolean = false,
 
-    val goal: Boolean = false,
-    val superRecoveryAvailable: Boolean = false,
-    val superRecoveryBathing: Boolean = false,
-    val gensen: String? = null,
-    val gensenRest: Int = 0,
-    val digFirstTurn: Boolean = false,
-    val ticket: Int = 0,
-    val ticketChange: Int = 0,
-    val usedHp: Int = 0,
-) {
+    ) {
     val saveData
         get() = action.ordinal * 1000 +
                 memberCount * 100 +
@@ -243,15 +256,31 @@ data class OnsenDigTurn(
         bathing = ((saveData / 10) % 10) > 0,
         superRecoveryTriggered = (saveData % 10) > 0,
     )
-
-    val displayAction = if (goal) OnsenDigTurnAction.Goal else action
 }
+
+enum class SuperRecoveryTrigger(val label: String) {
+    Outing("お出かけ超回復"),
+    UsedHp("確定超回復"),
+}
+
+data class OnsenDigTurnResult(
+    val fixedAction: OnsenDigTurnAction? = null,
+    val superRecoveryTrigger: SuperRecoveryTrigger? = null,
+    val superRecoveryAvailable: Boolean = false,
+    val superRecoveryBathing: Boolean = false,
+    val gensen: String? = null,
+    val gensenRest: Int = 0,
+    val digFirstTurn: Boolean = false,
+    val ticket: Int = 0,
+    val ticketChange: Int = 0,
+    val usedHp: Int = 0,
+)
 
 fun OnsenDigState.calc(): OnsenDigState {
     val support = initial.link.map { Store.guestSupportCardMap[it]!! }
     val factor = initial.factor.map { it to 3 }
     val chara = Store.getChara(initial.chara, 5, 5)
-    val goalTurns = Store.getGoalRaceList(chara.charaId).map { it.turn }.toSet()
+    val fixedActions = getFixedActions(chara)
     var schedule = schedules[0]
     var gensenList = schedule.gensenList.toMutableList()
     var status = schedule.firstHalfStatus
@@ -263,7 +292,8 @@ fun OnsenDigState.calc(): OnsenDigState {
     var usedHp = 0
     var outingCount = 0
     var nextSuperRecoveryAvailable = false
-    val newTurns = turns.mapIndexed { index, data ->
+    val newResults = List(76) { index ->
+        val setting = turns[index]
         val turn = index + 3
         when (turn) {
             // ジュニア後半開始
@@ -305,7 +335,7 @@ fun OnsenDigState.calc(): OnsenDigState {
         val alwaysSuperRecovery = onsenStatus.ryokanBonus.superRecoveryGuaranteed
         var currentSuperRecoveryAvailable = nextSuperRecoveryAvailable || alwaysSuperRecovery
         var superRecoveryBathing = false
-        if (data.bathing) {
+        if (setting.bathing) {
             ticket -= 1
             if (currentSuperRecoveryAvailable) {
                 superRecoveryBathing = true
@@ -314,40 +344,29 @@ fun OnsenDigState.calc(): OnsenDigState {
                 usedHp = 0
             }
         }
-        val goal = goalTurns.contains(turn)
-        val action = if (goal) OnsenDigTurnAction.Goal else data.action
+        val fixedAction = fixedActions[turn]
+        val action = fixedAction ?: setting.action
+        var superRecoveryTrigger: SuperRecoveryTrigger? = null
         if (action == OnsenDigTurnAction.Outing) {
             outingCount += 1
             ticket = min(3, ticket + if (outingCount == 5) 2 else 1)
+            superRecoveryTrigger = SuperRecoveryTrigger.Outing
+            currentSuperRecoveryAvailable = true
+            nextSuperRecoveryAvailable = true
         } else if (action == OnsenDigTurnAction.PR) {
             ticket = min(3, ticket + 1)
         }
-        if (action.hp > 0 && !currentSuperRecoveryAvailable) {
-            usedHp += action.hp + (if (action.levelUp) trainingHp else 0)
-            if (usedHp >= initial.superRecoveryHp) {
-                currentSuperRecoveryAvailable = true
-                nextSuperRecoveryAvailable = true
-            } else if (data.superRecoveryTriggered) {
-                nextSuperRecoveryAvailable = true
-            }
-        }
-        if (skipDig) {
-            data.copy(
-                goal = goal,
-                superRecoveryAvailable = currentSuperRecoveryAvailable || alwaysSuperRecovery,
-                superRecoveryBathing = superRecoveryBathing,
-                gensen = null,
-                ticket = currentTicket,
-                ticketChange = ticket - currentTicket,
-                usedHp = usedHp,
-            )
-        } else {
-            val basePoint = action.dig + if (action.hasMember) data.memberCount else 0
+        var gensen: String? = null
+        var gensenRest = 0
+        var currentDigFirstTurn = false
+        var currentUsedHp = action.hp + (if (action.levelUp) trainingHp else 0)
+        if (!skipDig) {
+            val basePoint = action.dig + if (action.hasMember) setting.memberCount else 0
             val digResult = OnsenCalculator.calcDigResult(onsenStatus, status, basePoint, noLimit = true)
             onsenStatus = onsenStatus.copy(digProgress = onsenStatus.digProgress + digResult.digPoint)
-            val gensen = onsenStatus.selectedGensen?.name ?: ""
-            val gensenRest = (onsenStatus.selectedGensen?.totalProgress ?: 0) - onsenStatus.digProgress
-            val currentDigFirstTurn = digFirstTurn
+            gensen = onsenStatus.selectedGensen?.name ?: ""
+            gensenRest = (onsenStatus.selectedGensen?.totalProgress ?: 0) - onsenStatus.digProgress
+            currentDigFirstTurn = digFirstTurn
             if (onsenStatus.digFinished(0)) {
                 onsenStatus = onsenStatus.copy(
                     excavatedGensen = onsenStatus.excavatedGensen + onsenStatus.selectedGensen!!,
@@ -359,22 +378,33 @@ fun OnsenDigState.calc(): OnsenDigState {
                 digFirstTurn = false
             }
             if (action != OnsenDigTurnAction.Goal) {
-                usedHp += digResult.digBonus.statusTotal / 5 * 3
+                currentUsedHp += digResult.digBonus.statusTotal / 5 * 3
             }
-            data.copy(
-                goal = goal,
-                superRecoveryAvailable = currentSuperRecoveryAvailable || alwaysSuperRecovery,
-                superRecoveryBathing = superRecoveryBathing,
-                gensen = gensen,
-                gensenRest = gensenRest,
-                digFirstTurn = currentDigFirstTurn,
-                ticket = currentTicket,
-                ticketChange = ticket - currentTicket,
-                usedHp = usedHp,
-            )
         }
+        if (action != OnsenDigTurnAction.Goal && !currentSuperRecoveryAvailable) {
+            usedHp += currentUsedHp
+            if (usedHp >= initial.superRecoveryHp) {
+                superRecoveryTrigger = SuperRecoveryTrigger.UsedHp
+                currentSuperRecoveryAvailable = true
+                nextSuperRecoveryAvailable = true
+            } else if (setting.superRecoveryTriggered) {
+                nextSuperRecoveryAvailable = true
+            }
+        }
+        OnsenDigTurnResult(
+            fixedAction = fixedAction,
+            superRecoveryTrigger = superRecoveryTrigger,
+            superRecoveryAvailable = currentSuperRecoveryAvailable || alwaysSuperRecovery,
+            superRecoveryBathing = superRecoveryBathing,
+            gensen = gensen,
+            gensenRest = gensenRest,
+            digFirstTurn = currentDigFirstTurn,
+            ticket = currentTicket,
+            ticketChange = ticket - currentTicket,
+            usedHp = usedHp,
+        )
     }
-    val result = copy(turns = newTurns)
+    val result = copy(results = newResults)
     saveOnsenDigState(result)
     return result
 }
