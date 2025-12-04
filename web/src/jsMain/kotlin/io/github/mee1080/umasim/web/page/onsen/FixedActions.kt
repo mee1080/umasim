@@ -11,8 +11,4 @@ val fixedActions = mapOf(
         29 to null,
         61 to null,
     ),
-    "ラインクラフト" to listOf(
-        21 to OnsenDigTurnAction.Goal,
-        22 to null,
-    ),
 )
