@@ -27,7 +27,7 @@ fun OnsenDigPage() {
     Div({ classes(S.wrapper) }) {
         Div({ classes(S.settingArea) }) {
             InitialSetting(state.initial) { data ->
-                state = state.copy(initial = data).calc()
+                state = state.updateInitial(data).calc()
             }
             Schedule("ジュニア", 0, state.schedules[0]) {
                 state = state.copy(schedules = state.schedules.replaced(0, it)).calc()
@@ -71,12 +71,12 @@ private fun InitialSetting(setting: OnsenDigInitialState, update: (OnsenDigIniti
                 Select({
                     onChange {
                         val value = it.value ?: return@onChange
-                        update(setting.copy(chara = value))
+                        update(setting.changeChara(value))
                     }
                 }) {
                     charaNames.forEach {
                         Option(it, attrs = {
-                            if (setting.chara == it) selected()
+                            if (setting.chara.charaName == it) selected()
                         }) { Text(it) }
                     }
                 }

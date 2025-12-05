@@ -72,7 +72,7 @@ enum class OnsenDigTurnAction(
     Outing("お出かけ", 25, 0),
     PR("PR活動", 10, 20, hasMember = true),
     Goal("目標レース", 25, 0),
-    Sleep("お休み", 0, 0),
+    Sleep("お休み", 15, 0),
 }
 
 val selectableTurnActions = OnsenDigTurnAction.entries
@@ -102,7 +102,7 @@ data class OnsenDigState(
 }
 
 data class OnsenDigInitialState(
-    val chara: String = "ハルウララ",
+    val chara: Chara = Store.getChara("ハルウララ", 5, 5),
     val link: Set<String> = emptySet(),
     val factor: List<StatusType> = List(4) { StatusType.SPEED } + List(2) { StatusType.POWER },
     val superRecoveryHp: Int = 300,
@@ -117,14 +117,14 @@ data class OnsenDigInitialState(
 
     val saveData
         get() = SaveData(
-            chara,
+            chara.charaName,
             link.map { linkCharaNames.indexOf(it) },
             factor.map { it.ordinal },
             superRecoveryHp,
         )
 
     constructor(saveData: SaveData) : this(
-        chara = saveData.c,
+        chara = Store.getChara(saveData.c, 5, 5),
         link = saveData.l.map { linkCharaNames[it] }.toSet(),
         factor = saveData.f.map { StatusType.entries[it] },
         superRecoveryHp = saveData.h,
@@ -279,8 +279,7 @@ data class OnsenDigTurnResult(
 fun OnsenDigState.calc(): OnsenDigState {
     val support = initial.link.map { Store.guestSupportCardMap[it]!! }
     val factor = initial.factor.map { it to 3 }
-    val chara = Store.getChara(initial.chara, 5, 5)
-    val fixedActions = getFixedActions(chara)
+    val fixedActions = getFixedActions(initial.chara)
     var schedule = schedules[0]
     var gensenList = schedule.gensenList.toMutableList()
     var status = schedule.firstHalfStatus
@@ -425,15 +424,42 @@ private fun selectGensen(
 
 private const val KEY_ONSEN_DIG_STATE = "umasim.onsenDigState"
 
+private const val KEY_ONSEN_DIG_LAST_CHARA = "umasim.onsenDigChara"
+
+private fun getKey(charaId: Int) = "${KEY_ONSEN_DIG_STATE}.${charaId}"
+
 fun loadOnsenDigState(data: String? = null): OnsenDigState {
-    val loaded = (data ?: localStorage.getItem(KEY_ONSEN_DIG_STATE))?.let {
-        runCatching {
-            OnsenDigState(Json.decodeFromString<OnsenDigState.SaveData>(it))
-        }.getOrNull()
-    } ?: OnsenDigState()
+    val loaded = data?.toState()
+        ?: localStorage.getItem(KEY_ONSEN_DIG_LAST_CHARA)?.toIntOrNull()?.let { loadChara(it) }
+        ?: localStorage.getItem(KEY_ONSEN_DIG_STATE)?.toState()
+        ?: OnsenDigState()
     return loaded.calc()
 }
 
+private fun loadChara(charaId: Int): OnsenDigState? {
+    return localStorage.getItem(getKey(charaId))?.toState()
+}
+
+private fun String.toState(): OnsenDigState? {
+    return runCatching {
+        OnsenDigState(Json.decodeFromString<OnsenDigState.SaveData>(this))
+    }.getOrNull()
+}
+
 fun saveOnsenDigState(state: OnsenDigState) {
-    localStorage.setItem(KEY_ONSEN_DIG_STATE, Json.encodeToString(state.saveData))
+    val chara = state.initial.chara
+    localStorage.setItem(KEY_ONSEN_DIG_LAST_CHARA, chara.charaId.toString())
+    localStorage.setItem(getKey(chara.charaId), Json.encodeToString(state.saveData))
+}
+
+fun OnsenDigInitialState.changeChara(name: String): OnsenDigInitialState {
+    return copy(chara = Store.getChara(name, 5, 5))
+}
+
+fun OnsenDigState.updateInitial(newValue: OnsenDigInitialState): OnsenDigState {
+    return if (initial.chara.charaId == newValue.chara.charaId) {
+        copy(initial = newValue)
+    } else {
+        loadChara(newValue.chara.charaId) ?: copy(initial = newValue)
+    }
 }
