@@ -7,6 +7,7 @@ import io.github.mee1080.umasim.scenario.onsen.StratumType
 import io.github.mee1080.umasim.web.components.LabeledCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
 import io.github.mee1080.umasim.web.components.atoms.MdDivider
+import io.github.mee1080.umasim.web.components.atoms.MdFilledButton
 import io.github.mee1080.umasim.web.components.atoms.onChange
 import io.github.mee1080.umasim.web.components.lib.ScopedStyleSheet
 import io.github.mee1080.umasim.web.components.lib.install
@@ -48,6 +49,7 @@ fun OnsenDigPage() {
                 if (it.pageY > 100.0) {
                     divider = divider + current - it.pageY
                 }
+                @Suppress("AssignedValueIsNeverRead")
                 current = it.pageY
             }
         }
@@ -55,8 +57,8 @@ fun OnsenDigPage() {
             classes(S.calendarArea)
             style { height(divider.px + 60.percent) }
         }) {
-            Calendar(state.turns, state.results) { index, data ->
-                state = state.copy(turns = state.turns.replaced(index, data)).calc()
+            Calendar(state.turns, state.results) {
+                state = state.copy(turns = it).calc()
             }
         }
     }
@@ -240,12 +242,17 @@ private fun GensenSelect(
 private fun Calendar(
     turns: List<OnsenDigTurnSetting>,
     results: List<OnsenDigTurnResult>,
-    update: (Int, OnsenDigTurnSetting) -> Unit
+    update: (List<OnsenDigTurnSetting>) -> Unit
 ) {
     var digOnly by remember { mutableStateOf(false) }
-    Div {
+    Div({ classes(S.calendarSetting) }) {
         MdCheckbox("掘削スケジュールのみ表示", digOnly) {
             onChange { digOnly = it }
+        }
+        MdFilledButton("参加人数と野良超回復をリセット") {
+            onClick {
+                update(turns.map { it.copy(memberCount = 2, superRecoveryTriggered = false) })
+            }
         }
     }
     Div({
@@ -275,7 +282,7 @@ private fun Calendar(
                 }
             }
             Turn(setting, result) {
-                update(index, it)
+                update(turns.replaced(index, it))
             }
         }
     }
@@ -450,6 +457,12 @@ private val S = object : ScopedStyleSheet() {
     val initialSettingBox by style {
         display(DisplayStyle.Flex)
         flexDirection(FlexDirection.Column)
+    }
+
+    val calendarSetting by style {
+        display(DisplayStyle.Flex)
+        alignItems(AlignItems.Center)
+        columnGap(8.px)
     }
 
     val calendarBox by style {
