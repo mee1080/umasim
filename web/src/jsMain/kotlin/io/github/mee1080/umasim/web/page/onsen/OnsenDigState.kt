@@ -270,7 +270,7 @@ data class OnsenDigTurnResult(
     val superRecoveryBathing: Boolean = false,
     val gensen: String? = null,
     val gensenRest: Int = 0,
-    val digFirstTurn: Boolean = false,
+    val newEquipment: StratumType? = null,
     val ticket: Int = 0,
     val ticketChange: Int = 0,
     val usedHp: Int = 0,
@@ -285,8 +285,11 @@ fun OnsenDigState.calc(): OnsenDigState {
     var status = schedule.firstHalfStatus
     var trainingHp = (schedule.firstHalfTrainingLevel - 1) * 5
     var onsenStatus = OnsenStatus(support, factor)
-    onsenStatus = selectGensen(onsenStatus, gensenList)
-    var digFirstTurn = true
+    var newEquipment: StratumType? = null
+    selectGensen(onsenStatus, gensenList).let {
+        onsenStatus = it.first
+        newEquipment = it.second
+    }
     var ticket = 2
     var usedHp = 0
     var outingCount = 0
@@ -314,14 +317,18 @@ fun OnsenDigState.calc(): OnsenDigState {
                 gensenList = schedule.gensenList.toMutableList()
                 status = schedule.firstHalfStatus
                 trainingHp = (schedule.firstHalfTrainingLevel - 1) * 5
-                onsenStatus = selectGensen(onsenStatus, gensenList)
-                digFirstTurn = true
+                selectGensen(onsenStatus, gensenList).let {
+                    onsenStatus = it.first
+                    newEquipment = it.second
+                }
             }
 
             // 伝説の秘湯掘削開始
             66 -> {
-                onsenStatus = selectGensen(onsenStatus, gensenList)
-                digFirstTurn = true
+                selectGensen(onsenStatus, gensenList).let {
+                    onsenStatus = it.first
+                    newEquipment = it.second
+                }
             }
 
             // ファイナルズ期間開始
@@ -357,7 +364,7 @@ fun OnsenDigState.calc(): OnsenDigState {
         }
         var gensen: String? = null
         var gensenRest = 0
-        var currentDigFirstTurn = false
+        var currentNewEquipment: StratumType? = null
         var currentUsedHp = action.hp + (if (action.levelUp) trainingHp else 0)
         if (!skipDig) {
             val basePoint = action.dig + if (action.hasMember) setting.memberCount else 0
@@ -365,16 +372,18 @@ fun OnsenDigState.calc(): OnsenDigState {
             onsenStatus = onsenStatus.copy(digProgress = onsenStatus.digProgress + digResult.digPoint)
             gensen = onsenStatus.selectedGensen?.name ?: ""
             gensenRest = (onsenStatus.selectedGensen?.totalProgress ?: 0) - onsenStatus.digProgress
-            currentDigFirstTurn = digFirstTurn
+            currentNewEquipment = newEquipment
             if (onsenStatus.digFinished(0)) {
                 onsenStatus = onsenStatus.copy(
                     excavatedGensen = onsenStatus.excavatedGensen + onsenStatus.selectedGensen!!,
                 )
-                onsenStatus = selectGensen(onsenStatus, gensenList)
+                selectGensen(onsenStatus, gensenList).let {
+                    onsenStatus = it.first
+                    newEquipment = it.second
+                }
                 ticket = min(3, ticket + 2)
-                digFirstTurn = true
             } else {
-                digFirstTurn = false
+                newEquipment = null
             }
             if (action != OnsenDigTurnAction.Goal) {
                 currentUsedHp += digResult.digBonus.statusTotal / 5 * 3
@@ -397,7 +406,7 @@ fun OnsenDigState.calc(): OnsenDigState {
             superRecoveryBathing = superRecoveryBathing,
             gensen = gensen,
             gensenRest = gensenRest,
-            digFirstTurn = currentDigFirstTurn,
+            newEquipment = currentNewEquipment,
             ticket = currentTicket,
             ticketChange = ticket - currentTicket,
             usedHp = usedHp,
@@ -411,15 +420,15 @@ fun OnsenDigState.calc(): OnsenDigState {
 private fun selectGensen(
     onsenStatus: OnsenStatus,
     gensenList: MutableList<OnsenDigGensen>,
-): OnsenStatus {
+): Pair<OnsenStatus, StratumType?> {
     while (gensenList.isNotEmpty()) {
         val targetGensen = gensenList.removeFirst()
         if (onsenStatus.excavatedGensen.all { it.name != targetGensen.name } && onsenStatus.equipmentLevel[targetGensen.equipment]!! < 6) {
             val newOnsenStatus = OnsenCalculator.selectGensen(onsenStatus, gensenData[targetGensen.name]!!)
-            return OnsenCalculator.selectEquipment(newOnsenStatus, targetGensen.equipment)
+            return OnsenCalculator.selectEquipment(newOnsenStatus, targetGensen.equipment) to targetGensen.equipment
         }
     }
-    return onsenStatus
+    return onsenStatus to null
 }
 
 private const val KEY_ONSEN_DIG_STATE = "umasim.onsenDigState"

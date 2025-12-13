@@ -361,8 +361,10 @@ private fun Turn(setting: OnsenDigTurnSetting, result: OnsenDigTurnResult, updat
             }
         }) {
             if (result.gensen != null) {
-                if (result.digFirstTurn) {
-                    Text(result.gensen)
+                if (result.newEquipment != null) {
+                    Text(result.gensen.substring(0, 2))
+                    Text(" / ")
+                    Text(result.newEquipment.displayName)
                     Text(" / ")
                 }
                 if (result.gensenRest > 0) {
