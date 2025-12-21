@@ -1116,6 +1116,15 @@ Weaving History
 ->ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41
 「芝、先行、距離割合40～41」、目標速度2500、持続4.0
 
+黄金を訪ねて
+[Sunlit Outsider]ステイゴールド 固有
+レース後半に速度を少し上げ続ける2000m以上のレースならその後ラストスパートで短い間加速力が少し上がる＜差し/追込＞
+評価点340、人気:スピード30/パワー30、確定発動
+running_style==3@running_style==4->distance_rate>=50
+「差し」または「追込」の後「距離割合>=50」、目標速度2500、持続6.0
+->is_activate_other_skill_detail==1&course_distance>=2000&is_lastspurt==1
+「上記効果発動後、距離>=2000、ラストスパート」、加速3000、持続2.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復し速度が少し上がる
@@ -2952,6 +2961,14 @@ Weaving History
 ->ground_type==1&running_style==2&distance_rate>=40&distance_rate<=41
 「芝、先行、距離割合40～41」、目標速度500、持続2.4
 
+黄金を訪ねて
+レース後半に速度をちょっと上げ続ける2000m以上のレースならその後ラストスパートで短い間加速力がちょっと上がる＜差し/追込＞
+評価点180、SP200、人気:スピード7/パワー7
+running_style==3@running_style==4->distance_rate>=50
+「差し」または「追込」の後「距離割合>=50」、目標速度500、持続3.6
+->is_activate_other_skill_detail==1&course_distance>=2000&is_lastspurt==1
+「上記効果発動後、距離>=2000、ラストスパート」、加速1000、持続1.2
+
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復し速度がちょっと上がる
 評価点180、SP200、人気:スピード7/スタミナ7
@@ -3737,6 +3754,14 @@ remain_distance<=600&order_rate>=40&order_rate<=80&is_behind_in==1&change_order_
 「序盤または中盤、追い抜かれ、経過時間>=5、順位率50以下（チャンミ～5/LoH～6）」または「序盤または中盤、横ブロック継続>=2、経過時間>=5、順位率50以下（チャンミ～5/LoH～6）」、目標速度1500、持続1.8
 ->is_activate_other_skill_detail==1&order<=2&distance_rate>=50&distance_type==4
 「上記効果発動後、順位<=2、距離割合>=50、長距離」、目標速度500、持続3.6
+
+黄金を訪ねて
+レース後半に速度をわずかに上げ続ける2000m以上のレースならその後ラストスパートで短い間加速力がわずかに上がる＜差し/追込＞
+評価点240、人気:スピード7/パワー7
+running_style==3@running_style==4->distance_rate>=50
+「差し」または「追込」の後「距離割合>=50」、目標速度1500、持続3.6
+->is_activate_other_skill_detail==1&course_distance>=2000&is_lastspurt==1
+「上記効果発動後、距離>=2000、ラストスパート」、加速2000、持続1.2
 
 ずっとずっと輝いて
 トリプルティアラのコースだと終盤のコーナーで少しの間わずかに前に出るさらにそこが下り坂なら加速力がちょっと上がる
@@ -12239,6 +12264,24 @@ distance_rate>=66&order_rate_out40_continue==1->running_style==3&distance_type==
 ->phase_random==1
 「中盤ランダム」、目標速度3500、持続2.4
 
+針が交わる時
+[Sunlit Outsider]ステイゴールド 進化(好奇心)
+終盤突入時に少し前に出る、その後最終コーナー以降に追い抜こうとしていた場合、残り400ｍを切ってから好位置にいると速度が上がる＜差し・中距離＞
+評価点633、進化元SP360、人気:スピード30/パワー30
+->distance_type==3&running_style==3&distance_rate>=66&distance_rate<=68
+「中距離、差し、距離割合66～68」、現在速度2500、持続2.4
+is_activate_other_skill_detail==1&is_finalcorner==1&is_overtake==1->remain_distance<=400&order_rate>=30&order_rate<=50
+「上記効果発動後、最終コーナー以降、追い抜きモード」の後「残り距離<=400、順位率30～50（チャンミ3～5/LoH4～6）」、目標速度3500、持続2.4
+
+旅の心得
+[Sunlit Outsider]ステイゴールド 進化(好奇心)
+レース後半の直線で中団にいると速度が少し上がる、その後残り1000m地点でしばらくの間わずかに前に出る＜差し・長距離＞
+評価点633、進化元SP360、人気:スピード30/パワー30
+->distance_type==4&running_style==3&distance_rate>=50&corner==0&order_rate<=70&order_rate>=30
+「長距離、差し、距離割合>=50、コーナー以外、順位率30～70（チャンミ3～6/LoH4～8）」、目標速度2500、持続2.4
+->is_activate_other_skill_detail==1&remain_distance>=999&remain_distance<=1001
+「上記効果発動後、残り距離999～1001」、現在速度1500、持続4.0
+
 心惹かれて
 レース中盤に速度がわずかに上がる
 評価点217、SP180、人気:スピード20
@@ -12558,6 +12601,31 @@ Ignite this Stage
 評価点217、SP120、人気:スピード20
 ->running_style==2&up_slope_random==1
 「先行、上り坂ランダム」、目標速度1500、持続2.4
+
+遥か先へ
+ラストスパートの最終直線で速度が上がる余力十分ならすごく上がる
+評価点633、SP200(合計400)、人気:スピード60
+->is_lastspurt==1&is_last_straight==1&lastspurt==2
+「ラストスパート、最終直線、最大スパート」、目標速度4500、持続2.4
+->is_lastspurt==1&is_last_straight==1
+「ラストスパート、最終直線」、目標速度3500、持続2.4
+
+見果てぬ旅路
+[Sunlit Outsider]ステイゴールド 進化(遥か先へ)
+ラストスパートの最終直線で速度がすごく上がる絶好調なら持久力を少し使ってとてつもなく上がる＜作戦・差し＞
+評価点758、進化元SP400、人気:スピード60
+->running_style==3&is_lastspurt==1&is_last_straight==1&motivation==5
+「差し、ラストスパート、最終直線、絶好調」、目標速度6500、体力-200、持続2.4
+->running_style==3&is_lastspurt==1&is_last_straight==1
+「差し、ラストスパート、最終直線」、目標速度4500、持続2.4
+
+勝負を懸けて
+ラストスパートの最終直線で速度がわずかに上がる余力十分なら少し上がる
+評価点263、SP200、人気:スピード20
+->is_lastspurt==1&is_last_straight==1&lastspurt==2
+「ラストスパート、最終直線、最大スパート」、目標速度2500、持続2.4
+->is_lastspurt==1&is_last_straight==1
+「ラストスパート、最終直線」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
