@@ -193,6 +193,8 @@ data class SupportCard(
 
     fun positionRateUp(relation: Int) = specialUnique.sumOf { it.positionRateUp(relation) }
 
+    fun hintCountUp(relation: Int) = specialUnique.sumOf { it.hintCountUp(relation) }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other == null || this::class != other::class) return false

@@ -217,6 +217,8 @@ data class SupportCardSpecialUnique(
 
     val trainingNextTurnSpecialityRateUp = if (type == 122 && value0 == 19) value1 else 0
 
+    fun hintCountUp(relation: Int) = 0 // TODO
+
     private fun getValue(
         card: SupportCard,
         condition: SpecialUniqueCondition,

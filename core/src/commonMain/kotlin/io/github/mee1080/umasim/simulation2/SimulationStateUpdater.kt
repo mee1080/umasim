@@ -466,11 +466,15 @@ private fun SimulationState.selectTrainingHint(
         val hintSupportList = support.filter { it.hint }
         if (hintSupportList.isEmpty()) return Status() to emptyList()
         val hintSupport = hintSupportList.random()
-        hintSupport.selectHint(status, 1 + hintCountPlus) to listOf(hintSupport)
+        hintSupport.selectHint(
+            status,
+            1 + hintCountPlus + hintSupport.card.hintCountUp(hintSupport.relation),
+        ) to listOf(hintSupport)
     }
 }
 
 private fun MemberState.selectHint(currentStatus: Status, count: Int = 1): Status {
+    // TODO 温泉超回復でサポカヒント獲得数アップが反映されるか確認
     var result = Status()
     repeat(count) {
         val hintSkill = (card.skills.filter {
