@@ -6570,6 +6570,69 @@ internal val rawCourseData = """
         ]
       }
     }
+  },
+  "99999": {
+    "name": "デルマー（仮）",
+    "courses": {
+      "999999": {
+        "raceTrackId": 99999,
+        "name": "芝2200m",
+        "distance": 2200,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [],
+        "laneMax": 12000,
+        "finishTimeMin": 130.2,
+        "finishTimeMax": 135.0,
+        "corners": [
+          {
+            "start": 131.0,
+            "length": 210.0
+          },
+          {
+            "start": 341.0,
+            "length": 210.0
+          },
+          {
+            "start": 831.0,
+            "length": 210.0
+          },
+          {
+            "start": 1041.0,
+            "length": 210.0
+          },
+          {
+            "start": 1531.0,
+            "length": 210.0
+          },
+          {
+            "start": 1741.0,
+            "length": 210.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 131.0
+          },
+          {
+            "start": 551.0,
+            "end": 831.0
+          },
+          {
+            "start": 1251.0,
+            "end": 1531.0
+          },
+          {
+            "start": 1951.0,
+            "end": 2200.0
+          }
+        ],
+        "slopes": [
+        ]
+      }
+    }
   }
 }
 """.trimIndent()
