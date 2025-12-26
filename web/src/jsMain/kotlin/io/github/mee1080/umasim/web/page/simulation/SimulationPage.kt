@@ -55,13 +55,13 @@ fun SimulationPage(state: State) {
         )
     }
     val aiSelector by derivedStateOf { aiSelectorOption?.generateSelector() }
-    var optionEdit by remember { mutableStateOf(false) }
-    (aiSelectorOption as? SerializableActionSelectorGenerator)?.let { option ->
-        OptionEditDialog(optionEdit, option) {
-            optionEdit = false
-            if (it != null) aiSelectorOption = it
-        }
-    }
+//    var optionEdit by remember { mutableStateOf(false) }
+//    (aiSelectorOption as? SerializableActionSelectorGenerator)?.let { option ->
+//        OptionEditDialog(optionEdit, option) {
+//            optionEdit = false
+//            if (it != null) aiSelectorOption = it
+//        }
+//    }
     Div({
         style {
             height(100.percent)
@@ -83,12 +83,12 @@ fun SimulationPage(state: State) {
                 Text("手動シミュレーション")
             }
             Div {
-                if (aiSelectorOption != null) {
-                    MdFilledButton("AI設定") {
-                        onClick { optionEdit = true }
-                        style { marginRight(8.px) }
-                    }
-                }
+//                if (aiSelectorOption != null) {
+//                    MdFilledButton("AI設定") {
+//                        onClick { optionEdit = true }
+//                        style { marginRight(8.px) }
+//                    }
+//                }
                 MdFilledButton("リセット") {
                     onClick { running = false }
                 }
