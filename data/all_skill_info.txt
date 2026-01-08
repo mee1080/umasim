@@ -1886,6 +1886,15 @@ track_id==10009&course_distance==1600@track_id==10008&course_distance==2000@trac
 distance_type==4&phase>=2&corner!=0&change_order_onetime<0&is_activate_other_skill_detail==1->is_last_straight==1
 「長距離、終盤、コーナー、追い抜き、上記効果発動後」の後「最終直線」、目標速度3500、持続3.0
 
+暁霞を拓き、朝を掴む
+[暁光]バブルガムフェロー 固有
+終盤の最終コーナー後半に前方にいると短い間少し前に出る、マイルか中距離レースならその後最終直線で短い間すごく前に出る＜作戦・先行＞
+評価点340、人気:パワー60、確定発動
+->running_style==2&phase>=2&is_finalcorner_laterhalf==1&order_rate<=50
+「先行、終盤、最終コーナー後半、順位率50以下（チャンミ～5/LoH～6）」、現在速度2500、持続3.0
+->is_activate_other_skill_detail==1&distance_type==2&is_last_straight==1@is_activate_other_skill_detail==1&distance_type==3&is_last_straight==1
+「上記効果発動後、マイル、最終直線」または「上記効果発動後、中距離、最終直線」、現在速度4500、持続3.0
+
 威風堂々、夢錦！
 [日之本一の総大将]スペシャルウィーク 固有
 終盤最終コーナーでスキルを発動すると声援を胸に速度を少し上げる中山レース場ならすごく上げる
@@ -3620,6 +3629,12 @@ track_id==10009&course_distance==1600@track_id==10008&course_distance==2000@trac
 「順位率50以上（チャンミ5～/LoH6～）、残り距離999～1001」、現在速度500、持続2.4
 distance_type==4&phase>=2&corner!=0&change_order_onetime<0&is_activate_other_skill_detail==1->is_last_straight==1
 「長距離、終盤、コーナー、追い抜き、上記効果発動後」の後「最終直線」、目標速度1500、持続1.8
+
+暁霞を拓き、朝を掴む
+終盤の最終コーナー後半に前方にいると短い間ちょっと前に出る＜作戦・先行＞
+評価点180、SP200、人気:パワー15
+->running_style==2&phase>=2&is_finalcorner_laterhalf==1&order_rate<=50
+「先行、終盤、最終コーナー後半、順位率50以下（チャンミ～5/LoH～6）」、現在速度500、持続1.8
 
 威風堂々、夢錦！
 終盤最終コーナーでスキルを発動すると速度をちょっと上げる中山レース場なら少し上げる
@@ -6934,6 +6949,15 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=201&remain_distance>=
 評価点394、進化元SP240、人気:スピード60
 ->ground_type==2&is_overtake==1&accumulatetime>=5
 「ダート、追い抜きモード、経過時間>=5」、目標速度4500、体力150、持続2.4
+
+風上に立て
+[暁光]バブルガムフェロー 進化(姉御肌)
+先頭にいるか追い抜こうとすると速度が上がる、東京レース場ならその後終盤の最終直線で少し前に出る＜マイル/中距離＞
+評価点394、進化元SP240、人気:スピード30/パワー30
+distance_type==2@distance_type==3->is_overtake==1&accumulatetime>=5@order==1&accumulatetime>=5
+「マイル」または「中距離」の後「追い抜きモード、経過時間>=5」または「順位==1、経過時間>=5」、目標速度3500、持続2.4
+->is_activate_other_skill_detail==1&track_id==10006&phase>=2&is_last_straight==1
+「上記効果発動後、東京レース場、終盤、最終直線」、現在速度2500、持続2.4
 
 負けん気
 追い抜こうとすると速度がわずかに上がる＜マイル＞
@@ -11483,6 +11507,21 @@ compete_fight_count>0->running_style==3&remain_distance<=200@running_style==4&re
 ->running_style==2&phase_random==1
 「先行、中盤ランダム」、目標速度2500、体力-200、持続2.4
 
+ハジける闘志
+レース中盤が迫ったとき速度が上がる＜作戦・先行＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==2&phase_laterhalf_random==0
+「先行、序盤後半ランダム」、目標速度3500、持続2.4
+
+ハジける風雲児
+[暁光]バブルガムフェロー 進化(ハジける闘志)
+レース中盤が迫ったとき速度が上がるマイルか中距離レースならその後終盤の最終直線でわずかに前に出る＜作戦・先行＞
+評価点633、進化元SP360、人気:スピード30/パワー30
+->running_style==2&phase_laterhalf_random==0
+「先行、序盤後半ランダム」、目標速度3500、持続2.4
+->is_activate_other_skill_detail==1&distance_type==2&phase>=2&is_last_straight==1@is_activate_other_skill_detail==1&distance_type==3&phase>=2&is_last_straight==1
+「上記効果発動後、マイル、終盤、最終直線」または「上記効果発動後、中距離、終盤、最終直線」、現在速度1500、持続2.4
+
 逸る足取り
 レース中盤が迫ったとき速度がわずかに上がる＜作戦・先行＞
 評価点217、SP180、人気:スピード20
@@ -12758,6 +12797,18 @@ distance_type==3@distance_type==4->base_stamina>=1200
 評価点217、SP180、人気:パワー20
 running_style==1@running_style==2->phase>=2&remain_distance<=600&order==1@phase>=2&remain_distance<=600&is_overtake==1&order_rate<=50
 「逃げ」または「先行」の後「終盤、残り距離<=600、順位==1」または「終盤、残り距離<=600、追い抜きモード、順位率50以下（チャンミ～5/LoH～6）」、加速2000、持続1.5
+
+有志竟成
+レース中盤に速度が上がる＜作戦・差し＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==3&phase_random==1
+「差し、中盤ランダム」、目標速度3500、持続2.4
+
+大志を抱いて
+レース中盤に速度がわずかに上がる＜作戦・差し＞
+評価点217、SP180、人気:スピード20
+->running_style==3&phase_random==1
+「差し、中盤ランダム」、目標速度1500、持続2.4
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる

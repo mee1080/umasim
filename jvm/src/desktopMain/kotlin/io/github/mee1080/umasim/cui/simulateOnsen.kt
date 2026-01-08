@@ -14,8 +14,8 @@ import io.github.mee1080.utility.applyIf
 fun simulateOnsen() {
 //    speed2power1guts1Wisdom1Speed()
 //    speed2stamina1power1Wisdom1Stamina()
-    speed2power1guts1Wisdom1Power()
-//    speed2power1guts1Wisdom1Guts()
+//    speed2power1guts1Wisdom1Power()
+    speed2power1guts1Wisdom1Guts()
 //    speed2power1guts1Wisdom1Wisdom()
 //    speed2power1guts1Wisdom1Friend()
 }
