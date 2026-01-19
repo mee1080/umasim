@@ -1125,6 +1125,15 @@ running_style==3@running_style==4->distance_rate>=50
 ->is_activate_other_skill_detail==1&course_distance>=2000&is_lastspurt==1
 「上記効果発動後、距離>=2000、ラストスパート」、加速3000、持続2.0
 
+想像×創造＝∞
+[Miracle Author]キセキ 固有
+中盤始めに中団以前だと長時間少し前に出続ける、「大逃げ」が発動していると効果が変わり、持久力を少し回復して速度がわずかに上がる＜中距離/長距離＞
+評価点340、人気:スタミナ30/パワー30、確定発動
+distance_type==3@distance_type==4->order_rate<=70&phase_firsthalf==1&is_used_skill_id==202051
+「中距離」または「長距離」の後「順位率70以下（チャンミ～6/LoH～8）、中盤前半、大逃げ」、体力350、目標速度1500、持続5.0
+distance_type==3@distance_type==4->order_rate<=70&phase_firsthalf==1
+「中距離」または「長距離」の後「順位率70以下（チャンミ～6/LoH～8）、中盤前半」、現在速度2500、持続8.0
+
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
 中盤に2回スキルを使い中団にいると持久力を回復し速度が少し上がる
@@ -2995,6 +3004,12 @@ running_style==3@running_style==4->distance_rate>=50
 「差し」または「追込」の後「距離割合>=50」、目標速度500、持続3.6
 ->is_activate_other_skill_detail==1&course_distance>=2000&is_lastspurt==1
 「上記効果発動後、距離>=2000、ラストスパート」、加速1000、持続1.2
+
+想像×創造＝∞
+中盤始めに中団以前だと長時間ちょっと前に出続ける＜中距離/長距離＞
+評価点180、SP200、人気:パワー15
+distance_type==3@distance_type==4->order_rate<=70&phase_firsthalf==1
+「中距離」または「長距離」の後「順位率70以下（チャンミ～6/LoH～8）、中盤前半」、現在速度500、持続4.8
 
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復し速度がちょっと上がる
@@ -10233,6 +10248,21 @@ distance_rate>=50&change_order_onetime<0->distance_type==3&corner_random==3@dist
 ->distance_type==3&activate_count_all>=13
 「中距離、スキル発動回数>=13」、現在速度1500、持続2.4
 
+インスピレーション
+レース中盤が迫ったとき中団以降にいると速度が上がる＜作戦・差し＞
+評価点508、SP180(合計360)、人気:スピード60
+->running_style==3&phase_laterhalf_random==0&order_rate>=40
+「差し、序盤後半ランダム、順位率40以上（チャンミ4～/LoH5～）」、目標速度3500、持続2.4
+
+ブラッシュアップ！
+[Miracle Author]キセキ 進化(インスピレーション)
+レース中盤が迫ったときしばらくの間速度が上がる、「大逃げ」が発動していると効果が変わり、持久力を少し回復して速度が少し上がる＜作戦・逃げ＞
+評価点633、進化元SP360、人気:スピード30/スタミナ30
+->running_style==1&phase_laterhalf_random==0&is_used_skill_id==202051
+「逃げ、序盤後半ランダム、大逃げ」、目標速度2500、体力350、持続2.4
+->running_style==1&phase_laterhalf_random==0
+「逃げ、序盤後半ランダム」、目標速度3500、持続4.0
+
 溢れる情熱
 レース中盤が迫ったとき中団以降にいると速度がわずかに上がる＜作戦・差し＞
 評価点217、SP180、人気:スピード20
@@ -12699,6 +12729,21 @@ Ignite this Stage
 「先行、中盤ランダム、先頭とのバ身差>=10」、目標速度2500、持続3.0
 ->running_style==2&phase_random==1
 「先行、中盤ランダム」、目標速度1500、持続3.0
+
+一世一代
+レース終盤始めの方早めに中団以降にいると加速力が上がる＜差し・長距離＞
+評価点508、SP160(合計320)、人気:パワー60
+->running_style==3&distance_type==4&phase_firstquarter_random==2&order_rate>=40
+「差し、長距離、終盤前1/8ランダム、順位率40以上（チャンミ4～/LoH5～）」、加速4000、持続1.2
+
+緊急重版
+[Miracle Author]キセキ 進化(一世一代)
+2000m以上のレースならレース終盤始めの方早めに前方にいると加速力が上がる、さらにスキル発動時2番手以内だと少し前に出る＜作戦・逃げ＞ 
+評価点633、進化元SP320、人気:パワー60
+->running_style==1&phase_firstquarter_random==2&order<=2&course_distance>=2000
+「逃げ、終盤前1/8ランダム、順位<=2、距離>=2000」、加速4000、現在速度2500、持続1.2
+->running_style==1&phase_firstquarter_random==2&order_rate<=50&course_distance>=2000
+「逃げ、終盤前1/8ランダム、順位率50以下（チャンミ～5/LoH～6）、距離>=2000」、加速4000、持続1.2
 
 ここ一番
 レース終盤始めの方早めに中団以降にいると加速力がわずかに上がる＜差し・長距離＞
