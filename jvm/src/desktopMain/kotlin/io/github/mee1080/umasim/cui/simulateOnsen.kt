@@ -12,10 +12,10 @@ import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.utility.applyIf
 
 fun simulateOnsen() {
-//    speed2power1guts1Wisdom1Speed()
+    speed2power1guts1Wisdom1Speed()
 //    speed2stamina1power1Wisdom1Stamina()
-//    speed2power1guts1Wisdom1Power()
-    speed2power1guts1Wisdom1Guts()
+    speed2power1guts1Wisdom1Power()
+//    speed2power1guts1Wisdom1Guts()
 //    speed2power1guts1Wisdom1Wisdom()
 //    speed2power1guts1Wisdom1Friend()
 }
@@ -36,8 +36,8 @@ private fun speed2power1guts1Wisdom1Speed() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[吉兆招福チョコ来たる]マチカネフクキタル" to it }.toTypedArray())),
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
@@ -50,8 +50,8 @@ private fun speed2power1guts1Wisdom1Speed() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[吉兆招福チョコ来たる]マチカネフクキタル" to it }.toTypedArray())),
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
@@ -118,8 +118,8 @@ private fun speed2power1guts1Wisdom1Power() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[All-Out Brilliance]トーセンジョーダン" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[星跨ぐメッセージ]ネオユニヴァース" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
@@ -132,8 +132,8 @@ private fun speed2power1guts1Wisdom1Power() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[All-Out Brilliance]トーセンジョーダン" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[星跨ぐメッセージ]ネオユニヴァース" to it }.toTypedArray())),
 //        Store.getSupportByName("[大望は飛んでいく]エルコンドルパサー" to 4),
         factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
         testCount = 100000,
