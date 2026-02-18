@@ -33,6 +33,9 @@ import io.github.mee1080.umasim.scenario.mecha.mechaTrainingData
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
 import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
+import io.github.mee1080.umasim.scenario.bc.BCCalculator
+import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
+import io.github.mee1080.umasim.scenario.bc.bcTrainingData
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenScenarioEvents
 import io.github.mee1080.umasim.scenario.onsen.onsenTrainingData
@@ -226,6 +229,16 @@ enum class Scenario(
             "トウカイテイオー", "ミホノブルボン", "トランセンド", "ホッコータルマエ", "ワンダーアキュート", "保科健子",
         ),
         calculator = OnsenCalculator,
+    ),
+
+    BC(
+        scenarioNumber = 13,
+        displayName = "BC（仮）",
+        trainingData = bcTrainingData,
+        scenarioEvents = { BCScenarioEvents() },
+        // TODO: シナリオリンク対象のウマ娘を追加する
+        scenarioLink = emptySet(),
+        calculator = BCCalculator,
     ),
 
     ;

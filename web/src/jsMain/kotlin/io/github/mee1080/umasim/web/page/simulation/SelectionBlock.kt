@@ -240,6 +240,8 @@ fun SelectionBlock(
                     is OnsenSelectGensen -> {}
 
                     is OnsenSelectEquipment -> {}
+
+                    is BCAction -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
