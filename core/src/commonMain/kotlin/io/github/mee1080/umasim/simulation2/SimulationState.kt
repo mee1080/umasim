@@ -28,6 +28,7 @@ import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
+import io.github.mee1080.umasim.scenario.bc.BCStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.scenario.onsen.OnsenStatus
@@ -73,6 +74,8 @@ data class SimulationState(
     val mujintoStatus get() = scenarioStatus as? MujintoStatus
 
     val onsenStatus get() = scenarioStatus as? OnsenStatus
+
+    val bcStatus get() = scenarioStatus as? BCStatus
 
     val supportTypeCount = supportCount.size
 

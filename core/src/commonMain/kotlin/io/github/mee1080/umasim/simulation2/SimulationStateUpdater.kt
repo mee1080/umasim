@@ -34,6 +34,7 @@ import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
+import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
@@ -199,6 +200,7 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
     if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
     if (state.scenario == Scenario.ONSEN && turn < 3 && charaName == "保科健子") return this
+    // TODO: BCシナリオの友人サポカ不在判定を追加する
 
     // 各トレーニングに配置
     var position: StatusType
@@ -284,6 +286,11 @@ suspend fun SimulationState.applyAction(
         is MujintoActionResult -> MujintoCalculator.applyScenarioAction(this, result, selector)
 
         is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result)
+
+        is BCActionResult -> {
+            // TODO: BCシナリオのアクション結果を反映する
+            this
+        }
     }
 }
 
@@ -707,6 +714,10 @@ private suspend fun SimulationState.applyScenarioActionParam(
         is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
         is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
         is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
+        is BCActionParam -> {
+            // TODO: BCシナリオのアクションパラメータを反映する
+            this
+        }
     }
 }
 

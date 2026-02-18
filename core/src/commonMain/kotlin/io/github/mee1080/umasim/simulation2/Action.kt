@@ -578,3 +578,16 @@ data class OnsenSelectEquipment(
     override val turnChange = false
     override val result = OnsenSelectEquipmentResult(equipment)
 }
+
+sealed interface BCActionResult : ActionResult
+
+data class BCActionParam(
+    val dummy: Int = 0
+) : ScenarioActionParam {
+    override fun toShortString() = "BC(dummy=$dummy)"
+}
+
+data class BCAction(
+    override val name: String,
+    override val result: ActionResult,
+) : SingleAction
