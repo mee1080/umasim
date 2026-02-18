@@ -6574,7 +6574,7 @@ internal val rawCourseData = """
   "99999": {
     "name": "デルマー（仮）",
     "courses": {
-      "999999": {
+      "9999901": {
         "raceTrackId": 99999,
         "name": "芝2200m",
         "distance": 2200,
@@ -6587,46 +6587,92 @@ internal val rawCourseData = """
         "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 131.0,
-            "length": 210.0
+            "start": 119.0,
+            "length": 212.0
           },
           {
-            "start": 341.0,
-            "length": 210.0
+            "start": 331.0,
+            "length": 212.0
           },
           {
-            "start": 831.0,
-            "length": 210.0
+            "start": 823.0,
+            "length": 212.0
           },
           {
-            "start": 1041.0,
-            "length": 210.0
+            "start": 1035.0,
+            "length": 212.0
           },
           {
-            "start": 1531.0,
-            "length": 210.0
+            "start": 1527.0,
+            "length": 212.0
           },
           {
-            "start": 1741.0,
-            "length": 210.0
+            "start": 1739.0,
+            "length": 212.0
           }
         ],
         "straights": [
           {
             "start": 0.0,
-            "end": 131.0
+            "end": 119.0
           },
           {
-            "start": 551.0,
-            "end": 831.0
+            "start": 543.0,
+            "end": 823.0
           },
           {
-            "start": 1251.0,
-            "end": 1531.0
+            "start": 1247.0,
+            "end": 1527.0
           },
           {
             "start": 1951.0,
             "end": 2200.0
+          }
+        ],
+        "slopes": [
+        ]
+      },
+      "9999951": {
+        "raceTrackId": 99999,
+        "name": "ダート2000m",
+        "distance": 2000,
+        "distanceType": 3,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [],
+        "laneMax": 12000,
+        "finishTimeMin": 121.0,
+        "finishTimeMax": 129.0,
+        "corners": [
+          {
+            "start": 462.0,
+            "length": 229.0
+          },
+          {
+            "start": 691.0,
+            "length": 229.0
+          },
+          {
+            "start": 1262.0,
+            "length": 229.0
+          },
+          {
+            "start": 1491.0,
+            "length": 229.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 462.0
+          },
+          {
+            "start": 920.0,
+            "end": 1262.0
+          },
+          {
+            "start": 1720.0,
+            "end": 2000.0
           }
         ],
         "slopes": [
