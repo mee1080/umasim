@@ -1,17 +1,43 @@
 package io.github.mee1080.umasim.compose.pages.race
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
 
 @Composable
 fun Header() {
     Row {
         Text("ウマ娘レースエミュレータ移植版", style = MaterialTheme.typography.headlineMedium)
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(16.dp)
+            .background(MaterialTheme.colorScheme.errorContainer)
+            .padding(8.dp)
+    ) {
+        Text("5周年アップデート反映状況", style = MaterialTheme.typography.headlineSmall)
+        """
+            【未実装】「全開スパート」システムを追加
+            【未実装】レース中に発動した一部スキルの効果量が賢さに応じて上昇する仕組みを追加
+            【未実装】「リード確保」システムの調整
+            【要修正】コースの直線やコーナーの距離を、実際のレース場の距離に合わせて調整（大井1800ダ、ロンシャン2400芝）
+            【要確認】「小回り◎」「小回り○」「小回り×」が発動するように調整（新潟と中山の一部）
+            【未実装】「助走距離システム」を追加
+            【要確認】助走距離システムの追加に伴い、スキル詳細において発動タイミングが 「スタート時」と記載されたスキルの、発動条件の仕組みを調整
+            【要修正】サンタアニタパークレース場、デルマーレース場追加
+        """.trimIndent().split("\n").forEach {
+            Row { Text(it.trim()) }
+        }
     }
 }
 
