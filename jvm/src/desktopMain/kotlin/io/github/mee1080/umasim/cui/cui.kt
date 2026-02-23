@@ -23,7 +23,8 @@ import io.github.mee1080.umasim.scenario.Scenario
 val scenario = Scenario.URA
 
 fun openCui(args: Array<String>) {
-    simulateOnsen()
+    simulateBC()
+//    simulateOnsen()
 //    simulateMujinto()
 //    debugMujinto()
 //    simulateLegend()

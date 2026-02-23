@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.climax.*
 import io.github.mee1080.umasim.scenario.cook.activateDish
 import io.github.mee1080.umasim.scenario.cook.updateCookStatus
@@ -34,7 +35,6 @@ import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
 import io.github.mee1080.umasim.scenario.mecha.applyMechaOverdrive
 import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
-import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
@@ -73,6 +73,7 @@ fun SimulationState.updateRefresh(): SimulationState {
 suspend fun SimulationState.updateOutingStep(selector: ActionSelector): SimulationState {
     val targets = mutableSetOf<MemberState>()
     member.filter { it.outingType && it.supportState?.outingStep == 1 }.forEach {
+        // TODO お出かけ開始イベント確率アップ反映
         val rate = if (it.relation >= 60) 0.25 else 0.05
         if (Random.nextDouble() < rate) {
             targets.add(it)
@@ -91,6 +92,7 @@ fun SimulationState.shuffleMember(): SimulationState {
     var supportPosition: Map<StatusType, MutableList<MemberState>>
     do {
         newMember = member.map { it.selectPosition(turn, this) }
+        newMember = scenario.calculator.modifyShuffledMember(this, newMember)
         supportPosition = trainingType.associateWith { mutableListOf() }
         newMember.forEach {
             it.positions.forEach { status ->
@@ -287,10 +289,7 @@ suspend fun SimulationState.applyAction(
 
         is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result)
 
-        is BCActionResult -> {
-            // TODO: BCシナリオのアクション結果を反映する
-            this
-        }
+        is BCActionResult -> BCCalculator.applyScenarioAction(this, result)
     }
 }
 
@@ -499,7 +498,7 @@ private fun SimulationState.selectAoharuTrainingHint(support: List<MemberState>)
     if (scenario != Scenario.AOHARU) return Status()
     val aoharuList = support.filter { it.scenarioState is AoharuMemberState && it.scenarioState.aoharuIcon }
     if (aoharuList.isEmpty()) return Status()
-    // TODO アオハル爆発スキル
+    // アオハル爆発スキルは未実装
     // val burnList = aoharuList.filter { it.aoharuBurn }
     if (Random.nextInt(100) >= 15) return Status()
     val skillList = aoharuList.filter { it.scenarioState is AoharuMemberState && !it.scenarioState.aoharuBurn }
@@ -714,10 +713,7 @@ private suspend fun SimulationState.applyScenarioActionParam(
         is LegendActionParam -> LegendCalculator.applyScenarioActionParam(this, action, result, param)
         is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
         is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
-        is BCActionParam -> {
-            // TODO: BCシナリオのアクションパラメータを反映する
-            this
-        }
+        is BCActionParam -> BCCalculator.applyScenarioActionParam(this, result, param)
     }
 }
 
@@ -745,7 +741,7 @@ private fun SimulationState.applyGmAction(action: GmActionParam): SimulationStat
                 )
                 oldMember.copy(supportState = newSupportState)
             }
-            // FIXME 色選択
+            // 色選択は未実装
             val founder = Founder.entries.random()
             addStatus = when (founder) {
                 Founder.Red -> Status(skillPt = 9)

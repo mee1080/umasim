@@ -156,4 +156,26 @@ interface ScenarioCalculator {
     fun getAdditionalMemberCount(
         state: SimulationState,
     ): Int = 0
+
+    /**
+     * トレーニングの絆上昇量ボーナス
+     */
+    fun getTrainingRelationBonus(
+        state: SimulationState,
+    ): Int = 0
+
+    /**
+     * ヒントアイコン最低保証
+     */
+    fun getForceHintCount(
+        state: SimulationState,
+    ): Int = 0
+
+    /**
+     * メンバー配置調整
+     */
+    fun modifyShuffledMember(
+        state: SimulationState,
+        member: List<MemberState>,
+    ): List<MemberState> = member
 }

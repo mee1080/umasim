@@ -352,4 +352,10 @@ object LegendCalculator : ScenarioCalculator {
     override fun getAdditionalMemberCount(state: SimulationState): Int {
         return state.legendStatus?.baseBuffEffect?.addMember ?: 0
     }
+
+    override fun getForceHintCount(
+        state: SimulationState,
+    ): Int {
+        return state.legendStatus?.baseBuffEffect?.forceHint ?: 0
+    }
 }

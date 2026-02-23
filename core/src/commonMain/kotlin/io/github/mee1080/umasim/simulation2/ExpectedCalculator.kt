@@ -92,7 +92,6 @@ class ExpectedCalculator(
         private val positionSelection = Calculator.calcCardPositionSelection(
             info = info.baseCalcInfo,
             member = factor,
-            // TODO ScenarioCalculator使用
             specialityRateUp = 0,
             positionRateUp = 0,
         )

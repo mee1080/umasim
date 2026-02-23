@@ -21,6 +21,7 @@ package io.github.mee1080.umasim.simulation2
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.aoharu.AoharuTeamStatusRank
+import io.github.mee1080.umasim.scenario.bc.BCStatus
 import io.github.mee1080.umasim.scenario.climax.*
 import io.github.mee1080.umasim.scenario.cook.CookStatus
 import io.github.mee1080.umasim.scenario.gm.GmStatus
@@ -28,7 +29,6 @@ import io.github.mee1080.umasim.scenario.larc.LArcStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMemberState
 import io.github.mee1080.umasim.scenario.legend.LegendStatus
 import io.github.mee1080.umasim.scenario.live.LiveStatus
-import io.github.mee1080.umasim.scenario.bc.BCStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.scenario.onsen.OnsenStatus
@@ -149,9 +149,7 @@ data class SimulationState(
 
     val forceHint = uafStatus?.forceHint ?: false
 
-    val forceHintCount
-        get() = legendStatus?.baseBuffEffect?.forceHint
-            ?: 0
+    val forceHintCount get() = scenario.calculator.getForceHintCount(this)
 
     val hintCountPlus
         get() = uafStatus?.let { if (it.forceHint) 1 else 0 }
@@ -176,11 +174,11 @@ data class SimulationState(
         fanCount = status.fanCount,
         currentStatus = status,
         totalRelation = totalRelation,
-        // TODO スキルPt140ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
+        // スキルPt140ごとに速度スキル1つ取る想定。ヒント取れるかは知らん。
         speedSkillCount = min(5, status.skillPt / 140),
-        // TODO スキルPt140ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
+        // スキルPt140ごとに回復スキル1つ取る想定。ヒント取れるかは知らん。速度と両方編成するとおかしくなる
         healSkillCount = min(3, status.skillPt / 140),
-        // TODO スキルPt140ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
+        // スキルPt140ごとに加速スキル1つ取る想定。ヒント取れるかは知らん。速度と回復と両方編成するとおかしくなる
         accelSkillCount = min(3, status.skillPt / 140),
         totalTrainingLevel = totalTrainingLevel,
         isLevelUpTurn = isLevelUpTurn,
@@ -193,9 +191,7 @@ data class SimulationState(
         support.sumOf { it.card.positionRateUp(it.relation) } + scenario.calculator.getPositionRateUp(this)
     }
 
-    val trainingRelationBonus
-        get() = mechaStatus?.trainingRelationBonus
-            ?: 0
+    val trainingRelationBonus get() = scenario.calculator.getTrainingRelationBonus(this)
 
     val continuousRace by lazy {
         raceTurns.contains(turn - 2) && raceTurns.contains(turn - 1)

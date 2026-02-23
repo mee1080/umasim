@@ -22,6 +22,8 @@ import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.randomSelect
+import io.github.mee1080.umasim.scenario.bc.BCTeamMember
+import io.github.mee1080.umasim.scenario.bc.BCTeamParameter
 import io.github.mee1080.umasim.scenario.climax.ShopItem
 import io.github.mee1080.umasim.scenario.cook.CookDish
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
@@ -582,12 +584,28 @@ data class OnsenSelectEquipment(
 sealed interface BCActionResult : ActionResult
 
 data class BCActionParam(
-    val dummy: Int = 0
+    val position: StatusType = StatusType.NONE,
+    val member: List<BCTeamMember> = emptyList(),
 ) : ScenarioActionParam {
-    override fun toShortString() = "BC(dummy=$dummy)"
+    override fun toShortString() = member.joinToString(",") { it.charaName }
 }
 
-data class BCAction(
-    override val name: String,
-    override val result: ActionResult,
-) : SingleAction
+data object BCDreamsTrainingResult : BCActionResult
+
+data object BCDreamsTraining : SingleAction {
+    override val name = "DREAMSトレーニング"
+    override val turnChange = false
+    override val result get() = BCDreamsTrainingResult
+}
+
+data class BCTeamParameterUpResult(
+    val parameter: BCTeamParameter,
+) : BCActionResult
+
+data class BCTeamParameterUp(
+    val parameter: BCTeamParameter,
+) : SingleAction {
+    override val name = "チームパラメータ上昇 ${parameter.displayName}"
+    override val turnChange = false
+    override val result get() = BCTeamParameterUpResult(parameter)
+}

@@ -43,7 +43,6 @@ fun SimulationState.predictNormal(): List<Action> {
     return mutableListOf(
         *(predictTrainingResult()),
         *(predictSleep()),
-        // TODO 出走可否判定、レース後イベント
         *(if (scenario.calculator.normalRaceBlocked(this)) emptyArray() else {
             // レースは高速化のため最初の1件のみ
             Store.raceMap.getOrNull(turn)?.firstOrNull()?.let {

@@ -201,4 +201,10 @@ object MechaCalculator : ScenarioCalculator {
     ): Boolean {
         return state.mechaStatus?.allSupportHint ?: false
     }
+
+    override fun getTrainingRelationBonus(
+        state: SimulationState,
+    ): Int {
+        return state.mechaStatus?.trainingRelationBonus ?: 0
+    }
 }

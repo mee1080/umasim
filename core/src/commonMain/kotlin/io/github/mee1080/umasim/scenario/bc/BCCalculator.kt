@@ -2,25 +2,237 @@ package io.github.mee1080.umasim.scenario.bc
 
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
-import io.github.mee1080.umasim.simulation2.Calculator
-import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.utility.mapIf
+import io.github.mee1080.utility.replaced
+import kotlin.random.Random
 
 object BCCalculator : ScenarioCalculator {
+
     override fun calcScenarioStatus(
         info: Calculator.CalcInfo,
         base: Status,
         raw: ExpectedStatus,
         friendTraining: Boolean
     ): Status {
-        // TODO: BCシナリオ固有のステータス上昇計算を実装する
-        return super.calcScenarioStatus(info, base, raw, friendTraining)
+        val bcStatus = info.bcStatus ?: return Status()
+        val position = info.training.type
+        val trainingEffect = bcStatus.trainingEffect(position)
+        val friendBonus = if (friendTraining) bcStatus.friendBonus else 0
+        if (Calculator.DEBUG) {
+            println("bc trainingEffect: $trainingEffect, friendBonus: $friendBonus")
+        }
+        // TODO 上限アップが下段に直接かかるか、上段で調整するか
+        return Status(
+            speed = calcSingleStatus(base.speed, trainingEffect, friendBonus),
+            stamina = calcSingleStatus(base.stamina, trainingEffect, friendBonus),
+            power = calcSingleStatus(base.power, trainingEffect, friendBonus),
+            guts = calcSingleStatus(base.guts, trainingEffect, friendBonus),
+            wisdom = calcSingleStatus(base.wisdom, trainingEffect, friendBonus),
+            skillPt = calcSingleStatus(base.skillPt, trainingEffect + bcStatus.skillPtEffect, friendBonus),
+        )
+    }
+
+    private fun calcSingleStatus(base: Int, trainingEffect: Int, friendBonus: Int): Int {
+        return base * (100 + trainingEffect) * (100 + friendBonus) / 10000 - base
+    }
+
+    override fun getScenarioCalcBonus(
+        state: SimulationState,
+        baseInfo: Calculator.CalcInfo,
+    ): Calculator.ScenarioCalcBonus? {
+        // サブ基礎能力は基本値にかかる
+        val bcStatus = state.bcStatus ?: return null
+        if (!bcStatus.dreamsTrainingActive) return null
+        return Calculator.ScenarioCalcBonus(
+            subFactor = bcStatus.subParameterRate / 100.0
+        )
+    }
+
+    override fun predictScenarioActionParams(
+        state: SimulationState,
+        baseActions: List<Action>,
+    ): List<Action> {
+        val bcStatus = state.bcStatus ?: return baseActions
+        return baseActions.map { action ->
+            when (action) {
+                is Training -> {
+                    val param = BCActionParam(action.type, bcStatus.teamMemberIn(action.type))
+                    action.copy(
+                        candidates = action.addScenarioActionParam(param)
+                    )
+                }
+
+                is Sleep -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
+
+                is Outing -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
+
+                is Race if (action.goal) -> action.copy(result = action.result.addScenarioActionParam(BCActionParam()))
+
+                else -> action
+            }
+        }
+    }
+
+    fun applyScenarioActionParam(
+        state: SimulationState,
+        result: ActionResult,
+        params: BCActionParam,
+    ): SimulationState {
+        if (!result.success) return state
+        return state.updateBCStatus {
+            if (params.position == StatusType.NONE) {
+                addRandomDreamGauge()
+            } else {
+                var newDreamsPoint = dreamsPoint
+                val newTeamMember = teamMember.mapIf({ params.member.contains(it) }) {
+                    if (it.dreamGauge == 3) {
+                        newDreamsPoint += dpMemberRankUp[casinoRarity]
+                        it.copy(dreamGauge = 0, memberRank = it.memberRank + 1)
+                    } else {
+                        it.copy(dreamGauge = it.dreamGauge + 1)
+                    }
+                }
+                copy(teamMember = newTeamMember, dreamsPoint = newDreamsPoint)
+            }
+        }
+    }
+
+    internal fun BCStatus.addRandomDreamGauge(): BCStatus {
+        return addDreamGauge(teamMember.filter { it.dreamGauge < 3 }.randomOrNull())
+    }
+
+    internal fun BCStatus.addLowestDreamGauge(): BCStatus {
+        // TODO カジノドライヴお出かけのゲージ最小判定方法調査
+        var result = this
+        repeat(3) {
+            result = result.addDreamGauge(teamMember.filter { it.dreamGauge < 3 }.randomOrNull())
+        }
+        return result
+    }
+
+    private fun BCStatus.addDreamGauge(target: BCTeamMember?): BCStatus {
+        return if (target == null) this else {
+            copy(
+                teamMember = teamMember.mapIf({ it == target }) {
+                    it.copy(dreamGauge = it.dreamGauge + 1)
+                }
+            )
+        }
+    }
+
+    override fun predictScenarioAction(
+        state: SimulationState,
+        goal: Boolean,
+    ): Array<Action> {
+        val bcStatus = state.bcStatus ?: return emptyArray()
+        if (goal || bcStatus.dreamsTrainingActive || bcStatus.dreamsTrainingCount == 0) return emptyArray()
+        return arrayOf(BCDreamsTraining)
+    }
+
+    fun applyScenarioAction(
+        state: SimulationState,
+        result: BCActionResult,
+    ): SimulationState {
+        return when (result) {
+            BCDreamsTrainingResult -> {
+                // TODO DREAMSトレーニングのサポカ配置ルール確認
+                val noneIndex = Random.nextInt(state.member.lastIndex)
+                val allPosition = setOf(StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM)
+                val newMember = state.member.mapIndexed { index, member ->
+                    if (index == noneIndex) {
+                        member.copy(position = StatusType.NONE, additionalPosition = emptySet())
+                    } else {
+                        member.copy(position = StatusType.SPEED, additionalPosition = allPosition)
+                    }
+                }
+                state.copy(member = newMember).updateBCStatus {
+                    copy(
+                        dreamsTrainingCount = dreamsTrainingCount - 1,
+                        dreamsTrainingActive = true,
+                    )
+                }
+            }
+
+            is BCTeamParameterUpResult -> state.updateBCStatus {
+                copy(
+                    teamParameter = teamParameter.replaced(result.parameter) { it + 1 },
+                    dreamsPoint = dreamsPoint - 5,
+                )
+            }
+        }
     }
 
     override fun updateScenarioTurn(state: SimulationState): SimulationState {
-        // TODO: BCシナリオ固有のターン更新処理を実装する
-        return super.updateScenarioTurn(state)
+        // チームメンバーをランダムなトレーニングに配置
+        return state.updateBCStatus {
+            copy(
+                teamMember = teamMember.map { it.copy(position = trainingType.random()) },
+                dreamsTrainingActive = false,
+            )
+        }
     }
 
-    // TODO: 必要に応じて他のメソッドをオーバーライドする
+    override fun modifyShuffledMember(
+        state: SimulationState,
+        member: List<MemberState>
+    ): List<MemberState> {
+        // シナリオリンクサポカ不在時はチームメンバーの位置に配置
+        // チームメンバーをサポカと同じ位置に配置する処理はBCScenarioEvents
+        val bcStatus = state.bcStatus ?: return member
+        val teamMemberPosition = bcStatus.teamMember.associate { it.charaName to it.position }
+        return member.map {
+            if (it.position != StatusType.NONE) it else {
+                it.copy(position = teamMemberPosition[it.charaName] ?: StatusType.NONE)
+            }
+        }
+    }
+
+    override fun getSpecialityRateUp(
+        state: SimulationState,
+        cardType: StatusType,
+    ): Int {
+        return state.bcStatus?.teamRankEffect?.specialityRateUp ?: 0
+    }
+
+    override fun getHintFrequencyUp(
+        state: SimulationState,
+        position: StatusType,
+    ): Int {
+        return state.bcStatus?.teamRankEffect?.hintFrequencyUp ?: 0
+    }
+
+    override fun isAllSupportHint(
+        state: SimulationState,
+        position: StatusType
+    ): Boolean {
+        return state.bcStatus?.hintAll == true
+    }
+
+    override fun getFailureRateDown(
+        state: SimulationState,
+    ): Int {
+        return state.bcStatus?.failureRateDown ?: 0
+    }
+
+    override fun getHpCostDown(
+        scenarioStatus: ScenarioStatus,
+    ): Int {
+        return (scenarioStatus as? BCStatus)?.hpCostDown ?: 0
+    }
+
+    override fun getTrainingRelationBonus(
+        state: SimulationState,
+    ): Int {
+        return state.bcStatus?.trainingRelationUp ?: 0
+    }
+
+    override fun getForceHintCount(
+        state: SimulationState,
+    ): Int {
+        return state.bcStatus?.minHintCount ?: 0
+    }
 }

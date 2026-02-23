@@ -2,6 +2,8 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.randomSelect
+import io.github.mee1080.umasim.scenario.bc.BCCalculator.addLowestDreamGauge
+import io.github.mee1080.umasim.scenario.bc.updateBCStatus
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
 import io.github.mee1080.umasim.scenario.cook.updateCookStatus
 import io.github.mee1080.umasim.scenario.legend.LegendMember
@@ -108,7 +110,11 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
             } else this
         }
 
-        // TODO 他の友人のイベント
+        "カジノドライヴ" -> {
+            // TODO カジノドライヴイベント
+            this
+        }
+
         else -> this
     }
 }
@@ -176,7 +182,7 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                     .updateLegendStatus { addBuffGauge(3) }
                     .startPassion(support)
 
-                // スピードシンボリ（TODO 本来は順番選択可能）
+                // スピードシンボリ（本来は順番選択可能）
                 2 -> applyFriendEvent(
                     support,
                     Status(
@@ -368,7 +374,31 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
             }
         }
 
-        // TODO 他の友人
+        "カジノドライヴ" -> {
+            // TODO カジノドライヴイベント
+            when (step) {
+
+                2 -> updateBCStatus { addLowestDreamGauge() }
+
+                3 -> updateBCStatus { addLowestDreamGauge() }
+
+                4 -> updateBCStatus { addLowestDreamGauge() }
+
+                5 -> updateBCStatus { addLowestDreamGauge() }
+
+                6 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 10, guts = 10, skillPt = 20, hp = 30, motivation = 1,
+                        skillHint = mapOf("いいとこ入った！" to 3),
+                    ),
+                    5, 7,
+                ).updateBCStatus { addLowestDreamGauge() }
+
+                else -> this
+            }
+        }
+
         else -> this
     }
 }
@@ -428,7 +458,11 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             )
 
-            // TODO 他の友人
+            "カジノドライヴ" -> {
+                // TODO カジノドライヴイベント
+                this
+            }
+
             else -> this
         }
     }
@@ -464,7 +498,11 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 0, 0,
             )
 
-            // TODO 他の友人
+            "カジノドライヴ" -> {
+                // TODO カジノドライヴイベント
+                this
+            }
+
             else -> this
         }
     }

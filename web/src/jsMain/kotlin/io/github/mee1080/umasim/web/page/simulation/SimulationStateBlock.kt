@@ -179,6 +179,9 @@ fun SimulationStateBlock(state: SimulationState) {
         state.onsenStatus?.let {
             OnsenStateBlock(it, state.status)
         }
+        state.bcStatus?.let {
+            BCStateBlock(it)
+        }
         HideBlock("サポートカード") {
             state.support.forEach {
                 MemberState(it)

@@ -128,6 +128,7 @@ fun SelectionBlock(
                         LegendInfo(action)
                         MujintoInfo(action)
                         OnsenInfo(action)
+                        BCInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -166,9 +167,7 @@ fun SelectionBlock(
 
                     is GmActivateWisdom -> {}
 
-                    is ClimaxBuyUseItem -> {
-                        // TODO
-                    }
+                    is ClimaxBuyUseItem -> {}
 
                     is LArcGetAptitude -> {
                         val description = when (action.result.aptitude) {
@@ -241,7 +240,9 @@ fun SelectionBlock(
 
                     is OnsenSelectEquipment -> {}
 
-                    is BCAction -> {}
+                    is BCDreamsTraining -> {}
+
+                    is BCTeamParameterUp -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
@@ -329,5 +330,17 @@ private fun OnsenInfo(action: Action) {
         }
         val ticket = if (param.onsenTicket == 0) "" else " 入浴券：${param.onsenTicket}枚"
         Text("$dig$status$ticket")
+    }
+}
+
+@Composable
+private fun BCInfo(action: Action) {
+    val param = action.candidates.firstOrNull { it.first.success }
+        ?.first?.scenarioActionParam as? BCActionParam ?: return
+    if (param.member.isEmpty()) return
+    Div {
+        Text(param.member.joinToString(", ") {
+            "${it.charaName} ${it.memberRankString} ${it.dreamGauge}/3"
+        })
     }
 }

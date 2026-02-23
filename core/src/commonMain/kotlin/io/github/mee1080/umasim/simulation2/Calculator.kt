@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.bc.BCStatus
 import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
 import io.github.mee1080.umasim.scenario.climax.ShopItem
 import io.github.mee1080.umasim.scenario.climax.WeightItem
@@ -37,7 +38,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 object Calculator {
 
-    var DEBUG = false
+    var DEBUG = true
 
     data class CalcInfo(
         val chara: Chara,
@@ -65,6 +66,7 @@ object Calculator {
         val legendStatus get() = scenarioStatus as? LegendStatus
         val mujintoStatus get() = scenarioStatus as? MujintoStatus
         val onsenStatus get() = scenarioStatus as? OnsenStatus
+        val bcStatus get() = scenarioStatus as? BCStatus
 
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(
@@ -105,6 +107,7 @@ object Calculator {
         val motivationBonus: Int = 0,
         val trainingBonus: Int = 0,
         val additionalFactor: Double = 1.0,
+        val subFactor: Double = 1.0,
     )
 
     fun calcTrainingSuccessStatus(
@@ -196,8 +199,9 @@ object Calculator {
             } + (bonus?.trainingBonus ?: 0)) / 100.0
         val count = 1 + info.member.size * 0.05
         val scenarioFactor = bonus?.additionalFactor ?: 1.0
-        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor")
-        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor
+        val subFactor = if (info.training.type == targetType) 1.0 else bonus?.subFactor ?: 1.0
+        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor, subFactor=$subFactor")
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor * subFactor
         return min(maxValue, raw + 0.0002)
     }
 

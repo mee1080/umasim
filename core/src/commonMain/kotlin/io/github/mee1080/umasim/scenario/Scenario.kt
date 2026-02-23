@@ -7,6 +7,9 @@ import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.scenario.aoharu.AoharuCalculator
 import io.github.mee1080.umasim.scenario.aoharu.AoharuScenarioEvents
 import io.github.mee1080.umasim.scenario.aoharu.aoharuTrainingData
+import io.github.mee1080.umasim.scenario.bc.BCCalculator
+import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
+import io.github.mee1080.umasim.scenario.bc.bcTrainingData
 import io.github.mee1080.umasim.scenario.climax.ClimaxCalculator
 import io.github.mee1080.umasim.scenario.climax.ClimaxScenarioEvents
 import io.github.mee1080.umasim.scenario.climax.climaxTrainingData
@@ -33,9 +36,6 @@ import io.github.mee1080.umasim.scenario.mecha.mechaTrainingData
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.mujinto.MujintoScenarioEvents
 import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
-import io.github.mee1080.umasim.scenario.bc.BCCalculator
-import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
-import io.github.mee1080.umasim.scenario.bc.bcTrainingData
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenScenarioEvents
 import io.github.mee1080.umasim.scenario.onsen.onsenTrainingData
@@ -233,11 +233,14 @@ enum class Scenario(
 
     BC(
         scenarioNumber = 13,
-        displayName = "BC（仮）",
+        displayName = "Beyond Dreams 共に前へ、共に光を",
         trainingData = bcTrainingData,
         scenarioEvents = { BCScenarioEvents() },
-        // TODO: シナリオリンク対象のウマ娘を追加する
-        scenarioLink = emptySet(),
+        turn = 69,
+        scenarioLink = setOf(
+            "エスポワールシチー", "ラブズオンリーユー", "レッドディザイア",
+            "フォーエバーヤング", "マルシュロレーヌ", "カジノドライヴ",
+        ),
         calculator = BCCalculator,
     ),
 
