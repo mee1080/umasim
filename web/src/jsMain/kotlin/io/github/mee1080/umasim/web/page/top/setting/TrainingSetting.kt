@@ -73,5 +73,8 @@ fun TrainingSetting(model: ViewModel, state: State) {
         if (state.scenario == Scenario.MECHA) {
             MechaTrainingSetting(model, state.mechaState)
         }
+        if (state.scenario == Scenario.BC) {
+            BcTrainingSetting(model, state.bcState)
+        }
     }
 }

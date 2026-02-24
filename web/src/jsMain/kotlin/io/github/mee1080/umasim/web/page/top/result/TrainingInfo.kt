@@ -312,6 +312,22 @@ fun TrainingInfo(model: ViewModel, state: State) {
         if (!state.scenario.guestMember) {
             H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
         }
+        if (state.scenario == Scenario.BC) {
+            val bcStatus = state.bcStatusIfEnabled
+            if (bcStatus != null) {
+                NestedHideBlock("BCシナリオボーナス") {
+                    Div { Text("チームランク: ${io.github.mee1080.umasim.scenario.bc.rankToString.getOrElse(bcStatus.teamRank) { "" }}") }
+                    Div { Text("友情ボーナス: +${bcStatus.friendBonus}%") }
+                    Div { Text("トレーニング効果（チームメンバー）: +${bcStatus.trainingEffect(state.selectedTrainingTypeForScenario)}%") }
+                    if (bcStatus.dreamsTrainingActive) {
+                        Div { Text("サブ基礎能力上昇率: ${bcStatus.subParameterRate}%") }
+                        Div { Text("体力消費軽減: ${bcStatus.hpCostDown}%") }
+                        Div { Text("スキルPt上昇量アップ: ${bcStatus.skillPtEffect}%") }
+                        Div { Text("ヒント発生率アップ: ${bcStatus.teamRankEffect.hintFrequencyUp}%") }
+                    }
+                }
+            }
+        }
         if (state.trainingImpact.isNotEmpty()) {
             NestedHideBlock("サポカ影響度") {
                 Div {

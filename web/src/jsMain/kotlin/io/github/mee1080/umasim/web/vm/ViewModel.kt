@@ -58,6 +58,8 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
     val graphViewModel = GraphViewModel(this)
 
+    val bcViewModel = BCViewModel(this)
+
     fun navigate(page: Page) {
         state = state.copy(page = page)
     }
@@ -846,5 +848,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
     fun updateMujinto(update: MujintoState.() -> MujintoState) {
         update { copy(mujintoState = mujintoState.update()) }
+    }
+
+    fun updateBC(update: BCState.() -> BCState) {
+        update { copy(bcState = bcState.update()) }
     }
 }
