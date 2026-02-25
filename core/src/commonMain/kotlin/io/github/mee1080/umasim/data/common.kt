@@ -175,6 +175,12 @@ fun toRaceGround(value: String) = when (value) {
     else -> RaceGround.UNKNOWN
 }
 
+fun toRaceGround(value: Int) = when (value) {
+    1 -> RaceGround.TURF
+    2 -> RaceGround.DIRT
+    else -> RaceGround.UNKNOWN
+}
+
 enum class RaceRunningStyle(val displayName: String) {
     NIGE("逃げ"), SENKO("先行"), SASHI("差し"), OIKOMI("追込"),
 }

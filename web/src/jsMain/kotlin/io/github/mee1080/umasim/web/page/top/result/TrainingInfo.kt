@@ -323,7 +323,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Div { Text("サブ基礎能力上昇率: ${bcStatus.subParameterRate}%") }
                         Div { Text("体力消費軽減: ${bcStatus.hpCostDown}%") }
                         Div { Text("スキルPt上昇量アップ: ${bcStatus.skillPtEffect}%") }
-                        Div { Text("ヒント発生率アップ: ${bcStatus.teamRankEffect.hintFrequencyUp}%") }
+                        Div { Text("ヒント発生率アップ: ${bcStatus.hintFrequencyUp}%") }
                     }
                 }
             }

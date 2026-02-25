@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.scenario.bc
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.utility.getOrLast
 
 fun SimulationState.updateBCStatus(update: BCStatus.() -> BCStatus): SimulationState {
     val bcStatus = this.bcStatus ?: return this
@@ -22,12 +23,15 @@ data class BCStatus(
 ) : ScenarioStatus {
 
     val teamRank by lazy { teamMember.minOfOrNull { it.memberRank } ?: 0 }
-    val teamRankEffect get() = teamRankEffects.getOrElse(teamRank) { teamRankEffects.last() }
 
     val friendBonus
-        get() = teamRankEffect.friendBonus + if (dreamsTrainingActive) {
+        get() = teamFriendBonus.getOrLast(teamRank) + if (dreamsTrainingActive) {
             physicalFriendBonus[teamParameter[BCTeamParameter.Physical]!!]
         } else 0
+
+    val specialityRateUp get() = teamSpecialityRateUp.getOrLast(teamRank)
+
+    val hintFrequencyUp get() = teamHintFrequencyUp.getOrLast(teamRank)
 
     fun teamMemberIn(position: StatusType) =
         if (dreamsTrainingActive) teamMember else teamMember.filter { it.position == position }
@@ -61,9 +65,7 @@ data class BCTeamMember(
 ) {
     val memberRankString get() = rankToString[memberRank]
 
-    val memberRankEffect get() = memberRankEffects.getOrElse(memberRank) { memberRankEffects.last() }
-
-    val trainingEffect get() = memberRankEffect.trainingEffect + if (dreamGauge == 3) memberRankEffect.maxTrainingEffect else 0
+    val trainingEffect get() = memberTrainingEffect.getOrLast(memberRank) + if (dreamGauge == 3) 30 else 0
 }
 
 data class BCMemberRankEffect(

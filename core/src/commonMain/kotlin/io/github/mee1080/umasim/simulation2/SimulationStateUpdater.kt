@@ -166,10 +166,11 @@ fun SimulationState.addAllStatus(
     skillPt: Int = 0,
     skillHint: Map<String, Int> = emptyMap(),
     hp: Int = 0,
+    motivation: Int = 0,
 ) = addStatus(
     Status(
         speed = status, stamina = status, power = status, guts = status, wisdom = status,
-        skillPt = skillPt, skillHint = skillHint, hp = hp,
+        skillPt = skillPt, skillHint = skillHint, hp = hp, motivation = motivation,
     )
 )
 
@@ -202,7 +203,6 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
     if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
     if (state.scenario == Scenario.ONSEN && turn < 3 && charaName == "保科健子") return this
-    // TODO: BCシナリオの友人サポカ不在判定を追加する
 
     // 各トレーニングに配置
     var position: StatusType
@@ -479,9 +479,9 @@ private fun SimulationState.selectTrainingHint(
     }
 }
 
-private fun MemberState.selectHint(currentStatus: Status, count: Int = 1): Status {
+private fun MemberState.selectHint(currentStatus: Status, count: Int = 1, hintCountUpEnabled: Boolean = true): Status {
     var result = Status()
-    repeat(count + card.hintCountUp(relation)) {
+    repeat(count + (if (hintCountUpEnabled) card.hintCountUp(relation) else 0)) {
         val hintSkill = (card.skills.filter {
             !result.skillHint.containsKey(it) && currentStatus.skillHint.getOrElse(it) { 0 } < 5
         } + "").random()
@@ -946,4 +946,12 @@ fun SimulationState.addNextTurnSpecialityRateUpAll(rate: Int): SimulationState {
 fun SimulationState.addRandomSupportHint(): SimulationState {
     val target = support.filter { !it.outingType }.randomOrNull() ?: return this
     return addStatus(target.selectHint(status))
+}
+
+fun SimulationState.addAllSupportHint(): SimulationState {
+    var result = this
+    support.filter { !it.outingType }.forEach {
+        result = result.addStatus(it.selectHint(status, hintCountUpEnabled = false))
+    }
+    return result
 }

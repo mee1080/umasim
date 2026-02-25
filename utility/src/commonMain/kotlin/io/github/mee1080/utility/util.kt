@@ -55,3 +55,5 @@ fun Collection<Char>.randomString(size: Int) = buildString(size) {
         append(this@randomString.random())
     }
 }
+
+fun <T> List<T>.getOrLast(index: Int) = getOrElse(index) { last() }

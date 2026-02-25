@@ -1,12 +1,11 @@
 package io.github.mee1080.umasim.scenario.bc
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.BaseScenarioEvents
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.bc.BCCalculator.addRandomDreamGauge
-import io.github.mee1080.umasim.simulation2.ActionSelector
-import io.github.mee1080.umasim.simulation2.BCTeamParameterUp
-import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.umasim.simulation2.*
 
 class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScenarioEvents() {
 
@@ -19,9 +18,24 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
     override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.beforeAction(state, selector)
         return when (base.turn) {
-            3 -> base
+
+            1 -> base
                 .joinTeamMembers()
-                .selectTeamParameter(selector, dpInitial)
+
+            3 -> base
+                .selectTeamParameter(selector, 3, dpInitial)
+
+            25 -> base
+                .addAllStatus(status = 6, skillPt = 40)
+
+            41 -> base
+                .addAllStatus(status = 10, skillPt = 60)
+
+            49 -> base
+                .addAllStatus(status = 10, skillPt = 40)
+
+            59 -> base
+                .addAllStatus(status = 25, skillPt = 60)
 
             37, 38, 39, 40, 61, 62, 63, 64 -> base
                 .updateBCStatus { addRandomDreamGauge() }
@@ -35,19 +49,35 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
         return when (base.turn) {
 
             12 -> base
-                .selectTeamParameter(selector, dpMeeting)
+                .addAllStatus(status = 3, skillPt = 15, hp = 15, motivation = 1)
+                .addAllSupportHint()
+                .selectTeamParameter(selector, 3, dpMeeting)
+
+            16 -> base
+                // TODO チームランクE達成時に発生
+                .addStatus(Status(speed = 10, skillPt = 10))
 
             24 -> base
-                .selectTeamParameter(selector, dpMeeting)
+                .addAllStatus(status = 5, skillPt = 25, hp = 15, motivation = 1)
+                .addAllSupportHint()
+                .allTrainingLevelUp()
+                .selectTeamParameter(selector, 5, dpMeeting)
 
             36 -> base
-                .selectTeamParameter(selector, dpMeeting)
+                .addAllStatus(status = 10, skillPt = 30, hp = 15, motivation = 1)
+                .addAllSupportHint()
+                .selectTeamParameter(selector, 5, dpMeeting)
 
             48 -> base
-                .selectTeamParameter(selector, dpMeeting)
+                .addAllStatus(status = 15, skillPt = 60, hp = 15, motivation = 1, skillHint = mapOf("全身全霊" to 1))
+                .addAllSupportHint()
+                .allTrainingLevelUp()
+                .selectTeamParameter(selector, 8, dpMeeting)
 
             60 -> base
-                .selectTeamParameter(selector, dpMeeting, 4)
+                .addAllStatus(status = 30, skillPt = 110, hp = 15, motivation = 1)
+                .addAllSupportHint()
+                .selectTeamParameter(selector, 8, dpMeeting, 4)
 
             else -> base
         }
@@ -70,6 +100,7 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
 
     private suspend fun SimulationState.selectTeamParameter(
         selector: ActionSelector,
+        maxLevel: Int,
         dreamsPointData: List<Int>,
         dreamsTrainingCount: Int = 2,
     ): SimulationState {
@@ -82,7 +113,7 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
         while ((state.bcStatus?.dreamsPoint ?: 0) >= 5) {
             val bcStatus = state.bcStatus ?: return state
             val actions = BCTeamParameter.entries
-                .filter { bcStatus.teamParameter[it]!! < 8 }
+                .filter { bcStatus.teamParameter[it]!! < maxLevel }
                 .map { BCTeamParameterUp(it) }
             if (actions.isEmpty()) break
             val action = selector.select(state, actions)
@@ -92,8 +123,8 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
     }
 
     override fun afterSimulation(state: SimulationState): SimulationState {
-        // TODO: BCシナリオ固有の育成完了時イベント処理を実装する
         return super.afterSimulation(state)
+            .addAllStatus(status = 40, skillPt = 100, skillHint = mapOf(route.skill to 2, "情熱と挑戦の先の栄光" to 1))
     }
 
     override fun beforePredict(state: SimulationState): SimulationState {

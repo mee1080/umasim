@@ -1,9 +1,6 @@
 package io.github.mee1080.umasim.scenario.bc
 
-import io.github.mee1080.umasim.data.ExpectedStatus
-import io.github.mee1080.umasim.data.Status
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.mapIf
@@ -191,18 +188,27 @@ object BCCalculator : ScenarioCalculator {
         }
     }
 
+    override fun calcBaseRaceStatus(
+        state: SimulationState,
+        race: RaceEntry,
+        goal: Boolean
+    ): Status? {
+        // TODO レース上昇量
+        return super.calcBaseRaceStatus(state, race, goal)
+    }
+
     override fun getSpecialityRateUp(
         state: SimulationState,
         cardType: StatusType,
     ): Int {
-        return state.bcStatus?.teamRankEffect?.specialityRateUp ?: 0
+        return state.bcStatus?.specialityRateUp ?: 0
     }
 
     override fun getHintFrequencyUp(
         state: SimulationState,
         position: StatusType,
     ): Int {
-        return state.bcStatus?.teamRankEffect?.hintFrequencyUp ?: 0
+        return state.bcStatus?.hintFrequencyUp ?: 0
     }
 
     override fun isAllSupportHint(
