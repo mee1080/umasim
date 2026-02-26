@@ -4,13 +4,11 @@ import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.bc.rankToString
 import io.github.mee1080.umasim.web.components.atoms.MdCheckbox
-import io.github.mee1080.umasim.web.components.atoms.MdRadioGroup
 import io.github.mee1080.umasim.web.components.atoms.onChange
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
 import io.github.mee1080.umasim.web.state.BCState
-import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
@@ -27,12 +25,6 @@ fun BcTrainingSetting(model: ViewModel, state: BCState) {
         }
         SliderEntry("メンタル：", state.mentalLevel, 1, 8) {
             model.updateBC { copy(mentalLevel = it.toInt()) }
-        }
-
-        DivFlexCenter {
-            MdCheckbox("DREAMSトレーニング中", state.dreamsTrainingActive) {
-                onChange { model.updateBC { copy(dreamsTrainingActive = it) } }
-            }
         }
 
         H4 { Text("チームメンバー") }
@@ -53,6 +45,15 @@ fun BcTrainingSetting(model: ViewModel, state: BCState) {
                 }
 
                 DivFlexCenter {
+                    MdCheckbox("配置あり", member.placed) {
+                        onChange { value ->
+                            model.updateBC {
+                                copy(teamMembers = teamMembers.toMutableList().also {
+                                    it[index] = it[index].copy(placed = value)
+                                })
+                            }
+                        }
+                    }
                     MdCheckbox("ドリームゲージ最大", member.dreamGaugeMax) {
                         onChange { value ->
                             model.updateBC {
@@ -63,22 +64,12 @@ fun BcTrainingSetting(model: ViewModel, state: BCState) {
                         }
                     }
                 }
+            }
+        }
 
-                DivFlexCenter {
-                    Text("配置：")
-                    MdRadioGroup(
-                        trainingTypeList,
-                        member.position,
-                        onSelect = { value ->
-                            model.updateBC {
-                                copy(teamMembers = teamMembers.toMutableList().also {
-                                    it[index] = it[index].copy(position = value)
-                                })
-                            }
-                        },
-                        itemToLabel = { it.displayName }
-                    )
-                }
+        DivFlexCenter {
+            MdCheckbox("DREAMSトレーニング中", state.dreamsTrainingActive) {
+                onChange { model.updateBC { copy(dreamsTrainingActive = it) } }
             }
         }
     }
