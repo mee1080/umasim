@@ -174,7 +174,7 @@ data class State(
 
     val mujintoStatusIfEnabled get() = if (scenario == Scenario.MUJINTO) mujintoState.toMujintoStatus() else null
 
-    val bcStatusIfEnabled get() = if (scenario == Scenario.BC) bcState.toBCStatus() else null
+    val bcStatusIfEnabled get() = if (scenario == Scenario.BC) bcState.toBCStatus(selectedTrainingType) else null
 
     val specialityRateUp
         get() = when (scenario) {

@@ -16,8 +16,8 @@ data class BCState(
     val mentalLevel: Int = 1,
     val dreamsTrainingActive: Boolean = false,
 ) {
-    fun toBCStatus() = BCStatus(
-        teamMember = teamMembers.map { it.toBCTeamMember() },
+    fun toBCStatus(selectedTrainingType: StatusType) = BCStatus(
+        teamMember = teamMembers.map { it.toBCTeamMember(selectedTrainingType) },
         teamParameter = mapOf(
             BCTeamParameter.Physical to physicalLevel,
             BCTeamParameter.Technique to techniqueLevel,
@@ -31,12 +31,12 @@ data class BCMemberState(
     val charaName: String,
     val memberRank: Int = 0,
     val dreamGaugeMax: Boolean = false,
-    val position: StatusType = StatusType.SPEED,
+    val placed: Boolean = false,
 ) {
-    fun toBCTeamMember() = BCTeamMember(
+    fun toBCTeamMember(currentPosition: StatusType) = BCTeamMember(
         charaName = charaName,
         dreamGauge = if (dreamGaugeMax) 3 else 0,
         memberRank = memberRank,
-        position = position
+        position = if (placed) currentPosition else StatusType.NONE
     )
 }
