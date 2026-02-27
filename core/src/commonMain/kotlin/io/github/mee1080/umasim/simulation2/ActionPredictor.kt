@@ -82,7 +82,7 @@ fun SimulationState.calcTrainingResult(
         training = training,
         member = support,
     )
-    val scenarioCalcBonus = scenario.calculator.getScenarioCalcBonus(this, info)
+    val scenarioCalcBonus = scenario.calculator.getScenarioCalcBonus(info)
     val (baseStatus, friend) = Calculator.calcTrainingSuccessStatusAndFriendEnabled(info, scenarioCalcBonus)
     val successStatus = if (itemAvailable) {
         baseStatus + Calculator.calcItemBonus(

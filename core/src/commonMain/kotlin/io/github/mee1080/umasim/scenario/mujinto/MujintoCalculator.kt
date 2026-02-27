@@ -344,10 +344,9 @@ object MujintoCalculator : ScenarioCalculator {
     }
 
     override fun getScenarioCalcBonus(
-        state: SimulationState,
         baseInfo: CalcInfo,
     ): Calculator.ScenarioCalcBonus? {
-        if (!state.isLevelUpTurn) return null
+        if (!baseInfo.isLevelUpTurn) return null
         val mujintoStatus = baseInfo.mujintoStatus ?: return null
         val friendCount = baseInfo.member.count { it.isFriendTraining(baseInfo.training.type) }
         val mujintoFriendBonus = (100 + friendCount * mujintoStatus.trainingEffectByFriend) / 100.0

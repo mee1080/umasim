@@ -25,9 +25,9 @@ data class BCStatus(
     val teamRank by lazy { teamMember.minOfOrNull { it.memberRank } ?: 0 }
 
     val friendBonus
-        get() = teamFriendBonus.getOrLast(teamRank) + if (dreamsTrainingActive) {
-            physicalFriendBonus[teamParameter[BCTeamParameter.Physical]!!]
-        } else 0
+        get() = (100 + teamFriendBonus.getOrLast(teamRank)) * (if (dreamsTrainingActive) {
+            100 + physicalFriendBonus[teamParameter[BCTeamParameter.Physical]!!]
+        } else 100) / 10000.0
 
     val specialityRateUp get() = teamSpecialityRateUp.getOrLast(teamRank)
 
@@ -38,7 +38,7 @@ data class BCStatus(
 
     fun trainingEffect(position: StatusType) = teamMemberIn(position).sumOf { it.trainingEffect }
 
-    val subParameterRate get() = if (dreamsTrainingActive) 10 + physicalSubParameter[teamParameter[BCTeamParameter.Physical]!!] else 100
+    val subParameterRate get() = if (dreamsTrainingActive) (10 + physicalSubParameter[teamParameter[BCTeamParameter.Physical]!!]) else 100
 
     val hpCostDown get() = if (dreamsTrainingActive) physicalHpCostDown[teamParameter[BCTeamParameter.Physical]!!] else 0
 

@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.CalculatorTestBase
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.Calculator
+import io.github.mee1080.utility.replaced
 
 abstract class BCCalculatorTest(
     chara: Triple<String, Int, Int>,
@@ -18,6 +19,30 @@ abstract class BCCalculatorTest(
 
     fun Calculator.CalcInfo.initBcStatus(): Calculator.CalcInfo {
         return copy(scenarioStatus = BCStatus(teamMember = teamMemberList.map { BCTeamMember(it) }))
+    }
+
+    fun Calculator.CalcInfo.setMemberRank(index: Int, rank: String) = updateBcStatus {
+        copy(teamMember = teamMember.replaced(index) { it.copy(memberRank = rankToString.indexOf(rank)) })
+    }
+
+    fun Calculator.CalcInfo.setMemberRank(vararg rank: String) = updateBcStatus {
+        copy(teamMember = teamMember.mapIndexed { index, member -> member.copy(memberRank = rankToString.indexOf(rank[index])) })
+    }
+
+    fun Calculator.CalcInfo.setMemberGaugeMax(index: Int, max: Boolean) = updateBcStatus {
+        copy(teamMember = teamMember.replaced(index) { it.copy(dreamGauge = if (max) 3 else 0) })
+    }
+
+    fun Calculator.CalcInfo.setMemberGaugeMax(vararg max: Boolean) = updateBcStatus {
+        copy(teamMember = teamMember.mapIndexed { index, member -> member.copy(dreamGauge = if (max[index]) 3 else 0) })
+    }
+
+    fun Calculator.CalcInfo.setTeamParameter(type: BCTeamParameter, value: Int) = updateBcStatus {
+        copy(teamParameter = teamParameter.replaced(type, value))
+    }
+
+    fun Calculator.CalcInfo.setTeamParameter(vararg value: Int) = updateBcStatus {
+        copy(teamParameter = BCTeamParameter.entries.associateWith { value[it.ordinal] })
     }
 
     fun testBcTraining(
@@ -34,7 +59,7 @@ abstract class BCCalculatorTest(
                 copy(
                     teamMember = teamMember.mapIndexed { index, member ->
                         if (guest.contains(index)) {
-                            member.copy(position = baseCalcInfo.training.type)
+                            member.copy(position = type)
                         } else {
                             member.copy(position = StatusType.NONE)
                         }
@@ -47,6 +72,22 @@ abstract class BCCalculatorTest(
             *support.toIntArray(),
             base = base,
             scenario = scenario,
+        )
+    }
+
+    fun testDreamsTraining(
+        baseCalcInfo: Calculator.CalcInfo,
+        type: StatusType,
+        level: Int,
+        support: List<Int> = supportCardList.mapIndexedNotNull { index, (name, _) ->
+            if (name == "[American Dream]カジノドライヴ") null else index
+        },
+        base: Status,
+        scenario: Status,
+    ) {
+        testBcTraining(
+            baseCalcInfo.updateBcStatus { copy(dreamsTrainingActive = true) },
+            type, level, support, listOf(0, 1, 2), base, scenario,
         )
     }
 }

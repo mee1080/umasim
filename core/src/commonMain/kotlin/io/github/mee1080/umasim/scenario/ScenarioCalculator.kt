@@ -101,9 +101,18 @@ interface ScenarioCalculator {
      * トレーニングの下段の計算に反映するボーナス
      */
     fun getScenarioCalcBonus(
-        state: SimulationState,
         baseInfo: CalcInfo,
     ): Calculator.ScenarioCalcBonus? = null
+
+    /**
+     * トレーニングの下段の結果を修正
+     */
+    fun modifyBaseStatus(
+        info: CalcInfo,
+        base: Status,
+        raw: ExpectedStatus,
+        friendTraining: Boolean,
+    ): Status = base
 
     /**
      * 得意率アップ

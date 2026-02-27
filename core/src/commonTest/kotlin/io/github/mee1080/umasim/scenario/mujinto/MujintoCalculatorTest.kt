@@ -88,7 +88,7 @@ abstract class MujintoCalculatorTest(
             training = training,
             member = baseCalcInfo.member.filter { memberNames.contains(it.name) },
         ).setTeamMember(guestCount)
-        val scenarioCalcBonus = MujintoCalculator.getScenarioCalcBonus(newState, info)
+        val scenarioCalcBonus = MujintoCalculator.getScenarioCalcBonus(info)
 
         val result = Calculator.calcTrainingSuccessStatusSeparated(info, scenarioCalcBonus)
         val message = buildString {

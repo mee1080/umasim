@@ -3,14 +3,17 @@ package io.github.mee1080.umasim.scenario.bc
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import io.github.mee1080.umasim.simulation2.Calculator.CalcInfo
 import io.github.mee1080.utility.mapIf
 import io.github.mee1080.utility.replaced
+import kotlin.math.max
+import kotlin.math.min
 import kotlin.random.Random
 
 object BCCalculator : ScenarioCalculator {
 
     override fun calcScenarioStatus(
-        info: Calculator.CalcInfo,
+        info: CalcInfo,
         base: Status,
         raw: ExpectedStatus,
         friendTraining: Boolean
@@ -18,12 +21,19 @@ object BCCalculator : ScenarioCalculator {
         val bcStatus = info.bcStatus ?: return Status()
         val position = info.training.type
         val trainingEffect = bcStatus.trainingEffect(position)
-        val friendBonus = if (friendTraining) bcStatus.friendBonus else 0
+        val friendBonus = if (friendTraining) bcStatus.friendBonus else 1.0
         if (Calculator.DEBUG) {
-            println("bc trainingEffect: $trainingEffect, friendBonus: $friendBonus")
+            val log = buildString {
+                append("BC TrainingEffect: ")
+                append(bcStatus.teamMemberIn(position).joinToString(",") {
+                    "${it.trainingEffect}(${it.memberRankString}/${it.dreamGauge})"
+                })
+                append(" FriendBonus: $friendBonus")
+            }
+            println(log)
         }
-        // TODO 上限アップが下段に直接かかるか、上段で調整するか
-        return Status(
+        // TODO 上限アップ
+        val base = Status(
             speed = calcSingleStatus(base.speed, trainingEffect, friendBonus),
             stamina = calcSingleStatus(base.stamina, trainingEffect, friendBonus),
             power = calcSingleStatus(base.power, trainingEffect, friendBonus),
@@ -31,22 +41,45 @@ object BCCalculator : ScenarioCalculator {
             wisdom = calcSingleStatus(base.wisdom, trainingEffect, friendBonus),
             skillPt = calcSingleStatus(base.skillPt, trainingEffect + bcStatus.skillPtEffect, friendBonus),
         )
+        return applyLimitOrSubParameterRate(info, base)
     }
 
-    private fun calcSingleStatus(base: Int, trainingEffect: Int, friendBonus: Int): Int {
-        return base * (100 + trainingEffect) * (100 + friendBonus) / 10000 - base
+    private fun calcSingleStatus(base: Int, trainingEffect: Int, friendBonus: Double): Int {
+        return (base * (100 + trainingEffect) * friendBonus / 100).toInt() - base
     }
 
-    override fun getScenarioCalcBonus(
-        state: SimulationState,
-        baseInfo: Calculator.CalcInfo,
-    ): Calculator.ScenarioCalcBonus? {
-        // サブ基礎能力は基本値にかかる
-        val bcStatus = state.bcStatus ?: return null
-        if (!bcStatus.dreamsTrainingActive) return null
-        return Calculator.ScenarioCalcBonus(
-            subFactor = bcStatus.subParameterRate / 100.0
+    override fun modifyBaseStatus(
+        info: CalcInfo,
+        base: Status,
+        raw: ExpectedStatus,
+        friendTraining: Boolean,
+    ): Status {
+        // サブ基礎能力倍率は最終結果に対して反映
+        return applyLimitOrSubParameterRate(info, base)
+    }
+
+    private fun applyLimitOrSubParameterRate(info: CalcInfo, base: Status): Status {
+        val bcStatus = info.bcStatus ?: return base
+        if (Calculator.DEBUG) println("applySubParameterRate active: ${bcStatus.dreamsTrainingActive}, subParameterRate: ${bcStatus.subParameterRate}")
+        if (!bcStatus.dreamsTrainingActive) return base
+        return base.copy(
+            speed = applyLimitOrSubParameterRateSingle(info, StatusType.SPEED, base.speed),
+            stamina = applyLimitOrSubParameterRateSingle(info, StatusType.STAMINA, base.stamina),
+            power = applyLimitOrSubParameterRateSingle(info, StatusType.POWER, base.power),
+            guts = applyLimitOrSubParameterRateSingle(info, StatusType.GUTS, base.guts),
+            wisdom = applyLimitOrSubParameterRateSingle(info, StatusType.WISDOM, base.wisdom),
+            skillPt = applyLimitOrSubParameterRateSingle(info, StatusType.SKILL, base.skillPt),
         )
+    }
+
+    private fun applyLimitOrSubParameterRateSingle(info: CalcInfo, type: StatusType, base: Int): Int {
+        if (base == 0) return 0
+        val bcStatus = info.bcStatus ?: return base
+        return when (type) {
+            StatusType.SKILL -> min(100 + bcStatus.skillPtLimitUp, base)
+            info.training.type -> min(100 + bcStatus.mainLimitUp, base)
+            else -> max(1, min(100, base) * bcStatus.subParameterRate / 100)
+        }
     }
 
     override fun predictScenarioActionParams(

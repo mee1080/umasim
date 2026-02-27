@@ -83,7 +83,8 @@ abstract class CalculatorTestBase(
             training = training,
             member = baseCalcInfo.member.filter { memberNames.contains(it.name) },
         ).setTeamMember(guestCount)
-        val result = Calculator.calcTrainingSuccessStatusSeparated(info)
+        val bonus = info.scenario.calculator.getScenarioCalcBonus(info)
+        val result = Calculator.calcTrainingSuccessStatusSeparated(info, bonus)
         val message = buildString {
             appendLine("expected:")
             appendLine(base)

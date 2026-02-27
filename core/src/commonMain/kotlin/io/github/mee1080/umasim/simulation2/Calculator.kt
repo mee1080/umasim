@@ -107,7 +107,6 @@ object Calculator {
         val motivationBonus: Int = 0,
         val trainingBonus: Int = 0,
         val additionalFactor: Double = 1.0,
-        val subFactor: Double = 1.0,
     )
 
     fun calcTrainingSuccessStatus(
@@ -150,7 +149,7 @@ object Calculator {
             hp = hp,
         )
         return Triple(
-            base to raw,
+            info.scenario.calculator.modifyBaseStatus(info, base, raw, friendTraining) to raw,
             info.scenario.calculator.calcScenarioStatus(info, base, raw, friendTraining),
             friendTraining,
         )
@@ -199,9 +198,8 @@ object Calculator {
             } + (bonus?.trainingBonus ?: 0)) / 100.0
         val count = 1 + info.member.size * 0.05
         val scenarioFactor = bonus?.additionalFactor ?: 1.0
-        val subFactor = if (info.training.type == targetType) 1.0 else bonus?.subFactor ?: 1.0
-        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor, subFactor=$subFactor")
-        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor * subFactor
+        if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor")
+        val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor
         return min(maxValue, raw + 0.0002)
     }
 
