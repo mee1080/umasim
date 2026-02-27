@@ -2,7 +2,7 @@
 
 buildkonfig = "0.17.1"
 clikt = "5.0.3"
-compose = "1.9.3"
+compose = "1.10.1"
 jvmTarget = "17"
 koalaplot = "0.10.2"
 koog = "0.5.3"
