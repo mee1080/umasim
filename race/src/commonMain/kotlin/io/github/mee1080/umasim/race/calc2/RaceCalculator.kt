@@ -192,6 +192,7 @@ private fun RaceState.updateFrame(): Boolean {
         staminaKeep = simulation.staminaKeep,
         secureLead = simulation.secureLead,
         staminaLimitBreak = simulation.staminaLimitBreak,
+        fullSpurt = simulation.fullSpurt,
         paceMakerFrame = paceMaker?.simulation?.frames?.lastOrNull(),
     )
     // 1秒おき判定
@@ -312,6 +313,12 @@ private fun RaceState.updateFrame(): Boolean {
         if (simulation.currentSpeed >= setting.maxSpurtSpeed) {
             simulation.staminaLimitBreak = true
         }
+    }
+
+    // 全開スパート
+    // TODO: 判定方法の修正が必要
+    if (setting.umaStatus.speed > 2000 && currentPhase == 3) {
+        simulation.fullSpurt = true
     }
 
     move(secondPerFrame)

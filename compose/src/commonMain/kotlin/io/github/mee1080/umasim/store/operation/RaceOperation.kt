@@ -286,6 +286,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 add(frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
 //                add(index, raceFrame, last, "リード確保") { it.secureLead }
                 add(frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
+                add(frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
 //                if (raceFrame.positionKeepState != PositionKeepState.NONE && raceFrame.positionKeepState != last.positionKeepState) {
 //                    add(index / 15f to raceFrame.positionKeepState.label)
 //                }

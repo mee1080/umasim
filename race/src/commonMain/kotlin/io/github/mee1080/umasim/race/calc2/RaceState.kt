@@ -238,6 +238,10 @@ class RaceState(
                 result += setting.staminaLimitBreakSpeed
             }
 
+            if (simulation.fullSpurt) {
+                result += sqrt(setting.umaStatus.speed.toDouble()) * setting.fullSpurtCoef
+            }
+
             return result
         }
 
@@ -257,8 +261,10 @@ class RaceState(
             if (simulation.isStartDash) {
                 acceleration += 24.0
             }
-            simulation.operatingSkills.forEach {
-                acceleration += it.acceleration
+            if (!simulation.fullSpurt) {
+                simulation.operatingSkills.forEach {
+                    acceleration += it.acceleration
+                }
             }
             if (simulation.competeFight) {
                 acceleration += setting.competeFightAcceleration
@@ -393,6 +399,7 @@ interface IRaceSetting {
     val coolDownBaseFrames: Double
     val skillActivateRate: Double
     val timeCoef: Double
+    val fullSpurtCoef: Double
     val oonige: Boolean
     val phase0Half: Double
     val phase1Start: Double
@@ -420,6 +427,7 @@ data class RaceSetting(
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
+    override val fullSpurtCoef: Double = 0.0,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -754,6 +762,7 @@ class RaceSimulationState(
     var secureLead: Boolean = false,
     var secureLeadNextFrame: Int = 0,
     var staminaLimitBreak: Boolean = false,
+    var fullSpurt: Boolean = false,
 
     val invokedSkills: List<InvokedSkill> = emptyList(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -850,6 +859,7 @@ data class RaceFrame(
     val staminaKeep: Boolean = false,
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = false,
+    val fullSpurt: Boolean = false,
     val paceMakerFrame: RaceFrame? = null,
 )
 
