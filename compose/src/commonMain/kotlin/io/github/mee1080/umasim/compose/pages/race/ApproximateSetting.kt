@@ -16,6 +16,7 @@ import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
+import io.github.mee1080.umasim.store.operation.setFullSpurtAccelCoef
 import io.github.mee1080.umasim.store.operation.setFullSpurtCoef
 import io.github.mee1080.umasim.store.operation.setPositionKeepMode
 import io.github.mee1080.umasim.store.operation.setPositionKeepRate
@@ -27,6 +28,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
     val positionKeepMode by derivedStateOf { state.setting.positionKeepMode }
     val positionKeepRate by derivedStateOf { state.setting.positionKeepRate }
     val fullSpurtCoef by derivedStateOf { state.setting.fullSpurtCoef }
+    val fullSpurtAccelCoef by derivedStateOf { state.setting.fullSpurtAccelCoef }
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -39,14 +41,23 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
         Column {
             Text("全開スパート", style = MaterialTheme.typography.titleLarge)
-            Text("詳細不明のため、開始位置は最終盤開始時とし、速度は指定した係数を用いて、以下の式で計算します")
+            Text("詳細不明のため、開始位置は最終盤開始時とし、速度と加速度は指定した係数を用いて、以下の式で計算します")
             Text("スピードのやる気による変動は有効、コースごとのボーナス対象ステータスやバ場による変動は無効です")
-            Text("速度上昇量：√(スピード-2000)×係数")
-            Text("係数: ${fullSpurtCoef.roundToString(3)}")
+            Text("最高速度上昇量：√(スピード-2000)×係数")
+            Text("速度係数: ${fullSpurtCoef.roundToString(3)}")
             Slider(
                 value = fullSpurtCoef.toFloat(),
                 onValueChange = { dispatch(setFullSpurtCoef(it.toDouble())) },
                 valueRange = 0f..0.1f,
+                steps = 99,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            Text("加速度: 通常の加速度×係数")
+            Text("加速度係数: ${fullSpurtAccelCoef.roundToString(2)}")
+            Slider(
+                value = fullSpurtAccelCoef.toFloat(),
+                onValueChange = { dispatch(setFullSpurtAccelCoef(it.toDouble())) },
+                valueRange = 0f..1.0f,
                 steps = 99,
                 modifier = Modifier.fillMaxWidth(),
             )

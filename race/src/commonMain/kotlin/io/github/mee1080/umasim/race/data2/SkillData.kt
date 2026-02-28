@@ -309,6 +309,7 @@ val ignoreConditions = mapOf(
     "season" to "季節条件は無視",
     "weather" to "天候条件は無視",
     "is_dirtgrade" to "交流重賞条件はレース場のみ判定、重賞かどうかは無視",
+    "fan_count" to "ファン数条件は無視",
 
     "order" to "順位条件は無視",
     "order_rate" to "順位条件は無視",
@@ -339,6 +340,7 @@ val ignoreConditions = mapOf(
     "distance_diff_top_float" to "他のウマ娘との距離条件は無視",
 
     "same_skill_horse_count" to "他のウマ娘のスキル条件は無視",
+    "is_exist_skill_id" to "他のウマ娘のスキル条件は無視",
 
     "is_behind_in" to "内外条件は無視",
     "lane_type" to "内外条件は無視",
@@ -653,6 +655,15 @@ data class Invoke(
             else -> duration
         }
     }
+
+    val isRunAtFullSpeedRandom by lazy {
+        conditions.any { list -> list.any { it.type == "run_at_full_speed_random" } }
+    }
+
+    fun fullSpurtAcceleration(state: RaceState): Double {
+        return totalEffect(state, "fullSpurtAcceleration") / 10000.0
+    }
+
 }
 
 @Serializable

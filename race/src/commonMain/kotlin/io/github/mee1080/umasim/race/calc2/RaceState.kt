@@ -262,7 +262,10 @@ class RaceState(
                 acceleration += 24.0
             }
             if (simulation.fullSpurt) {
-                // TODO 伸びを見せるスキルの効果反映
+                acceleration *= setting.fullSpurtAccelCoef
+                simulation.operatingSkills.forEach {
+                    acceleration += it.fullSpurtAcceleration
+                }
             } else {
                 simulation.operatingSkills.forEach {
                     acceleration += it.acceleration
@@ -402,6 +405,7 @@ interface IRaceSetting {
     val skillActivateRate: Double
     val timeCoef: Double
     val fullSpurtCoef: Double
+    val fullSpurtAccelCoef: Double
     val oonige: Boolean
     val phase0Half: Double
     val phase1Start: Double
@@ -430,6 +434,7 @@ data class RaceSetting(
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
     override val fullSpurtCoef: Double = 0.05,
+    override val fullSpurtAccelCoef: Double = 0.2,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -773,6 +778,7 @@ class RaceSimulationState(
     var secureLeadNextFrame: Int = 0,
     var staminaLimitBreak: Boolean = false,
     var fullSpurt: Boolean = false,
+    val fullSpurtRandomPosition: MutableMap<String, Double> = mutableMapOf(),
 
     val invokedSkills: List<InvokedSkill> = emptyList(),
     val coolDownMap: MutableMap<String, Int> = mutableMapOf(),
@@ -842,6 +848,7 @@ data class OperatingSkill(
     val duration: Double,
     val fixLane: Boolean,
     val laneChangeSpeed: Double,
+    val fullSpurtAcceleration: Double,
 ) {
     val totalSpeed = targetSpeed + speedWithDecel
 }

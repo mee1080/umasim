@@ -283,6 +283,11 @@ private fun checkCondition(
 
         "is_tight_track" -> condition.preChecked(baseSetting.trackDetail.tightTrack)
 
+        "run_at_full_speed_random" -> condition.checkInRaceBool {
+            val position = simulation.fullSpurtRandomPosition[skill.id] ?: return@checkInRaceBool false
+            simulation.startPosition >= position
+        }
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
@@ -536,6 +541,7 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
             duration = skill.calcDuration(this) * setting.timeCoef,
             fixLane = skill.invoke.isFixLane,
             laneChangeSpeed = skill.invoke.laneChangeSpeed(this),
+            fullSpurtAcceleration = skill.invoke.fullSpurtAcceleration(this),
         ).also {
             simulation.operatingSkills += it
             if (it.totalSpeed > 0.0 && !isAfterFinalCornerOrInFinalStraight && Random.nextDouble() < system.skillLaneChangeRate) {
