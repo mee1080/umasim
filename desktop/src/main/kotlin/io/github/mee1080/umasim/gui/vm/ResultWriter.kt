@@ -30,7 +30,6 @@ class ResultWriter {
 
     private val fileNameFormatter = SimpleDateFormat("yyyyMMddHHmmss")
 
-    // FIXME 新実装
 //    fun output(
 //        chara: Chara,
 //        support: List<SupportCard>,

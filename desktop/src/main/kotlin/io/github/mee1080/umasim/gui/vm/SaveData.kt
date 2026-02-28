@@ -24,6 +24,5 @@ data class SaveData(
 
     fun toJson() = Json.encodeToString(this)
 
-    // FIXME
     val simulationOption get() = FactorBasedActionSelector2.speedPower
 }

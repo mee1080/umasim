@@ -1,5 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -22,6 +21,7 @@ dependencies {
     implementation(project(":jvm"))
     implementation(compose.desktop.currentOs)
     implementation(libs.kotlinx.serializationJson)
+    implementation(libs.kotlinx.coroutinesCore)
 }
 
 tasks.withType<KotlinCompile> {

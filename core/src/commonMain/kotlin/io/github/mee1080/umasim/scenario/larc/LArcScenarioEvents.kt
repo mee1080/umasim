@@ -8,7 +8,6 @@ import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
 import kotlin.random.Random
 
-// TODO LArc
 class LArcScenarioEvents : ScenarioEvents {
 
     override fun beforeSimulation(state: SimulationState): SimulationState {

@@ -323,7 +323,6 @@ class ClimaxFactorBasedActionSelector(val option: Option = Option()) : ActionSel
                 state.status.fanCount,
                 state.status,
                 state.totalRelation,
-                // TODO
                 0,
                 0,
                 0,

@@ -135,7 +135,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
         val totalWinCount = uafStatus.festivalWinCount.values.sum()
         return when {
             totalWinCount == 75 -> base.addAllStatus(55, 140, mapOf("爆熱のキラメキ！" to 3))
-            // TODO 条件未確定
+            // 条件未確定
             totalWinCount >= 60 -> base.addAllStatus(30, 90, mapOf("爆熱のキラメキ！" to 1))
             else -> base.addAllStatus(20, 70, mapOf("バーニングソウル" to 1))
         }

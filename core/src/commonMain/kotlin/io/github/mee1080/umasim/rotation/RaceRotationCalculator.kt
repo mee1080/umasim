@@ -167,7 +167,7 @@ class RaceRotationCalculator(
                         option.rank(ground[raceEntry.ground]) + option.rank(distance[raceEntry.distanceType])
                     val nextRotation = rotation + raceEntry
                     val nextAchievement = nextRotation.checkAchievement(availableAchievement)
-                    // TODO 動作速度が大幅に遅くなるため、達成できなくなる称号の判定は除外
+                    // 動作速度が大幅に遅くなるため、達成できなくなる称号の判定は除外
 //                    val nextCannotAchieve =
 //                        checkCanAchieve(availableAchievement, raceSelections, nextRotation.selectedRace)
                     val diff = nextAchievement.mapNotNull { (name, count) ->

@@ -245,11 +245,9 @@ class LegendActionSelector(
         var score = 0.0
         when (mastery) {
             LegendMember.Blue -> {
-                // TODO
             }
 
             LegendMember.Green -> {
-                // TODO
             }
 
             LegendMember.Red -> {

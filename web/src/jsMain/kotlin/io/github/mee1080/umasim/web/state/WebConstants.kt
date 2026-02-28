@@ -134,7 +134,6 @@ object WebConstants {
         SortOrder("名前", descending = false, noInfo = true) { name },
         SortOrder("キャラ名", descending = false, noInfo = true) { chara },
         SortOrder("初期絆") { initialRelation },
-        // TODO 特殊固有対応
         SortOrder("初期ステ合計") { initialStatus(emptyList()).statusTotal },
         SortOrder("友情ボナ") { friendFactor(noSpecialUniqueCondition) },
         SortOrder("友情ボナ（特殊固有）") { friendFactor(withSpecialUniqueCondition) },

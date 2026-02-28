@@ -43,7 +43,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
                 .applyRace("A")
 
             70 -> newState
-                // TODO アオハルヒント、爆発10で+20
+                // アオハルヒント、爆発10で+20は未実装
                 .addStatus(Status(skillPt = 15))
                 .updateTrainingLevel()
 
@@ -73,7 +73,7 @@ class AoharuScenarioEvents : CommonScenarioEvents() {
         val current = member.map { it.charaName }
         val newMember = member.toMutableList()
         val rank = teamStatusRank
-        // TODO 適性による優先順位をつける
+        // 適性による優先順位をつけたい
         Store.Aoharu.getShuffledGuest().filter { !current.contains(it.chara) }.subList(0, count).forEach {
             newMember.add(createGuest(newMember.size, it, rank))
         }

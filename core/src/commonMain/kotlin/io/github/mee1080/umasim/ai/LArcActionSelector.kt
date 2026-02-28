@@ -198,9 +198,7 @@ class LArcActionSelector(
             status.longchampAptitude == 1 -> LArcAptitude.LongchampAptitude
             status.nutritionManagement == 1 -> LArcAptitude.NutritionManagement
 
-            // TODO クラシック遠征中、状況に応じてトレ効果+50%を取る
-
-            // FIXME 固定でスピ+50%を取る
+            // 固定でスピ+50%を取る
             turn in 37..40 && status.nutritionManagement == 2 -> LArcAptitude.NutritionManagement
 
             // スキルPt+10を取る
@@ -224,12 +222,10 @@ class LArcActionSelector(
             // 帰国後、友情+20%を取る
             turn >= 44 && status.mentalStrength < 3 -> LArcAptitude.MentalStrength
 
-            // TODO シニア遠征中、状況に応じてトレ効果+50%を取る
-
             // シニア遠征中、体力軽減を取る
             turn in 61..63 && status.strongHeart == 2 -> LArcAptitude.StrongHeart
 
-            // FIXME 固定でスピ→賢さ→パワ→スタ→根性の順で取る
+            // 固定でスピ→賢さ→パワ→スタ→根性の順で取る
             turn in 61..63 && status.nutritionManagement == 2 -> LArcAptitude.NutritionManagement
             turn in 61..63 && status.frenchSkill == 2 -> LArcAptitude.FrenchSkill
             turn in 61..63 && status.lifeRhythm == 2 -> LArcAptitude.LifeRhythm

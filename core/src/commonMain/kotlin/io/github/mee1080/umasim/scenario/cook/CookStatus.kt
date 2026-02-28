@@ -264,7 +264,7 @@ private fun SimulationState.addRandomHint(): SimulationState {
             }
         }
     }
-    // TODO 適性A以上のスキルからランダム
+    // 適性A以上のスキルからランダム選択は未実装
     return this
 }
 

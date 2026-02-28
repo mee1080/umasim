@@ -82,7 +82,7 @@ class GmScenarioEvents : CommonScenarioEvents() {
 
     private fun SimulationState.applyRace(race: SpecialRace): SimulationState {
         val gmStatus = gmStatus ?: return this
-        // FIXME 青叡智のスキル獲得は未反映
+        // 青叡智のスキル獲得は未反映
         val baseStatus = race.baseStatus
             .applyIf(gmStatus.wisdomLevel[Founder.Red]!! > race.updateLevel) {
                 copy(skillPt = skillPt + race.updateSkillPt)

@@ -127,7 +127,6 @@ val mechaLearningSubStatus = mapOf(
     StatusType.WISDOM to (StatusType.GUTS to StatusType.SPEED),
 )
 
-// TODO 値は調査中
 val mechaGearRate = listOf(
     // ジュニア
     listOf(

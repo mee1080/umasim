@@ -366,7 +366,6 @@ class FactorBasedActionSelector2(val option: Option = Option()) : ActionSelector
                         state.status.fanCount,
                         state.status,
                         state.totalRelation,
-                        // TODO
                         0,
                         0,
                         0,

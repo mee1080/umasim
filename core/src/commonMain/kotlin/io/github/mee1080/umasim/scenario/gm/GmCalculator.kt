@@ -28,7 +28,6 @@ object GmCalculator : ScenarioCalculator {
             guts = calcGmStatusSingle(gmStatus, StatusType.GUTS, base.guts),
             wisdom = calcGmStatusSingle(gmStatus, StatusType.WISDOM, base.wisdom),
             skillPt = calcGmStatusSingle(gmStatus, StatusType.SKILL, base.skillPt),
-            // TODO 体力消費ダウン計算式
             hp = -(base.hp * gmStatus.wisdomHpCost / 100.0).toInt()
         ) + calcGmStatusHint(info.member, gmStatus)
     }

@@ -215,7 +215,6 @@ class ViewModel(private val scope: CoroutineScope) {
         val simulationThread = simulationThread
         simulationRunningCount = simulationCount
         simulationFinishedCount = 0
-        // FIXME 新実装
 //        simulationJob = scope.launch(Dispatchers.Default) {
 //            val simulationContext = Executors.newFixedThreadPool(simulationThread).asCoroutineDispatcher()
 //            simulationContext.use { context ->
