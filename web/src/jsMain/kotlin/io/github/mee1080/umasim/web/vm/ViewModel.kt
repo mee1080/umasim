@@ -346,7 +346,8 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             state.isLevelUpTurn,
             scenarioStatus,
         ).setTeamMember(state.teamJoinCount)
-        val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo)
+        val scenarioBonus = state.scenario.calculator.getScenarioCalcBonus(trainingCalcInfo)
+        val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo, scenarioBonus)
         val trainingPerformanceValue = if (state.scenario == Scenario.GRAND_LIVE) {
             LiveCalculator.calcPerformanceValue(trainingCalcInfo)
         } else 0
@@ -431,34 +432,6 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
         val upperRate = expectedResult.second.filter { it.second.statusTotal < total }
             .sumOf { it.first } / expectedResult.second.sumOf { it.first }
 
-//
-//        val raceBonus = 100 + state.supportSelectionList.sumOf { it.card?.race ?: 0 }
-//        val raceScore: (Double) -> Double = {
-//            10 * raceBonus / 100 + 35 * raceBonus / 100 * 0.4 + 100 * it
-//        }
-//        val coinRate =
-//            (trainingResult.statusTotal + trainingResult.skillPt * 0.4 - 8 * raceBonus / 100 - 25 * raceBonus / 100 * 0.4) / 100.0
-//
-//
-//        val coinRate = WebConstants.shopItemMegaphone.getOrNull(state.shopItemMegaphone)?.let { megaPhone ->
-//            // 倍率×現在トレ上昇値－MAX（現在トレ上昇値,レース上昇値）＋（ターン数－１）×（倍率×トレ期待値－MAX（トレ上昇値,レース上昇値）の期待値）－価格
-//            val expectedRateTotal = expectedResult.second.sumOf { it.first }
-//            BinarySearcher.run(0.0, 2.0, 0.01, 0.0) { rate ->
-//                megaPhone.trainingFactor / 100.0 * trainingResult.statusTotal -
-//                        max(
-//                            trainingResult.statusTotal.toDouble(),
-//                            raceScore(rate)
-//                        ) + (megaPhone.turn - 1) * (
-//                        megaPhone.trainingFactor / 100.0 * expectedResult.first.statusTotal -
-//                                expectedResult.second.sumOf {
-//                                    it.first / expectedRateTotal * max(
-//                                        it.second.statusTotal.toDouble(),
-//                                        raceScore(rate)
-//                                    )
-//                                }
-//                        )
-//            }
-//        } ?: 0.0
         val friendProbability = 1.0 - supportList.fold(1.0) { acc, memberState ->
             val type = memberState.card.type
             acc * if (type.outingType || !memberState.friendTrainingEnabled) 1.0 else {

@@ -7,17 +7,17 @@ import kotlin.test.Test
 class BcCalculatorTest1 : BCCalculatorTest(
     chara = Triple("[初うらら♪さくさくら]ハルウララ", 5, 5),
     supportCardList = listOf(
-        "[Devilish Whispers]スティルインラブ" to 4,
-        "[故郷に錦を飾るんでい！]イナリワン" to 4,
-        "[白き稲妻の如く]タマモクロス" to 4,
-        "[無垢の白妙]デアリングタクト" to 4,
-        "[Innovator]フォーエバーヤング" to 4,
-        "[American Dream]カジノドライヴ" to 0,
+        "[Devilish Whispers]スティルインラブ" to 4, // 0
+        "[故郷に錦を飾るんでい！]イナリワン" to 4, // 1
+        "[白き稲妻の如く]タマモクロス" to 4, // 2
+        "[無垢の白妙]デアリングタクト" to 4, // 3
+        "[Innovator]フォーエバーヤング" to 4, // 4
+        "[American Dream]カジノドライヴ" to 0, // 5
     ),
     teamMemberList = listOf(
-        "マルシュロレーヌ",
-        "フォーエバーヤング",
-        "ラブズオンリーユー",
+        "マルシュロレーヌ", // 0
+        "フォーエバーヤング", // 1
+        "ラブズオンリーユー", // 2
     ),
 ) {
 
@@ -188,7 +188,7 @@ class BcCalculatorTest1 : BCCalculatorTest(
         )
 
         baseCalcInfo = baseCalcInfo
-            .setTeamParameter(BCTeamParameter.Mental, 3)
+            .setTeamParameter(1, 1, 3)
 
         // WS000039.png
         testDreamsTraining(
@@ -317,7 +317,7 @@ class BcCalculatorTest1 : BCCalculatorTest(
         )
 
         baseCalcInfo = baseCalcInfo
-            .setTeamParameter(BCTeamParameter.Physical, 3)
+            .setTeamParameter(3, 1, 3)
             .setMemberGaugeMax(0, true)
             .setMemberGaugeMax(1, true)
             .setRelation(1, 80)
@@ -552,172 +552,180 @@ class BcCalculatorTest1 : BCCalculatorTest(
             base = Status(16, 0, 0, 0, 98, 98),
         )
 
-        // TODO ここから未修正
+        baseCalcInfo = baseCalcInfo
+            .setMemberRank("C", "B", "C")
+            .setMemberGaugeMax(false)
 
         // WS000091.png
         testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 1,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(3, 0, 12, 0, 0, 8),
-            base = Status(8, 0, 0, 0, 0, 0),
+            baseCalcInfo, StatusType.WISDOM, 4,
+            support = listOf(3), guest = listOf(0),
+            scenario = Status(3, 0, 0, 0, 12, 8),
+            base = Status(8, 0, 0, 0, 26, 18),
         )
 
         // WS000092.png
         testBcTraining(
-            baseCalcInfo, StatusType.STAMINA, 1,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(8, 0, 0, 5, 0, 9),
-            base = Status(23, 0, 0, 14, 0, 25),
+            baseCalcInfo, StatusType.STAMINA, 3,
+            support = listOf(0, 2, 4), guest = listOf(1, 2),
+            scenario = Status(0, 8, 0, 5, 0, 9),
+            base = Status(0, 23, 0, 14, 0, 25),
         )
 
         // WS000093.png
         testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 1,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.SPEED, 3,
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
             base = Status(15, 0, 2, 0, 0, 8),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setMemberGaugeMax(2, true)
+
         // WS000094.png
         testBcTraining(
-            baseCalcInfo, StatusType.STAMINA, 1,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(9, 0, 0, 6, 0, 8),
-            base = Status(15, 0, 0, 10, 0, 13),
+            baseCalcInfo, StatusType.STAMINA, 3,
+            support = listOf(0), guest = listOf(0, 2),
+            scenario = Status(0, 9, 0, 6, 0, 8),
+            base = Status(0, 15, 0, 10, 0, 13),
         )
 
         // WS000095.png
         testBcTraining(
-            baseCalcInfo, StatusType.POWER, 1,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.POWER, 3,
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
-            base = Status(4, 0, 17, 0, 0, 8),
+            base = Status(0, 4, 17, 0, 0, 8),
         )
 
         // WS000096.png
         testBcTraining(
-            baseCalcInfo, StatusType.GUTS, 1,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.GUTS, 3,
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
             base = Status(2, 0, 2, 14, 0, 8),
         )
 
         // WS000097.png
         testBcTraining(
-            baseCalcInfo, StatusType.WISDOM, 1,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.WISDOM, 4,
+            support = listOf(1, 3, 4), guest = listOf(1),
             scenario = Status(8, 0, 0, 0, 35, 26),
             base = Status(17, 0, 0, 0, 71, 53),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setMemberGaugeMax(1, true)
+
         // WS000098.png
-        testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 1,
-            support = listOf(0), guest = listOf(),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.SPEED, 3,
             scenario = Status(125, 0, 27, 0, 0, 140),
             base = Status(66, 0, 10, 0, 0, 62),
         )
 
         // WS000099.png
-        testBcTraining(
-            baseCalcInfo, StatusType.STAMINA, 1,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(125, 47, 0, 0, 0, 140),
-            base = Status(49, 0, 0, 0, 0, 67),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.STAMINA, 3,
+            scenario = Status(0, 125, 0, 47, 0, 140),
+            base = Status(0, 49, 0, 17, 0, 67),
         )
 
         // WS000100.png
-        testBcTraining(
-            baseCalcInfo, StatusType.POWER, 1,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(31, 0, 125, 0, 0, 140),
-            base = Status(11, 0, 78, 0, 0, 70),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.POWER, 3,
+            scenario = Status(0, 31, 125, 0, 0, 140),
+            base = Status(0, 11, 78, 0, 0, 70),
         )
 
         // WS000101.png
-        testBcTraining(
-            baseCalcInfo, StatusType.GUTS, 1,
-            support = listOf(0), guest = listOf(),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.GUTS, 3,
             scenario = Status(8, 0, 8, 46, 0, 62),
             base = Status(7, 0, 7, 40, 0, 46),
         )
 
         // WS000102.png
-        testBcTraining(
-            baseCalcInfo, StatusType.WISDOM, 1,
-            support = listOf(0), guest = listOf(),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.WISDOM, 4,
             scenario = Status(50, 0, 0, 0, 125, 140),
             base = Status(19, 0, 0, 0, 104, 98),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setTeamParameter(5, 5, 4)
+            .setMemberGaugeMax(true, false, false)
+            .setMemberRank("C", "A", "B")
+
         // WS000104.png
-        testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(124, 0, 34, 0, 0, 160),
+        // スピード2000超のため補正
+        testDreamsTraining(
+            baseCalcInfo, StatusType.SPEED, 5,
+            scenario = Status(135, 0, 34, 0, 0, 160),
             base = Status(75, 0, 15, 0, 0, 62),
         )
 
         // WS000105.png
-        testBcTraining(
-            baseCalcInfo, StatusType.STAMINA, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(134, 50, 0, 0, 0, 160),
-            base = Status(58, 22, 0, 0, 0, 67),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.STAMINA, 5,
+            scenario = Status(0, 134, 0, 50, 0, 160),
+            base = Status(0, 58, 0, 22, 0, 67),
         )
 
         // WS000106.png
-        testBcTraining(
-            baseCalcInfo, StatusType.POWER, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(37, 0, 135, 0, 0, 160),
-            base = Status(16, 0, 89, 0, 0, 70),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.POWER, 5,
+            scenario = Status(0, 37, 135, 0, 0, 160),
+            base = Status(0, 16, 89, 0, 0, 70),
         )
 
         // WS000107.png
-        testBcTraining(
-            baseCalcInfo, StatusType.GUTS, 4,
-            support = listOf(0), guest = listOf(),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.GUTS, 5,
             scenario = Status(9, 0, 8, 42, 0, 55),
             base = Status(10, 0, 9, 47, 0, 46),
         )
 
         // WS000108.png
-        testBcTraining(
-            baseCalcInfo, StatusType.WISDOM, 4,
-            support = listOf(0), guest = listOf(),
+        testDreamsTraining(
+            baseCalcInfo, StatusType.WISDOM, 5,
             scenario = Status(50, 0, 0, 0, 135, 160),
             base = Status(22, 0, 0, 0, 111, 98),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setMemberGaugeMax(false)
+            .setMemberRank("B", "A", "B")
+
         // WS000109.png
         testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 4,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.SPEED, 5,
+            support = listOf(0, 3), guest = listOf(),
             scenario = Status(12, 0, 3, 0, 0, 7),
             base = Status(40, 0, 13, 0, 0, 24),
         )
 
         // WS000110.png
         testBcTraining(
-            baseCalcInfo, StatusType.STAMINA, 4,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.STAMINA, 5,
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
-            base = Status(14, 0, 0, 10, 0, 8),
+            base = Status(0, 14, 0, 10, 0, 8),
         )
 
         // WS000111.png
         testBcTraining(
             baseCalcInfo, StatusType.POWER, 5,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(4, 0, 13, 0, 0, 6),
-            base = Status(16, 0, 44, 0, 0, 20),
+            support = listOf(2, 5), guest = listOf(),
+            scenario = Status(0, 4, 13, 0, 0, 6),
+            base = Status(0, 16, 44, 0, 0, 20),
         )
 
         // WS000112.png
         testBcTraining(
             baseCalcInfo, StatusType.GUTS, 5,
-            support = listOf(0), guest = listOf(),
+            support = listOf(1), guest = listOf(0),
             scenario = Status(1, 0, 1, 4, 0, 2),
             base = Status(6, 0, 5, 24, 0, 12),
         )
@@ -725,97 +733,108 @@ class BcCalculatorTest1 : BCCalculatorTest(
         // WS000113.png
         testBcTraining(
             baseCalcInfo, StatusType.WISDOM, 5,
-            support = listOf(0), guest = listOf(),
+            support = listOf(4), guest = listOf(1, 2),
             scenario = Status(6, 0, 0, 0, 26, 16),
             base = Status(8, 0, 0, 0, 31, 19),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setTeamParameter(5, 5, 7)
+            .setMemberRank("S", "S", "A")
+
         // WS000115.png
+        // スピード上限補正
         testBcTraining(
             baseCalcInfo, StatusType.SPEED, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(18, 0, 13, 0, 0, 23),
-            base = Status(32, 0, 14, 0, 0, 24),
+            support = listOf(0, 2), guest = listOf(0, 2),
+            scenario = Status(36, 0, 13, 0, 0, 23),
+            base = Status(38, 0, 14, 0, 0, 24),
         )
 
         // WS000116.png
+        // スタミナ上限補正
         testBcTraining(
             baseCalcInfo, StatusType.STAMINA, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(4, 0, 0, 6, 0, 5),
-            base = Status(18, 0, 0, 18, 0, 17),
+            support = listOf(1), guest = listOf(),
+            scenario = Status(0, 8, 0, 6, 0, 5),
+            base = Status(0, 23, 0, 18, 0, 17),
         )
 
         // WS000117.png
         testBcTraining(
             baseCalcInfo, StatusType.POWER, 4,
-            support = listOf(0), guest = listOf(),
+            support = listOf(5), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
-            base = Status(6, 0, 22, 0, 0, 10),
+            base = Status(0, 6, 22, 0, 0, 10),
         )
 
         // WS000118.png
         testBcTraining(
             baseCalcInfo, StatusType.GUTS, 4,
-            support = listOf(0), guest = listOf(),
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
             base = Status(3, 0, 2, 15, 0, 8),
         )
 
         // WS000119.png
+        // スピード賢さ上限補正
         testBcTraining(
-            baseCalcInfo, StatusType.WISDOM, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(10, 0, 0, 0, 19, 25),
-            base = Status(17, 0, 0, 0, 56, 38),
+            baseCalcInfo, StatusType.WISDOM, 5,
+            support = listOf(3, 4), guest = listOf(1),
+            scenario = Status(11, 0, 0, 0, 39, 25),
+            base = Status(17, 0, 0, 0, 59, 38),
         )
 
+        baseCalcInfo = baseCalcInfo
+            .setMemberGaugeMax(true, false, true)
+
         // WS000120.png
-        testBcTraining(
+        // スピード上限補正
+        testDreamsTraining(
             baseCalcInfo, StatusType.SPEED, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(75, 0, 41, 0, 0, 210),
-            base = Status(35, 0, 12, 0, 0, 62),
+            scenario = Status(150, 0, 41, 0, 0, 210),
+            base = Status(71, 0, 12, 0, 0, 62),
         )
 
         // WS000121.png
-        testBcTraining(
+        // スタミナ上限補正
+        testDreamsTraining(
             baseCalcInfo, StatusType.STAMINA, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(75, 0, 0, 50, 0, 210),
-            base = Status(34, 0, 0, 19, 0, 67),
+            scenario = Status(0, 150, 0, 50, 0, 210),
+            base = Status(0, 54, 0, 19, 0, 67),
         )
 
         // WS000122.png
-        testBcTraining(
+        // スタミナパワー上限補正
+        testDreamsTraining(
             baseCalcInfo, StatusType.POWER, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(23, 0, 88, 0, 0, 210),
-            base = Status(14, 0, 84, 0, 0, 70),
+            scenario = Status(0, 46, 150, 0, 0, 210),
+            base = Status(0, 14, 84, 0, 0, 70),
         )
 
         // WS000123.png
-        testBcTraining(
+        // スピード上限補正
+        testDreamsTraining(
             baseCalcInfo, StatusType.GUTS, 4,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(5, 0, 9, 57, 0, 73),
-            base = Status(4, 0, 7, 44, 0, 46),
+            scenario = Status(11, 0, 9, 57, 0, 73),
+            base = Status(9, 0, 7, 44, 0, 46),
         )
 
         // WS000124.png
-        testBcTraining(
+        // スピード賢さ上限補正
+        testDreamsTraining(
             baseCalcInfo, StatusType.WISDOM, 5,
-            support = listOf(0), guest = listOf(),
-            scenario = Status(25, 0, 0, 0, 75, 210),
-            base = Status(11, 0, 0, 0, 82, 98),
+            scenario = Status(50, 0, 0, 0, 150, 210),
+            base = Status(22, 0, 0, 0, 111, 98),
         )
 
         // WS000125.png
+        // スピード上限補正
         testBcTraining(
-            baseCalcInfo, StatusType.SPEED, 4,
-            support = listOf(0), guest = listOf(),
+            baseCalcInfo, StatusType.SPEED, 5,
+            support = listOf(), guest = listOf(),
             scenario = Status(0, 0, 0, 0, 0, 0),
-            base = Status(9, 0, 5, 0, 0, 8),
+            base = Status(18, 0, 5, 0, 0, 8),
         )
 
     }

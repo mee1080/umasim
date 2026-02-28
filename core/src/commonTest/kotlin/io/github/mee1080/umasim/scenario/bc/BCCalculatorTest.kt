@@ -26,7 +26,9 @@ abstract class BCCalculatorTest(
     }
 
     fun Calculator.CalcInfo.setMemberRank(vararg rank: String) = updateBcStatus {
-        copy(teamMember = teamMember.mapIndexed { index, member -> member.copy(memberRank = rankToString.indexOf(rank[index])) })
+        copy(teamMember = teamMember.mapIndexed { index, member ->
+            member.copy(memberRank = rankToString.indexOf(rank.getOrElse(index) { rank.last() }))
+        })
     }
 
     fun Calculator.CalcInfo.setMemberGaugeMax(index: Int, max: Boolean) = updateBcStatus {
@@ -34,7 +36,7 @@ abstract class BCCalculatorTest(
     }
 
     fun Calculator.CalcInfo.setMemberGaugeMax(vararg max: Boolean) = updateBcStatus {
-        copy(teamMember = teamMember.mapIndexed { index, member -> member.copy(dreamGauge = if (max[index]) 3 else 0) })
+        copy(teamMember = teamMember.mapIndexed { index, member -> member.copy(dreamGauge = if (max.getOrElse(index) { max.last() }) 3 else 0) })
     }
 
     fun Calculator.CalcInfo.setTeamParameter(type: BCTeamParameter, value: Int) = updateBcStatus {

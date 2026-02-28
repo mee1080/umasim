@@ -48,6 +48,10 @@ object BCCalculator : ScenarioCalculator {
         return (base * (100 + trainingEffect) * friendBonus / 100).toInt() - base
     }
 
+    private val scenarioCalcBonus = Calculator.ScenarioCalcBonus(maxValue = 300.0)
+
+    override fun getScenarioCalcBonus(baseInfo: CalcInfo) = scenarioCalcBonus
+
     override fun modifyBaseStatus(
         info: CalcInfo,
         base: Status,

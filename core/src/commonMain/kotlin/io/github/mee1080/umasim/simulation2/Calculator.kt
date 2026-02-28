@@ -103,10 +103,11 @@ object Calculator {
     }
 
     data class ScenarioCalcBonus(
-        val friendFactor: Double = 1.0,
-        val motivationBonus: Int = 0,
-        val trainingBonus: Int = 0,
-        val additionalFactor: Double = 1.0,
+        val friendFactor: Double? = null,
+        val motivationBonus: Int? = null,
+        val trainingBonus: Int? = null,
+        val additionalFactor: Double? = null,
+        val maxValue: Double? = null,
     )
 
     fun calcTrainingSuccessStatus(
@@ -200,7 +201,7 @@ object Calculator {
         val scenarioFactor = bonus?.additionalFactor ?: 1.0
         if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor")
         val raw = base * charaBonus * friend * motivationBonus * trainingBonus * count * scenarioFactor
-        return min(maxValue, raw + 0.0002)
+        return min(bonus?.maxValue ?: maxValue, raw + 0.0002)
     }
 
     private fun calcTrainingHp(
