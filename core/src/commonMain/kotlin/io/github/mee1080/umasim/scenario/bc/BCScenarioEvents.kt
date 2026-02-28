@@ -12,15 +12,12 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
     override fun beforeSimulation(state: SimulationState): SimulationState {
         return super.beforeSimulation(state).copy(
             goalRace = listOf(state.goalRace.first(), *route.goalRace.toTypedArray()),
-        )
+        ).joinTeamMembers()
     }
 
     override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
         val base = super.beforeAction(state, selector)
         return when (base.turn) {
-
-            1 -> base
-                .joinTeamMembers()
 
             3 -> base
                 .selectTeamParameter(selector, 3, dpInitial)
@@ -54,7 +51,7 @@ class BCScenarioEvents(private val route: BCRoute = BCRoute.Classic) : BaseScena
                 .selectTeamParameter(selector, 3, dpMeeting)
 
             16 -> base
-                // TODO チームランクE達成時に発生
+                // 本来はチームランクE達成時に発生だけど結果に影響がないので適当なターンに発生扱い
                 .addStatus(Status(speed = 10, skillPt = 10))
 
             24 -> base

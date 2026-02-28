@@ -2,7 +2,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.randomSelect
-import io.github.mee1080.umasim.scenario.bc.BCCalculator.addLowestDreamGauge
+import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.bc.updateBCStatus
 import io.github.mee1080.umasim.scenario.cook.CookMaterial
 import io.github.mee1080.umasim.scenario.cook.updateCookStatus
@@ -111,8 +111,11 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
         }
 
         "カジノドライヴ" -> {
-            // TODO カジノドライヴイベント
-            this
+            if (isFirst) {
+                applyFriendEvent(target, Status(speed = 5, power = 5, guts = 5, motivation = 1, maxHp = 4), 5, 1)
+            } else if (Random.nextDouble() < 0.4) {
+                applyFriendEvent(target, Status(guts = 7), 5)
+            } else this
         }
 
         else -> this
@@ -375,16 +378,46 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
         }
 
         "カジノドライヴ" -> {
-            // TODO カジノドライヴイベント
             when (step) {
+                1 -> applyFriendEvent(
+                    support,
+                    Status(
+                        stamina = 5, power = 5, skillPt = 5, motivation = 1,
+                        skillHint = mapOf("ウマ好み" to 5),
+                    ),
+                    5, 2,
+                ).copy(condition = condition + "ポジティブ思考")
 
-                2 -> updateBCStatus { addLowestDreamGauge() }
+                2 -> applyFriendEvent(
+                    support,
+                    Status(power = 10, guts = 10, skillPt = 10, hp = 30, motivation = 1, maxHp = 4),
+                    5, 3,
+                ).updateBCStatus { BCCalculator.addLowestDreamGauge(this) }
 
-                3 -> updateBCStatus { addLowestDreamGauge() }
+                3 -> applyFriendEvent(
+                    support,
+                    Status(
+                        guts = 10, skillPt = 10, hp = 30, motivation = 1,
+                        skillHint = mapOf("スリップストリーム" to 2),
+                    ),
+                    5, 4,
+                ).updateBCStatus { BCCalculator.addLowestDreamGauge(this) }
 
-                4 -> updateBCStatus { addLowestDreamGauge() }
+                4 -> applyFriendEvent(
+                    support,
+                    if (status.hp >= 80) {
+                        Status(speed = 10, stamina = 10, guts = 10, wisdom = 10, skillPt = 20, motivation = 1)
+                    } else {
+                        Status(hp = 50, motivation = 1)
+                    },
+                    5, 5,
+                ).updateBCStatus { BCCalculator.addLowestDreamGauge(this) }
 
-                5 -> updateBCStatus { addLowestDreamGauge() }
+                5 -> applyFriendEvent(
+                    support,
+                    Status(speed = 5, power = 5, guts = 10, skillPt = 5, hp = 30, motivation = 1),
+                    5, 6,
+                ).updateBCStatus { BCCalculator.addLowestDreamGauge(this) }
 
                 6 -> applyFriendEvent(
                     support,
@@ -393,7 +426,7 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                         skillHint = mapOf("いいとこ入った！" to 3),
                     ),
                     5, 7,
-                ).updateBCStatus { addLowestDreamGauge() }
+                ).updateBCStatus { BCCalculator.addLowestDreamGauge(this) }
 
                 else -> this
             }
@@ -458,10 +491,14 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             )
 
-            "カジノドライヴ" -> {
-                // TODO カジノドライヴイベント
-                this
-            }
+            "カジノドライヴ" -> state.applyFriendEvent(
+                support,
+                Status(
+                    speed = 7, power = 7, guts = 7, skillPt = 5, motivation = 1,
+                    skillHint = mapOf("末脚" to 3),
+                ),
+                5, 0,
+            )
 
             else -> this
         }
@@ -498,10 +535,10 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 0, 0,
             )
 
-            "カジノドライヴ" -> {
-                // TODO カジノドライヴイベント
-                this
-            }
+            "カジノドライヴ" -> state.applyFriendEvent(
+                support, Status(speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10, skillPt = 45),
+                0, 0,
+            )
 
             else -> this
         }

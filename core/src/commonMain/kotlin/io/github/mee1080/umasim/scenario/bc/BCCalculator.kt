@@ -8,7 +8,6 @@ import io.github.mee1080.utility.mapIf
 import io.github.mee1080.utility.replaced
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.random.Random
 
 object BCCalculator : ScenarioCalculator {
 
@@ -32,7 +31,6 @@ object BCCalculator : ScenarioCalculator {
             }
             println(log)
         }
-        // TODO 上限アップ
         val base = Status(
             speed = calcSingleStatus(base.speed, trainingEffect, friendBonus),
             stamina = calcSingleStatus(base.stamina, trainingEffect, friendBonus),
@@ -102,7 +100,7 @@ object BCCalculator : ScenarioCalculator {
 
                 is Sleep -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
 
-                is Outing -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
+                is Outing if (action.support == null) -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
 
                 is Race if (action.goal) -> action.copy(result = action.result.addScenarioActionParam(BCActionParam()))
 
@@ -139,11 +137,12 @@ object BCCalculator : ScenarioCalculator {
         return addDreamGauge(teamMember.filter { it.dreamGauge < 3 }.randomOrNull())
     }
 
-    internal fun BCStatus.addLowestDreamGauge(): BCStatus {
-        // TODO カジノドライヴお出かけのゲージ最小判定方法調査
-        var result = this
+    internal fun addLowestDreamGauge(bcStatus: BCStatus): BCStatus {
+        var result = bcStatus
         repeat(3) {
-            result = result.addDreamGauge(teamMember.filter { it.dreamGauge < 3 }.randomOrNull())
+            val target = result.teamMember.mapIndexed { index, member -> index to member }
+                .minBy { it.second.dreamGauge * 10 + it.first }.second
+            result = result.addDreamGauge(target)
         }
         return result
     }
@@ -173,14 +172,13 @@ object BCCalculator : ScenarioCalculator {
     ): SimulationState {
         return when (result) {
             BCDreamsTrainingResult -> {
-                // TODO DREAMSトレーニングのサポカ配置ルール確認
-                val noneIndex = Random.nextInt(state.member.lastIndex)
+                val positioned = state.member.filter { !it.outingType }.shuffled().take(5).map { it.index }
                 val allPosition = setOf(StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM)
-                val newMember = state.member.mapIndexed { index, member ->
-                    if (index == noneIndex) {
-                        member.copy(position = StatusType.NONE, additionalPosition = emptySet())
-                    } else {
+                val newMember = state.member.map { member ->
+                    if (positioned.contains(member.index)) {
                         member.copy(position = StatusType.SPEED, additionalPosition = allPosition)
+                    } else {
+                        member.copy(position = StatusType.NONE, additionalPosition = emptySet())
                     }
                 }
                 state.copy(member = newMember).updateBCStatus {
@@ -230,8 +228,18 @@ object BCCalculator : ScenarioCalculator {
         race: RaceEntry,
         goal: Boolean
     ): Status? {
-        // TODO レース上昇量
-        return super.calcBaseRaceStatus(state, race, goal)
+        if (!goal) return null
+        if (race.grade == RaceGrade.DEBUT) {
+            return state.raceStatus(4, 9, 105).copy(fanCount = 2000)
+        }
+        return when (state.goalRace.indexOfFirst { it.turn == race.turn }) {
+            1 -> state.raceStatus(4, 9, 105).copy(fanCount = 14000)
+            2 -> state.raceStatus(5, 9, 135).copy(fanCount = 40000)
+            3 -> state.raceStatus(5, 9, 135).copy(fanCount = 60000)
+            4 -> state.raceStatus(5, 9, 135).copy(fanCount = 30000)
+            5 -> state.raceStatus(5, 40, 150)
+            else -> null
+        }
     }
 
     override fun getSpecialityRateUp(

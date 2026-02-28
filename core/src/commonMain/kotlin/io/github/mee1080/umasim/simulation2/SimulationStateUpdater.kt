@@ -73,8 +73,7 @@ fun SimulationState.updateRefresh(): SimulationState {
 suspend fun SimulationState.updateOutingStep(selector: ActionSelector): SimulationState {
     val targets = mutableSetOf<MemberState>()
     member.filter { it.outingType && it.supportState?.outingStep == 1 }.forEach {
-        // TODO お出かけ開始イベント確率アップ反映
-        val rate = if (it.relation >= 60) 0.25 else 0.05
+        val rate = if (it.relation >= 60) 0.5 else 0.05
         if (Random.nextDouble() < rate) {
             targets.add(it)
         }
