@@ -227,7 +227,7 @@ private fun toSummary(skill: SkillData, list: List<SimulationSkillInfo>): Simula
 }
 
 private const val speedMin = 13f
-private const val speedMax = 28f
+private const val speedMax = 30f
 
 private const val staminaMin = -200f
 

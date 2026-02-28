@@ -239,7 +239,7 @@ class RaceState(
             }
 
             if (simulation.fullSpurt) {
-                result += sqrt(setting.umaStatus.speed.toDouble()) * setting.fullSpurtCoef
+                result += setting.fullSpurtSpeed
             }
 
             return result
@@ -261,16 +261,18 @@ class RaceState(
             if (simulation.isStartDash) {
                 acceleration += 24.0
             }
-            if (!simulation.fullSpurt) {
+            if (simulation.fullSpurt) {
+                // TODO 伸びを見せるスキルの効果反映
+            } else {
                 simulation.operatingSkills.forEach {
                     acceleration += it.acceleration
                 }
-            }
-            if (simulation.competeFight) {
-                acceleration += setting.competeFightAcceleration
-            }
-            if (isInConservePower) {
-                acceleration += simulation.conservePowerAcceleration ?: 0.0
+                if (simulation.competeFight) {
+                    acceleration += setting.competeFightAcceleration
+                }
+                if (isInConservePower) {
+                    acceleration += simulation.conservePowerAcceleration ?: 0.0
+                }
             }
 
             return max(acceleration, 0.0)
@@ -427,7 +429,7 @@ data class RaceSetting(
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
-    override val fullSpurtCoef: Double = 0.0,
+    override val fullSpurtCoef: Double = 0.05,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -667,7 +669,7 @@ class RaceSettingWithPassive(
     }
 
     val positionCompetitionStamina by lazy {
-        // TODO 近距離に他のウマ娘がいることで発動した場合、係数+0.5
+        // 近距離に他のウマ娘がいることで発動した場合の係数+0.5は無視
         20 * (positionCompetitionStaminaCoef[runningStyle]!! * positionCompetitionDistanceCoef(trackDetail.distance))
     }
 
@@ -684,10 +686,18 @@ class RaceSettingWithPassive(
     }
 
     val staminaLimitBreakSpeed by lazy {
-        // TODO パワー依存のランダム係数は詳細不明
+        // パワー依存のランダム係数は詳細不明なので無視
         val status = umaStatus.stamina + passiveBonus.stamina
         if (status <= 1200) return@lazy 0.0
         sqrt(status - 1200.0) * 0.0085 * staminaLimitBreakDistanceCoef(trackDetail.distance)
+    }
+
+    val fullSpurtSpeed by lazy {
+        // 計算方法不明のため近似
+        modifiedSpeed
+        val status = umaStatus.speed * condCoef[umaStatus.condition]!! + passiveBonus.speed
+        if (status <= 2000) return@lazy 0.0
+        sqrt(status - 2000.0) * fullSpurtCoef
     }
 
     val baseLaneChangeTargetSpeed by lazy {

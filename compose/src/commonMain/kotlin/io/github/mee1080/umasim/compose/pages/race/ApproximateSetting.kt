@@ -26,6 +26,7 @@ import io.github.mee1080.utility.toPercentString
 fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     val positionKeepMode by derivedStateOf { state.setting.positionKeepMode }
     val positionKeepRate by derivedStateOf { state.setting.positionKeepRate }
+    val fullSpurtCoef by derivedStateOf { state.setting.fullSpurtCoef }
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -37,9 +38,11 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         }
 
         Column {
-            val fullSpurtCoef by derivedStateOf { state.setting.fullSpurtCoef }
             Text("全開スパート", style = MaterialTheme.typography.titleLarge)
-            Text("全開スパート係数: ${fullSpurtCoef.roundToString(3)}")
+            Text("詳細不明のため、開始位置は最終盤開始時とし、速度は指定した係数を用いて、以下の式で計算します")
+            Text("スピードのやる気による変動は有効、コースごとのボーナス対象ステータスやバ場による変動は無効です")
+            Text("速度上昇量：√(スピード-2000)×係数")
+            Text("係数: ${fullSpurtCoef.roundToString(3)}")
             Slider(
                 value = fullSpurtCoef.toFloat(),
                 onValueChange = { dispatch(setFullSpurtCoef(it.toDouble())) },
