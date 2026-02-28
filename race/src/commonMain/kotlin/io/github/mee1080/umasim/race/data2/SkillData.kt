@@ -707,6 +707,7 @@ data class SkillEffect(
                 30 -> add("ラヴは最大前提")
                 31 -> add("総発展Ptは最大前提（1.2倍）")
                 32 -> add("伝説の宿前提（1.2倍）")
+                37 -> add("チームランクS以上前提（1.2倍）")
             }
             when (additional) {
                 2 -> add("同時に別のスキルを2つ発動する条件で近似")
@@ -873,6 +874,16 @@ data class SkillEffect(
                     state.setting.trackDetail.distance == 2500 && state.setting.track.location == 10005 -> value + 2000.0
                     else -> value.toDouble()
                 }
+            }
+
+            36 -> {
+                // 中距離なら短い間とてつもなく前に出る（Peerless Heroine）
+                if (state.setting.trackDetail.distanceType == 3) 6500.0 else value.toDouble()
+            }
+
+            37 -> {
+                // チームランクがS以上なら効果が増える（情熱と挑戦の先の栄光）
+                value * 1.2
             }
 
             else -> value.toDouble()
