@@ -87,6 +87,8 @@ data class TrackDetail(
     val corners: List<Corner>,
     val straights: List<Straight>,
     val slopes: List<Slope>,
+    val tightTrack: Int,
+    val runUp: Int,
 ) {
     fun getSlope(position: Double): Double {
         for (slope in slopes) {

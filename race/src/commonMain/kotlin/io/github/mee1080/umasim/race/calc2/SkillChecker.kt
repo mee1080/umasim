@@ -281,6 +281,8 @@ private fun checkCondition(
 
         "overtake_target_no_order_up_time" -> condition.checkSpecialState()
 
+        "is_tight_track" -> condition.preChecked(baseSetting.trackDetail.tightTrack)
+
         else -> {
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")

@@ -58,7 +58,9 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10102": {
         "raceTrackId": 10001,
@@ -95,7 +97,9 @@ internal val rawCourseData = """
             "end": 1500.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10103": {
         "raceTrackId": 10001,
@@ -140,7 +144,9 @@ internal val rawCourseData = """
             "end": 1800.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10104": {
         "raceTrackId": 10001,
@@ -187,7 +193,9 @@ internal val rawCourseData = """
             "end": 2000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10105": {
         "raceTrackId": 10001,
@@ -246,7 +254,9 @@ internal val rawCourseData = """
             "end": 2600.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10106": {
         "raceTrackId": 10001,
@@ -279,7 +289,9 @@ internal val rawCourseData = """
             "end": 1000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10107": {
         "raceTrackId": 10001,
@@ -326,7 +338,9 @@ internal val rawCourseData = """
             "end": 1700.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10108": {
         "raceTrackId": 10001,
@@ -383,7 +397,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -427,7 +443,9 @@ internal val rawCourseData = """
             "length": 555.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10202": {
         "raceTrackId": 10002,
@@ -466,7 +484,9 @@ internal val rawCourseData = """
             "length": 755.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10203": {
         "raceTrackId": 10002,
@@ -524,7 +544,9 @@ internal val rawCourseData = """
             "length": 720.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10204": {
         "raceTrackId": 10002,
@@ -582,7 +604,9 @@ internal val rawCourseData = """
             "length": 720.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10205": {
         "raceTrackId": 10002,
@@ -657,7 +681,9 @@ internal val rawCourseData = """
             "length": 720.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10206": {
         "raceTrackId": 10002,
@@ -690,7 +716,9 @@ internal val rawCourseData = """
             "end": 1000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10207": {
         "raceTrackId": 10002,
@@ -746,7 +774,9 @@ internal val rawCourseData = """
             "length": 670.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10208": {
         "raceTrackId": 10002,
@@ -805,7 +835,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -843,7 +875,9 @@ internal val rawCourseData = """
             "length": 60.0,
             "slope": -10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10302": {
         "raceTrackId": 10003,
@@ -876,7 +910,9 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10303": {
         "raceTrackId": 10003,
@@ -909,7 +945,9 @@ internal val rawCourseData = """
             "end": 1400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10304": {
         "raceTrackId": 10003,
@@ -953,7 +991,9 @@ internal val rawCourseData = """
             "length": 300.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10305": {
         "raceTrackId": 10003,
@@ -999,7 +1039,9 @@ internal val rawCourseData = """
             "length": 300.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10306": {
         "raceTrackId": 10003,
@@ -1047,7 +1089,9 @@ internal val rawCourseData = """
             "end": 2000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10307": {
         "raceTrackId": 10003,
@@ -1094,7 +1138,9 @@ internal val rawCourseData = """
             "length": 350.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10308": {
         "raceTrackId": 10003,
@@ -1141,7 +1187,9 @@ internal val rawCourseData = """
             "end": 2200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10309": {
         "raceTrackId": 10003,
@@ -1186,7 +1234,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10310": {
         "raceTrackId": 10003,
@@ -1219,7 +1269,9 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10311": {
         "raceTrackId": 10003,
@@ -1266,7 +1318,9 @@ internal val rawCourseData = """
             "end": 1800.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10312": {
         "raceTrackId": 10003,
@@ -1323,7 +1377,9 @@ internal val rawCourseData = """
             "end": 2500.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -1367,7 +1423,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10402": {
         "raceTrackId": 10004,
@@ -1420,7 +1478,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10403": {
         "raceTrackId": 10004,
@@ -1473,7 +1533,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10404": {
         "raceTrackId": 10004,
@@ -1541,7 +1603,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10405": {
         "raceTrackId": 10004,
@@ -1574,7 +1638,9 @@ internal val rawCourseData = """
             "end": 1150.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10406": {
         "raceTrackId": 10004,
@@ -1627,7 +1693,9 @@ internal val rawCourseData = """
             "length": 320.0,
             "slope": -10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10407": {
         "raceTrackId": 10004,
@@ -1686,7 +1754,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -1731,7 +1801,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10502": {
         "raceTrackId": 10005,
@@ -1777,7 +1849,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10503": {
         "raceTrackId": 10005,
@@ -1843,7 +1917,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10504": {
         "raceTrackId": 10005,
@@ -1911,7 +1987,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10505": {
         "raceTrackId": 10005,
@@ -1976,7 +2054,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10506": {
         "raceTrackId": 10005,
@@ -2053,7 +2133,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10507": {
         "raceTrackId": 10005,
@@ -2160,7 +2242,9 @@ internal val rawCourseData = """
             "length": 110.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10508": {
         "raceTrackId": 10005,
@@ -2206,7 +2290,9 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10509": {
         "raceTrackId": 10005,
@@ -2274,7 +2360,9 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10510": {
         "raceTrackId": 10005,
@@ -2333,7 +2421,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "10511": {
         "raceTrackId": 10005,
@@ -2390,7 +2480,9 @@ internal val rawCourseData = """
             "end": 2500.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -2447,7 +2539,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10602": {
         "raceTrackId": 10006,
@@ -2499,7 +2593,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10603": {
         "raceTrackId": 10006,
@@ -2554,7 +2650,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10604": {
         "raceTrackId": 10006,
@@ -2607,7 +2705,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10605": {
         "raceTrackId": 10006,
@@ -2670,7 +2770,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10606": {
         "raceTrackId": 10006,
@@ -2736,7 +2838,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10607": {
         "raceTrackId": 10006,
@@ -2804,7 +2908,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10608": {
         "raceTrackId": 10006,
@@ -2892,7 +2998,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10609": {
         "raceTrackId": 10006,
@@ -2938,7 +3046,9 @@ internal val rawCourseData = """
             "length": 250.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10610": {
         "raceTrackId": 10006,
@@ -2984,7 +3094,9 @@ internal val rawCourseData = """
             "length": 250.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10611": {
         "raceTrackId": 10006,
@@ -3031,7 +3143,9 @@ internal val rawCourseData = """
             "length": 250.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10612": {
         "raceTrackId": 10006,
@@ -3087,7 +3201,9 @@ internal val rawCourseData = """
             "length": 250.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10613": {
         "raceTrackId": 10006,
@@ -3138,7 +3254,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -3187,7 +3305,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10702": {
         "raceTrackId": 10007,
@@ -3231,7 +3351,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10703": {
         "raceTrackId": 10007,
@@ -3281,7 +3403,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10704": {
         "raceTrackId": 10007,
@@ -3342,7 +3466,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10705": {
         "raceTrackId": 10007,
@@ -3410,7 +3536,9 @@ internal val rawCourseData = """
             "length": 100.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10706": {
         "raceTrackId": 10007,
@@ -3443,7 +3571,9 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10707": {
         "raceTrackId": 10007,
@@ -3487,7 +3617,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10708": {
         "raceTrackId": 10007,
@@ -3550,7 +3682,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10709": {
         "raceTrackId": 10007,
@@ -3595,7 +3729,9 @@ internal val rawCourseData = """
             "end": 1900.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -3644,7 +3780,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10802": {
         "raceTrackId": 10008,
@@ -3688,7 +3826,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10803": {
         "raceTrackId": 10008,
@@ -3737,7 +3877,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10804": {
         "raceTrackId": 10008,
@@ -3783,7 +3925,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10805": {
         "raceTrackId": 10008,
@@ -3834,7 +3978,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10806": {
         "raceTrackId": 10008,
@@ -3883,7 +4029,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10807": {
         "raceTrackId": 10008,
@@ -3941,7 +4089,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10808": {
         "raceTrackId": 10008,
@@ -4004,7 +4154,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10809": {
         "raceTrackId": 10008,
@@ -4067,7 +4219,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10810": {
         "raceTrackId": 10008,
@@ -4158,7 +4312,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": -20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10811": {
         "raceTrackId": 10008,
@@ -4246,7 +4402,9 @@ internal val rawCourseData = """
             "length": 225.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10812": {
         "raceTrackId": 10008,
@@ -4290,7 +4448,9 @@ internal val rawCourseData = """
             "length": 200.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10813": {
         "raceTrackId": 10008,
@@ -4334,7 +4494,9 @@ internal val rawCourseData = """
             "length": 200.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10814": {
         "raceTrackId": 10008,
@@ -4390,7 +4552,9 @@ internal val rawCourseData = """
             "length": 200.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10815": {
         "raceTrackId": 10008,
@@ -4446,7 +4610,9 @@ internal val rawCourseData = """
             "length": 200.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -4495,7 +4661,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10902": {
         "raceTrackId": 10009,
@@ -4539,7 +4707,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10903": {
         "raceTrackId": 10009,
@@ -4585,7 +4755,9 @@ internal val rawCourseData = """
             "length": 120.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10904": {
         "raceTrackId": 10009,
@@ -4631,7 +4803,9 @@ internal val rawCourseData = """
             "length": 120.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10905": {
         "raceTrackId": 10009,
@@ -4699,7 +4873,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10906": {
         "raceTrackId": 10009,
@@ -4767,7 +4943,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10907": {
         "raceTrackId": 10009,
@@ -4835,7 +5013,9 @@ internal val rawCourseData = """
             "length": 120.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10908": {
         "raceTrackId": 10009,
@@ -4901,7 +5081,9 @@ internal val rawCourseData = """
             "length": 120.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10909": {
         "raceTrackId": 10009,
@@ -4981,7 +5163,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10910": {
         "raceTrackId": 10009,
@@ -5025,7 +5209,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10911": {
         "raceTrackId": 10009,
@@ -5069,7 +5255,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10912": {
         "raceTrackId": 10009,
@@ -5130,7 +5318,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10913": {
         "raceTrackId": 10009,
@@ -5199,7 +5389,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "10914": {
         "raceTrackId": 10009,
@@ -5277,7 +5469,9 @@ internal val rawCourseData = """
             "length": 125.0,
             "slope": 20000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -5323,7 +5517,9 @@ internal val rawCourseData = """
             "length": 60.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11002": {
         "raceTrackId": 10010,
@@ -5374,7 +5570,9 @@ internal val rawCourseData = """
             "length": 255.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11003": {
         "raceTrackId": 10010,
@@ -5427,7 +5625,9 @@ internal val rawCourseData = """
             "length": 255.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11004": {
         "raceTrackId": 10010,
@@ -5492,7 +5692,9 @@ internal val rawCourseData = """
             "length": 255.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11005": {
         "raceTrackId": 10010,
@@ -5527,7 +5729,9 @@ internal val rawCourseData = """
             "end": 1000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11006": {
         "raceTrackId": 10010,
@@ -5578,7 +5782,9 @@ internal val rawCourseData = """
             "length": 150.0,
             "slope": 15000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11007": {
         "raceTrackId": 10010,
@@ -5635,7 +5841,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -5676,7 +5884,9 @@ internal val rawCourseData = """
             "end": 1200.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11102": {
         "raceTrackId": 10101,
@@ -5723,7 +5933,9 @@ internal val rawCourseData = """
             "end": 1800.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11103": {
         "raceTrackId": 10101,
@@ -5770,7 +5982,9 @@ internal val rawCourseData = """
             "end": 2000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -5799,7 +6013,26 @@ internal val rawCourseData = """
           }
         ],
         "straights": [],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
+      },
+      "11202": {
+        "raceTrackId": 10201,
+        "name": "芝1400m",
+        "distance": 1400,
+        "distanceType": 1,
+        "surface": 1,
+        "turn": 1,
+        "courseSetStatus": [],
+        "laneMax": 12000,
+        "finishTimeMin": 80.0,
+        "finishTimeMax": 84.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11203": {
         "raceTrackId": 10201,
@@ -5855,7 +6088,9 @@ internal val rawCourseData = """
             "length": 217.0,
             "slope": -15000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
@@ -5907,7 +6142,9 @@ internal val rawCourseData = """
             "end": 1400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11302": {
         "raceTrackId": 10103,
@@ -5954,7 +6191,9 @@ internal val rawCourseData = """
             "end": 1600.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11303": {
         "raceTrackId": 10103,
@@ -6014,7 +6253,9 @@ internal val rawCourseData = """
             "end": 2100.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -6054,7 +6295,9 @@ internal val rawCourseData = """
             "end": 1000.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11402": {
         "raceTrackId": 10104,
@@ -6099,7 +6342,9 @@ internal val rawCourseData = """
             "end": 1600.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11403": {
         "raceTrackId": 10104,
@@ -6144,7 +6389,9 @@ internal val rawCourseData = """
             "end": 1800.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
       "11404": {
         "raceTrackId": 10104,
@@ -6203,7 +6450,9 @@ internal val rawCourseData = """
             "end": 2400.0
           }
         ],
-        "slopes": []
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
@@ -6259,7 +6508,9 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11502": {
         "raceTrackId": 10105,
@@ -6311,7 +6562,9 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11503": {
         "raceTrackId": 10105,
@@ -6375,7 +6628,9 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       },
       "11504": {
         "raceTrackId": 10105,
@@ -6443,64 +6698,15 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 0,
+        "runUp": 0
       }
     }
   },
   "10202": {
     "name": "サンタアニタパーク",
     "courses": {
-      "11605": {
-        "raceTrackId": 10202,
-        "name": "芝2000m",
-        "distance": 2000,
-        "distanceType": 3,
-        "surface": 1,
-        "turn": 2,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 117.2,
-        "finishTimeMax": 123.2,
-        "corners": [
-          {
-            "start": 700.0,
-            "length": 150.0
-          },
-          {
-            "start": 850.0,
-            "length": 150.0
-          },
-          {
-            "start": 1400.0,
-            "length": 150.0
-          },
-          {
-            "start": 1550.0,
-            "length": 150.0
-          }
-        ],
-        "straights": [
-          {
-            "start": 300.0,
-            "end": 700.0
-          },
-          {
-            "start": 1000.0,
-            "end": 1400.0
-          },
-          {
-            "start": 1700.0,
-            "end": 2000.0
-          }
-        ],
-        "slopes": [
-          {
-            "start": 0.0,
-            "length": 150.0,
-            "slope": -20000.0
-          }
-        ]
-      },
       "11612": {
         "raceTrackId": 10202,
         "name": "芝2000m",
@@ -6567,23 +6773,244 @@ internal val rawCourseData = """
             "length": 175.0,
             "slope": 10000.0
           }
-        ]
+        ],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11613": {
+        "raceTrackId": 10202,
+        "name": "芝1000m",
+        "distance": 1000,
+        "distanceType": 1,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          1,
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 55.0,
+        "finishTimeMax": 56.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11614": {
+        "raceTrackId": 10202,
+        "name": "芝1600m",
+        "distance": 1600,
+        "distanceType": 2,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 92.0,
+        "finishTimeMax": 96.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11615": {
+        "raceTrackId": 10202,
+        "name": "芝2000m",
+        "distance": 2000,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          2,
+          5
+        ],
+        "laneMax": 12000,
+        "finishTimeMin": 118.0,
+        "finishTimeMax": 122.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11616": {
+        "raceTrackId": 10202,
+        "name": "芝2400m",
+        "distance": 2400,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          2,
+          4
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 143.0,
+        "finishTimeMax": 146.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11617": {
+        "raceTrackId": 10202,
+        "name": "ダート1200m",
+        "distance": 1200,
+        "distanceType": 1,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          1,
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 68.0,
+        "finishTimeMax": 70.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11618": {
+        "raceTrackId": 10202,
+        "name": "ダート1400m",
+        "distance": 1400,
+        "distanceType": 1,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          1
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 81.0,
+        "finishTimeMax": 83.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11619": {
+        "raceTrackId": 10202,
+        "name": "ダート1600m",
+        "distance": 1600,
+        "distanceType": 2,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          3,
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 96.0,
+        "finishTimeMax": 97.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 50
+      },
+      "11620": {
+        "raceTrackId": 10202,
+        "name": "ダート1800m",
+        "distance": 1800,
+        "distanceType": 2,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 108.0,
+        "finishTimeMax": 111.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11621": {
+        "raceTrackId": 10202,
+        "name": "ダート2000m",
+        "distance": 2000,
+        "distanceType": 3,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          3,
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 120.0,
+        "finishTimeMax": 123.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   },
-  "99999": {
-    "name": "デルマー（仮）",
+  "10203": {
+    "name": "デルマー",
     "courses": {
-      "9999901": {
-        "raceTrackId": 99999,
+      "11701": {
+        "raceTrackId": 10203,
+        "name": "芝1000m",
+        "distance": 1000,
+        "distanceType": 1,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          1,
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 55.0,
+        "finishTimeMax": 57.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11702": {
+        "raceTrackId": 10203,
+        "name": "芝1600m",
+        "distance": 1600,
+        "distanceType": 2,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 93.0,
+        "finishTimeMax": 95.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11703": {
+        "raceTrackId": 10203,
         "name": "芝2200m",
         "distance": 2200,
         "distanceType": 3,
         "surface": 1,
         "turn": 2,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 130.2,
+        "courseSetStatus": [
+          3,
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 134.0,
         "finishTimeMax": 135.0,
         "corners": [
           {
@@ -6629,20 +7056,122 @@ internal val rawCourseData = """
             "end": 2200.0
           }
         ],
-        "slopes": [
-        ]
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       },
-      "9999951": {
-        "raceTrackId": 99999,
+      "11704": {
+        "raceTrackId": 10203,
+        "name": "芝2400m",
+        "distance": 2400,
+        "distanceType": 3,
+        "surface": 1,
+        "turn": 2,
+        "courseSetStatus": [
+          2,
+          4
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 146.0,
+        "finishTimeMax": 147.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11705": {
+        "raceTrackId": 10203,
+        "name": "ダート1200m",
+        "distance": 1200,
+        "distanceType": 1,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          1,
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 69.0,
+        "finishTimeMax": 70.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11706": {
+        "raceTrackId": 10203,
+        "name": "ダート1400m",
+        "distance": 1400,
+        "distanceType": 1,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          1
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 81.0,
+        "finishTimeMax": 83.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11707": {
+        "raceTrackId": 10203,
+        "name": "ダート1600m",
+        "distance": 1600,
+        "distanceType": 2,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          3,
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 95.0,
+        "finishTimeMax": 96.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 60
+      },
+      "11708": {
+        "raceTrackId": 10203,
+        "name": "ダート1800m",
+        "distance": 1800,
+        "distanceType": 2,
+        "surface": 2,
+        "turn": 2,
+        "courseSetStatus": [
+          3
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 108.0,
+        "finishTimeMax": 111.0,
+        "corners": [],
+        "straights": [],
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
+      },
+      "11709": {
+        "raceTrackId": 10203,
         "name": "ダート2000m",
         "distance": 2000,
         "distanceType": 3,
         "surface": 2,
         "turn": 2,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 121.0,
-        "finishTimeMax": 129.0,
+        "courseSetStatus": [
+          3,
+          5
+        ],
+        "laneMax": 135000,
+        "finishTimeMin": 120.0,
+        "finishTimeMax": 122.0,
         "corners": [
           {
             "start": 462.0,
@@ -6675,10 +7204,10 @@ internal val rawCourseData = """
             "end": 2000.0
           }
         ],
-        "slopes": [
-        ]
+        "slopes": [],
+        "tightTrack": 1,
+        "runUp": 0
       }
     }
   }
-}
-""".trimIndent()
+}""".trimIndent()
