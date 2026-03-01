@@ -178,7 +178,7 @@ private fun RaceState.updateFrame(): Boolean {
     simulation.startPosition = simulation.position
     val startSp = simulation.sp
     var frame = RaceFrame(
-        speed = simulation.currentSpeed,
+        speed = simulation.totalSpeed,
         sp = simulation.sp,
         startPosition = simulation.startPosition,
         currentLane = simulation.currentLane,
@@ -331,8 +331,8 @@ private fun RaceState.updateFrame(): Boolean {
     frame = frame.copy(
         movement = simulation.position - simulation.startPosition,
         consume = simulation.sp - startSp,
-        targetSpeed = targetSpeed,
-        acceleration = acceleration
+        targetSpeed = targetSpeed + fullSpurtTargetSpeed,
+        acceleration = acceleration + fullSpurtAcceleration
     )
     simulation.frameElapsed++
 
@@ -394,7 +394,7 @@ private fun RaceState.move(elapsedTime: Double) {
         }
 
         updateSelfSpeed(elapsedTime /* NOT timeAfterDelay!! */)
-        val moveLength = simulation.currentSpeed * timeAfterDelay
+        val moveLength = simulation.totalSpeed * timeAfterDelay
         val cornerLoss = currentCorner?.let {
             moveLength / it.length / 4 * 2 * PI * simulation.currentLane
         } ?: 0.0
@@ -430,10 +430,19 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     simulation.speedDebuff = speedModification
     newSpeed += speedModification
     simulation.currentSpeed = newSpeed
+
+    val fullSpurtTargetSpeed = fullSpurtTargetSpeed
+    var newFullSpurtSpeed = if (simulation.fullSpurtCurrentSpeed < fullSpurtTargetSpeed) {
+        min(simulation.fullSpurtCurrentSpeed + elapsedTime * fullSpurtAcceleration, fullSpurtTargetSpeed)
+    } else {
+        max(simulation.fullSpurtCurrentSpeed + elapsedTime * deceleration, fullSpurtTargetSpeed)
+    }
+    newFullSpurtSpeed = max(newFullSpurtSpeed, 0.0)
+    simulation.fullSpurtCurrentSpeed = newFullSpurtSpeed
 }
 
 private fun RaceState.updateStartDash() {
-    if (simulation.isStartDash && simulation.currentSpeed >= setting.v0) {
+    if (simulation.isStartDash && simulation.totalSpeed >= setting.v0) {
         simulation.isStartDash = false
     }
 }
@@ -505,7 +514,7 @@ fun RaceState.calcSpurtDistance(v: Double): Double {
 }
 
 private fun RaceState.goal(): RaceSimulationResult {
-    val excessTime = (simulation.position - setting.courseLength) / simulation.currentSpeed
+    val excessTime = (simulation.position - setting.courseLength) / simulation.totalSpeed
     val raceTime = simulation.frameElapsed * secondPerFrame - excessTime
     val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
     val competeFightFrame = (simulation.competeFightEnd ?: simulation.frameElapsed) -
