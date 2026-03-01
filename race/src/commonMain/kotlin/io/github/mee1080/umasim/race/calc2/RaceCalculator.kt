@@ -431,14 +431,16 @@ private fun RaceState.updateSelfSpeed(elapsedTime: Double) {
     newSpeed += speedModification
     simulation.currentSpeed = newSpeed
 
-    val fullSpurtTargetSpeed = fullSpurtTargetSpeed
-    var newFullSpurtSpeed = if (simulation.fullSpurtCurrentSpeed < fullSpurtTargetSpeed) {
-        min(simulation.fullSpurtCurrentSpeed + elapsedTime * fullSpurtAcceleration, fullSpurtTargetSpeed)
-    } else {
-        max(simulation.fullSpurtCurrentSpeed + elapsedTime * deceleration, fullSpurtTargetSpeed)
+    if (simulation.fullSpurt) {
+        val fullSpurtTargetSpeed = fullSpurtTargetSpeed
+        var newFullSpurtSpeed = if (simulation.fullSpurtCurrentSpeed < fullSpurtTargetSpeed) {
+            min(simulation.fullSpurtCurrentSpeed + elapsedTime * fullSpurtAcceleration, fullSpurtTargetSpeed)
+        } else {
+            max(simulation.fullSpurtCurrentSpeed + elapsedTime * deceleration, fullSpurtTargetSpeed)
+        }
+        newFullSpurtSpeed = max(newFullSpurtSpeed, 0.0)
+        simulation.fullSpurtCurrentSpeed = newFullSpurtSpeed
     }
-    newFullSpurtSpeed = max(newFullSpurtSpeed, 0.0)
-    simulation.fullSpurtCurrentSpeed = newFullSpurtSpeed
 }
 
 private fun RaceState.updateStartDash() {

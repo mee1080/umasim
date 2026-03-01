@@ -53,11 +53,11 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
                 modifier = Modifier.fillMaxWidth(),
             )
             Text("加速度: 通常の加速度×係数")
-            Text("加速度係数: ${fullSpurtAccelCoef.roundToString(2)}")
+            Text("加速度係数: ${fullSpurtAccelCoef.roundToString(3)}")
             Slider(
                 value = fullSpurtAccelCoef.toFloat(),
                 onValueChange = { dispatch(setFullSpurtAccelCoef(it.toDouble())) },
-                valueRange = 0f..1.0f,
+                valueRange = 0f..0.1f,
                 steps = 99,
                 modifier = Modifier.fillMaxWidth(),
             )

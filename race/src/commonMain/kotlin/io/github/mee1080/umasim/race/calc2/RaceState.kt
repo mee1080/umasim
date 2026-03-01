@@ -444,7 +444,7 @@ data class RaceSetting(
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
     override val fullSpurtCoef: Double = 0.05,
-    override val fullSpurtAccelCoef: Double = 0.2,
+    override val fullSpurtAccelCoef: Double = 0.017,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -709,7 +709,6 @@ class RaceSettingWithPassive(
 
     val fullSpurtSpeed by lazy {
         // 計算方法不明のため近似
-        modifiedSpeed
         val status = umaStatus.speed * condCoef[umaStatus.condition]!! + passiveBonus.speed
         if (status <= 2000) return@lazy 0.0
         sqrt(status - 2000.0) * fullSpurtCoef
