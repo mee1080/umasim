@@ -238,11 +238,12 @@ class RaceState(
                 result += setting.staminaLimitBreakSpeed
             }
 
-            if (simulation.fullSpurt) {
-                result += setting.fullSpurtSpeed
-            }
-
             return result
+        }
+
+    val fullSpurtTargetSpeed: Double
+        get() {
+            return if (simulation.fullSpurt) setting.fullSpurtSpeed else 0.0
         }
 
     val vMin: Double
@@ -261,23 +262,32 @@ class RaceState(
             if (simulation.isStartDash) {
                 acceleration += 24.0
             }
-            if (simulation.fullSpurt) {
-                acceleration *= setting.fullSpurtAccelCoef
-                simulation.operatingSkills.forEach {
-                    acceleration += it.fullSpurtAcceleration
-                }
-            } else {
-                simulation.operatingSkills.forEach {
-                    acceleration += it.acceleration
-                }
-                if (simulation.competeFight) {
-                    acceleration += setting.competeFightAcceleration
-                }
-                if (isInConservePower) {
-                    acceleration += simulation.conservePowerAcceleration ?: 0.0
-                }
+            simulation.operatingSkills.forEach {
+                acceleration += it.acceleration
+            }
+            if (simulation.competeFight) {
+                acceleration += setting.competeFightAcceleration
+            }
+            if (isInConservePower) {
+                acceleration += simulation.conservePowerAcceleration ?: 0.0
             }
 
+            return max(acceleration, 0.0)
+        }
+
+    val fullSpurtAcceleration: Double
+        get() {
+            if (!simulation.fullSpurt) return 0.0
+            val c = if (isInSlopeUp()) 0.0004 else 0.0006
+            var acceleration = c *
+                    sqrt(500.0 * setting.modifiedPower) *
+                    setting.runningStyle.styleAccelerateCoef[currentPhase]!! *
+                    surfaceFitAccelerateCoef[setting.umaStatus.surfaceFit]!! *
+                    distanceFitAccelerateCoef[setting.umaStatus.distanceFit]!!
+            acceleration *= setting.fullSpurtAccelCoef
+            simulation.operatingSkills.forEach {
+                acceleration += it.fullSpurtAcceleration
+            }
             return max(acceleration, 0.0)
         }
 
@@ -335,7 +345,7 @@ class RaceState(
         }
 
     fun calcConsumePerSecond(
-        currentSpeed: Double = simulation.currentSpeed,
+        currentSpeed: Double = simulation.totalSpeed,
         spurtPhase: Boolean = currentPhase >= 2,
         applyStatusModifier: Boolean = true,
     ): Double {
@@ -745,6 +755,7 @@ class RaceSimulationState(
     var position: Double = 0.0,
     var startPosition: Double = 0.0,
     var currentSpeed: Double = startSpeed,
+    var fullSpurtCurrentSpeed: Double = 0.0,
     var sp: Double = 0.0,
     var currentLane: Double = 0.0,
     var targetLane: Double = 0.0,
@@ -800,6 +811,8 @@ class RaceSimulationState(
 
     val frames: MutableList<RaceFrame> = mutableListOf(),
 ) {
+    val totalSpeed get() = currentSpeed + fullSpurtCurrentSpeed
+
     val isInTemptation: Boolean
         get() {
             val temptationModeStart = temptationModeStart ?: return false
