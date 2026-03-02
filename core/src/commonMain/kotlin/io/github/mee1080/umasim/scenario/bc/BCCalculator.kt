@@ -100,7 +100,11 @@ object BCCalculator : ScenarioCalculator {
 
                 is Sleep -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
 
-                is Outing if (action.support == null) -> action.copy(candidates = action.addScenarioActionParam(BCActionParam()))
+                is Outing if (action.support == null) -> action.copy(
+                    candidates = action.addScenarioActionParam(
+                        BCActionParam()
+                    )
+                )
 
                 is Race if (action.goal) -> action.copy(result = action.result.addScenarioActionParam(BCActionParam()))
 
@@ -141,7 +145,7 @@ object BCCalculator : ScenarioCalculator {
         var result = bcStatus
         repeat(3) {
             val target = result.teamMember.mapIndexed { index, member -> index to member }
-                .minBy { it.second.dreamGauge * 10 + it.first }.second
+                .minBy { it.second.dreamGauge * 1000 + it.second.memberRank * 10 + it.first }.second
             result = result.addDreamGauge(target)
         }
         return result
