@@ -534,8 +534,8 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
         OperatingSkill(
             data = skill,
             startFrame = simulation.frameElapsed,
-            targetSpeed = skill.invoke.targetSpeed(this),
-            speedWithDecel = skill.invoke.speedWithDecel(this),
+            targetSpeed = skill.targetSpeed(this),
+            speedWithDecel = skill.speedWithDecel(this),
             currentSpeed = skill.invoke.currentSpeed(this),
             acceleration = skill.invoke.acceleration(this),
             duration = skill.calcDuration(this) * setting.timeCoef,

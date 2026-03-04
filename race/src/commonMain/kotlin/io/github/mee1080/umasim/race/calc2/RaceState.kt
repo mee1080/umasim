@@ -391,6 +391,9 @@ class RaceState(
         val phase3Length = setting.courseLength / 3.0
         return calcRequiredSp(setting.v2, phase2Length, false) + calcRequiredSp(setting.maxSpurtSpeed, phase3Length)
     }
+
+    val wisdomSkillBuff: Double
+        get() = getWisdomSkillBuff(setting.modifiedWisdom, setting.basicRunningStyle)[currentPhase]
 }
 
 interface IRaceSetting {
@@ -914,6 +917,20 @@ class InvokedSkill(
         return invoke.calcDuration(state) * if (skill.rarity == "evo") {
             state.simulation.evoDurationMultiplier
         } else 1.0
+    }
+
+    private val isUniqueOrEvoOrRare = skill.rarity == "unique" || skill.rarity == "evo" || skill.rarity == "rare"
+
+    fun speedWithDecel(state: RaceState): Double {
+        return if (isUniqueOrEvoOrRare) {
+            invoke.speedWithDecel(state) * state.wisdomSkillBuff
+        } else invoke.speedWithDecel(state)
+    }
+
+    fun targetSpeed(state: RaceState): Double {
+        return if (isUniqueOrEvoOrRare) {
+            invoke.targetSpeed(state) * state.wisdomSkillBuff
+        } else invoke.targetSpeed(state)
     }
 }
 

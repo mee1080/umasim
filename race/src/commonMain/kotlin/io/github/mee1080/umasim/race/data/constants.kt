@@ -469,3 +469,49 @@ enum class PositionKeepState(val label: String) {
     PACE_DOWN("ペースダウン"),
     PACE_UP_EX("ペースアップEx"),
 }
+
+/**
+ * フェーズ->list(賢さ->(逃げ,先行,差し,追込))
+ */
+val wisdomSkillBuff = listOf(
+    listOf(
+        1400 to listOf(1.052, 1.041, 1.038, 1.03),
+        1600 to listOf(1.208, 1.168, 1.152, 1.12),
+        2000 to listOf(1.26, 1.21, 1.19, 1.15),
+        2500 to listOf(1.273, 1.22, 1.2, 1.158),
+    ),
+    listOf(
+        1400 to listOf(1.044, 1.04, 1.035, 1.033),
+        1600 to listOf(1.185, 1.168, 1.145, 1.138),
+        2000 to listOf(1.23, 1.21, 1.18, 1.171),
+        2500 to listOf(1.242, 1.221, 1.19, 1.18),
+    ),
+    listOf(
+        1400 to listOf(1.038, 1.042, 1.045, 1.05),
+        1600 to listOf(1.152, 1.168, 1.185, 1.2),
+        2000 to listOf(1.19, 1.21, 1.23, 1.25),
+        2500 to listOf(1.2, 1.22, 1.242, 1.263),
+    ),
+    listOf(
+        1400 to listOf(1.032, 1.042, 1.048, 1.055),
+        1600 to listOf(1.128, 1.168, 1.192, 1.218),
+        2000 to listOf(1.16, 1.21, 1.24, 1.272),
+        2500 to listOf(1.168, 1.22, 1.252, 1.285),
+    ),
+)
+
+fun getWisdomSkillBuff(wisdom: Int, style: Style): List<Double> {
+    val index = style.value - 1
+    if (wisdom <= 1200) return listOf(1.0, 1.0, 1.0, 1.0)
+    return List(4) {
+        var low = 1200 to 1.0
+        for ((nextWisdom, list) in wisdomSkillBuff[it]) {
+            val value = list[index]
+            if (wisdom <= nextWisdom) {
+                return@List low.second + (value - low.second) * (wisdom - low.first) / (nextWisdom - low.first)
+            }
+            low = nextWisdom to value
+        }
+        wisdomSkillBuff[it].last().second[index]
+    }
+}

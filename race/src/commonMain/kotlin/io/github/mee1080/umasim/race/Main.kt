@@ -22,9 +22,9 @@
  */
 package io.github.mee1080.umasim.race
 
-import io.github.mee1080.umasim.race.data.trackData
-import kotlin.math.max
-import kotlin.math.min
+import io.github.mee1080.umasim.race.data.Style
+import io.github.mee1080.umasim.race.data.getWisdomSkillBuff
+import io.github.mee1080.utility.roundToString
 
 fun main() {
 //    skillData.forEach {
@@ -35,24 +35,36 @@ fun main() {
 //    }
 //    testCalc()
 //    testCalc2()
-    trackData.forEach { (_, course) ->
-        course.courses.forEach { (_, track) ->
-            val start = track.distance * 5.0 / 12.0
-            val end = track.distance * 2.0 / 3.0
-            val targets = track.straights.filter { (it.start <= end && it.end >= start) }
-            if (targets.count() >= 2) {
-                println("${course.name} ${track.name}")
-                println("  中盤後半 $start ～ $end")
-                val lengthList = mutableListOf<Double>()
-                targets.forEach {
-                    val length = min(it.end, end) - max(it.start, start)
-                    lengthList += length
-                    println("　  ${it.start} ～ ${it.end} $length")
-                }
-                val diff = lengthList.max() / lengthList.min()
-                println("  diff $diff")
-                println()
-            }
+//    trackData.forEach { (_, course) ->
+//        course.courses.forEach { (_, track) ->
+//            val start = track.distance * 5.0 / 12.0
+//            val end = track.distance * 2.0 / 3.0
+//            val targets = track.straights.filter { (it.start <= end && it.end >= start) }
+//            if (targets.count() >= 2) {
+//                println("${course.name} ${track.name}")
+//                println("  中盤後半 $start ～ $end")
+//                val lengthList = mutableListOf<Double>()
+//                targets.forEach {
+//                    val length = min(it.end, end) - max(it.start, start)
+//                    lengthList += length
+//                    println("　  ${it.start} ～ ${it.end} $length")
+//                }
+//                val diff = lengthList.max() / lengthList.min()
+//                println("  diff $diff")
+//                println()
+//            }
+//        }
+//    }
+    val wisdomSkillBuff = buildList {
+        val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
+        for (wisdom in 1200..2500 step 10) {
+            add(wisdom to styles.map { getWisdomSkillBuff(wisdom, it) })
+        }
+    }
+    for (phase in 0..3) {
+        println("Phase $phase")
+        wisdomSkillBuff.forEach { (wisdom, buffs) ->
+            println("$wisdom\t${buffs.joinToString("\t") { it[phase].roundToString(3) }}")
         }
     }
 }
