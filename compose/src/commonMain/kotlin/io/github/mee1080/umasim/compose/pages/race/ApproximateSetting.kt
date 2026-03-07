@@ -41,7 +41,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
         Column {
             Text("全開スパート", style = MaterialTheme.typography.titleLarge)
-            Text("詳細不明のため、開始位置は最終盤開始時とし、速度と加速度は指定した係数を用いて、以下の式で計算します")
+            Text("開始位置は最高速度到達時（スタミナ勝負と同じ）とし、速度と加速度は指定した係数を用いて、以下の式で計算します")
             Text("スピードのやる気による変動は有効、コースごとのボーナス対象ステータスやバ場による変動は無効です")
             Text("最高速度上昇量：√(スピード-2000)×係数")
             Text("速度係数: ${fullSpurtCoef.roundToString(3)}")

@@ -316,8 +316,7 @@ private fun RaceState.updateFrame(): Boolean {
     }
 
     // 全開スパート
-    // TODO: 判定方法の修正が必要
-    if (!simulation.fullSpurt && setting.umaStatus.speed > 2000 && currentPhase == 3) {
+    if (!simulation.fullSpurt && setting.umaStatus.speed > 2000 && simulation.currentSpeed >= setting.maxSpurtSpeed) {
         simulation.fullSpurt = true
         simulation.invokedSkills.forEach {
             if (it.invoke.isRunAtFullSpeedRandom) {
