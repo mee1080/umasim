@@ -20,7 +20,7 @@ dependencies {
 val jar by tasks.getting(Jar::class) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "io.github.mee1080.umasim.cli.OnsenCliKt"
+        attributes["Main-Class"] = "io.github.mee1080.umasim.cli.BCCliKt"
     }
     configurations["runtimeClasspath"].forEach { file: File ->
         from(zipTree(file.absoluteFile))

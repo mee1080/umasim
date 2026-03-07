@@ -74,6 +74,15 @@ abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Cont
                 maxTurnChangeAction = action to score
             }
         }
+
+        val lastTurnBeforeLevelUp by lazy {
+            when (state.turn) {
+                36, 60 -> true
+                35, 59 -> state.goalRace.any { it.turn == state.turn + 1 }
+                34, 58 -> state.goalRace.any { it.turn == state.turn + 1 || it.turn == state.turn + 2 }
+                else -> false
+            }
+        }
     }
 
     override suspend fun select(state: SimulationState, selection: List<Action>): Action {
@@ -127,7 +136,7 @@ abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Cont
     fun calcBaseScore(context: Context, action: Action): Double {
         if (!action.turnChange) return Double.MIN_VALUE
         val (option, state) = context
-        val hpKeepFactor = if (state.turn == 36) 20 * option.hpKeep else option.hpKeep
+        val hpKeepFactor = if (context.lastTurnBeforeLevelUp) 20 * option.hpKeep else option.hpKeep
         if (DEBUG) println("${state.turn}: ${action.toShortString()}")
         val total = action.candidates.sumOf { it.second }.toDouble()
         val score = action.candidates.sumOf {
@@ -175,14 +184,17 @@ abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Cont
     private fun calcRelationScore(option: Option, action: Action): Double {
         if (action !is Training) return 0.0
         val score = action.support.sumOf {
-            when {
-                it.relation >= it.card.requiredRelation -> 0
-                it.outingType -> option.outingRelation
-                else -> option.relation
-            }
+            if (it.relation >= it.card.requiredRelation) 0 else getRelationFactor(option, it)
         }.toDouble()
         if (DEBUG) println("  relation $score")
         return score
+    }
+
+    open fun getRelationFactor(option: Option, target: MemberState): Int {
+        return when {
+            target.outingType -> option.outingRelation
+            else -> option.relation
+        }
     }
 
     /**

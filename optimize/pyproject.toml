@@ -1,0 +1,10 @@
+[project]
+name = "optimize"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = [
+    "optuna>=4.7.0",
+    "optuna-dashboard>=0.20.0",
+]

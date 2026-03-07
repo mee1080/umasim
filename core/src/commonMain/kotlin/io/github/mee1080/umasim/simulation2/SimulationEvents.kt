@@ -93,6 +93,10 @@ open class RandomEvents(
     initialStatus: (status: Status) -> Status = { it },
 ) : SimulationEvents(initialStatus) {
 
+    companion object {
+        private const val DEBUG = false
+    }
+
     private val eventQueue = mutableListOf<EventEntry>()
 
     private val continuousEventCount = IntArray(6) { 0 }
@@ -125,10 +129,12 @@ open class RandomEvents(
     }
 
     override fun beforeAction(state: SimulationState): SimulationState {
+        if (DEBUG) println("events: beforeAction queue=${eventQueue.size}")
         if (eventQueue.isEmpty()) return state
         val turn = state.turn
-        return if (turn % 2 == 2 && turn !in 37..40 && turn !in 60..63 && turn < 72) {
+        return if (turn % 2 == 0 && turn !in 37..40 && turn !in 60..63 && turn < 72) {
             val event = eventQueue.removeFirst()
+            if (DEBUG) println("events: ${event.calcStatus(state.supportEventEffect, continuousEventCount)}")
             state.addStatus(
                 event.calcStatus(state.supportEventEffect, continuousEventCount)
             ).applyIf(event.relationTarget >= 0) {

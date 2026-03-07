@@ -38,7 +38,7 @@ import kotlin.native.concurrent.ThreadLocal
 
 object Calculator {
 
-    var DEBUG = true
+    var DEBUG = false
 
     data class CalcInfo(
         val chara: Chara,

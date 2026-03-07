@@ -50,6 +50,7 @@ fun SimulationPage(state: State) {
                 Scenario.LEGEND -> LegendActionSelector.Option()
                 Scenario.MUJINTO -> MujintoActionSelector.Option()
                 Scenario.ONSEN -> OnsenActionSelector2.Option()
+                Scenario.BC -> BCActionSelector.Option()
                 else -> null
             }
         )

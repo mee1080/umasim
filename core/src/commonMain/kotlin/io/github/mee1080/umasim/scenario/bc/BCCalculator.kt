@@ -141,7 +141,7 @@ object BCCalculator : ScenarioCalculator {
         return addDreamGauge(teamMember.filter { it.dreamGauge < 3 }.randomOrNull())
     }
 
-    internal fun addLowestDreamGauge(bcStatus: BCStatus): BCStatus {
+    fun addLowestDreamGauge(bcStatus: BCStatus): BCStatus {
         var result = bcStatus
         repeat(3) {
             val target = result.teamMember.mapIndexed { index, member -> index to member }
@@ -152,7 +152,7 @@ object BCCalculator : ScenarioCalculator {
     }
 
     private fun BCStatus.addDreamGauge(target: BCTeamMember?): BCStatus {
-        return if (target == null) this else {
+        return if (target == null || target.dreamGauge >= 3) this else {
             copy(
                 teamMember = teamMember.mapIf({ it == target }) {
                     it.copy(dreamGauge = it.dreamGauge + 1)

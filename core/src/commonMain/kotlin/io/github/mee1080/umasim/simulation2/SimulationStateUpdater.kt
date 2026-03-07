@@ -46,6 +46,8 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
+private const val DEBUG_STATUS = false
+
 suspend fun SimulationState.onTurnChange(selector: ActionSelector): SimulationState {
     val turn = turn + 1
     val levelOverride = if (levelUpTurns.contains(turn)) {
@@ -152,12 +154,15 @@ fun SimulationState.addStatus(
     val newMotivation = if (newState.motivationLimitOver) 3 else {
         max(-2, min(2, currentStatus.motivation + status.motivation))
     }
-    return newState.copy(
-        status = (currentStatus + status).copy(
-            hp = newHp,
-            motivation = newMotivation,
-        )
+    val newStatus = (currentStatus + status).copy(
+        hp = newHp,
+        motivation = newMotivation,
     )
+    if (DEBUG_STATUS) {
+        println("addStatus: $status")
+        println("addStatus: -> $newStatus")
+    }
+    return newState.copy(status = newStatus)
 }
 
 fun SimulationState.addAllStatus(
