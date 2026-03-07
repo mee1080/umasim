@@ -105,7 +105,7 @@ class UafScenarioEvents : CommonScenarioEvents() {
                 it >= 5 -> 3
                 it >= 1 -> 1
                 else -> 0
-            }.toInt()
+            }
         }
 
         return addStatus(
