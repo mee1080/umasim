@@ -7,12 +7,60 @@ import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
 
 class BCActionSelector(
-    vararg val options: Option,
+    vararg val options: Option = deafultOptions.toTypedArray(),
 ) : BaseActionSelector3<BCActionSelector.Option, BCActionSelector.Context>() {
 
     companion object {
         const val DEBUG = false
         const val FORCE = 10000000.0
+
+        val deafultOptions = buildList {
+            val base = Option(
+                status = 100,
+                wisdom = 90,
+                skillPt = 1000,
+                hp = 500,
+                motivation = 1000,
+                relation = 10000,
+                outingRelation = 24000,
+                wisdomRelation = 16000,
+                hpKeep = 1000,
+                risk = 350,
+                dreamGauge = listOf(26000, 25000, 24000),
+                dreamGaugeMax = 0,
+            )
+            add(base)
+            add(
+                base.copy(
+                    wisdom = 90,
+                    hp = 500,
+                    hpKeep = 700,
+                    risk = 300,
+                    dreamGauge = listOf(18000, 17000, 16000),
+                    dreamGaugeMax = 0,
+                )
+            )
+            add(
+                base.copy(
+                    wisdom = 90,
+                    hp = 500,
+                    hpKeep = 1200,
+                    risk = 350,
+                    dreamGauge = listOf(10000, 9000, 8000),
+                    dreamGaugeMax = 0,
+                )
+            )
+            add(
+                base.copy(
+                    wisdom = 100,
+                    hp = 500,
+                    hpKeep = 1100,
+                    risk = 400,
+                    dreamGauge = listOf(12000, 11000, 10000),
+                    dreamGaugeMax = 0,
+                )
+            )
+        }
     }
 
     @Serializable
@@ -196,22 +244,31 @@ class BCActionSelector(
                 return dream to FORCE
             }
         }
-        if (friend != null) {
+        if (friend != null && restGauge >= 2) {
             // お休みで友人お出かけが可能な場合は友人お出かけ
             if (selectedAction is Sleep) return friend to FORCE
 
             // 体力が減っていてレース選択するほどの下振れの場合は友人お出かけ
             if (state.status.hp <= 70 && selectedAction is Race) return friend to FORCE
 
-            // 体力が減っていてランクが最も低いキャラのゲージが2以上上がるならお出かけ
-            if (state.status.hp <= 50) {
-                val memberRank = context.memberRank
-                if (memberRank != null) {
-                    val nextBcStatus = BCCalculator.addLowestDreamGauge(bcStatus)
-                    val targetName = context.memberRank.entries.first { it.value == 0 }.key
-                    val currentGauge = bcStatus.teamMember.first { it.charaName == targetName }.dreamGauge
-                    val nextGauge = nextBcStatus.teamMember.first { it.charaName == targetName }.dreamGauge
-                    if (nextGauge - currentGauge >= 2) return friend to FORCE
+            // お出かけ回数の残りが多いか体力が減っていてランクが最も低いキャラのゲージが2以上上がるならお出かけ
+            if (restGauge >= 3) {
+                val outingStep = state.member.first { it.outingType }.supportState?.outingStep ?: Int.MAX_VALUE
+                val requiredStep = when {
+                    state.turn >= 40 -> 6
+                    state.turn >= 30 -> 5
+                    state.turn >= 20 -> 4
+                    else -> 3
+                }
+                if (outingStep < requiredStep || state.status.hp <= 50) {
+                    val memberRank = context.memberRank
+                    if (memberRank != null) {
+                        val nextBcStatus = BCCalculator.addLowestDreamGauge(bcStatus)
+                        val targetName = context.memberRank.entries.first { it.value == 0 }.key
+                        val currentGauge = bcStatus.teamMember.first { it.charaName == targetName }.dreamGauge
+                        val nextGauge = nextBcStatus.teamMember.first { it.charaName == targetName }.dreamGauge
+                        if (nextGauge - currentGauge >= 2) return friend to FORCE
+                    }
                 }
             }
         }
@@ -223,7 +280,8 @@ class BCActionSelector(
         context: Context,
         action: Action
     ): Double? {
-        if (action is Race) return 0.0
+        // レースは基本的に選ばない
+        if (action is Race) return 1.0
         if (action is BCTeamParameterUp) {
             return if (action.parameter == context.nextTeamParameter) FORCE else 0.0
         }

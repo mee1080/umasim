@@ -19,14 +19,14 @@ fun simulateBC() {
 
 private fun speed2power1guts1Wisdom1Speed() {
     val scenario = Scenario.BC
-    val chara = Store.getChara("[リアライズ・ルーン]スイープトウショウ", 5, 5)
+    val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
     val defaultSupport = Store.getSupportByName(
-//        "[世界を変える眼差し]アーモンドアイ" to 4,
-        "[Unveiled Dream]ラインクラフト" to 4,
-        "[白き稲妻の如く]タマモクロス" to 4,
-        "[繋がれパレード・ノーツ♪]トランセンド" to 4,
-        "[Take Them Down!]ナリタタイシン" to 4,
-        "[激録！爆走トナカイ事件]ゴールドシップ" to 4,
+//        "[心覚えし、京の華]エアグルーヴ" to 4,
+        "[天才的ユートピア]トウカイテイオー" to 4,
+        "[ぬくもりのノエル]フェノーメノ" to 4,
+        "[星跨ぐメッセージ]ネオユニヴァース" to 4,
+        "[Innovator]フォーエバーヤング" to 4,
+        "[American Dream]カジノドライヴ" to 4,
     ).toTypedArray()
     val targetStatus = StatusType.SPEED
     doSimulation2(
@@ -34,14 +34,14 @@ private fun speed2power1guts1Wisdom1Speed() {
         chara,
         defaultSupport,
 //        targetStatus, rarity = 2..3, talent = 0..4,
-        Store.getSupportByName(*((0..4).map { "[世界を変える眼差し]アーモンドアイ" to it }.toTypedArray())),
+        Store.getSupportByName(*((0..4).map { "[心覚えし、京の華]エアグルーヴ" to it }.toTypedArray())),
 //        Store.getSupportByName("[世界を変える眼差し]アーモンドアイ" to 4),
-        factor = factor(StatusType.SPEED, 4) + factor(StatusType.POWER, 2),
-        testCount = 1,
-        selector = BCActionSelector.Option()::generateSelector,
+        factor = factor(StatusType.SPEED, 6),
+        testCount = 10000,
+        selector = { BCActionSelector() },
         evaluateSetting = Runner.bcSetting,
-        evaluateUpperRate = 1.0,
-        scenarioEvents = { BCScenarioEvents(BCRoute.Mile) },
+        evaluateUpperRate = 0.2,
+        scenarioEvents = { BCScenarioEvents(BCRoute.Classic) },
     )
 }
 

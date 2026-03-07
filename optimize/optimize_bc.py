@@ -3,71 +3,71 @@ import optuna
 
 def objective(trial):
 
-    count = 1000
+    count = 100000
 
     status = 100
     skillPt = 1000
     motivation = 1000
 
 
-    wisdom1 = trial.suggest_int ('wisdom1', 50, 100, step=10)
-    hp1 = trial.suggest_int ('hp1', 200, 500, step=25)
+    wisdom1 = trial.suggest_int ('wisdom1', 50, 100, step=5)
+    hp1 = trial.suggest_int ('hp1', 400, 1000, step=50)
 
-    relation1 = trial.suggest_int ('relation1', 8000, 30000, step=2000)
-    outingRelation1 = trial.suggest_int ('outingRelation1', 8000, 30000, step=2000)
-    wisdomRelation1 = trial.suggest_int ('wisdomRelation1', 8000, 30000, step=2000)
-    hpKeep1 = trial.suggest_int ('hpKeep1', 600, 1200, step=100)
+    relation1 = trial.suggest_int ('relation', 6000, 30000, step=2000)
+    outingRelation1 = trial.suggest_int ('outingRelation', 6000, 30000, step=2000)
+    wisdomRelation1 = trial.suggest_int ('wisdomRelation', 6000, 30000, step=2000)
+    hpKeep1 = trial.suggest_int ('hpKeep1', 600, 1500, step=100)
     risk1 = trial.suggest_int ('risk1', 100, 500, step=50)
 
-    dreamGauge11 = trial.suggest_int ('dreamGauge11', 10000, 30000, step=2000)
-    dreamGauge21 = trial.suggest_int ('dreamGauge21', 0, 5000, step=500)
-    dreamGauge31 = trial.suggest_int ('dreamGauge31', 0, 5000, step=500)
-    dreamGaugeMax1 = trial.suggest_int ('dreamGaugeMax1', 0, 10000, step=1000)
+    dreamGauge11 = trial.suggest_int ('dreamGauge11', 8000, 30000, step=2000)
+    dreamGauge21 = 1000
+    dreamGauge31 = 1000
+    dreamGaugeMax1 = trial.suggest_int ('dreamGaugeMax1', -10000, 10000, step=2000)
 
 
-    wisdom2 = trial.suggest_int ('wisdom2', 50, 100, step=10)
-    hp2 = trial.suggest_int ('hp2', 200, 500, step=25)
+    wisdom2 = trial.suggest_int ('wisdom2', 50, 100, step=5)
+    hp2 = trial.suggest_int ('hp2', 400, 1000, step=50)
 
-    relation2 = trial.suggest_int ('relation2', 8000, 30000, step=2000)
-    outingRelation2 = trial.suggest_int ('outingRelation2', 8000, 30000, step=2000)
-    wisdomRelation2 = relation2
-    hpKeep2 = trial.suggest_int ('hpKeep2', 600, 1200, step=100)
+    relation2 = relation1
+    outingRelation2 = outingRelation1
+    wisdomRelation2 = wisdomRelation1
+    hpKeep2 = trial.suggest_int ('hpKeep2', 600, 1500, step=100)
     risk2 = trial.suggest_int ('risk2', 100, 500, step=50)
 
-    dreamGauge12 = trial.suggest_int ('dreamGauge12', 10000, 30000, step=2000)
-    dreamGauge22 = trial.suggest_int ('dreamGauge22', 0, 5000, step=500)
-    dreamGauge32 = trial.suggest_int ('dreamGauge32', 0, 5000, step=500)
-    dreamGaugeMax2 = trial.suggest_int ('dreamGaugeMax2', 0, 10000, step=1000)
+    dreamGauge12 = trial.suggest_int ('dreamGauge12', 8000, 30000, step=2000)
+    dreamGauge22 = 1000
+    dreamGauge32 = 1000
+    dreamGaugeMax2 = trial.suggest_int ('dreamGaugeMax2', -10000, 10000, step=2000)
 
 
-    wisdom3 = trial.suggest_int ('wisdom3', 50, 100, step=10)
-    hp3 = trial.suggest_int ('hp3', 200, 500, step=25)
+    wisdom3 = trial.suggest_int ('wisdom3', 50, 100, step=5)
+    hp3 = trial.suggest_int ('hp3', 400, 1000, step=50)
 
-    relation3 = 10000
-    outingRelation3 = 10000
-    wisdomRelation3 = 10000
-    hpKeep3 = trial.suggest_int ('hpKeep3', 600, 1200, step=100)
+    relation3 = relation1
+    outingRelation3 = outingRelation1
+    wisdomRelation3 = wisdomRelation1
+    hpKeep3 = trial.suggest_int ('hpKeep3', 600, 1500, step=100)
     risk3 = trial.suggest_int ('risk3', 100, 500, step=50)
 
-    dreamGauge13 = trial.suggest_int ('dreamGauge13', 10000, 30000, step=2000)
-    dreamGauge23 = trial.suggest_int ('dreamGauge23', 0, 5000, step=500)
-    dreamGauge33 = trial.suggest_int ('dreamGauge33', 0, 5000, step=500)
-    dreamGaugeMax3 = trial.suggest_int ('dreamGaugeMax3', 0, 10000, step=1000)
+    dreamGauge13 = trial.suggest_int ('dreamGauge13', 8000, 30000, step=2000)
+    dreamGauge23 = 1000
+    dreamGauge33 = 1000
+    dreamGaugeMax3 = trial.suggest_int ('dreamGaugeMax3', -10000, 10000, step=2000)
 
 
-    wisdom4 = trial.suggest_int ('wisdom4', 50, 100, step=10)
-    hp4 = trial.suggest_int ('hp4', 200, 500, step=25)
+    wisdom4 = trial.suggest_int ('wisdom4', 50, 100, step=5)
+    hp4 = trial.suggest_int ('hp4', 400, 1000, step=50)
 
     relation4 = 10000
-    outingRelation4 = 10000
-    wisdomRelation4 = 10000
-    hpKeep4 = trial.suggest_int ('hpKeep4', 600, 1200, step=100)
+    outingRelation4 = outingRelation1
+    wisdomRelation4 = wisdomRelation1
+    hpKeep4 = trial.suggest_int ('hpKeep4', 600, 1500, step=100)
     risk4 = trial.suggest_int ('risk4', 100, 500, step=50)
 
-    dreamGauge14 = trial.suggest_int ('dreamGauge14', 10000, 30000, step=2000)
-    dreamGauge24 = trial.suggest_int ('dreamGauge24', 0, 5000, step=500)
-    dreamGauge34 = trial.suggest_int ('dreamGauge34', 0, 5000, step=500)
-    dreamGaugeMax4 = trial.suggest_int ('dreamGaugeMax4', 0, 10000, step=1000)
+    dreamGauge14 = trial.suggest_int ('dreamGauge14', 8000, 30000, step=2000)
+    dreamGauge24 = 1000
+    dreamGauge34 = 1000
+    dreamGaugeMax4 = trial.suggest_int ('dreamGaugeMax4', -10000, 10000, step=2000)
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count {count}'\
@@ -117,7 +117,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='bc_s2h1p1w1_1',
+    study_name='bc_s2h1p1w1_3',
     storage='sqlite:///optuna_study_bc.db',
     load_if_exists=True,
     direction='maximize'
