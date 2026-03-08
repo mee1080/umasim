@@ -446,8 +446,8 @@ data class RaceSetting(
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
-    override val fullSpurtCoef: Double = 0.05,
-    override val fullSpurtAccelCoef: Double = 0.017,
+    override val fullSpurtCoef: Double = defaultFullSpurtCoef,
+    override val fullSpurtAccelCoef: Double = defaultFullSpurtAccelCoef,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }

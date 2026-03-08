@@ -1,17 +1,17 @@
 package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.layout.*
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Text
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.race.data.PositionKeepMode
+import io.github.mee1080.umasim.race.data.defaultFullSpurtAccelCoef
+import io.github.mee1080.umasim.race.data.defaultFullSpurtCoef
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
@@ -45,22 +45,32 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
             Text("スピードのやる気による変動は有効、コースごとのボーナス対象ステータスやバ場による変動は無効です")
             Text("最高速度上昇量：√(スピード-2000)×係数")
             Text("速度係数: ${fullSpurtCoef.roundToString(3)}")
-            Slider(
-                value = fullSpurtCoef.toFloat(),
-                onValueChange = { dispatch(setFullSpurtCoef(it.toDouble())) },
-                valueRange = 0f..0.1f,
-                steps = 99,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    value = fullSpurtCoef.toFloat(),
+                    onValueChange = { dispatch(setFullSpurtCoef(it.toDouble())) },
+                    valueRange = 0f..0.1f,
+                    steps = 99,
+                    modifier = Modifier.weight(1f),
+                )
+                Button(
+                    onClick = { dispatch(setFullSpurtCoef(defaultFullSpurtCoef)) },
+                ) { Text("リセット") }
+            }
             Text("加速度: 通常の加速度×係数")
             Text("加速度係数: ${fullSpurtAccelCoef.roundToString(3)}")
-            Slider(
-                value = fullSpurtAccelCoef.toFloat(),
-                onValueChange = { dispatch(setFullSpurtAccelCoef(it.toDouble())) },
-                valueRange = 0f..0.1f,
-                steps = 99,
-                modifier = Modifier.fillMaxWidth(),
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    value = fullSpurtAccelCoef.toFloat(),
+                    onValueChange = { dispatch(setFullSpurtAccelCoef(it.toDouble())) },
+                    valueRange = 0f..0.1f,
+                    steps = 99,
+                    modifier = Modifier.weight(1f),
+                )
+                Button(
+                    onClick = { dispatch(setFullSpurtAccelCoef(defaultFullSpurtAccelCoef)) },
+                ) { Text("リセット") }
+            }
         }
 
         Column {

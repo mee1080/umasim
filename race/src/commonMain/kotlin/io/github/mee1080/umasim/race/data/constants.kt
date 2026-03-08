@@ -98,6 +98,9 @@ const val horseLane = courseWidth / 18.0
 const val laneChangeAcceleration = 0.02 * 1.5
 const val laneChangeAccelerationPerFrame = laneChangeAcceleration / framePerSecond
 
+const val defaultFullSpurtCoef = 0.05
+const val defaultFullSpurtAccelCoef = 0.02
+
 /**
  * やる気->ステータス補正倍率
  */
