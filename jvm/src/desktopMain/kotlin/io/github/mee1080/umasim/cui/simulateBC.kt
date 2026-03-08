@@ -10,6 +10,7 @@ import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateBC() {
 //    doBCSimulation(StatusType.SPEED, "[心覚えし、京の華]エアグルーヴ")
+//    doBCSimulation(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
     doBCSimulation(StatusType.SPEED)
     doBCSimulation(StatusType.STAMINA)
     doBCSimulation(StatusType.POWER)
@@ -20,6 +21,7 @@ fun simulateBC() {
 private fun doBCSimulation(
     targetStatus: StatusType,
     targetSupport: String? = null,
+    rarity: IntRange = 2..3,
 ) {
     val scenario = Scenario.BC
     val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
@@ -32,6 +34,7 @@ private fun doBCSimulation(
         "[American Dream]カジノドライヴ" to null,
     ).filter { it.second != targetStatus }.map { it.first to 4 }
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
+        .map { it.copy(skills = emptyList()) }
     val testCount = 100000
 
     if (targetSupport == null) {
@@ -39,7 +42,7 @@ private fun doBCSimulation(
             scenario,
             chara,
             support.toTypedArray(),
-            targetStatus, rarity = 2..3, talent = 0..4,
+            targetStatus, rarity = rarity, talent = 0..4,
             factor = factor(StatusType.SPEED, 6),
             testCount = testCount,
             selector = { BCActionSelector() },
