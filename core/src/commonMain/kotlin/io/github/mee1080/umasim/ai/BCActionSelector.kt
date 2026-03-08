@@ -19,7 +19,7 @@ class BCActionSelector(
                 status = 100,
                 wisdom = 90,
                 skillPt = 1000,
-                hp = 500,
+                hp = 600,
                 motivation = 1000,
                 relation = 10000,
                 outingRelation = 24000,
@@ -33,7 +33,7 @@ class BCActionSelector(
             add(
                 base.copy(
                     wisdom = 90,
-                    hp = 500,
+                    hp = 750,
                     hpKeep = 700,
                     risk = 300,
                     dreamGauge = listOf(18000, 17000, 16000),
@@ -43,7 +43,7 @@ class BCActionSelector(
             add(
                 base.copy(
                     wisdom = 90,
-                    hp = 500,
+                    hp = 750,
                     hpKeep = 1200,
                     risk = 350,
                     dreamGauge = listOf(10000, 9000, 8000),
@@ -53,7 +53,7 @@ class BCActionSelector(
             add(
                 base.copy(
                     wisdom = 100,
-                    hp = 500,
+                    hp = 600,
                     hpKeep = 1100,
                     risk = 400,
                     dreamGauge = listOf(12000, 11000, 10000),
@@ -251,16 +251,16 @@ class BCActionSelector(
             // 体力が減っていてレース選択するほどの下振れの場合は友人お出かけ
             if (state.status.hp <= 70 && selectedAction is Race) return friend to FORCE
 
-            // お出かけ回数の残りが多いか体力が減っていてランクが最も低いキャラのゲージが2以上上がるならお出かけ
+            // 体力が減っていてランクが最も低いキャラのゲージが2以上上がるならお出かけ
             if (restGauge >= 3) {
-                val outingStep = state.member.first { it.outingType }.supportState?.outingStep ?: Int.MAX_VALUE
-                val requiredStep = when {
-                    state.turn >= 40 -> 6
-                    state.turn >= 30 -> 5
-                    state.turn >= 20 -> 4
-                    else -> 3
-                }
-                if (outingStep < requiredStep || state.status.hp <= 50) {
+//                val outingStep = state.member.first { it.outingType }.supportState?.outingStep ?: Int.MAX_VALUE
+//                val requiredStep = when {
+//                    state.turn >= 40 -> 2
+//                    state.turn >= 30 -> 2
+//                    state.turn >= 20 -> 2
+//                    else -> 2
+//                }
+                if (state.status.hp <= 50) {
                     val memberRank = context.memberRank
                     if (memberRank != null) {
                         val nextBcStatus = BCCalculator.addLowestDreamGauge(bcStatus)

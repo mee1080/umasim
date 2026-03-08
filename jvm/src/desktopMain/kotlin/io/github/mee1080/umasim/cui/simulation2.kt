@@ -1,6 +1,9 @@
 package io.github.mee1080.umasim.cui
 
-import io.github.mee1080.umasim.data.*
+import io.github.mee1080.umasim.data.Chara
+import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
+import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.ScenarioEvents
 import io.github.mee1080.umasim.simulation2.*
@@ -152,4 +155,51 @@ fun doSimulation2(
 
 val stdoutOutput = { card: SupportCard, summaries: List<Summary> ->
     println("${card.id},${card.name},${card.talent},${Evaluator(summaries).toSummaryString()}")
+}
+
+fun compareSelector(
+    scenario: Scenario,
+    chara: Chara,
+    support: List<SupportCard>,
+    factor: List<Pair<StatusType, Int>>,
+    testCount: Int,
+    selectors: List<Pair<String, () -> ActionSelector>>,
+    evaluateSetting: Map<StatusType, Pair<Double, Int>>,
+    evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
+    events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+) {
+    println(chara.name)
+    support.forEach { println(it.name) }
+    println(factor.joinToString(",") { "${it.first} ${it.second}" })
+    println("start ${LocalDateTime.now()}")
+    runBlocking {
+        selectors.mapIndexed { index, (name, selector) ->
+            launch(context) {
+                val (score, evaluator) = Runner.runAndEvaluate(
+                    testCount,
+                    scenario,
+                    chara,
+                    support,
+                    factor,
+                    evaluateSetting,
+                    evaluateUpperRate,
+                    scenarioEvents,
+                    events = events,
+                    selector = selector,
+                )
+                println("$index,\"$name\",0,${evaluator.toSummaryString()},$score")
+                // ヒストグラム
+//                evaluator.getStatusSum(evaluateSetting)
+//                    .map { it.roundToInt() }
+//                    .fold(mutableMapOf<Int, Int>()) { map, value ->
+//                        map[value] = map.getOrPut(value) { 0 } + 1
+//                        map
+//                    }.toSortedMap().forEach { (value, count) ->
+//                        println("$value\t$count")
+//                    }
+            }
+        }.joinAll()
+    }
+    println("finished ${LocalDateTime.now()}")
 }
