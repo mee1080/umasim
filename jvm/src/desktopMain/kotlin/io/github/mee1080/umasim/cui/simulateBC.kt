@@ -15,6 +15,7 @@ fun simulateBC() {
     doBCSimulation(StatusType.STAMINA)
     doBCSimulation(StatusType.POWER)
     doBCSimulation(StatusType.WISDOM)
+//    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
 //    optimize()
 }
 
@@ -31,7 +32,7 @@ private fun doBCSimulation(
         "[ぬくもりのノエル]フェノーメノ" to StatusType.STAMINA,
         "[星跨ぐメッセージ]ネオユニヴァース" to StatusType.POWER,
         "[Innovator]フォーエバーヤング" to StatusType.WISDOM,
-        "[American Dream]カジノドライヴ" to null,
+        "[American Dream]カジノドライヴ" to StatusType.FRIEND,
     ).filter { it.second != targetStatus }.map { it.first to 4 }
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
         .map { it.copy(skills = emptyList()) }
