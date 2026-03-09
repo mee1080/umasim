@@ -14,7 +14,7 @@ fun simulateBC() {
     doBCSimulation(StatusType.SPEED)
     doBCSimulation(StatusType.STAMINA)
     doBCSimulation(StatusType.POWER)
-    doBCSimulation(StatusType.WISDOM)
+//    doBCSimulation(StatusType.WISDOM)
 //    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
 //    optimize()
 }

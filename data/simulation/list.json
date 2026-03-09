@@ -1,4 +1,7 @@
 [
+{"path":"bc_speed","type":"SPEED","displayName":"スピード DREAMSスピ2"},
+{"path":"bc_stamina","type":"STAMINA","displayName":"スタミナ DREAMSスピ2"},
+{"path":"bc_power","type":"POWER","displayName":"パワー DREAMSスピ2"},
 {"path":"onsen_1_speed","type":"SPEED","displayName":"スピード 温泉追加出走なし"},
 {"path":"onsen_2_speed","type":"SPEED","displayName":"スピード 温泉追加8戦程度"},
 {"path":"onsen_1_stamina","type":"STAMINA","displayName":"スタミナ 温泉追加出走なし"},
