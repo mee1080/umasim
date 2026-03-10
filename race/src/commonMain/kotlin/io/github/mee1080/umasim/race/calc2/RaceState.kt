@@ -419,6 +419,7 @@ interface IRaceSetting {
     val timeCoef: Double
     val fullSpurtCoef: Double
     val fullSpurtAccelCoef: Double
+    val secureLeadNigeBoost: Double
     val oonige: Boolean
     val phase0Half: Double
     val phase1Start: Double
@@ -448,6 +449,7 @@ data class RaceSetting(
     override val virtualLeader: UmaStatus = UmaStatus(),
     override val fullSpurtCoef: Double = defaultFullSpurtCoef,
     override val fullSpurtAccelCoef: Double = defaultFullSpurtAccelCoef,
+    override val secureLeadNigeBoost: Double = defaultSecureLeadNigeBoost,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -701,7 +703,7 @@ class RaceSettingWithPassive(
         } else {
             virtualLeader.style
         }
-        val multiplier = if (runningStyle == Style.NIGE && virtualLeaderRunningStyle != Style.NIGE) 1.2 else 1.0
+        val multiplier = if (runningStyle == Style.NIGE && virtualLeaderRunningStyle != Style.NIGE) secureLeadNigeBoost else 1.0
         (modifiedGuts / 2000.0).pow(0.5) * 0.3 * secureLeadSpeedCoef[runningStyle]!! * multiplier
     }
 
