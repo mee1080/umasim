@@ -17,11 +17,7 @@ import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
-import io.github.mee1080.umasim.store.operation.setFullSpurtAccelCoef
-import io.github.mee1080.umasim.store.operation.setFullSpurtCoef
-import io.github.mee1080.umasim.store.operation.setSecureLeadNigeBoost
-import io.github.mee1080.umasim.store.operation.setPositionKeepMode
-import io.github.mee1080.umasim.store.operation.setPositionKeepRate
+import io.github.mee1080.umasim.store.operation.*
 import io.github.mee1080.utility.roundToString
 import io.github.mee1080.utility.toPercentString
 
@@ -189,7 +185,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         Column {
             Text("リード確保", style = MaterialTheme.typography.titleLarge)
             Text("追込以外で、${systemSetting.secureLeadRate.toPercentString()}の確率で発動します")
-            Text("自身の作戦が逃げ、かつ相手の作戦が逃げ以外の場合、速度上昇量が設定した係数で倍増します")
+            Text("自身の作戦が逃げ、ポジションキープモードが仮想ペースメーカー、かつ相手の作戦が逃げ以外または大逃げの場合、速度上昇量に指定した倍率がかかります")
             Text("速度倍率: ${secureLeadNigeBoost.roundToString(2)}")
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Slider(
