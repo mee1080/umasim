@@ -186,6 +186,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         Column {
             Text("リード確保", style = MaterialTheme.typography.titleLarge)
             Text("追込以外で、${systemSetting.secureLeadRate.toPercentString()}の確率で発動します")
+            Text("自身の作戦が逃げ、かつ相手の作戦が逃げ以外の場合、速度上昇量が1.2倍になります")
         }
 
         Column {

@@ -696,7 +696,13 @@ class RaceSettingWithPassive(
     }
 
     val secureLeadSpeed by lazy {
-        (modifiedGuts / 2000.0).pow(0.5) * 0.3 * secureLeadSpeedCoef[runningStyle]!!
+        val virtualLeaderRunningStyle = if (virtualLeader.style == Style.NIGE && virtualLeader.hasSkills.any { s -> s.invokes.any { it.oonige } }) {
+            Style.OONIGE
+        } else {
+            virtualLeader.style
+        }
+        val multiplier = if (runningStyle == Style.NIGE && virtualLeaderRunningStyle != Style.NIGE) 1.2 else 1.0
+        (modifiedGuts / 2000.0).pow(0.5) * 0.3 * secureLeadSpeedCoef[runningStyle]!! * multiplier
     }
 
     val secureLeadStamina by lazy {
