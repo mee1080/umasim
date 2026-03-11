@@ -1938,6 +1938,15 @@ distance_type==4&phase>=2&corner!=0&change_order_onetime<0&is_activate_other_ski
 ->is_activate_other_skill_detail==1&distance_type==2&is_last_straight==1@is_activate_other_skill_detail==1&distance_type==3&is_last_straight==1
 「上記効果発動後、マイル、最終直線」または「上記効果発動後、中距離、最終直線」、現在速度4500、持続3.0
 
+Watch Us Flourish
+[Love-Linked Aster]ラヴズオンリーユー 固有
+レース中盤の直線で前方にいると速度を少し上げ続ける海外レース場なら効果が増える
+評価点340、人気:スピード60、確定発動
+->phase==1&corner==0&order_rate<=50&is_abroad==1
+「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）、is_abroad==1」、目標速度3500、持続6.0
+->phase==1&corner==0&order_rate<=50
+「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続6.0
+
 威風堂々、夢錦！
 [日之本一の総大将]スペシャルウィーク 固有
 終盤以降の最終コーナーでスキルを発動すると声援を胸に速度を少し上げる中山レース場ならすごく上げる
@@ -3713,6 +3722,12 @@ distance_type==4&phase>=2&corner!=0&change_order_onetime<0&is_activate_other_ski
 評価点180、SP200、人気:パワー15
 ->running_style==2&phase>=2&is_finalcorner_laterhalf==1&order_rate<=50
 「先行、終盤、最終コーナー後半、順位率50以下（チャンミ～5/LoH～6）」、現在速度500、持続1.8
+
+Watch Us Flourish
+レース中盤の直線で前方にいると速度をちょっと上げ続ける
+評価点180、SP200、人気:スピード15
+->phase==1&corner==0&order_rate<=50
+「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続3.6
 
 威風堂々、夢錦！
 終盤以降の最終コーナーでスキルを発動すると速度をちょっと上げる中山レース場なら少し上げる
@@ -11474,6 +11489,15 @@ Legends 進化(飛翔脚)
 ->distance_type==3&phase_firsthalf_random==2&order_rate<=50
 「中距離、終盤前1/4ランダム、順位率50以下（チャンミ～5/LoH～6）」、加速4000、持続1.8
 
+ロッツオブラヴ♡
+[Love-Linked Aster]ラヴズオンリーユー 進化(王道一途)
+終盤始めの方で前方だと加速力が上がる海外レース場の芝のレースならラストスパートの最中に直線で前方だと加速力が上がる＜中距離＞
+評価点633、進化元SP320、人気:パワー60
+->order_rate<=50&distance_type==3&ground_type==1&is_lastspurt==1&corner==0&is_abroad==1
+「順位率50以下（チャンミ～5/LoH～6）、中距離、芝、ラストスパート、コーナー以外、is_abroad==1」、加速4000、持続1.8
+->order_rate<=50&distance_type==3&phase_firsthalf_random==2&is_abroad==0@order_rate<=50&distance_type==3&ground_type==2&phase_firsthalf_random==2&is_abroad==1
+「順位率50以下（チャンミ～5/LoH～6）、中距離、終盤前1/4ランダム、is_abroad==0」または「順位率50以下（チャンミ～5/LoH～6）、中距離、ダート、終盤前1/4ランダム、is_abroad==1」、加速4000、持続1.8
+
 正面突破
 レース終盤始めの方で前方にいると加速力がわずかに上がる＜中距離＞
 評価点217、SP160、人気:パワー20
@@ -13183,6 +13207,27 @@ The Next Phase
 評価点217、SP180、人気:パワー20
 ->run_at_full_speed_random==1&distance_type==3
 「全開スパート、中距離」、伸びを見せる2000、持続2.0
+
+百花繚乱
+レース中盤の直線で前方にいるとしばらくの間速度が少し上がる＜先行・中距離＞
+評価点508、SP160(合計320)、人気:スピード60
+->distance_type==3&running_style==2&phase_straight_random==1&order_rate<=50
+「中距離、先行、中盤直線ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続4.0
+
+海を越える神回！
+[Love-Linked Aster]ラヴズオンリーユー 進化(百花繚乱)
+レース終盤が迫ったときの直線でしばらくの間速度が少し上がる、さらに海外レース場でスキル発動時前方だとしばらくの間わずかに前に出る＜先行・中距離＞
+評価点633、進化元SP320、人気:スピード30/パワー30
+->phase_latter_half_straight_random==1&running_style==2&distance_type==3&order_rate<=50&is_abroad==1
+「中盤後半直線ランダム、先行、中距離、順位率50以下（チャンミ～5/LoH～6）、is_abroad==1」、目標速度2500、現在速度1500、持続4.0
+->phase_latter_half_straight_random==1&running_style==2&distance_type==3
+「中盤後半直線ランダム、先行、中距離」、目標速度2500、持続4.0
+
+個性的
+レース中盤の直線で前方にいるとしばらくの間速度がちょっと上がる＜先行・中距離＞
+評価点217、SP160、人気:スピード20
+->distance_type==3&running_style==2&phase_straight_random==1&order_rate<=50
+「中距離、先行、中盤直線ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続4.0
 
 アオハル燃焼・速
 レース中盤にアオハル魂が燃えレース中のチームメンバーのスピード合計が高いほど速度が上がる
