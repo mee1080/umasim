@@ -5907,7 +5907,7 @@ internal val rawCourseData = """
             "length": 150.0
           },
           {
-            "start": 500.0,
+            "start": 450.0,
             "length": 150.0
           },
           {
@@ -5922,11 +5922,11 @@ internal val rawCourseData = """
         "straights": [
           {
             "start": 0.0,
-            "end": 301.0
+            "end": 300.0
           },
           {
             "start": 600.0,
-            "end": 1100.22998046875
+            "end": 1100.0
           },
           {
             "start": 1414.0,
@@ -6065,7 +6065,7 @@ internal val rawCourseData = """
           },
           {
             "start": 1617.0,
-            "end": 1866.0
+            "end": 1867.0
           },
           {
             "start": 1867.0,
@@ -7014,42 +7014,42 @@ internal val rawCourseData = """
         "finishTimeMax": 135.0,
         "corners": [
           {
-            "start": 119.0,
-            "length": 212.0
+            "start": 141.0,
+            "length": 185.0
           },
           {
-            "start": 331.0,
-            "length": 212.0
+            "start": 326.0,
+            "length": 185.0
           },
           {
-            "start": 823.0,
-            "length": 212.0
+            "start": 861.0,
+            "length": 185.0
           },
           {
-            "start": 1035.0,
-            "length": 212.0
+            "start": 1046.0,
+            "length": 185.0
           },
           {
-            "start": 1527.0,
-            "length": 212.0
+            "start": 1581.0,
+            "length": 185.0
           },
           {
-            "start": 1739.0,
-            "length": 212.0
+            "start": 1766.0,
+            "length": 185.0
           }
         ],
         "straights": [
           {
             "start": 0.0,
-            "end": 119.0
+            "end": 141.0
           },
           {
-            "start": 543.0,
-            "end": 823.0
+            "start": 511.0,
+            "end": 861.0
           },
           {
-            "start": 1247.0,
-            "end": 1527.0
+            "start": 1231.0,
+            "end": 1581.0
           },
           {
             "start": 1951.0,
@@ -7174,30 +7174,30 @@ internal val rawCourseData = """
         "finishTimeMax": 122.0,
         "corners": [
           {
-            "start": 462.0,
-            "length": 229.0
+            "start": 500.0,
+            "length": 210.0
           },
           {
-            "start": 691.0,
-            "length": 229.0
+            "start": 710.0,
+            "length": 210.0
           },
           {
-            "start": 1262.0,
-            "length": 229.0
+            "start": 1300.0,
+            "length": 210.0
           },
           {
-            "start": 1491.0,
-            "length": 229.0
+            "start": 1510.0,
+            "length": 210.0
           }
         ],
         "straights": [
           {
-            "start": 0.0,
-            "end": 462.0
+            "start": 120.0,
+            "end": 500.0
           },
           {
             "start": 920.0,
-            "end": 1262.0
+            "end": 1300.0
           },
           {
             "start": 1720.0,
