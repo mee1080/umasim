@@ -5991,49 +5991,6 @@ internal val rawCourseData = """
   "10201": {
     "name": "ロンシャン",
     "courses": {
-      "11201": {
-        "raceTrackId": 10201,
-        "name": "芝1000m",
-        "distance": 1000,
-        "distanceType": 1,
-        "surface": 1,
-        "turn": 4,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 54.7,
-        "finishTimeMax": 57.0,
-        "corners": [
-          {
-            "start": 200.0,
-            "length": 200.0
-          },
-          {
-            "start": 400.0,
-            "length": 200.0
-          }
-        ],
-        "straights": [],
-        "slopes": [],
-        "tightTrack": 0,
-        "runUp": 0
-      },
-      "11202": {
-        "raceTrackId": 10201,
-        "name": "芝1400m",
-        "distance": 1400,
-        "distanceType": 1,
-        "surface": 1,
-        "turn": 1,
-        "courseSetStatus": [],
-        "laneMax": 12000,
-        "finishTimeMin": 80.0,
-        "finishTimeMax": 84.0,
-        "corners": [],
-        "straights": [],
-        "slopes": [],
-        "tightTrack": 0,
-        "runUp": 0
-      },
       "11203": {
         "raceTrackId": 10201,
         "name": "芝2400m",
@@ -6707,76 +6664,6 @@ internal val rawCourseData = """
   "10202": {
     "name": "サンタアニタパーク",
     "courses": {
-      "11612": {
-        "raceTrackId": 10202,
-        "name": "芝2000m",
-        "distance": 2000,
-        "distanceType": 3,
-        "surface": 1,
-        "turn": 2,
-        "courseSetStatus": [
-          2
-        ],
-        "laneMax": 135000,
-        "finishTimeMin": 121.0,
-        "finishTimeMax": 129.0,
-        "corners": [
-          {
-            "start": 500.0,
-            "length": 200.0
-          },
-          {
-            "start": 700.0,
-            "length": 200.0
-          },
-          {
-            "start": 1300.0,
-            "length": 200.0
-          },
-          {
-            "start": 1500.0,
-            "length": 200.0
-          }
-        ],
-        "straights": [
-          {
-            "start": 100.0,
-            "end": 500.0
-          },
-          {
-            "start": 900.0,
-            "end": 1300.0
-          },
-          {
-            "start": 1700.0,
-            "end": 2000.0
-          }
-        ],
-        "slopes": [
-          {
-            "start": 175.0,
-            "length": 175.0,
-            "slope": 10000.0
-          },
-          {
-            "start": 900.0,
-            "length": 375.0,
-            "slope": 10000.0
-          },
-          {
-            "start": 1275.0,
-            "length": 450.0,
-            "slope": -15000.0
-          },
-          {
-            "start": 1775.0,
-            "length": 175.0,
-            "slope": 10000.0
-          }
-        ],
-        "tightTrack": 1,
-        "runUp": 0
-      },
       "11613": {
         "raceTrackId": 10202,
         "name": "芝1000m",
@@ -6791,8 +6678,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 55.0,
         "finishTimeMax": 56.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 400.0,
+            "length": 150.0
+          },
+          {
+            "start": 550.0,
+            "length": 150.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 400.0
+          },
+          {
+            "start": 700.0,
+            "end": 1000.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6810,8 +6715,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 92.0,
         "finishTimeMax": 96.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 300.0,
+            "length": 150.0
+          },
+          {
+            "start": 450.0,
+            "length": 150.0
+          },
+          {
+            "start": 1000.0,
+            "length": 150.0
+          },
+          {
+            "start": 1150.0,
+            "length": 150.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 300.0
+          },
+          {
+            "start": 600.0,
+            "end": 1000.0
+          },
+          {
+            "start": 1300.0,
+            "end": 1600.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6830,9 +6765,49 @@ internal val rawCourseData = """
         "laneMax": 12000,
         "finishTimeMin": 118.0,
         "finishTimeMax": 122.0,
-        "corners": [],
-        "straights": [],
-        "slopes": [],
+        "corners": [
+          {
+            "start": 100.0,
+            "length": 200.0
+          },
+          {
+            "start": 700.0,
+            "length": 150.0
+          },
+          {
+            "start": 850.0,
+            "length": 150.0
+          },
+          {
+            "start": 1400.0,
+            "length": 150.0
+          },
+          {
+            "start": 1550.0,
+            "length": 150.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 300.0,
+            "end": 700.0
+          },
+          {
+            "start": 1000.0,
+            "end": 1400.0
+          },
+          {
+            "start": 1700.0,
+            "end": 2000.0
+          }
+        ],
+        "slopes": [
+          {
+            "start": 0.0,
+            "length": 148.0,
+            "slope": -10000.0
+          }
+        ],
         "tightTrack": 1,
         "runUp": 0
       },
@@ -6850,9 +6825,49 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 143.0,
         "finishTimeMax": 146.0,
-        "corners": [],
-        "straights": [],
-        "slopes": [],
+        "corners": [
+          {
+            "start": 200.0,
+            "length": 500.0
+          },
+          {
+            "start": 1100.0,
+            "length": 150.0
+          },
+          {
+            "start": 1250.0,
+            "length": 150.0
+          },
+          {
+            "start": 1800.0,
+            "length": 150.0
+          },
+          {
+            "start": 1950.0,
+            "length": 150.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 700.0,
+            "end": 1100.0
+          },
+          {
+            "start": 1400.0,
+            "end": 1800.0
+          },
+          {
+            "start": 2100.0,
+            "end": 2400.0
+          }
+        ],
+        "slopes": [
+          {
+            "start": 343.0,
+            "length": 205.0,
+            "slope": -10000.0
+          }
+        ],
         "tightTrack": 1,
         "runUp": 0
       },
@@ -6870,8 +6885,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 68.0,
         "finishTimeMax": 70.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 500.0,
+            "length": 195.0
+          },
+          {
+            "start": 695.0,
+            "length": 195.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 90.0,
+            "end": 500.0
+          },
+          {
+            "start": 890.0,
+            "end": 1200.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6889,8 +6922,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 81.0,
         "finishTimeMax": 83.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 700.0,
+            "length": 195.0
+          },
+          {
+            "start": 895.0,
+            "length": 195.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 290.0,
+            "end": 700.0
+          },
+          {
+            "start": 1090.0,
+            "end": 1400.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6909,8 +6960,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 96.0,
         "finishTimeMax": 97.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 100.0,
+            "length": 195.0
+          },
+          {
+            "start": 295.0,
+            "length": 195.0
+          },
+          {
+            "start": 900.0,
+            "length": 195.0
+          },
+          {
+            "start": 1095.0,
+            "length": 195.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 100.0
+          },
+          {
+            "start": 490.0,
+            "end": 900.0
+          },
+          {
+            "start": 1290.0,
+            "end": 1600.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 50
@@ -6928,8 +7009,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 108.0,
         "finishTimeMax": 111.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 300.0,
+            "length": 195.0
+          },
+          {
+            "start": 495.0,
+            "length": 195.0
+          },
+          {
+            "start": 1100.0,
+            "length": 195.0
+          },
+          {
+            "start": 1295.0,
+            "length": 195.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 300.0
+          },
+          {
+            "start": 690.0,
+            "end": 1100.0
+          },
+          {
+            "start": 1490.0,
+            "end": 1800.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6948,8 +7059,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 120.0,
         "finishTimeMax": 123.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 500.0,
+            "length": 195.0
+          },
+          {
+            "start": 695.0,
+            "length": 195.0
+          },
+          {
+            "start": 1300.0,
+            "length": 195.0
+          },
+          {
+            "start": 1495.0,
+            "length": 195.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 90.0,
+            "end": 500.0
+          },
+          {
+            "start": 890.0,
+            "end": 1300.0
+          },
+          {
+            "start": 1690.0,
+            "end": 2000.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6973,8 +7114,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 55.0,
         "finishTimeMax": 57.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 381.0,
+            "length": 185.0
+          },
+          {
+            "start": 566.0,
+            "length": 185.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 31.0,
+            "end": 381.0
+          },
+          {
+            "start": 751.0,
+            "end": 1000.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -6992,8 +7151,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 93.0,
         "finishTimeMax": 95.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 261.0,
+            "length": 185.0
+          },
+          {
+            "start": 446.0,
+            "length": 185.0
+          },
+          {
+            "start": 981.0,
+            "length": 185.0
+          },
+          {
+            "start": 1166.0,
+            "length": 185.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 261.0
+          },
+          {
+            "start": 631.0,
+            "end": 981.0
+          },
+          {
+            "start": 1351.0,
+            "end": 1600.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -7074,8 +7263,50 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 146.0,
         "finishTimeMax": 147.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 341.0,
+            "length": 185.0
+          },
+          {
+            "start": 526.0,
+            "length": 185.0
+          },
+          {
+            "start": 1061.0,
+            "length": 185.0
+          },
+          {
+            "start": 1246.0,
+            "length": 185.0
+          },
+          {
+            "start": 1781.0,
+            "length": 185.0
+          },
+          {
+            "start": 1966.0,
+            "length": 185.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 341.0
+          },
+          {
+            "start": 711.0,
+            "end": 1061.0
+          },
+          {
+            "start": 1431.0,
+            "end": 1781.0
+          },
+          {
+            "start": 2151.0,
+            "end": 2400.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -7094,8 +7325,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 69.0,
         "finishTimeMax": 70.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 500.0,
+            "length": 210.0
+          },
+          {
+            "start": 710.0,
+            "length": 210.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 120.0,
+            "end": 500.0
+          },
+          {
+            "start": 920.0,
+            "end": 1200.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -7113,8 +7362,26 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 81.0,
         "finishTimeMax": 83.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 700.0,
+            "length": 210.0
+          },
+          {
+            "start": 910.0,
+            "length": 210.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 320.0,
+            "end": 700.0
+          },
+          {
+            "start": 1120.0,
+            "end": 1400.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
@@ -7133,8 +7400,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 95.0,
         "finishTimeMax": 96.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 100.0,
+            "length": 210.0
+          },
+          {
+            "start": 310.0,
+            "length": 210.0
+          },
+          {
+            "start": 900.0,
+            "length": 210.0
+          },
+          {
+            "start": 1110.0,
+            "length": 210.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 100.0
+          },
+          {
+            "start": 520.0,
+            "end": 900.0
+          },
+          {
+            "start": 1320.0,
+            "end": 1600.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 60
@@ -7152,8 +7449,38 @@ internal val rawCourseData = """
         "laneMax": 135000,
         "finishTimeMin": 108.0,
         "finishTimeMax": 111.0,
-        "corners": [],
-        "straights": [],
+        "corners": [
+          {
+            "start": 300.0,
+            "length": 210.0
+          },
+          {
+            "start": 510.0,
+            "length": 210.0
+          },
+          {
+            "start": 1100.0,
+            "length": 210.0
+          },
+          {
+            "start": 1310.0,
+            "length": 210.0
+          }
+        ],
+        "straights": [
+          {
+            "start": 0.0,
+            "end": 300.0
+          },
+          {
+            "start": 720.0,
+            "end": 1100.0
+          },
+          {
+            "start": 1520.0,
+            "end": 1800.0
+          }
+        ],
         "slopes": [],
         "tightTrack": 1,
         "runUp": 0
