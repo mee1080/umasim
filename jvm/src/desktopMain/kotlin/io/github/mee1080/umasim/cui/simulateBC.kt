@@ -9,7 +9,7 @@ import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateBC() {
-    doBCSimulation(StatusType.SPEED, "[響け、二人の凱歌]マルシュロレーヌ")
+    doBCSimulation(StatusType.SPEED, "[心覚えし、京の華]エアグルーヴ")
 //    doBCSimulation(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
 //    doBCSimulation(StatusType.SPEED)
 //    doBCSimulation(StatusType.STAMINA)
@@ -37,6 +37,7 @@ private fun doBCSimulation(
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
         .map { it.copy(skills = emptyList()) }
     val testCount = 100000
+    val route = BCRoute.Classic
 
     if (targetSupport == null) {
         doSimulation2(
@@ -49,7 +50,7 @@ private fun doBCSimulation(
             selector = { BCActionSelector() },
             evaluateSetting = Runner.bcSetting,
             evaluateUpperRate = 0.2,
-            scenarioEvents = { BCScenarioEvents(BCRoute.Classic) },
+            scenarioEvents = { BCScenarioEvents(route) },
         )
     } else {
         doSimulation2(
@@ -62,7 +63,7 @@ private fun doBCSimulation(
             selector = { BCActionSelector() },
             evaluateSetting = Runner.bcSetting,
             evaluateUpperRate = 0.2,
-            scenarioEvents = { BCScenarioEvents(BCRoute.Classic) },
+            scenarioEvents = { BCScenarioEvents(route) },
         )
     }
 }
