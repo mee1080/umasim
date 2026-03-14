@@ -261,6 +261,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
                 (max(setting.track.gateCount + 1, 11) * horseLane + setting.track.initialLaneAdjuster).toFloat()
             )
         },
+        phase0Start = frameList.indexOfFirst { it.startPosition >= 0 } / 15f,
         phase1Start = frameList.indexOfFirst { it.startPosition >= setting.phase1Start } / 15f,
         phase2Start = frameList.indexOfFirst { it.startPosition >= setting.phase2Start } / 15f,
         straightData = toGraphData(trackDetail.straights.map { it.start to it.end }, frameList),

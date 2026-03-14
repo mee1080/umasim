@@ -61,12 +61,12 @@ private fun checkCondition(
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
         "activate_count_heal" -> condition.checkInRace { simulation.healTriggerCount }
         "activate_count_all" -> condition.checkInRace { simulation.skillTriggerCount.total }
-        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[0] }
+        "activate_count_start" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[0]!! }
         "activate_count_later_half" -> condition.checkInRace { simulation.skillTriggerCount.inLaterHalf }
-        "activate_count_middle" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[1] }
+        "activate_count_middle" -> condition.checkInRace { simulation.skillTriggerCount.inPhase[1]!! }
         "activate_count_end_after" -> condition.checkInRace { simulation.skillTriggerCount.inAfterPhase2 }
 
-        "accumulatetime" -> condition.checkInRace { simulation.frameElapsed / 15 }
+        "accumulatetime" -> condition.checkInRace { simulation.currentTime.toInt() }
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }

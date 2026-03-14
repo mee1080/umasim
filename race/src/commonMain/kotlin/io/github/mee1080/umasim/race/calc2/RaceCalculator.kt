@@ -53,6 +53,8 @@ class RaceCalculator(
             targetLane = initialLane,
             invokedSkills = invokedSkills,
             postNumber = gateNumberToPostNumber[gateNumber][gateCount],
+            position = -trackDetail.runUp.toDouble(),
+            startTime = if (trackDetail.runUp > 0) 100000.0 else 0.0,
         )
         val settingWithPassive = applyPassive(system, simulationState)
         simulationState.passiveTriggered = settingWithPassive.passiveBonus.skills.size
@@ -144,15 +146,15 @@ private fun RaceState.triggerStartSkills() {
     simulation.frames += RaceFrame(
         speed = 0.0,
         sp = setting.spMax,
-        startPosition = 0.0,
+        startPosition = simulation.position,
         currentLane = simulation.currentLane,
         triggeredSkills = skills,
         paceMakerFrame = paceMaker?.simulation?.frames?.lastOrNull(),
     )
 }
 
-private fun RaceState.initSectionTargetSpeedRandoms(): List<Double> {
-    return (0..24).map {
+private fun RaceState.initSectionTargetSpeedRandoms(): Map<Int, Double> {
+    return (currentSection..24).associateWith {
         val max = (setting.modifiedWisdom / 5500.0) *
                 log10(setting.modifiedWisdom * 0.1) * 0.01
         if (setting.fixRandom) {
@@ -334,6 +336,11 @@ private fun RaceState.updateFrame(): Boolean {
         acceleration = acceleration + fullSpurtAcceleration
     )
     simulation.frameElapsed++
+
+    if (simulation.startPosition < 0.0 && simulation.position >= 0.0) {
+        val excessTime = simulation.position / simulation.totalSpeed
+        simulation.startTime = simulation.frameElapsed * secondPerFrame - excessTime
+    }
 
     // 終盤入り
     if (currentPhase == 1 && getPhase(simulation.position) == 2) {
@@ -517,12 +524,14 @@ fun RaceState.calcSpurtDistance(v: Double): Double {
 private fun RaceState.goal(): RaceSimulationResult {
     val excessTime = (simulation.position - setting.courseLength) / simulation.totalSpeed
     val raceTime = simulation.frameElapsed * secondPerFrame - excessTime
-    val raceTimeDelta = raceTime - setting.trackDetail.finishTimeMax / 1.18
+    val raceTimeWithoutRunUp = raceTime - simulation.startTime
+    val raceTimeDelta = raceTimeWithoutRunUp - setting.trackDetail.finishTimeMax / 1.18
     val competeFightFrame = (simulation.competeFightEnd ?: simulation.frameElapsed) -
             (simulation.competeFightStart ?: simulation.frameElapsed)
     return RaceSimulationResult(
         raceTime = raceTime,
         raceTimeDelta = raceTimeDelta,
+        raceTimeWithoutRunUp = raceTimeWithoutRunUp,
         maxSpurt = simulation.maxSpurt,
         spDiff = simulation.spurtParameters?.spDiff ?: 0.0,
         positionCompetitionCount = simulation.positionCompetitionCount,

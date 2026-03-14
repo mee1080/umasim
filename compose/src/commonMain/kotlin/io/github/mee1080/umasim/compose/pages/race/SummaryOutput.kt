@@ -31,6 +31,9 @@ fun SummaryOutput(state: AppState) {
         Text("結果", style = MaterialTheme.typography.headlineSmall)
         Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
         SummaryTable(summary)
+        if (state.simulationSummary.setting.trackDetail.runUp > 0) {
+            Text("※各タイムは助走区間分を含む")
+        }
         SkillTable(summary)
     }
 }

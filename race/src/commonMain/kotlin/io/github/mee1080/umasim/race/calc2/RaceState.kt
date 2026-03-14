@@ -102,6 +102,7 @@ class RaceState(
 ) {
     fun getPhase(position: Double): Int {
         return when {
+            position < 0 -> -1
             position < setting.phase1Start -> 0
             position < setting.phase2Start -> 1
             position < setting.phase3Start -> 2
@@ -187,7 +188,7 @@ class RaceState(
                                 distanceFitSpeedCoef[setting.umaStatus.distanceFit]!! +
                                 (setting.modifiedGuts * 450.0).pow(0.597) * 0.0001
                     }
-                } + setting.baseSpeed * simulation.sectionTargetSpeedRandoms[currentSection]
+                } + setting.baseSpeed * simulation.sectionTargetSpeedRandoms[currentSection]!!
             }
 
             // ポジションキープ
@@ -204,7 +205,7 @@ class RaceState(
 
             // 序盤で内が空いている場合に速度上昇
             // 乱数値はレース開始時に決定
-            if (currentPhase == 0 && simulation.targetLane < simulation.currentLane && simulation.laneChangeSpeed > 0.0) {
+            if (currentPhase <= 0 && simulation.targetLane < simulation.currentLane && simulation.laneChangeSpeed > 0.0) {
                 result += simulation.forceInSpeed
             }
 
@@ -298,7 +299,7 @@ class RaceState(
             } else if (simulation.positionKeepState == PositionKeepState.PACE_DOWN) {
                 -0.5
             } else when (currentPhase) {
-                0 -> -1.2
+                -1, 0 -> -1.2
                 1 -> -0.8
                 else -> -1.0
             }
@@ -393,7 +394,7 @@ class RaceState(
     }
 
     val wisdomSkillBuff: Double
-        get() = getWisdomSkillBuff(setting.modifiedWisdom, setting.basicRunningStyle)[currentPhase]
+        get() = getWisdomSkillBuff(setting.modifiedWisdom, setting.basicRunningStyle, currentPhase)
 }
 
 interface IRaceSetting {
@@ -760,6 +761,7 @@ class RaceSettingWithPassive(
 
 class RaceSimulationState(
     var frameElapsed: Int = 0,
+    var startTime: Double = 0.0,
     var position: Double = 0.0,
     var startPosition: Double = 0.0,
     var currentSpeed: Double = startSpeed,
@@ -805,7 +807,7 @@ class RaceSimulationState(
     var passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
-    var sectionTargetSpeedRandoms: List<Double> = emptyList(),
+    var sectionTargetSpeedRandoms: Map<Int, Double> = emptyMap(),
     var evoDurationMultiplier: Double = 1.0,
 
     var positionCompetitionCount: Int = 0,
@@ -834,18 +836,20 @@ class RaceSimulationState(
     val hasTemptation get() = temptationModeStart != null
 
     val hasLeadCompetition get() = leadCompetitionStart != null
+
+    val currentTime get() = frameElapsed * secondPerFrame - startTime
 }
 
 class SkillTriggerCount {
-    var inPhase = arrayOf(0, 0, 0, 0)
+    val inPhase = ((-1)..3).associateWith { 0 }.toMutableMap()
     var inLaterHalf = 0
 
-    val total get() = inPhase.sum()
-    val inAfterPhase2 get() = inPhase[2] + inPhase[3]
+    val total get() = inPhase.values.sum()
+    val inAfterPhase2 get() = inPhase[2]!! + inPhase[3]!!
 
     fun increment(state: RaceState) {
         val phase = state.currentPhase
-        inPhase[phase]++
+        inPhase[phase] = inPhase[phase]!! + 1
         if (state.isLaterHalf) {
             inLaterHalf++
         }
@@ -904,6 +908,7 @@ data class RaceFrame(
 data class RaceSimulationResult(
     val raceTime: Double,
     val raceTimeDelta: Double,
+    val raceTimeWithoutRunUp: Double,
     val maxSpurt: Boolean,
     val spDiff: Double,
     val positionCompetitionCount: Int,

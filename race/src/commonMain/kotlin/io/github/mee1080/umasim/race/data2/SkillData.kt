@@ -178,7 +178,7 @@ val approximateConditions = mapOf(
                 it.currentSection in 1..3 && it.simulation.currentLane > 3.0 * horseLane
             },
             ApproximateStartContinue("上記以外の序盤", 0.1, 0.85) to {
-                it.currentPhase == 0
+                it.currentPhase <= 0
             },
             ApproximateStartContinue("中盤", 0.08, 0.75) to {
                 it.currentPhase == 1
@@ -191,7 +191,7 @@ val approximateConditions = mapOf(
         "前にウマ娘(ノンストなど)",
         listOf(
             ApproximateStartContinue("序盤", 0.05, 0.50) to {
-                it.currentPhase == 0
+                it.currentPhase <= 0
             },
             ApproximateStartContinue("中盤", 0.10, 0.50) to {
                 it.currentPhase == 1
@@ -208,7 +208,7 @@ val approximateConditions = mapOf(
         "近くのウマ娘人数(ウマ好み/ワクワククライマックスなど)",
         listOf(
             ApproximateRandomRates("序盤", listOf(1 to 0.1, 2 to 0.2, 3 to 0.3, 4 to 0.2, 5 to 0.1)) to {
-                it.currentPhase == 0
+                it.currentPhase <= 0
             },
             ApproximateRandomRates("中盤", listOf(1 to 0.3, 2 to 0.2, 3 to 0.1)) to {
                 it.currentPhase == 1
@@ -226,7 +226,7 @@ val approximateConditions = mapOf(
         "他のウマ娘が速度スキル発動(後の先など)",
         listOf(
             ApproximateRandomRates("序盤", listOf(1 to 0.1)) to {
-                it.currentPhase == 0
+                it.currentPhase <= 0
             },
             ApproximateRandomRates("中盤", listOf(1 to 0.15)) to {
                 it.currentPhase == 1
@@ -238,7 +238,7 @@ val approximateConditions = mapOf(
         "他のウマ娘が加速スキル発動(トランセンド固有)",
         listOf(
             ApproximateRandomRates("序盤", listOf(1 to 0.9)) to {
-                it.currentPhase == 0
+                it.currentPhase <= 0
             },
             ApproximateRandomRates("中盤前半", listOf(1 to 0.01)) to {
                 it.simulation.position in it.setting.phase1Start..it.setting.phase1Half

@@ -22,6 +22,7 @@
  */
 package io.github.mee1080.umasim.race.data
 
+import kotlin.math.max
 import kotlin.math.min
 
 enum class Distance {
@@ -223,30 +224,35 @@ val Style.styleSpCoef get() = styleSpCoefData[this]!!
  */
 private val styleSpeedCoefData = mapOf(
     Style.NIGE to mapOf(
+        -1 to 1.0,
         0 to 1.0,
         1 to 0.98,
         2 to 0.962,
         3 to 0.962,
     ),
     Style.SEN to mapOf(
+        -1 to 0.978,
         0 to 0.978,
         1 to 0.991,
         2 to 0.975,
         3 to 0.975,
     ),
     Style.SASI to mapOf(
+        -1 to 0.938,
         0 to 0.938,
         1 to 0.998,
         2 to 0.994,
         3 to 0.994,
     ),
     Style.OI to mapOf(
+        -1 to 0.931,
         0 to 0.931,
         1 to 1.0,
         2 to 1.0,
         3 to 1.0,
     ),
     Style.OONIGE to mapOf(
+        -1 to 1.063,
         0 to 1.063,
         1 to 0.962,
         2 to 0.95,
@@ -261,30 +267,35 @@ val Style.styleSpeedCoef get() = styleSpeedCoefData[this]!!
  */
 private val styleAccelerateCoefData = mapOf(
     Style.NIGE to mapOf(
+        -1 to 1.0,
         0 to 1.0,
         1 to 1.0,
         2 to 0.996,
         3 to 0.996
     ),
     Style.SEN to mapOf(
+        -1 to 0.985,
         0 to 0.985,
         1 to 1.0,
         2 to 0.996,
         3 to 0.996
     ),
     Style.SASI to mapOf(
+        -1 to 0.975,
         0 to 0.975,
         1 to 1.0,
         2 to 1.0,
         3 to 1.0
     ),
     Style.OI to mapOf(
+        -1 to 0.945,
         0 to 0.945,
         1 to 1.0,
         2 to 0.997,
         3 to 0.997
     ),
     Style.OONIGE to mapOf(
+        -1 to 1.17,
         0 to 1.17,
         1 to 0.94,
         2 to 0.956,
@@ -504,18 +515,17 @@ val wisdomSkillBuff = listOf(
     ),
 )
 
-fun getWisdomSkillBuff(wisdom: Int, style: Style): List<Double> {
+fun getWisdomSkillBuff(wisdom: Int, style: Style, phase: Int): Double {
     val index = style.value - 1
-    if (wisdom <= 1200) return listOf(1.0, 1.0, 1.0, 1.0)
-    return List(4) {
-        var low = 1200 to 1.0
-        for ((nextWisdom, list) in wisdomSkillBuff[it]) {
-            val value = list[index]
-            if (wisdom <= nextWisdom) {
-                return@List low.second + (value - low.second) * (wisdom - low.first) / (nextWisdom - low.first)
-            }
-            low = nextWisdom to value
+    val phaseIndex = max(0, phase)
+    if (wisdom <= 1200) return 1.0
+    var low = 1200 to 1.0
+    for ((nextWisdom, list) in wisdomSkillBuff[phaseIndex]) {
+        val value = list[index]
+        if (wisdom <= nextWisdom) {
+            return low.second + (value - low.second) * (wisdom - low.first) / (nextWisdom - low.first)
         }
-        wisdomSkillBuff[it].last().second[index]
+        low = nextWisdom to value
     }
+    return wisdomSkillBuff[phaseIndex].last().second[index]
 }

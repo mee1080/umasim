@@ -6980,7 +6980,7 @@ internal val rawCourseData = """
         ],
         "straights": [
           {
-            "start": 0.0,
+            "start": -50.0,
             "end": 100.0
           },
           {
@@ -7420,7 +7420,7 @@ internal val rawCourseData = """
         ],
         "straights": [
           {
-            "start": 0.0,
+            "start": -60.0,
             "end": 100.0
           },
           {

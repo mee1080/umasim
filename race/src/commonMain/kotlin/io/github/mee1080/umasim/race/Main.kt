@@ -55,16 +55,16 @@ fun main() {
 //            }
 //        }
 //    }
-    val wisdomSkillBuff = buildList {
-        val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
-        for (wisdom in 1200..2500 step 10) {
-            add(wisdom to styles.map { getWisdomSkillBuff(wisdom, it) })
-        }
-    }
-    for (phase in 0..3) {
-        println("Phase $phase")
-        wisdomSkillBuff.forEach { (wisdom, buffs) ->
-            println("$wisdom\t${buffs.joinToString("\t") { it[phase].roundToString(3) }}")
-        }
-    }
+//    val wisdomSkillBuff = buildList {
+//        val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
+//        for (wisdom in 1200..2500 step 10) {
+//            add(wisdom to styles.map { getWisdomSkillBuff(wisdom, it) })
+//        }
+//    }
+//    for (phase in 0..3) {
+//        println("Phase $phase")
+//        wisdomSkillBuff.forEach { (wisdom, buffs) ->
+//            println("$wisdom\t${buffs.joinToString("\t") { it[phase].roundToString(3) }}")
+//        }
+//    }
 }

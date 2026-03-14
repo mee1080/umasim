@@ -97,6 +97,12 @@ private fun GraphArea(graphData: GraphData) {
                     areaBaseline = AreaBaseline.ConstantLine(0.1f),
                     areaStyle = AreaStyle(SolidColor(Color(255, 255, 0)), 0.15f),
                 )
+                if (graphData.phase0Start > 0.0) {
+                    VerticalLineAnnotation(
+                        graphData.phase0Start,
+                        LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f),
+                    )
+                }
                 VerticalLineAnnotation(graphData.phase1Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
                 VerticalLineAnnotation(graphData.phase2Start, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
                 HorizontalLineAnnotation(graphData.staminaZero, LineStyle(SolidColor(Color.Black), 1.dp, alpha = 0.8f))
