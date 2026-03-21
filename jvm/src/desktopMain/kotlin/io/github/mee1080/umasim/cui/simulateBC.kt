@@ -9,13 +9,14 @@ import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateBC() {
-    doBCSimulation(StatusType.SPEED, "[心覚えし、京の華]エアグルーヴ")
+//    doBCSimulation(StatusType.SPEED, "[心覚えし、京の華]エアグルーヴ")
 //    doBCSimulation(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
 //    doBCSimulation(StatusType.SPEED)
 //    doBCSimulation(StatusType.STAMINA)
 //    doBCSimulation(StatusType.POWER)
 //    doBCSimulation(StatusType.WISDOM)
 //    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
+    doBCSimulation2(StatusType.GUTS)
 //    optimize()
 }
 
@@ -68,28 +69,104 @@ private fun doBCSimulation(
     }
 }
 
+private val dreamTrainingTargetGuts = listOf(
+    StatusType.WISDOM, StatusType.WISDOM,
+    StatusType.SPEED, StatusType.SPEED,
+    StatusType.SPEED, StatusType.GUTS,
+    StatusType.WISDOM, StatusType.GUTS,
+    StatusType.GUTS, StatusType.GUTS,
+    StatusType.GUTS, StatusType.POWER, StatusType.POWER, StatusType.POWER,
+)
+
+private fun doBCSimulation2(
+    targetStatus: StatusType,
+    targetSupport: String? = null,
+    rarity: IntRange = 2..3,
+) {
+    val scenario = Scenario.BC
+    val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
+    val defaultSupport = listOf(
+        "[心覚えし、京の華]エアグルーヴ" to StatusType.SPEED,
+        "[響け、二人の凱歌]マルシュロレーヌ" to null,
+        "[気まぐれ渡り星]ステイゴールド" to StatusType.GUTS,
+        "[星跨ぐメッセージ]ネオユニヴァース" to StatusType.POWER,
+        "[Innovator]フォーエバーヤング" to StatusType.WISDOM,
+        "[American Dream]カジノドライヴ" to StatusType.FRIEND,
+    ).filter { it.second != targetStatus }.map { it.first to 4 }
+    val support = Store.getSupportByName(*defaultSupport.toTypedArray())
+        .map { it.copy(skills = emptyList()) }
+    val testCount = 100000
+    val route = BCRoute.Classic
+    val factor = factor(StatusType.STAMINA, 6)
+
+    val wisdom = listOf(100, 100, 90, 100)
+    val hp = listOf(650, 750, 750, 600)
+    val options = BCActionSelector.deafultOptions.mapIndexed { index, option ->
+        option.copy(
+            dreamTrainingTarget = dreamTrainingTargetGuts,
+            wisdom = wisdom[index],
+            hp = hp[index],
+        )
+    }.toTypedArray()
+
+    if (targetSupport == null) {
+        doSimulation2(
+            scenario,
+            chara,
+            support.toTypedArray(),
+            targetStatus, rarity = rarity, talent = 0..4,
+            factor = factor,
+            testCount = testCount,
+            selector = { BCActionSelector(*options) },
+            evaluateSetting = Runner.bcSetting,
+            evaluateUpperRate = 0.2,
+            scenarioEvents = { BCScenarioEvents(route) },
+        )
+    } else {
+        doSimulation2(
+            scenario,
+            chara,
+            support.toTypedArray(),
+            Store.getSupportByName(*((0..4).map { targetSupport to it }.toTypedArray())),
+            factor = factor,
+            testCount = testCount,
+            selector = { BCActionSelector(*options) },
+            evaluateSetting = Runner.bcSetting,
+            evaluateUpperRate = 0.2,
+            scenarioEvents = { BCScenarioEvents(route) },
+        )
+    }
+}
+
 private fun optimize() {
     val scenario = Scenario.BC
     val chara = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
     val support = Store.getSupportByName(
         "[心覚えし、京の華]エアグルーヴ" to 4,
-        "[天才的ユートピア]トウカイテイオー" to 4,
-        "[ぬくもりのノエル]フェノーメノ" to 4,
+        "[響け、二人の凱歌]マルシュロレーヌ" to 4,
+        "[気まぐれ渡り星]ステイゴールド" to 4,
         "[星跨ぐメッセージ]ネオユニヴァース" to 4,
         "[Innovator]フォーエバーヤング" to 4,
         "[American Dream]カジノドライヴ" to 4,
     )
     val selectors = buildList {
-        for (hp1 in 600..650 step 50) {
-            for (hp2 in 750..850 step 50) {
-                for (hp3 in 650..750 step 50) {
-                    for (hp4 in 550..600 step 50) {
-                        val hp = listOf(hp1, hp2, hp3, hp4)
-                        val options = BCActionSelector.deafultOptions.mapIndexed { index, option ->
-                            option.copy(hp = hp[index])
-                        }
-                        add(hp.joinToString("_") to { BCActionSelector(*options.toTypedArray()) })
+        val wisdomList = listOf(90, 90, 100, 100)
+        val hpList = listOf(650, 700, 700, 600)
+        repeat(4) { target ->
+            val wisdomBase = wisdomList[target]
+            val hpBase = hpList[target]
+            for (wisdom in (wisdomBase - 20)..(wisdomBase + 20) step 10) {
+                for (hp in (hpBase - 100)..(hpBase + 100) step 50) {
+                    val options = BCActionSelector.deafultOptions.mapIndexed { index, option ->
+                        if (index == target) option.copy(
+                            dreamTrainingTarget = dreamTrainingTargetGuts,
+                            wisdom = wisdom,
+                            hp = hp,
+                        ) else option.copy(
+                            dreamTrainingTarget = dreamTrainingTargetGuts,
+                        )
                     }
+                    add("$target/$wisdom/$hp" to { BCActionSelector(*options.toTypedArray()) })
                 }
             }
         }
@@ -98,8 +175,8 @@ private fun optimize() {
         scenario,
         chara,
         support,
-        factor = factor(StatusType.SPEED, 6),
-        testCount = 10000,
+        factor = factor(StatusType.STAMINA, 6),
+        testCount = 50000,
         selectors = selectors,
         evaluateSetting = Runner.bcSetting,
         evaluateUpperRate = 0.2,
