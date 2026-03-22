@@ -180,6 +180,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         Column {
             Text("位置取り調整", style = MaterialTheme.typography.titleLarge)
             Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.toPercentString()}の確率で発動します")
+            Text("本来は確率発動ではなく、先頭からの距離判定と、近くにウマ娘がいるかどうかの判定のようですが、詳細不明です")
         }
 
         Column {
