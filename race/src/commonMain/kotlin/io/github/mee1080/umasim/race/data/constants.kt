@@ -102,6 +102,7 @@ const val laneChangeAccelerationPerFrame = laneChangeAcceleration / framePerSeco
 const val defaultFullSpurtCoef = 0.05
 const val defaultFullSpurtAccelCoef = 0.02
 const val defaultSecureLeadNigeBoost = 1.2
+const val defaultPositionCompetitionRate = 0.8
 
 /**
  * やる気->ステータス補正倍率
