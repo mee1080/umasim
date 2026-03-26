@@ -143,19 +143,13 @@ private fun GraphArea(graphData: GraphData) {
                     graphData.skillData.forEachIndexed { index, skill ->
                         val top = 1f - skillMargin * index
                         XYAnnotation(Point(skill.start, top), AnchorPoint.TopLeft) {
-                            if (skill.description.isEmpty()) {
+                            WithTooltip(
+                                tooltip = {
+                                    Text(skill.description)
+                                }
+                            ) {
                                 TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
                                     Text(skill.name)
-                                }
-                            } else {
-                                WithTooltip(
-                                    tooltip = {
-                                        Text(skill.description)
-                                    }
-                                ) {
-                                    TooltipSurface(containerColor = Color(0, 0, 0, 128)) {
-                                        Text(skill.name)
-                                    }
                                 }
                             }
                         }
