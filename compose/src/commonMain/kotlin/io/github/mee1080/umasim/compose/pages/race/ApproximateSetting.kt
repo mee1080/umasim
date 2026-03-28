@@ -10,23 +10,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.race.data.PositionKeepMode
-import io.github.mee1080.umasim.race.data.defaultFullSpurtAccelCoef
-import io.github.mee1080.umasim.race.data.defaultFullSpurtCoef
 import io.github.mee1080.umasim.race.data.defaultPositionCompetitionRate
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
-import io.github.mee1080.umasim.store.operation.*
-import io.github.mee1080.utility.roundToString
+import io.github.mee1080.umasim.store.operation.setPositionCompetitionRate
+import io.github.mee1080.umasim.store.operation.setPositionKeepMode
+import io.github.mee1080.umasim.store.operation.setPositionKeepRate
 import io.github.mee1080.utility.toPercentString
 
 @Composable
 fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>) {
     val positionKeepMode by derivedStateOf { state.setting.positionKeepMode }
     val positionKeepRate by derivedStateOf { state.setting.positionKeepRate }
-    val fullSpurtCoef by derivedStateOf { state.setting.fullSpurtCoef }
-    val fullSpurtAccelCoef by derivedStateOf { state.setting.fullSpurtAccelCoef }
     HorizontalDivider()
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -39,36 +36,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
         Column {
             Text("全開スパート", style = MaterialTheme.typography.titleLarge)
-            Text("開始位置は最高速度到達時（スタミナ勝負と同じ）とし、速度と加速度は指定した係数を用いて、以下の式で計算します")
-            Text("スピードのやる気による変動は有効、コースごとのボーナス対象ステータスやバ場による変動は無効です")
-            Text("最高速度上昇量：√(スピード-2000)×係数")
-            Text("速度係数: ${fullSpurtCoef.roundToString(3)}")
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = fullSpurtCoef.toFloat(),
-                    onValueChange = { dispatch(setFullSpurtCoef(it.toDouble())) },
-                    valueRange = 0f..0.1f,
-                    steps = 99,
-                    modifier = Modifier.weight(1f),
-                )
-                Button(
-                    onClick = { dispatch(setFullSpurtCoef(defaultFullSpurtCoef)) },
-                ) { Text("リセット") }
-            }
-            Text("加速度: 通常の加速度×係数")
-            Text("加速度係数: ${fullSpurtAccelCoef.roundToString(3)}")
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Slider(
-                    value = fullSpurtAccelCoef.toFloat(),
-                    onValueChange = { dispatch(setFullSpurtAccelCoef(it.toDouble())) },
-                    valueRange = 0f..0.1f,
-                    steps = 99,
-                    modifier = Modifier.weight(1f),
-                )
-                Button(
-                    onClick = { dispatch(setFullSpurtAccelCoef(defaultFullSpurtAccelCoef)) },
-                ) { Text("リセット") }
-            }
+            Text("最高速度は不明のため、スピード2000を超えていれば無制限としています")
         }
 
         Column {

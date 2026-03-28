@@ -285,9 +285,9 @@ class RaceState(
                     setting.runningStyle.styleAccelerateCoef[currentPhase]!! *
                     surfaceFitAccelerateCoef[setting.umaStatus.surfaceFit]!! *
                     distanceFitAccelerateCoef[setting.umaStatus.distanceFit]!!
-            acceleration *= setting.fullSpurtAccelCoef
+            acceleration = 0.068 * acceleration / (setting.trackDetail.distance / 1000.0).pow(1.5)
             simulation.operatingSkills.forEach {
-                acceleration += it.fullSpurtAcceleration
+                acceleration += it.fullSpurtAcceleration / 10.0
             }
             return max(acceleration, 0.0)
         }
@@ -418,8 +418,6 @@ interface IRaceSetting {
     val coolDownBaseFrames: Double
     val skillActivateRate: Double
     val timeCoef: Double
-    val fullSpurtCoef: Double
-    val fullSpurtAccelCoef: Double
     val oonige: Boolean
     val phase0Half: Double
     val phase1Start: Double
@@ -447,8 +445,6 @@ data class RaceSetting(
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
-    override val fullSpurtCoef: Double = defaultFullSpurtCoef,
-    override val fullSpurtAccelCoef: Double = defaultFullSpurtAccelCoef,
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -717,10 +713,9 @@ class RaceSettingWithPassive(
     }
 
     val fullSpurtSpeed by lazy {
-        // 計算方法不明のため近似
+        // 計算方法不明のため無制限
         val status = umaStatus.speed * condCoef[umaStatus.condition]!! + passiveBonus.speed
-        if (status <= 2000) return@lazy 0.0
-        sqrt(status - 2000.0) * fullSpurtCoef
+        if (status <= 2000) 0.0 else Double.MAX_VALUE
     }
 
     val baseLaneChangeTargetSpeed by lazy {
