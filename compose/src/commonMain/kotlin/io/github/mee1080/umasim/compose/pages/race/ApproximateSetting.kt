@@ -9,10 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
-import io.github.mee1080.umasim.race.data.PositionKeepMode
-import io.github.mee1080.umasim.race.data.defaultFullSpurtAccelCoef
-import io.github.mee1080.umasim.race.data.defaultFullSpurtCoef
-import io.github.mee1080.umasim.race.data.defaultSecureLeadNigeBoost
+import io.github.mee1080.umasim.race.data.*
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
@@ -180,7 +177,19 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         Column {
             Text("位置取り調整", style = MaterialTheme.typography.titleLarge)
             Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.toPercentString()}の確率で発動します")
-            Text("本来は確率発動ではなく、先頭からの距離判定と、近くにウマ娘がいるかどうかの判定のようですが、詳細不明です")
+            Text("本来は確率発動ではなく、先頭からの距離判定と、近くにウマ娘がいるかどうかの判定のため、適当な確率を設定してください")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    value = (systemSetting.positionCompetitionRate * 100).toFloat(),
+                    onValueChange = { dispatch(setPositionCompetitionRate(it.toDouble() / 100.0)) },
+                    valueRange = 0f..100f,
+                    steps = 99,
+                    modifier = Modifier.weight(1f),
+                )
+                Button(
+                    onClick = { dispatch(setPositionCompetitionRate(defaultPositionCompetitionRate)) },
+                ) { Text("リセット") }
+            }
         }
 
         Column {

@@ -948,6 +948,7 @@ class InvokedSkill(
 @Serializable
 data class SystemSetting(
     val skillLaneChangeRate: Double = 0.4,
+    val positionCompetitionRate: Double = defaultPositionCompetitionRate,
 ) {
     @Transient
     val positionKeepSectionSen: List<Boolean> = List(10) { it == 0 }
@@ -963,9 +964,6 @@ data class SystemSetting(
 
     @Transient
     val competeFightRate: Double = 0.4
-
-    @Transient
-    val positionCompetitionRate: Double = 0.8
 
     @Transient
     val staminaKeepRate: Double = 0.9

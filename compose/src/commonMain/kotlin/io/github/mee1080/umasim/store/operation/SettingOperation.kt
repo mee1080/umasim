@@ -62,3 +62,7 @@ fun setThreadCount(value: Int) = DirectOperation<AppState> { state ->
 fun setSkillLaneChangeRate(value: Double) = DirectOperation<AppState> { state ->
     state.updateSystemSetting { it.copy(skillLaneChangeRate = value) }
 }
+
+fun setPositionCompetitionRate(value: Double) = DirectOperation<AppState> { state ->
+    state.updateSystemSetting { it.copy(positionCompetitionRate = value) }
+}
