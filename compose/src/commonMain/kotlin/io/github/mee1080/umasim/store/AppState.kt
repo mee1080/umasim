@@ -45,6 +45,24 @@ enum class SimulationMode(val label: String) {
 
 @Stable
 @Serializable
+data class GraphDisplaySetting(
+    val skill: Boolean = true,
+    val temptation: Boolean = true,
+    val spurting: Boolean = true,
+    val paceDownMode: Boolean = true,
+    val downSlopeMode: Boolean = true,
+    val leadCompetition: Boolean = true,
+    val competeFight: Boolean = true,
+    val conservePower: Boolean = true,
+    val positionCompetition: Boolean = true,
+    val staminaKeep: Boolean = true,
+    val secureLead: Boolean = true,
+    val staminaLimitBreak: Boolean = true,
+    val fullSpurt: Boolean = true,
+)
+
+@Stable
+@Serializable
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
     val systemSetting: SystemSetting = SystemSetting(),
@@ -55,6 +73,7 @@ data class AppState(
     val simulationCount: Int = 100,
     val simulationMode: SimulationMode = SimulationMode.NORMAL,
     val contributionTargets: Set<String> = emptySet(),
+    val graphDisplaySetting: GraphDisplaySetting = GraphDisplaySetting(),
     val threadCount: Int = defaultThreadCount,
     @Transient
     val simulationProgress: Int = 0,
