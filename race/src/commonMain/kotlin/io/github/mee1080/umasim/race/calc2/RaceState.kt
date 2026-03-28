@@ -394,7 +394,7 @@ class RaceState(
     }
 
     val wisdomSkillBuff: Double
-        get() = getWisdomSkillBuff(setting.modifiedWisdom, setting.basicRunningStyle, currentPhase)
+        get() = setting.wisdomSkillBuff[currentPhase]!!
 }
 
 interface IRaceSetting {
@@ -751,6 +751,12 @@ class RaceSettingWithPassive(
             else -> 0.0
         }
     }
+
+    val wisdomSkillBuff by lazy {
+        val calcWisdom = umaStatus.wisdom * condCoef[umaStatus.condition]!! + passiveBonus.wisdom
+        val buff = getWisdomSkillBuff(calcWisdom.toInt(), basicRunningStyle)
+        buff + (-1 to buff[0])
+    }
 }
 
 class RaceSimulationState(
@@ -928,13 +934,13 @@ class InvokedSkill(
 
     fun speedWithDecel(state: RaceState): Double {
         return if (isUniqueOrEvoOrRare) {
-            invoke.speedWithDecel(state) * state.wisdomSkillBuff
+            invoke.speedWithDecel(state) * (1.0 + state.wisdomSkillBuff)
         } else invoke.speedWithDecel(state)
     }
 
     fun targetSpeed(state: RaceState): Double {
         return if (isUniqueOrEvoOrRare) {
-            invoke.targetSpeed(state) * state.wisdomSkillBuff
+            invoke.targetSpeed(state) * (1.0 + state.wisdomSkillBuff)
         } else invoke.targetSpeed(state)
     }
 }

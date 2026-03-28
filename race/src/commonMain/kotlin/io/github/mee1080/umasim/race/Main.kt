@@ -23,6 +23,7 @@
 package io.github.mee1080.umasim.race
 
 import io.github.mee1080.umasim.race.data.Style
+import io.github.mee1080.umasim.race.data.calcBaseWisdomSkillBuff
 import io.github.mee1080.umasim.race.data.getWisdomSkillBuff
 import io.github.mee1080.utility.roundToString
 
@@ -55,16 +56,16 @@ fun main() {
 //            }
 //        }
 //    }
-//    val wisdomSkillBuff = buildList {
-//        val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
-//        for (wisdom in 1200..2500 step 10) {
-//            add(wisdom to styles.map { getWisdomSkillBuff(wisdom, it) })
-//        }
-//    }
-//    for (phase in 0..3) {
-//        println("Phase $phase")
-//        wisdomSkillBuff.forEach { (wisdom, buffs) ->
-//            println("$wisdom\t${buffs.joinToString("\t") { it[phase].roundToString(3) }}")
-//        }
-//    }
+    val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
+    for (wisdom in 1201..2501 step 20) {
+        val base = calcBaseWisdomSkillBuff(wisdom)
+        println("$wisdom\t${wisdom - 1200}\t$base")
+    }
+    for (phase in 0..3) {
+        println("Phase $phase")
+        for (wisdom in 1200..2500 step 10) {
+            val buffs = styles.map { getWisdomSkillBuff(wisdom, it)[phase]!! + 1.0 }
+            println("$wisdom\t${buffs.joinToString("\t") { it.roundToString(3) }}")
+        }
+    }
 }

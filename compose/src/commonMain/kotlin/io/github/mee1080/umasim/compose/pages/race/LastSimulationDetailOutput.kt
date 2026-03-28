@@ -61,5 +61,16 @@ fun LastSimulationDetailOutput(state: AppState) {
                 setting.competeFightAcceleration.roundToString(2)
             }"
         )
+        Text(
+            "賢さスキル強化　序盤：${
+                setting.wisdomSkillBuff[0]!!.roundToString(2)
+            } 中盤：${
+                setting.wisdomSkillBuff[1]!!.roundToString(2)
+            } 終盤：${
+                setting.wisdomSkillBuff[2]!!.roundToString(2)
+            } 最終盤：${
+                setting.wisdomSkillBuff[3]!!.roundToString(2)
+            }"
+        )
     }
 }

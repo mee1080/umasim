@@ -22,7 +22,6 @@
  */
 package io.github.mee1080.umasim.race.data
 
-import kotlin.math.max
 import kotlin.math.min
 
 enum class Distance {
@@ -492,46 +491,31 @@ enum class PositionKeepState(val label: String) {
 }
 
 /**
- * フェーズ->list(賢さ->(逃げ,先行,差し,追込))
+ * 脚質->フェーズ->賢さスキル強化倍率
  */
-val wisdomSkillBuff = listOf(
-    listOf(
-        1300 to listOf(1.052, 1.041, 1.038, 1.03),
-        1400 to listOf(1.208, 1.168, 1.152, 1.12),
-        1600 to listOf(1.26, 1.21, 1.19, 1.15),
-        1850 to listOf(1.273, 1.22, 1.2, 1.158),
-    ),
-    listOf(
-        1300 to listOf(1.044, 1.04, 1.035, 1.033),
-        1400 to listOf(1.185, 1.168, 1.145, 1.138),
-        1600 to listOf(1.23, 1.21, 1.18, 1.171),
-        1850 to listOf(1.242, 1.221, 1.19, 1.18),
-    ),
-    listOf(
-        1300 to listOf(1.038, 1.042, 1.045, 1.05),
-        1400 to listOf(1.152, 1.168, 1.185, 1.2),
-        1600 to listOf(1.19, 1.21, 1.23, 1.25),
-        1850 to listOf(1.2, 1.22, 1.242, 1.263),
-    ),
-    listOf(
-        1300 to listOf(1.032, 1.042, 1.048, 1.055),
-        1400 to listOf(1.128, 1.168, 1.192, 1.218),
-        1600 to listOf(1.16, 1.21, 1.24, 1.272),
-        1850 to listOf(1.168, 1.22, 1.252, 1.285),
-    ),
+val styleWisdomSkillBuffData = mapOf(
+    Style.NIGE to listOf(0.26, 0.23, 0.19, 0.16),
+    Style.SEN to listOf(0.21, 0.21, 0.21, 0.21),
+    Style.SASI to listOf(0.19, 0.18, 0.23, 0.24),
+    Style.OI to listOf(0.15, 0.17, 0.25, 0.27),
 )
 
-fun getWisdomSkillBuff(wisdom: Int, style: Style, phase: Int): Double {
-    val index = style.value - 1
-    val phaseIndex = max(0, phase)
-    if (wisdom <= 1200) return 1.0
-    var low = 1200 to 1.0
-    for ((nextWisdom, list) in wisdomSkillBuff[phaseIndex]) {
-        val value = list[index]
-        if (wisdom <= nextWisdom) {
-            return low.second + (value - low.second) * (wisdom - low.first) / (nextWisdom - low.first)
-        }
-        low = nextWisdom to value
-    }
-    return wisdomSkillBuff[phaseIndex].last().second[index]
+fun getWisdomSkillBuff(wisdom: Int, baseStyle: Style): Map<Int, Double> {
+    val base = calcBaseWisdomSkillBuff(wisdom)
+    return styleWisdomSkillBuffData[baseStyle]!!.mapIndexed { phase, rate ->
+        phase to base * rate
+    }.toMap()
+}
+
+fun calcBaseWisdomSkillBuff(wisdom: Int): Double {
+    var result = 0.0
+    if (wisdom <= 1220) return result
+    result += (min(wisdom, 1401) - 1201) / 20 * 0.02
+    if (wisdom <= 1420) return result
+    result += (min(wisdom, 1601) - 1401) / 20 * 0.06
+    if (wisdom <= 1620) return result
+    result += (min(wisdom, 2001) - 1601) / 20 * 0.01
+    if (wisdom <= 2100) return result
+    result += (min(wisdom, 3101) - 2001) / 100 * 0.01
+    return result
 }
