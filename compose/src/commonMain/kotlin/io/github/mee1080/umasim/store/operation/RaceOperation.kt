@@ -11,6 +11,7 @@ import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.ActionContext
+import io.github.mee1080.umasim.store.framework.DirectOperation
 import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
@@ -72,7 +73,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
             lastRaceState = result.second
         }
     }
-    val graphData = toGraphData(state.setting, lastRaceState?.simulation?.frames)
+    val graphData = toGraphData(state.setting, lastRaceState?.simulation?.frames, state.graphDisplaySetting)
     val spurtResults = results.filter { it.maxSpurt }
     val notSpurtResult = results.filter { !it.maxSpurt }
     val summary = SimulationSummary(
@@ -237,7 +238,11 @@ private const val areaHeight = 0.1f
 
 private fun adjustRange(value: Double, min: Float, max: Float) = (value.toFloat() - min) / (max - min)
 
-private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): GraphData? {
+internal fun toGraphData(
+    setting: RaceSetting,
+    frameList: List<RaceFrame>?,
+    displaySetting: GraphDisplaySetting
+): GraphData? {
     if (frameList.isNullOrEmpty()) return null
     val staminaMax = frameList[0].sp.toFloat()
     val trackDetail = setting.trackDetail
@@ -270,36 +275,35 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
         downSlopeData = toGraphData(trackDetail.slopes.filter { it.slope < 0f }.map { it.start to it.end }, frameList),
         skillData = buildList {
             frameList.forEachIndexed { index, raceFrame ->
-                raceFrame.triggeredSkills.forEach { skill ->
-                    val endIndex = searchFrame(frameList, index + 1) { frame ->
-                        frame.endedSkills.any { it.data.skill.id == skill.invoke.skill.id }
-                    }
-                    add(
-                        GraphSkill(
-                            start = index / 15f,
-                            end = endIndex?.div(15f),
-                            name = skill.invoke.skill.name,
-                            effect = skill,
-                            startRate = raceFrame.startPosition / setting.courseLength,
-                            endRate = endIndex?.let { frameList[it].startPosition / setting.courseLength },
+                if (displaySetting.skill) {
+                    raceFrame.triggeredSkills.forEach { skill ->
+                        val endIndex = searchFrame(frameList, index + 1) { frame ->
+                            frame.endedSkills.any { it.data.skill.id == skill.invoke.skill.id }
+                        }
+                        add(
+                            GraphSkill(
+                                start = index / 15f,
+                                end = endIndex?.div(15f),
+                                name = skill.invoke.skill.name,
+                                effect = skill,
+                                startRate = raceFrame.startPosition / setting.courseLength,
+                                endRate = endIndex?.let { frameList[it].startPosition / setting.courseLength },
+                            )
                         )
-                    )
+                    }
                 }
-                add(setting, frameList, index, raceFrame, "掛かり") { it.temptation }
-//                add(index, raceFrame, last, "スパート開始") { it.spurting }
-//                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
-                add(setting, frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
-//                add(index, raceFrame, last, "位置取り争い") { it.leadCompetition }
-                add(setting, frameList, index, raceFrame, "追い比べ") { it.competeFight }
-//                add(index, raceFrame, last, "脚色十分") { it.conservePower }
-//                add(index, raceFrame, last, "位置取り調整") { it.positionCompetition }
-                add(setting, frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
-//                add(index, raceFrame, last, "リード確保") { it.secureLead }
-                add(setting, frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
-                add(setting, frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
-//                if (raceFrame.positionKeepState != PositionKeepState.NONE && raceFrame.positionKeepState != last.positionKeepState) {
-//                    add(index / 15f to raceFrame.positionKeepState.label)
-//                }
+                if (displaySetting.temptation) add(setting, frameList, index, raceFrame, "掛かり") { it.temptation }
+                if (displaySetting.spurting) add(setting, frameList, index, raceFrame, "スパート開始") { it.spurting }
+                if (displaySetting.paceDownMode) add(setting, frameList, index, raceFrame, "ペースダウンモード") { it.positionKeepState == PositionKeepState.PACE_DOWN }
+                if (displaySetting.downSlopeMode) add(setting, frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
+                if (displaySetting.leadCompetition) add(setting, frameList, index, raceFrame, "位置取り争い") { it.leadCompetition }
+                if (displaySetting.competeFight) add(setting, frameList, index, raceFrame, "追い比べ") { it.competeFight }
+                if (displaySetting.conservePower) add(setting, frameList, index, raceFrame, "脚色十分") { it.conservePower }
+                if (displaySetting.positionCompetition) add(setting, frameList, index, raceFrame, "位置取り調整") { it.positionCompetition }
+                if (displaySetting.staminaKeep) add(setting, frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
+                if (displaySetting.secureLead) add(setting, frameList, index, raceFrame, "リード確保") { it.secureLead }
+                if (displaySetting.staminaLimitBreak) add(setting, frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
+                if (displaySetting.fullSpurt) add(setting, frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
             }
         }.sortedBy { it.start },
         paceMakerData = frameList.mapIndexedNotNull { index, raceFrame ->
@@ -376,6 +380,13 @@ private fun toGraphData(
 fun cancelSimulation() = AsyncOperation<AppState>({
     send { it.clearSimulationResult() }
 }, simulationCancelPolicy)
+
+fun setGraphDisplaySetting(value: GraphDisplaySetting) = DirectOperation<AppState> { state ->
+    state.copy(
+        graphDisplaySetting = value,
+        graphData = toGraphData(state.setting, state.graphData?.frameList, value)
+    ).also { it.saveSetting() }
+}
 
 private sealed interface ContributionTarget {
     fun applySetting(setting: RaceSetting): RaceSetting

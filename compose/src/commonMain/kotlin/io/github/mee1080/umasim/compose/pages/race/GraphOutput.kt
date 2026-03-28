@@ -1,9 +1,7 @@
 package io.github.mee1080.umasim.compose.pages.race
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -28,13 +26,15 @@ import io.github.mee1080.umasim.compose.common.atoms.TooltipSurface
 import io.github.mee1080.umasim.compose.common.parts.WithTooltip
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.GraphData
+import io.github.mee1080.umasim.store.framework.OperationDispatcher
+import io.github.mee1080.umasim.store.operation.setGraphDisplaySetting
 import kotlin.math.max
 import kotlin.math.min
 
 @Composable
-fun GraphOutput(state: AppState) {
+fun GraphOutput(state: AppState, dispatch: OperationDispatcher<AppState>) {
     val graphData = state.graphData ?: return
-    GraphArea(graphData)
+    GraphArea(state, graphData, dispatch)
 }
 
 private val defaultLegends = listOf(
@@ -47,9 +47,9 @@ private val virtualLegends = defaultLegends + listOf(
     "先頭との差" to Color(0, 255, 255),
 )
 
-@OptIn(ExperimentalKoalaPlotApi::class)
+@OptIn(ExperimentalKoalaPlotApi::class, ExperimentalLayoutApi::class)
 @Composable
-private fun GraphArea(graphData: GraphData) {
+private fun GraphArea(state: AppState, graphData: GraphData, dispatch: OperationDispatcher<AppState>) {
     val frameList = graphData.frameList
     Column {
         Text("直近レース詳細", style = MaterialTheme.typography.headlineSmall)
@@ -161,6 +161,51 @@ private fun GraphArea(graphData: GraphData) {
                         }
                     }
                 }
+            }
+        }
+        val setting = state.graphDisplaySetting
+        FlowRow(
+            modifier = Modifier.padding(top = 8.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            LabeledCheckbox(setting.skill, { dispatch(setGraphDisplaySetting(setting.copy(skill = it))) }) {
+                Text("スキル")
+            }
+            LabeledCheckbox(setting.temptation, { dispatch(setGraphDisplaySetting(setting.copy(temptation = it))) }) {
+                Text("掛かり")
+            }
+            LabeledCheckbox(setting.spurting, { dispatch(setGraphDisplaySetting(setting.copy(spurting = it))) }) {
+                Text("スパート開始")
+            }
+            LabeledCheckbox(setting.paceDownMode, { dispatch(setGraphDisplaySetting(setting.copy(paceDownMode = it))) }) {
+                Text("ペースダウンモード")
+            }
+            LabeledCheckbox(setting.downSlopeMode, { dispatch(setGraphDisplaySetting(setting.copy(downSlopeMode = it))) }) {
+                Text("下り坂モード")
+            }
+            LabeledCheckbox(setting.leadCompetition, { dispatch(setGraphDisplaySetting(setting.copy(leadCompetition = it))) }) {
+                Text("位置取り争い")
+            }
+            LabeledCheckbox(setting.competeFight, { dispatch(setGraphDisplaySetting(setting.copy(competeFight = it))) }) {
+                Text("追い比べ")
+            }
+            LabeledCheckbox(setting.conservePower, { dispatch(setGraphDisplaySetting(setting.copy(conservePower = it))) }) {
+                Text("脚色十分")
+            }
+            LabeledCheckbox(setting.positionCompetition, { dispatch(setGraphDisplaySetting(setting.copy(positionCompetition = it))) }) {
+                Text("位置取り調整")
+            }
+            LabeledCheckbox(setting.staminaKeep, { dispatch(setGraphDisplaySetting(setting.copy(staminaKeep = it))) }) {
+                Text("持久力温存")
+            }
+            LabeledCheckbox(setting.secureLead, { dispatch(setGraphDisplaySetting(setting.copy(secureLead = it))) }) {
+                Text("リード確保")
+            }
+            LabeledCheckbox(setting.staminaLimitBreak, { dispatch(setGraphDisplaySetting(setting.copy(staminaLimitBreak = it))) }) {
+                Text("スタミナ勝負")
+            }
+            LabeledCheckbox(setting.fullSpurt, { dispatch(setGraphDisplaySetting(setting.copy(fullSpurt = it))) }) {
+                Text("全開スパート")
             }
         }
     }

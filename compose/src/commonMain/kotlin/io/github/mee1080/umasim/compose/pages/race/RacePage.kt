@@ -26,7 +26,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         ModeInput(state, dispatch)
         ActionInput(state, dispatch)
         SummaryOutput(state)
-        GraphOutput(state)
+        GraphOutput(state, dispatch)
         LastSimulationDetailOutput(state)
         ContributionOutput(state)
         ApproximateSetting(state, dispatch)
