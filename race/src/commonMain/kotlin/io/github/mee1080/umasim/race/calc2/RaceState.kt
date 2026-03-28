@@ -146,7 +146,7 @@ class RaceState(
     val isAfterFinalCornerOrInFinalStraight get() = isAfterFinalCorner || isInFinalStraight()
 
     fun getSection(position: Double): Int {
-        return floor((position * 24.0) / setting.courseLength).toInt()
+        return floor((position * 24.0) / setting.courseLength).toInt() + 1
     }
 
     val currentSection get() = getSection(simulation.position)

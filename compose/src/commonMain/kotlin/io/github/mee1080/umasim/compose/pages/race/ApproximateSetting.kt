@@ -176,8 +176,9 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
 
         Column {
             Text("位置取り調整", style = MaterialTheme.typography.titleLarge)
+            Text("先頭からの距離判定と、近くにウマ娘がいるかどうかの判定は、常に成功扱いです")
             Text("持久力温存でなければ、${systemSetting.positionCompetitionRate.toPercentString()}の確率で発動します")
-            Text("本来は確率発動ではなく、先頭からの距離判定と、近くにウマ娘がいるかどうかの判定のため、適当な確率を設定してください")
+            Text("発動回数が実測した期待値通りになるのは、40%～60%程度です（スタミナ足りるか判定する場合は100%で）")
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Slider(
                     value = (systemSetting.positionCompetitionRate * 100).toFloat(),

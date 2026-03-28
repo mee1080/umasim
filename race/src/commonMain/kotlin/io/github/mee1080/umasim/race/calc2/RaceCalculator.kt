@@ -275,9 +275,9 @@ private fun RaceState.updateFrame(): Boolean {
         // 位置取り調整/持久力温存
         if (simulation.frameElapsed >= simulation.positionCompetitionNextFrame) {
             if (simulation.positionCompetition) {
-                // 位置取り調整終了後は1秒のクールタイム
+                // 位置取り調整終了後は2秒のクールタイム
                 simulation.positionCompetition = false
-                simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond
+                simulation.positionCompetitionNextFrame = simulation.frameElapsed + framePerSecond * 2
             } else if (!simulation.staminaKeep) {
                 applyPositionCompetition()
             }
