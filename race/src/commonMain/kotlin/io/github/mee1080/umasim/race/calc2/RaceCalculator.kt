@@ -286,9 +286,9 @@ private fun RaceState.updateFrame(): Boolean {
         // リード確保
         if (simulation.frameElapsed >= simulation.secureLeadNextFrame) {
             if (simulation.secureLead) {
-                // リード確保終了後は1秒のクールタイム
+                // リード確保終了後は2秒のクールタイム
                 simulation.secureLead = false
-                simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond
+                simulation.secureLeadNextFrame = simulation.frameElapsed + framePerSecond * 2
             } else if (setting.runningStyle != Style.OI) {
                 if (Random.nextDouble() < system.secureLeadRate) {
                     // リード確保発生時は2秒後に終了
