@@ -7,10 +7,7 @@ import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.framework.State
 import io.github.mee1080.umasim.store.operation.updateSetting
-import io.github.mee1080.utility.decodeFromStringOrNull
-import io.github.mee1080.utility.encodeToString
-import io.github.mee1080.utility.persistentSettings
-import io.github.mee1080.utility.roundToString
+import io.github.mee1080.utility.*
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -194,6 +191,8 @@ data class GraphSkill(
     val end: Float?,
     val name: String,
     val effect: TriggeredSkill?,
+    val startRate: Double = 0.0,
+    val endRate: Double? = null,
 ) {
     val description = buildString {
         if (effect != null) {
@@ -227,6 +226,12 @@ data class GraphSkill(
                     appendLine("持続時間：${operating.duration.roundToString(2)}")
                 }
             }
+        }
+        val startPercent = startRate.toPercentString(1)
+        if (endRate != null) {
+            appendLine("${startPercent}〜${endRate.toPercentString(1)}")
+        } else {
+            appendLine(startPercent)
         }
     }.trim()
 }

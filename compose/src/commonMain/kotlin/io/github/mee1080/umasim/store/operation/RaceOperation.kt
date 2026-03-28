@@ -271,23 +271,32 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
         skillData = buildList {
             frameList.forEachIndexed { index, raceFrame ->
                 raceFrame.triggeredSkills.forEach { skill ->
-                    val end = searchFrame(frameList, index + 1) { frame ->
+                    val endIndex = searchFrame(frameList, index + 1) { frame ->
                         frame.endedSkills.any { it.data.skill.id == skill.invoke.skill.id }
                     }
-                    add(GraphSkill(index / 15f, end?.div(15f), skill.invoke.skill.name, skill))
+                    add(
+                        GraphSkill(
+                            start = index / 15f,
+                            end = endIndex?.div(15f),
+                            name = skill.invoke.skill.name,
+                            effect = skill,
+                            startRate = raceFrame.startPosition / setting.courseLength,
+                            endRate = endIndex?.let { frameList[it].startPosition / setting.courseLength },
+                        )
+                    )
                 }
-                add(frameList, index, raceFrame, "掛かり") { it.temptation }
+                add(setting, frameList, index, raceFrame, "掛かり") { it.temptation }
 //                add(index, raceFrame, last, "スパート開始") { it.spurting }
 //                add(index, raceFrame, last, "ペースダウンモード") { it.paceDownMode }
-                add(frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
+                add(setting, frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
 //                add(index, raceFrame, last, "位置取り争い") { it.leadCompetition }
-                add(frameList, index, raceFrame, "追い比べ") { it.competeFight }
+                add(setting, frameList, index, raceFrame, "追い比べ") { it.competeFight }
 //                add(index, raceFrame, last, "脚色十分") { it.conservePower }
 //                add(index, raceFrame, last, "位置取り調整") { it.positionCompetition }
-                add(frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
+                add(setting, frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
 //                add(index, raceFrame, last, "リード確保") { it.secureLead }
-                add(frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
-                add(frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
+                add(setting, frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
+                add(setting, frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
 //                if (raceFrame.positionKeepState != PositionKeepState.NONE && raceFrame.positionKeepState != last.positionKeepState) {
 //                    add(index / 15f to raceFrame.positionKeepState.label)
 //                }
@@ -302,6 +311,7 @@ private fun toGraphData(setting: RaceSetting, frameList: List<RaceFrame>?): Grap
 }
 
 private fun MutableList<GraphSkill>.add(
+    setting: RaceSetting,
     frameList: List<RaceFrame>,
     frame: Int,
     raceFrame: RaceFrame,
@@ -310,7 +320,16 @@ private fun MutableList<GraphSkill>.add(
 ) {
     if (check(raceFrame) && (frame == 0 || !check(frameList[frame - 1]))) {
         val end = searchFrame(frameList, frame + 1) { !check(it) } ?: frameList.lastIndex
-        add(GraphSkill(frame / 15f, end / 15f, label, null))
+        add(
+            GraphSkill(
+                start = frame / 15f,
+                end = end / 15f,
+                name = label,
+                effect = null,
+                startRate = raceFrame.startPosition / setting.courseLength,
+                endRate = frameList[end].startPosition / setting.courseLength,
+            )
+        )
     }
 }
 
