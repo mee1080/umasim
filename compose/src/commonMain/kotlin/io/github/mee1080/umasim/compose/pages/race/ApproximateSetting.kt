@@ -10,14 +10,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.SelectBox
 import io.github.mee1080.umasim.race.data.PositionKeepMode
+import io.github.mee1080.umasim.race.data.defaultCompeteFightRate
 import io.github.mee1080.umasim.race.data.defaultPositionCompetitionRate
+import io.github.mee1080.umasim.race.data.defaultSecureLeadRate
 import io.github.mee1080.umasim.race.data2.ApproximateMultiCondition
 import io.github.mee1080.umasim.race.data2.approximateConditions
 import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
-import io.github.mee1080.umasim.store.operation.setPositionCompetitionRate
-import io.github.mee1080.umasim.store.operation.setPositionKeepMode
-import io.github.mee1080.umasim.store.operation.setPositionKeepRate
+import io.github.mee1080.umasim.store.operation.*
 import io.github.mee1080.utility.toPercentString
 
 @Composable
@@ -131,6 +131,18 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
         Column {
             Text("追い比べ", style = MaterialTheme.typography.titleLarge)
             Text("最終直線で1秒毎に、${systemSetting.competeFightRate.toPercentString()}の確率で発動します")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    value = (systemSetting.competeFightRate * 100).toFloat(),
+                    onValueChange = { dispatch(setCompeteFightRate(it.toDouble() / 100.0)) },
+                    valueRange = 0f..100f,
+                    steps = 99,
+                    modifier = Modifier.weight(1f),
+                )
+                Button(
+                    onClick = { dispatch(setCompeteFightRate(defaultCompeteFightRate)) },
+                ) { Text("リセット") }
+            }
         }
 
         Column {
@@ -167,6 +179,18 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
             Text("リード確保", style = MaterialTheme.typography.titleLarge)
             Text("追込以外で、${systemSetting.secureLeadRate.toPercentString()}の確率で発動します")
             Text("自身の作戦が逃げ、ポジションキープモードが仮想ペースメーカー、かつ相手の作戦が自身と異なる場合、速度上昇量に倍率がかかります")
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Slider(
+                    value = (systemSetting.secureLeadRate * 100).toFloat(),
+                    onValueChange = { dispatch(setSecureLeadRate(it.toDouble() / 100.0)) },
+                    valueRange = 0f..100f,
+                    steps = 99,
+                    modifier = Modifier.weight(1f),
+                )
+                Button(
+                    onClick = { dispatch(setSecureLeadRate(defaultSecureLeadRate)) },
+                ) { Text("リセット") }
+            }
         }
 
         Column {

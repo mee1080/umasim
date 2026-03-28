@@ -949,6 +949,8 @@ class InvokedSkill(
 data class SystemSetting(
     val skillLaneChangeRate: Double = 0.4,
     val positionCompetitionRate: Double = defaultPositionCompetitionRate,
+    val competeFightRate: Double = defaultCompeteFightRate,
+    val secureLeadRate: Double = defaultSecureLeadRate,
 ) {
     @Transient
     val positionKeepSectionSen: List<Boolean> = List(10) { it == 1 }
@@ -963,13 +965,7 @@ data class SystemSetting(
     val leadCompetitionPosition: Int = 200
 
     @Transient
-    val competeFightRate: Double = 0.4
-
-    @Transient
     val staminaKeepRate: Double = 0.9
-
-    @Transient
-    val secureLeadRate: Double = 0.3
 }
 
 class TriggeredSkill(

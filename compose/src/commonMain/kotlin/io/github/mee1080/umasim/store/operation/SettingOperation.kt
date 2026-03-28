@@ -54,3 +54,11 @@ fun setSkillLaneChangeRate(value: Double) = DirectOperation<AppState> { state ->
 fun setPositionCompetitionRate(value: Double) = DirectOperation<AppState> { state ->
     state.updateSystemSetting { it.copy(positionCompetitionRate = value) }
 }
+
+fun setCompeteFightRate(value: Double) = DirectOperation<AppState> { state ->
+    state.updateSystemSetting { it.copy(competeFightRate = value) }
+}
+
+fun setSecureLeadRate(value: Double) = DirectOperation<AppState> { state ->
+    state.updateSystemSetting { it.copy(secureLeadRate = value) }
+}
