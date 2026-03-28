@@ -101,7 +101,6 @@ const val laneChangeAccelerationPerFrame = laneChangeAcceleration / framePerSeco
 
 const val defaultFullSpurtCoef = 0.05
 const val defaultFullSpurtAccelCoef = 0.02
-const val defaultSecureLeadNigeBoost = 1.2
 const val defaultPositionCompetitionRate = 0.8
 
 /**
@@ -419,6 +418,14 @@ internal val secureLeadSpeedCoef = mapOf(
     Style.SEN to 1.0,
     Style.SASI to 0.8,
     Style.OI to 0.0,
+)
+
+/**
+ * 脚質->逃げリード確保追加係数
+ */
+internal val secureLeadNigeBoost = mapOf(
+    Style.OONIGE to 7.0,
+    Style.NIGE to 4.0,
 )
 
 /**

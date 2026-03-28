@@ -51,10 +51,6 @@ fun setFullSpurtAccelCoef(value: Double) = DirectOperation<AppState> { state ->
     state.updateSetting { it.copy(fullSpurtAccelCoef = value) }
 }
 
-fun setSecureLeadNigeBoost(value: Double) = DirectOperation<AppState> { state ->
-    state.updateSetting { it.copy(secureLeadNigeBoost = value) }
-}
-
 fun setThreadCount(value: Int) = DirectOperation<AppState> { state ->
     state.copy(threadCount = value).also { it.saveSetting() }
 }
