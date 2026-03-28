@@ -175,7 +175,7 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
                 Text("掛かり")
             }
             LabeledCheckbox(setting.spurting, { dispatch(setGraphDisplaySetting(setting.copy(spurting = it))) }) {
-                Text("スパート開始")
+                Text("ラストスパート")
             }
             LabeledCheckbox(setting.paceDownMode, { dispatch(setGraphDisplaySetting(setting.copy(paceDownMode = it))) }) {
                 Text("ペースダウンモード")

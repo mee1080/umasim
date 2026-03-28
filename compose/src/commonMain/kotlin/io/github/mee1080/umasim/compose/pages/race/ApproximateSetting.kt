@@ -88,7 +88,7 @@ fun ApproximateSetting(state: AppState, dispatch: OperationDispatcher<AppState>)
                         "先行：${
                             systemSetting.positionKeepSectionSen.mapIndexed { index, value -> index to value }
                                 .filter { it.second }
-                                .joinToString { (it.first + 1).toString() }
+                                .joinToString { it.first.toString() }
                         }"
                     )
                     Text(

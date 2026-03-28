@@ -293,7 +293,7 @@ internal fun toGraphData(
                     }
                 }
                 if (displaySetting.temptation) add(setting, frameList, index, raceFrame, "掛かり") { it.temptation }
-                if (displaySetting.spurting) add(setting, frameList, index, raceFrame, "スパート開始") { it.spurting }
+                if (displaySetting.spurting) add(setting, frameList, index, raceFrame, "ラストスパート") { it.spurting }
                 if (displaySetting.paceDownMode) add(setting, frameList, index, raceFrame, "ペースダウンモード") { it.positionKeepState == PositionKeepState.PACE_DOWN }
                 if (displaySetting.downSlopeMode) add(setting, frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
                 if (displaySetting.leadCompetition) add(setting, frameList, index, raceFrame, "位置取り争い") { it.leadCompetition }

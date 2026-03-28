@@ -951,13 +951,13 @@ data class SystemSetting(
     val positionCompetitionRate: Double = defaultPositionCompetitionRate,
 ) {
     @Transient
-    val positionKeepSectionSen: List<Boolean> = List(10) { it == 0 }
+    val positionKeepSectionSen: List<Boolean> = List(10) { it == 1 }
 
     @Transient
-    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 0 || it == 3 }
+    val positionKeepSectionSasi: List<Boolean> = List(10) { it == 1 || it == 4 }
 
     @Transient
-    val positionKeepSectionOi: List<Boolean> = List(10) { it == 0 || it == 2 || it == 7 }
+    val positionKeepSectionOi: List<Boolean> = List(10) { it == 1 || it == 3 || it == 8 }
 
     @Transient
     val leadCompetitionPosition: Int = 200
