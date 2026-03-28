@@ -99,6 +99,8 @@ const val laneChangeAcceleration = 0.02 * 1.5
 const val laneChangeAccelerationPerFrame = laneChangeAcceleration / framePerSecond
 
 const val defaultPositionCompetitionRate = 0.8
+const val defaultCompeteFightRate = 0.4
+const val defaultSecureLeadRate = 0.3
 
 /**
  * やる気->ステータス補正倍率
