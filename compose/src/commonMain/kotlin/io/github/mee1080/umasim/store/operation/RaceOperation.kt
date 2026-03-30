@@ -304,6 +304,17 @@ internal fun toGraphData(
                 if (displaySetting.secureLead) add(setting, frameList, index, raceFrame, "リード確保") { it.secureLead }
                 if (displaySetting.staminaLimitBreak) add(setting, frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
                 if (displaySetting.fullSpurt) add(setting, frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
+                raceFrame.triggeredDebuffs.forEach { debuff ->
+                    add(
+                        GraphSkill(
+                            start = index / 15f,
+                            end = null,
+                            name = "デバフ：${debuff.label}",
+                            effect = null,
+                            startRate = raceFrame.startPosition / setting.courseLength,
+                        )
+                    )
+                }
             }
         }.sortedBy { it.start },
         paceMakerData = frameList.mapIndexedNotNull { index, raceFrame ->

@@ -62,3 +62,15 @@ fun setCompeteFightRate(value: Double) = DirectOperation<AppState> { state ->
 fun setSecureLeadRate(value: Double) = DirectOperation<AppState> { state ->
     state.updateSystemSetting { it.copy(secureLeadRate = value) }
 }
+
+fun setDebuffCount(type: io.github.mee1080.umasim.race.calc2.DebuffType, value: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { setting ->
+        setting.copy(
+            debuffSetting = setting.debuffSetting.copy(
+                counts = setting.debuffSetting.counts.toMutableMap().apply {
+                    if (value == 0) remove(type) else put(type, value)
+                }
+            )
+        )
+    }
+}

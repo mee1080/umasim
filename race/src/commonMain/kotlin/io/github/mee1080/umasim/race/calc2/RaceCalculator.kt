@@ -88,6 +88,23 @@ class RaceCalculator(
 
         simulation.forceInSpeed = Random.nextDouble(0.1) * forceInFixed[umaStatus.style]!!
 
+        if (virtualLeader == null) {
+            debuffSetting.counts.forEach { (type, count) ->
+                val (start, end) = if (type.phase == 2) {
+                    // 終盤デバフはフェーズ2と3の両方を対象にする
+                    val p2 = getPhaseStartEnd(2)
+                    val p3 = getPhaseStartEnd(3)
+                    p2.first to p3.second
+                } else {
+                    getPhaseStartEnd(type.phase)
+                }
+                repeat(count) {
+                    val position = Random.nextDouble(start, end)
+                    simulation.debuffTriggers[position] = type
+                }
+            }
+        }
+
         return state
     }
 
@@ -251,6 +268,15 @@ private fun RaceState.updateFrame(): Boolean {
         simulation.positionKeepState = PositionKeepState.NONE
     }
 
+    // デバフ判定
+    val triggeredDebuffs = mutableListOf<DebuffType>()
+    val debuffs = simulation.debuffTriggers.filterKeys { it in simulation.startPosition..simulation.position }
+    debuffs.forEach { (pos, type) ->
+        simulation.sp -= setting.spMax * type.rate
+        triggeredDebuffs += type
+        simulation.debuffTriggers.remove(pos)
+    }
+
     // 位置取り争い
     if (simulation.leadCompetitionStart == null && setting.basicRunningStyle == Style.NIGE && simulation.position >= system.leadCompetitionPosition) {
         simulation.leadCompetitionStart = simulation.frameElapsed
@@ -333,7 +359,8 @@ private fun RaceState.updateFrame(): Boolean {
         movement = simulation.position - simulation.startPosition,
         consume = simulation.sp - startSp,
         targetSpeed = targetSpeed + fullSpurtTargetSpeed,
-        acceleration = acceleration + fullSpurtAcceleration
+        acceleration = acceleration + fullSpurtAcceleration,
+        triggeredDebuffs = triggeredDebuffs,
     )
     simulation.frameElapsed++
 

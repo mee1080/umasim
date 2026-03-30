@@ -33,6 +33,21 @@ import kotlin.math.*
 const val NOT_SELECTED = "(未選択)"
 
 @Serializable
+enum class DebuffType(val label: String, val phase: Int, val rate: Double) {
+    EARLY_WHITE("序盤白（-1%）", 0, 0.01),
+    EARLY_GOLD("序盤金（-3%）", 0, 0.03),
+    MIDDLE_WHITE("中盤白（-1%）", 1, 0.01),
+    MIDDLE_GOLD("中盤金（-3%）", 1, 0.03),
+    LATE_WHITE("終盤白（-1%）", 2, 0.01),
+    LATE_GOLD("終盤金（-3%）", 2, 0.03),
+}
+
+@Serializable
+data class DebuffSetting(
+    val counts: Map<DebuffType, Int> = emptyMap()
+)
+
+@Serializable
 data class UmaStatus(
     val charaName: String = NOT_SELECTED,
     val speed: Int = 1800,
@@ -445,6 +460,8 @@ data class RaceSetting(
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
     override val virtualLeader: UmaStatus = UmaStatus(),
+
+    val debuffSetting: DebuffSetting = DebuffSetting(),
 ) : IRaceSetting {
     override val fixRandom get() = skillActivateAdjustment == SkillActivateAdjustment.ALL
     override val runningStyle by lazy { if (oonige) Style.OONIGE else umaStatus.style }
@@ -814,6 +831,8 @@ class RaceSimulationState(
     var staminaKeepStart: Double = 0.0,
     var staminaKeepDistance: Double = 0.0,
 
+    val debuffTriggers: MutableMap<Double, DebuffType> = mutableMapOf(),
+
     var positionKeepState: PositionKeepState = PositionKeepState.NONE,
     var positionKeepNextFrame: Int = framePerSecond * 2,
     var positionKeepExitPosition: Double = 0.0,
@@ -902,6 +921,7 @@ data class RaceFrame(
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = false,
     val fullSpurt: Boolean = false,
+    val triggeredDebuffs: List<DebuffType> = emptyList(),
     val paceMakerFrame: RaceFrame? = null,
 )
 
