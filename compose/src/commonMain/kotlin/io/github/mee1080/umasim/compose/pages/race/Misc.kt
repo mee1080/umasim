@@ -1,43 +1,17 @@
 package io.github.mee1080.umasim.compose.pages.race
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
 
 @Composable
 fun Header() {
     Row {
         Text("ウマ娘レースエミュレータ移植版", style = MaterialTheme.typography.headlineMedium)
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp)
-            .background(MaterialTheme.colorScheme.errorContainer)
-            .padding(8.dp)
-    ) {
-        Text("5周年アップデート反映状況", style = MaterialTheme.typography.headlineSmall)
-        """
-            【済】「全開スパート」システムを追加
-            【済】「リード確保」システムの調整
-            【済】「小回り◎」「小回り○」「小回り×」の発動条件変更（新潟、中山、デルマー、サンタアニタパークの一部追加）
-            【済】レース中に発動した一部スキルの効果量が賢さに応じて上昇する仕組みを追加
-            【済】コースの直線やコーナーの距離を、実際のレース場の距離に合わせて調整（大井1800ダ、ロンシャン2400芝）
-            【済】サンタアニタパークレース場、デルマーレース場追加
-            【済】「助走距離システム」を追加
-            【済】助走距離システムの追加に伴い、スキル詳細において発動タイミングが 「スタート時」と記載されたスキルの、発動条件の仕組みを調整
-        """.trimIndent().split("\n").forEach {
-            Row { Text(it.trim()) }
-        }
     }
 }
 
@@ -51,7 +25,6 @@ fun Footer() {
         あくまで目安。適当実装＆データの正確性が低いので参考までに。
         他ウマ娘が絡む発動条件は、毎フレーム一定確率で発動するよう近似。スリスト遊びは2回発動が多すぎるので要修正。
         順位条件その他色々無視。詳しくは該当スキルのツールチップに。
-        固有のレベルは未実装。
         各種別情報は大いに参考させて頂きました。
     """.trimIndent().split("\n").forEachIndexed { index, c ->
             Row { Text("${index + 1}: ${c.trim()}") }
