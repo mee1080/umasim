@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.store.operation
 
+import io.github.mee1080.umasim.race.calc2.DebuffType
 import io.github.mee1080.umasim.race.data.PositionKeepMode
 import io.github.mee1080.umasim.race.data.RandomPosition
 import io.github.mee1080.umasim.race.data.SkillActivateAdjustment
@@ -7,6 +8,7 @@ import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.SimulationMode
 import io.github.mee1080.umasim.store.framework.DirectOperation
 import io.github.mee1080.umasim.store.saveSetting
+import io.github.mee1080.utility.replaced
 
 fun setSimulationCount(value: Int) = DirectOperation<AppState> { state ->
     state.copy(simulationCount = value).also { it.saveSetting() }
@@ -61,4 +63,8 @@ fun setCompeteFightRate(value: Double) = DirectOperation<AppState> { state ->
 
 fun setSecureLeadRate(value: Double) = DirectOperation<AppState> { state ->
     state.updateSystemSetting { it.copy(secureLeadRate = value) }
+}
+
+fun setDebuffCount(type: DebuffType, value: Int) = DirectOperation<AppState> { state ->
+    state.updateSetting { it.copy(debuffCounts = it.debuffCounts.replaced(type, value)) }
 }

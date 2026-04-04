@@ -171,28 +171,43 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
             LabeledCheckbox(setting.skill, { dispatch(setGraphDisplaySetting(setting.copy(skill = it))) }) {
                 Text("スキル")
             }
+            LabeledCheckbox(setting.debuff, { dispatch(setGraphDisplaySetting(setting.copy(debuff = it))) }) {
+                Text("デバフ")
+            }
             LabeledCheckbox(setting.temptation, { dispatch(setGraphDisplaySetting(setting.copy(temptation = it))) }) {
                 Text("掛かり")
             }
             LabeledCheckbox(setting.spurting, { dispatch(setGraphDisplaySetting(setting.copy(spurting = it))) }) {
                 Text("ラストスパート")
             }
-            LabeledCheckbox(setting.paceDownMode, { dispatch(setGraphDisplaySetting(setting.copy(paceDownMode = it))) }) {
+            LabeledCheckbox(
+                setting.paceDownMode,
+                { dispatch(setGraphDisplaySetting(setting.copy(paceDownMode = it))) }) {
                 Text("ペースダウンモード")
             }
-            LabeledCheckbox(setting.downSlopeMode, { dispatch(setGraphDisplaySetting(setting.copy(downSlopeMode = it))) }) {
+            LabeledCheckbox(
+                setting.downSlopeMode,
+                { dispatch(setGraphDisplaySetting(setting.copy(downSlopeMode = it))) }) {
                 Text("下り坂モード")
             }
-            LabeledCheckbox(setting.leadCompetition, { dispatch(setGraphDisplaySetting(setting.copy(leadCompetition = it))) }) {
+            LabeledCheckbox(
+                setting.leadCompetition,
+                { dispatch(setGraphDisplaySetting(setting.copy(leadCompetition = it))) }) {
                 Text("位置取り争い")
             }
-            LabeledCheckbox(setting.competeFight, { dispatch(setGraphDisplaySetting(setting.copy(competeFight = it))) }) {
+            LabeledCheckbox(
+                setting.competeFight,
+                { dispatch(setGraphDisplaySetting(setting.copy(competeFight = it))) }) {
                 Text("追い比べ")
             }
-            LabeledCheckbox(setting.conservePower, { dispatch(setGraphDisplaySetting(setting.copy(conservePower = it))) }) {
+            LabeledCheckbox(
+                setting.conservePower,
+                { dispatch(setGraphDisplaySetting(setting.copy(conservePower = it))) }) {
                 Text("脚色十分")
             }
-            LabeledCheckbox(setting.positionCompetition, { dispatch(setGraphDisplaySetting(setting.copy(positionCompetition = it))) }) {
+            LabeledCheckbox(
+                setting.positionCompetition,
+                { dispatch(setGraphDisplaySetting(setting.copy(positionCompetition = it))) }) {
                 Text("位置取り調整")
             }
             LabeledCheckbox(setting.staminaKeep, { dispatch(setGraphDisplaySetting(setting.copy(staminaKeep = it))) }) {
@@ -201,7 +216,9 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
             LabeledCheckbox(setting.secureLead, { dispatch(setGraphDisplaySetting(setting.copy(secureLead = it))) }) {
                 Text("リード確保")
             }
-            LabeledCheckbox(setting.staminaLimitBreak, { dispatch(setGraphDisplaySetting(setting.copy(staminaLimitBreak = it))) }) {
+            LabeledCheckbox(
+                setting.staminaLimitBreak,
+                { dispatch(setGraphDisplaySetting(setting.copy(staminaLimitBreak = it))) }) {
                 Text("スタミナ勝負")
             }
             LabeledCheckbox(setting.fullSpurt, { dispatch(setGraphDisplaySetting(setting.copy(fullSpurt = it))) }) {

@@ -11,8 +11,8 @@ import io.github.mee1080.umasim.race.data2.SkillData
 import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.umasim.store.*
 import io.github.mee1080.umasim.store.framework.ActionContext
-import io.github.mee1080.umasim.store.framework.DirectOperation
 import io.github.mee1080.umasim.store.framework.AsyncOperation
+import io.github.mee1080.umasim.store.framework.DirectOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
 import kotlinx.coroutines.*
@@ -292,18 +292,67 @@ internal fun toGraphData(
                         )
                     }
                 }
-                if (displaySetting.temptation) add(setting, frameList, index, raceFrame, "掛かり") { it.temptation }
-                if (displaySetting.spurting) add(setting, frameList, index, raceFrame, "ラストスパート") { it.spurting }
-                if (displaySetting.paceDownMode) add(setting, frameList, index, raceFrame, "ペースダウンモード") { it.positionKeepState == PositionKeepState.PACE_DOWN }
-                if (displaySetting.downSlopeMode) add(setting, frameList, index, raceFrame, "下り坂モード") { it.downSlopeMode }
-                if (displaySetting.leadCompetition) add(setting, frameList, index, raceFrame, "位置取り争い") { it.leadCompetition }
-                if (displaySetting.competeFight) add(setting, frameList, index, raceFrame, "追い比べ") { it.competeFight }
-                if (displaySetting.conservePower) add(setting, frameList, index, raceFrame, "脚色十分") { it.conservePower }
-                if (displaySetting.positionCompetition) add(setting, frameList, index, raceFrame, "位置取り調整") { it.positionCompetition }
-                if (displaySetting.staminaKeep) add(setting, frameList, index, raceFrame, "持久力温存") { it.staminaKeep }
-                if (displaySetting.secureLead) add(setting, frameList, index, raceFrame, "リード確保") { it.secureLead }
-                if (displaySetting.staminaLimitBreak) add(setting, frameList, index, raceFrame, "スタミナ勝負") { it.staminaLimitBreak }
-                if (displaySetting.fullSpurt) add(setting, frameList, index, raceFrame, "全開スパート") { it.fullSpurt }
+                if (displaySetting.temptation) add(
+                    setting, frameList, index, raceFrame,
+                    "掛かり"
+                ) { it.temptation }
+                if (displaySetting.spurting) add(
+                    setting, frameList, index, raceFrame,
+                    "ラストスパート"
+                ) { it.spurting }
+                if (displaySetting.paceDownMode) add(
+                    setting, frameList, index, raceFrame,
+                    "ペースダウンモード"
+                ) { it.positionKeepState == PositionKeepState.PACE_DOWN }
+                if (displaySetting.downSlopeMode) add(
+                    setting, frameList, index, raceFrame,
+                    "下り坂モード"
+                ) { it.downSlopeMode }
+                if (displaySetting.leadCompetition) add(
+                    setting, frameList, index, raceFrame,
+                    "位置取り争い"
+                ) { it.leadCompetition }
+                if (displaySetting.competeFight) add(
+                    setting, frameList, index, raceFrame,
+                    "追い比べ"
+                ) { it.competeFight }
+                if (displaySetting.conservePower) add(
+                    setting, frameList, index, raceFrame,
+                    "脚色十分"
+                ) { it.conservePower }
+                if (displaySetting.positionCompetition) add(
+                    setting, frameList, index, raceFrame,
+                    "位置取り調整"
+                ) { it.positionCompetition }
+                if (displaySetting.staminaKeep) add(
+                    setting, frameList, index, raceFrame,
+                    "持久力温存"
+                ) { it.staminaKeep }
+                if (displaySetting.secureLead) add(
+                    setting, frameList, index, raceFrame,
+                    "リード確保"
+                ) { it.secureLead }
+                if (displaySetting.staminaLimitBreak) add(
+                    setting, frameList, index, raceFrame,
+                    "スタミナ勝負"
+                ) { it.staminaLimitBreak }
+                if (displaySetting.fullSpurt) add(
+                    setting, frameList, index, raceFrame,
+                    "全開スパート"
+                ) { it.fullSpurt }
+                if (displaySetting.debuff) {
+                    raceFrame.triggeredDebuffs.forEach { debuff ->
+                        add(
+                            GraphSkill(
+                                start = index / 15f,
+                                end = null,
+                                name = debuff.label,
+                                effect = null,
+                                startRate = raceFrame.startPosition / setting.courseLength,
+                            )
+                        )
+                    }
+                }
             }
         }.sortedBy { it.start },
         paceMakerData = frameList.mapIndexedNotNull { index, raceFrame ->

@@ -33,6 +33,45 @@ import kotlin.math.*
 const val NOT_SELECTED = "(未選択)"
 
 @Serializable
+sealed interface DebuffTrigger {
+    class RandomInPhase(val phase: Int) : DebuffTrigger
+    object RandomLaterHalf : DebuffTrigger
+    class Temptation(val phase: Int) : DebuffTrigger
+}
+
+@Serializable
+enum class DebuffType(
+    val label: String,
+    val trigger: DebuffTrigger,
+    val value: Int,
+    val distanceType: Int? = null,
+) {
+    Kensei("けん制", 0, 100),
+    Aseri("焦り", 1, 100),
+    NukegakeGold("逃亡禁止令", 0, 300, distanceType = 1),
+    Nukegake("抜け駆け禁止", 0, 100, distanceType = 1),
+    SasayakiGold("魅惑のささやき", 1, 300, distanceType = 3),
+    Sasayaki("ささやき", 1, 100, distanceType = 3),
+    StaminaEaterGold("スタミナグリード", 1, 100, distanceType = 4),
+    StaminaEater("スタミナイーター", 1, 50, distanceType = 4),
+    GankouGold("八方にらみ", 2, 300),
+    Gankou("鋭い眼光", 2, 100),
+    TrickGold("見惚れるトリック", DebuffTrigger.Temptation(1), 300),
+    Trick("トリック（前/後）", DebuffTrigger.Temptation(1), 100),
+    DrainForRose("Drain for rose（本体）", 1, 50),
+    DrainForRose2("Drain for rose（継承）", 1, 25),
+    Gorushi("Adventure of 564+金スタデバ", DebuffTrigger.RandomLaterHalf, 300)
+    ;
+
+    constructor(
+        label: String,
+        phase: Int,
+        value: Int,
+        distanceType: Int? = null,
+    ) : this(label, DebuffTrigger.RandomInPhase(phase), value, distanceType)
+}
+
+@Serializable
 data class UmaStatus(
     val charaName: String = NOT_SELECTED,
     val speed: Int = 1800,
@@ -405,6 +444,7 @@ interface IRaceSetting {
     val season: Int
     val weather: Int
     val badStart: Boolean
+    val debuffCounts: Map<DebuffType, Int>
     val positionKeepMode: PositionKeepMode
     val positionKeepRate: Int
     val virtualLeader: UmaStatus
@@ -441,6 +481,8 @@ data class RaceSetting(
     override val season: Int = 0,
     override val weather: Int = 0,
     override val badStart: Boolean = false,
+
+    override val debuffCounts: Map<DebuffType, Int> = DebuffType.entries.associateWith { 0 },
 
     override val positionKeepMode: PositionKeepMode = PositionKeepMode.APPROXIMATE,
     override val positionKeepRate: Int = 100,
@@ -814,6 +856,8 @@ class RaceSimulationState(
     var staminaKeepStart: Double = 0.0,
     var staminaKeepDistance: Double = 0.0,
 
+    val debuffTriggers: MutableList<Pair<Double, DebuffType>> = mutableListOf(),
+
     var positionKeepState: PositionKeepState = PositionKeepState.NONE,
     var positionKeepNextFrame: Int = framePerSecond * 2,
     var positionKeepExitPosition: Double = 0.0,
@@ -902,6 +946,7 @@ data class RaceFrame(
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = false,
     val fullSpurt: Boolean = false,
+    val triggeredDebuffs: List<DebuffType> = emptyList(),
     val paceMakerFrame: RaceFrame? = null,
 )
 

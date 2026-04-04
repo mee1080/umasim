@@ -38,7 +38,7 @@ class RaceCalculator(
         return result to state
     }
 
-    private fun RaceSetting.initializeState(): RaceState {
+    private fun RaceSetting.initializeState(isVirtualLeader: Boolean = false): RaceState {
         val invokedSkills = invokeSkills()
         val gateCount = track.gateCount
         val gateNumber = when (umaStatus.gateNumber) {
@@ -62,8 +62,8 @@ class RaceCalculator(
             simulationState.coolDownMap[it.invoke.coolDownId] = 0
         }
 
-        val virtualLeader = if (positionKeepMode == PositionKeepMode.VIRTUAL) {
-            copy(umaStatus = virtualLeader, positionKeepMode = PositionKeepMode.SPEED_UP).initializeState()
+        val virtualLeader = if (!isVirtualLeader && positionKeepMode == PositionKeepMode.VIRTUAL) {
+            copy(umaStatus = virtualLeader, positionKeepMode = PositionKeepMode.SPEED_UP).initializeState(true)
         } else null
         val state = RaceState(settingWithPassive, simulationState, system, virtualLeader)
         val simulation = state.simulation
@@ -87,6 +87,29 @@ class RaceCalculator(
         }
 
         simulation.forceInSpeed = Random.nextDouble(0.1) * forceInFixed[umaStatus.style]!!
+
+        if (!isVirtualLeader) {
+            debuffCounts.forEach { (type, count) ->
+                if (type.distanceType != null && type.distanceType != trackDetail.distanceType) return@forEach
+                val range = when (type.trigger) {
+                    is DebuffTrigger.RandomInPhase -> {
+                        getPhaseStartEnd(type.trigger.phase)
+                    }
+
+                    is DebuffTrigger.RandomLaterHalf -> {
+                        trackDetail.distance / 2.0 to trackDetail.distance.toDouble()
+                    }
+
+                    else -> null
+                }
+                if (range != null) {
+                    repeat(count) {
+                        val position = Random.nextDouble(range.first, range.second)
+                        simulation.debuffTriggers += position to type
+                    }
+                }
+            }
+        }
 
         return state
     }
@@ -238,10 +261,21 @@ private fun RaceState.updateFrame(): Boolean {
             simulation.temptationModeEnd = simulation.frameElapsed
         }
     }
+
+    val triggeredDebuffs = mutableListOf<DebuffType>()
+
     // 掛かり開始
     if (simulation.temptationSection > 0 && currentSection == simulation.temptationSection) {
         simulation.temptationModeStart = simulation.frameElapsed
         simulation.temptationSection = -1
+        setting.debuffCounts.forEach { (type, count) ->
+            if (type.trigger is DebuffTrigger.Temptation && type.trigger.phase == currentPhase) {
+                repeat(count) {
+                    simulation.sp -= setting.spMax * type.value / 10000.0
+                    triggeredDebuffs += type
+                }
+            }
+        }
     }
 
     // ポジションキープ
@@ -249,6 +283,16 @@ private fun RaceState.updateFrame(): Boolean {
         applyPositionKeep()
     } else if (currentSection == 11) {
         simulation.positionKeepState = PositionKeepState.NONE
+    }
+
+    // デバフ判定
+    val debuffs = simulation.debuffTriggers.filter { it.first <= simulation.startPosition }
+    debuffs.forEach { (pos, type) ->
+        if (simulation.currentTime >= 5.0) {
+            simulation.sp -= setting.spMax * type.value / 10000.0
+            triggeredDebuffs += type
+        }
+        simulation.debuffTriggers.remove(pos to type)
     }
 
     // 位置取り争い
@@ -333,7 +377,8 @@ private fun RaceState.updateFrame(): Boolean {
         movement = simulation.position - simulation.startPosition,
         consume = simulation.sp - startSp,
         targetSpeed = targetSpeed + fullSpurtTargetSpeed,
-        acceleration = acceleration + fullSpurtAcceleration
+        acceleration = acceleration + fullSpurtAcceleration,
+        triggeredDebuffs = triggeredDebuffs,
     )
     simulation.frameElapsed++
 

@@ -59,6 +59,7 @@ data class GraphDisplaySetting(
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = true,
     val fullSpurt: Boolean = true,
+    val debuff: Boolean = true,
 )
 
 @Stable

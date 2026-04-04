@@ -21,6 +21,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         CharaInput(false, state, dispatch)
         CourseInput(state, dispatch)
         SkillInput(false, state, dispatch)
+        DebuffInput(state, dispatch)
         SettingInput(state, dispatch)
         HorizontalDivider()
         ModeInput(state, dispatch)
