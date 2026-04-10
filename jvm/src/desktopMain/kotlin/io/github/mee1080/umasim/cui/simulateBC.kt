@@ -16,8 +16,7 @@ fun simulateBC() {
 //    doBCSimulation(StatusType.POWER)
 //    doBCSimulation(StatusType.WISDOM)
 //    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
-    doBCSimulation2(StatusType.GUTS, "[白に至る純真]デアリングタクト")
-    doBCSimulation2(StatusType.GUTS, "[白に至る覚悟]デアリングハート")
+    doBCSimulation2(StatusType.GUTS, "[単焦点でつかまえて]アストンマーチャン")
 //    optimize()
 }
 
