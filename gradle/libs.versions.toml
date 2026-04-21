@@ -1,6 +1,6 @@
 [versions]
 
-buildkonfig = "0.17.1"
+buildkonfig = "0.18.0"
 clikt = "5.1.0"
 compose = "1.10.3"
 jvmTarget = "17"
