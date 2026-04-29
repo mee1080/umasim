@@ -71,7 +71,7 @@ jobs:
       # 8. ドラフトリリースを作成し、成果物 (zipファイル) をアップロード
       #    tag_name と name に github.ref_name を使用
       - name: Create Draft Release and Upload Assets
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           # 選択されたタグ名をそのまま使用
           tag_name: ${{ github.ref_name }}
