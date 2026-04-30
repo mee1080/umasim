@@ -9,14 +9,14 @@ import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateBC() {
-//    doBCSimulation(StatusType.SPEED, "[心覚えし、京の華]エアグルーヴ")
+//    doBCSimulation(StatusType.SPEED, "[刀光散らしてClash！]タップダンスシチー")
 //    doBCSimulation(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
 //    doBCSimulation(StatusType.SPEED)
 //    doBCSimulation(StatusType.STAMINA)
-//    doBCSimulation(StatusType.POWER)
+    doBCSimulation(StatusType.POWER, "[ゆかし、きらめきの旅路]ファインモーション")
 //    doBCSimulation(StatusType.WISDOM)
 //    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
-    doBCSimulation2(StatusType.GUTS, "[単焦点でつかまえて]アストンマーチャン")
+//    doBCSimulation2(StatusType.GUTS, "[単焦点でつかまえて]アストンマーチャン")
 //    optimize()
 }
 
