@@ -20,7 +20,7 @@ actual val defaultFontResource = Res.font.LINESeedJP_OTF_Rg
 
 actual val defaultThreadCount = 1
 
-actual val progressReportInterval = 50
+actual val progressReportInterval = 5
 
 actual val progressReportDelay = 10L
 
