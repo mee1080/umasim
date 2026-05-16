@@ -69,25 +69,59 @@ private fun MainArea(
 ) {
     var divider by remember { mutableStateOf<Double?>(0.0) }
     Div({ classes(S.wrapper) }) {
-        Div({ classes(S.header) }) {
-            MdOutlinedSelect(
-                selection = state.targetCandidates,
-                selectedItem = state.target,
-                onSelect = { viewModel.setGraphTarget(it) },
-                itemToValue = { it.path },
-                itemToDisplayText = { it.displayName },
-            )
-            MdFilledButton("フィルタ") {
-                onClick { viewModel.openGraphFilterDialog() }
+        Div({
+            classes(S.header)
+            if (slim) {
+                style {
+                    flexDirection(FlexDirection.Column)
+                    alignItems(AlignItems.FlexStart)
+                }
             }
-            MdRadioGroup(
-                selection = GraphSortOrder.entries,
-                selectedItem = state.sortOrder,
-                onSelect = { viewModel.setGraphSortOrder(it) },
-                itemToLabel = { it.displayName },
-            )
-            MdCheckbox("上下分割", divider != null) {
-                onChange { divider = if (it) 0.0 else null }
+        }) {
+            if (slim) {
+                Div({ classes(S.headerRow) }) {
+                    MdOutlinedSelect(
+                        selection = state.targetCandidates,
+                        selectedItem = state.target,
+                        onSelect = { viewModel.setGraphTarget(it) },
+                        itemToValue = { it.path },
+                        itemToDisplayText = { it.displayName },
+                    )
+                    MdFilledButton("フィルタ") {
+                        onClick { viewModel.openGraphFilterDialog() }
+                    }
+                }
+                Div({ classes(S.headerRow) }) {
+                    MdRadioGroup(
+                        selection = GraphSortOrder.entries,
+                        selectedItem = state.sortOrder,
+                        onSelect = { viewModel.setGraphSortOrder(it) },
+                        itemToLabel = { it.displayName },
+                    )
+                    MdCheckbox("上下分割", divider != null) {
+                        onChange { divider = if (it) 0.0 else null }
+                    }
+                }
+            } else {
+                MdOutlinedSelect(
+                    selection = state.targetCandidates,
+                    selectedItem = state.target,
+                    onSelect = { viewModel.setGraphTarget(it) },
+                    itemToValue = { it.path },
+                    itemToDisplayText = { it.displayName },
+                )
+                MdFilledButton("フィルタ") {
+                    onClick { viewModel.openGraphFilterDialog() }
+                }
+                MdRadioGroup(
+                    selection = GraphSortOrder.entries,
+                    selectedItem = state.sortOrder,
+                    onSelect = { viewModel.setGraphSortOrder(it) },
+                    itemToLabel = { it.displayName },
+                )
+                MdCheckbox("上下分割", divider != null) {
+                    onChange { divider = if (it) 0.0 else null }
+                }
             }
         }
         val dividerValue = divider
@@ -130,6 +164,16 @@ private val S = object : ScopedStyleSheet() {
 
     val header by style {
         display(DisplayStyle.Flex)
+        alignItems(AlignItems.Center)
+        gap(4.px)
+        padding(4.px)
+    }
+
+    val headerRow by style {
+        display(DisplayStyle.Flex)
+        alignItems(AlignItems.Center)
+        flexWrap(FlexWrap.Wrap)
+        gap(4.px)
     }
 
     val dividedGraph by style {
