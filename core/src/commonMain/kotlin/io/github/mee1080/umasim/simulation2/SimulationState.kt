@@ -32,6 +32,7 @@ import io.github.mee1080.umasim.scenario.live.LiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.scenario.onsen.OnsenStatus
+import io.github.mee1080.umasim.scenario.ramen.RamenStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
@@ -76,6 +77,8 @@ data class SimulationState(
     val onsenStatus get() = scenarioStatus as? OnsenStatus
 
     val bcStatus get() = scenarioStatus as? BCStatus
+
+    val ramenStatus get() = scenarioStatus as? RamenStatus
 
     val supportTypeCount = supportCount.size
 

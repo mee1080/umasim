@@ -10,6 +10,9 @@ import io.github.mee1080.umasim.scenario.aoharu.aoharuTrainingData
 import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
 import io.github.mee1080.umasim.scenario.bc.bcTrainingData
+import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
+import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
+import io.github.mee1080.umasim.scenario.ramen.ramenTrainingData
 import io.github.mee1080.umasim.scenario.climax.ClimaxCalculator
 import io.github.mee1080.umasim.scenario.climax.ClimaxScenarioEvents
 import io.github.mee1080.umasim.scenario.climax.climaxTrainingData
@@ -242,6 +245,18 @@ enum class Scenario(
             "フォーエバーヤング", "マルシュロレーヌ", "カジノドライヴ",
         ),
         calculator = BCCalculator,
+    ),
+
+    RAMEN(
+        scenarioNumber = 14,
+        displayName = "ラーメン（仮）",
+        trainingData = ramenTrainingData,
+        scenarioEvents = { RamenScenarioEvents() },
+        turn = 78,
+        scenarioLink = setOf(
+            "ファインモーション",
+        ),
+        calculator = RamenCalculator,
     ),
 
     ;
