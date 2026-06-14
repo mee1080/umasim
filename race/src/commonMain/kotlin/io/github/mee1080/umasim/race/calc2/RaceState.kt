@@ -851,6 +851,7 @@ class RaceSimulationState(
     var startDelayCount: Int = 0,
     var sectionTargetSpeedRandoms: Map<Int, Double> = emptyMap(),
     var evoDurationMultiplier: Double = 1.0,
+    var supernaturalExperienceCount: Int = 0,
 
     var positionCompetitionCount: Int = 0,
     var staminaKeepStart: Double = 0.0,

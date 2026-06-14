@@ -599,6 +599,7 @@ data class Invoke(
             when (durationSpecial) {
                 2 -> add("先頭との距離は最大（1.6倍）固定")
                 4 -> add("発動直後に2回追い抜く条件で近似")
+                8 -> add("上り坂を上りきった回数に応じて効果時間が増える（最大4回）")
             }
         }
     }
@@ -650,6 +651,11 @@ data class Invoke(
                     sp < 2100 -> 2.5
                     else -> 3.0
                 }
+            }
+
+            8 -> {
+                // 坂の数に応じて（超常体験）
+                duration + state.simulation.supernaturalExperienceCount * 0.5 * state.setting.timeCoef
             }
 
             else -> duration

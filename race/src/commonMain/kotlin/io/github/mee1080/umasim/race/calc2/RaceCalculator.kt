@@ -88,6 +88,12 @@ class RaceCalculator(
 
         simulation.forceInSpeed = Random.nextDouble(0.1) * forceInFixed[umaStatus.style]!!
 
+        val finalCornerStart = trackDetail.corners.lastOrNull()?.start ?: Double.MAX_VALUE
+        simulation.supernaturalExperienceCount = min(
+            4,
+            trackDetail.slopes.count { it.slope > 0 && it.end < finalCornerStart }
+        )
+
         if (!isVirtualLeader) {
             debuffCounts.forEach { (type, count) ->
                 if (type.distanceType != null && type.distanceType != trackDetail.distanceType) return@forEach
