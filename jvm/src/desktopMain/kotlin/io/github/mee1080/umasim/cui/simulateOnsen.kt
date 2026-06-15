@@ -12,9 +12,9 @@ import io.github.mee1080.umasim.simulation2.SimulationState
 import io.github.mee1080.utility.applyIf
 
 fun simulateOnsen() {
-    speed2power1guts1Wisdom1Speed()
-//    speed2stamina1power1Wisdom1Stamina()
-    speed2power1guts1Wisdom1Power()
+//    speed2power1guts1Wisdom1Speed()
+    speed2stamina1power1Wisdom1Stamina()
+//    speed2power1guts1Wisdom1Power()
 //    speed2power1guts1Wisdom1Guts()
 //    speed2power1guts1Wisdom1Wisdom()
 //    speed2power1guts1Wisdom1Friend()
@@ -77,8 +77,8 @@ private fun speed2stamina1power1Wisdom1Stamina() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[ぬくもりのノエル]フェノーメノ" to it }.toTypedArray())),
 //        Store.getSupportByName("[Cocoon]エアシャカール" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
@@ -91,8 +91,8 @@ private fun speed2stamina1power1Wisdom1Stamina() {
         scenario,
         chara,
         defaultSupport,
-        targetStatus, rarity = 2..3, talent = 0..4,
-//        Store.getSupportByName(*((0..4).map { "[Cocoon]エアシャカール" to it }.toTypedArray())),
+//        targetStatus, rarity = 2..3, talent = 0..4,
+        Store.getSupportByName(*((0..4).map { "[ぬくもりのノエル]フェノーメノ" to it }.toTypedArray())),
 //        Store.getSupportByName("[Cocoon]エアシャカール" to 4),
         factor = factor(StatusType.SPEED, 2) + factor(StatusType.GUTS, 4),
         testCount = 100000,
