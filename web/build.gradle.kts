@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.compose.compiler.gradle.ComposeFeatureFlag
-
 plugins {
     alias(libs.plugins.kotlin.multiplatform)
     alias(libs.plugins.compose)
@@ -15,22 +13,20 @@ repositories {
 }
 
 kotlin {
-    js(IR) {
+    js {
         browser()
         binaries.executable()
     }
     sourceSets {
-        val jsMain by getting {
-            dependencies {
-                implementation(project(":utility"))
-                implementation(project(":core"))
-                implementation(compose.html.core)
-                implementation(compose.runtime)
-                implementation(npm("@material/web", libs.versions.materialWeb.get()))
-                implementation(libs.kotlinx.serializationJson)
-                implementation(libs.kotlinx.coroutinesCore)
-                implementation(libs.ktor.clientJs)
-            }
+        jsMain.dependencies {
+            implementation(project(":utility"))
+            implementation(project(":core"))
+            implementation(libs.compose.html.core)
+            implementation(libs.compose.runtime)
+            implementation(npm("@material/web", libs.versions.materialWeb.get()))
+            implementation(libs.kotlinx.serializationJson)
+            implementation(libs.kotlinx.coroutinesCore)
+            implementation(libs.ktor.clientJs)
         }
     }
 }

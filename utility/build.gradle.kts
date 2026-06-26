@@ -9,7 +9,7 @@ kotlin {
 
     jvm()
 
-    js(IR) {
+    js {
         browser()
         binaries.executable()
     }
@@ -24,37 +24,27 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.multiplatform.settings)
-                implementation(libs.kotlinx.serializationJson)
-                implementation(libs.kotlinx.coroutinesCore)
-            }
+        commonMain.dependencies {
+            implementation(libs.multiplatform.settings)
+            implementation(libs.kotlinx.serializationJson)
+            implementation(libs.kotlinx.coroutinesCore)
         }
 
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.test.common)
-                implementation(libs.test.annotations)
-            }
+        commonTest.dependencies {
+            implementation(libs.test.common)
+            implementation(libs.test.annotations)
         }
 
-        val jvmMain by getting {
-            dependencies {
+        jvmMain.dependencies {
 //                implementation(libs.ktor.clientCio)
-            }
         }
 
-        val jvmTest by getting {
-            dependencies {
-                implementation(libs.test.junit)
-            }
+        jvmTest.dependencies {
+            implementation(libs.test.junit)
         }
 
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.kotlinx.browser)
-            }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

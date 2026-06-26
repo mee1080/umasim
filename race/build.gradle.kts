@@ -12,7 +12,7 @@ kotlin {
 
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
-    jvm("desktop")
+    jvm()
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
@@ -24,24 +24,18 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":utility"))
-                implementation(libs.kotlinx.coroutinesCore)
-                implementation(libs.kotlinx.serializationJson)
-            }
+        commonMain.dependencies {
+            implementation(project(":utility"))
+            implementation(libs.kotlinx.coroutinesCore)
+            implementation(libs.kotlinx.serializationJson)
         }
 
-        val desktopMain by getting {
-            dependencies {
-                implementation(libs.slf4j.nop)
-            }
+        jvmMain.dependencies {
+            implementation(libs.slf4j.nop)
         }
 
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.kotlinx.browser)
-            }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

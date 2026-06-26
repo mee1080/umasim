@@ -10,28 +10,24 @@ kotlin {
 
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
-    jvm("desktop")
+    jvm()
 
-    js(IR) {
+    js {
         useCommonJs()
         browser()
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":utility"))
-                implementation(libs.kotlinx.serializationJson)
-                implementation(libs.kotlinx.coroutinesCore)
-            }
+        commonMain.dependencies {
+            implementation(project(":utility"))
+            implementation(libs.kotlinx.serializationJson)
+            implementation(libs.kotlinx.coroutinesCore)
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.test)
-                implementation(libs.test.common)
-                implementation(libs.test.annotations)
-                implementation(libs.kotlinx.coroutinesTest)
-            }
+        commonTest.dependencies {
+            implementation(libs.test)
+            implementation(libs.test.common)
+            implementation(libs.test.annotations)
+            implementation(libs.kotlinx.coroutinesTest)
         }
     }
 }

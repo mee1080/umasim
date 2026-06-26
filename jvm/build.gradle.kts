@@ -9,18 +9,16 @@ kotlin {
 
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
-    jvm("desktop")
+    jvm()
 
     sourceSets {
-        val desktopMain by getting {
-            dependencies {
-                implementation(project(":utility"))
-                implementation(project(":core"))
-                implementation(kotlin("stdlib"))
-                implementation(libs.kotlinx.coroutinesCore)
-                implementation(libs.ktor.clientCio)
-                implementation(libs.sqlite.jdbc)
-            }
+        jvmMain.dependencies {
+            implementation(project(":utility"))
+            implementation(project(":core"))
+            implementation(kotlin("stdlib"))
+            implementation(libs.kotlinx.coroutinesCore)
+            implementation(libs.ktor.clientCio)
+            implementation(libs.sqlite.jdbc)
         }
     }
 }

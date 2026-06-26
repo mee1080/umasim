@@ -17,7 +17,7 @@ dependencies {
     implementation(libs.kotlinx.coroutinesCore)
 }
 
-val jar by tasks.getting(Jar::class) {
+val jar = tasks.getByName<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
         attributes["Main-Class"] = "io.github.mee1080.umasim.cli.BCCliKt"

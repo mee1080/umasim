@@ -33,33 +33,27 @@ kotlin {
     }
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(project(":utility"))
-                implementation(project(":race"))
-                implementation(compose.runtime)
-                implementation(compose.material3)
-                implementation(compose.materialIconsExtended)
-                @OptIn(org.jetbrains.compose.ExperimentalComposeLibrary::class)
-                implementation(compose.components.resources)
-                implementation(libs.kotlinx.serializationJson)
-                implementation(libs.kotlinx.coroutinesCore)
-                implementation(libs.multiplatform.settings)
-                implementation(libs.koalaplot.core)
-            }
+        commonMain.dependencies {
+            implementation(project(":utility"))
+            implementation(project(":race"))
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.material3)
+            implementation(libs.compose.materialIconsExtended)
+            implementation(libs.compose.components.resources)
+            implementation(libs.kotlinx.serializationJson)
+            implementation(libs.kotlinx.coroutinesCore)
+            implementation(libs.multiplatform.settings)
+            implementation(libs.koalaplot.core)
         }
 
-        val jvmMain by getting {
-            dependencies {
-                implementation(project(":mcp"))
-                implementation(compose.desktop.currentOs)
-            }
+        jvmMain.dependencies {
+            implementation(project(":mcp"))
+            implementation(compose.desktop.currentOs)
+
         }
 
-        val wasmJsMain by getting {
-            dependencies {
-                implementation(libs.kotlinx.browser)
-            }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

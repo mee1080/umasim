@@ -20,26 +20,22 @@ version = "1.0"
 kotlin {
     jvmToolchain(libs.versions.jvmTarget.get().toInt())
 
-    jvm("desktop")
+    jvm()
 
     sourceSets {
-        val commonMain by getting {
-            dependencies {
-                implementation(libs.koog.agents)
-                implementation(compose.runtime)
-                implementation(compose.foundation)
-                implementation(compose.material)
-                implementation(compose.ui)
-                implementation(libs.multiplatform.settings.noarg)
-                implementation(project(":compose"))
-            }
+        commonMain.dependencies {
+            implementation(libs.koog.agents)
+            implementation(libs.compose.runtime)
+            implementation(libs.compose.foundation)
+            implementation(libs.compose.material)
+            implementation(libs.compose.ui)
+            implementation(libs.multiplatform.settings.noarg)
+            implementation(project(":compose"))
         }
-        val commonTest by getting {
-            dependencies {
-                implementation(libs.test)
-                implementation(libs.test.common)
-                implementation(libs.test.annotations)
-            }
+        commonTest.dependencies {
+            implementation(libs.test)
+            implementation(libs.test.common)
+            implementation(libs.test.annotations)
         }
     }
 }
