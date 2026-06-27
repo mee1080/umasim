@@ -67,6 +67,7 @@ object Calculator {
         val mujintoStatus get() = scenarioStatus as? MujintoStatus
         val onsenStatus get() = scenarioStatus as? OnsenStatus
         val bcStatus get() = scenarioStatus as? BCStatus
+        val ramenStatus get() = scenarioStatus as? io.github.mee1080.umasim.scenario.ramen.RamenStatus
 
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(

@@ -57,6 +57,8 @@ data class SimulationState(
     val possessionItem: List<ShopItem> = emptyList(),
     val enableItem: EnableItem = EnableItem(),
     val scenarioStatus: ScenarioStatus? = null,
+    val lastAction: Action? = null,
+    val lastActionResult: ActionResult? = null,
 ) {
     val liveStatus get() = scenarioStatus as? LiveStatus
 

@@ -110,7 +110,7 @@ class Simulator(
                 val action = selector.select(state, selection)
                 val result = action.randomSelectResult()
                 selections += Triple(selection, action, result)
-                state = state.applyAction(action, result, selector)
+                state = state.applyAction(action, result, selector).copy(lastAction = action, lastActionResult = result)
             } while (!action.turnChange)
             state = scenarioEvents.afterAction(state, selector)
             state = scenarioEvents.onTurnEnd(state)

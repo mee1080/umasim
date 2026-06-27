@@ -37,6 +37,7 @@ import io.github.mee1080.umasim.scenario.mecha.applyTuning
 import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
+import io.github.mee1080.umasim.scenario.ramen.updateRamenStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -294,6 +295,10 @@ suspend fun SimulationState.applyAction(
         is OnsenActionResult -> OnsenCalculator.applyScenarioAction(this, result)
 
         is BCActionResult -> BCCalculator.applyScenarioAction(this, result)
+
+        is RamenActionResult -> io.github.mee1080.umasim.scenario.ramen.RamenCalculator.applyScenarioAction(this, result)
+
+        else -> this
     }
 }
 
@@ -718,6 +723,7 @@ private suspend fun SimulationState.applyScenarioActionParam(
         is MujintoActionParam -> MujintoCalculator.applyScenarioActionParam(this, result, param)
         is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
         is BCActionParam -> BCCalculator.applyScenarioActionParam(this, result, param)
+        is RamenActionParam -> updateRamenStatus { addGauges(param.noodleGauge, param.soupGauge, param.toppingGauge).addHiddenTaste(param.hiddenTaste) }
     }
 }
 
