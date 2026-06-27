@@ -2,7 +2,7 @@
 
 buildkonfig = "0.22.0"
 clikt = "5.1.0"
-compose = "1.11.1"
+compose = "23.10.16.1"
 compose-material3 = "1.11.0-alpha07"
 compose-material-icons = "1.7.3"
 jvmTarget = "17"
