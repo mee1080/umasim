@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.unit.dp
 import io.github.koalaplot.core.ChartLayout
 import io.github.koalaplot.core.Symbol
-import io.github.koalaplot.core.legend.FlowLegend
+import io.github.koalaplot.core.legend.FlowLegend2
 import io.github.koalaplot.core.legend.LegendLocation
 import io.github.koalaplot.core.line.AreaBaseline
 import io.github.koalaplot.core.line.AreaPlot2
@@ -62,7 +62,7 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
             modifier = Modifier.height(height.dp),
             legend = {
                 val legends = if (graphData.paceMakerData.isEmpty()) defaultLegends else virtualLegends
-                FlowLegend(
+                FlowLegend2(
                     itemCount = legends.size,
                     symbol = { Symbol(shape = RectangleShape, fillBrush = SolidColor(legends[it].second)) },
                     label = { Text(legends[it].first) },
@@ -73,28 +73,29 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
         ) {
             val xMax = (frameList.size - 1) / 15f
             XYGraph(
-                xAxisModel = rememberFloatLinearAxisModel(0f..xMax),
-                yAxisModel = rememberFloatLinearAxisModel(0f..1f),
-                yAxisLabels = { "" },
+                rememberFloatLinearAxisModel(0f..xMax),
+                rememberFloatLinearAxisModel(0f..1f),
+                rememberAxisContent(),
+                rememberAxisContent(),
             ) {
                 AreaPlot2(
                     data = graphData.straightData.map { Point(it.first, it.second) },
-                    areaBaseline = AreaBaseline.ConstantLine(0f),
+                    areaBaseline = AreaBaseline.HorizontalLine(0f),
                     areaStyle = AreaStyle(SolidColor(Color(0, 128, 255)), 0.15f),
                 )
                 AreaPlot2(
                     data = graphData.cornerData.map { Point(it.first, it.second) },
-                    areaBaseline = AreaBaseline.ConstantLine(0f),
+                    areaBaseline = AreaBaseline.HorizontalLine(0f),
                     areaStyle = AreaStyle(SolidColor(Color(128, 0, 255)), 0.15f),
                 )
                 AreaPlot2(
                     data = graphData.upSlopeData.map { Point(it.first, it.second + 0.1f) },
-                    areaBaseline = AreaBaseline.ConstantLine(0.1f),
+                    areaBaseline = AreaBaseline.HorizontalLine(0.1f),
                     areaStyle = AreaStyle(SolidColor(Color(0, 255, 128)), 0.15f),
                 )
                 AreaPlot2(
                     data = graphData.downSlopeData.map { Point(it.first, it.second + 0.1f) },
-                    areaBaseline = AreaBaseline.ConstantLine(0.1f),
+                    areaBaseline = AreaBaseline.HorizontalLine(0.1f),
                     areaStyle = AreaStyle(SolidColor(Color(255, 255, 0)), 0.15f),
                 )
                 if (graphData.phase0Start > 0.0) {
@@ -225,5 +226,21 @@ private fun GraphArea(state: AppState, graphData: GraphData, dispatch: Operation
                 Text("全開スパート")
             }
         }
+    }
+}
+
+@Composable
+fun <T> rememberAxisContent(
+    labels: (@Composable AxisLabelScope<T>.(T) -> Unit)? = null,
+    title: (@Composable () -> Unit)? = null,
+    style: AxisStyle? = null,
+): AxisContent<T> {
+    val styleNotNull = style ?: rememberAxisStyle()
+    return remember(labels, title, style) {
+        AxisContent(
+            labels ?: {},
+            title ?: {},
+            style ?: styleNotNull,
+        )
     }
 }
