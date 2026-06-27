@@ -243,6 +243,10 @@ fun SelectionBlock(
                     is BCDreamsTraining -> {}
 
                     is BCTeamParameterUp -> {}
+
+                    is RamenSelectRegion -> {}
+
+                    is RamenTasting -> {}
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {

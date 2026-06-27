@@ -39,6 +39,8 @@ import io.github.mee1080.umasim.scenario.mujinto.MujintoFacility
 import io.github.mee1080.umasim.scenario.mujinto.facilityName
 import io.github.mee1080.umasim.scenario.onsen.Gensen
 import io.github.mee1080.umasim.scenario.onsen.StratumType
+import io.github.mee1080.umasim.scenario.ramen.RamenRegion
+import io.github.mee1080.umasim.scenario.ramen.RamenTipType
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 
 sealed interface Action {
@@ -608,4 +610,53 @@ data class BCTeamParameterUp(
     override val name = "チームパラメータ上昇 ${parameter.displayName}"
     override val turnChange = false
     override val result get() = BCTeamParameterUpResult(parameter)
+}
+
+data class RamenActionParam(
+    val noodleGauge: Int = 0,
+    val soupGauge: Int = 0,
+    val toppingGauge: Int = 0,
+    val hiddenTaste: Int = 0,
+) : ScenarioActionParam {
+    override fun toShortString() = buildList {
+        if (noodleGauge > 0) add("麺:$noodleGauge")
+        if (soupGauge > 0) add("スープ:$soupGauge")
+        if (toppingGauge > 0) add("トッピング:$toppingGauge")
+        if (hiddenTaste > 0) add("隠し味:$hiddenTaste")
+    }.joinToString(", ")
+
+    fun add(type: RamenTipType): RamenActionParam {
+        return when (type) {
+            RamenTipType.NOODLE -> copy(noodleGauge = noodleGauge + 2)
+            RamenTipType.SOUP -> copy(soupGauge = soupGauge + 2)
+            RamenTipType.TOPPING -> copy(toppingGauge = toppingGauge + 2)
+            else -> this
+        }
+    }
+}
+
+sealed interface RamenActionResult : ActionResult
+
+data class RamenSelectRegionResult(
+    val region: RamenRegion,
+) : RamenActionResult
+
+data class RamenSelectRegion(
+    val region: RamenRegion,
+) : SingleAction {
+    override val name = "地域選択: ${region.displayName}"
+    override val turnChange = false
+    override val result = RamenSelectRegionResult(region)
+}
+
+data class RamenTastingResult(
+    val region: RamenRegion,
+) : RamenActionResult
+
+data class RamenTasting(
+    val region: RamenRegion,
+) : SingleAction {
+    override val name = "試食会: ${region.ramenName}"
+    override val turnChange = false
+    override val result = RamenTastingResult(region)
 }

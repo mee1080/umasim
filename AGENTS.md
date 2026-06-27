@@ -1,4 +1,3 @@
-```markdown
 # AGENTS.md - Umamusume Simulator (umasim)
 
 This document provides an overview of the Umamusume Simulator project for AI agents and developers.
@@ -89,7 +88,28 @@ The project uses Gradle with the Kotlin DSL.
     *   `./gradlew :compose:wasmJsBrowserDevelopmentRun`: Runs the WasmJS compose application in development mode.
 *   **Testing:** Look for test sources in `commonTest`, `jvmTest`, `desktopTest`, etc., directories within each module. Run tests using `./gradlew check` or specific test tasks like `./gradlew :core:allTests`.
 *   **Dependencies:** Refer to `gradle/libs.versions.toml` for library versions and aliases used in `build.gradle.kts` files.
-*   **READMEs:** Some modules have their own `README.md` or `readme.txt` files (e.g., `desktop/readme.txt`, `compose/readme.txt`) which contain specific instructions or information. The `Library/` directory also contains auto-generated READMEs about library usage for some older module structures.
 
-This document should be updated as the project evolves.
-```
+## 実装ルール
+
+* import文を適切に使用する。完全修飾名でのクラス参照は、同名のクラスがある場合を除き行わない。
+* テストの作成および実行は、指示がない限り不要。
+
+## 育成シミュレータシナリオ実装方法
+
+この説明は、育成シミュレータのシナリオを実装する場合のみ参照すること。
+
+* シナリオの実装は主に、`core/src/commonMain/kotlin/io/github/mee1080/umasim/scenario/` 以下の、シナリオ短縮名のディレクトリに行う
+  * `XxxStatus`: シナリオ固有の、シミュレーション中に変化するデータ、およびそれに対する操作
+    * `inteface ScenarioStatus`を継承する
+  * `XxxCalculator`: 計算処理全般、1つの処理で複数のデータを変更する等、複雑な処理は`XxxStatus`のメソッドに移譲すること
+    * `interface ScenarioCalculator`を継承し、必要な処理を実装する
+  * `XxxScenarioEvents`: シナリオで特定のターンに発生するイベント、ただしActionに付随するものは`Action.kt`の`ScenarioActionParam`で実装し、`XxxScenarioEvents`には含めないこと
+  * `XxxStore`: シナリオ固有のマスターデータ
+  * `XxxTrainingData`: シナリオのトレーニング基本上昇量、こちらで入力するので適当な値を入れれば良い
+* その他、以下のファイルも変更が必要（いずれも`core/src/commonMain/kotlin/io/github/mee1080/umasim`以下）
+  * `scenario/Scenario.kt`: シナリオの基本情報
+  * `simulation2/Action.kt`: シナリオ固有のトレーニング等に付随するパラメータ、およびシナリオ固有の行動
+  * `simulation2/Calculator.kt`: `scenarioStatus`を`xxxStatus`として取得
+  * `simulation2/SimulationState.kt`: `scenarioStatus`を`xxxStatus`として取得
+  * `simulation2/SimulationStateUpdater.kt`: Actionの反映、ただし実際の処理はXxxCalculatorに移譲すること
+  * `simulation2/OutingEvents.kt`: 新友人のイベント

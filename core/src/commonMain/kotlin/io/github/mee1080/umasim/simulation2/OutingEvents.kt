@@ -118,6 +118,11 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
             } else this
         }
 
+        "駿川たづな" -> {
+            // TODO 新サポカ前提
+            this
+        }
+
         else -> this
     }
 }
@@ -432,6 +437,11 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
             }
         }
 
+        "駿川たづな" -> {
+            // TODO 新サポカ前提
+            this
+        }
+
         else -> this
     }
 }
@@ -500,6 +510,11 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             )
 
+            "駿川たづな" -> {
+                // TODO 新サポカ前提
+                this
+            }
+
             else -> this
         }
     }
@@ -539,6 +554,11 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 support, Status(speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10, skillPt = 45),
                 0, 0,
             )
+
+            "駿川たづな" -> {
+                // TODO 新サポカ前提
+                this
+            }
 
             else -> this
         }
