@@ -10,9 +10,6 @@ import io.github.mee1080.umasim.scenario.aoharu.aoharuTrainingData
 import io.github.mee1080.umasim.scenario.bc.BCCalculator
 import io.github.mee1080.umasim.scenario.bc.BCScenarioEvents
 import io.github.mee1080.umasim.scenario.bc.bcTrainingData
-import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
-import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
-import io.github.mee1080.umasim.scenario.ramen.ramenTrainingData
 import io.github.mee1080.umasim.scenario.climax.ClimaxCalculator
 import io.github.mee1080.umasim.scenario.climax.ClimaxScenarioEvents
 import io.github.mee1080.umasim.scenario.climax.climaxTrainingData
@@ -42,6 +39,9 @@ import io.github.mee1080.umasim.scenario.mujinto.mujintoTrainingData
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenScenarioEvents
 import io.github.mee1080.umasim.scenario.onsen.onsenTrainingData
+import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
+import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
+import io.github.mee1080.umasim.scenario.ramen.ramenTrainingData
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
@@ -249,12 +249,13 @@ enum class Scenario(
 
     RAMEN(
         scenarioNumber = 14,
-        displayName = "ラーメン（仮）",
+        displayName = "らっしゃい！トレセン軒！",
         trainingData = ramenTrainingData,
         scenarioEvents = { RamenScenarioEvents() },
         turn = 78,
         scenarioLink = setOf(
-            "ファインモーション",
+            "ファインモーション", "メイショウドトウ", "ナイスネイチャ", "ナリタトップロード",
+            "カルストンライトオ", "駿川たづな", "ライトハロー",
         ),
         calculator = RamenCalculator,
     ),
