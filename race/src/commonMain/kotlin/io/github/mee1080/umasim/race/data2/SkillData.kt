@@ -652,6 +652,14 @@ data class Invoke(
                 }
             }
 
+            8 -> {
+                // 上り坂を上りきった回数（超常体験）
+                val track = state.setting.trackDetail
+                val finalCornerStart = track.corners.lastOrNull()?.start ?: Double.MAX_VALUE
+                val count = min(4, track.slopes.count { it.slope > 0 && it.end < finalCornerStart })
+                duration + count * 0.5
+            }
+
             else -> duration
         }
     }
