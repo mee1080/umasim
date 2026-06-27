@@ -196,7 +196,7 @@ private fun RaceState.progressRace(): RaceSimulationResult {
 }
 
 private fun RaceState.updateFrame(): Boolean {
-    if (simulation.frameElapsed > 5000) {
+    if (simulation.frameElapsed > 5000 || simulation.position >= setting.courseLength) {
         return true
     }
     paceMaker?.updateFrame()
@@ -372,12 +372,14 @@ private fun RaceState.updateFrame(): Boolean {
         }
     }
 
+    val frameTargetSpeed = targetSpeed + fullSpurtTargetSpeed
+    val frameAcceleration = acceleration + fullSpurtAcceleration
     move(secondPerFrame)
     frame = frame.copy(
         movement = simulation.position - simulation.startPosition,
         consume = simulation.sp - startSp,
-        targetSpeed = targetSpeed + fullSpurtTargetSpeed,
-        acceleration = acceleration + fullSpurtAcceleration,
+        targetSpeed = frameTargetSpeed,
+        acceleration = frameAcceleration,
         triggeredDebuffs = triggeredDebuffs,
     )
     simulation.frameElapsed++
