@@ -10,6 +10,33 @@ enum class RamenTipType(val displayName: String) {
     HIDDEN("隠し味")
 }
 
+data class RamenBaseEffect(
+    // TODO: トレ効果
+    val trainingEffect: Int,
+    // TODO: 友情ボーナス
+    val friendBonus: Int = 0,
+    // TODO: 失敗率ダウン
+    val failureRateDown: Int,
+    // TODO: 絆ゲージ
+    val relationGauge: Int = 0,
+    // TODO: 獲得上限（基礎能力・SP共通）
+    val statusLimitOver: Int = 0,
+    // TODO: 全サポカヒントアイコン＆全ヒントイベント発生
+    val allHintEvent: Boolean = false,
+)
+
+val ramenBaseEffect = listOf(
+    // ジュニア
+    RamenBaseEffect(trainingEffect = 15, failureRateDown = 30, relationGauge = 10),
+    // クラシック
+    RamenBaseEffect(trainingEffect = 15, friendBonus = 30, failureRateDown = 50, statusLimitOver = 20),
+    // シニア
+    RamenBaseEffect(
+        trainingEffect = 15, friendBonus = 45, failureRateDown = 100,
+        statusLimitOver = 40, allHintEvent = true,
+    ),
+)
+
 enum class RamenRegion(
     val displayName: String,
     val ramenName: String,
@@ -39,7 +66,7 @@ enum class RamenRegion(
     ),
 
     HAKODATE(
-        "函館", "函館塩ラーメン",
+        "函館", "すっきり塩ラーメン",
         1, 2, 2,
         listOf(StatusType.STAMINA),
         trainingEffect = 20,
@@ -55,7 +82,7 @@ enum class RamenRegion(
     ),
 
     FUKUSHIMA(
-        "福島", "福島ラーメン",
+        "福島", "あっさり醤油ラーメン",
         2, 3, 0,
         listOf(StatusType.GUTS),
         trainingEffect = 20,
@@ -71,7 +98,7 @@ enum class RamenRegion(
     ),
 
     NAKAYAMA(
-        "中山", "中山ラーメン",
+        "中山", "玉ねぎ醤油ラーメン",
         2, 0, 3,
         listOf(StatusType.SPEED),
         friendBonus = 10,
@@ -81,7 +108,7 @@ enum class RamenRegion(
     ),
 
     CHUKYO(
-        "中京", "中京ラーメン",
+        "中京", "ウマ辛名古屋ラーメン",
         3, 2, 0,
         listOf(StatusType.POWER, StatusType.GUTS),
         friendBonus = 50,
@@ -99,7 +126,7 @@ enum class RamenRegion(
     ),
 
     HANSHIN(
-        "阪神", "阪神ラーメン",
+        "阪神", "甘口醤油ラーメン",
         2, 1, 2,
         listOf(StatusType.STAMINA, StatusType.POWER),
         friendBonus = 50,
@@ -108,7 +135,7 @@ enum class RamenRegion(
     ),
 
     KOKURA(
-        "小倉", "小倉ラーメン",
+        "小倉", "こってり豚骨ラーメン",
         1, 3, 1,
         listOf(StatusType.WISDOM),
         friendBonus = 50,
@@ -126,7 +153,7 @@ enum class RamenRegion(
     ),
 
     HAKODATE2(
-        "函館", "函館塩ラーメン",
+        "函館", "すっきり塩ラーメン",
         1, 2, 2,
         listOf(StatusType.STAMINA),
         friendBonus = 60,
@@ -144,7 +171,7 @@ enum class RamenRegion(
     ),
 
     FUKUSHIMA2(
-        "福島", "福島ラーメン",
+        "福島", "あっさり醤油ラーメン",
         2, 3, 0,
         listOf(StatusType.GUTS),
         friendBonus = 60,
@@ -162,7 +189,7 @@ enum class RamenRegion(
     ),
 
     NAKAYAMA2(
-        "中山", "中山ラーメン",
+        "中山", "玉ねぎ醤油ラーメン",
         2, 0, 3,
         listOf(StatusType.SPEED, StatusType.POWER, StatusType.WISDOM),
         friendBonus = 40,
@@ -171,7 +198,7 @@ enum class RamenRegion(
     ),
 
     CHUKYO2(
-        "中京", "中京ラーメン",
+        "中京", "ウマ辛名古屋ラーメン",
         3, 2, 0,
         listOf(StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
         friendBonus = 40,
@@ -189,7 +216,7 @@ enum class RamenRegion(
     ),
 
     HANSHIN2(
-        "阪神", "阪神ラーメン",
+        "阪神", "甘口醤油ラーメン",
         2, 1, 2,
         listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER),
         friendBonus = 40,
@@ -198,7 +225,7 @@ enum class RamenRegion(
     ),
 
     KOKURA2(
-        "小倉", "小倉ラーメン",
+        "小倉", "こってり豚骨ラーメン",
         1, 3, 1,
         listOf(StatusType.SPEED, StatusType.GUTS, StatusType.WISDOM),
         friendBonus = 40,
@@ -207,7 +234,7 @@ enum class RamenRegion(
     ),
 
     FINALS1(
-        "極1", "超RMJ極1",
+        "スペシャル", "スペシャルトレセンラーメン",
         1, 1, 1,
         trainingType.toList(),
         friendBonus = 1000,
@@ -216,7 +243,7 @@ enum class RamenRegion(
     ),
 
     FINALS2(
-        "極2", "超RMJ極2",
+        "よくばり", "よくばりトレセンラーメン",
         1, 1, 1,
         trainingType.toList(),
         friendBonus = 1000,
@@ -225,7 +252,7 @@ enum class RamenRegion(
     ),
 
     FINALS3(
-        "極3", "超RMJ極3",
+        "珠玉", "珠玉のトレセンラーメン",
         1, 1, 1,
         trainingType.toList(),
         friendBonus = 1000,
