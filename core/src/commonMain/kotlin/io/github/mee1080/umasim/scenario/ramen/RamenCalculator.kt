@@ -17,53 +17,46 @@ object RamenCalculator : ScenarioCalculator {
     ): Status {
         val ramenStatus = info.ramenStatus ?: return Status()
         val region = ramenStatus.activeTastingRegion
+        val excitePtBonus = ramenStatus.excitePtBonus
+        val rmjBonus = ramenStatus.rmjBonus
 
-        var trainingBonus = 0
-        var friendFactor = 1.0
+        // TODO 地域効果
 
-        // 試食会の基礎効果 (トレ効果15)
-        if (region != null) {
-            trainingBonus += 15
+        var factor = 1.0
+        var skillPtFactor = 1.0
+        factor *= (100 + excitePtBonus.trainingEffect) / 100.0
+        factor *= (100 + rmjBonus.trainingEffect) / 100.0
+        if (friendTraining) {
+            factor *= (100 + excitePtBonus.friendBonus) / 100.0
+            factor *= (100 + rmjBonus.friendBonus) / 100.0
+        }
+        if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
+            factor *= (100 + region.trainingEffect) / 100.0
+            factor *= (100 + region.friendBonus) / 100.0
+            skillPtFactor = (100 + region.skillPtTrainingEffect) / 100.0
         }
 
-        // 盛り上がりPtによるボーナス (暫定: 1000ptごとにトレ効果1%?)
-        val excitementBonus = (ramenStatus.excitementPt / 1000).coerceAtMost(10)
-        trainingBonus += excitementBonus
-
-        // 地域ごとの固有効果
-        var skillPtBonus = 0
-        if (region != null) {
-            if (region.targetAll || region.targetTypes.contains(info.training.type)) {
-                trainingBonus += region.trainingEffect
-                if (friendTraining) {
-                    friendFactor *= (100 + region.friendBonus) / 100.0
-                }
-                skillPtBonus = region.skillPtTrainingEffect
-            }
-        }
-
-        val commonBonus = Calculator.ScenarioCalcBonus(
-            trainingBonus = trainingBonus,
-            friendFactor = friendFactor
-        )
-
-        val speed = (Calculator.calcTrainingStatus(info, StatusType.SPEED, friendTraining, bonus = commonBonus) - base.speed).toInt()
-        val stamina = (Calculator.calcTrainingStatus(info, StatusType.STAMINA, friendTraining, bonus = commonBonus) - base.stamina).toInt()
-        val power = (Calculator.calcTrainingStatus(info, StatusType.POWER, friendTraining, bonus = commonBonus) - base.power).toInt()
-        val guts = (Calculator.calcTrainingStatus(info, StatusType.GUTS, friendTraining, bonus = commonBonus) - base.guts).toInt()
-        val wisdom = (Calculator.calcTrainingStatus(info, StatusType.WISDOM, friendTraining, bonus = commonBonus) - base.wisdom).toInt()
-
-        val skillBonus = commonBonus.copy(trainingBonus = trainingBonus + skillPtBonus)
-        val skillPt = (Calculator.calcTrainingStatus(info, StatusType.SKILL, friendTraining, bonus = skillBonus) - base.skillPt).toInt()
+        val speed = base.speed * factor
+        val stamina = base.stamina * factor
+        val power = base.power * factor
+        val guts = base.guts * factor
+        val wisdom = base.wisdom * factor
+        val skillPt = base.skillPt * factor * skillPtFactor
 
         return Status(
-            speed = speed,
-            stamina = stamina,
-            power = power,
-            guts = guts,
-            wisdom = wisdom,
-            skillPt = skillPt,
+            speed = speed.toInt(),
+            stamina = stamina.toInt(),
+            power = power.toInt(),
+            guts = guts.toInt(),
+            wisdom = wisdom.toInt(),
+            skillPt = skillPt.toInt(),
         )
+    }
+
+    override fun updateScenarioTurn(state: SimulationState): SimulationState {
+        return state.updateRamenStatus {
+            copy(turn = state.turn)
+        }
     }
 
     override fun predictScenarioAction(

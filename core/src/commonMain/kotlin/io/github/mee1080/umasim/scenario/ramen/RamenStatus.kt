@@ -15,6 +15,7 @@ fun SimulationState.updateRamenStatus(update: RamenStatus.() -> RamenStatus): Si
  * Ramenシナリオ固有の状態を保持するクラス。
  */
 data class RamenStatus(
+    val turn: Int = 1,
     val selectedRegions: List<RamenRegion> = emptyList(),
     val baseGauge: RamenActionParam = RamenActionParam(),
     val gauges: Map<RamenTipType, Int> = mapOf(
@@ -32,7 +33,10 @@ data class RamenStatus(
     val excitementPt: Int = 0,
     val activeTastingRegion: RamenRegion? = null,
     val trainingTip: Map<StatusType, RamenTipType> = emptyMap(),
+    val rmjBonus: RamenBaseBonus = RamenBaseBonus(0, 0, 0, 0),
 ) : ScenarioStatus {
+
+    val excitePtBonus by lazy { ramenExcitePtBonus(excitementPt) }
 
     fun shuffleTrainingTip(): RamenStatus {
         val tipList = listOf(
@@ -52,6 +56,7 @@ data class RamenStatus(
             gauges = gauges.map { it.key to 0 }.toMap(),
             tips = tips.map { it.key to 0 }.toMap(),
             tipHistory = emptyList(),
+            excitementPt = 0,
         )
     }
 
@@ -63,8 +68,7 @@ data class RamenStatus(
         if (newRegions.size < 3) {
             return copy(selectedRegions = newRegions)
         }
-        // TODO ゲージ基礎上昇量計算
-        val newBaseGauge = RamenActionParam(3, 3, 3)
+        val newBaseGauge = ramenGaugeBase(newRegions)
         return copy(selectedRegions = newRegions, baseGauge = newBaseGauge)
     }
 
