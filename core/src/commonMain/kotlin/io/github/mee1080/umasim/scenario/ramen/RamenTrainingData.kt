@@ -23,7 +23,7 @@ val ramenTrainingData: List<TrainingBase> = listOf(
     TrainingBase(StatusType.GUTS, 1, 532, Status(2, 0, 2, 11, 0, 7, -21)),
     TrainingBase(StatusType.GUTS, 2, 536, Status(2, 0, 2, 12, 0, 7, -22)),
     TrainingBase(StatusType.GUTS, 3, 540, Status(2, 0, 2, 13, 0, 7, -23)),
-    TrainingBase(StatusType.GUTS, 4, 544, Status(3, 0, 2, 14, 0, 7, -25)),
+    TrainingBase(StatusType.GUTS, 4, 544, Status(3, 0, 3, 14, 0, 7, -25)),
     TrainingBase(StatusType.GUTS, 5, 548, Status(3, 0, 3, 15, 0, 7, -27)),
     TrainingBase(StatusType.WISDOM, 1, 320, Status(3, 0, 0, 0, 7, 7, 5)),
     TrainingBase(StatusType.WISDOM, 2, 321, Status(3, 0, 0, 0, 8, 7, 5)),

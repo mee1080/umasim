@@ -144,9 +144,11 @@ data class RamenStatus(
         repeat(region.topping) {
             state = state.removeTipOrHidden(RamenTipType.TOPPING)
         }
+        val gainPt = ramenGainExcitePt[period]
+        val tastingCount = min(5, excitementPt / gainPt / 10)
         return state.copy(
             activeTastingRegion = region,
-            excitementPt = state.excitementPt + ramenGainExcitePt[period] * (10 + state.regionRank),
+            excitementPt = state.excitementPt + gainPt * (10 + tastingCount),
         )
     }
 }
