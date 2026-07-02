@@ -6,6 +6,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import kotlin.math.max
 
 object RamenCalculator : ScenarioCalculator {
 
@@ -20,21 +21,38 @@ object RamenCalculator : ScenarioCalculator {
         val excitePtBonus = ramenStatus.excitePtBonus
         val rmjBonus = ramenStatus.rmjBonus
 
-        // TODO 地域効果
+        val period = (ramenStatus.turn - 1) / 24
+        val baseEffect = if (region != null) ramenBaseEffect.getOrNull(period) else null
 
-        var factor = 1.0
-        var skillPtFactor = 1.0
-        factor *= (100 + excitePtBonus.trainingEffect) / 100.0
-        factor *= (100 + rmjBonus.trainingEffect) / 100.0
+        var trainingEffect = 0
+        var friendBonus = 0
+        var skillPtTrainingEffect = 0
+
+        trainingEffect += excitePtBonus.trainingEffect
+        trainingEffect += rmjBonus.trainingEffect
+
         if (friendTraining) {
-            factor *= (100 + excitePtBonus.friendBonus) / 100.0
-            factor *= (100 + rmjBonus.friendBonus) / 100.0
+            friendBonus += excitePtBonus.friendBonus
+            friendBonus += rmjBonus.friendBonus
         }
+
+        if (baseEffect != null) {
+            trainingEffect += baseEffect.trainingEffect
+            if (friendTraining) {
+                friendBonus += baseEffect.friendBonus
+            }
+        }
+
         if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
-            factor *= (100 + region.trainingEffect) / 100.0
-            factor *= (100 + region.friendBonus) / 100.0
-            skillPtFactor = (100 + region.skillPtTrainingEffect) / 100.0
+            trainingEffect += region.trainingEffect
+            if (friendTraining) {
+                friendBonus += region.friendBonus
+            }
+            skillPtTrainingEffect += region.skillPtTrainingEffect
         }
+
+        val factor = (100 + trainingEffect) / 100.0 * (100 + friendBonus) / 100.0
+        val skillPtFactor = (100 + skillPtTrainingEffect) / 100.0
 
         val speed = base.speed * factor
         val stamina = base.stamina * factor
@@ -44,12 +62,12 @@ object RamenCalculator : ScenarioCalculator {
         val skillPt = base.skillPt * factor * skillPtFactor
 
         return Status(
-            speed = speed.toInt(),
-            stamina = stamina.toInt(),
-            power = power.toInt(),
-            guts = guts.toInt(),
-            wisdom = wisdom.toInt(),
-            skillPt = skillPt.toInt(),
+            speed = max(0, speed.toInt() - base.speed),
+            stamina = max(0, stamina.toInt() - base.stamina),
+            power = max(0, power.toInt() - base.power),
+            guts = max(0, guts.toInt() - base.guts),
+            wisdom = max(0, wisdom.toInt() - base.wisdom),
+            skillPt = max(0, skillPt.toInt() - base.skillPt),
         )
     }
 
@@ -173,6 +191,45 @@ object RamenCalculator : ScenarioCalculator {
                 else -> action
             }
         }
+    }
+
+    override fun getSpecialityRateUp(state: SimulationState, cardType: StatusType): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.excitePtBonus.specialityRateUp + ramenStatus.rmjBonus.specialityRateUp
+    }
+
+    override fun getHintFrequencyUp(state: SimulationState, position: StatusType): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.excitePtBonus.hintRateUp + ramenStatus.rmjBonus.hintRateUp
+    }
+
+    override fun getFailureRateDown(state: SimulationState): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        if (ramenStatus.activeTastingRegion == null) return 0
+        val period = (ramenStatus.turn - 1) / 24
+        return ramenBaseEffect.getOrNull(period)?.failureRateDown ?: 0
+    }
+
+    override fun getTrainingRelationBonus(state: SimulationState): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        if (ramenStatus.activeTastingRegion == null) return 0
+        val period = (ramenStatus.turn - 1) / 24
+        return ramenBaseEffect.getOrNull(period)?.relationGauge ?: 0
+    }
+
+    override fun isAllSupportHint(state: SimulationState, position: StatusType): Boolean {
+        val ramenStatus = state.ramenStatus ?: return false
+        if (ramenStatus.activeTastingRegion == null) return false
+        val period = (ramenStatus.turn - 1) / 24
+        return ramenBaseEffect.getOrNull(period)?.allHintEvent ?: false
+    }
+
+    override fun getScenarioCalcBonus(baseInfo: Calculator.CalcInfo): Calculator.ScenarioCalcBonus? {
+        val ramenStatus = baseInfo.ramenStatus ?: return null
+        if (ramenStatus.activeTastingRegion == null) return null
+        val period = (ramenStatus.turn - 1) / 24
+        val limitOver = ramenBaseEffect.getOrNull(period)?.statusLimitOver ?: return null
+        return Calculator.ScenarioCalcBonus(maxValue = 100.0 + limitOver)
     }
 
     fun applyScenarioAction(state: SimulationState, result: ActionResult): SimulationState {
