@@ -19,29 +19,47 @@ object RamenCalculator : ScenarioCalculator {
         val region = ramenStatus.activeTastingRegion
         val excitePtBonus = ramenStatus.excitePtBonus
         val rmjBonus = ramenStatus.rmjBonus
-
-        // TODO 地域効果
+        val baseEffect = ramenStatus.baseEffect
+        val regionRankBonus = ramenStatus.regionRankBonus
 
         var factor = 1.0
         var skillPtFactor = 1.0
         factor *= (100 + excitePtBonus.trainingEffect) / 100.0
-        factor *= (100 + rmjBonus.trainingEffect) / 100.0
         if (friendTraining) {
-            factor *= (100 + excitePtBonus.friendBonus) / 100.0
             factor *= (100 + rmjBonus.friendBonus) / 100.0
         }
         if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
-            factor *= (100 + region.trainingEffect) / 100.0
-            factor *= (100 + region.friendBonus) / 100.0
-            skillPtFactor = (100 + region.skillPtTrainingEffect) / 100.0
+            factor *= (100 + baseEffect.trainingEffect) / 100.0
+            factor *= (100 + region.trainingEffect + regionRankBonus) / 100.0
+            if (friendTraining) {
+                factor *= (100 + baseEffect.friendBonus) / 100.0
+                factor *= (100 + region.friendBonus + regionRankBonus) / 100.0
+            }
+            skillPtFactor = (100 + region.skillPtTrainingEffect + regionRankBonus) / 100.0
+        }
+        if (Calculator.DEBUG) {
+            println("exPtTraining: ${excitePtBonus.trainingEffect}")
+            if (friendTraining) {
+                println("rmjFriend: ${rmjBonus.friendBonus}")
+            }
+            if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
+                println("baseTraining: ${baseEffect.trainingEffect}")
+                println("regionTraining: ${region.trainingEffect + regionRankBonus}")
+                if (friendTraining) {
+                    println("baseFriend: ${baseEffect.friendBonus}")
+                    println("regionFriend: ${region.friendBonus + regionRankBonus}")
+                }
+                println("regionSpTraining: ${region.skillPtTrainingEffect + regionRankBonus}")
+            }
+            println("factor: $factor, spFactor: $skillPtFactor")
         }
 
-        val speed = base.speed * factor
-        val stamina = base.stamina * factor
-        val power = base.power * factor
-        val guts = base.guts * factor
-        val wisdom = base.wisdom * factor
-        val skillPt = base.skillPt * factor * skillPtFactor
+        val speed = (base.speed * factor) - base.speed
+        val stamina = (base.stamina * factor) - base.stamina
+        val power = (base.power * factor) - base.power
+        val guts = (base.guts * factor) - base.guts
+        val wisdom = (base.wisdom * factor) - base.wisdom
+        val skillPt = (base.skillPt * factor * skillPtFactor) - base.skillPt
 
         return Status(
             speed = speed.toInt(),
@@ -79,18 +97,6 @@ object RamenCalculator : ScenarioCalculator {
             hidden >= neededHidden
         }
         return availableTasting.map { RamenTasting(it) }.toTypedArray()
-    }
-
-    override fun getAdditionalMemberCount(state: SimulationState): Int {
-        val ramenStatus = state.ramenStatus ?: return 0
-        val region = ramenStatus.activeTastingRegion ?: return 0
-        return if (region.targetAll) region.addMember else 0
-    }
-
-    override fun getForceHintCount(state: SimulationState): Int {
-        val ramenStatus = state.ramenStatus ?: return 0
-        val region = ramenStatus.activeTastingRegion ?: return 0
-        return if (region.targetAll) region.hintCount else 0
     }
 
     override fun modifyShuffledMember(
@@ -201,5 +207,36 @@ object RamenCalculator : ScenarioCalculator {
                 param.toppingGauge
             ).addHiddenTaste(param.hiddenTaste)
         }
+    }
+
+    override fun getSpecialityRateUp(state: SimulationState, cardType: StatusType): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.excitePtBonus.specialityRateUp + ramenStatus.rmjBonus.specialityRateUp
+    }
+
+    override fun getHintFrequencyUp(state: SimulationState, position: StatusType): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.excitePtBonus.hintRateUp + ramenStatus.rmjBonus.hintRateUp
+    }
+
+    override fun getFailureRateDown(state: SimulationState): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.baseEffect.failureRateDown
+    }
+
+    override fun getTrainingRelationBonus(state: SimulationState): Int {
+        val ramenStatus = state.ramenStatus ?: return 0
+        return ramenStatus.baseEffect.relationGauge
+    }
+
+    override fun isAllSupportHint(state: SimulationState, position: StatusType): Boolean {
+        val ramenStatus = state.ramenStatus ?: return false
+        return ramenStatus.baseEffect.allHintEvent
+    }
+
+    override fun getScenarioCalcBonus(baseInfo: Calculator.CalcInfo): Calculator.ScenarioCalcBonus? {
+        val ramenStatus = baseInfo.ramenStatus ?: return null
+        val limitOver = ramenStatus.baseEffect.statusLimitOver
+        return Calculator.ScenarioCalcBonus(maxValue = 100.0 + limitOver)
     }
 }

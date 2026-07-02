@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.RamenActionParam
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
+import kotlin.math.min
 
 fun SimulationState.updateRamenStatus(update: RamenStatus.() -> RamenStatus): SimulationState {
     val ramenStatus = this.ramenStatus ?: return this
@@ -36,7 +37,19 @@ data class RamenStatus(
     val rmjBonus: RamenBaseBonus = RamenBaseBonus(0, 0, 0, 0),
 ) : ScenarioStatus {
 
+    val period = (turn - 1) / 24
+
+    val baseEffect = if (activeTastingRegion == null) RamenBaseEffect.Empty else {
+        ramenBaseEffect.getOrElse(period) { RamenBaseEffect.Empty }
+    }
+
     val excitePtBonus by lazy { ramenExcitePtBonus(excitementPt) }
+
+    val targetExcitePt = ramenTargetExcitePt[period]
+
+    val regionRank = min(5, excitementPt * 5 / targetExcitePt)
+
+    val regionRankBonus = ramenRegionRankBonus[regionRank]
 
     fun shuffleTrainingTip(): RamenStatus {
         val tipList = listOf(
@@ -133,7 +146,7 @@ data class RamenStatus(
         }
         return state.copy(
             activeTastingRegion = region,
-            excitementPt = excitementPt + 300,
+            excitementPt = state.excitementPt + ramenGainExcitePt[period] * (10 + state.regionRank),
         )
     }
 }

@@ -11,7 +11,7 @@ val ramenTrainingData: List<TrainingBase> = listOf(
     TrainingBase(StatusType.SPEED, 4, 532, Status(14, 0, 3, 0, 0, 7, -24)),
     TrainingBase(StatusType.SPEED, 5, 536, Status(15, 0, 4, 0, 0, 7, -25)),
     TrainingBase(StatusType.STAMINA, 1, 507, Status(0, 10, 0, 3, 0, 7, -20)),
-    TrainingBase(StatusType.STAMINA, 2, 511, Status(0, 11, 0, 3, 0, 7, -21)),
+    TrainingBase(StatusType.STAMINA, 2, 511, Status(0, 11, 0, 4, 0, 7, -21)),
     TrainingBase(StatusType.STAMINA, 3, 515, Status(0, 12, 0, 4, 0, 7, -22)),
     TrainingBase(StatusType.STAMINA, 4, 519, Status(0, 13, 0, 5, 0, 7, -24)),
     TrainingBase(StatusType.STAMINA, 5, 523, Status(0, 14, 0, 6, 0, 7, -26)),

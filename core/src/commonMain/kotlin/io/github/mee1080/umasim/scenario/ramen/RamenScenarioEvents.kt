@@ -59,7 +59,7 @@ class RamenScenarioEvents : BaseScenarioEvents() {
 
     private fun SimulationState.applyRmj(period: Int): SimulationState {
         val ramenStatus = ramenStatus ?: return this
-        val target = ramenTargetExcitePt[period]
+        val target = ramenStatus.targetExcitePt
         val success = ramenStatus.excitementPt >= target
         val eventResult = when (period) {
             0 -> if (success) {

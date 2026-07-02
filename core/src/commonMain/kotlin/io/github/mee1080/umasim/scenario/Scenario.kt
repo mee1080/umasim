@@ -252,6 +252,7 @@ enum class Scenario(
         displayName = "らっしゃい！トレセン軒！",
         trainingData = ramenTrainingData,
         scenarioEvents = { RamenScenarioEvents() },
+        guestMember = true,
         turn = 78,
         scenarioLink = setOf(
             "ファインモーション", "メイショウドトウ", "ナイスネイチャ", "ナリタトップロード",

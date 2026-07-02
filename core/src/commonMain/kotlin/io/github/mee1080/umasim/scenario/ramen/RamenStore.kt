@@ -12,17 +12,17 @@ enum class RamenTipType(val displayName: String) {
 }
 
 data class RamenBaseEffect(
-    val trainingEffect: Int,
+    val trainingEffect: Int = 0,
     val friendBonus: Int = 0,
-    // TODO: 失敗率ダウン
-    val failureRateDown: Int,
-    // TODO: 絆ゲージ
+    val failureRateDown: Int = 0,
     val relationGauge: Int = 0,
-    // TODO: 獲得上限（基礎能力・SP共通）
     val statusLimitOver: Int = 0,
-    // TODO: 全サポカヒントアイコン＆全ヒントイベント発生
     val allHintEvent: Boolean = false,
-)
+) {
+    companion object {
+        val Empty = RamenBaseEffect()
+    }
+}
 
 val ramenBaseEffect = listOf(
     // ジュニア
@@ -310,9 +310,11 @@ val ramenRmjBonus = listOf(
     ),
 )
 
-val ramenTargetExcitePt = listOf(1500, 3000, 3500)
+val ramenTargetExcitePt = listOf(1500, 3000, 3500, 9999)
 
-val ramenGainExcitePt = listOf(30, 40, 50)
+val ramenGainExcitePt = listOf(30, 40, 50, 0)
+
+val ramenRegionRankBonus = listOf(0, 3, 5, 7, 9, 10)
 
 private val ramenGaugeBaseData = mapOf(
     listOf(8, 6, 1) to listOf(5, 4, 1),
