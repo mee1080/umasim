@@ -16,43 +16,66 @@ object RamenCalculator : ScenarioCalculator {
         friendTraining: Boolean
     ): Status {
         val ramenStatus = info.ramenStatus ?: return Status()
-        val region = ramenStatus.activeTastingRegion
+        val region = ramenStatus.activeTastingRegion?.first
         val excitePtBonus = ramenStatus.excitePtBonus
         val rmjBonus = ramenStatus.rmjBonus
         val baseEffect = ramenStatus.baseEffect
-        val regionRankBonus = ramenStatus.regionRankBonus
+        val regionRankBonus = ramenStatus.activeTastingRegion?.second ?: 0
 
         var factor = 1.0
         var skillPtFactor = 1.0
+        var totallTrainingEffect = 0
+        var totalFriendBonus = 0
         factor *= (100 + excitePtBonus.trainingEffect) / 100.0
+        totallTrainingEffect += excitePtBonus.trainingEffect
         if (friendTraining) {
             factor *= (100 + rmjBonus.friendBonus) / 100.0
+            totalFriendBonus += rmjBonus.friendBonus
         }
-        if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
+        if (region != null) {
+            val targetType = region.targetAll || region.targetTypes.contains(info.training.type)
             factor *= (100 + baseEffect.trainingEffect) / 100.0
-            factor *= (100 + region.trainingEffect + regionRankBonus) / 100.0
+            totallTrainingEffect += baseEffect.trainingEffect
+            if (targetType) {
+                if (region.trainingEffect > 0) {
+                    factor *= (100 + region.trainingEffect + regionRankBonus) / 100.0
+                    totallTrainingEffect += region.trainingEffect + regionRankBonus
+                }
+                if (region.skillPtTrainingEffect > 0) {
+                    skillPtFactor = (100 + region.skillPtTrainingEffect + regionRankBonus) / 100.0
+                }
+            }
             if (friendTraining) {
                 factor *= (100 + baseEffect.friendBonus) / 100.0
-                factor *= (100 + region.friendBonus + regionRankBonus) / 100.0
+                totalFriendBonus += baseEffect.friendBonus
+                if (targetType && region.friendBonus > 0) {
+                    factor *= (100 + region.friendBonus + regionRankBonus) / 100.0
+                    totalFriendBonus += region.friendBonus + regionRankBonus
+                }
             }
-            skillPtFactor = (100 + region.skillPtTrainingEffect + regionRankBonus) / 100.0
         }
         if (Calculator.DEBUG) {
             println("exPtTraining: ${excitePtBonus.trainingEffect}")
             if (friendTraining) {
                 println("rmjFriend: ${rmjBonus.friendBonus}")
             }
-            if (region != null && (region.targetAll || region.targetTypes.contains(info.training.type))) {
+            if (region != null) {
+                val targetType = region.targetAll || region.targetTypes.contains(info.training.type)
                 println("baseTraining: ${baseEffect.trainingEffect}")
-                println("regionTraining: ${region.trainingEffect + regionRankBonus}")
+                if (targetType) {
+                    println("regionTraining: ${region.trainingEffect + regionRankBonus}")
+                    println("regionSpTraining: ${region.skillPtTrainingEffect + regionRankBonus}")
+                }
                 if (friendTraining) {
                     println("baseFriend: ${baseEffect.friendBonus}")
-                    println("regionFriend: ${region.friendBonus + regionRankBonus}")
+                    if (targetType) {
+                        println("regionFriend: ${region.friendBonus + regionRankBonus}")
+                    }
                 }
-                println("regionSpTraining: ${region.skillPtTrainingEffect + regionRankBonus}")
             }
-            println("factor: $factor, spFactor: $skillPtFactor")
+            println("factor: $factor, spFactor: $skillPtFactor, totalTrainingEffect: $totallTrainingEffect, totalFriendBonus: $totalFriendBonus")
         }
+        factor = (100 + totallTrainingEffect) * (100 + totalFriendBonus) / 10000.0
 
         val speed = (base.speed * factor) - base.speed
         val stamina = (base.stamina * factor) - base.stamina
@@ -104,7 +127,7 @@ object RamenCalculator : ScenarioCalculator {
         member: List<MemberState>
     ): List<MemberState> {
         val ramenStatus = state.ramenStatus ?: return member
-        val region = ramenStatus.activeTastingRegion ?: return member
+        val region = ramenStatus.activeTastingRegion?.first ?: return member
         if (region.targetAll) return member
 
         var currentMember = member

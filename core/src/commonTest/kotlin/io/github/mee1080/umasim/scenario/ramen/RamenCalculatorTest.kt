@@ -25,7 +25,7 @@ abstract class RamenCalculatorTest(
     }
 
     fun Calculator.CalcInfo.setActiveTastingRegion(region: RamenRegion?) = updateRamenStatus {
-        copy(activeTastingRegion = region)
+        copy(activeTastingRegion = region?.let { it to regionRankBonus })
     }
 
     fun Calculator.CalcInfo.setGauges(noodle: Int, soup: Int, topping: Int) = updateRamenStatus {

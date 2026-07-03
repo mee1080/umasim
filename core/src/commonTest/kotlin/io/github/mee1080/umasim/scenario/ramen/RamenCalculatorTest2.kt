@@ -56,9 +56,9 @@ class RamenCalculatorTest2 : RamenCalculatorTest(
             scenario = Status(0, 0, 0, 0, 0, 0),
         )
 
-        baseCalcInfo = baseCalcInfo.updateRamenStatus {
-            copy(activeTastingRegion = RamenRegion.FUKUSHIMA)
-        }
+        baseCalcInfo = baseCalcInfo
+            .setActiveTastingRegion(RamenRegion.FUKUSHIMA)
+            .setExcitementPt(300)
 
         // WS000005.png
         testTraining(
@@ -67,9 +67,8 @@ class RamenCalculatorTest2 : RamenCalculatorTest(
             scenario = Status(1, 0, 1, 7, 0, 4),
         )
 
-        baseCalcInfo = baseCalcInfo.updateRamenStatus {
-            copy(activeTastingRegion = null)
-        }
+        baseCalcInfo = baseCalcInfo
+            .setActiveTastingRegion(null)
 
         // WS000006.png
         testTraining(

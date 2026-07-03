@@ -32,7 +32,7 @@ data class RamenStatus(
     ),
     val tipHistory: List<RamenTipType> = emptyList(),
     val excitementPt: Int = 0,
-    val activeTastingRegion: RamenRegion? = null,
+    val activeTastingRegion: Pair<RamenRegion, Int>? = null,
     val trainingTip: Map<StatusType, RamenTipType> = emptyMap(),
     val rmjBonus: RamenBaseBonus = RamenBaseBonus(0, 0, 0, 0),
 ) : ScenarioStatus {
@@ -147,7 +147,7 @@ data class RamenStatus(
         val gainPt = ramenGainExcitePt[period]
         val tastingCount = min(5, excitementPt / gainPt / 10)
         return state.copy(
-            activeTastingRegion = region,
+            activeTastingRegion = region to state.regionRankBonus,
             excitementPt = state.excitementPt + gainPt * (10 + tastingCount),
         )
     }
