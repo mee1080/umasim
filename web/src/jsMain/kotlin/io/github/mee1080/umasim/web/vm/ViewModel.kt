@@ -29,6 +29,7 @@ import io.github.mee1080.umasim.scenario.climax.WeightItem
 import io.github.mee1080.umasim.scenario.gm.Founder
 import io.github.mee1080.umasim.scenario.live.LiveCalculator
 import io.github.mee1080.umasim.scenario.mecha.MechaCalculator
+import io.github.mee1080.umasim.scenario.ramen.RamenStatus
 import io.github.mee1080.umasim.scenario.uaf.UafAthleticsLevelCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.util.SaveDataConverter
@@ -405,8 +406,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
         var ramenTastingImpact = emptyList<RamenTastingImpact>()
         if (state.scenario == Scenario.RAMEN && state.ramenState.turn in 25..72 && state.ramenState.activeTastingRegion != null) {
-            val ramenStatus = scenarioStatus as? io.github.mee1080.umasim.scenario.ramen.RamenStatus
-            if (ramenStatus != null) {
+            val ramenStatus = scenarioStatus as? RamenStatus
+            val region = state.ramenState.activeTastingRegion
+            if (ramenStatus != null && (region.targetAll || region.targetTypes.contains(trainingType))) {
                 val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
                 val noTastingInfo = trainingCalcInfo.copy(scenarioStatus = noTastingStatus)
                 val s2 = Calculator.calcTrainingSuccessStatusSeparated(
