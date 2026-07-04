@@ -74,6 +74,7 @@ data class State(
     val trainingPerformanceValue: Int = 0,
     val rawTrainingResult: ExpectedStatus = ExpectedStatus(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
+    val ramenTastingImpact: List<RamenTastingImpact> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
     val friendProbability: Double = 0.0,
@@ -187,6 +188,12 @@ data class State(
             else -> 0
         }
 }
+
+data class RamenTastingImpact(
+    val name: String,
+    val status: Status,
+    val impact: Status,
+)
 
 data class SupportSelection(
     val selectedSupport: Int = WebConstants.notSelected.first,
