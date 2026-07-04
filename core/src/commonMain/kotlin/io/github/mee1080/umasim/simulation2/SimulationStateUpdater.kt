@@ -486,7 +486,12 @@ private fun SimulationState.selectTrainingHint(
     }
 }
 
-private fun MemberState.selectHint(currentStatus: Status, count: Int = 1, hintCountUpEnabled: Boolean = true): Status {
+private fun MemberState.selectHint(
+    currentStatus: Status,
+    count: Int = 1,
+    hintCountUpEnabled: Boolean = true,
+    hintLevel: Int? = null,
+): Status {
     var result = Status()
     repeat(count + (if (hintCountUpEnabled) card.hintCountUp(relation) else 0)) {
         val hintSkill = (card.skills.filter {
@@ -495,7 +500,7 @@ private fun MemberState.selectHint(currentStatus: Status, count: Int = 1, hintCo
         result += if (hintSkill.isEmpty()) {
             card.hintStatus
         } else {
-            Status(skillHint = mapOf(hintSkill to 1 + card.hintLevel))
+            Status(skillHint = mapOf(hintSkill to (hintLevel ?: (1 + card.hintLevel))))
         }
     }
     return result
@@ -951,9 +956,14 @@ fun SimulationState.addNextTurnSpecialityRateUpAll(rate: Int): SimulationState {
     return copy(member = member.map { it.addNextTurnSpecialityRateUp(rate) })
 }
 
-fun SimulationState.addRandomSupportHint(): SimulationState {
-    val target = support.filter { !it.outingType }.randomOrNull() ?: return this
-    return addStatus(target.selectHint(status))
+fun SimulationState.addRandomSupportHint(
+    targetTypes: List<StatusType>? = null,
+    hintLevel: Int? = null,
+): SimulationState {
+    val target = support.filter {
+        !it.outingType && (targetTypes == null || targetTypes.contains(it.card.type))
+    }.randomOrNull() ?: return this
+    return addStatus(target.selectHint(status, hintLevel = hintLevel))
 }
 
 fun SimulationState.addAllSupportHint(): SimulationState {

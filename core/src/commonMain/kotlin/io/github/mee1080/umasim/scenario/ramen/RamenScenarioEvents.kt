@@ -13,7 +13,10 @@ class RamenScenarioEvents : BaseScenarioEvents() {
     }
 
     override suspend fun beforeAction(state: SimulationState, selector: ActionSelector): SimulationState {
-        val base = state.updateRamenStatus { shuffleTrainingTip() }
+        var base = state.updateRamenStatus { shuffleTrainingTip() }
+        if (base.turn >= 73) {
+            base = base.addStatus(Status(hp = 20, motivation = 1))
+        }
         val current = when (base.turn) {
             1 -> base.selectRamenRegion(selector, 0)
 
