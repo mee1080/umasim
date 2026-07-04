@@ -95,6 +95,7 @@ data class State(
     val mechaState: MechaState = MechaState(),
     val mujintoState: MujintoState = MujintoState(),
     val bcState: BCState = BCState(),
+    val ramenState: RamenState = RamenState(),
 ) {
 
     val supportFilterApplied get() = supportFilter == appliedSupportFilter
@@ -156,6 +157,7 @@ data class State(
             ?: mechaStatusIfEnabled
             ?: mujintoStatusIfEnabled
             ?: bcStatusIfEnabled
+            ?: ramenStatusIfEnabled
 
     val trainingLiveStateIfEnabled get() = if (scenario == Scenario.GRAND_LIVE) trainingLiveState else null
 
@@ -175,6 +177,8 @@ data class State(
     val mujintoStatusIfEnabled get() = if (scenario == Scenario.MUJINTO) mujintoState.toMujintoStatus() else null
 
     val bcStatusIfEnabled get() = if (scenario == Scenario.BC) bcState.toBCStatus(selectedTrainingType) else null
+
+    val ramenStatusIfEnabled get() = if (scenario == Scenario.RAMEN) ramenState.toRamenStatus() else null
 
     val specialityRateUp
         get() = when (scenario) {
