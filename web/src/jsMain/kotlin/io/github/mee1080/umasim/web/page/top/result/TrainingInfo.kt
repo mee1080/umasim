@@ -328,6 +328,63 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 }
             }
         }
+        if (state.ramenTastingImpact.isNotEmpty()) {
+            H3 { Text("試食会でサポカ出現した場合の上昇量") }
+            Div {
+                Table({ classes(AppStyle.table) }) {
+                    Tr {
+                        Th({
+                            style {
+                                property("border", "none")
+                            }
+                            unsetWidth()
+                        }) { }
+                        Th { Text("スピード") }
+                        Th { Text("スタミナ") }
+                        Th { Text("パワー") }
+                        Th { Text("根性") }
+                        Th { Text("賢さ") }
+                        Th { Text("スキルPt") }
+                        Th { Text("体力") }
+                        Th { Text("5ステ合計") }
+                        Th { Text("5ステ+SP") }
+                    }
+                    state.ramenTastingImpact.forEach { (name, status, impact) ->
+                        Tr {
+                            Td({
+                                unsetWidth()
+                                style { fontWeight("bold") }
+                            }) { Text(name) }
+                            Td { Text(status.speed.toString()) }
+                            Td { Text(status.stamina.toString()) }
+                            Td { Text(status.power.toString()) }
+                            Td { Text(status.guts.toString()) }
+                            Td { Text(status.wisdom.toString()) }
+                            Td { Text(status.skillPt.toString()) }
+                            Td { Text(status.hp.toString()) }
+                            Td { Text(status.statusTotal.toString()) }
+                            Td { Text(status.totalPlusSkillPt.toString()) }
+                        }
+                        Tr {
+                            Td({
+                                unsetWidth()
+                                style { textAlign("right") }
+                            }) { Text("(増分)") }
+                            Td { Text(impact.speed.toString()) }
+                            Td { Text(impact.stamina.toString()) }
+                            Td { Text(impact.power.toString()) }
+                            Td { Text(impact.guts.toString()) }
+                            Td { Text(impact.wisdom.toString()) }
+                            Td { Text(impact.skillPt.toString()) }
+                            Td { Text(impact.hp.toString()) }
+                            Td { Text(impact.statusTotal.toString()) }
+                            Td { Text(impact.totalPlusSkillPt.toString()) }
+                        }
+                    }
+                }
+            }
+            Div { Text("※計算式： 参加した場合の上昇量 - 試食会なしの上昇量") }
+        }
         if (state.trainingImpact.isNotEmpty()) {
             NestedHideBlock("サポカ影響度") {
                 Div {
@@ -368,64 +425,6 @@ fun TrainingInfo(model: ViewModel, state: State) {
                     }
                 }
                 Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
-            }
-        }
-        if (state.scenario == Scenario.RAMEN && state.ramenTastingImpact.isNotEmpty()) {
-            NestedHideBlock("試食会上昇量") {
-                Div {
-                    Table({ classes(AppStyle.table) }) {
-                        Tr {
-                            Th({
-                                style {
-                                    property("border", "none")
-                                }
-                                unsetWidth()
-                            }) { }
-                            Th { Text("スピード") }
-                            Th { Text("スタミナ") }
-                            Th { Text("パワー") }
-                            Th { Text("根性") }
-                            Th { Text("賢さ") }
-                            Th { Text("スキルPt") }
-                            Th { Text("体力") }
-                            Th { Text("5ステ合計") }
-                            Th { Text("5ステ+SP") }
-                        }
-                        state.ramenTastingImpact.forEach { (name, status, impact) ->
-                            Tr {
-                                Td({
-                                    unsetWidth()
-                                    style { fontWeight("bold") }
-                                }) { Text(name) }
-                                Td { Text(status.speed.toString()) }
-                                Td { Text(status.stamina.toString()) }
-                                Td { Text(status.power.toString()) }
-                                Td { Text(status.guts.toString()) }
-                                Td { Text(status.wisdom.toString()) }
-                                Td { Text(status.skillPt.toString()) }
-                                Td { Text(status.hp.toString()) }
-                                Td { Text(status.statusTotal.toString()) }
-                                Td { Text(status.totalPlusSkillPt.toString()) }
-                            }
-                            Tr {
-                                Td({
-                                    unsetWidth()
-                                    style { textAlign("right") }
-                                }) { Text("(増分)") }
-                                Td { Text(impact.speed.toString()) }
-                                Td { Text(impact.stamina.toString()) }
-                                Td { Text(impact.power.toString()) }
-                                Td { Text(impact.guts.toString()) }
-                                Td { Text(impact.wisdom.toString()) }
-                                Td { Text(impact.skillPt.toString()) }
-                                Td { Text(impact.hp.toString()) }
-                                Td { Text(impact.statusTotal.toString()) }
-                                Td { Text(impact.totalPlusSkillPt.toString()) }
-                            }
-                        }
-                    }
-                }
-                Div { Text("※計算式： 参加した場合の上昇量 / 試食会なしの上昇量からの増分") }
             }
         }
         H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }

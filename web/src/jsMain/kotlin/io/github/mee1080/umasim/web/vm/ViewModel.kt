@@ -38,6 +38,7 @@ import io.github.mee1080.utility.applyIfNotNull
 import kotlinx.browser.localStorage
 import kotlinx.coroutines.*
 import kotlinx.serialization.json.Json
+import kotlin.time.Duration.Companion.milliseconds
 
 @Stable
 class ViewModel(val scope: CoroutineScope, initialPage: String?) {
@@ -91,7 +92,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 newState = calculateBonus(newState)
             }
             state = newState
-            delay(100L)
+            delay(100L.milliseconds)
         }
     }
 
@@ -402,12 +403,18 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
         }
 
-        val ramenTastingImpact = if (state.scenario == Scenario.RAMEN && state.ramenState.turn in 25..72 && state.ramenState.activeTastingRegion != null) {
+        var ramenTastingImpact = emptyList<RamenTastingImpact>()
+        if (state.scenario == Scenario.RAMEN && state.ramenState.turn in 25..72 && state.ramenState.activeTastingRegion != null) {
             val ramenStatus = scenarioStatus as? io.github.mee1080.umasim.scenario.ramen.RamenStatus
             if (ramenStatus != null) {
                 val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
-                allSupportList.filter { support ->
-                    !joinSupportList.any { it.index == support.index } && !support.card.type.outingType
+                val noTastingInfo = trainingCalcInfo.copy(scenarioStatus = noTastingStatus)
+                val s2 = Calculator.calcTrainingSuccessStatusSeparated(
+                    noTastingInfo,
+                    state.scenario.calculator.getScenarioCalcBonus(noTastingInfo)
+                ).let { it.first.first + it.second }
+                ramenTastingImpact = allSupportList.filter { support ->
+                    !joinSupportList.any { it.card.id == support.card.id } && !support.card.type.outingType
                 }.map { support ->
                     val withSupportJoinList = joinSupportList + support
                     val withSupportInfo = trainingCalcInfo.copy(member = withSupportJoinList)
@@ -415,15 +422,10 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                         withSupportInfo,
                         state.scenario.calculator.getScenarioCalcBonus(withSupportInfo)
                     ).let { it.first.first + it.second }
-                    val withSupportNoTastingInfo = withSupportInfo.copy(scenarioStatus = noTastingStatus)
-                    val s2 = Calculator.calcTrainingSuccessStatusSeparated(
-                        withSupportNoTastingInfo,
-                        state.scenario.calculator.getScenarioCalcBonus(withSupportNoTastingInfo)
-                    ).let { it.first.first + it.second }
                     RamenTastingImpact(support.name, s1, s1 - s2)
                 }
-            } else emptyList()
-        } else emptyList()
+            }
+        }
 
         val supportList = state.supportSelectionList.mapIndexedNotNull { index, support ->
             support.toMemberState(state.scenario, index)
