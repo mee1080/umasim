@@ -262,10 +262,4 @@ object RamenCalculator : ScenarioCalculator {
         val ramenStatus = state.ramenStatus ?: return false
         return ramenStatus.baseEffect.allHintEvent
     }
-
-    override fun getScenarioCalcBonus(baseInfo: Calculator.CalcInfo): Calculator.ScenarioCalcBonus? {
-        val ramenStatus = baseInfo.ramenStatus ?: return null
-        val limitOver = ramenStatus.baseEffect.statusLimitOver
-        return Calculator.ScenarioCalcBonus(maxValue = 100.0 + limitOver)
-    }
 }
