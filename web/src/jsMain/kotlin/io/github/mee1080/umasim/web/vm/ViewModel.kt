@@ -826,4 +826,8 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
     fun updateBC(update: BCState.() -> BCState) {
         update { copy(bcState = bcState.update()) }
     }
+
+    fun updateRamen(update: RamenState.() -> RamenState) {
+        update { copy(ramenState = ramenState.update()) }
+    }
 }
