@@ -28,6 +28,13 @@ abstract class RamenCalculatorTest(
         copy(activeTastingRegion = region?.let { it to regionRankBonus })
     }
 
+    fun Calculator.CalcInfo.setPeriod(period: Int, success: Boolean): Calculator.CalcInfo = updateRamenStatus {
+        copy(
+            turn = period * 24 + 1,
+            rmjBonus = ramenRmjBonus[period - 1][if (success) 1 else 0],
+        )
+    }
+
     fun Calculator.CalcInfo.setGauges(noodle: Int, soup: Int, topping: Int) = updateRamenStatus {
         copy(
             gauges = mapOf(

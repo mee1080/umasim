@@ -1,7 +1,6 @@
 package io.github.mee1080.umasim.scenario.ramen
 
 import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.RamenActionParam
 
 enum class RamenTipType(val displayName: String) {
@@ -18,6 +17,7 @@ data class RamenBaseEffect(
     val relationGauge: Int = 0,
     val statusLimitOver: Int = 0,
     val allHintEvent: Boolean = false,
+    val skillPtTrainingEffect: Int = 0,
 ) {
     companion object {
         val Empty = RamenBaseEffect()
@@ -34,6 +34,8 @@ val ramenBaseEffect = listOf(
         trainingEffect = 15, friendBonus = 45, failureRateDown = 100,
         statusLimitOver = 40, allHintEvent = true,
     ),
+    // ファイナルズ
+    RamenBaseEffect(friendBonus = 150, skillPtTrainingEffect = 100),
 )
 
 enum class RamenRegion(
@@ -52,6 +54,11 @@ enum class RamenRegion(
     val addMember: Int = 0,
     // TODO: friendBonusとaddMemberが全トレーニング対象になる
     val targetAll: Boolean = false,
+    // TODO: targetStatusとスキルPtの上限突破
+    val targetStatusLimitOver: Int = 0,
+    // TODO: 極のヒント獲得
+    val hintSkill: String = "",
+    // TODO: 極の体力+20、やる気+1、レスボ100、全サポカ1箇所追加配置
 ) {
     SAPPORO(
         "札幌", "濃厚味噌ラーメン",
@@ -230,30 +237,27 @@ enum class RamenRegion(
     ),
 
     FINALS1(
-        "スペシャル", "スペシャルトレセンラーメン",
-        1, 1, 1,
-        trainingType.toList(),
-        friendBonus = 1000,
-        trainingEffect = 1000,
-        skillPtTrainingEffect = 1000,
+        "", "スペシャルトレセンラーメン",
+        0, 0, 0,
+        listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.GUTS, StatusType.WISDOM),
+        targetStatusLimitOver = 100,
+        hintSkill = "火事場のバ鹿力",
     ),
 
     FINALS2(
-        "よくばり", "よくばりトレセンラーメン",
-        1, 1, 1,
-        trainingType.toList(),
-        friendBonus = 1000,
-        trainingEffect = 1000,
-        skillPtTrainingEffect = 1000,
+        "", "よくばりトレセンラーメン",
+        0, 0, 0,
+        listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.WISDOM),
+        targetStatusLimitOver = 100,
+        hintSkill = "いいとこ入った！",
     ),
 
     FINALS3(
-        "珠玉", "珠玉のトレセンラーメン",
-        1, 1, 1,
-        trainingType.toList(),
-        friendBonus = 1000,
-        trainingEffect = 1000,
-        skillPtTrainingEffect = 1000,
+        "", "珠玉のトレセンラーメン",
+        0, 0, 0,
+        listOf(StatusType.SPEED, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM),
+        targetStatusLimitOver = 100,
+        hintSkill = "恩返し、召し上がれ",
     ),
 }
 

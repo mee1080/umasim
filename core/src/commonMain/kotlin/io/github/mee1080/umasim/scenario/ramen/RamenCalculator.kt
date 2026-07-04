@@ -6,6 +6,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
+import kotlin.math.min
 
 object RamenCalculator : ScenarioCalculator {
 
@@ -22,37 +23,36 @@ object RamenCalculator : ScenarioCalculator {
         val baseEffect = ramenStatus.baseEffect
         val regionRankBonus = ramenStatus.activeTastingRegion?.second ?: 0
 
-        var factor = 1.0
-        var skillPtFactor = 1.0
-        var totallTrainingEffect = 0
+        var totallTrainingEffect = excitePtBonus.trainingEffect
         var totalFriendBonus = 0
-        factor *= (100 + excitePtBonus.trainingEffect) / 100.0
-        totallTrainingEffect += excitePtBonus.trainingEffect
+        var totalSkillPtEffect = 0
+        var statusLimitOver = 0
+        var targetStatusLimitOver = 0
+        var targetTypes = emptySet<StatusType>()
         if (friendTraining) {
-            factor *= (100 + rmjBonus.friendBonus) / 100.0
             totalFriendBonus += rmjBonus.friendBonus
         }
         if (region != null) {
-            val targetType = region.targetAll || region.targetTypes.contains(info.training.type)
-            factor *= (100 + baseEffect.trainingEffect) / 100.0
+            targetTypes = region.targetTypes.toSet()
+            val targetType = region.targetAll || targetTypes.contains(info.training.type)
             totallTrainingEffect += baseEffect.trainingEffect
+            totalSkillPtEffect += baseEffect.skillPtTrainingEffect
             if (targetType) {
                 if (region.trainingEffect > 0) {
-                    factor *= (100 + region.trainingEffect + regionRankBonus) / 100.0
                     totallTrainingEffect += region.trainingEffect + regionRankBonus
                 }
                 if (region.skillPtTrainingEffect > 0) {
-                    skillPtFactor = (100 + region.skillPtTrainingEffect + regionRankBonus) / 100.0
+                    totalSkillPtEffect += region.skillPtTrainingEffect + regionRankBonus
                 }
             }
             if (friendTraining) {
-                factor *= (100 + baseEffect.friendBonus) / 100.0
                 totalFriendBonus += baseEffect.friendBonus
                 if (targetType && region.friendBonus > 0) {
-                    factor *= (100 + region.friendBonus + regionRankBonus) / 100.0
                     totalFriendBonus += region.friendBonus + regionRankBonus
                 }
             }
+            statusLimitOver = baseEffect.statusLimitOver
+            targetStatusLimitOver = region.targetStatusLimitOver
         }
         if (Calculator.DEBUG) {
             println("exPtTraining: ${excitePtBonus.trainingEffect}")
@@ -73,24 +73,30 @@ object RamenCalculator : ScenarioCalculator {
                     }
                 }
             }
-            println("factor: $factor, spFactor: $skillPtFactor, totalTrainingEffect: $totallTrainingEffect, totalFriendBonus: $totalFriendBonus")
+            println("totalTrainingEffect: $totallTrainingEffect, totalFriendBonus: $totalFriendBonus, totalSkillPtEffect: $totalSkillPtEffect")
         }
-        factor = (100 + totallTrainingEffect) * (100 + totalFriendBonus) / 10000.0
+        val factor = (100 + totallTrainingEffect) * (100 + totalFriendBonus) / 10000.0
+        val skillPtFactor = (100 + totalSkillPtEffect) / 100.0
 
-        val speed = (base.speed * factor) - base.speed
-        val stamina = (base.stamina * factor) - base.stamina
-        val power = (base.power * factor) - base.power
-        val guts = (base.guts * factor) - base.guts
-        val wisdom = (base.wisdom * factor) - base.wisdom
+        fun calcSingleStatus(type: StatusType): Int {
+            val baseValue = base.get(type)
+            val total = ((baseValue * factor) - baseValue).toInt()
+            var limit = 100 + statusLimitOver
+            if (targetStatusLimitOver > 0 && targetTypes.contains(type)) {
+                limit += targetStatusLimitOver
+            }
+            return min(total, limit)
+        }
+
         val skillPt = (base.skillPt * factor * skillPtFactor) - base.skillPt
 
         return Status(
-            speed = speed.toInt(),
-            stamina = stamina.toInt(),
-            power = power.toInt(),
-            guts = guts.toInt(),
-            wisdom = wisdom.toInt(),
-            skillPt = skillPt.toInt(),
+            speed = calcSingleStatus(StatusType.SPEED),
+            stamina = calcSingleStatus(StatusType.STAMINA),
+            power = calcSingleStatus(StatusType.POWER),
+            guts = calcSingleStatus(StatusType.GUTS),
+            wisdom = calcSingleStatus(StatusType.WISDOM),
+            skillPt = skillPt.toInt().coerceAtMost(100 + statusLimitOver + targetStatusLimitOver),
         )
     }
 
