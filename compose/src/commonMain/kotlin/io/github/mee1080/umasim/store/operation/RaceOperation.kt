@@ -45,60 +45,65 @@ private fun AppState.clearSimulationResult() = copy(
 private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState, overrideCount: Int? = null) {
     val simulationCount = overrideCount ?: state.simulationCount
     if (simulationCount <= 0) return
-    val results = mutableListOf<RaceSimulationResult>()
-    val skillSummaries = state.hasSkills(false).associate {
-        it.name to mutableListOf<SimulationSkillInfo>()
-    }
-    val skillDataMap = state.hasSkills(false).associateBy { it.name }
-    var firstRaceState: RaceState? = null
-    val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
-    var count = 0
-    val chunkSize = max(state.threadCount * 10, progressReportInterval)
-    for (chunk in (0 until simulationCount).chunked(chunkSize)) {
-        chunk.map { i ->
-            scope.async {
-                val result = RaceCalculator(state.systemSetting).simulate(state.setting)
-                val skillMap = createSkillMap(result.second)
-                if (i == 0) {
-                    result to skillMap
-                } else {
-                    (result.first to null) to skillMap
+    try {
+        val results = mutableListOf<RaceSimulationResult>()
+        val skillSummaries = state.hasSkills(false).associate {
+            it.name to mutableListOf<SimulationSkillInfo>()
+        }
+        val skillDataMap = state.hasSkills(false).associateBy { it.name }
+        var firstRaceState: RaceState? = null
+        val scope = CoroutineScope(currentCoroutineContext() + asyncDispatcher.limitedParallelism(state.threadCount))
+        var count = 0
+        val chunkSize = max(state.threadCount * 10, progressReportInterval)
+        for (chunk in (0 until simulationCount).chunked(chunkSize)) {
+            chunk.map { i ->
+                scope.async {
+                    val result = RaceCalculator(state.systemSetting).simulate(state.setting)
+                    val skillMap = createSkillMap(result.second)
+                    if (i == 0) {
+                        result to skillMap
+                    } else {
+                        (result.first to null) to skillMap
+                    }
+                }
+            }.forEach { deferred ->
+                val (result, skillMap) = deferred.await()
+                results += result.first
+                skillMap.forEach {
+                    skillSummaries[it.key]?.add(it.value)
+                }
+                if (firstRaceState == null) {
+                    firstRaceState = result.second
+                }
+                count++
+                if (count % progressReportInterval == 0) {
+                    send { it.copy(simulationProgress = count) }
+                    delay(progressReportDelay)
                 }
             }
-        }.forEach { deferred ->
-            val (result, skillMap) = deferred.await()
-            results += result.first
-            skillMap.forEach {
-                skillSummaries[it.key]?.add(it.value)
-            }
-            if (firstRaceState == null) {
-                firstRaceState = result.second
-            }
-            count++
-            if (count % progressReportInterval == 0) {
-                send { it.copy(simulationProgress = count) }
-                delay(progressReportDelay)
-            }
         }
-    }
-    val graphData = toGraphData(state.setting, firstRaceState?.simulation?.frames, state.graphDisplaySetting)
-    val spurtResults = results.filter { it.maxSpurt }
-    val notSpurtResult = results.filter { !it.maxSpurt }
-    val summary = SimulationSummary(
-        setting = state.setting,
-        allSummary = toSummary(results),
-        spurtSummary = toSummary(spurtResults),
-        notSpurtSummary = toSummary(notSpurtResult),
-        spurtRate = spurtResults.size.toDouble() / results.size,
-        skillSummaries = skillSummaries.map { it.key to toSummary(skillDataMap[it.key]!!, it.value) },
-    )
-    send {
-        it.copy(
-            simulationProgress = 0,
-            simulationSummary = summary,
-            lastSimulationSettingWithPassive = firstRaceState?.setting,
-            graphData = graphData,
+        val graphData = toGraphData(state.setting, firstRaceState?.simulation?.frames, state.graphDisplaySetting)
+        val spurtResults = results.filter { it.maxSpurt }
+        val notSpurtResult = results.filter { !it.maxSpurt }
+        val summary = SimulationSummary(
+            setting = state.setting,
+            allSummary = toSummary(results),
+            spurtSummary = toSummary(spurtResults),
+            notSpurtSummary = toSummary(notSpurtResult),
+            spurtRate = spurtResults.size.toDouble() / results.size,
+            skillSummaries = skillSummaries.map { it.key to toSummary(skillDataMap[it.key]!!, it.value) },
         )
+        send {
+            it.copy(
+                simulationProgress = 0,
+                simulationSummary = summary,
+                lastSimulationSettingWithPassive = firstRaceState?.setting,
+                graphData = graphData,
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        send { it.copy(simulationProgress = 0) }
     }
 }
 
@@ -601,38 +606,43 @@ private suspend fun ActionContext<AppState>.runSimulationContribution(state: App
         }
     }
     if (state.simulationCount < 5 || targetSkills.isEmpty()) return
-    val calculateState = CalculateState(this, state, targetSkills.size + 1)
-    val baseSetting = if (selectMode) {
-        state.setting.copy(
-            umaStatus = state.setting.umaStatus.copy(
-                hasSkills = state.hasSkills(false).filterNot { targets.contains(it.id) }
+    try {
+        val calculateState = CalculateState(this, state, targetSkills.size + 1)
+        val baseSetting = if (selectMode) {
+            state.setting.copy(
+                umaStatus = state.setting.umaStatus.copy(
+                    hasSkills = state.hasSkills(false).filterNot { targets.contains(it.id) }
+                )
             )
+        } else state.setting
+        val baseTimes = calculateState.calculateTimes(baseSetting)
+        val baseResult = ContributionResult(
+            name = "基本値",
+            compareName = null,
+            averageTime = baseTimes.average(),
+            averageDiff = Double.NaN,
+            upperTime = baseTimes.subList(0, baseTimes.size / 5).average(),
+            upperDiff = Double.NaN,
+            lowerTime = baseTimes.subList(baseTimes.size * 4 / 5, baseTimes.size).average(),
+            lowerDiff = Double.NaN,
+            efficiency = listOf(Double.NaN),
         )
-    } else state.setting
-    val baseTimes = calculateState.calculateTimes(baseSetting)
-    val baseResult = ContributionResult(
-        name = "基本値",
-        compareName = null,
-        averageTime = baseTimes.average(),
-        averageDiff = Double.NaN,
-        upperTime = baseTimes.subList(0, baseTimes.size / 5).average(),
-        upperDiff = Double.NaN,
-        lowerTime = baseTimes.subList(baseTimes.size * 4 / 5, baseTimes.size).average(),
-        lowerDiff = Double.NaN,
-        efficiency = listOf(Double.NaN),
-    )
-    val targetResults = mutableListOf<ContributionResult>()
-    targetSkills.forEach { target ->
-        val setting = target.applySetting(baseSetting)
-        val times = calculateState.calculateTimes(setting)
-        target.addResults(targetResults, baseResult, times)
-    }
-    val sortedResults = targetResults.sortedByDescending { it.efficiency.last() }
-    send {
-        it.copy(
-            simulationProgress = 0,
-            contributionResults = listOf(baseResult) + sortedResults,
-        )
+        val targetResults = mutableListOf<ContributionResult>()
+        targetSkills.forEach { target ->
+            val setting = target.applySetting(baseSetting)
+            val times = calculateState.calculateTimes(setting)
+            target.addResults(targetResults, baseResult, times)
+        }
+        val sortedResults = targetResults.sortedByDescending { it.efficiency.last() }
+        send {
+            it.copy(
+                simulationProgress = 0,
+                contributionResults = listOf(baseResult) + sortedResults,
+            )
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+        send { it.copy(simulationProgress = 0) }
     }
 }
 
