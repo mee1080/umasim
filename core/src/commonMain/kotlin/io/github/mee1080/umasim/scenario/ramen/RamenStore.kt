@@ -40,7 +40,6 @@ val ramenBaseEffect = listOf(
 
 enum class RamenRegion(
     val displayName: String,
-    val ramenName: String,
     val noodle: Int,
     val soup: Int,
     val topping: Int,
@@ -61,7 +60,7 @@ enum class RamenRegion(
     // TODO: 極の体力+20、やる気+1、レスボ100、全サポカ1箇所追加配置
 ) {
     SAPPORO(
-        "札幌", "濃厚味噌ラーメン",
+        "【札幌】濃厚味噌ラーメン(スピ)",
         2, 2, 1,
         listOf(StatusType.SPEED),
         trainingEffect = 20,
@@ -69,7 +68,7 @@ enum class RamenRegion(
     ),
 
     HAKODATE(
-        "函館", "すっきり塩ラーメン",
+        "【函館】すっきり塩ラーメン(スタ)",
         1, 2, 2,
         listOf(StatusType.STAMINA),
         trainingEffect = 20,
@@ -77,7 +76,7 @@ enum class RamenRegion(
     ),
 
     NIIGATA(
-        "新潟", "岩のり背脂ラーメン",
+        "【新潟】岩のり背脂ラーメン(パワ)",
         3, 1, 1,
         listOf(StatusType.POWER),
         trainingEffect = 20,
@@ -85,7 +84,7 @@ enum class RamenRegion(
     ),
 
     FUKUSHIMA(
-        "福島", "あっさり醤油ラーメン",
+        "【福島】あっさり醤油ラーメン(根性)",
         2, 3, 0,
         listOf(StatusType.GUTS),
         trainingEffect = 20,
@@ -93,7 +92,7 @@ enum class RamenRegion(
     ),
 
     TOKYO(
-        "東京", "ガッツリ豚ラーメン",
+        "【東京】ガッツリ豚ラーメン(賢さ)",
         1, 1, 3,
         listOf(StatusType.WISDOM),
         trainingEffect = 20,
@@ -101,7 +100,7 @@ enum class RamenRegion(
     ),
 
     NAKAYAMA(
-        "中山", "玉ねぎ醤油ラーメン",
+        "【中山】玉ねぎ醤油ラーメン(5種)",
         2, 0, 3,
         listOf(StatusType.SPEED),
         friendBonus = 10,
@@ -111,7 +110,7 @@ enum class RamenRegion(
     ),
 
     CHUKYO(
-        "中京", "ウマ辛名古屋ラーメン",
+        "【中京】ウマ辛名古屋ラーメン(パワ根性)",
         3, 2, 0,
         listOf(StatusType.POWER, StatusType.GUTS),
         friendBonus = 50,
@@ -120,7 +119,7 @@ enum class RamenRegion(
     ),
 
     KYOTO(
-        "京都", "背脂ねぎラーメン",
+        "【京都】背脂ねぎラーメン(スタ根性)",
         0, 3, 2,
         listOf(StatusType.STAMINA, StatusType.GUTS),
         friendBonus = 50,
@@ -129,7 +128,7 @@ enum class RamenRegion(
     ),
 
     HANSHIN(
-        "阪神", "甘口醤油ラーメン",
+        "【阪神】甘口醤油ラーメン(スタパワ)",
         2, 1, 2,
         listOf(StatusType.STAMINA, StatusType.POWER),
         friendBonus = 50,
@@ -138,7 +137,7 @@ enum class RamenRegion(
     ),
 
     KOKURA(
-        "小倉", "こってり豚骨ラーメン",
+        "【小倉】こってり豚骨ラーメン(賢さ)",
         1, 3, 1,
         listOf(StatusType.WISDOM),
         friendBonus = 50,
@@ -147,7 +146,7 @@ enum class RamenRegion(
     ),
 
     SAPPORO2(
-        "札幌", "濃厚味噌ラーメン",
+        "【札幌】濃厚味噌ラーメン(スピ)",
         2, 2, 1,
         listOf(StatusType.SPEED),
         friendBonus = 50,
@@ -156,7 +155,7 @@ enum class RamenRegion(
     ),
 
     HAKODATE2(
-        "函館", "すっきり塩ラーメン",
+        "【函館】すっきり塩ラーメン(スタ)",
         1, 2, 2,
         listOf(StatusType.STAMINA),
         friendBonus = 60,
@@ -165,7 +164,7 @@ enum class RamenRegion(
     ),
 
     NIIGATA2(
-        "新潟", "岩のり背脂ラーメン",
+        "【新潟】岩のり背脂ラーメン(パワ)",
         3, 1, 1,
         listOf(StatusType.POWER),
         friendBonus = 60,
@@ -174,7 +173,7 @@ enum class RamenRegion(
     ),
 
     FUKUSHIMA2(
-        "福島", "あっさり醤油ラーメン",
+        "【福島】あっさり醤油ラーメン(根性)",
         2, 3, 0,
         listOf(StatusType.GUTS),
         friendBonus = 60,
@@ -183,7 +182,7 @@ enum class RamenRegion(
     ),
 
     TOKYO2(
-        "東京", "ガッツリ豚ラーメン",
+        "【東京】ガッツリ豚ラーメン(賢さ)",
         1, 1, 3,
         listOf(StatusType.WISDOM),
         friendBonus = 60,
@@ -192,7 +191,7 @@ enum class RamenRegion(
     ),
 
     NAKAYAMA2(
-        "中山", "玉ねぎ醤油ラーメン",
+        "【中山】玉ねぎ醤油ラーメン(スピパワ賢さ)",
         2, 0, 3,
         listOf(StatusType.SPEED, StatusType.POWER, StatusType.WISDOM),
         friendBonus = 40,
@@ -201,7 +200,7 @@ enum class RamenRegion(
     ),
 
     CHUKYO2(
-        "中京", "ウマ辛名古屋ラーメン",
+        "【中京】ウマ辛名古屋ラーメン(スピパワ根性)",
         3, 2, 0,
         listOf(StatusType.SPEED, StatusType.POWER, StatusType.GUTS),
         friendBonus = 40,
@@ -210,7 +209,7 @@ enum class RamenRegion(
     ),
 
     KYOTO2(
-        "京都", "背脂ねぎラーメン",
+        "【京都】背脂ねぎラーメン(スピスタ賢さ)",
         0, 3, 2,
         listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.WISDOM),
         friendBonus = 40,
@@ -219,7 +218,7 @@ enum class RamenRegion(
     ),
 
     HANSHIN2(
-        "阪神", "甘口醤油ラーメン",
+        "【阪神】甘口醤油ラーメン(スピスタパワ)",
         2, 1, 2,
         listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER),
         friendBonus = 40,
@@ -228,7 +227,7 @@ enum class RamenRegion(
     ),
 
     KOKURA2(
-        "小倉", "こってり豚骨ラーメン",
+        "【小倉】こってり豚骨ラーメン(スピ根性賢さ)",
         1, 3, 1,
         listOf(StatusType.SPEED, StatusType.GUTS, StatusType.WISDOM),
         friendBonus = 40,
@@ -237,7 +236,7 @@ enum class RamenRegion(
     ),
 
     FINALS1(
-        "", "スペシャルトレセンラーメン",
+        "スペシャルトレセンラーメン(スピスタ根性賢さ/火事場のバ鹿力)",
         0, 0, 0,
         listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.GUTS, StatusType.WISDOM),
         targetStatusLimitOver = 100,
@@ -245,7 +244,7 @@ enum class RamenRegion(
     ),
 
     FINALS2(
-        "", "よくばりトレセンラーメン",
+        "よくばりトレセンラーメン(スピスタパワ賢さ/いいとこ入った！)",
         0, 0, 0,
         listOf(StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.WISDOM),
         targetStatusLimitOver = 100,
@@ -253,11 +252,11 @@ enum class RamenRegion(
     ),
 
     FINALS3(
-        "", "珠玉のトレセンラーメン",
+        "珠玉のトレセンラーメン(スピパワ根性賢さ/好奇心)",
         0, 0, 0,
         listOf(StatusType.SPEED, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM),
         targetStatusLimitOver = 100,
-        hintSkill = "恩返し、召し上がれ",
+        hintSkill = "好奇心",
     ),
 }
 

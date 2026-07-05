@@ -2,16 +2,20 @@ package io.github.mee1080.umasim.web.page.top.setting
 
 import androidx.compose.runtime.Composable
 import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.ramen.RamenRegion
 import io.github.mee1080.umasim.scenario.ramen.ramenRegionSelection
-import io.github.mee1080.umasim.web.components.atoms.*
+import io.github.mee1080.umasim.web.components.atoms.MdFilledSelect
+import io.github.mee1080.umasim.web.components.atoms.MdRadio
+import io.github.mee1080.umasim.web.components.atoms.label
+import io.github.mee1080.umasim.web.components.atoms.onSelect
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
 import io.github.mee1080.umasim.web.state.RamenState
 import io.github.mee1080.umasim.web.vm.ViewModel
 import org.jetbrains.compose.web.css.*
-import org.jetbrains.compose.web.dom.*
+import org.jetbrains.compose.web.dom.H4
+import org.jetbrains.compose.web.dom.Label
+import org.jetbrains.compose.web.dom.Text
 
 @Composable
 fun RamenTrainingSetting(model: ViewModel, state: RamenState) {
@@ -78,7 +82,7 @@ fun RamenTrainingSetting(model: ViewModel, state: RamenState) {
             itemToValue = { it },
             itemToDisplayText = { name ->
                 if (name == "none") "なし"
-                else selection.first { it.name == name }.let { "【${it.displayName}】${it.ramenName}" }
+                else selection.first { it.name == name }.displayName
             }
         )
     }

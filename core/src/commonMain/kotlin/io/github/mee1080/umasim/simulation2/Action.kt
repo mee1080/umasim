@@ -656,7 +656,7 @@ data class RamenTastingResult(
 data class RamenTasting(
     val region: RamenRegion,
 ) : SingleAction {
-    override val name = "試食会: ${region.ramenName}"
+    override val name = "試食会: ${region.displayName}"
     override val turnChange = false
     override val result = RamenTastingResult(region)
 }
