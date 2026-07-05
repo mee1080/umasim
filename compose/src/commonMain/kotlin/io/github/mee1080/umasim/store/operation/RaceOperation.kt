@@ -689,7 +689,7 @@ private class CalculateState(
             }.forEach { deferred ->
                 results += deferred.await()
                 progress++
-                if (progress % (progressReportInterval * setCount) == 0) {
+                if (progress % progressReportInterval == 0) {
                     context.send { it.copy(simulationProgress = progress / setCount) }
                     delay(progressReportDelay)
                 }
