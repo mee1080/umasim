@@ -44,7 +44,7 @@ class RaceCalculator(
         val gateNumber = when (umaStatus.gateNumber) {
             0 -> Random.nextInt(1..gateCount)
             -1 -> Random.nextInt(1..((3..6).maxBy { gateNumberToPostNumber[it][gateCount] <= 3 }))
-            -2 -> Random.nextInt(((6..12).maxBy { gateNumberToPostNumber[it][gateCount] >= 6 })..8)
+            -2 -> Random.nextInt(((6..12).maxBy { gateNumberToPostNumber[it][gateCount] >= 6 })..gateCount)
             else -> umaStatus.gateNumber
         }
         val initialLane = gateNumber * horseLane + track.initialLaneAdjuster

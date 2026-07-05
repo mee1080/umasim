@@ -15,9 +15,13 @@ import io.github.mee1080.umasim.store.framework.AsyncOperation
 import io.github.mee1080.umasim.store.framework.DirectOperation
 import io.github.mee1080.umasim.store.framework.OnRunning
 import io.github.mee1080.utility.averageOf
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.currentCoroutineContext
+import kotlinx.coroutines.delay
 import kotlin.math.abs
 import kotlin.math.max
+import kotlin.time.Duration.Companion.milliseconds
 
 private val simulationTag = OnRunning.Tag()
 
@@ -57,7 +61,12 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
     for (chunk in (0 until simulationCount).chunked(chunkSize)) {
         chunk.map { i ->
             scope.async {
-                val result = RaceCalculator(state.systemSetting).simulate(state.setting)
+                val result = runCatching {
+                    RaceCalculator(state.systemSetting).simulate(state.setting)
+                }.onFailure {
+                    it.printStackTrace()
+                }.getOrNull()
+                if (result == null) return@async null
                 val skillMap = createSkillMap(result.second)
                 if (i == 0) {
                     result to skillMap
@@ -66,18 +75,21 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
                 }
             }
         }.forEach { deferred ->
-            val (result, skillMap) = deferred.await()
-            results += result.first
-            skillMap.forEach {
-                skillSummaries[it.key]?.add(it.value)
-            }
-            if (firstRaceState == null) {
-                firstRaceState = result.second
+            val resultWithSkillMap = deferred.await()
+            if (resultWithSkillMap != null) {
+                val (result, skillMap) = resultWithSkillMap
+                results += result.first
+                skillMap.forEach {
+                    skillSummaries[it.key]?.add(it.value)
+                }
+                if (firstRaceState == null) {
+                    firstRaceState = result.second
+                }
             }
             count++
             if (count % progressReportInterval == 0) {
                 send { it.copy(simulationProgress = count) }
-                delay(progressReportDelay)
+                delay(progressReportDelay.milliseconds)
             }
         }
     }
@@ -684,14 +696,21 @@ private class CalculateState(
         for (chunk in (0 until state.simulationCount).chunked(chunkSize)) {
             chunk.map {
                 scope.async {
-                    RaceCalculator(state.systemSetting).simulate(setting).first.raceTime
+                    runCatching {
+                        RaceCalculator(state.systemSetting).simulate(setting).first.raceTime
+                    }.onFailure {
+                        it.printStackTrace()
+                    }.getOrNull()
                 }
             }.forEach { deferred ->
-                results += deferred.await()
+                val result = deferred.await()
+                if (result != null) {
+                    results += result
+                }
                 progress++
                 if (progress % (progressReportInterval * setCount) == 0) {
                     context.send { it.copy(simulationProgress = progress / setCount) }
-                    delay(progressReportDelay)
+                    delay(progressReportDelay.milliseconds)
                 }
             }
         }
