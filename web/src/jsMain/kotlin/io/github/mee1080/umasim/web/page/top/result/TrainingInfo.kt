@@ -384,6 +384,46 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 }
             }
             Div { Text("※計算式： 参加した場合の上昇量 - 試食会なしの上昇量") }
+
+            MdFilledButton("全パターン計算", attrs = {
+                onClick { model.calculateRamenAllPatterns() }
+                style { marginTop(8.px) }
+            })
+
+            if (state.ramenAllTastingImpact.isNotEmpty()) {
+                Div({ style { marginTop(16.px) } }) {
+                    Table({ classes(AppStyle.table) }) {
+                        Tr {
+                            Th { Text("参加サポート") }
+                            Th { Text("追加") }
+                            Th { Text("スピード") }
+                            Th { Text("スタミナ") }
+                            Th { Text("パワー") }
+                            Th { Text("根性") }
+                            Th { Text("賢さ") }
+                            Th { Text("スキルPt") }
+                            Th { Text("体力") }
+                            Th { Text("5ステ合計") }
+                            Th { Text("5ステ+SP") }
+                        }
+                        state.ramenAllTastingImpact.forEach { impact ->
+                            Tr {
+                                Td { Text(impact.participants.joinToString(", ")) }
+                                Td { Text(impact.added) }
+                                Td { Text(impact.impact.speed.toString()) }
+                                Td { Text(impact.impact.stamina.toString()) }
+                                Td { Text(impact.impact.power.toString()) }
+                                Td { Text(impact.impact.guts.toString()) }
+                                Td { Text(impact.impact.wisdom.toString()) }
+                                Td { Text(impact.impact.skillPt.toString()) }
+                                Td { Text(impact.impact.hp.toString()) }
+                                Td { Text(impact.impact.statusTotal.toString()) }
+                                Td { Text(impact.impact.totalPlusSkillPt.toString()) }
+                            }
+                        }
+                    }
+                }
+            }
         }
         if (state.trainingImpact.isNotEmpty()) {
             NestedHideBlock("サポカ影響度") {

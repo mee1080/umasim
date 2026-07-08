@@ -75,6 +75,7 @@ data class State(
     val rawTrainingResult: ExpectedStatus = ExpectedStatus(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val ramenTastingImpact: List<RamenTastingImpact> = emptyList(),
+    val ramenAllTastingImpact: List<RamenAllTastingImpact> = emptyList(),
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
     val friendProbability: Double = 0.0,
@@ -192,6 +193,12 @@ data class State(
 data class RamenTastingImpact(
     val name: String,
     val status: Status,
+    val impact: Status,
+)
+
+data class RamenAllTastingImpact(
+    val participants: List<String>,
+    val added: String,
     val impact: Status,
 )
 
