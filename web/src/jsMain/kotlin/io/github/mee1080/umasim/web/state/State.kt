@@ -22,6 +22,7 @@ import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.climax.MegaphoneItem
 import io.github.mee1080.umasim.scenario.climax.WeightItem
+import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.toMemberState
 import io.github.mee1080.umasim.util.SaveDataConverter
 import io.github.mee1080.umasim.web.page.graph.GraphState
@@ -197,8 +198,8 @@ data class RamenTastingImpact(
 )
 
 data class RamenAllTastingImpact(
-    val participants: List<String>,
-    val added: String,
+    val participants: Set<String>,
+    val added: MemberState,
     val impact: Status,
 )
 

@@ -905,28 +905,28 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             val results = mutableListOf<RamenAllTastingImpact>()
             val n = allSupportList.size
             for (i in 0 until (1 shl n)) {
-                val P = mutableListOf<MemberState>()
+                val baseSupport = mutableListOf<MemberState>()
                 val remaining = mutableListOf<MemberState>()
                 for (j in 0 until n) {
                     if ((i shr j) and 1 == 1) {
-                        P.add(allSupportList[j])
+                        baseSupport.add(allSupportList[j])
                     } else {
                         remaining.add(allSupportList[j])
                     }
                 }
 
-                if (P.size > 4) continue
+                if (baseSupport.size > 4) continue
 
-                val s2Info = baseInfo.copy(member = P, scenarioStatus = noTastingStatus)
+                val s2Info = baseInfo.copy(member = baseSupport, scenarioStatus = noTastingStatus)
                 val s2 = Calculator.calcTrainingSuccessStatusSeparated(
                     s2Info,
                     scenarioCalculator.getScenarioCalcBonus(s2Info)
                 ).let { it.first.first + it.second }
 
-                for (u in remaining) {
-                    if (u.card.type.outingType) continue
+                for (addSupport in remaining) {
+                    if (addSupport.card.type.outingType) continue
 
-                    val s1Info = baseInfo.copy(member = P + u, scenarioStatus = ramenStatus)
+                    val s1Info = baseInfo.copy(member = baseSupport + addSupport, scenarioStatus = ramenStatus)
                     val s1 = Calculator.calcTrainingSuccessStatusSeparated(
                         s1Info,
                         scenarioCalculator.getScenarioCalcBonus(s1Info)
@@ -934,13 +934,14 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
                     results.add(
                         RamenAllTastingImpact(
-                            participants = P.map { it.charaName },
-                            added = u.charaName,
+                            participants = baseSupport.map { it.charaName }.toSet(),
+                            added = addSupport,
                             impact = s1 - s2
                         )
                     )
                 }
             }
+            results.sortByDescending { it.impact.totalPlusSkillPt }
 
             withContext(Dispatchers.Main) {
                 updateState(calculate = false) { it.copy(ramenAllTastingImpact = results) }

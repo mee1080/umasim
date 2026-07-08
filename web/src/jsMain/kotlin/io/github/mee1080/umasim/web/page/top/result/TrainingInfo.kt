@@ -34,6 +34,7 @@ import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
 import io.github.mee1080.utility.roundToString
+import org.jetbrains.compose.web.attributes.colspan
 import org.jetbrains.compose.web.css.*
 import org.jetbrains.compose.web.dom.*
 import kotlin.math.roundToInt
@@ -391,11 +392,22 @@ fun TrainingInfo(model: ViewModel, state: State) {
             })
 
             if (state.ramenAllTastingImpact.isNotEmpty()) {
+                Div { Text("※見にくければExcelとかにコピペして") }
                 Div({ style { marginTop(16.px) } }) {
                     Table({ classes(AppStyle.table) }) {
                         Tr {
-                            Th { Text("参加サポート") }
-                            Th { Text("追加") }
+                            Th({
+                                unsetWidth()
+                                colspan(state.supportSelectionList.count { it.card != null })
+                            }) { Text("初期配置") }
+                        }
+                        Tr {
+                            state.supportSelectionList.forEach { support ->
+                                support.card?.let {
+                                    Th({ unsetWidth() }) { Text(it.chara.first().toString()) }
+                                }
+                            }
+                            Th({ unsetWidth() }) { Text("追加配置") }
                             Th { Text("スピード") }
                             Th { Text("スタミナ") }
                             Th { Text("パワー") }
@@ -408,8 +420,23 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         }
                         state.ramenAllTastingImpact.forEach { impact ->
                             Tr {
-                                Td { Text(impact.participants.joinToString(", ")) }
-                                Td { Text(impact.added) }
+                                state.supportSelectionList.forEach { support ->
+                                    support.card?.let {
+                                        Th({ unsetWidth() }) {
+                                            val mark = if (impact.participants.contains(it.chara)) {
+                                                if (it.type == state.selectedTrainingType) "◎" else "◯"
+                                            } else "-"
+                                            Text(mark)
+                                        }
+                                    }
+                                }
+                                Td({
+                                    unsetWidth()
+                                    style { textAlign("left") }
+                                }) {
+                                    val mark = if (impact.added.card.type == state.selectedTrainingType) "◎" else ""
+                                    Text(mark + impact.added.charaName)
+                                }
                                 Td { Text(impact.impact.speed.toString()) }
                                 Td { Text(impact.impact.stamina.toString()) }
                                 Td { Text(impact.impact.power.toString()) }
