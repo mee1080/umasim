@@ -182,6 +182,9 @@ fun SimulationStateBlock(state: SimulationState) {
         state.bcStatus?.let {
             BCStateBlock(it)
         }
+        state.ramenStatus?.let {
+            RamenStateBlock(it)
+        }
         HideBlock("サポートカード") {
             state.support.forEach {
                 MemberState(it)

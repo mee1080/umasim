@@ -64,10 +64,15 @@ fun SelectionBlock(
         }
         selection.forEachIndexed { index, action ->
             val uafStatus = state.uafStatus
+            val ramenStatus = state.ramenStatus
             val (actionName, uafAthletic, uafAthleticLevel) = if (uafStatus != null && action is Training) {
                 val athletic = uafStatus.trainingAthletics[action.type]!!
                 val level = uafStatus.athleticsLevel[athletic]!!
                 Triple("トレーニング(${action.type.displayName}/${athletic.longDisplayName}Lv$level)", athletic, level)
+            } else if (ramenStatus != null && action is Training) {
+                val tip = ramenStatus.trainingTip[action.type]
+                val suffix = if (tip != null) " / ${tip.displayName}" else ""
+                Triple("トレーニング(${action.type.displayName}$suffix)", null, 0)
             } else Triple(action.name, null, 0)
             Card({
                 style {
@@ -96,6 +101,7 @@ fun SelectionBlock(
                         CookMaterialInfo(action)
                         LegendInfo(action)
                         OnsenInfo(action)
+                        RamenInfo(action)
                     }
 
                     is Race -> {
@@ -103,6 +109,7 @@ fun SelectionBlock(
                         LegendInfo(action)
                         MujintoInfo(action)
                         OnsenInfo(action)
+                        RamenInfo(action)
                         StatusTable(action.result.status)
                     }
 
@@ -120,6 +127,7 @@ fun SelectionBlock(
                         CookMaterialInfo(action)
                         LegendInfo(action)
                         OnsenInfo(action)
+                        RamenInfo(action)
                     }
 
                     is Training -> {
@@ -129,6 +137,7 @@ fun SelectionBlock(
                         MujintoInfo(action)
                         OnsenInfo(action)
                         BCInfo(action)
+                        RamenInfo(action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -244,9 +253,47 @@ fun SelectionBlock(
 
                     is BCTeamParameterUp -> {}
 
-                    is RamenSelectRegion -> {}
+                    is RamenSelectRegion -> {
+                        val reg = action.region
+                        Div {
+                            Text("試食コスト - 麺: ${reg.noodle}, スープ: ${reg.soup}, トッピング: ${reg.topping}")
+                        }
+                        Div {
+                            val effects = buildList {
+                                if (reg.targetTypes.isNotEmpty()) add("対象：${reg.targetTypes.joinToString("/") { it.displayName }}")
+                                if (reg.trainingEffect > 0) add("トレーニング効果: +${reg.trainingEffect}%")
+                                if (reg.skillPtTrainingEffect > 0) add("スキルPt効果: +${reg.skillPtTrainingEffect}%")
+                                if (reg.friendBonus > 0) add("友情ボーナス: +${reg.friendBonus}%")
+                                if (reg.hintCount > 0) add("ヒント獲得数: +${reg.hintCount}")
+                                if (reg.addMember > 0) add("サポカ追加配置: +${reg.addMember}")
+                                if (reg.targetAll) add("全トレーニング対象")
+                                if (reg.targetStatusLimitOver > 0) add("上限突破: +${reg.targetStatusLimitOver}")
+                                if (reg.hintSkill.isNotEmpty()) add("スキルヒント: ${reg.hintSkill}")
+                            }
+                            Text("試食効果：${effects.joinToString(", ")}")
+                        }
+                    }
 
-                    is RamenTasting -> {}
+                    is RamenTasting -> {
+                        val reg = action.region
+                        Div {
+                            Text("試食コスト - 麺: ${reg.noodle}, スープ: ${reg.soup}, トッピング: ${reg.topping}")
+                        }
+                        Div {
+                            val effects = buildList {
+                                if (reg.targetTypes.isNotEmpty()) add("対象：${reg.targetTypes.joinToString("/") { it.displayName }}")
+                                if (reg.trainingEffect > 0) add("トレーニング効果: +${reg.trainingEffect}%")
+                                if (reg.skillPtTrainingEffect > 0) add("スキルPt効果: +${reg.skillPtTrainingEffect}%")
+                                if (reg.friendBonus > 0) add("友情ボーナス: +${reg.friendBonus}%")
+                                if (reg.hintCount > 0) add("ヒント獲得数: +${reg.hintCount}")
+                                if (reg.addMember > 0) add("サポカ追加配置: +${reg.addMember}")
+                                if (reg.targetAll) add("全トレーニング対象")
+                                if (reg.targetStatusLimitOver > 0) add("上限突破: +${reg.targetStatusLimitOver}")
+                                if (reg.hintSkill.isNotEmpty()) add("スキルヒント: ${reg.hintSkill}")
+                            }
+                            Text("試食効果：${effects.joinToString(", ")}")
+                        }
+                    }
                 }
                 val targetAiScore = aiScore.getOrNull(index)
                 if (aiSelection == action || targetAiScore != null) {
@@ -346,5 +393,20 @@ private fun BCInfo(action: Action) {
         Text(param.member.joinToString(", ") {
             "${it.charaName} ${it.memberRankString} ${it.dreamGauge}/3"
         })
+    }
+}
+
+@Composable
+private fun RamenInfo(action: Action) {
+    val param = action.candidates.firstOrNull { it.first.success }
+        ?.first?.scenarioActionParam as? RamenActionParam ?: return
+    Div {
+        val list = buildList {
+            if (param.noodleGauge > 0) add("麺ゲージ: +${param.noodleGauge}")
+            if (param.soupGauge > 0) add("スープゲージ: +${param.soupGauge}")
+            if (param.toppingGauge > 0) add("トッピングゲージ: +${param.toppingGauge}")
+            if (param.hiddenTaste > 0) add("隠し味: +${param.hiddenTaste}")
+        }
+        Text(list.joinToString(", "))
     }
 }

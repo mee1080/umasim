@@ -69,7 +69,7 @@ class Simulator(
             fanCount = 1,
         ) + chara.initialStatus + supportCardList
             .map { target -> target.initialStatus(supportCardList.map { it.type }) }
-            .reduce { acc, status -> acc + status },
+            .fold(Status()) { acc, status -> acc + status },
         supportCount = supportCardList.groupBy { it.type }.mapValues { it.value.size },
         totalRaceBonus = supportCardList.sumOf { it.race },
         totalFanBonus = supportCardList.sumOf { it.fan },
