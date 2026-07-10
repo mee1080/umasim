@@ -57,7 +57,7 @@ data class RamenStatus(
             RamenTipType.SOUP, RamenTipType.SOUP,
             RamenTipType.TOPPING, RamenTipType.TOPPING,
         ).shuffled()
-        val newTrainingTip = (0..5).associate {
+        val newTrainingTip = trainingType.indices.associate {
             trainingType[it] to tipList[it]
         }
         return copy(trainingTip = newTrainingTip)
