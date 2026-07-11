@@ -20,42 +20,40 @@
  * This file was ported from uma-clock-emu by Romulus Urakagi Tsai(@urakagi)
  * https://github.com/urakagi/uma-clock-emu
  */
+@file:Suppress("unused")
+
 package io.github.mee1080.umasim.race
 
+import io.github.mee1080.umasim.race.calc2.RaceSetting
+import io.github.mee1080.umasim.race.calc2.RandomEntry
+import io.github.mee1080.umasim.race.calc2.checkCondition
 import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.race.data.calcBaseWisdomSkillBuff
 import io.github.mee1080.umasim.race.data.getWisdomSkillBuff
+import io.github.mee1080.umasim.race.data.trackData
+import io.github.mee1080.umasim.race.data2.loadLocalSkillData
+import io.github.mee1080.umasim.race.data2.skillData2
 import io.github.mee1080.utility.roundToString
+import kotlin.math.max
+import kotlin.math.min
 
 fun main() {
-//    skillData.forEach {
-//        println("${it.implemented} : ${it.rarity} ${it.displayType} ${it.name}")
-//    }
-//    skillData2.forEach {
-//        println(it)
-//    }
-//    testCalc()
-//    testCalc2()
-//    trackData.forEach { (_, course) ->
-//        course.courses.forEach { (_, track) ->
-//            val start = track.distance * 5.0 / 12.0
-//            val end = track.distance * 2.0 / 3.0
-//            val targets = track.straights.filter { (it.start <= end && it.end >= start) }
-//            if (targets.count() >= 2) {
-//                println("${course.name} ${track.name}")
-//                println("  中盤後半 $start ～ $end")
-//                val lengthList = mutableListOf<Double>()
-//                targets.forEach {
-//                    val length = min(it.end, end) - max(it.start, start)
-//                    lengthList += length
-//                    println("　  ${it.start} ～ ${it.end} $length")
-//                }
-//                val diff = lengthList.max() / lengthList.min()
-//                println("  diff $diff")
-//                println()
-//            }
-//        }
-//    }
+    checkSkillImplementation()
+}
+
+private fun checkSkillImplementation() {
+    loadLocalSkillData()
+    val setting = RaceSetting()
+    val calculatedAreas = mutableMapOf<String, List<RandomEntry>>()
+    skillData2.forEach { skill ->
+        skill.invokes.forEach { invoke ->
+            checkCondition(skill, invoke.preConditions, setting, calculatedAreas)
+            checkCondition(skill, invoke.conditions, setting, calculatedAreas)
+        }
+    }
+}
+
+private fun checkWisdomSkillBuff() {
     val styles = listOf(Style.NIGE, Style.SEN, Style.SASI, Style.OI)
     for (wisdom in 1201..2501 step 20) {
         val base = calcBaseWisdomSkillBuff(wisdom)
@@ -66,6 +64,32 @@ fun main() {
         for (wisdom in 1200..2500 step 10) {
             val buffs = styles.map { getWisdomSkillBuff(wisdom, it)[phase]!! + 1.0 }
             println("$wisdom\t${buffs.joinToString("\t") { it.roundToString(3) }}")
+        }
+    }
+}
+
+private fun outputData() {
+    skillData2.forEach {
+        println(it)
+    }
+    trackData.forEach { (_, course) ->
+        course.courses.forEach { (_, track) ->
+            val start = track.distance * 5.0 / 12.0
+            val end = track.distance * 2.0 / 3.0
+            val targets = track.straights.filter { (it.start <= end && it.end >= start) }
+            if (targets.count() >= 2) {
+                println("${course.name} ${track.name}")
+                println("  中盤後半 $start ～ $end")
+                val lengthList = mutableListOf<Double>()
+                targets.forEach {
+                    val length = min(it.end, end) - max(it.start, start)
+                    lengthList += length
+                    println("　  ${it.start} ～ ${it.end} $length")
+                }
+                val diff = lengthList.max() / lengthList.min()
+                println("  diff $diff")
+                println()
+            }
         }
     }
 }

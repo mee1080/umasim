@@ -20,6 +20,12 @@ suspend fun loadSkillData() {
     skillData2 = jsonParser.decodeFromString<List<SkillData>>(skillDataString)
 }
 
+expect fun loadLocalSkillDatatring(): String
+
+fun loadLocalSkillData() {
+    skillData2 = jsonParser.decodeFromString<List<SkillData>>(loadLocalSkillDatatring())
+}
+
 lateinit var skillData2: List<SkillData>
     private set
 
@@ -222,6 +228,9 @@ val approximateConditions = mapOf(
         "後ろのウマ娘掛かり(トリック&トリートなど、自身への効果のみ反映)",
         0.07, 0.20,
     ),
+    "is_other_character_activate_advantage_skill-1" to ApproximateRandomRates(
+        "他のウマ娘がスキル発動(想い束ね、前へ)", listOf(1 to 0.9),
+    ),
     "is_other_character_activate_advantage_skill22" to ApproximateMultiCondition(
         "他のウマ娘が速度スキル発動(後の先など)",
         listOf(
@@ -354,6 +363,8 @@ val ignoreConditions = mapOf(
     "activate_count_all_team" to "チームのスキル発動数条件は無視",
 
     "fan_count" to "ファン数は満たす前提",
+
+    "is_used_skill_id_with_detail_one" to "前提スキルは強い方の発動が前提",
 )
 
 @Serializable
@@ -570,8 +581,22 @@ data class Invoke(
         return totalEffect(state, "acceleration") / 10000.0
     }
 
-    fun rareSkill(state: RaceState): Double {
-        return totalEffect(state, "rareSkill") / 10000.0
+    fun invokeOtherSkill(state: RaceState): List<SkillData> {
+        return buildList {
+            val coolDownMap = state.simulation.coolDownMap
+            val rare = totalEffect(state, "invokeRare").toInt() / 10000
+            if (rare > 0) {
+                state.setting.umaStatus.hasSkills.filter { skill ->
+                    (skill.rarity == "rare" || skill.rarity == "evo") && skill.invokes.all { !coolDownMap.containsKey(it.coolDownId) }
+                }.shuffled().take(rare).forEach { add(it) }
+            }
+            val unique = totalEffect(state, "invokeUnique").toInt() / 10000
+            if (unique > 0) {
+                state.setting.umaStatus.hasSkills.filter { skill ->
+                    skill.rarity == "unique"
+                }.shuffled().take(unique).forEach { add(it) }
+            }
+        }
     }
 
     fun totalSpeed(state: RaceState): Double {

@@ -31,7 +31,7 @@ val trackData by lazy {
     Json.decodeFromString<Map<Int, RaceTrack>>(rawCourseData)
 }
 
-private lateinit var recentEventTrackData: List<Pair<String, Track>>
+private var recentEventTrackData: List<Pair<String, Track>> = emptyList()
 
 val recentEventTrackList by lazy {
     recentEventTrackData.map { it.second }

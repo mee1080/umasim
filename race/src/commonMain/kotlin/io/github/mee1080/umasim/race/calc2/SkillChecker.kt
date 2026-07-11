@@ -110,6 +110,8 @@ private fun checkCondition(
         "is_dirtgrade" -> condition.preChecked(if (baseSetting.trackDetail.isDirtGrade) 1 else 0)
         "is_basis_distance" -> condition.preChecked(baseSetting.trackDetail.isBasisDistance)
         "distance_rate" -> condition.checkInRace { (simulation.position * 100.0 / baseSetting.courseLength).toInt() }
+        "is_abroad" -> condition.preChecked(if (baseSetting.track.location >= 10200) 1 else 0)
+
         "phase_random" -> checkInRandom(calculatedAreas, condition.type + condition.value) {
             baseSetting.initPhaseRandom(condition.value)
         }
@@ -252,7 +254,8 @@ private fun checkCondition(
 
         "temptation_opponent_count_behind" -> condition.checkSpecialState()
 
-        "is_other_character_activate_advantage_skill" -> condition.withAssert("==") {
+        "is_other_character_activate_advantage_skill",
+        "is_popularity_top_character_activate_advantage_skill" -> condition.withAssert("==") {
             val key = "is_other_character_activate_advantage_skill${condition.value}"
             { (simulation.specialState[key] ?: 0) > 0 }
         }
@@ -276,6 +279,10 @@ private fun checkCondition(
         "furlong" -> condition.checkInRace { (simulation.startPosition / 200.0).toInt() }
 
         "is_used_skill_id" -> {
+            { simulation.coolDownMap.containsKey(condition.value.toString()) }
+        }
+
+        "is_used_skill_id_with_detail_one" -> {
             { simulation.coolDownMap.containsKey(condition.value.toString()) }
         }
 
@@ -526,7 +533,7 @@ fun RaceState.checkSkillTrigger(): List<TriggeredSkill> {
     return skillTriggered
 }
 
-fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
+fun RaceState.triggerSkill(skill: InvokedSkill): List<TriggeredSkill> {
     val (heal, waste) = if (skill.invoke.isHeal) {
         doHeal(skill.invoke.heal(this))
     } else null to null
@@ -559,12 +566,17 @@ fun RaceState.triggerSkill(skill: InvokedSkill): TriggeredSkill {
     }
     simulation.skillTriggerCount.increment(this)
     simulation.coolDownMap[skill.invoke.coolDownId] = simulation.frameElapsed
-    return TriggeredSkill(
-        invoke = skill,
-        operating = operating,
-        heal = heal,
-        waste = waste,
-    )
+    val otherSkills = skill.invoke.invokeOtherSkill(this).flatMap {
+        triggerSkill(InvokedSkill(it, it.invokes.first(), { true }, { true }))
+    }
+    return listOf(
+        TriggeredSkill(
+            invoke = skill,
+            operating = operating,
+            heal = heal,
+            waste = waste,
+        )
+    ) + otherSkills
 }
 
 fun RaceState.doHeal(value: Double): Pair<Double, Double> {
