@@ -1,17 +1,15 @@
 package io.github.mee1080.umasim.compose
 
-import androidx.compose.foundation.VerticalScrollbar
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.rememberScrollbarAdapter
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import io.github.mee1080.umasim.BuildKonfig
 import io.github.mee1080.umasim.compose.common.atoms.MyButton
 import io.github.mee1080.umasim.compose.common.atoms.TextWithLink
@@ -27,6 +25,7 @@ import io.github.mee1080.umasim.store.AppState
 import io.github.mee1080.umasim.store.framework.OperationDispatcher
 import io.github.mee1080.umasim.store.framework.StateHolder
 import io.github.mee1080.umasim.store.loadSetting
+import kotlinx.coroutines.joinAll
 import kotlinx.coroutines.launch
 
 @Composable
@@ -40,9 +39,7 @@ fun App() {
         listOf(
             launch(asyncDispatcher) { loadRecentEventTrackList() },
             launch(asyncDispatcher) { loadSkillData() },
-        ).forEach {
-            it.join()
-        }
+        ).joinAll()
         loading = false
     }
     AppTheme(loading, darkTheme = false) {
@@ -54,7 +51,7 @@ fun App() {
         val state = stateHolder.state.collectAsState().value
 
         val scrollState = rememberScrollState()
-        Row(Modifier.fillMaxSize()) {
+        Row(Modifier.fillMaxSize().background(Color.White)) {
             Column(
                 modifier = Modifier.fillMaxHeight().weight(1f).verticalScroll(scrollState),
             ) {
