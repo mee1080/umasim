@@ -114,20 +114,35 @@ object RamenCalculator : ScenarioCalculator {
     ): Array<Action> {
         val status = state.ramenStatus ?: return emptyArray()
         if (state.turn >= 73) return emptyArray()
-        val availableTasting = status.selectedRegions.filter { region ->
-            val tips = status.tips
+        val tips = status.tips
 
-            fun canAfford(type: RamenTipType, amount: Int): Int {
-                return (amount - (tips[type] ?: 0)).coerceAtLeast(0)
-            }
-
-            val neededHidden = canAfford(RamenTipType.NOODLE, region.noodle) +
-                    canAfford(RamenTipType.SOUP, region.soup) +
-                    canAfford(RamenTipType.TOPPING, region.topping)
-
-            status.hiddenTips >= neededHidden
+        fun canAfford(type: RamenTipType, amount: Int): Int {
+            return (amount - (tips[type] ?: 0)).coerceAtLeast(0)
         }
-        return availableTasting.map { RamenTasting(it) }.toTypedArray()
+
+        val actions = mutableListOf<Action>()
+        for (region in status.selectedRegions) {
+            for (cn in 0..region.noodle) {
+                for (cs in 0..region.soup) {
+                    for (ct in 0..region.topping) {
+                        if (cn + cs + ct > 2) continue
+                        val neededHidden = cn + cs + ct +
+                                canAfford(RamenTipType.NOODLE, region.noodle - cn) +
+                                canAfford(RamenTipType.SOUP, region.soup - cs) +
+                                canAfford(RamenTipType.TOPPING, region.topping - ct)
+                        if (status.hiddenTips >= neededHidden) {
+                            val changeHiddenList = buildList {
+                                repeat(cn) { add(RamenTipType.NOODLE) }
+                                repeat(cs) { add(RamenTipType.SOUP) }
+                                repeat(ct) { add(RamenTipType.TOPPING) }
+                            }
+                            actions.add(RamenTasting(region, changeHiddenList))
+                        }
+                    }
+                }
+            }
+        }
+        return actions.toTypedArray()
     }
 
     override fun modifyShuffledMember(
@@ -203,7 +218,7 @@ object RamenCalculator : ScenarioCalculator {
         val ramenStatus = state.ramenStatus ?: return state
         val region = result.region
         var newState = state.updateRamenStatus {
-            activateTasting(region)
+            activateTasting(region, result.changeHiddenTips)
         }
 
         // relationGauge: 絆上昇

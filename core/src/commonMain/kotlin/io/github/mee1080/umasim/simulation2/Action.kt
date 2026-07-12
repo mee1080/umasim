@@ -651,12 +651,20 @@ data class RamenSelectRegion(
 
 data class RamenTastingResult(
     val region: RamenRegion,
+    val changeHiddenTips: List<RamenTipType> = emptyList(),
 ) : RamenActionResult
 
 data class RamenTasting(
     val region: RamenRegion,
+    val changeHiddenTips: List<RamenTipType> = emptyList(),
 ) : SingleAction {
     override val name = "試食会: ${region.displayName}"
     override val turnChange = false
-    override val result = RamenTastingResult(region)
+    override val result = RamenTastingResult(region, changeHiddenTips)
+    override fun infoToString(): String {
+        if (changeHiddenTips.isEmpty()) return ""
+        val counts = changeHiddenTips.groupingBy { it }.eachCount()
+        val parts = counts.map { "${it.key.displayName}${it.value}変更" }
+        return "(${parts.joinToString(", ")})"
+    }
 }
