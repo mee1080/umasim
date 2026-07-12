@@ -36,7 +36,9 @@ import io.github.mee1080.umasim.scenario.ramen.RamenStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 
-interface ScenarioStatus
+interface ScenarioStatus {
+    fun toShortString(): String = ""
+}
 
 data class SimulationState(
     val scenario: Scenario,

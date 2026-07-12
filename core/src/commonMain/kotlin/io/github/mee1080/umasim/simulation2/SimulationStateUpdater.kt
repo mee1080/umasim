@@ -951,8 +951,12 @@ fun SimulationState.addNextTurnSpecialityRateUpAll(rate: Int): SimulationState {
     return copy(member = member.map { it.addNextTurnSpecialityRateUp(rate) })
 }
 
-fun SimulationState.addRandomSupportHint(): SimulationState {
-    val target = support.filter { !it.outingType }.randomOrNull() ?: return this
+fun SimulationState.addRandomSupportHint(
+    targetTypes: List<StatusType>? = null,
+): SimulationState {
+    val target = support.filter {
+        !it.outingType && (targetTypes == null || targetTypes.contains(it.card.type))
+    }.randomOrNull() ?: return this
     return addStatus(target.selectHint(status))
 }
 

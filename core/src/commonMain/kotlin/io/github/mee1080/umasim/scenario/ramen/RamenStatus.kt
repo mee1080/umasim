@@ -28,14 +28,24 @@ data class RamenStatus(
         RamenTipType.NOODLE to 0,
         RamenTipType.SOUP to 0,
         RamenTipType.TOPPING to 0,
-        RamenTipType.HIDDEN to 0
     ),
+    val hiddenTips: Int = 0,
     val tipHistory: List<RamenTipType> = emptyList(),
     val excitementPt: Int = 0,
     val activeTastingRegion: Pair<RamenRegion, Int>? = null,
     val trainingTip: Map<StatusType, RamenTipType> = emptyMap(),
     val rmjBonus: RamenBaseBonus = RamenBaseBonus(0, 0, 0, 0),
 ) : ScenarioStatus {
+
+    override fun toShortString() = buildString {
+        append("地域選択: ${selectedRegions.joinToString(",") { it.regionName }}")
+        append("(${baseGauge.noodleGauge}/${baseGauge.soupGauge}/${baseGauge.toppingGauge})")
+        append(", ゲージ: ${gauges.values.joinToString("/")}")
+        append(", コツ: ${tips.values.joinToString("/")}")
+        append(", 隠し味: $hiddenTips")
+        append(", 盛り上がりPt: $excitementPt")
+        append(", 試食会: ${activeTastingRegion?.first?.regionName ?: "なし"}")
+    }
 
     val period = (turn - 1) / 24
 
@@ -67,8 +77,6 @@ data class RamenStatus(
         return copy(
             selectedRegions = emptyList(),
             gauges = gauges.map { it.key to 0 }.toMap(),
-            tips = tips.map { it.key to 0 }.toMap(),
-            tipHistory = emptyList(),
             excitementPt = 0,
         )
     }
@@ -104,9 +112,7 @@ data class RamenStatus(
             val newHistory = tipHistory - type
             return copy(tips = newTips, tipHistory = newHistory)
         } else {
-            val newTips = tips.toMutableMap()
-            newTips[RamenTipType.HIDDEN] = (newTips[RamenTipType.HIDDEN]!!) - 1
-            return copy(tips = newTips)
+            return addHiddenTips(-1)
         }
     }
 
@@ -127,10 +133,8 @@ data class RamenStatus(
             .addGauge(RamenTipType.TOPPING, topping)
     }
 
-    fun addHiddenTaste(amount: Int): RamenStatus {
-        val newTips = tips.toMutableMap()
-        newTips[RamenTipType.HIDDEN] = minOf(4, (newTips[RamenTipType.HIDDEN] ?: 0) + amount)
-        return copy(tips = newTips)
+    fun addHiddenTips(amount: Int): RamenStatus {
+        return copy(hiddenTips = min(4, hiddenTips + amount))
     }
 
     fun activateTasting(region: RamenRegion): RamenStatus {

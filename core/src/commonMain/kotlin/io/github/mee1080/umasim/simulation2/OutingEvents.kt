@@ -10,6 +10,7 @@ import io.github.mee1080.umasim.scenario.legend.LegendMember
 import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
 import io.github.mee1080.umasim.scenario.onsen.updateOnsenStatus
+import io.github.mee1080.umasim.scenario.ramen.updateRamenStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
 import kotlin.math.min
@@ -119,8 +120,12 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
         }
 
         "駿川たづな" -> {
-            // TODO 新サポカ前提
-            this
+            // 新サポカ前提
+            if (isFirst) {
+                applyFriendEvent(target, Status(power = 5, guts = 5, skillPt = 5, motivation = 1, maxHp = 4), 15, 1)
+            } else if (Random.nextDouble() < 0.4) {
+                applyFriendEvent(target, Status(skillPt = 7), 5)
+            } else this
         }
 
         else -> this
@@ -438,8 +443,64 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
         }
 
         "駿川たづな" -> {
-            // TODO 新サポカ前提
-            this
+            //  新サポカ前提
+            when (step) {
+                1 -> applyFriendEvent(
+                    support,
+                    if (status.maxHp - status.hp >= 15) Status(
+                        hp = 25, wisdom = 5, skillPt = 5, motivation = 1,
+                    ) else Status(
+                        speed = 5, wisdom = 5, skillPt = 5, motivation = 1,
+                        skillHint = mapOf("心惹かれて" to 5),
+                    ),
+                    5, 2,
+                ).copy(condition = condition + "リフレッシュの心得")
+
+                2 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
+                        hp = 35, motivation = 1, maxHp = 4
+                    ),
+                    5, 3,
+                ).updateRamenStatus { addHiddenTips(2) }
+
+                3 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 10, guts = 10, skillPt = 10, hp = 30, motivation = 1,
+                        skillHint = mapOf("遊びはおしまいっ！" to 2),
+                    ),
+                    5, 4,
+                ).updateRamenStatus { addHiddenTips(2) }
+
+                4 -> applyFriendEvent(
+                    support,
+                    if (status.maxHp - status.hp > 20) {
+                        Status(hp = 50, motivation = 1)
+                    } else {
+                        Status(speed = 10, power = 10, guts = 10, skillPt = 20, motivation = 1)
+                    },
+                    5, 5,
+                ).updateRamenStatus { addHiddenTips(2) }
+
+                5 -> applyFriendEvent(
+                    support,
+                    Status(stamina = 15, skillPt = 10, hp = 30, motivation = 1),
+                    5, 6,
+                ).updateRamenStatus { addHiddenTips(2) }
+
+                6 -> applyFriendEvent(
+                    support,
+                    Status(
+                        speed = 10, stamina = 10, power = 10, skillPt = 10,
+                        hp = 40, motivation = 1, skillHint = mapOf("お先に失礼っ！" to 3),
+                    ),
+                    5, 7,
+                ).updateRamenStatus { addHiddenTips(2) }
+
+                else -> this
+            }
         }
 
         else -> this
@@ -510,10 +571,14 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                 5, 0,
             )
 
-            "駿川たづな" -> {
-                // TODO 新サポカ前提
-                this
-            }
+            "駿川たづな" -> state.applyFriendEvent(
+                support,
+                Status(
+                    speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5, motivation = 1,
+                    skillHint = mapOf("中盤巧者" to 3),
+                ),
+                5, 0,
+            )
 
             else -> this
         }
@@ -555,10 +620,10 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 0, 0,
             )
 
-            "駿川たづな" -> {
-                // TODO 新サポカ前提
-                this
-            }
+            "駿川たづな" -> state.applyFriendEvent(
+                support, Status(speed = 15, stamina = 15, wisdom = 15, skillPt = 50),
+                0, 0,
+            )
 
             else -> this
         }

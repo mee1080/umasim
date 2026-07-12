@@ -55,7 +55,6 @@ abstract class RamenCalculatorTest(
                 RamenTipType.NOODLE to noodle,
                 RamenTipType.SOUP to soup,
                 RamenTipType.TOPPING to topping,
-                RamenTipType.HIDDEN to hidden
             )
         )
     }

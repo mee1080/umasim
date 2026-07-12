@@ -43,7 +43,7 @@ data class UafStatus(
             .mapValues { it.value.associateBy { it.level } }
     }
 
-    fun toShortString() = buildString {
+    override fun toShortString() = buildString {
         append("UafStatus(festivalBonus=")
         append(festivalBonus)
         append(", consultCount=")

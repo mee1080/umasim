@@ -236,7 +236,7 @@ data class MujintoStatus(
         } ?: 0
     )
 
-    fun toShortString() = buildString {
+    override fun toShortString() = buildString {
         append("施設：")
         trainingType.forEach {
             val facility = facilities[it]

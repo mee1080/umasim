@@ -30,7 +30,7 @@ data class GmStatus(
     val wisdomLevel: Map<Founder, Int> = Founder.entries.associateWith { 0 },
     val fragmentCount: Map<StatusType, Int> = trainingTypeOrSkill.associateWith { 0 },
 ) : ScenarioStatus {
-    fun toShortString() = buildString {
+    override fun toShortString() = buildString {
         append(knowledgeTable1.joinToString { it.toShortString() })
         append(" : ")
         append(knowledgeTable2.joinToString { it.toShortString() })

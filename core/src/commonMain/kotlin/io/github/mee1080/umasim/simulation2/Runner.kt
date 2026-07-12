@@ -225,6 +225,15 @@ object Runner {
         StatusType.SKILL to (2.0 to 12000),
     )
 
+    val ramenSetting = mapOf(
+        StatusType.SPEED to (1.0 to 3100),
+        StatusType.STAMINA to (1.0 to 2400),
+        StatusType.POWER to (1.0 to 2200),
+        StatusType.GUTS to (1.0 to 2200),
+        StatusType.WISDOM to (1.0 to 2400),
+        StatusType.SKILL to (2.0 to 12000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,

@@ -203,3 +203,48 @@ fun compareSelector(
     }
     println("finished ${LocalDateTime.now()}")
 }
+
+fun debugSimulation(
+    scenario: Scenario,
+    chara: Chara,
+    support: List<SupportCard>,
+    factor: List<Pair<StatusType, Int>>,
+    selector: () -> ActionSelector,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
+    events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+) {
+    val result = runBlocking {
+        Simulator(scenario, chara, support, factor)
+            .simulateWithHistory(selector(), scenarioEvents, events)
+    }
+    result.second.forEachIndexed { index, history ->
+        println()
+        println("ターン ${index + 1}:")
+        println("  開始時: ${history.beforeActionState.status.toShortString()}")
+        println("  トレLv: ${history.beforeActionState.training.map { "${it.type}${it.level} " }}")
+        println("  シナリオ: ${history.beforeActionState.scenarioStatus?.toShortString()}")
+        history.selections.forEach { (selection, selectedAction, result) ->
+            println()
+            selection.forEach { action ->
+                println("  ・${action.name}")
+                val total = action.candidates.sumOf { it.second } / 100.0
+                action.candidates.forEach {
+                    println("    ${it.second / total}% ${it.first}")
+                }
+                action.infoToString().split("/").forEach {
+                    if (it.isNotEmpty()) println("    $it")
+                }
+                println()
+            }
+            println("  -> ${selectedAction.name}")
+            if (selectedAction is MultipleAction) {
+                println("     結果: $result")
+            }
+        }
+        println()
+        println("  終了時: ${(history.afterTurnState.status).toShortString()}")
+        println("  シナリオ: ${history.afterTurnState.scenarioStatus?.toShortString()}")
+    }
+    println(result.first)
+    println(result.first.status.toShortString())
+}

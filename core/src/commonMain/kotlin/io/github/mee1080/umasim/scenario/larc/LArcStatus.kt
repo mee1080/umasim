@@ -111,7 +111,7 @@ data class LArcStatus(
 
     val ssMatchMember: Set<MemberState> = emptySet(),
 ) : ScenarioStatus {
-    fun toShortString() =
+    override fun toShortString() =
         "LArcStatus(SupporterPt=$supporterPt/$memberSupporterPt, expectationLevel=$expectationLevel aptitudePt=$aptitudePt, ssMatch=$ssMatchCount/$totalSSMatchCount/$isSSSMatch, aptitude=$overseasTurfAptitude/$longchampAptitude/$lifeRhythm/$nutritionManagement/$frenchSkill/$overseasExpedition/$strongHeart/$mentalStrength/$hopeOfLArc/$consecutiveVictories)"
 
     val expectationLevel get() = (supporterPt + memberSupporterPt) / 1700

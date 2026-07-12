@@ -42,6 +42,7 @@ import io.github.mee1080.umasim.scenario.onsen.StratumType
 import io.github.mee1080.umasim.scenario.ramen.RamenRegion
 import io.github.mee1080.umasim.scenario.ramen.RamenTipType
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
+import io.github.mee1080.utility.applyIf
 
 sealed interface Action {
     val name: String
@@ -616,21 +617,20 @@ data class RamenActionParam(
     val noodleGauge: Int = 0,
     val soupGauge: Int = 0,
     val toppingGauge: Int = 0,
-    val hiddenTaste: Int = 0,
 ) : ScenarioActionParam {
-    override fun toShortString() = buildList {
-        if (noodleGauge > 0) add("麺:$noodleGauge")
-        if (soupGauge > 0) add("スープ:$soupGauge")
-        if (toppingGauge > 0) add("トッピング:$toppingGauge")
-        if (hiddenTaste > 0) add("隠し味:$hiddenTaste")
-    }.joinToString(", ")
+    override fun toShortString() = "$noodleGauge/$soupGauge/$toppingGauge"
 
-    fun add(type: RamenTipType): RamenActionParam {
-        return when (type) {
-            RamenTipType.NOODLE -> copy(noodleGauge = noodleGauge + 2)
-            RamenTipType.SOUP -> copy(soupGauge = soupGauge + 2)
-            RamenTipType.TOPPING -> copy(toppingGauge = toppingGauge + 2)
-            else -> this
+    fun add(tipType: RamenTipType, value: Int, friend: Boolean): RamenActionParam {
+        return when (tipType) {
+            RamenTipType.NOODLE -> copy(noodleGauge = noodleGauge + value)
+            RamenTipType.SOUP -> copy(soupGauge = soupGauge + value)
+            RamenTipType.TOPPING -> copy(toppingGauge = toppingGauge + value)
+        }.applyIf(friend) {
+            copy(
+                noodleGauge = noodleGauge + 2,
+                soupGauge = soupGauge + 2,
+                toppingGauge = toppingGauge + 2,
+            )
         }
     }
 }

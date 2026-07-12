@@ -402,10 +402,9 @@ private fun RamenInfo(action: Action) {
         ?.first?.scenarioActionParam as? RamenActionParam ?: return
     Div {
         val list = buildList {
-            if (param.noodleGauge > 0) add("麺ゲージ: +${param.noodleGauge}")
-            if (param.soupGauge > 0) add("スープゲージ: +${param.soupGauge}")
-            if (param.toppingGauge > 0) add("トッピングゲージ: +${param.toppingGauge}")
-            if (param.hiddenTaste > 0) add("隠し味: +${param.hiddenTaste}")
+            if (param.noodleGauge > 0) add("麺: +${param.noodleGauge}")
+            if (param.soupGauge > 0) add("スープ: +${param.soupGauge}")
+            if (param.toppingGauge > 0) add("トッピング: +${param.toppingGauge}")
         }
         Text(list.joinToString(", "))
     }
