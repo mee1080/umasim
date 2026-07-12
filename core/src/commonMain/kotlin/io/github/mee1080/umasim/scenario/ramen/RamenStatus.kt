@@ -137,17 +137,23 @@ data class RamenStatus(
         return copy(hiddenTips = min(4, hiddenTips + amount))
     }
 
-    fun activateTasting(region: RamenRegion): RamenStatus {
+    fun activateTasting(region: RamenRegion, changeHiddenTips: List<RamenTipType> = emptyList()): RamenStatus {
         var state = this
-        repeat(region.noodle) {
-            state = state.removeTipOrHidden(RamenTipType.NOODLE)
+        val changeCounts = changeHiddenTips.groupingBy { it }.eachCount()
+
+        fun processType(type: RamenTipType, required: Int) {
+            val changeCount = changeCounts[type] ?: 0
+            state = state.addHiddenTips(-changeCount)
+            val normalRequired = required - changeCount
+            repeat(normalRequired) {
+                state = state.removeTipOrHidden(type)
+            }
         }
-        repeat(region.soup) {
-            state = state.removeTipOrHidden(RamenTipType.SOUP)
-        }
-        repeat(region.topping) {
-            state = state.removeTipOrHidden(RamenTipType.TOPPING)
-        }
+
+        processType(RamenTipType.NOODLE, region.noodle)
+        processType(RamenTipType.SOUP, region.soup)
+        processType(RamenTipType.TOPPING, region.topping)
+
         val gainPt = ramenGainExcitePt[period]
         val tastingCount = min(5, excitementPt / gainPt / 10)
         return state.copy(
