@@ -619,20 +619,6 @@ data class RamenActionParam(
     val toppingGauge: Int = 0,
 ) : ScenarioActionParam {
     override fun toShortString() = "$noodleGauge/$soupGauge/$toppingGauge"
-
-    fun add(tipType: RamenTipType, value: Int, friend: Boolean): RamenActionParam {
-        return when (tipType) {
-            RamenTipType.NOODLE -> copy(noodleGauge = noodleGauge + value)
-            RamenTipType.SOUP -> copy(soupGauge = soupGauge + value)
-            RamenTipType.TOPPING -> copy(toppingGauge = toppingGauge + value)
-        }.applyIf(friend) {
-            copy(
-                noodleGauge = noodleGauge + 2,
-                soupGauge = soupGauge + 2,
-                toppingGauge = toppingGauge + 2,
-            )
-        }
-    }
 }
 
 sealed interface RamenActionResult : ActionResult
@@ -658,7 +644,15 @@ data class RamenTasting(
     val region: RamenRegion,
     val changeHiddenTips: List<RamenTipType> = emptyList(),
 ) : SingleAction {
-    override val name = "試食会: ${region.displayName}"
+    override val name = buildString {
+        append("試食会: ")
+        append(region.displayName)
+        if (changeHiddenTips.isNotEmpty()) {
+            append(" [")
+            append(changeHiddenTips.joinToString(",") { it.displayName })
+            append(" -> 隠し味]")
+        }
+    }
     override val turnChange = false
     override val result = RamenTastingResult(region, changeHiddenTips)
     override fun infoToString(): String {
@@ -667,4 +661,8 @@ data class RamenTasting(
         val parts = counts.map { "${it.key.displayName}${it.value}変更" }
         return "(${parts.joinToString(", ")})"
     }
+
+    val useNoodle by lazy { region.noodle - changeHiddenTips.count { it == RamenTipType.NOODLE } }
+    val useSoup by lazy { region.soup - changeHiddenTips.count { it == RamenTipType.SOUP } }
+    val useTopping by lazy { region.topping - changeHiddenTips.count { it == RamenTipType.TOPPING } }
 }

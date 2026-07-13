@@ -101,7 +101,7 @@ fun SelectionBlock(
                         CookMaterialInfo(action)
                         LegendInfo(action)
                         OnsenInfo(action)
-                        RamenInfo(action)
+                        RamenParamInfo(state, action)
                     }
 
                     is Race -> {
@@ -109,7 +109,7 @@ fun SelectionBlock(
                         LegendInfo(action)
                         MujintoInfo(action)
                         OnsenInfo(action)
-                        RamenInfo(action)
+                        RamenParamInfo(state, action)
                         StatusTable(action.result.status)
                     }
 
@@ -127,7 +127,7 @@ fun SelectionBlock(
                         CookMaterialInfo(action)
                         LegendInfo(action)
                         OnsenInfo(action)
-                        RamenInfo(action)
+                        RamenParamInfo(state, action)
                     }
 
                     is Training -> {
@@ -137,7 +137,7 @@ fun SelectionBlock(
                         MujintoInfo(action)
                         OnsenInfo(action)
                         BCInfo(action)
-                        RamenInfo(action)
+                        RamenParamInfo(state, action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -254,45 +254,11 @@ fun SelectionBlock(
                     is BCTeamParameterUp -> {}
 
                     is RamenSelectRegion -> {
-                        val reg = action.region
-                        Div {
-                            Text("試食コスト - 麺: ${reg.noodle}, スープ: ${reg.soup}, トッピング: ${reg.topping}")
-                        }
-                        Div {
-                            val effects = buildList {
-                                if (reg.targetTypes.isNotEmpty()) add("対象：${reg.targetTypes.joinToString("/") { it.displayName }}")
-                                if (reg.trainingEffect > 0) add("トレーニング効果: +${reg.trainingEffect}%")
-                                if (reg.skillPtTrainingEffect > 0) add("スキルPt効果: +${reg.skillPtTrainingEffect}%")
-                                if (reg.friendBonus > 0) add("友情ボーナス: +${reg.friendBonus}%")
-                                if (reg.hintCount > 0) add("ヒント獲得数: +${reg.hintCount}")
-                                if (reg.addMember > 0) add("サポカ追加配置: +${reg.addMember}")
-                                if (reg.targetAll) add("全トレーニング対象")
-                                if (reg.targetStatusLimitOver > 0) add("上限突破: +${reg.targetStatusLimitOver}")
-                                if (reg.hintSkill.isNotEmpty()) add("スキルヒント: ${reg.hintSkill}")
-                            }
-                            Text("試食効果：${effects.joinToString(", ")}")
-                        }
+                        RamenSelectRegionInfo(action)
                     }
 
                     is RamenTasting -> {
-                        val reg = action.region
-                        Div {
-                            Text("試食コスト - 麺: ${reg.noodle}, スープ: ${reg.soup}, トッピング: ${reg.topping}")
-                        }
-                        Div {
-                            val effects = buildList {
-                                if (reg.targetTypes.isNotEmpty()) add("対象：${reg.targetTypes.joinToString("/") { it.displayName }}")
-                                if (reg.trainingEffect > 0) add("トレーニング効果: +${reg.trainingEffect}%")
-                                if (reg.skillPtTrainingEffect > 0) add("スキルPt効果: +${reg.skillPtTrainingEffect}%")
-                                if (reg.friendBonus > 0) add("友情ボーナス: +${reg.friendBonus}%")
-                                if (reg.hintCount > 0) add("ヒント獲得数: +${reg.hintCount}")
-                                if (reg.addMember > 0) add("サポカ追加配置: +${reg.addMember}")
-                                if (reg.targetAll) add("全トレーニング対象")
-                                if (reg.targetStatusLimitOver > 0) add("上限突破: +${reg.targetStatusLimitOver}")
-                                if (reg.hintSkill.isNotEmpty()) add("スキルヒント: ${reg.hintSkill}")
-                            }
-                            Text("試食効果：${effects.joinToString(", ")}")
-                        }
+                        RamenTastingInfo(action)
                     }
                 }
                 val targetAiScore = aiScore.getOrNull(index)
@@ -393,19 +359,5 @@ private fun BCInfo(action: Action) {
         Text(param.member.joinToString(", ") {
             "${it.charaName} ${it.memberRankString} ${it.dreamGauge}/3"
         })
-    }
-}
-
-@Composable
-private fun RamenInfo(action: Action) {
-    val param = action.candidates.firstOrNull { it.first.success }
-        ?.first?.scenarioActionParam as? RamenActionParam ?: return
-    Div {
-        val list = buildList {
-            if (param.noodleGauge > 0) add("麺: +${param.noodleGauge}")
-            if (param.soupGauge > 0) add("スープ: +${param.soupGauge}")
-            if (param.toppingGauge > 0) add("トッピング: +${param.toppingGauge}")
-        }
-        Text(list.joinToString(", "))
     }
 }

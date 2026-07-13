@@ -5,6 +5,7 @@ import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.simulation2.RamenActionParam
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
+import io.github.mee1080.utility.applyIf
 import kotlin.math.min
 
 fun SimulationState.updateRamenStatus(update: RamenStatus.() -> RamenStatus): SimulationState {
@@ -60,6 +61,10 @@ data class RamenStatus(
     val regionRank = min(5, excitementPt * 5 / targetExcitePt)
 
     val regionRankBonus = ramenRegionRankBonus[regionRank]
+
+    val noodle = gauges[RamenTipType.NOODLE] ?: 0
+    val soup = gauges[RamenTipType.SOUP] ?: 0
+    val topping = gauges[RamenTipType.TOPPING] ?: 0
 
     fun shuffleTrainingTip(): RamenStatus {
         val tipList = listOf(
@@ -161,4 +166,26 @@ data class RamenStatus(
             excitementPt = state.excitementPt + gainPt * (10 + tastingCount),
         )
     }
+}
+
+fun RamenActionParam.add(tipType: RamenTipType, value: Int, friend: Boolean): RamenActionParam {
+    return when (tipType) {
+        RamenTipType.NOODLE -> copy(noodleGauge = noodleGauge + value)
+        RamenTipType.SOUP -> copy(soupGauge = soupGauge + value)
+        RamenTipType.TOPPING -> copy(toppingGauge = toppingGauge + value)
+    }.applyIf(friend) {
+        copy(
+            noodleGauge = noodleGauge + 2,
+            soupGauge = soupGauge + 2,
+            toppingGauge = toppingGauge + 2,
+        )
+    }
+}
+
+fun RamenActionParam.adjustMax(ramenStatus: RamenStatus): RamenActionParam {
+    return copy(
+        noodleGauge = min(7 - ramenStatus.noodle, noodleGauge),
+        soupGauge = min(7 - ramenStatus.soup, soupGauge),
+        toppingGauge = min(7 - ramenStatus.topping, toppingGauge),
+    )
 }

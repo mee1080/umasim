@@ -3,7 +3,6 @@ package io.github.mee1080.umasim.scenario.ramen
 import io.github.mee1080.umasim.simulation2.RamenTasting
 import kotlin.test.Test
 import kotlin.test.assertEquals
-import kotlin.test.assertTrue
 
 class RamenHiddenTipsTest : RamenCalculatorTest(
     chara = Triple("[初うらら♪さくさくら]ハルウララ", 5, 5),
@@ -31,26 +30,27 @@ class RamenHiddenTipsTest : RamenCalculatorTest(
         )
 
         // 1. With 0 hiddenTips and full normal tips
+        var expectedChanges = setOf(
+            emptyList<RamenTipType>()
+        )
         var actions = RamenCalculator.predictScenarioAction(customState, false).filterIsInstance<RamenTasting>()
-        println("Actions for 0 hidden tips: ${actions.map { it.toShortString() }}")
-        assertEquals(1, actions.size)
-        assertTrue(actions[0].changeHiddenTips.isEmpty())
+        var actualChanges = actions.map { it.changeHiddenTips }.toSet()
+        assertEquals(expectedChanges, actualChanges)
 
         // 2. With 1 hiddenTips and full normal tips
         customState = customState.updateRamenStatus {
             copy(hiddenTips = 1)
         }
         actions = RamenCalculator.predictScenarioAction(customState, false).filterIsInstance<RamenTasting>()
-        println("Actions for 1 hidden tip: ${actions.map { it.toShortString() }}")
         assertEquals(4, actions.size)
-        val expectedChanges = listOf(
+        expectedChanges = setOf(
             emptyList(),
             listOf(RamenTipType.NOODLE),
             listOf(RamenTipType.SOUP),
             listOf(RamenTipType.TOPPING)
         )
-        val actualChanges = actions.map { it.changeHiddenTips }
-        assertEquals(expectedChanges.toSet(), actualChanges.toSet())
+        actualChanges = actions.map { it.changeHiddenTips }.toSet()
+        assertEquals(expectedChanges, actualChanges)
 
         // 3. Test activateTasting with changeHiddenTips
         val ramenStatus = customState.ramenStatus!!
@@ -59,5 +59,66 @@ class RamenHiddenTipsTest : RamenCalculatorTest(
         assertEquals(0, nextRamenStatus.tips[RamenTipType.SOUP])
         assertEquals(0, nextRamenStatus.tips[RamenTipType.TOPPING])
         assertEquals(0, nextRamenStatus.hiddenTips)
+
+        // 隠し味2個
+        customState = customState.updateRamenStatus {
+            copy(
+                tips = mapOf(
+                    RamenTipType.NOODLE to 2,
+                    RamenTipType.SOUP to 2,
+                    RamenTipType.TOPPING to 1
+                ),
+                hiddenTips = 2,
+            )
+        }
+        expectedChanges = setOf(
+            emptyList(),
+            listOf(RamenTipType.NOODLE),
+            listOf(RamenTipType.NOODLE, RamenTipType.NOODLE),
+            listOf(RamenTipType.NOODLE, RamenTipType.SOUP),
+            listOf(RamenTipType.NOODLE, RamenTipType.TOPPING),
+            listOf(RamenTipType.SOUP),
+            listOf(RamenTipType.SOUP, RamenTipType.SOUP),
+            listOf(RamenTipType.SOUP, RamenTipType.TOPPING),
+            listOf(RamenTipType.TOPPING)
+        )
+        actions = RamenCalculator.predictScenarioAction(customState, false).filterIsInstance<RamenTasting>()
+        actualChanges = actions.map { it.changeHiddenTips }.toSet()
+        assertEquals(expectedChanges, actualChanges)
+
+        // 隠し味による補充
+        customState = customState.updateRamenStatus {
+            copy(
+                tips = mapOf(
+                    RamenTipType.NOODLE to 1,
+                    RamenTipType.SOUP to 2,
+                    RamenTipType.TOPPING to 5
+                ),
+                hiddenTips = 3,
+            )
+        }
+        expectedChanges = setOf(
+            listOf(RamenTipType.NOODLE),
+            listOf(RamenTipType.NOODLE, RamenTipType.NOODLE),
+            listOf(RamenTipType.NOODLE, RamenTipType.SOUP),
+            listOf(RamenTipType.NOODLE, RamenTipType.TOPPING),
+        )
+        actions = RamenCalculator.predictScenarioAction(customState, false).filterIsInstance<RamenTasting>()
+        actualChanges = actions.map { it.changeHiddenTips }.toSet()
+        assertEquals(expectedChanges, actualChanges)
+
+        // 不足
+        customState = customState.updateRamenStatus {
+            copy(
+                tips = mapOf(
+                    RamenTipType.NOODLE to 1,
+                    RamenTipType.SOUP to 0,
+                    RamenTipType.TOPPING to 7
+                ),
+                hiddenTips = 2,
+            )
+        }
+        actions = RamenCalculator.predictScenarioAction(customState, false).filterIsInstance<RamenTasting>()
+        assertEquals(actions, emptyList())
     }
 }

@@ -6,6 +6,7 @@ import io.github.mee1080.umasim.scenario.ScenarioCalculator
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.mapIf
+import kotlin.math.max
 import kotlin.math.min
 
 object RamenCalculator : ScenarioCalculator {
@@ -115,29 +116,30 @@ object RamenCalculator : ScenarioCalculator {
         val status = state.ramenStatus ?: return emptyArray()
         if (state.turn >= 73) return emptyArray()
         val tips = status.tips
-
-        fun canAfford(type: RamenTipType, amount: Int): Int {
-            return (amount - (tips[type] ?: 0)).coerceAtLeast(0)
-        }
+        val noodle = tips[RamenTipType.NOODLE] ?: 0
+        val soup = tips[RamenTipType.SOUP] ?: 0
+        val topping = tips[RamenTipType.TOPPING] ?: 0
+        val hiddenTips = min(2, status.hiddenTips)
 
         val actions = mutableListOf<Action>()
         for (region in status.selectedRegions) {
-            for (cn in 0..region.noodle) {
-                for (cs in 0..region.soup) {
-                    for (ct in 0..region.topping) {
-                        if (cn + cs + ct > 2) continue
-                        val neededHidden = cn + cs + ct +
-                                canAfford(RamenTipType.NOODLE, region.noodle - cn) +
-                                canAfford(RamenTipType.SOUP, region.soup - cs) +
-                                canAfford(RamenTipType.TOPPING, region.topping - ct)
-                        if (status.hiddenTips >= neededHidden) {
-                            val changeHiddenList = buildList {
-                                repeat(cn) { add(RamenTipType.NOODLE) }
-                                repeat(cs) { add(RamenTipType.SOUP) }
-                                repeat(ct) { add(RamenTipType.TOPPING) }
-                            }
-                            actions.add(RamenTasting(region, changeHiddenList))
+            val needNoodle = max(0, region.noodle - noodle)
+            if (needNoodle > hiddenTips) continue
+            for (cn in needNoodle..min(hiddenTips, region.noodle)) {
+                val hiddenTips2 = hiddenTips - cn
+                val needSoup = max(0, region.soup - soup)
+                if (needSoup > hiddenTips2) continue
+                for (cs in needSoup..min(hiddenTips2, region.soup)) {
+                    val hiddenTips3 = hiddenTips2 - cs
+                    val needTopping = max(0, region.topping - topping)
+                    if (needTopping > hiddenTips3) continue
+                    for (ct in needTopping..min(hiddenTips3, region.topping)) {
+                        val changeHiddenList = buildList {
+                            repeat(cn) { add(RamenTipType.NOODLE) }
+                            repeat(cs) { add(RamenTipType.SOUP) }
+                            repeat(ct) { add(RamenTipType.TOPPING) }
                         }
+                        actions.add(RamenTasting(region, changeHiddenList))
                     }
                 }
             }
@@ -159,15 +161,16 @@ object RamenCalculator : ScenarioCalculator {
     ): List<Action> {
         val ramenStatus = state.ramenStatus ?: return baseActions
         if (state.turn >= 73) return baseActions
-        val baseParam = if (Scenario.RAMEN.levelUpTurns.contains(state.turn)) {
+        val baseParam = (if (Scenario.RAMEN.levelUpTurns.contains(state.turn)) {
             RamenActionParam(7, 7, 7)
-        } else ramenStatus.baseGauge
+        } else ramenStatus.baseGauge).adjustMax(ramenStatus)
         return baseActions.map { action ->
             when (action) {
                 is Training -> {
                     val tipType = ramenStatus.trainingTip[action.type]!!
                     val tipCount = 1 + action.member.sumOf { if (it.guest) 1 else 2 } / 2
                     val param = baseParam.add(tipType, tipCount, action.friendTraining)
+                        .adjustMax(ramenStatus)
                     action.copy(
                         candidates = action.addScenarioActionParam(param)
                     )
