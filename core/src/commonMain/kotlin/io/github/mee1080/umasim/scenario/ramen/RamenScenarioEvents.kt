@@ -31,7 +31,9 @@ class RamenScenarioEvents : BaseScenarioEvents() {
         var base = super.afterAction(state, selector)
 
         // ターン終了時に試食会効果をクリア
-        base = base.updateRamenStatus { copy(activeTastingRegion = null) }
+        if (state.turn <= 72) {
+            base = base.updateRamenStatus { copy(activeTastingRegion = null) }
+        }
 
         // RMJイベント
         base = when (base.turn) {

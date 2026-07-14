@@ -1,11 +1,7 @@
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.data.StatusType
-import io.github.mee1080.umasim.scenario.ramen.RamenRegion
-import io.github.mee1080.umasim.scenario.ramen.RamenTipType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 
 open class RamenActionSelector(
     vararg val options: Option = deafultOptions.toTypedArray(),
@@ -53,6 +49,10 @@ open class RamenActionSelector(
                 )
             )
         }
+
+        val defaultGenerator = object : ActionSelectorGenerator {
+            override fun generateSelector() = RamenActionSelector()
+        }
     }
 
     @Serializable
@@ -69,13 +69,32 @@ open class RamenActionSelector(
 
         val regionPriority: List<String> = listOf(
             // Junior (Period 0)
-            "SAPPORO", "HAKODATE", "TOKYO", "FUKUSHIMA", "NIIGATA",
+            "SAPPORO",
+            "HAKODATE",
+            "TOKYO",
+            "FUKUSHIMA",
+            "NIIGATA",
             // Classic (Period 1)
-            "KOKURA", "HANSHIN", "KYOTO", "CHUKYO", "NAKAYAMA",
+            "KOKURA",
+            "HANSHIN",
+            "KYOTO",
+            "CHUKYO",
+            "NAKAYAMA",
             // Senior (Period 2)
-            "SAPPORO2", "HAKODATE2", "KYOTO2", "HANSHIN2", "KOKURA2", "TOKYO2", "NIIGATA2", "FUKUSHIMA2", "CHUKYO2", "NAKAYAMA2",
+            "SAPPORO2",
+            "HAKODATE2",
+            "KYOTO2",
+            "HANSHIN2",
+            "KOKURA2",
+            "TOKYO2",
+            "NIIGATA2",
+            "FUKUSHIMA2",
+            "CHUKYO2",
+            "NAKAYAMA2",
             // Finals (Period 3)
-            "FINALS1", "FINALS2", "FINALS3"
+            "FINALS1",
+            "FINALS2",
+            "FINALS3"
         ),
         val tastingScoreThreshold: Double = 15.0,
         val tastingSupportCountThreshold: Int = 2,

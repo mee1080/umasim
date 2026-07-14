@@ -51,7 +51,7 @@ fun SimulationPage(state: State) {
                 Scenario.MUJINTO -> MujintoActionSelector.Option()
                 Scenario.ONSEN -> OnsenActionSelector2.Option()
                 Scenario.BC -> BCActionSelector.Option()
-                Scenario.RAMEN -> null
+                Scenario.RAMEN -> RamenActionSelector.defaultGenerator
                 else -> null
             }
         )

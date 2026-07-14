@@ -114,7 +114,7 @@ object RamenCalculator : ScenarioCalculator {
         goal: Boolean
     ): Array<Action> {
         val status = state.ramenStatus ?: return emptyArray()
-        if (state.turn >= 73) return emptyArray()
+        if (state.turn >= 73 || status.activeTastingRegion != null) return emptyArray()
         val tips = status.tips
         val noodle = tips[RamenTipType.NOODLE] ?: 0
         val soup = tips[RamenTipType.SOUP] ?: 0
@@ -214,6 +214,12 @@ object RamenCalculator : ScenarioCalculator {
     private fun applyRamenSelectRegionResult(state: SimulationState, result: RamenSelectRegionResult): SimulationState {
         return state.updateRamenStatus {
             addRegion(result.region)
+        }.applyIf({ result.region.hintSkill.isNotEmpty() }) {
+            addStatus(Status(skillHint = mapOf(result.region.hintSkill to 2))).updateRamenStatus {
+                copy(
+                    activeTastingRegion = result.region to 0,
+                )
+            }
         }
     }
 
@@ -243,11 +249,6 @@ object RamenCalculator : ScenarioCalculator {
                     if (region.targetAll) trainingType.toList() else region.targetTypes,
                 )
             )
-        }
-
-        // hintSkill: 極のヒント獲得
-        if (region.hintSkill.isNotEmpty()) {
-            newState = newState.addStatus(Status(skillHint = mapOf(region.hintSkill to 2)))
         }
 
         return newState
