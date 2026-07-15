@@ -410,23 +410,42 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
         if (state.scenario == Scenario.RAMEN && state.ramenState.turn in 25..72 && state.ramenState.activeTastingRegion != null) {
             val ramenStatus = scenarioStatus as? RamenStatus
             val region = state.ramenState.activeTastingRegion
-            if (ramenStatus != null && (region.targetAll || region.targetTypes.contains(trainingType))) {
-                val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
-                val noTastingInfo = trainingCalcInfo.copy(scenarioStatus = noTastingStatus)
-                val s2 = Calculator.calcTrainingSuccessStatusSeparated(
-                    noTastingInfo,
-                    state.scenario.calculator.getScenarioCalcBonus(noTastingInfo)
-                ).let { it.first.first + it.second }
-                ramenTastingImpact = allSupportList.filter { support ->
-                    !joinSupportList.any { it.card.id == support.card.id } && !support.card.type.outingType
-                }.map { support ->
-                    val withSupportJoinList = joinSupportList + support
-                    val withSupportInfo = trainingCalcInfo.copy(member = withSupportJoinList)
-                    val s1 = Calculator.calcTrainingSuccessStatusSeparated(
-                        withSupportInfo,
-                        state.scenario.calculator.getScenarioCalcBonus(withSupportInfo)
+            if (ramenStatus != null) {
+                if (region.targetAll || region.targetTypes.contains(trainingType)) {
+                    val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
+                    val noTastingInfo = trainingCalcInfo.copy(scenarioStatus = noTastingStatus)
+                    val s2 = Calculator.calcTrainingSuccessStatusSeparated(
+                        noTastingInfo,
+                        state.scenario.calculator.getScenarioCalcBonus(noTastingInfo)
                     ).let { it.first.first + it.second }
-                    RamenTastingImpact(support.name, s1, s1 - s2)
+                    ramenTastingImpact = allSupportList.filter { support ->
+                        !joinSupportList.any { it.card.id == support.card.id } && !support.card.type.outingType
+                    }.map { support ->
+                        val withSupportJoinList = joinSupportList + support
+                        val withSupportInfo = trainingCalcInfo.copy(member = withSupportJoinList)
+                        val s1 = Calculator.calcTrainingSuccessStatusSeparated(
+                            withSupportInfo,
+                            state.scenario.calculator.getScenarioCalcBonus(withSupportInfo)
+                        ).let { it.first.first + it.second }
+                        RamenTastingImpact(support.name, s1, s1 - s2)
+                    }
+                } else {
+                    val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
+                    val noTastingInfo = trainingCalcInfo.copy(scenarioStatus = noTastingStatus)
+                    val s2 = Calculator.calcTrainingSuccessStatusSeparated(
+                        noTastingInfo,
+                        state.scenario.calculator.getScenarioCalcBonus(noTastingInfo)
+                    ).let { it.first.first + it.second }
+
+                    val s1Info = trainingCalcInfo
+                    val s1 = Calculator.calcTrainingSuccessStatusSeparated(
+                        s1Info,
+                        state.scenario.calculator.getScenarioCalcBonus(s1Info)
+                    ).let { it.first.first + it.second }
+
+                    ramenTastingImpact = listOf(
+                        RamenTastingImpact("追加出現なし", s1, s1 - s2)
+                    )
                 }
             }
         }
