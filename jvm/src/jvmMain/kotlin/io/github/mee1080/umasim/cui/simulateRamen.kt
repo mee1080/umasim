@@ -36,7 +36,7 @@ private fun doRamenSimulation(
     ).filter { it.second != targetStatus }.map { it.first to 4 }
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
         .map { it.copy(skills = emptyList()) }
-    val testCount = 100
+    val testCount = 1000
 
     if (targetSupport == null) {
         doSimulation2(

@@ -1,10 +1,10 @@
 package io.github.mee1080.umasim.ai
 
-import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
 import io.github.mee1080.umasim.scenario.ramen.RamenRegion
 import io.github.mee1080.umasim.scenario.ramen.RamenTipType
 import io.github.mee1080.umasim.simulation2.*
 import kotlinx.serialization.Serializable
+import kotlin.math.max
 
 open class RamenActionSelector(
     vararg val options: Option = deafultOptions.toTypedArray(),
@@ -18,38 +18,42 @@ open class RamenActionSelector(
             val base = Option(
                 status = 100,
                 wisdom = 90,
-                skillPt = 1000,
-                hp = 600,
+                skillPt = 200,
+                hp = 60,
                 motivation = 1000,
                 relation = 10000,
                 outingRelation = 24000,
                 hpKeep = 1000,
                 risk = 350,
+                region = setOf(RamenRegion.SAPPORO, RamenRegion.HAKODATE, RamenRegion.TOKYO),
             )
             add(base)
             add(
                 base.copy(
                     speedOverride = 50,
-                    wisdom = 90,
-                    hp = 750,
+                    wisdom = 200,
+                    hp = 70,
                     hpKeep = 700,
                     risk = 300,
+                    region = setOf(RamenRegion.NAKAYAMA, RamenRegion.HANSHIN, RamenRegion.KOKURA),
                 )
             )
             add(
                 base.copy(
                     wisdom = 90,
-                    hp = 750,
+                    hp = 70,
                     hpKeep = 1200,
                     risk = 350,
+                    region = setOf(RamenRegion.HAKODATE2, RamenRegion.TOKYO2, RamenRegion.HANSHIN2),
                 )
             )
             add(
                 base.copy(
                     wisdom = 100,
-                    hp = 600,
+                    hp = 80,
                     hpKeep = 1100,
                     risk = 400,
+                    region = setOf(RamenRegion.SAPPORO, RamenRegion.HAKODATE, RamenRegion.TOKYO),
                 )
             )
         }
@@ -72,39 +76,27 @@ open class RamenActionSelector(
         override val hpKeep: Int = 900,
         override val risk: Int = 300,
 
-        val regionPriority: List<RamenRegion> = listOf(
+        val region: Set<RamenRegion> = setOf(
             // Junior (Period 0)
             RamenRegion.SAPPORO,
             RamenRegion.HAKODATE,
             RamenRegion.TOKYO,
-            RamenRegion.FUKUSHIMA,
-            RamenRegion.NIIGATA,
             // Classic (Period 1)
-            RamenRegion.KOKURA,
-            RamenRegion.HANSHIN,
-            RamenRegion.KYOTO,
-            RamenRegion.CHUKYO,
             RamenRegion.NAKAYAMA,
+            RamenRegion.HANSHIN,
+            RamenRegion.KOKURA,
             // Senior (Period 2)
-            RamenRegion.SAPPORO2,
             RamenRegion.HAKODATE2,
-            RamenRegion.KYOTO2,
-            RamenRegion.HANSHIN2,
-            RamenRegion.KOKURA2,
             RamenRegion.TOKYO2,
-            RamenRegion.NIIGATA2,
-            RamenRegion.FUKUSHIMA2,
-            RamenRegion.CHUKYO2,
-            RamenRegion.NAKAYAMA2,
+            RamenRegion.HANSHIN2,
             // Finals (Period 3)
-            RamenRegion.FINALS1,
             RamenRegion.FINALS2,
-            RamenRegion.FINALS3
         ),
         val tastingScoreThreshold: Double = 15.0,
         val tastingSupportCountThreshold: Int = 2,
         val tastingFriendshipCountThreshold: Int = 1,
-        val gaugeScore: Double = 10.0,
+        val gaugeScore: Double = 200.0,
+        val gaugeMaxScore: Double = 200.0,
     ) : SerializableActionSelectorGenerator, BaseOption {
         override val speed get() = speedOverride ?: status
         override val stamina get() = status
@@ -145,12 +137,12 @@ open class RamenActionSelector(
         val baseSoup = ramenStatus.baseGauge.soupGauge
         val baseTopping = ramenStatus.baseGauge.toppingGauge
 
-        val diffNoodle = param.noodleGauge - baseNoodle
-        val diffSoup = param.soupGauge - baseSoup
-        val diffTopping = param.toppingGauge - baseTopping
+        var score = (param.noodleGauge + param.soupGauge + param.toppingGauge) * option.gaugeScore
+        if (baseNoodle + param.noodleGauge >= 7) score += option.gaugeMaxScore
+        if (baseSoup + param.soupGauge >= 7) score += option.gaugeMaxScore
+        if (baseTopping + param.toppingGauge >= 7) score += option.gaugeMaxScore
 
-        val totalGained = diffNoodle + diffSoup + diffTopping
-        return totalGained * option.gaugeScore
+        return score
     }
 
     override fun selectFromScore(context: Context): Pair<Action, Double> {
@@ -161,7 +153,7 @@ open class RamenActionSelector(
         (selected.first as? Race)?.let { race ->
             if (state.status.hp + race.result.status.hp <= 50) {
                 context.selectionWithScore.firstOrNull { it.first is Sleep }?.let {
-                    if (it.second > Double.MIN_VALUE) {
+                    if (it.second > 0.0) {
                         selected = it
                     }
                 }
@@ -169,21 +161,24 @@ open class RamenActionSelector(
         }
 
         // お休みで友人お出かけが可能な場合は友人お出かけ
-        if (selected.first is Sleep) {
+        if (selected.first is Sleep && !isFriendOutingBlocked(state)) {
             val supportOuting = context.selectionWithScore.firstOrNull {
                 (it.first as? Outing)?.support != null
             }
-            if (supportOuting != null && supportOuting.second > Double.MIN_VALUE) {
+            if (supportOuting != null) {
                 selected = supportOuting
             }
         }
         return selected
     }
 
-    private fun isFriendOutingBlocked(state: SimulationState, action: Outing): Boolean {
-        if (action.support == null) return false
+    private fun isFriendOutingBlocked(state: SimulationState): Boolean {
+        val ramenStatus = state.ramenStatus ?: return true
+        // 隠し味がある場合は回避
+        if (ramenStatus.hiddenTips > 2) return true
         val turn = state.turn
-        if (turn <= 24) return true // ジュニアでは友人お出かけは行わない
+        // ジュニアでは友人お出かけは行わない
+        if (turn <= 24) return true
         if (turn in 25..48) {
             // クラシックでは友人お出かけは3回まで
             val count = state.member.filter { it.outingType }.sumOf {
@@ -194,106 +189,31 @@ open class RamenActionSelector(
         return false
     }
 
-    private fun isSleepOrOutingBlockedByHp(state: SimulationState, action: Action): Boolean {
-        if (state.status.hp >= 70) {
-            if (action is Sleep || action is Outing) {
-                return true
-            }
-        }
-        return false
-    }
-
     override suspend fun calcScenarioActionScore(
         context: Context,
         action: Action
     ): Double? {
-        val state = context.state
-        if (action is Outing && isFriendOutingBlocked(state, action)) {
-            return Double.MIN_VALUE
-        }
-        if (isSleepOrOutingBlockedByHp(state, action)) {
-            return Double.MIN_VALUE
-        }
-
-        val turn = state.turn
-        val ramenStatus = state.ramenStatus
-        if (ramenStatus != null) {
-            val totalTips = ramenStatus.tips.values.sum()
-            val hiddenTips = ramenStatus.hiddenTips
-
-            val isBeforeCamp = turn in 33..36 || turn in 57..60
-            val isClassicEnd = turn in 45..48
-
-            // ジュニアでは隠し味を使わない
-            if (turn <= 24 && action is RamenTasting && action.changeHiddenTips.isNotEmpty()) {
-                return Double.MIN_VALUE
+        return when (action) {
+            is RamenSelectRegion -> {
+                if (context.option.region.contains(action.region)) 10000.0 else 0.0
             }
 
-            if (isBeforeCamp || isClassicEnd) {
-                if (action is RamenTasting) {
-                    val usedHidden = action.changeHiddenTips.size
-                    val remainingHidden = hiddenTips - usedHidden
+            is RamenTasting -> calcTastingScore(context, action)
 
-                    if (hiddenTips >= 3) {
-                        if (remainingHidden > 2) {
-                            return Double.MIN_VALUE
-                        }
-                    } else {
-                        if (usedHidden > 0) {
-                            return Double.MIN_VALUE
-                        }
-                    }
-
-                    if (isBeforeCamp) {
-                        val spentNormalTips = action.region.noodle + action.region.soup + action.region.topping - usedHidden
-                        val remainingNormalTips = totalTips - spentNormalTips
-                        if (remainingNormalTips < 7) {
-                            if (hiddenTips >= 3 && remainingHidden <= 2) {
-                                // 隠し味を減らすことを優先し許容する
-                            } else {
-                                return Double.MIN_VALUE
-                            }
-                        }
-                    }
-                } else {
-                    if (hiddenTips >= 3) {
-                        val tastings = RamenCalculator.predictScenarioAction(state, false)
-                        val hasValidTasting = tastings.any { act ->
-                            act is RamenTasting && (hiddenTips - act.changeHiddenTips.size <= 2)
-                        }
-                        if (hasValidTasting) {
-                            return Double.MIN_VALUE
-                        }
-                    }
-                }
-            }
+            else -> null
         }
-
-        if (action is RamenSelectRegion) {
-            val option = context.option
-            val region = action.region
-            val index = option.regionPriority.indexOf(region)
-            return if (index >= 0) {
-                10000.0 - index
-            } else {
-                0.0
-            }
-        }
-        if (action is RamenTasting) {
-            val score = calcTastingScore(context, action)
-            return if (score == Double.MIN_VALUE) null else score
-        }
-        return null
     }
 
     private fun calcTastingScore(context: Context, action: RamenTasting): Double {
         val (option, state) = context
+        val ramenStatus = state.ramenStatus ?: return 0.0
         val region = action.region
         val turn = state.turn
 
-        if (turn >= 73) return Double.MIN_VALUE
+        // ジュニアでは隠し味を使わない
+        if (turn <= 24 && action.changeHiddenTips.isNotEmpty()) return 0.0
 
-        val maxActionPair = context.maxTurnChangeAction ?: return Double.MIN_VALUE
+        val maxActionPair = context.maxTurnChangeAction ?: return 0.0
         val maxAction = maxActionPair.first
         val maxScore = maxActionPair.second
 
@@ -304,6 +224,8 @@ open class RamenActionSelector(
         var shouldTaste = false
         var reasonScore = 0.0
 
+        // FIXME maxActionをそのまま使用するのではなく、試食会の失敗率低下やキャラ追加を踏まえて、再計算が必要
+        // FIXME 1枚編成のトレーニングは優先する、特にクラシックの賢さ
         if (maxAction is Training) {
             val isMatch = region.targetAll || region.targetTypes.contains(maxAction.type)
             if (isMatch) {
@@ -331,37 +253,39 @@ open class RamenActionSelector(
             }
         }
 
-        if (!shouldTaste && isYearEnd) {
+        val overHiddenTips = max(0, ramenStatus.hiddenTips - 2)
+        if (!shouldTaste && isYearEnd && action.changeHiddenTips.size <= overHiddenTips) {
             shouldTaste = true
             reasonScore = 300.0
         }
 
         return if (shouldTaste) {
             val hiddenTipPenalty = action.changeHiddenTips.size * 10.0
-            val regionPriorityIndex = option.regionPriority.indexOf(region)
-            val priorityBonus = if (regionPriorityIndex >= 0) (100 - regionPriorityIndex) * 0.1 else 0.0
 
-            var baseScore = reasonScore - hiddenTipPenalty + priorityBonus
+            var baseScore = 100000.0 + reasonScore - hiddenTipPenalty + action.region.friendBonus
 
             // 試食会で隠し味は残り2個までは優先的に使う
-            val remainingHidden = (state.ramenStatus?.hiddenTips ?: 0) - action.changeHiddenTips.size
-            if (action.changeHiddenTips.isNotEmpty() && remainingHidden >= 2) {
+            if (action.changeHiddenTips.size == overHiddenTips) {
                 baseScore += 50.0
             }
 
             // 隠し味を使う場合、残りが少なくなるコツを変換する
             if (action.changeHiddenTips.isNotEmpty()) {
-                val sumRemainingConverted = action.changeHiddenTips.distinct().sumOf { type ->
-                    val totalTips = state.ramenStatus?.tips?.get(type) ?: 0
-                    val convertCount = action.changeHiddenTips.count { it == type }
-                    totalTips - convertCount
+                val restTips = mutableMapOf(
+                    RamenTipType.NOODLE to ramenStatus.noodle - action.region.noodle,
+                    RamenTipType.SOUP to ramenStatus.soup - action.region.soup,
+                    RamenTipType.TOPPING to ramenStatus.topping - action.region.topping,
+                )
+                action.changeHiddenTips.forEach {
+                    val valueOrder = restTips.values.sorted().indexOf(restTips[it])
+                    baseScore -= valueOrder * 10.0
+                    restTips[it] = restTips[it]!! + 1
                 }
-                baseScore += (10.0 - sumRemainingConverted * 1.0)
             }
 
             baseScore
         } else {
-            Double.MIN_VALUE
+            0.0
         }
     }
 }
