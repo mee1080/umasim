@@ -52,6 +52,18 @@ private fun doRamenSimulation(
             scenarioEvents = { RamenScenarioEvents() },
         )
     } else {
+//        doSimulation2(
+//            scenario,
+//            chara,
+//            support.toTypedArray(),
+//            Store.getSupportByName(*((0..4).map { targetSupport to it }.toTypedArray())),
+//            factor = factor(StatusType.SPEED, 6),
+//            testCount = testCount,
+//            selector = { RamenActionSelector() },
+//            evaluateSetting = Runner.ramenSetting,
+//            evaluateUpperRate = 0.2,
+//            scenarioEvents = { RamenScenarioEvents() },
+//        )
         doSimulation2(
             scenario,
             chara,

@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.ai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.simulation2.*
 import kotlin.math.min
 
@@ -47,6 +48,17 @@ abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Cont
         val hpKeep: Int
         val risk: Int
         val maxSleep: Int
+
+        fun getStatus(statusType: StatusType): Int {
+            return when (statusType) {
+                StatusType.SPEED -> speed
+                StatusType.STAMINA -> stamina
+                StatusType.POWER -> power
+                StatusType.GUTS -> guts
+                StatusType.WISDOM -> wisdom
+                else -> 0
+            }
+        }
     }
 
     open class BaseContext<Option : BaseOption>(
@@ -75,14 +87,27 @@ abstract class BaseActionSelector3<Option : BaseActionSelector3.BaseOption, Cont
             }
         }
 
-        val lastTurnBeforeLevelUp by lazy {
-            when (state.turn) {
+        fun isLastTurnBeforeLevelUp(turn: Int): Boolean {
+            return when (turn) {
                 36, 60 -> true
-                35, 59 -> state.goalRace.any { it.turn == state.turn + 1 }
-                34, 58 -> state.goalRace.any { it.turn == state.turn + 1 || it.turn == state.turn + 2 }
+                35, 59 -> state.goalRace.any { it.turn == turn + 1 }
+                34, 58 -> state.goalRace.any { it.turn == turn + 1 } && state.goalRace.any { it.turn == turn + 2 }
                 else -> false
             }
         }
+
+        val lastTurnBeforeLevelUp by lazy { isLastTurnBeforeLevelUp(state.turn) }
+
+        fun isLastTurnOfYear(turn: Int): Boolean {
+            return when (turn) {
+                24, 48, 72 -> true
+                23, 47, 71 -> state.goalRace.any { it.turn == turn + 1 }
+                22, 46, 70 -> state.goalRace.any { it.turn == turn + 1 } && state.goalRace.any { it.turn == turn + 2 }
+                else -> false
+            }
+        }
+
+        val lastTurnOfYear by lazy { isLastTurnOfYear(state.turn) }
     }
 
     override suspend fun select(state: SimulationState, selection: List<Action>): Action {

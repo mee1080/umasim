@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.data.trainingTypeOrSkill
 
 class Evaluator(val summaries: List<Summary>) {
 
@@ -61,12 +62,12 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun average(type: StatusType) = getStatus(type).average()
 
-    fun average() = outputStatus.map { average(it.first) }
+    fun average() = trainingTypeOrSkill.map { average(it) }
 
     fun upper(type: StatusType, rate: Double) = getStatus(type).sortedDescending()
         .slice(0 until (summaries.size * rate).toInt()).average()
 
-    fun upper(rate: Double) = outputStatus.map { upper(it.first, rate) }
+    fun upper(rate: Double) = trainingTypeOrSkill.map { upper(it, rate) }
 
     private fun getStatusSum(vararg type: StatusType) = results.value.map { result ->
         type.sumOf { result.get(it) }
@@ -95,20 +96,13 @@ class Evaluator(val summaries: List<Summary>) {
 
     fun upperSum(rate: Double, limit: Int = Int.MAX_VALUE) = upperSum(rate, *outputStatus, limit = limit)
 
-    fun averageSum(vararg type: StatusType) = getStatusSum(*type).average()
-
     fun averageSum(vararg typeToFactor: Pair<StatusType, Double>) = getStatusSum(*typeToFactor).average()
-
-    fun averageSum() = averageSum(*outputStatus)
 
     fun averageTrainingCount(type: StatusType) = summaries.map { it.trainingCount[type]!! }.average()
 
     fun averageFriendTrainingCount(type: StatusType) = summaries.map { it.trainingFriendCount[type]!! }
         .fold(IntArray(6)) { acc, value -> acc.mapIndexed { index, i -> i + value[index] }.toIntArray() }
         .map { it / summaries.size.toDouble() }
-
-    fun trainingCount(type: StatusType) =
-        listOf(averageTrainingCount(type), *averageFriendTrainingCount(type).toTypedArray())
 
     fun averageSleepCount() = summaries.map { it.sleepCount }.average()
 
@@ -122,7 +116,7 @@ class Evaluator(val summaries: List<Summary>) {
 
     private val averageSkillHint by lazy { skillHints.average() }
 
-    fun toSummaryString(): String {
+    fun toSummaryString(separator: String = ","): String {
         val skillFactor = 1.0
         return arrayOf<Any>(
             // ステータス
@@ -135,10 +129,10 @@ class Evaluator(val summaries: List<Summary>) {
             averageSkillHint,
 
             // トレーニング
-            trainingType.joinToString(",") { type ->
+            trainingType.joinToString(separator) { type ->
                 val averageTrainingCount = averageTrainingCount(type)
                 val friendTrainingCount = averageFriendTrainingCount(type)
-                "$averageTrainingCount,${friendTrainingCount.joinToString(",")}"
+                "$averageTrainingCount$separator${friendTrainingCount.joinToString(separator)}"
             },
 
             // スピード評価
@@ -175,7 +169,7 @@ class Evaluator(val summaries: List<Summary>) {
             averageSleepCount(),
             averageOutingCount(),
             averageRaceCount(),
-        ).joinToString(",")
+        ).joinToString(separator)
 //        val averageSpeed = average(StatusType.SPEED)
 //        val upperSpeed = upper(StatusType.SPEED, 0.2)
 //        val averagePower = average(StatusType.POWER)
