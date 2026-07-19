@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.ai
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ramen.RamenRegion
+import io.github.mee1080.umasim.scenario.ramen.RamenStatus
 import io.github.mee1080.umasim.scenario.ramen.RamenTipType
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.averageOf
@@ -10,66 +11,83 @@ import kotlinx.serialization.Serializable
 import kotlin.math.max
 
 open class RamenActionSelector(
-    vararg val options: Option = defaultOptions().toTypedArray(),
+    vararg val options: Option = s2h2w1.toTypedArray(),
 ) : BaseActionSelector3<RamenActionSelector.Option, RamenActionSelector.Context>() {
 
     companion object {
         const val DEBUG = false
-        const val FORCE = 10000000.0
 
-        val defaultRegions = setOf(
-            // Junior (Period 0)
-            RamenRegion.SAPPORO,
-            RamenRegion.HAKODATE,
-            RamenRegion.TOKYO,
-            // Classic (Period 1)
-            RamenRegion.NAKAYAMA,
-            RamenRegion.HANSHIN,
-            RamenRegion.KOKURA,
-            // Senior (Period 2)
-            RamenRegion.HAKODATE2,
-            RamenRegion.TOKYO2,
-            RamenRegion.HANSHIN2,
-            // Finals (Period 3)
-            RamenRegion.FINALS2,
-        )
-
-        fun defaultOptions(regions: Set<RamenRegion> = defaultRegions) = buildList {
+        val s2h2w1 = buildList {
             val base = Option(
                 status = 100,
                 wisdom = 90,
                 skillPt = 200,
-                hp = 60,
+                hp = 100,
                 motivation = 1000,
-                relation = 10000,
-                outingRelation = 24000,
-                hpKeep = 1000,
-                risk = 350,
-                regions = regions,
+                relation = 9000,
+                outingRelation = 9000,
+                hpKeep = 500,
+                risk = 225,
+                tastingThreashold = 500,
+                speedTastingFactor = 120,
+                staminaTastingFactor = 120,
+                wisdomTastingFactor = 130,
+                tastingMinFailureRate = 10,
+                gaugeScore = 100,
+                gaugeMaxScore = 7500,
+                regions = setOf(
+                    // Junior (Period 0)
+                    RamenRegion.SAPPORO,
+                    RamenRegion.HAKODATE,
+                    RamenRegion.TOKYO,
+                    // Classic (Period 1)
+                    RamenRegion.NAKAYAMA,
+                    RamenRegion.HANSHIN,
+                    RamenRegion.KOKURA,
+                    // Senior (Period 2)
+                    RamenRegion.HAKODATE2,
+                    RamenRegion.TOKYO2,
+                    RamenRegion.HANSHIN2,
+                    // Finals (Period 3)
+                    RamenRegion.FINALS2,
+                ),
             )
             add(base)
             add(
                 base.copy(
-                    wisdom = 120,
-                    hp = 70,
-                    hpKeep = 700,
-                    risk = 300,
+                    wisdom = 60,
+                    hp = 90,
+                    hpKeep = 250,
+                    risk = 175,
+                    tastingThreashold = 500,
+                    allTastingFactor = 70,
+                    staminaTastingFactor = 70,
+                    wisdomTastingFactor = 100,
+                    tastingMinFailureRate = 30,
+                    gaugeScore = 0,
+                    gaugeMaxScore = 0,
                 )
             )
             add(
                 base.copy(
-                    wisdom = 90,
-                    hp = 70,
-                    hpKeep = 1200,
-                    risk = 350,
+                    wisdom = 75,
+                    hp = 95,
+                    hpKeep = 50,
+                    risk = 50,
+                    tastingThreashold = 600,
+                    speedTastingFactor = 100,
+                    staminaTastingFactor = 90,
+                    wisdomTastingFactor = 140,
                     tastingMinFailureRate = 100,
-                    wisdomTastingFactor = 110,
+                    gaugeScore = 700,
+                    gaugeMaxScore = 1500,
                 )
             )
             add(
                 base.copy(
-                    skillPt = 300,
+                    skillPt = 1000,
                     hp = 0,
+                    motivation = 0,
                     hpKeep = 0,
                     risk = 0,
                 )
@@ -102,7 +120,7 @@ open class RamenActionSelector(
         val tastingMinFailureRate: Int = 10,
         val gaugeScore: Int = 200,
         val gaugeMaxScore: Int = 2000,
-        val regions: Set<RamenRegion> = defaultRegions,
+        val regions: Set<RamenRegion> = emptySet(),
     ) : SerializableActionSelectorGenerator, BaseOption {
         override val speed get() = status
         override val stamina get() = status
@@ -190,6 +208,30 @@ open class RamenActionSelector(
                 selected = supportOuting
             }
         }
+
+        // お出かけ消費
+        val ramenStatus = state.scenarioStatus as? RamenStatus ?: return selected
+        val ramenCanOuting = !context.lastTurnOfYear &&
+                ramenStatus.hiddenTips <= 2 && ramenStatus.activeTastingRegion == null
+        if (ramenCanOuting && ((selected.first as? Race)?.goal == false || (selected.first is Training && state.status.hp < 65))) {
+            val minOuting = when {
+                state.turn >= 65 -> 5
+                state.turn >= 55 -> 4
+                state.turn >= 49 -> 3
+                state.turn >= 41 -> 2
+                state.turn >= 31 -> 1
+                else -> 0
+            }
+            if (context.friendOutingCount < minOuting) {
+                val supportOuting = context.selectionWithScore.firstOrNull {
+                    (it.first as? Outing)?.support != null
+                }
+                if (supportOuting != null) {
+                    selected = supportOuting
+                }
+            }
+        }
+
         return selected
     }
 
