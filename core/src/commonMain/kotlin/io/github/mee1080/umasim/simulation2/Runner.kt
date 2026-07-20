@@ -234,13 +234,24 @@ object Runner {
         StatusType.SKILL to (2.0 to 12000),
     )
 
-    val ramenSetting2 = mapOf(
-        StatusType.SPEED to (2.0 to 3100),
-        StatusType.STAMINA to (1.0 to 2400),
-        StatusType.POWER to (1.5 to 2200),
-        StatusType.GUTS to (0.5 to 1400),
-        StatusType.WISDOM to (2.0 to 2100),
-        StatusType.SKILL to (2.0 to 12000),
+    val ramenSettingTemplate = mapOf(
+        "s2h2w1" to mapOf(
+            StatusType.SPEED to (2.0 to 3100),
+            StatusType.STAMINA to (1.0 to 2400),
+            StatusType.POWER to (1.5 to 2200),
+            StatusType.GUTS to (0.5 to 1400),
+            StatusType.WISDOM to (2.0 to 2100),
+            StatusType.SKILL to (2.0 to 12000),
+        ),
+
+        "s3h1w1" to mapOf(
+            StatusType.SPEED to (1.0 to 3100),
+            StatusType.STAMINA to (2.0 to 2000),
+            StatusType.POWER to (1.0 to 2200),
+            StatusType.GUTS to (1.0 to 1400),
+            StatusType.WISDOM to (3.0 to 2100),
+            StatusType.SKILL to (2.0 to 12000),
+        ),
     )
 
     suspend fun runAndEvaluate(

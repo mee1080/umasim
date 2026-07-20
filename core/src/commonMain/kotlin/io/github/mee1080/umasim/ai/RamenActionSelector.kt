@@ -11,7 +11,7 @@ import kotlinx.serialization.Serializable
 import kotlin.math.max
 
 open class RamenActionSelector(
-    vararg val options: Option = s2h2w1.toTypedArray(),
+    vararg val options: Option = s2h2w1,
 ) : BaseActionSelector3<RamenActionSelector.Option, RamenActionSelector.Context>() {
 
     companion object {
@@ -92,7 +92,84 @@ open class RamenActionSelector(
                     risk = 0,
                 )
             )
-        }
+        }.toTypedArray()
+
+        val s3h1w1 = buildList {
+            val base = Option(
+                status = 100,
+                wisdom = 95,
+                skillPt = 200,
+                hp = 100,
+                motivation = 1000,
+                relation = 4000,
+                outingRelation = 2000,
+                hpKeep = 450,
+                risk = 50,
+                tastingThreashold = 500,
+                speedTastingFactor = 100,
+                staminaTastingFactor = 100,
+                wisdomTastingFactor = 110,
+                tastingMinFailureRate = 20,
+                gaugeScore = 0,
+                gaugeMaxScore = 2500,
+                regions = setOf(
+                    // Junior (Period 0)
+                    RamenRegion.SAPPORO,
+                    RamenRegion.HAKODATE,
+                    RamenRegion.TOKYO,
+                    // Classic (Period 1)
+                    RamenRegion.NAKAYAMA,
+                    RamenRegion.HANSHIN,
+                    RamenRegion.KOKURA,
+                    // Senior (Period 2)
+                    RamenRegion.HAKODATE2,
+                    RamenRegion.TOKYO2,
+                    RamenRegion.HANSHIN2,
+                    // Finals (Period 3)
+                    RamenRegion.FINALS2,
+                ),
+            )
+            add(base)
+            add(
+                base.copy(
+                    wisdom = 120,
+                    hp = 95,
+                    hpKeep = 500,
+                    risk = 250,
+                    tastingThreashold = 500,
+                    allTastingFactor = 60,
+                    staminaTastingFactor = 100,
+                    wisdomTastingFactor = 80,
+                    tastingMinFailureRate = 20,
+                    gaugeScore = 100,
+                    gaugeMaxScore = 0,
+                )
+            )
+            add(
+                base.copy(
+                    wisdom = 120,
+                    hp = 95,
+                    hpKeep = 50,
+                    risk = 125,
+                    tastingThreashold = 700,
+                    speedTastingFactor = 80,
+                    staminaTastingFactor = 150,
+                    wisdomTastingFactor = 80,
+                    tastingMinFailureRate = 100,
+                    gaugeScore = 1700,
+                    gaugeMaxScore = 7500,
+                )
+            )
+            add(
+                base.copy(
+                    skillPt = 1000,
+                    hp = 0,
+                    motivation = 0,
+                    hpKeep = 0,
+                    risk = 0,
+                )
+            )
+        }.toTypedArray()
 
         val defaultGenerator = object : ActionSelectorGenerator {
             override fun generateSelector() = RamenActionSelector()

@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.RamenActionSelector
 import io.github.mee1080.umasim.data.StatusType
@@ -26,6 +27,8 @@ class RamenCli : CliktCommand() {
     private val factor by option(help = "因子").pair().multiple()
 
     private val count by option(help = "実行回数").int().default(100)
+
+    private val evaluate by option().choice(Runner.ramenSettingTemplate.keys).required()
 
     private val status by option().int().multiple()
     private val wisdom by option().int().multiple()
@@ -77,7 +80,7 @@ class RamenCli : CliktCommand() {
             )
         }
         val factorList = factor.map { StatusType.valueOf(it.first) to it.second.toInt() }
-        val evaluateSetting = Runner.ramenSetting2
+        val evaluateSetting = Runner.ramenSettingTemplate[evaluate]!!
         System.err.println(options)
         val result = runBlocking {
             Runner.runAndEvaluate(

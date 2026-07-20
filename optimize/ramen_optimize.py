@@ -1,6 +1,11 @@
 import subprocess
 import optuna
 
+mode = 's3h1w1'
+#lastCard = '[賑やかな未来を乗せて走れ！]サクラチヨノオー'
+lastCard = '[世界を変える眼差し]アーモンドアイ'
+index = 2
+
 def objective(trial):
 
     #count = 100000
@@ -21,8 +26,8 @@ def objective(trial):
 
     tastingThreashold1 = trial.suggest_int ('tastingThreashold1', 500, 900, step=100)
     allTastingFactor1 = 100
-    speedTastingFactor1 = trial.suggest_int ('tastingFactor1', 50, 150, step=10)
-    staminaTastingFactor1 = speedTastingFactor1
+    speedTastingFactor1 = trial.suggest_int ('speedTastingFactor1', 50, 150, step=10)
+    staminaTastingFactor1 = trial.suggest_int ('staminaTastingFactor1', 50, 150, step=10)
     wisdomTastingFactor1 = trial.suggest_int ('wisdomTastingFactor1', 50, 150, step=10)
     tastingMinFailureRate1 = trial.suggest_int ('tastingMinFailureRate1', 0, 30, step=10)
     gaugeScore1 = trial.suggest_int ('gaugeScore1', 0, 2000, step=100)
@@ -67,11 +72,12 @@ def objective(trial):
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
           f' --count {count}'\
+          f' --evaluate {mode}'\
           f' --chara "[初うらら♪さくさくら]ハルウララ" 5 5'\
           f' --support "[天才的ユートピア]トウカイテイオー" 4'\
           f' --support "[心覚えし、京の華]エアグルーヴ" 4'\
           f' --support "[その執念は怒濤が如く]メイショウドトウ" 4'\
-          f' --support "[賑やかな未来を乗せて走れ！]サクラチヨノオー" 4'\
+          f' --support "{lastCard}" 4'\
           f' --support "[Innovator]フォーエバーヤング" 4' \
           f' --support "[一杯のノスタルジア]駿川たづな" 4' \
           f' --factor SPEED 3 --factor SPEED 3 --factor SPEED 3'\
@@ -117,7 +123,7 @@ def objective(trial):
     return float(score)
 
 study = optuna.create_study(
-    study_name='ramen_s2h2w1_1',
+    study_name=f'ramen_{mode}_{index}',
     storage='sqlite:///optuna_study_ramen.db',
     load_if_exists=True,
     direction='maximize'
