@@ -1195,7 +1195,7 @@ running_style==3@running_style==4->distance_rate>=50
 distance_type==2@distance_type==3->phase==2&lastspurt==2&order_rate>=40
 「マイル」または「中距離」の後「終盤前半、最大スパート、順位率40以上（チャンミ4～/LoH5～）」、現在速度3500、持続5.0
 ->is_activate_other_skill_detail==1&run_at_full_speed_random==1&is_used_skill_id_with_detail_one==204452
-「上記効果発動後、全開スパート、スキル1つ目の条件で発動==204452」、伸びを見せる3000、持続2.0
+「上記効果発動後、全開スパート、スキル発動_with_detail_one==204452」、伸びを見せる3000、持続2.0
 
 想像×創造＝∞
 [Miracle Author]キセキ 固有
@@ -1214,6 +1214,15 @@ distance_rate>=16&distance_rate<=18&order_rate>=50->running_style==3&phase_later
 「距離割合16～18、順位率50以上（チャンミ5～/LoH6～）」の後「差し、中盤後半」、現在速度3500、持続5.0
 ->is_activate_other_skill_detail==1&distance_type==3&is_last_straight_onetime==1&order_rate<=50
 「上記効果発動後、中距離、最終直線に入った時、順位率50以下（チャンミ～5/LoH～6）」、現在速度1500、持続5.0
+
+冠絶タクティクス
+[Monochrome GM]ルーラーシップ 固有
+スタートが上手くいくと長時間少し前に出続ける、または出遅れていて中間地点で後方にいると速度がすごく上がる＜先行/追込＞
+評価点340、人気:スピード30/パワー30、確定発動
+running_style==2@running_style==4->is_goodstart==1
+「先行」または「追込」の後「is_goodstart==1」、現在速度2500、持続8.0
+running_style==2@running_style==4->is_badstart==1&distance_rate>=50&distance_rate<=51&order_rate>=50
+「先行」または「追込」の後「出遅れ、距離割合50～51、順位率50以上（チャンミ5～/LoH6～）」、目標速度4500、持続5.0
 
 わやかわ♪マリンダイヴ
 [ほっぴん♪ビタミンハート]スペシャルウィーク 固有
@@ -1918,7 +1927,7 @@ phase==1&order_rate<=70&order_rate>=20&blocked_side_continuetime>=2->phase==3&is
 レース中間地点で速度が少し上がるさらにダートレースでスキル発動時第3コーナーにいない場合加えて速度がわずかに上がる
 評価点340、人気:スピード60、確定発動
 ->distance_rate>=50&distance_rate<=51&ground_type==2&corner!=3
-「距離割合50～51、ダート、第3コーナー以外」、目標速度2500、目標速度1500、持続5.0
+「距離割合50～51、ダート、corner!=3」、目標速度2500、目標速度1500、持続5.0
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度2500、持続5.0
 
@@ -2026,7 +2035,7 @@ Watch Us Flourish
 レース中盤の直線で前方にいると速度を少し上げ続ける海外レース場なら効果が増える
 評価点340、人気:スピード60、確定発動
 ->phase==1&corner==0&order_rate<=50&is_abroad==1
-「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）、海外」、目標速度3500、持続6.0
+「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）、is_abroad==1」、目標速度3500、持続6.0
 ->phase==1&corner==0&order_rate<=50
 「中盤、コーナー以外、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続6.0
 
@@ -2364,6 +2373,12 @@ remain_distance<=600&order_rate>=40&order_rate<=80&is_behind_in==1&change_order_
 評価点-174、人気:パワー-30、確定発動
 ->always==1
 「常時」、パワー-40、持続0
+
+抱えた動揺
+最悪の最悪の最悪！負けイベ発生！能力をわずかに発揮しにくくなり出遅れる時間が長くなる
+評価点-174、人気:スピード-15/スタミナ-15、確定発動
+->always==1
+「常時」、出遅れ時間1000、全ての基礎能力-20、持続0
 
 超遊び癖
 スタートがすごく苦手になり出遅れたりスタート時の加速力が低下したりするこのスキルは育成完了後に消滅する
@@ -3261,6 +3276,12 @@ distance_rate>=16&distance_rate<=18&order_rate>=50->running_style==3&phase_later
 ->is_activate_other_skill_detail==1&distance_type==3&is_last_straight_onetime==1&order_rate<=50
 「上記効果発動後、中距離、最終直線に入った時、順位率50以下（チャンミ～5/LoH～6）」、現在速度350、持続3.0
 
+冠絶タクティクス
+スタートが上手くいくと長時間ちょっと前に出続ける＜先行/追込＞
+評価点180、SP200、人気:パワー15
+running_style==2@running_style==4->is_goodstart==1
+「先行」または「追込」の後「is_goodstart==1」、現在速度500、持続4.8
+
 わやかわ♪マリンダイヴ
 中盤に2回スキルを使い中団にいると持久力をわずかに回復し速度がちょっと上がる
 評価点180、SP200、人気:スピード7/スタミナ7
@@ -3851,7 +3872,7 @@ phase==1&order_rate<=70&order_rate>=20&blocked_side_continuetime>=2->phase==3&is
 レース中間地点で速度がちょっと上がるさらにダートレースでスキル発動時第3コーナーにいない場合加えて速度がほんのわずかに上がる
 評価点180、SP200、人気:スピード15
 ->distance_rate>=50&distance_rate<=51&ground_type==2&corner!=3
-「距離割合50～51、ダート、第3コーナー以外」、目標速度500、目標速度350、持続3.0
+「距離割合50～51、ダート、corner!=3」、目標速度500、目標速度350、持続3.0
 ->distance_rate>=50&distance_rate<=51
 「距離割合50～51」、目標速度500、持続3.0
 
@@ -5383,6 +5404,15 @@ You copy?
 評価点461、進化元SP280、人気:スピード60
 ->always==1
 「常時」、スタート4000、加速2000、持続3.0
+
+巧妙なるギャンビット
+[Monochrome GM]ルーラーシップ 進化(コンセントレーション)
+2000m～2500mのレースなら出遅れる時間が長くなるその後レース中盤始めの方にしばらくの間速度がすごく上がる＜芝＞
+評価点461、進化元SP280、人気:スピード60
+->always==1&course_distance>=2000&course_distance<=2500&ground_type==1
+「常時、距離>=2000、距離<=2500、芝」、出遅れ時間1000、持続0.0
+->is_activate_other_skill_detail==1&phase_firsthalf_random==1
+「上記効果発動後、中盤前半ランダム」、目標速度4500、持続4.0
 
 集中力
 スタートが得意になり出遅れる時間がわずかに少なくなる
@@ -9071,7 +9101,7 @@ Dreams 進化(いいとこ入った！)
 終盤以降の最終直線で中団以前にいると速度が上がる、さらに「聖女の試練」で速度を上げているとわずかに前に出る＜作戦・差し＞
 評価点633、進化元SP320、人気:スピード30/パワー30
 ->running_style==3&is_last_straight==1&order_rate<=60&phase>=2&is_used_skill_id_with_detail_one==204452
-「差し、最終直線、順位率60以下（チャンミ～5/LoH～7）、終盤、スキル1つ目の条件で発動==204452」、目標速度3500、現在速度1500、持続3.0
+「差し、最終直線、順位率60以下（チャンミ～5/LoH～7）、終盤、スキル発動_with_detail_one==204452」、目標速度3500、現在速度1500、持続3.0
 ->running_style==3&is_last_straight==1&order_rate<=60&phase>=2
 「差し、最終直線、順位率60以下（チャンミ～5/LoH～7）、終盤」、目標速度3500、持続3.0
 
@@ -11644,6 +11674,15 @@ Legends 進化(飛翔脚)
 ->running_style==4&distance_type==4&phase_firstquarter_random==2
 「追込、長距離、終盤前1/8ランダム」、加速4000、持続1.2
 
+強襲トリック
+[Monochrome GM]ルーラーシップ 進化(千載一遇)
+2000m～2500mのレースなら終盤始めの方早めに加速力がすごく上がるさらに中距離でレース後半に追い抜いていると少し前に出る＜先行/追込＞
+評価点633、進化元SP320、人気:パワー60
+running_style==2&distance_type==3&distance_rate>=50&change_order_onetime<0@running_style==4&distance_type==3&distance_rate>=50&change_order_onetime<0->course_distance>=2000&phase_firstquarter_random==2
+「先行、中距離、距離割合>=50、追い抜き」または「追込、中距離、距離割合>=50、追い抜き」の後「距離>=2000、終盤前1/8ランダム」、加速5000、現在速度2500、持続1.2
+running_style==2@running_style==4->course_distance>=2000&course_distance<=2500&phase_firstquarter_random==2
+「先行」または「追込」の後「距離>=2000、距離<=2500、終盤前1/8ランダム」、加速5000、持続1.2
+
 好機を捉えて
 レース終盤始めの方早めに中団以降にいると加速力がわずかに上がる＜追込・長距離＞
 評価点217、SP160、人気:パワー20
@@ -11893,9 +11932,9 @@ Legends 進化(飛翔脚)
 終盤始めの方で前方だと加速力が上がる海外レース場の芝のレースならラストスパートの最中に直線で前方だと加速力が上がる＜中距離＞
 評価点633、進化元SP320、人気:パワー60
 ->order_rate<=50&distance_type==3&ground_type==1&is_lastspurt==1&corner==0&is_abroad==1
-「順位率50以下（チャンミ～5/LoH～6）、中距離、芝、ラストスパート、コーナー以外、海外」、加速4000、持続1.8
+「順位率50以下（チャンミ～5/LoH～6）、中距離、芝、ラストスパート、コーナー以外、is_abroad==1」、加速4000、持続1.8
 ->order_rate<=50&distance_type==3&phase_firsthalf_random==2&is_abroad==0@order_rate<=50&distance_type==3&ground_type==2&phase_firsthalf_random==2&is_abroad==1
-「順位率50以下（チャンミ～5/LoH～6）、中距離、終盤前1/4ランダム、国内」または「順位率50以下（チャンミ～5/LoH～6）、中距離、ダート、終盤前1/4ランダム、海外」、加速4000、持続1.8
+「順位率50以下（チャンミ～5/LoH～6）、中距離、終盤前1/4ランダム、is_abroad==0」または「順位率50以下（チャンミ～5/LoH～6）、中距離、ダート、終盤前1/4ランダム、is_abroad==1」、加速4000、持続1.8
 
 正面突破
 レース終盤始めの方で前方にいると加速力がわずかに上がる＜中距離＞
@@ -12231,7 +12270,7 @@ running_style==2@running_style==3->phase_random==1
 下り坂で加速力が少し上がる、さらに「聖女の試練」で速度を上げていると持久力を少し使って少し前に出る＜作戦・差し＞
 評価点394、進化元SP240、人気:パワー60
 ->running_style==3&down_slope_random==1&is_used_skill_id_with_detail_one==204452
-「差し、下り坂ランダム、スキル1つ目の条件で発動==204452」、加速3000、現在速度2500、体力-200、持続3.0
+「差し、下り坂ランダム、スキル発動_with_detail_one==204452」、加速3000、現在速度2500、体力-200、持続3.0
 ->running_style==3&down_slope_random==1
 「差し、下り坂ランダム」、加速3000、持続3.0
 
@@ -12332,9 +12371,9 @@ running_style==2@running_style==3->phase_random==1
 終盤以降の最終コーナー以降にいるとき1番人気のウマ娘がスキルを発動するとしばらくの間前に出る、賢さが十二分に高いと効果が増える＜中距離/長距離＞
 評価点633、進化元SP360、人気:パワー60
 distance_type==3@distance_type==4->phase>=2&is_finalcorner==1&is_popularity_top_character_activate_advantage_skill==-1&base_wiz>=1200
-「中距離」または「長距離」の後「終盤、最終コーナー以降、1番人気のウマ娘がスキルを発動、基礎賢さ>=1200」、現在速度4000、持続4.0
+「中距離」または「長距離」の後「終盤、最終コーナー以降、is_人気_top_character_activate_advantage_skill==-1、基礎賢さ>=1200」、現在速度4000、持続4.0
 distance_type==3@distance_type==4->phase>=2&is_finalcorner==1&is_popularity_top_character_activate_advantage_skill==-1
-「中距離」または「長距離」の後「終盤、最終コーナー以降、1番人気のウマ娘がスキルを発動」、現在速度3500、持続4.0
+「中距離」または「長距離」の後「終盤、最終コーナー以降、is_人気_top_character_activate_advantage_skill==-1」、現在速度3500、持続4.0
 
 切り返し
 終盤以降の最終コーナー以降にいるときライバルのウマ娘が速度スキルを発動するとしばらくの間ちょっと前に出る＜中距離/長距離＞
@@ -13632,7 +13671,7 @@ distance_type==3@distance_type==4->base_stamina>=1200
 ->distance_type==3&phase_laterhalf_random==1&order_rate<=50
 「中距離、中盤後半ランダム、順位率50以下（チャンミ～5/LoH～6）」、目標速度3500、持続2.4
 ->is_activate_other_skill_detail==1&phase==3&is_used_skill_id==120221
-「上記効果発動後、終盤後半、スキル発動==120221」、固有スキル発動、持続0.0
+「上記効果発動後、終盤後半、スキル発動==120221」、(49)10000、持続0.0
 
 気持ちを乗せて
 レース終盤が迫ったとき前方にいると速度がわずかに上がる
@@ -13811,7 +13850,7 @@ The Next Phase
 レース終盤が迫ったときの直線でしばらくの間速度が少し上がる、さらに海外レース場でスキル発動時前方だとしばらくの間わずかに前に出る＜先行・中距離＞
 評価点633、進化元SP320、人気:スピード30/パワー30
 ->phase_latter_half_straight_random==1&running_style==2&distance_type==3&order_rate<=50&is_abroad==1
-「中盤後半直線ランダム、先行、中距離、順位率50以下（チャンミ～5/LoH～6）、海外」、目標速度2500、現在速度1500、持続4.0
+「中盤後半直線ランダム、先行、中距離、順位率50以下（チャンミ～5/LoH～6）、is_abroad==1」、目標速度2500、現在速度1500、持続4.0
 ->phase_latter_half_straight_random==1&running_style==2&distance_type==3
 「中盤後半直線ランダム、先行、中距離」、目標速度2500、持続4.0
 
