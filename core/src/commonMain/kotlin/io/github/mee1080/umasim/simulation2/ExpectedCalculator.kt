@@ -48,6 +48,7 @@ class ExpectedCalculator(
         totalTrainingLevel: Int,
         isLevelUpTurn: Boolean,
         val scenarioStatus: ScenarioStatus?,
+        val eventTrainingEffect: Int = 0,
     ) {
 
         val liveStatus get() = scenarioStatus as? TrainingLiveStatus
@@ -68,6 +69,7 @@ class ExpectedCalculator(
             totalTrainingLevel = totalTrainingLevel,
             isLevelUpTurn = isLevelUpTurn,
             scenarioStatus = scenarioStatus,
+            eventTrainingEffect = eventTrainingEffect,
         )
 
         fun toCalcInfo(type: StatusType, factors: List<Wrapper>, count: Int): Calculator.CalcInfo {
