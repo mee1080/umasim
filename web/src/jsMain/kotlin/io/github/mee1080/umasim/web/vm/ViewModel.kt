@@ -349,6 +349,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             state.totalTrainingLevel,
             state.isLevelUpTurn,
             scenarioStatus,
+            if (state.eventTrainingLimit) 20 else 0,
         ).setTeamMember(state.teamJoinCount)
         val scenarioBonus = state.scenario.calculator.getScenarioCalcBonus(trainingCalcInfo)
         val trainingResult = Calculator.calcTrainingSuccessStatusSeparated(trainingCalcInfo, scenarioBonus)
@@ -401,6 +402,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                     state.totalTrainingLevel,
                     state.isLevelUpTurn,
                     scenarioStatus,
+                    if (state.eventTrainingLimit) 20 else 0,
                 ).setTeamMember(state.teamJoinCount)
             )
             target.name to trainingResult.first.first + trainingResult.second - notJoinResult.first.first - notJoinResult.second
@@ -470,6 +472,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
                 scenarioStatus,
+                if (state.eventTrainingLimit) 20 else 0,
             ),
             state.teamJoinCount,
             // TODO ScenarioCalculator使用
@@ -561,6 +564,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
                 state.scenarioStatus,
+                if (state.eventTrainingLimit) 20 else 0,
             )
             val typeRate = state.expectedState.targetTypes.associateWith { 0.0 }.toMutableMap()
             val expected = ExpectedCalculator(
@@ -842,6 +846,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
                 uafStatus,
+                if (state.eventTrainingLimit) 20 else 0,
             )
             val result = UafAthleticsLevelCalculator.calc(trainingCalcInfo, state.uafState.athleticsLevelUpBonus)
             var expected = 0.0
@@ -916,6 +921,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 state.totalTrainingLevel,
                 state.isLevelUpTurn,
                 ramenStatus,
+                if (state.eventTrainingLimit) 20 else 0,
             ).setTeamMember(state.teamJoinCount)
 
             val noTastingStatus = ramenStatus.copy(activeTastingRegion = null)
