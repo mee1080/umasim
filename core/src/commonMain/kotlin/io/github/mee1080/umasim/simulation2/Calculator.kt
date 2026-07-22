@@ -56,6 +56,7 @@ object Calculator {
         val totalTrainingLevel: Int,
         val isLevelUpTurn: Boolean,
         val scenarioStatus: ScenarioStatus?,
+        val eventTrainingEffect: Int = 0,
     ) {
         val liveStatus get() = scenarioStatus as? TrainingLiveStatus
         val gmStatus get() = scenarioStatus as? GmStatus
@@ -197,7 +198,7 @@ object Calculator {
         val trainingBonus =
             1 + (support.sumOf {
                 it.card.trainingFactor(baseCondition.applyMember(it))
-            } + (bonus?.trainingBonus ?: 0)) / 100.0
+            } + info.eventTrainingEffect + (bonus?.trainingBonus ?: 0)) / 100.0
         val count = 1 + info.member.size * 0.05
         val scenarioFactor = bonus?.additionalFactor ?: 1.0
         if (DEBUG) println("$targetType base=$baseStatus baseBonus=$base chara=$charaBonus friend=$friend motivation=$motivationBonus training=$trainingBonus count=$count scenario=$scenarioFactor")
