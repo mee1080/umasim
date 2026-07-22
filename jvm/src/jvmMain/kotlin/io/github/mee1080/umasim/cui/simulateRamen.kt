@@ -8,7 +8,10 @@ import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateRamen() {
-    doRamenSimulationS2H2W1(StatusType.SPEED, null)
+//    doRamenSimulationS2H2W1(StatusType.SPEED, null)
+//    doRamenSimulationS2H2W1(StatusType.STAMINA, null)
+//    doRamenSimulationS2H2W1(StatusType.WISDOM, null)
+    doRamenSimulationS2H2W1(StatusType.FRIEND, "[一杯のノスタルジア]駿川たづな")
 //    doRamenSimulationS2H2W1(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
 //    doRamenSimulationS3H1W1(StatusType.SPEED, "[世界を変える眼差し]アーモンドアイ")
 //    optimize()
@@ -31,7 +34,7 @@ private fun doRamenSimulationS2H2W1(
     ).filter { it.second != targetStatus }.map { it.first to 4 }
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
         .map { it.copy(skills = emptyList()) }
-    val testCount = 1000
+    val testCount = 100000
 
     if (targetSupport == null) {
         doSimulation2(
@@ -42,7 +45,7 @@ private fun doRamenSimulationS2H2W1(
             factor = factor(StatusType.SPEED, 6),
             testCount = testCount,
             selector = { RamenActionSelector() },
-            evaluateSetting = Runner.ramenSetting,
+            evaluateSetting = Runner.ramenSettingTemplate["s2h2w1"]!!,
             evaluateUpperRate = 0.2,
             scenarioEvents = { RamenScenarioEvents() },
         )
@@ -55,7 +58,7 @@ private fun doRamenSimulationS2H2W1(
             factor = factor(StatusType.SPEED, 6),
             testCount = testCount,
             selector = { RamenActionSelector() },
-            evaluateSetting = Runner.ramenSetting,
+            evaluateSetting = Runner.ramenSettingTemplate["s2h2w1"]!!,
             evaluateUpperRate = 0.2,
             scenarioEvents = { RamenScenarioEvents() },
         )
@@ -90,7 +93,7 @@ private fun doRamenSimulationS3H1W1(
             factor = factor(StatusType.SPEED, 6),
             testCount = testCount,
             selector = { RamenActionSelector(*RamenActionSelector.s3h1w1) },
-            evaluateSetting = Runner.ramenSetting,
+            evaluateSetting = Runner.ramenSettingTemplate["s3h1w1"]!!,
             evaluateUpperRate = 0.2,
             scenarioEvents = { RamenScenarioEvents() },
         )
@@ -103,7 +106,7 @@ private fun doRamenSimulationS3H1W1(
             factor = factor(StatusType.SPEED, 6),
             testCount = testCount,
             selector = { RamenActionSelector(*RamenActionSelector.s3h1w1) },
-            evaluateSetting = Runner.ramenSetting,
+            evaluateSetting = Runner.ramenSettingTemplate["s3h1w1"]!!,
             evaluateUpperRate = 0.2,
             scenarioEvents = { RamenScenarioEvents() },
         )
