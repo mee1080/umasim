@@ -182,7 +182,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             }
         }
         DivFlexCenter {
-            MdCheckbox("トレーニング制限", state.eventTrainingLimit) {
+            MdCheckbox("トレーニング制限イベント（スイープのみ確認済）", state.eventTrainingLimit) {
                 onChange { model.update { copy(eventTrainingLimit = it) } }
             }
         }
