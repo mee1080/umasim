@@ -68,6 +68,7 @@ private fun checkCondition(
 
         "accumulatetime" -> condition.checkInRace { simulation.currentTime.toInt() }
         "straight_front_type" -> condition.checkInRace { getStraightFrontType() }
+        "is_goodstart" -> condition.checkInRace { if (simulation.startDelay <= 0.05) 1 else 0 }
         "is_badstart" -> condition.checkInRace { if (simulation.startDelay >= 0.08) 1 else 0 }
         "temptation_count" -> condition.checkInRace { if (simulation.hasTemptation) 1 else 0 }
         "remain_distance" -> condition.checkInRace { (baseSetting.courseLength - simulation.startPosition).toInt() }
