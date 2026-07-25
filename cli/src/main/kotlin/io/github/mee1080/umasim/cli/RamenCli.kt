@@ -10,6 +10,7 @@ import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.StoreLoader
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.ramen.RamenRegion
 import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 import kotlinx.coroutines.runBlocking
@@ -31,6 +32,7 @@ class RamenCli : CliktCommand() {
     private val evaluate by option().choice(Runner.ramenSettingTemplate.keys).required()
 
     private val status by option().int().multiple()
+    private val speed by option().int().multiple()
     private val wisdom by option().int().multiple()
     private val skillPt by option().int().multiple()
     private val hp by option().int().multiple()
@@ -59,6 +61,7 @@ class RamenCli : CliktCommand() {
         val options = List(4) {
             RamenActionSelector.Option(
                 status = status.getOrElse(it) { defaultOption.status },
+                speed = wisdom.getOrElse(it) { defaultOption.speed },
                 wisdom = wisdom.getOrElse(it) { defaultOption.wisdom },
                 skillPt = skillPt.getOrElse(it) { defaultOption.skillPt },
                 hp = hp.getOrElse(it) { defaultOption.hp },
@@ -68,15 +71,31 @@ class RamenCli : CliktCommand() {
                 hpKeep = hpKeep.getOrElse(it) { defaultOption.hpKeep },
                 risk = risk.getOrElse(it) { defaultOption.risk },
                 tastingThreashold = tastingThreashold.getOrElse(it) { defaultOption.tastingThreashold },
-                allTastingFactor = allTastingFactor.getOrElse(it) { defaultOption.allTastingFactor },
-                speedTastingFactor = speedTastingFactor.getOrElse(it) { defaultOption.speedTastingFactor },
-                staminaTastingFactor = staminaTastingFactor.getOrElse(it) { defaultOption.staminaTastingFactor },
-                powerTastingFactor = powerTastingFactor.getOrElse(it) { defaultOption.powerTastingFactor },
-                gutsTastingFactor = gutsTastingFactor.getOrElse(it) { defaultOption.gutsTastingFactor },
-                wisdomTastingFactor = wisdomTastingFactor.getOrElse(it) { defaultOption.wisdomTastingFactor },
+                allTastingFactor = allTastingFactor.getOrElse(it) { 0 },
+                speedTastingFactor = speedTastingFactor.getOrElse(it) { 0 },
+                staminaTastingFactor = staminaTastingFactor.getOrElse(it) { 0 },
+                powerTastingFactor = powerTastingFactor.getOrElse(it) { 0 },
+                gutsTastingFactor = gutsTastingFactor.getOrElse(it) { 0 },
+                wisdomTastingFactor = wisdomTastingFactor.getOrElse(it) { 0 },
                 tastingMinFailureRate = tastingMinFailureRate.getOrElse(it) { defaultOption.tastingMinFailureRate },
                 gaugeScore = gaugeScore.getOrElse(it) { defaultOption.gaugeScore },
                 gaugeMaxScore = gaugeMaxScore.getOrElse(it) { defaultOption.gaugeMaxScore },
+                regions = setOf(
+                    // Junior (Period 0)
+                    RamenRegion.SAPPORO,
+                    RamenRegion.HAKODATE,
+                    RamenRegion.TOKYO,
+                    // Classic (Period 1)
+                    RamenRegion.NAKAYAMA,
+                    RamenRegion.HANSHIN,
+                    RamenRegion.KOKURA,
+                    // Senior (Period 2)
+                    RamenRegion.HAKODATE2,
+                    RamenRegion.TOKYO2,
+                    RamenRegion.HANSHIN2,
+                    // Finals (Period 3)
+                    RamenRegion.FINALS2,
+                ),
             )
         }
         val factorList = factor.map { StatusType.valueOf(it.first) to it.second.toInt() }

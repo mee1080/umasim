@@ -4,7 +4,50 @@ import optuna
 mode = 's3h1w1'
 #lastCard = '[賑やかな未来を乗せて走れ！]サクラチヨノオー'
 lastCard = '[世界を変える眼差し]アーモンドアイ'
-index = 2
+index = 5
+sampler = optuna.samplers.CmaEsSampler()
+
+initial_params = {
+    "speed1": 100,
+    "wisdom1": 120,
+    "hp1": 55,
+    "relation1": 1000,
+    "outingRelation1": 5000,
+    "hpKeep1": 450,
+    "risk1": 200,
+    "tastingThreashold1": 500,
+    "speedTastingFactor1": 90,
+    "staminaTastingFactor1": 140,
+    "wisdomTastingFactor1": 120,
+    "tastingMinFailureRate1": 0,
+    "gaugeScore1": 400,
+    "gaugeMaxScore1": 2500,
+
+    "speed2": 50,
+    "wisdom2": 120,
+    "hp2": 90,
+    "hpKeep2": 500,
+    "risk2": 175,
+    "tastingThreashold2": 600,
+    "allTastingFactor2": 50,
+    "staminaTastingFactor2": 120,
+    "wisdomTastingFactor2": 140,
+    "tastingMinFailureRate2": 10,
+    "gaugeScore2": 100,
+    "gaugeMaxScore2": 1000,
+
+    "speed3": 50,
+    "wisdom3": 100,
+    "hp3": 85,
+    "hpKeep3": 50,
+    "risk3": 225,
+    "tastingThreashold3": 700,
+    "speedTastingFactor3": 90,
+    "staminaTastingFactor3": 140,
+    "wisdomTastingFactor3": 110,
+    "gaugeScore3": 1900,
+    "gaugeMaxScore3": 9000,
+}
 
 def objective(trial):
 
@@ -16,6 +59,7 @@ def objective(trial):
     motivation = 1000
 
 
+    speed1 = trial.suggest_int ('speed1', 40, 100, step=5)
     wisdom1 = trial.suggest_int ('wisdom1', 50, 120, step=5)
     hp1 = trial.suggest_int ('hp1', 40, 100, step=5)
 
@@ -25,7 +69,7 @@ def objective(trial):
     risk1 = trial.suggest_int ('risk1', 50, 250, step=25)
 
     tastingThreashold1 = trial.suggest_int ('tastingThreashold1', 500, 900, step=100)
-    allTastingFactor1 = 100
+    allTastingFactor1 = 0
     speedTastingFactor1 = trial.suggest_int ('speedTastingFactor1', 50, 150, step=10)
     staminaTastingFactor1 = trial.suggest_int ('staminaTastingFactor1', 50, 150, step=10)
     wisdomTastingFactor1 = trial.suggest_int ('wisdomTastingFactor1', 50, 150, step=10)
@@ -34,6 +78,7 @@ def objective(trial):
     gaugeMaxScore1 = trial.suggest_int ('gaugeMaxScore1', 0, 10000, step=500)
 
 
+    speed2 = trial.suggest_int ('speed2', 40, 100, step=5)
     wisdom2 = trial.suggest_int ('wisdom2', 50, 120, step=5)
     hp2 = trial.suggest_int ('hp2', 40, 100, step=5)
 
@@ -44,7 +89,7 @@ def objective(trial):
 
     tastingThreashold2 = trial.suggest_int ('tastingThreashold2', 500, 900, step=100)
     allTastingFactor2 = trial.suggest_int ('allTastingFactor2', 50, 150, step=10)
-    speedTastingFactor2 = 100
+    speedTastingFactor2 = 0
     staminaTastingFactor2 = trial.suggest_int ('staminaTastingFactor2', 50, 150, step=10)
     wisdomTastingFactor2 = trial.suggest_int ('wisdomTastingFactor2', 50, 150, step=10)
     tastingMinFailureRate2 = trial.suggest_int ('tastingMinFailureRate2', 0, 30, step=10)
@@ -52,6 +97,7 @@ def objective(trial):
     gaugeMaxScore2 = trial.suggest_int ('gaugeMaxScore2', 0, 10000, step=500)
 
 
+    speed3 = trial.suggest_int ('speed3', 40, 100, step=5)
     wisdom3 = trial.suggest_int ('wisdom3', 50, 120, step=5)
     hp3 = trial.suggest_int ('hp3', 40, 100, step=5)
 
@@ -61,7 +107,7 @@ def objective(trial):
     risk3 = trial.suggest_int ('risk3', 50, 250, step=25)
 
     tastingThreashold3 = trial.suggest_int ('tastingThreashold3', 500, 900, step=100)
-    allTastingFactor3 = 100
+    allTastingFactor3 = 0
     speedTastingFactor3 = trial.suggest_int ('speedTastingFactor3', 50, 150, step=10)
     staminaTastingFactor3 = trial.suggest_int ('staminaTastingFactor3', 50, 150, step=10)
     wisdomTastingFactor3 = trial.suggest_int ('wisdomTastingFactor3', 50, 150, step=10)
@@ -83,7 +129,7 @@ def objective(trial):
           f' --factor SPEED 3 --factor SPEED 3 --factor SPEED 3'\
           f' --factor SPEED 3 --factor SPEED 3 --factor SPEED 3'\
           \
-          f' --status {status} --wisdom {wisdom1} --skill-pt {skillPt}'\
+          f' --status {status} --speed {speed1} --wisdom {wisdom1} --skill-pt {skillPt}'\
           f' --hp {hp1} --motivation {motivation}'\
           f' --relation {relation1} --outing-relation {outingRelation1}'\
           f' --hp-keep {hpKeep1} --risk {risk1}'\
@@ -92,7 +138,7 @@ def objective(trial):
           f' --wisdom-tasting-factor {wisdomTastingFactor1} --tasting-min-failure-rate {tastingMinFailureRate1}'\
           f' --gauge-score {gaugeScore1} --gauge-max-score {gaugeMaxScore1}'\
           \
-          f' --status {status} --wisdom {wisdom2} --skill-pt {skillPt}'\
+          f' --status {status} --speed {speed2} --wisdom {wisdom2} --skill-pt {skillPt}'\
           f' --hp {hp2} --motivation {motivation}'\
           f' --relation {relation2} --outing-relation {outingRelation2}'\
           f' --hp-keep {hpKeep2} --risk {risk2}'\
@@ -101,7 +147,7 @@ def objective(trial):
           f' --wisdom-tasting-factor {wisdomTastingFactor2} --tasting-min-failure-rate {tastingMinFailureRate2}'\
           f' --gauge-score {gaugeScore2} --gauge-max-score {gaugeMaxScore2}'\
           \
-          f' --status {status} --wisdom {wisdom3} --skill-pt {skillPt}'\
+          f' --status {status} --speed {speed3} --wisdom {wisdom3} --skill-pt {skillPt}'\
           f' --hp {hp3} --motivation {motivation}'\
           f' --relation {relation3} --outing-relation {outingRelation3}'\
           f' --hp-keep {hpKeep3} --risk {risk3}'\
@@ -122,10 +168,20 @@ def objective(trial):
     print(score.decode('cp932'))
     return float(score)
 
+storage = optuna.storages.RDBStorage(
+    url="sqlite:///optuna_study_ramen.db",
+    engine_kwargs={"connect_args": {"timeout": 60}}
+)
+
 study = optuna.create_study(
+    sampler=sampler,
     study_name=f'ramen_{mode}_{index}',
-    storage='sqlite:///optuna_study_ramen.db',
+    storage=storage,
     load_if_exists=True,
     direction='maximize'
 )
-study.optimize(objective, n_trials=1000000)
+if len(study.get_trials(deepcopy=False)) == 0:
+    print('enque initial trial')
+    study.enqueue_trial(initial_params)
+
+study.optimize(objective, n_trials=100000)

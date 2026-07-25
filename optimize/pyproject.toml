@@ -5,6 +5,7 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.14"
 dependencies = [
+    "cmaes>=0.13.0",
     "optuna>=4.7.0",
     "optuna-dashboard>=0.20.0",
 ]
