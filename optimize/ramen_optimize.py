@@ -1,58 +1,59 @@
 import subprocess
 import optuna
 
-mode = 's3h1w1'
-#lastCard = '[賑やかな未来を乗せて走れ！]サクラチヨノオー'
-lastCard = '[世界を変える眼差し]アーモンドアイ'
-index = 5
+mode = 's2h2w1'
+lastCard = '[賑やかな未来を乗せて走れ！]サクラチヨノオー'
+#mode = 's3h1w1'
+#lastCard = '[世界を変える眼差し]アーモンドアイ'
+index = 6
 sampler = optuna.samplers.CmaEsSampler()
 
 initial_params = {
     "speed1": 100,
-    "wisdom1": 120,
-    "hp1": 55,
-    "relation1": 1000,
-    "outingRelation1": 5000,
-    "hpKeep1": 450,
-    "risk1": 200,
+    "wisdom1": 90,
+    "hp1": 100,
+    "relation1": 9000,
+    "outingRelation1": 9000,
+    "hpKeep1": 500,
+    "risk1": 225,
     "tastingThreashold1": 500,
-    "speedTastingFactor1": 90,
-    "staminaTastingFactor1": 140,
-    "wisdomTastingFactor1": 120,
-    "tastingMinFailureRate1": 0,
-    "gaugeScore1": 400,
-    "gaugeMaxScore1": 2500,
+    "speedTastingFactor1": 120,
+    "staminaTastingFactor1": 120,
+    "wisdomTastingFactor1": 130,
+    "tastingMinFailureRate1": 10,
+    "gaugeScore1": 100,
+    "gaugeMaxScore1": 7500,
 
-    "speed2": 50,
-    "wisdom2": 120,
+    "speed2": 100,
+    "wisdom2": 60,
     "hp2": 90,
-    "hpKeep2": 500,
+    "hpKeep2": 250,
     "risk2": 175,
-    "tastingThreashold2": 600,
-    "allTastingFactor2": 50,
-    "staminaTastingFactor2": 120,
-    "wisdomTastingFactor2": 140,
-    "tastingMinFailureRate2": 10,
-    "gaugeScore2": 100,
-    "gaugeMaxScore2": 1000,
+    "tastingThreashold2": 500,
+    "allTastingFactor2": 70,
+    "staminaTastingFactor2": 70,
+    "wisdomTastingFactor2": 100,
+    "tastingMinFailureRate2": 30,
+    "gaugeScore2": 0,
+    "gaugeMaxScore2": 0,
 
-    "speed3": 50,
-    "wisdom3": 100,
-    "hp3": 85,
+    "speed3": 100,
+    "wisdom3": 75,
+    "hp3": 95,
     "hpKeep3": 50,
-    "risk3": 225,
-    "tastingThreashold3": 700,
-    "speedTastingFactor3": 90,
-    "staminaTastingFactor3": 140,
-    "wisdomTastingFactor3": 110,
-    "gaugeScore3": 1900,
-    "gaugeMaxScore3": 9000,
+    "risk3": 50,
+    "tastingThreashold3": 600,
+    "speedTastingFactor3": 100,
+    "staminaTastingFactor3": 90,
+    "wisdomTastingFactor3": 140,
+    "gaugeScore3": 700,
+    "gaugeMaxScore3": 1500,
 }
 
 def objective(trial):
 
     #count = 100000
-    count = 10000
+    count = 50000
 
     status = 100
     skillPt = 200
