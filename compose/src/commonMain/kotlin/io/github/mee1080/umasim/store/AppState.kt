@@ -107,6 +107,7 @@ data class SimulationSummary(
     val spurtSummary: SimulationSummaryEntry,
     val notSpurtSummary: SimulationSummaryEntry,
     val spurtRate: Double,
+    val finishRate: Double,
     val skillSummaries: List<Pair<String, SimulationSkillSummary>>,
 )
 
@@ -118,6 +119,9 @@ data class SimulationSummaryEntry(
     val averageSp: Double = 0.0,
     val bestSp: Double = 0.0,
     val worstSp: Double = 0.0,
+    val averageGoalSp: Double = 0.0,
+    val bestGoalSp: Double = 0.0,
+    val worstGoalSp: Double = 0.0,
     val positionCompetitionCount: Double = 0.0,
     val staminaKeepRate: Double = 0.0,
     val staminaKeepDistance: Double = 0.0,

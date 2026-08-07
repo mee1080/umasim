@@ -29,7 +29,10 @@ fun SummaryOutput(state: AppState) {
     val summary = state.simulationSummary ?: return
     Column {
         Text("結果", style = MaterialTheme.typography.headlineSmall)
-        Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
+        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            Text("最大スパート率：${summary.spurtRate.toPercentString(2)}")
+            Text("完走率：${summary.finishRate.toPercentString(2)}")
+        }
         SummaryTable(summary)
         if (state.simulationSummary.setting.trackDetail.runUp > 0) {
             Text("※各タイムは助走区間分を含む")
@@ -46,6 +49,9 @@ private val tableHeader = listOf(
     "平均余剰耐力",
     "最大余剰耐力",
     "最小余剰耐力",
+    "平均残り体力",
+    "最大残り体力",
+    "最小残り体力",
     "位置取り調整回数",
     "持久力温存発生率",
     "持久力温存平均距離",
@@ -87,7 +93,7 @@ private fun SummaryTable(summary: SimulationSummary) {
 
 private fun toTableData(label: String, entry: SimulationSummaryEntry): List<String> {
     return if (entry.count == 0) {
-        listOf(label, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-")
+        listOf(label, "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-")
     } else {
         listOf(
             label,
@@ -97,6 +103,9 @@ private fun toTableData(label: String, entry: SimulationSummaryEntry): List<Stri
             entry.averageSp.roundToString(1),
             entry.bestSp.roundToString(1),
             entry.worstSp.roundToString(1),
+            entry.averageGoalSp.roundToString(1),
+            entry.bestGoalSp.roundToString(1),
+            entry.worstGoalSp.roundToString(1),
             entry.positionCompetitionCount.roundToString(2),
             entry.staminaKeepRate.toPercentString(1),
             entry.staminaKeepDistance.roundToString(1),

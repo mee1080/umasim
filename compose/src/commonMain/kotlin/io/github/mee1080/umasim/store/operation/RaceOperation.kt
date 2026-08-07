@@ -102,6 +102,7 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
         spurtSummary = toSummary(spurtResults),
         notSpurtSummary = toSummary(notSpurtResult),
         spurtRate = spurtResults.size.toDouble() / results.size,
+        finishRate = results.count { it.goalSp >= 0.0 }.toDouble() / results.size,
         skillSummaries = skillSummaries.map { it.key to toSummary(skillDataMap[it.key]!!, it.value) },
     )
     send {
@@ -123,6 +124,9 @@ private fun toSummary(result: List<RaceSimulationResult>): SimulationSummaryEntr
         averageSp = result.averageOf { it.spDiff },
         bestSp = result.maxOf { it.spDiff },
         worstSp = result.minOf { it.spDiff },
+        averageGoalSp = result.averageOf { it.goalSp },
+        bestGoalSp = result.maxOf { it.goalSp },
+        worstGoalSp = result.minOf { it.goalSp },
         positionCompetitionCount = result.averageOf { it.positionCompetitionCount.toDouble() },
         staminaKeepRate = result.count { it.staminaKeepDistance > 0.0 } / result.size.toDouble(),
         staminaKeepDistance = result.averageOf { it.staminaKeepDistance },
