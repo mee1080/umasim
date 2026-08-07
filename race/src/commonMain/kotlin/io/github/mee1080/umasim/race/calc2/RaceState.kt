@@ -960,6 +960,7 @@ data class RaceSimulationResult(
     val staminaKeepDistance: Double,
     val competeFightFinished: Boolean,
     val competeFightTime: Double,
+    val goalSp: Double,
 )
 
 class InvokedSkill(

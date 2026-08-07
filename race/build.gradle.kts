@@ -30,8 +30,17 @@ kotlin {
             implementation(libs.kotlinx.serializationJson)
         }
 
+        commonTest.dependencies {
+            implementation(libs.test.common)
+            implementation(libs.test.annotations)
+        }
+
         jvmMain.dependencies {
             implementation(libs.slf4j.nop)
+        }
+
+        jvmTest.dependencies {
+            implementation(libs.test.junit)
         }
 
         wasmJsMain.dependencies {

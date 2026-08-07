@@ -585,6 +585,7 @@ private fun RaceState.goal(): RaceSimulationResult {
         staminaKeepDistance = simulation.staminaKeepDistance,
         competeFightFinished = simulation.competeFightEnd == null && simulation.competeFightStart != null,
         competeFightTime = competeFightFrame * secondPerFrame,
+        goalSp = simulation.sp,
     )
 }
 
