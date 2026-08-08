@@ -26,7 +26,7 @@ fun RacePage(state: AppState, dispatch: OperationDispatcher<AppState>) {
         HorizontalDivider()
         ModeInput(state, dispatch)
         ActionInput(state, dispatch)
-        SummaryOutput(state)
+        SummaryOutput(state, dispatch)
         GraphOutput(state, dispatch)
         LastSimulationDetailOutput(state)
         ContributionOutput(state)

@@ -63,6 +63,14 @@ data class GraphDisplaySetting(
 )
 
 @Stable
+data class SimulationHistoryEntry(
+    val id: Int,
+    val summary: SimulationSummary,
+    val lastSimulationSettingWithPassive: RaceSettingWithPassive?,
+    val graphData: GraphData?,
+)
+
+@Stable
 @Serializable
 data class AppState(
     val setting: RaceSetting = RaceSetting(),
@@ -86,6 +94,10 @@ data class AppState(
     val graphData: GraphData? = null,
     @Transient
     val contributionResults: List<ContributionResult> = emptyList(),
+    @Transient
+    val simulationHistory: List<SimulationHistoryEntry> = emptyList(),
+    @Transient
+    val selectedSimulationId: Int? = null,
 ) : State {
     fun chara(virtual: Boolean): UmaStatus {
         return if (virtual) setting.virtualLeader else setting.umaStatus

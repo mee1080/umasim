@@ -31,10 +31,14 @@ private val simulationCancelPolicy = OnRunning.CancelAndRun(simulationTag)
 
 fun runSimulation(overrideCount: Int? = null) = AsyncOperation<AppState>({ state ->
     send { it.clearSimulationResult() }
-    when (state.simulationMode) {
-        SimulationMode.NORMAL -> runSimulationNormal(state, overrideCount)
-        SimulationMode.CONTRIBUTION -> runSimulationContribution(state, false)
-        SimulationMode.CONTRIBUTION2 -> runSimulationContribution(state, true)
+    runCatching {
+        when (state.simulationMode) {
+            SimulationMode.NORMAL -> runSimulationNormal(state, overrideCount)
+            SimulationMode.CONTRIBUTION -> runSimulationContribution(state, false)
+            SimulationMode.CONTRIBUTION2 -> runSimulationContribution(state, true)
+        }
+    }.onFailure {
+        it.printStackTrace()
     }
 }, simulationPolicy)
 
@@ -106,8 +110,17 @@ private suspend fun ActionContext<AppState>.runSimulationNormal(state: AppState,
         skillSummaries = skillSummaries.map { it.key to toSummary(skillDataMap[it.key]!!, it.value) },
     )
     send {
+        val nextId = (it.simulationHistory.maxOfOrNull { entry -> entry.id } ?: 0) + 1
+        val entry = SimulationHistoryEntry(
+            id = nextId,
+            summary = summary,
+            lastSimulationSettingWithPassive = firstRaceState?.setting,
+            graphData = graphData,
+        )
         it.copy(
             simulationProgress = 0,
+            simulationHistory = listOf(entry) + it.simulationHistory,
+            selectedSimulationId = nextId,
             simulationSummary = summary,
             lastSimulationSettingWithPassive = firstRaceState?.setting,
             graphData = graphData,
@@ -447,6 +460,32 @@ private fun toGraphData(
             add((frameList.size - 1) / 15f to areaHeight)
             add((frameList.size - 1) / 15f to 0f)
         }
+    }
+}
+
+fun selectHistoryEntry(id: Int) = DirectOperation<AppState> { state ->
+    val entry = state.simulationHistory.firstOrNull { it.id == id } ?: return@DirectOperation state
+    state.copy(
+        selectedSimulationId = id,
+        simulationSummary = entry.summary,
+        lastSimulationSettingWithPassive = entry.lastSimulationSettingWithPassive,
+        graphData = entry.graphData,
+    )
+}
+
+fun deleteHistoryEntry(id: Int) = DirectOperation<AppState> { state ->
+    val newHistory = state.simulationHistory.filterNot { it.id == id }
+    if (state.selectedSimulationId == id) {
+        val lastEntry = newHistory.lastOrNull()
+        state.copy(
+            simulationHistory = newHistory,
+            selectedSimulationId = lastEntry?.id,
+            simulationSummary = lastEntry?.summary,
+            lastSimulationSettingWithPassive = lastEntry?.lastSimulationSettingWithPassive,
+            graphData = lastEntry?.graphData,
+        )
+    } else {
+        state.copy(simulationHistory = newHistory)
     }
 }
 
