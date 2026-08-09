@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.data
 
 import io.github.mee1080.umasim.scenario.live.Performance
+import kotlin.math.roundToInt
 
 data class ExpectedStatus(
     override val speed: Double = 0.0,
@@ -83,6 +84,19 @@ data class ExpectedStatus(
             div((sleepHp / -hp + 1) / (sleepHp / -hp))
         }.copy(hp = 0.0)
     }
+
+    fun roundToStatus() = Status(
+        speed = speed.roundToInt(),
+        stamina = stamina.roundToInt(),
+        power = power.roundToInt(),
+        guts = guts.roundToInt(),
+        wisdom = wisdom.roundToInt(),
+        skillPt = skillPt.roundToInt(),
+        hp = hp.roundToInt(),
+        motivation = motivation.roundToInt(),
+        maxHp = maxHp.roundToInt(),
+        performance = performance?.roundToPerformance(),
+    )
 }
 
 data class ExpectedPerformance(
@@ -118,4 +132,12 @@ data class ExpectedPerformance(
     )
 
     val totalValue by lazy { dance + passion + vocal + visual + mental }
+
+    fun roundToPerformance() = Performance(
+        dance = dance.roundToInt(),
+        passion = passion.roundToInt(),
+        vocal = vocal.roundToInt(),
+        visual = visual.roundToInt(),
+        mental = mental.roundToInt(),
+    )
 }

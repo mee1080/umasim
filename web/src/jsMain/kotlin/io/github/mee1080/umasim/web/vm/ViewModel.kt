@@ -78,7 +78,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
         scope.launch {
             var newState = update(state)
             if (calculate) {
-                newState = newState.copy(ramenAllTastingImpact = emptyList())
+                newState = newState.copy(ramenAllTastingImpact = null)
                 newState = calculate(newState)
                 newState = calculateBonus(newState)
             }
@@ -90,7 +90,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
         withContext(Dispatchers.Main) {
             var newState = update(state)
             if (calculate) {
-                newState = newState.copy(ramenAllTastingImpact = emptyList())
+                newState = newState.copy(ramenAllTastingImpact = null)
                 newState = calculate(newState)
                 newState = calculateBonus(newState)
             }
@@ -933,14 +933,14 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                 val baseSupport = mutableListOf<MemberState>()
                 val remaining = mutableListOf<MemberState>()
                 for (j in 0 until n) {
-                    if ((i shr j) and 1 == 1) {
+                    if ((i shr (n - 1 - j)) and 1 == 1) {
                         baseSupport.add(allSupportList[j])
                     } else {
                         remaining.add(allSupportList[j])
                     }
                 }
 
-                if (baseSupport.size > 4) continue
+                if (baseSupport.size > 5) continue
 
                 val s2Info = baseInfo.copy(member = baseSupport, scenarioStatus = noTastingStatus)
                 val s2 = Calculator.calcTrainingSuccessStatusSeparated(
@@ -948,10 +948,8 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                     scenarioCalculator.getScenarioCalcBonus(s2Info)
                 ).let { it.first.first + it.second }
 
-                for (addSupport in remaining) {
-                    if (addSupport.card.type.outingType) continue
-
-                    val s1Info = baseInfo.copy(member = baseSupport + addSupport, scenarioStatus = ramenStatus)
+                if (baseSupport.size >= 4) {
+                    val s1Info = baseInfo.copy(member = baseSupport, scenarioStatus = ramenStatus)
                     val s1 = Calculator.calcTrainingSuccessStatusSeparated(
                         s1Info,
                         scenarioCalculator.getScenarioCalcBonus(s1Info)
@@ -959,18 +957,37 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
 
                     results.add(
                         RamenAllTastingImpact(
-                            participants = baseSupport.map { it.charaName }.toSet(),
-                            added = addSupport,
+                            participants = baseSupport.map { it.charaName },
+                            participantsSort = i,
+                            added = null,
                             impact = s1 - s2
                         )
                     )
                 }
+                if (baseSupport.size <= 4) {
+                    for (addSupport in remaining) {
+                        if (addSupport.card.type.outingType) continue
+
+                        val s1Info = baseInfo.copy(member = baseSupport + addSupport, scenarioStatus = ramenStatus)
+                        val s1 = Calculator.calcTrainingSuccessStatusSeparated(
+                            s1Info,
+                            scenarioCalculator.getScenarioCalcBonus(s1Info)
+                        ).let { it.first.first + it.second }
+
+                        results.add(
+                            RamenAllTastingImpact(
+                                participants = baseSupport.map { it.charaName },
+                                participantsSort = i,
+                                added = addSupport,
+                                impact = s1 - s2
+                            )
+                        )
+                    }
+                }
             }
-            val sortedResults = if (state.ramenAllTastingSortKey != null) {
-                results.sortRamenAllTastingImpact(state.ramenAllTastingSortKey, state.ramenAllTastingSortDescending)
-            } else {
-                results.sortRamenAllTastingImpact(RamenAllTastingSortKey.TotalPlusSkillPt, true)
-            }
+            val sortedResults = results.sortRamenAllTastingImpact(
+                state.ramenAllTastingSortKey, state.ramenAllTastingSortDescending
+            )
 
             withContext(Dispatchers.Main) {
                 updateState(calculate = false) {
@@ -985,15 +1002,11 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
     }
 
     fun updateRamenAllTastingSort(key: RamenAllTastingSortKey) {
-        val state = state
-        val nextDescending = if (state.ramenAllTastingSortKey == key) {
-            !state.ramenAllTastingSortDescending
-        } else {
-            true
-        }
-        val sortedList = state.ramenAllTastingImpact.sortRamenAllTastingImpact(key, nextDescending)
-        update {
-            copy(
+        updateState(calculate = false) {
+            val ramenAllTastingImpact = it.ramenAllTastingImpact ?: return@updateState it
+            val nextDescending = it.ramenAllTastingSortKey != key || !it.ramenAllTastingSortDescending
+            val sortedList = ramenAllTastingImpact.first.sortRamenAllTastingImpact(key, nextDescending)
+            it.copy(
                 ramenAllTastingImpact = sortedList,
                 ramenAllTastingSortKey = key,
                 ramenAllTastingSortDescending = nextDescending

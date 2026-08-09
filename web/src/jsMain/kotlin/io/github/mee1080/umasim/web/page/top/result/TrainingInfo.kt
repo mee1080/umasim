@@ -18,7 +18,7 @@
  */
 package io.github.mee1080.umasim.web.page.top.result
 
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
@@ -27,9 +27,11 @@ import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
-import io.github.mee1080.umasim.web.state.*
+import io.github.mee1080.umasim.web.state.RamenAllTastingSortKey
+import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
+import io.github.mee1080.umasim.web.state.getRamenAllTastingSortIndicator
 import io.github.mee1080.umasim.web.style.AppStyle
 import io.github.mee1080.umasim.web.unsetWidth
 import io.github.mee1080.umasim.web.vm.ViewModel
@@ -396,9 +398,15 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 style { marginTop(8.px) }
             })
 
-            if (state.ramenAllTastingImpact.isNotEmpty()) {
+            if (state.ramenAllTastingImpact != null) {
                 Div { Text("※項目名クリックでソート") }
                 Div { Text("※見にくければExcelとかにコピペして") }
+                var grouped by remember { mutableStateOf(false) }
+                Div {
+                    MdCheckbox("初期配置ごとの期待値表示", grouped) {
+                        onChange { grouped = it }
+                    }
+                }
                 Div({ style { marginTop(16.px) } }) {
                     Table({ classes(AppStyle.table) }) {
                         Tr {
@@ -415,11 +423,17 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                     Th({ unsetWidth() }) { Text(it.chara.first().toString()) }
                                 }
                             }
-                            Th({
-                                unsetWidth()
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.AddedChara) }
-                            }) { Text("追加配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.AddedChara)) }
+                            if (grouped) {
+                                Th({
+                                    unsetWidth()
+                                }) { Text("理/記") }
+                            } else {
+                                Th({
+                                    unsetWidth()
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.AddedChara) }
+                                }) { Text("追加配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.AddedChara)) }
+                            }
                             Th({
                                 style { cursor("pointer") }
                                 onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Speed) }
@@ -457,7 +471,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                 onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.TotalPlusSkillPt) }
                             }) { Text("5ステ+SP" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.TotalPlusSkillPt)) }
                         }
-                        state.ramenAllTastingImpact.forEach { impact ->
+                        val displayData =
+                            if (grouped) state.ramenAllTastingImpact.second else state.ramenAllTastingImpact.first
+                        displayData.forEach { impact ->
                             Tr {
                                 state.supportSelectionList.forEach { support ->
                                     support.card?.let {
@@ -469,12 +485,22 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                         }
                                     }
                                 }
-                                Td({
-                                    unsetWidth()
-                                    style { textAlign("left") }
-                                }) {
-                                    val mark = if (impact.added.card.type == state.selectedTrainingType) "◎" else ""
-                                    Text(mark + impact.added.charaName)
+                                if (grouped) {
+                                    Th({
+                                        unsetWidth()
+                                    }) {
+                                        Text(if (impact.participants.contains("理事長/記者")) "◯" else "-")
+                                    }
+                                } else {
+                                    Td({
+                                        unsetWidth()
+                                        style { textAlign("left") }
+                                    }) {
+                                        impact.added?.let {
+                                            val mark = if (it.card.type == state.selectedTrainingType) "◎" else ""
+                                            Text(mark + it.charaName)
+                                        } ?: Text("なし")
+                                    }
                                 }
                                 Td { Text(impact.impact.speed.toString()) }
                                 Td { Text(impact.impact.stamina.toString()) }
