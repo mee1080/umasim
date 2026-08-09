@@ -78,6 +78,8 @@ data class State(
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
     val ramenTastingImpact: List<RamenTastingImpact> = emptyList(),
     val ramenAllTastingImpact: List<RamenAllTastingImpact> = emptyList(),
+    val ramenAllTastingSortKey: RamenAllTastingSortKey? = null,
+    val ramenAllTastingSortDescending: Boolean = true,
     val expectedResult: ExpectedStatus = ExpectedStatus(),
     val upperRate: Double = 0.0,
     val friendProbability: Double = 0.0,
@@ -203,6 +205,63 @@ data class RamenAllTastingImpact(
     val added: MemberState,
     val impact: Status,
 )
+
+sealed interface RamenAllTastingSortKey {
+    object InitialParticipants : RamenAllTastingSortKey
+    object AddedChara : RamenAllTastingSortKey
+    object Speed : RamenAllTastingSortKey
+    object Stamina : RamenAllTastingSortKey
+    object Power : RamenAllTastingSortKey
+    object Guts : RamenAllTastingSortKey
+    object Wisdom : RamenAllTastingSortKey
+    object SkillPt : RamenAllTastingSortKey
+    object Hp : RamenAllTastingSortKey
+    object StatusTotal : RamenAllTastingSortKey
+    object TotalPlusSkillPt : RamenAllTastingSortKey
+}
+
+fun List<RamenAllTastingImpact>.sortRamenAllTastingImpact(
+    key: RamenAllTastingSortKey,
+    descending: Boolean
+): List<RamenAllTastingImpact> {
+    return this.sortedWith { a, b ->
+        val comparison = when (key) {
+            RamenAllTastingSortKey.InitialParticipants -> {
+                val aStr = a.participants.sorted().joinToString(",")
+                val bStr = b.participants.sorted().joinToString(",")
+                aStr.compareTo(bStr)
+            }
+            RamenAllTastingSortKey.AddedChara -> {
+                val aName = a.added.card.name
+                val bName = b.added.card.name
+                aName.compareTo(bName)
+            }
+            RamenAllTastingSortKey.Speed -> a.impact.speed.compareTo(b.impact.speed)
+            RamenAllTastingSortKey.Stamina -> a.impact.stamina.compareTo(b.impact.stamina)
+            RamenAllTastingSortKey.Power -> a.impact.power.compareTo(b.impact.power)
+            RamenAllTastingSortKey.Guts -> a.impact.guts.compareTo(b.impact.guts)
+            RamenAllTastingSortKey.Wisdom -> a.impact.wisdom.compareTo(b.impact.wisdom)
+            RamenAllTastingSortKey.SkillPt -> a.impact.skillPt.compareTo(b.impact.skillPt)
+            RamenAllTastingSortKey.Hp -> a.impact.hp.compareTo(b.impact.hp)
+            RamenAllTastingSortKey.StatusTotal -> {
+                val aTotal = a.impact.speed + a.impact.stamina + a.impact.power + a.impact.guts + a.impact.wisdom
+                val bTotal = b.impact.speed + b.impact.stamina + b.impact.power + b.impact.guts + b.impact.wisdom
+                aTotal.compareTo(bTotal)
+            }
+            RamenAllTastingSortKey.TotalPlusSkillPt -> {
+                val aTotal = a.impact.speed + a.impact.stamina + a.impact.power + a.impact.guts + a.impact.wisdom + a.impact.skillPt
+                val bTotal = b.impact.speed + b.impact.stamina + b.impact.power + b.impact.guts + b.impact.wisdom + b.impact.skillPt
+                aTotal.compareTo(bTotal)
+            }
+        }
+        if (descending) -comparison else comparison
+    }
+}
+
+fun State.getRamenAllTastingSortIndicator(key: RamenAllTastingSortKey): String {
+    if (ramenAllTastingSortKey != key) return ""
+    return if (ramenAllTastingSortDescending) " ▼" else " ▲"
+}
 
 data class SupportSelection(
     val selectedSupport: Int = WebConstants.notSelected.first,

@@ -966,11 +966,38 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                     )
                 }
             }
-            results.sortByDescending { it.impact.totalPlusSkillPt }
+            val sortedResults = if (state.ramenAllTastingSortKey != null) {
+                results.sortRamenAllTastingImpact(state.ramenAllTastingSortKey, state.ramenAllTastingSortDescending)
+            } else {
+                results.sortRamenAllTastingImpact(RamenAllTastingSortKey.TotalPlusSkillPt, true)
+            }
 
             withContext(Dispatchers.Main) {
-                updateState(calculate = false) { it.copy(ramenAllTastingImpact = results) }
+                updateState(calculate = false) {
+                    it.copy(
+                        ramenAllTastingImpact = sortedResults,
+                        ramenAllTastingSortKey = it.ramenAllTastingSortKey ?: RamenAllTastingSortKey.TotalPlusSkillPt,
+                        ramenAllTastingSortDescending = it.ramenAllTastingSortDescending
+                    )
+                }
             }
+        }
+    }
+
+    fun updateRamenAllTastingSort(key: RamenAllTastingSortKey) {
+        val state = state
+        val nextDescending = if (state.ramenAllTastingSortKey == key) {
+            !state.ramenAllTastingSortDescending
+        } else {
+            true
+        }
+        val sortedList = state.ramenAllTastingImpact.sortRamenAllTastingImpact(key, nextDescending)
+        update {
+            copy(
+                ramenAllTastingImpact = sortedList,
+                ramenAllTastingSortKey = key,
+                ramenAllTastingSortDescending = nextDescending
+            )
         }
     }
 }
