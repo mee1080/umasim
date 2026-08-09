@@ -27,7 +27,7 @@ import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
 import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
-import io.github.mee1080.umasim.web.state.State
+import io.github.mee1080.umasim.web.state.*
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
 import io.github.mee1080.umasim.web.style.AppStyle
@@ -397,6 +397,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
             })
 
             if (state.ramenAllTastingImpact.isNotEmpty()) {
+                Div { Text("※項目名クリックでソート") }
                 Div { Text("※見にくければExcelとかにコピペして") }
                 Div({ style { marginTop(16.px) } }) {
                     Table({ classes(AppStyle.table) }) {
@@ -404,7 +405,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                             Th({
                                 unsetWidth()
                                 colspan(state.supportSelectionList.count { it.card != null })
-                            }) { Text("初期配置") }
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.InitialParticipants) }
+                            }) { Text("初期配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.InitialParticipants)) }
                         }
                         Tr {
                             state.supportSelectionList.forEach { support ->
@@ -412,16 +415,47 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                     Th({ unsetWidth() }) { Text(it.chara.first().toString()) }
                                 }
                             }
-                            Th({ unsetWidth() }) { Text("追加配置") }
-                            Th { Text("スピード") }
-                            Th { Text("スタミナ") }
-                            Th { Text("パワー") }
-                            Th { Text("根性") }
-                            Th { Text("賢さ") }
-                            Th { Text("スキルPt") }
-                            Th { Text("体力") }
-                            Th { Text("5ステ合計") }
-                            Th { Text("5ステ+SP") }
+                            Th({
+                                unsetWidth()
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.AddedChara) }
+                            }) { Text("追加配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.AddedChara)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Speed) }
+                            }) { Text("スピード" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Speed)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Stamina) }
+                            }) { Text("スタミナ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Stamina)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Power) }
+                            }) { Text("パワー" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Power)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Guts) }
+                            }) { Text("根性" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Guts)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Wisdom) }
+                            }) { Text("賢さ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Wisdom)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.SkillPt) }
+                            }) { Text("スキルPt" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.SkillPt)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Hp) }
+                            }) { Text("体力" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Hp)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.StatusTotal) }
+                            }) { Text("5ステ合計" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.StatusTotal)) }
+                            Th({
+                                style { cursor("pointer") }
+                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.TotalPlusSkillPt) }
+                            }) { Text("5ステ+SP" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.TotalPlusSkillPt)) }
                         }
                         state.ramenAllTastingImpact.forEach { impact ->
                             Tr {
