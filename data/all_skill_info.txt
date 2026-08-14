@@ -2005,6 +2005,15 @@ track_id==10009&course_distance==1600@track_id==10008&course_distance==2000@trac
 ->is_lastspurt==1&phase==3&running_style==2
 「ラストスパート、終盤後半、先行」、目標速度4500、持続4.0
 
+渚のヴィーナスタイム♡
+[Snatchin' Hearts ♡]フサイチパンドラ 固有
+レース終盤が迫ったとき前方で近寄られると速度が少し上がるさらに中距離レースで絶好調なら加えて速度がわずかに上がる
+評価点340、人気:スピード60、確定発動
+->phase_laterhalf==1&overtake_target_time>=1&order_rate<=50&motivation==5&distance_type==3
+「中盤後半、追い抜き対象時間>=1、順位率50以下（チャンミ～5/LoH～6）、絶好調、中距離」、目標速度2500、目標速度1500、持続5.0
+->phase_laterhalf==1&overtake_target_time>=1&order_rate<=50
+「中盤後半、追い抜き対象時間>=1、順位率50以下（チャンミ～5/LoH～6）」、目標速度2500、持続5.0
+
 不凋なるCattleya
 [La dama perfetta]ジェンティルドンナ 固有
 レース中間地点で中団にいると残り400m地点で速度がすごく上がるスキル発動時、好位置にいると効果が増える＜中距離＞
@@ -3949,6 +3958,12 @@ track_id==10009&course_distance==1600@track_id==10008&course_distance==2000@trac
 評価点180、SP200、人気:スピード15
 ->is_lastspurt==1&phase==3&running_style==2
 「ラストスパート、終盤後半、先行」、目標速度2500、持続2.4
+
+渚のヴィーナスタイム♡
+レース終盤が迫ったとき前方で近寄られると速度がちょっと上がる
+評価点180、SP200、人気:スピード15
+->phase_laterhalf==1&overtake_target_time>=1&order_rate<=50
+「中盤後半、追い抜き対象時間>=1、順位率50以下（チャンミ～5/LoH～6）」、目標速度500、持続3.0
 
 不凋なるCattleya
 レース中間地点で中団にいると残り400m地点で速度が少し上がるスキル発動時、好位置にいると効果が増える＜中距離＞
@@ -11114,6 +11129,15 @@ Enjoy the Flight
 ->running_style==2&distance_type==3&base_speed>=1200&base_wiz<1200
 「先行、中距離、基礎スピード>=1200、基礎賢さ<1200」、スピード80、持続0
 
+愛されすぎてマジごめん♡
+[Snatchin' Hearts ♡]フサイチパンドラ 進化(シンギュラリティ)
+スピードが十二分に高いとスピードがすごく上がる、さらに絶好調なら全ての基礎能力がわずかに上がる＜先行・中距離＞
+評価点508、進化元SP240、人気:スピード30/スタミナ30、確定発動
+->running_style==2&distance_type==3&base_speed>=1200&motivation==5
+「先行、中距離、基礎スピード>=1200、絶好調」、スピード80、全ての基礎能力20、持続0
+->running_style==2&distance_type==3&base_speed>=1200&motivation<=4
+「先行、中距離、基礎スピード>=1200、やる気<=4」、スピード80、持続0
+
 探求心
 スピードが十二分に高いとスピードがわずかに上がる、賢さも十二分ならスピードが少し上がる＜先行・中距離＞
 評価点174、SP120、人気:スピード20、確定発動
@@ -12553,6 +12577,15 @@ distance_type==2@distance_type==4->phase_random==1&order_rate<=50
 評価点633、進化元SP340、人気:スピード60
 ->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3
 「中距離、ラストスパート、終盤1/2～3/4ランダム」、目標速度4500、持続3.0
+
+秘める気のない才気
+[Snatchin' Hearts ♡]フサイチパンドラ 進化(才気煥発)
+レース最終盤始めの方でラストスパートの最中なら速度が上がる絶好調ならものすごく上がる＜中距離＞
+評価点633、進化元SP340、人気:スピード60
+->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3&motivation==5
+「中距離、ラストスパート、終盤1/2～3/4ランダム、絶好調」、目標速度5500、持続3.0
+->distance_type==3&is_lastspurt==1&phase_firsthalf_random==3
+「中距離、ラストスパート、終盤1/2～3/4ランダム」、目標速度3500、持続3.0
 
 躍動
 レース最終盤始めの方でラストスパートの最中なら速度がわずかに上がる＜中距離＞
