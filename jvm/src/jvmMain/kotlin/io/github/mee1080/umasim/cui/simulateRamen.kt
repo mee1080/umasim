@@ -9,10 +9,11 @@ import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateRamen() {
 //    doRamenSimulationS2H2W1(StatusType.SPEED, null)
-    doRamenSimulationS2H2W1(StatusType.STAMINA, "[巻頭カラーの夏]キセキ")
+//    doRamenSimulationS2H2W1(StatusType.STAMINA, "[巻頭カラーの夏]キセキ")
 //    doRamenSimulationS2H2W1(StatusType.WISDOM, null)
 //    doRamenSimulationS2H2W1(StatusType.FRIEND, "[一杯のノスタルジア]駿川たづな")
-//    doRamenSimulationS2H2W1(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
+    doRamenSimulationS2H2W1(StatusType.SPEED, "[As if Guided]エフフォーリア")
+    doRamenSimulationS2H2W1(StatusType.SPEED, "[時に交わる海と空]ミスターシービー")
 //    doRamenSimulationS3H1W1(StatusType.SPEED, "[世界を変える眼差し]アーモンドアイ")
 //    optimize()
 }
