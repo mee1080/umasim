@@ -13,10 +13,10 @@ fun simulateBC() {
 //    doBCSimulation(StatusType.SPEED, "[天才的ユートピア]トウカイテイオー")
 //    doBCSimulation(StatusType.SPEED)
 //    doBCSimulation(StatusType.STAMINA, "[その執念は怒濤が如く]メイショウドトウ")
-//    doBCSimulation(StatusType.POWER, "[スマイル・エバーアフター]グランアレグリア")
+    doBCSimulation(StatusType.POWER, "[わたしときみの交換こ♪]ハルウララ")
 //    doBCSimulation(StatusType.WISDOM)
 //    doBCSimulation(StatusType.FRIEND, "[American Dream]カジノドライヴ")
-    doBCSimulation2(StatusType.GUTS, "[夏空チルタイム]アーモンドアイ")
+    doBCSimulation2(StatusType.GUTS, "[ちょいワルヒーロー、見参！]ビコーペガサス")
 //    optimize()
 }
 
