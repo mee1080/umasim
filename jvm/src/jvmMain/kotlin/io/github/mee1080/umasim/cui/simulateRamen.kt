@@ -12,8 +12,8 @@ fun simulateRamen() {
 //    doRamenSimulationS2H2W1(StatusType.STAMINA, "[巻頭カラーの夏]キセキ")
 //    doRamenSimulationS2H2W1(StatusType.WISDOM, null)
 //    doRamenSimulationS2H2W1(StatusType.FRIEND, "[一杯のノスタルジア]駿川たづな")
-    doRamenSimulationS2H2W1(StatusType.SPEED, "[As if Guided]エフフォーリア")
-    doRamenSimulationS2H2W1(StatusType.SPEED, "[時に交わる海と空]ミスターシービー")
+    doRamenSimulationS2H2W1(StatusType.SPEED, "[行き先はあたたかな場所]マチカネタンホイザ")
+//    doRamenSimulationS2H2W1(StatusType.SPEED, "[時に交わる海と空]ミスターシービー")
 //    doRamenSimulationS3H1W1(StatusType.SPEED, "[世界を変える眼差し]アーモンドアイ")
 //    optimize()
 }
