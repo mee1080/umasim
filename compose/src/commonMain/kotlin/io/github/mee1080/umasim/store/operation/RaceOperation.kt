@@ -161,7 +161,7 @@ private fun createSkillMap(state: RaceState): Map<String, SimulationSkillInfo> {
         it.name to SimulationSkillInfoWork(SimulationSkillInfo(phase1Start, phase2Start))
     }.toMutableMap()
     state.simulation.frames.forEachIndexed { index, frame ->
-        val speedDiff = frame.targetSpeed - frame.speed
+        val speedDiff = (frame.targetSpeed - frame.fullSpurtTargetSpeed) - (frame.speed - frame.fullSpurtCurrentSpeed)
         frame.operatingSkills.filter { it.targetSpeed > 0.0 }.forEach {
             val current = skillMap[it.data.skill.name] ?: return@forEach
             current.totalFrameCount++
