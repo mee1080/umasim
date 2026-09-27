@@ -946,6 +946,8 @@ data class RaceFrame(
     val secureLead: Boolean = false,
     val staminaLimitBreak: Boolean = false,
     val fullSpurt: Boolean = false,
+    val fullSpurtTargetSpeed: Double = 0.0,
+    val fullSpurtCurrentSpeed: Double = 0.0,
     val triggeredDebuffs: List<DebuffType> = emptyList(),
     val paceMakerFrame: RaceFrame? = null,
 )

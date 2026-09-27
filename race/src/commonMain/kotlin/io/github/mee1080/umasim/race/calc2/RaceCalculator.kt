@@ -218,6 +218,8 @@ private fun RaceState.updateFrame(): Boolean {
         secureLead = simulation.secureLead,
         staminaLimitBreak = simulation.staminaLimitBreak,
         fullSpurt = simulation.fullSpurt,
+        fullSpurtTargetSpeed = fullSpurtTargetSpeed,
+        fullSpurtCurrentSpeed = simulation.fullSpurtCurrentSpeed,
         paceMakerFrame = paceMaker?.simulation?.frames?.lastOrNull(),
     )
     // 1秒おき判定
