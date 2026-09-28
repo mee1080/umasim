@@ -33,14 +33,19 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.random.Random
 
+class CalculatedConditions {
+    val calculatedAreas: MutableMap<String, List<RandomEntry>> = mutableMapOf()
+    val sharedLot: Int = Random.nextInt(100)
+}
+
 fun checkCondition(
     skill: SkillData,
     conditions: List<List<SkillCondition>>,
     setting: RaceSetting,
-    calculatedAreas: MutableMap<String, List<RandomEntry>>,
+    calculatedConditions: CalculatedConditions,
 ): RaceState.() -> Boolean {
     val checks = conditions.map { andConditions ->
-        andConditions.mapNotNull { checkCondition(skill, it, setting, calculatedAreas) }
+        andConditions.mapNotNull { checkCondition(skill, it, setting, calculatedConditions) }
     }
     if (checks.isEmpty()) return { true }
     return {
@@ -54,8 +59,9 @@ private fun checkCondition(
     skill: SkillData,
     condition: SkillCondition,
     baseSetting: RaceSetting,
-    calculatedAreas: MutableMap<String, List<RandomEntry>>,
+    calculatedConditions: CalculatedConditions,
 ): (RaceState.() -> Boolean)? {
+    val calculatedAreas = calculatedConditions.calculatedAreas
     return when (condition.type) {
         "motivation" -> condition.preChecked(baseSetting.umaStatus.condition.value)
         "hp_per" -> condition.checkInRace { (simulation.sp / setting.spMax * 100).toInt() }
@@ -212,8 +218,17 @@ private fun checkCondition(
         "base_wiz" -> condition.preChecked(baseSetting.umaStatus.wisdom)
         "course_distance" -> condition.preChecked(baseSetting.courseLength)
 
+        "succession_skill_count" -> condition.preChecked(
+            baseSetting.umaStatus.hasSkills.count { it.rarity == "inherit" }
+        )
+
         "random_lot" -> condition.withAssert("==") {
             val result = if (baseSetting.fixRandom) true else value > Random.nextInt(100)
+            return@withAssert { result }
+        }
+
+        "random_lot_shared" -> condition.withAssert("==") {
+            val result = if (baseSetting.fixRandom) true else value > calculatedConditions.sharedLot
             return@withAssert { result }
         }
 
@@ -271,7 +286,9 @@ private fun checkCondition(
             { simulation.coolDownMap.containsKey(skill.id) }
         }
 
-        "popularity" -> condition.preChecked(baseSetting.umaStatus.popularity)
+        "popularity" -> {
+            { simulation.ignorePopularity || condition.check(setting.umaStatus.popularity) }
+        }
 
         "post_number" -> condition.checkInRace { simulation.postNumber }
 
@@ -300,7 +317,7 @@ private fun checkCondition(
             if (!ignoreConditions.containsKey(condition.type)) {
                 println("not supported condition: $condition")
             }
-            return null
+            null
         }
     }
 }

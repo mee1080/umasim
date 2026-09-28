@@ -24,8 +24,8 @@
 
 package io.github.mee1080.umasim.race
 
+import io.github.mee1080.umasim.race.calc2.CalculatedConditions
 import io.github.mee1080.umasim.race.calc2.RaceSetting
-import io.github.mee1080.umasim.race.calc2.RandomEntry
 import io.github.mee1080.umasim.race.calc2.checkCondition
 import io.github.mee1080.umasim.race.data.Style
 import io.github.mee1080.umasim.race.data.calcBaseWisdomSkillBuff
@@ -44,11 +44,11 @@ fun main() {
 private fun checkSkillImplementation() {
     loadLocalSkillData()
     val setting = RaceSetting()
-    val calculatedAreas = mutableMapOf<String, List<RandomEntry>>()
+    val calculatedConditions = CalculatedConditions()
     skillData2.forEach { skill ->
         skill.invokes.forEach { invoke ->
-            checkCondition(skill, invoke.preConditions, setting, calculatedAreas)
-            checkCondition(skill, invoke.conditions, setting, calculatedAreas)
+            checkCondition(skill, invoke.preConditions, setting, calculatedConditions)
+            checkCondition(skill, invoke.conditions, setting, calculatedConditions)
         }
     }
 }

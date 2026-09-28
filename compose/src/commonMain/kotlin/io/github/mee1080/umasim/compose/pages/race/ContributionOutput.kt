@@ -79,12 +79,12 @@ fun ContributionOutput(state: AppState) {
                     }
                 }
             }
-            val maxEfficiency = results.map { it.efficiency.last() }.filter { !it.isNaN() }.max()
+            val maxEfficiency = results.map { it.efficiency.last() }.filter { !it.isNaN() }.maxOrNull()
             Table(results.size + 1, 5, scrollable = true) { row, col ->
                 if (row != 0 && col == 3) {
                     Box(Modifier.padding(4.dp).align(Alignment.CenterStart)) {
                         val efficiency = results[row - 1].efficiency
-                        if (!efficiency[0].isNaN()) {
+                        if (maxEfficiency != null && !efficiency[0].isNaN()) {
                             Row(Modifier.height(16.dp).align(Alignment.CenterStart)) {
                                 efficiency.forEachIndexed { index, value ->
                                     val width = value - efficiency.getOrElse(index - 1) { 0.0 }

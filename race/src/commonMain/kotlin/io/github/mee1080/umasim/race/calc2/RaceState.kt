@@ -849,6 +849,7 @@ class RaceSimulationState(
     var passiveTriggered: Int = 0,
     var healTriggerCount: Int = 0,
     var startDelayCount: Int = 0,
+    var ignorePopularity: Boolean = false,
     var sectionTargetSpeedRandoms: Map<Int, Double> = emptyMap(),
     var evoDurationMultiplier: Double = 1.0,
 
