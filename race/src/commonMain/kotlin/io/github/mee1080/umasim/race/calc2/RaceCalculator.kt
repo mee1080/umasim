@@ -144,7 +144,7 @@ private fun RaceSetting.invokeSkills(): List<InvokedSkill> {
 private fun RaceSetting.applyPassive(system: SystemSetting, simulation: RaceSimulationState): RaceSettingWithPassive {
     var passiveBonus = PassiveBonus()
     val stateForCheck = RaceState(RaceSettingWithPassive(this, passiveBonus), simulation, system, null)
-    if (simulation.invokedSkills.any { it.invoke.isIgnorePopularity }) {
+    if (simulation.invokedSkills.any { it.invoke.isIgnorePopularity && it.check(stateForCheck) }) {
         simulation.ignorePopularity = true
     }
     simulation.invokedSkills.forEach { skill ->
