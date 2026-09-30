@@ -12,9 +12,11 @@ fun simulateRamen() {
 //    doRamenSimulationS2H2W1(StatusType.STAMINA, "[巻頭カラーの夏]キセキ")
 //    doRamenSimulationS2H2W1(StatusType.WISDOM, null)
 //    doRamenSimulationS2H2W1(StatusType.FRIEND, "[一杯のノスタルジア]駿川たづな")
-    doRamenSimulationS2H2W1(StatusType.SPEED, "[行き先はあたたかな場所]マチカネタンホイザ")
+//    doRamenSimulationS2H2W1(StatusType.SPEED, "[行き先はあたたかな場所]マチカネタンホイザ")
 //    doRamenSimulationS2H2W1(StatusType.SPEED, "[時に交わる海と空]ミスターシービー")
 //    doRamenSimulationS3H1W1(StatusType.SPEED, "[世界を変える眼差し]アーモンドアイ")
+    doRamenSimulationS2H2W1(StatusType.WISDOM, "[晩餐]ナリタブライアン")
+    doRamenSimulationS2H2W1(StatusType.WISDOM, "[冷凜なるビスクドール]アドマイヤグルーヴ")
 //    optimize()
 }
 
@@ -83,7 +85,7 @@ private fun doRamenSimulationS3H1W1(
     ).filter { it.second != targetStatus }.map { it.first to 4 }
     val support = Store.getSupportByName(*defaultSupport.toTypedArray())
         .map { it.copy(skills = emptyList()) }
-    val testCount = 5000
+    val testCount = 100000
 
     if (targetSupport == null) {
         doSimulation2(
