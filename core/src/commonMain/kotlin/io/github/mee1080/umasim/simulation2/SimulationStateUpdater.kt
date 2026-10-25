@@ -38,6 +38,7 @@ import io.github.mee1080.umasim.scenario.mecha.updateMechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoCalculator
 import io.github.mee1080.umasim.scenario.onsen.OnsenCalculator
 import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
@@ -297,6 +298,8 @@ suspend fun SimulationState.applyAction(
         is BCActionResult -> BCCalculator.applyScenarioAction(this, result)
 
         is RamenActionResult -> RamenCalculator.applyScenarioAction(this, result)
+
+        is ShuntaisaiActionResult -> ShuntaisaiCalculator.applyScenarioAction(this, result)
     }
 }
 
@@ -722,6 +725,7 @@ private suspend fun SimulationState.applyScenarioActionParam(
         is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
         is BCActionParam -> BCCalculator.applyScenarioActionParam(this, result, param)
         is RamenActionParam -> RamenCalculator.applyScenarioActionParam(this, param)
+        is ShuntaisaiActionParam -> ShuntaisaiCalculator.applyScenarioActionParam(this, param)
     }
 }
 

@@ -11,6 +11,7 @@ import io.github.mee1080.umasim.scenario.legend.addBuffGauge
 import io.github.mee1080.umasim.scenario.legend.updateLegendStatus
 import io.github.mee1080.umasim.scenario.onsen.updateOnsenStatus
 import io.github.mee1080.umasim.scenario.ramen.updateRamenStatus
+import io.github.mee1080.umasim.scenario.shuntaisai.updateShuntaisaiStatus
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.applyIfNotNull
 import kotlin.math.min
@@ -125,6 +126,13 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
                 applyFriendEvent(target, Status(power = 5, guts = 5, skillPt = 5, motivation = 1, maxHp = 4), 15, 1)
             } else if (Random.nextDouble() < 0.4) {
                 applyFriendEvent(target, Status(skillPt = 7), 5)
+            } else this
+        }
+
+        "吾妻" -> {
+            // TODO 初回イベント、トレーニング後イベントの内容不明（仮）
+            if (isFirst) {
+                applyFriendEvent(target, Status(motivation = 1), 15, 1)
             } else this
         }
 
@@ -498,6 +506,39 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                     ),
                     5, 7,
                 ).updateRamenStatus { addHiddenTips(2) }
+
+                else -> this
+            }
+        }
+
+        "吾妻" -> {
+            // TODO お出かけ1～4回目の内容不明（仮）
+            when (step) {
+                1 -> applyFriendEvent(
+                    support,
+                    if (status.maxHp - status.hp >= 15) Status(
+                        hp = 25, stamina = 5, guts = 5, motivation = 1,
+                    ) else Status(
+                        guts = 5, wisdom = 5, skillPt = 5, motivation = 1,
+                        skillHint = mapOf("弧を描いて" to 5),
+                    ),
+                    5, 2,
+                ) // TODO 疲労回復（体力49以下で一度だけ15回復）
+
+                2, 3, 4, 5 -> applyFriendEvent(
+                    support,
+                    Status(hp = 30, motivation = 1),
+                    5, step + 1,
+                ).updateShuntaisaiStatus { levelUpLowest() }
+
+                6 -> applyFriendEvent(
+                    support,
+                    Status(
+                        guts = 10, wisdom = 10, skillPt = 20, hp = 35, motivation = 1,
+                        skillHint = mapOf("神速" to 3),
+                    ),
+                    5, 7,
+                ).updateShuntaisaiStatus { levelUpLowest() }
 
                 else -> this
             }

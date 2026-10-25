@@ -41,6 +41,8 @@ import io.github.mee1080.umasim.scenario.onsen.Gensen
 import io.github.mee1080.umasim.scenario.onsen.StratumType
 import io.github.mee1080.umasim.scenario.ramen.RamenRegion
 import io.github.mee1080.umasim.scenario.ramen.RamenTipType
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiPerformance
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiTeaching
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.utility.applyIf
 
@@ -665,4 +667,50 @@ data class RamenTasting(
     val useNoodle by lazy { region.noodle - changeHiddenTips.count { it == RamenTipType.NOODLE } }
     val useSoup by lazy { region.soup - changeHiddenTips.count { it == RamenTipType.SOUP } }
     val useTopping by lazy { region.topping - changeHiddenTips.count { it == RamenTipType.TOPPING } }
+}
+
+data class ShuntaisaiActionParam(
+    val gaugeUp: Map<StatusType, Int> = emptyMap(),
+    val practice: StatusType? = null,
+) : ScenarioActionParam {
+    override fun toShortString() = buildString {
+        if (practice != null) {
+            append("演目稽古(${ShuntaisaiPerformance.of(practice)?.displayName}) ")
+        }
+        append(gaugeUp.entries.joinToString(",") { "${ShuntaisaiPerformance.of(it.key)?.displayName}+${it.value}" })
+    }
+}
+
+sealed interface ShuntaisaiActionResult : ActionResult
+
+data class ShuntaisaiAssignTeachingResult(
+    val teaching: ShuntaisaiTeaching,
+    val target: StatusType,
+) : ShuntaisaiActionResult
+
+data class ShuntaisaiAssignTeaching(
+    val teaching: ShuntaisaiTeaching,
+    val target: StatusType,
+) : SingleAction {
+    override val name = "教え伝受: ${teaching.displayName} → ${ShuntaisaiPerformance.of(target)?.displayName}"
+    override val turnChange = false
+    override val result = ShuntaisaiAssignTeachingResult(teaching, target)
+}
+
+data class ShuntaisaiTransformTeachingResult(
+    val teaching: ShuntaisaiTeaching,
+    val target: StatusType,
+) : ShuntaisaiActionResult
+
+data class ShuntaisaiTransformTeaching(
+    val teaching: ShuntaisaiTeaching,
+    val target: StatusType,
+    val consumed: ShuntaisaiTeaching?,
+) : SingleAction {
+    override val name = buildString {
+        append("教え転成: ${teaching.displayName} → ${ShuntaisaiPerformance.of(target)?.displayName}")
+        if (consumed != null) append(" (${consumed.displayName}を消費)")
+    }
+    override val turnChange = false
+    override val result = ShuntaisaiTransformTeachingResult(teaching, target)
 }

@@ -42,6 +42,10 @@ import io.github.mee1080.umasim.scenario.onsen.onsenTrainingData
 import io.github.mee1080.umasim.scenario.ramen.RamenCalculator
 import io.github.mee1080.umasim.scenario.ramen.RamenScenarioEvents
 import io.github.mee1080.umasim.scenario.ramen.ramenTrainingData
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiCalculator
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiScenarioEvents
+import io.github.mee1080.umasim.scenario.shuntaisai.shuntaisaiCampTurns
+import io.github.mee1080.umasim.scenario.shuntaisai.shuntaisaiTrainingData
 import io.github.mee1080.umasim.scenario.uaf.UafCalculator
 import io.github.mee1080.umasim.scenario.uaf.UafScenarioEvents
 import io.github.mee1080.umasim.scenario.uaf.uafTrainingData
@@ -259,6 +263,19 @@ enum class Scenario(
             "カルストンライトオ", "駿川たづな", "ライトハロー",
         ),
         calculator = RamenCalculator,
+    ),
+
+    SHUNTAISAI(
+        scenarioNumber = 15,
+        displayName = "朋、史解き ―午式駿大祭―（実装途中）",
+        trainingData = shuntaisaiTrainingData,
+        scenarioEvents = { ShuntaisaiScenarioEvents() },
+        turn = 78,
+        levelUpTurns = shuntaisaiCampTurns,
+        scenarioLink = setOf(
+            "ダイワスカーレット", "マヤノトップガン", "ユキノビジン", "ノーリーズン", "ブラストワンピース", "吾妻",
+        ),
+        calculator = ShuntaisaiCalculator,
     ),
 
     ;

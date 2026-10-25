@@ -102,6 +102,7 @@ fun SelectionBlock(
                         LegendInfo(action)
                         OnsenInfo(action)
                         RamenParamInfo(state, action)
+                        ShuntaisaiParamInfo(state, action)
                     }
 
                     is Race -> {
@@ -110,6 +111,7 @@ fun SelectionBlock(
                         MujintoInfo(action)
                         OnsenInfo(action)
                         RamenParamInfo(state, action)
+                        ShuntaisaiParamInfo(state, action)
                         StatusTable(action.result.status)
                     }
 
@@ -128,6 +130,7 @@ fun SelectionBlock(
                         LegendInfo(action)
                         OnsenInfo(action)
                         RamenParamInfo(state, action)
+                        ShuntaisaiParamInfo(state, action)
                     }
 
                     is Training -> {
@@ -138,6 +141,7 @@ fun SelectionBlock(
                         OnsenInfo(action)
                         BCInfo(action)
                         RamenParamInfo(state, action)
+                        ShuntaisaiParamInfo(state, action)
                         if (uafStatus != null && uafAthletic != null) {
                             val actionResult = action.candidates[0].first as? StatusActionResult
                             val param = actionResult?.scenarioActionParam as UafScenarioActionParam?
@@ -259,6 +263,14 @@ fun SelectionBlock(
 
                     is RamenTasting -> {
                         RamenTastingInfo(action)
+                    }
+
+                    is ShuntaisaiAssignTeaching -> {
+                        ShuntaisaiTeachingInfo(action.teaching)
+                    }
+
+                    is ShuntaisaiTransformTeaching -> {
+                        ShuntaisaiTeachingInfo(action.teaching, action.consumed)
                     }
                 }
                 val targetAiScore = aiScore.getOrNull(index)

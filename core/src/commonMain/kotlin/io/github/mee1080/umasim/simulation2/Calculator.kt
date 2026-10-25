@@ -32,6 +32,7 @@ import io.github.mee1080.umasim.scenario.live.TrainingLiveStatus
 import io.github.mee1080.umasim.scenario.mecha.MechaStatus
 import io.github.mee1080.umasim.scenario.mujinto.MujintoStatus
 import io.github.mee1080.umasim.scenario.onsen.OnsenStatus
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiStatus
 import io.github.mee1080.umasim.scenario.uaf.UafStatus
 import kotlin.math.min
 import kotlin.native.concurrent.ThreadLocal
@@ -69,6 +70,7 @@ object Calculator {
         val onsenStatus get() = scenarioStatus as? OnsenStatus
         val bcStatus get() = scenarioStatus as? BCStatus
         val ramenStatus get() = scenarioStatus as? io.github.mee1080.umasim.scenario.ramen.RamenStatus
+        val shuntaisaiStatus get() = scenarioStatus as? ShuntaisaiStatus
 
         fun setTeamMember(teamJoinCount: Int) = copy(
             member = member + if (scenario == Scenario.URA || scenario.guestMember) createTeamMemberState(

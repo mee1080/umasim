@@ -79,5 +79,8 @@ fun TrainingSetting(model: ViewModel, state: State) {
         if (state.scenario == Scenario.RAMEN) {
             RamenTrainingSetting(model, state.ramenState)
         }
+        if (state.scenario == Scenario.SHUNTAISAI) {
+            ShuntaisaiTrainingSetting(model, state.shuntaisaiState)
+        }
     }
 }

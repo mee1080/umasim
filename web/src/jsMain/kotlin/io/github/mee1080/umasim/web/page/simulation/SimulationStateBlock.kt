@@ -185,6 +185,9 @@ fun SimulationStateBlock(state: SimulationState) {
         state.ramenStatus?.let {
             RamenStateBlock(it)
         }
+        state.shuntaisaiStatus?.let {
+            ShuntaisaiStateBlock(it)
+        }
         HideBlock("サポートカード") {
             state.support.forEach {
                 MemberState(it)

@@ -885,6 +885,10 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
         update { copy(ramenState = ramenState.update()) }
     }
 
+    fun updateShuntaisai(update: ShuntaisaiState.() -> ShuntaisaiState) {
+        update { copy(shuntaisaiState = shuntaisaiState.update()) }
+    }
+
     fun calculateRamenAllPatterns() {
         val state = state
         if (state.scenario != Scenario.RAMEN) return
