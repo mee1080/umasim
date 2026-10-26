@@ -669,13 +669,22 @@ data class RamenTasting(
     val useTopping by lazy { region.topping - changeHiddenTips.count { it == RamenTipType.TOPPING } }
 }
 
+/**
+ * @param training トレーニングかどうか（助力の支えを消費する）
+ * @param joryokuSupport 助力の支えを獲得するか
+ */
 data class ShuntaisaiActionParam(
     val gaugeUp: Map<StatusType, Int> = emptyMap(),
     val practice: StatusType? = null,
+    val training: Boolean = false,
+    val joryokuSupport: Boolean = false,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
         if (practice != null) {
             append("演目稽古(${ShuntaisaiPerformance.of(practice)?.displayName}) ")
+        }
+        if (joryokuSupport) {
+            append("助力の支え獲得 ")
         }
         append(gaugeUp.entries.joinToString(",") { "${ShuntaisaiPerformance.of(it.key)?.displayName}+${it.value}" })
     }

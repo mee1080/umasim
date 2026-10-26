@@ -93,7 +93,7 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
     /**
      * 進捗発表会
      *
-     * TODO イベント効果は全て仮（トレセン軒のRMJと同等とした）
+     * TODO 成功時の効果は仮、全トレーニングLv+1・理事長絆・スキルは未反映
      */
     private fun SimulationState.applyPresentation(index: Int): SimulationState {
         val shuntaisaiStatus = shuntaisaiStatus ?: return this
@@ -101,36 +101,32 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
         val eventStatus = when (index) {
             0 -> when (result) {
                 ShuntaisaiPresentationResult.GREAT_SUCCESS -> Status(
-                    speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
-                    skillPt = 100, hp = 30, fanCount = 3000,
+                    speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
+                    skillPt = 200, fanCount = 1000,
                 )
 
                 ShuntaisaiPresentationResult.SUCCESS -> Status(
-                    speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
-                    skillPt = 50, hp = 30, fanCount = 500,
+                    speed = 3, stamina = 3, power = 3, guts = 3, wisdom = 3,
+                    skillPt = 100, fanCount = 500,
                 )
-
-                ShuntaisaiPresentationResult.FAILURE -> Status(hp = 20)
             }
 
             else -> when (result) {
                 ShuntaisaiPresentationResult.GREAT_SUCCESS -> Status(
-                    speed = 15, stamina = 15, power = 15, guts = 15, wisdom = 15,
-                    skillPt = 150, hp = 40, fanCount = 18000,
+                    speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
+                    skillPt = 300, fanCount = 20000,
                 )
 
                 ShuntaisaiPresentationResult.SUCCESS -> Status(
-                    speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
-                    skillPt = 75, hp = 30, fanCount = 2000,
+                    speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
+                    skillPt = 150, fanCount = 10000,
                 )
-
-                ShuntaisaiPresentationResult.FAILURE -> Status(hp = 20)
             }
         }
         return addStatus(eventStatus).updateShuntaisaiStatus {
             copy(
                 presentationResults = presentationResults + result,
-                presentationBonus = shuntaisaiPresentationBonus[index][result] ?: ShuntaisaiPresentationBonus.Empty,
+                presentationBonus = shuntaisaiPresentationBonus[index][result] ?: presentationBonus,
             )
         }
     }
@@ -138,30 +134,27 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
     /**
      * 午式駿大祭本番
      *
-     * TODO イベント効果は全て仮
+     * TODO 成功時の効果は仮、スキルは未反映
      */
     private fun SimulationState.applyFinalPerformance(): SimulationState {
         val shuntaisaiStatus = shuntaisaiStatus ?: return this
         val result = shuntaisaiStatus.judgePresentation(2)
         val eventStatus = when (result) {
             ShuntaisaiPresentationResult.GREAT_SUCCESS -> Status(
-                speed = 30, stamina = 30, power = 30, guts = 30, wisdom = 30,
-                skillPt = 250, hp = 30, fanCount = 45000,
+                speed = 15, stamina = 15, power = 15, guts = 15, wisdom = 15,
+                skillPt = 400, hp = 30, motivation = 1, fanCount = 45000,
             )
 
             ShuntaisaiPresentationResult.SUCCESS -> Status(
-                speed = 20, stamina = 20, power = 20, guts = 20, wisdom = 20,
-                skillPt = 200, hp = 30, fanCount = 30000,
-            )
-
-            ShuntaisaiPresentationResult.FAILURE -> Status(
-                speed = 15, stamina = 15, power = 15, guts = 15, wisdom = 15,
-                skillPt = 150, hp = 30, fanCount = 5000,
+                speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
+                skillPt = 200, hp = 30, motivation = 1, fanCount = 30000,
             )
         }
         return addStatus(eventStatus).updateShuntaisaiStatus {
-            copy(presentationResults = presentationResults + result)
+            copy(
+                presentationResults = presentationResults + result,
+                presentationBonus = shuntaisaiPresentationBonus[2][result] ?: presentationBonus,
+            )
         }
     }
 }
-

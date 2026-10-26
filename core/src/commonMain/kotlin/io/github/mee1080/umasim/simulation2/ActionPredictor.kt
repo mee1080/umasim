@@ -145,7 +145,7 @@ private fun SimulationState.calcTrainingFailureRate(training: TrainingBase, supp
     if (status.hp >= 100) return 0
     val base = (status.hp - 100) * (status.hp * 10 - training.failureRate) / 400.0
     val supportFailureRate = support.map { it.card.failureRate() }.fold(1.0) { acc, d -> acc * d }
-    val scenarioFailureRate = (100 - scenario.calculator.getFailureRateDown(this)) / 100.0
+    val scenarioFailureRate = (100 - scenario.calculator.getFailureRateDown(this, training, support)) / 100.0
     val supported = base * supportFailureRate * scenarioFailureRate
     val supportedInRange = max(0, min(99, ceil(supported).toInt()))
     return max(0, min(100, supportedInRange + conditionFailureRate))

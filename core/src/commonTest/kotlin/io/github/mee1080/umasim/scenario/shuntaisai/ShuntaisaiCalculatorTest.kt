@@ -38,9 +38,15 @@ class ShuntaisaiCalculatorTest {
 
     private val baseStatus = Status(10, 0, 5, 0, 0, 5)
 
+    private val speedTraining by lazy { simulator.initialState.training.first { it.type == StatusType.SPEED }.base[0] }
+
     @Test
     fun testNoBonus() {
-        val info = simulator.initialState.baseCalcInfo.copy(scenarioStatus = ShuntaisaiStatus(turn = 5))
+        val info = simulator.initialState.baseCalcInfo.copy(
+            training = speedTraining,
+            member = emptyList(),
+            scenarioStatus = ShuntaisaiStatus(turn = 5),
+        )
         val result = ShuntaisaiCalculator.calcScenarioStatus(info, baseStatus, ExpectedStatus(), false)
         assertEquals(Status(), result)
     }
@@ -48,37 +54,33 @@ class ShuntaisaiCalculatorTest {
     @Test
     fun testPractice() {
         val shuntaisaiStatus = ShuntaisaiStatus(turn = 5).addGauge(StatusType.SPEED, 5)
-        val training = simulator.initialState.training.first { it.type == StatusType.SPEED }.base[0]
-        val info = simulator.initialState.baseCalcInfo.copy(training = training, scenarioStatus = shuntaisaiStatus)
+        val info = simulator.initialState.baseCalcInfo.copy(
+            training = speedTraining,
+            member = emptyList(),
+            scenarioStatus = shuntaisaiStatus,
+        )
         val result = ShuntaisaiCalculator.calcScenarioStatus(info, baseStatus, ExpectedStatus(), false)
-        val practice = shuntaisaiPracticeStatus(0, 1)
-        assertEquals(practice.speed, result.speed)
-        assertEquals(practice.wisdom, result.wisdom)
-        assertEquals(practice.skillPt, result.skillPt)
+        // 全基礎能力+10
+        assertEquals(10, result.speed)
+        assertEquals(10, result.wisdom)
+        assertEquals(0, result.skillPt)
     }
 
     @Test
     fun testTeaching() {
         val shuntaisaiStatus = ShuntaisaiStatus(turn = 30)
             .assignTeaching(ShuntaisaiTeaching.TOKKA, StatusType.SPEED)
-        val training = simulator.initialState.training.first { it.type == StatusType.SPEED }.base[0]
-        val info = simulator.initialState.baseCalcInfo.copy(training = training, scenarioStatus = shuntaisaiStatus)
-        val result = ShuntaisaiCalculator.calcScenarioStatus(info, baseStatus, ExpectedStatus(), false)
-        // 特化: 主ステのみ上昇
-        assertEquals(baseStatus.speed * ShuntaisaiTeaching.TOKKA.effect.mainStatusUp / 100, result.speed)
+        val member = simulator.initialState.member.filter { it.card.type == StatusType.SPEED }.take(1)
+        val info = simulator.initialState.baseCalcInfo.copy(
+            training = speedTraining,
+            member = member,
+            scenarioStatus = shuntaisaiStatus,
+        )
+        val base = Status(40, 0, 20, 0, 0, 20)
+        val result = ShuntaisaiCalculator.calcScenarioStatus(info, base, ExpectedStatus(), false)
+        // 特化Lv1: メイン基礎能力のみ5%アップ
+        assertEquals(2, result.speed)
         assertEquals(0, result.power)
-    }
-
-    @Test
-    fun testFriendBonus() {
-        val shuntaisaiStatus = ShuntaisaiStatus(turn = 50)
-            .assignTeaching(ShuntaisaiTeaching.KYORYOKU, StatusType.SPEED)
-        val training = simulator.initialState.training.first { it.type == StatusType.SPEED }.base[0]
-        val info = simulator.initialState.baseCalcInfo.copy(training = training, scenarioStatus = shuntaisaiStatus)
-        val friend = ShuntaisaiCalculator.calcScenarioStatus(info, Status(20, 0, 10, 0, 0, 10), ExpectedStatus(), true)
-        val notFriend = ShuntaisaiCalculator.calcScenarioStatus(info, Status(20, 0, 10, 0, 0, 10), ExpectedStatus(), false)
-        assertEquals(20 * ShuntaisaiTeaching.KYORYOKU.effect.friendBonus / 100, friend.speed)
-        assertEquals(0, notFriend.speed)
     }
 
     @Test

@@ -2,8 +2,10 @@ package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.simulation2.MemberState
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
+import kotlin.math.max
 import kotlin.math.min
 
 fun SimulationState.updateShuntaisaiStatus(update: ShuntaisaiStatus.() -> ShuntaisaiStatus): SimulationState {
@@ -14,14 +16,14 @@ fun SimulationState.updateShuntaisaiStatus(update: ShuntaisaiStatus.() -> Shunta
 /**
  * 演目に割り当てられた教え
  *
- * @param transformedFrom 転成で消費した教え
+ * @param transformedFrom 転成で消費した教え（効果は転成効果に変化する）
  */
 data class ShuntaisaiTeachingSlot(
     val teaching: ShuntaisaiTeaching,
     val transformedFrom: ShuntaisaiTeaching? = null,
 ) {
-    // TODO 転成効果の内容不明のため、消費した教えの効果がそのまま残るものとして扱う
-    val effect get() = teaching.effect + (transformedFrom?.effect ?: ShuntaisaiTeachingEffect.Empty)
+    fun effect(level: Int) =
+        teaching.effect(level) + (transformedFrom?.transformEffect ?: ShuntaisaiTeachingEffect.Empty)
 
     val displayName
         get() = if (transformedFrom == null) teaching.displayName else {
@@ -31,23 +33,28 @@ data class ShuntaisaiTeachingSlot(
 
 /**
  * 駿大祭シナリオ固有の状態を保持するクラス。
+ *
+ * @param joryokuSupportCount 助力の支えの残り回数
  */
 data class ShuntaisaiStatus(
     val turn: Int = 1,
     val maxLevel: Int = shuntaisaiDefaultMaxLevel,
     val gauges: Map<StatusType, Int> = trainingType.associateWith { 0 },
-    // TODO 演目Lvの初期値不明
     val levels: Map<StatusType, Int> = trainingType.associateWith { 1 },
     val teachings: Map<StatusType, ShuntaisaiTeachingSlot> = emptyMap(),
     val presentationResults: List<ShuntaisaiPresentationResult> = emptyList(),
-    val presentationBonus: ShuntaisaiPresentationBonus = ShuntaisaiPresentationBonus.Empty,
+    val presentationBonus: ShuntaisaiPresentationBonus = ShuntaisaiPresentationBonus.Initial,
     val supportTypeCount: Int = 0,
+    val joryokuSupportCount: Int = 0,
 ) : ScenarioStatus {
 
     override fun toShortString() = buildString {
         append("演目Lv: ${trainingType.joinToString("/") { "${levels[it]}" }}")
         append(", ゲージ: ${trainingType.joinToString("/") { "${gauges[it]}" }}")
         append(", 教え: ${trainingType.joinToString("/") { teachings[it]?.displayName ?: "-" }}")
+        if (joryokuSupportCount > 0) {
+            append(", 助力の支え: $joryokuSupportCount")
+        }
         if (presentationResults.isNotEmpty()) {
             append(", 発表会: ${presentationResults.joinToString("/") { it.displayName }}")
         }
@@ -70,14 +77,32 @@ data class ShuntaisaiStatus(
      */
     fun isPractice(type: StatusType) = trainingType.contains(type) && (isCamp || isGaugeMax(type))
 
-    fun teachingEffect(type: StatusType) = teachings[type]?.effect ?: ShuntaisaiTeachingEffect.Empty
-
-    fun practiceStatus(type: StatusType) = shuntaisaiPracticeStatus(period, level(type))
+    /**
+     * 演目に割り当てられた教えの効果（演目Lvに応じた値）
+     */
+    fun teachingEffect(type: StatusType) =
+        teachings[type]?.effect(level(type)) ?: ShuntaisaiTeachingEffect.Empty
 
     /**
-     * シニアでサポカのタイプを5種類以上編成している場合のバフ
+     * トレーニング参加メンバーによる教えの効果
+     *
+     * 演目担当1人ごとに、担当演目に割り当てられた教えの効果が加算される
      */
-    val seniorAllTypeBonus get() = period >= 2 && supportTypeCount >= 5
+    fun memberTeachingEffect(member: List<MemberState>): ShuntaisaiTeachingEffect {
+        return member.fold(ShuntaisaiTeachingEffect.Empty) { acc, memberState ->
+            val type = memberState.card.type
+            if (trainingType.contains(type)) acc + teachingEffect(type) else acc
+        }
+    }
+
+    fun practiceEffect(type: StatusType) = shuntaisaiPracticeEffect(level(type))
+
+    /**
+     * サポカのタイプを5種類以上編成している場合の演目稽古効果が有効か
+     */
+    val allTypeBonus get() = supportTypeCount >= 5
+
+    val joryokuSupportEffect get() = if (joryokuSupportCount > 0) shuntaisaiJoryokuSupportEffect else 0
 
     fun teachingTarget(teaching: ShuntaisaiTeaching) = teachings.entries.firstOrNull { it.value.teaching == teaching }?.key
 
@@ -122,6 +147,15 @@ data class ShuntaisaiStatus(
         return levelUp(type).copy(gauges = gauges + (type to 0))
     }
 
+    /**
+     * トレーニング実行時の助力の支えの消費と獲得
+     */
+    fun updateJoryokuSupport(gain: Boolean): ShuntaisaiStatus {
+        return copy(
+            joryokuSupportCount = if (gain) shuntaisaiJoryokuSupportCount else max(0, joryokuSupportCount - 1),
+        )
+    }
+
     fun assignTeaching(teaching: ShuntaisaiTeaching, target: StatusType): ShuntaisaiStatus {
         return copy(teachings = teachings + (target to ShuntaisaiTeachingSlot(teaching)))
     }
@@ -133,19 +167,21 @@ data class ShuntaisaiStatus(
 
     /**
      * 転成で消費可能な教えが割り当てられている演目
+     *
+     * 消費できるのは未転成のジュニアの教えのみ
      */
     fun transformTargets(teaching: ShuntaisaiTeaching): List<StatusType> {
         return trainingType.filter {
             val slot = teachings[it]
-            slot == null || (slot.transformedFrom == null && slot.teaching.period < teaching.period)
+            slot == null || (slot.transformedFrom == null && slot.teaching.period == 0 && teaching.period > 0)
         }
     }
 
     fun judgePresentation(index: Int): ShuntaisaiPresentationResult {
-        return when {
-            minLevel >= shuntaisaiGreatTargetLevel[index] -> ShuntaisaiPresentationResult.GREAT_SUCCESS
-            minLevel >= shuntaisaiTargetLevel[index] -> ShuntaisaiPresentationResult.SUCCESS
-            else -> ShuntaisaiPresentationResult.FAILURE
+        return if (minLevel >= shuntaisaiGreatTargetLevel[index]) {
+            ShuntaisaiPresentationResult.GREAT_SUCCESS
+        } else {
+            ShuntaisaiPresentationResult.SUCCESS
         }
     }
 }

@@ -18,8 +18,8 @@ data class ShuntaisaiState(
     val maxLevel get() = if (azumaSsr) shuntaisaiAzumaMaxLevel else shuntaisaiDefaultMaxLevel
 
     fun toShuntaisaiStatus(supportTypeCount: Int): ShuntaisaiStatus {
-        val presentationBonus = if (period == 0) ShuntaisaiPresentationBonus.Empty else {
-            shuntaisaiPresentationBonus[minOf(period, 2) - 1][presentationResult] ?: ShuntaisaiPresentationBonus.Empty
+        val presentationBonus = if (period == 0) ShuntaisaiPresentationBonus.Initial else {
+            shuntaisaiPresentationBonus[minOf(period, 3) - 1][presentationResult] ?: ShuntaisaiPresentationBonus.Initial
         }
         return ShuntaisaiStatus(
             turn = turn,

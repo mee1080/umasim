@@ -265,6 +265,22 @@ interface ScenarioCalculator {
     ): Int = 0
 
     /**
+     * トレーニングごとの失敗率低下のシナリオ補正値を返します。
+     * [io.github.mee1080.umasim.simulation2.ActionPredictor.calcTrainingFailureRate] で使用されます。
+     * トレーニングの種類や参加メンバーによって補正値が変わる場合に使用します。デフォルトは [getFailureRateDown] の値。
+     *
+     * @param state 現在のシミュレーション状態
+     * @param training 対象のトレーニング
+     * @param member トレーニングに参加するメンバー
+     * @return 失敗率を何パーセント軽減するか
+     */
+    fun getFailureRateDown(
+        state: SimulationState,
+        training: TrainingBase,
+        member: List<MemberState>,
+    ): Int = getFailureRateDown(state)
+
+    /**
      * 体力消費軽減のシナリオ補正値を返します。
      * [io.github.mee1080.umasim.simulation2.Calculator.calcTrainingHp] で使用されます。
      *
@@ -274,6 +290,18 @@ interface ScenarioCalculator {
     fun getHpCostDown(
         scenarioStatus: ScenarioStatus,
     ): Int = 0
+
+    /**
+     * トレーニングごとの体力消費軽減のシナリオ補正値を返します。
+     * [io.github.mee1080.umasim.simulation2.Calculator.calcTrainingHp] で使用されます。
+     * トレーニングの種類や参加メンバーによって補正値が変わる場合に使用します。デフォルトは [getHpCostDown] の値。
+     *
+     * @param info トレーニングの計算情報
+     * @return 消費体力を何パーセント軽減するか
+     */
+    fun getHpCostDown(
+        info: CalcInfo,
+    ): Int = info.scenarioStatus?.let { getHpCostDown(it) } ?: 0
 
     /**
      * 追加で配置されるメンバー数を返します。

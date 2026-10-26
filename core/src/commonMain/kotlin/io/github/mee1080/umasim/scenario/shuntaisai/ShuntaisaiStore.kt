@@ -1,6 +1,5 @@
 package io.github.mee1080.umasim.scenario.shuntaisai
 
-import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
 /**
@@ -25,43 +24,70 @@ enum class ShuntaisaiPerformance(
 /**
  * 教えの効果
  *
- * TODO 数値は全て仮
+ * 教えを割り当てた演目の担当がトレーニングに参加している場合に、参加人数分加算される（絆ゲージ上昇を除く）
+ *
+ * @param relationBonus 全編成サポカの絆ゲージ上昇（重複しない）
+ * @param practiceMainStatusUp 演目稽古でメイン基礎能力の獲得量アップ
+ * @param practiceHintPlus 演目稽古のヒントイベントで獲得するヒントLv
+ * @param nonFriendTrainingEffect 友情非発生時のトレーニング効果アップ
+ * @param joryokuSupport 演目稽古で「助力の支え」を獲得
+ * @param hpCostDown 体力消費ダウン
+ * @param practiceHpCostDown 演目稽古の体力消費ダウン
+ * @param mainStatusUp メイン基礎能力の獲得量アップ
+ * @param statusLimitUp 基礎能力の獲得上限アップ
+ * @param additionalPracticeRate 追加の稽古の発生率
+ * @param practiceFriendBonus 演目稽古の友情ボーナス
+ * @param addMember 演目担当の編成サポカが追加で別のトレーニングに現れる
+ * @param campAddMember 合宿中に演目担当の編成サポカから追加で1人トレーニングに現れる
+ * @param failureRateDownHp 体力がこの値以上なら失敗率100%ダウン
+ * @param practiceTrainingEffect 演目稽古のトレーニング効果アップ
+ * @param subStatusUp サブ基礎能力の獲得量アップ
  */
 data class ShuntaisaiTeachingEffect(
-    val trainingEffect: Int = 0,
-    val friendBonus: Int = 0,
-    val nonFriendTrainingEffect: Int = 0,
+    val relationBonus: Int = 0,
+    val practiceMainStatusUp: Int = 0,
     val specialityRate: Int = 0,
     val hintRate: Int = 0,
+    val practiceHintPlus: Int = 0,
+    val nonFriendTrainingEffect: Int = 0,
+    val joryokuSupport: Boolean = false,
+    val hpCostDown: Int = 0,
+    val practiceHpCostDown: Int = 0,
     val mainStatusUp: Int = 0,
-    val subStatusUp: Int = 0,
     val statusLimitUp: Int = 0,
-    val practiceTrainingEffect: Int = 0,
-    val practiceStatusUp: Int = 0,
-    val practiceHpDown: Int = 0,
-    val relationBonus: Int = 0,
+    val additionalPracticeRate: Int = 0,
+    val friendBonus: Int = 0,
+    val practiceFriendBonus: Int = 0,
     val addMember: Int = 0,
-    val failureRateDown: Boolean = false,
+    val campAddMember: Int = 0,
+    val failureRateDownHp: Int? = null,
+    val practiceTrainingEffect: Int = 0,
+    val subStatusUp: Int = 0,
 ) {
     companion object {
         val Empty = ShuntaisaiTeachingEffect()
     }
 
     operator fun plus(other: ShuntaisaiTeachingEffect) = ShuntaisaiTeachingEffect(
-        trainingEffect = trainingEffect + other.trainingEffect,
-        friendBonus = friendBonus + other.friendBonus,
-        nonFriendTrainingEffect = nonFriendTrainingEffect + other.nonFriendTrainingEffect,
+        relationBonus = maxOf(relationBonus, other.relationBonus),
+        practiceMainStatusUp = practiceMainStatusUp + other.practiceMainStatusUp,
         specialityRate = specialityRate + other.specialityRate,
         hintRate = hintRate + other.hintRate,
+        practiceHintPlus = practiceHintPlus + other.practiceHintPlus,
+        nonFriendTrainingEffect = nonFriendTrainingEffect + other.nonFriendTrainingEffect,
+        joryokuSupport = joryokuSupport || other.joryokuSupport,
+        hpCostDown = hpCostDown + other.hpCostDown,
+        practiceHpCostDown = practiceHpCostDown + other.practiceHpCostDown,
         mainStatusUp = mainStatusUp + other.mainStatusUp,
-        subStatusUp = subStatusUp + other.subStatusUp,
         statusLimitUp = statusLimitUp + other.statusLimitUp,
-        practiceTrainingEffect = practiceTrainingEffect + other.practiceTrainingEffect,
-        practiceStatusUp = practiceStatusUp + other.practiceStatusUp,
-        practiceHpDown = practiceHpDown + other.practiceHpDown,
-        relationBonus = relationBonus + other.relationBonus,
+        additionalPracticeRate = additionalPracticeRate + other.additionalPracticeRate,
+        friendBonus = friendBonus + other.friendBonus,
+        practiceFriendBonus = practiceFriendBonus + other.practiceFriendBonus,
         addMember = addMember + other.addMember,
-        failureRateDown = failureRateDown || other.failureRateDown,
+        campAddMember = campAddMember + other.campAddMember,
+        failureRateDownHp = listOfNotNull(failureRateDownHp, other.failureRateDownHp).minOrNull(),
+        practiceTrainingEffect = practiceTrainingEffect + other.practiceTrainingEffect,
+        subStatusUp = subStatusUp + other.subStatusUp,
     )
 }
 
@@ -69,79 +95,111 @@ data class ShuntaisaiTeachingEffect(
  * 教え
  *
  * @param period 伝受する時期（0:ジュニア3ターン目、1:クラシック年始、2:シニア年始）
+ * @param effects 演目Lv1～10の効果
+ * @param transformEffect 転成で消費された場合の効果（転成元の効果はこの効果に変化する、演目Lvによらず固定）
  */
 enum class ShuntaisaiTeaching(
     val displayName: String,
     val period: Int,
-    val effect: ShuntaisaiTeachingEffect,
     val description: String,
+    private val effects: List<ShuntaisaiTeachingEffect>,
+    val transformEffect: ShuntaisaiTeachingEffect,
 ) {
-    // TODO 合宿中の追加トレ出現
     KIZUNA(
         "絆", 0,
-        ShuntaisaiTeachingEffect(relationBonus = 2, practiceStatusUp = 10),
-        "絆ゲージ上昇、演目稽古の基礎能力獲得量アップ",
+        "全編成サポカの絆ゲージ+3、演目稽古でメイン基礎能力の獲得量アップ",
+        listOf(3, 5, 7, 9, 10, 11, 12, 13, 14, 15).map {
+            ShuntaisaiTeachingEffect(relationBonus = 3, practiceMainStatusUp = it)
+        },
+        // TODO 合宿中の追加出現は未実装
+        ShuntaisaiTeachingEffect(practiceMainStatusUp = 15, campAddMember = 1),
     ),
 
-    // TODO 転成後の演目稽古友情ボーナス
     TOKUI(
         "得意率", 0,
-        ShuntaisaiTeachingEffect(specialityRate = 30),
         "得意率アップ",
+        listOf(10, 13, 16, 20, 25, 30, 35, 40, 45, 50).map {
+            ShuntaisaiTeachingEffect(specialityRate = it)
+        },
+        ShuntaisaiTeachingEffect(specialityRate = 50, practiceFriendBonus = 10),
     ),
 
-    // TODO ヒントイベントでヒント+1
     HINT(
         "ヒント", 0,
-        ShuntaisaiTeachingEffect(hintRate = 30),
         "ヒント発生率アップ",
+        listOf(30, 33, 36, 40, 45, 50, 55, 60, 70, 80).map {
+            ShuntaisaiTeachingEffect(hintRate = it)
+        },
+        // TODO ヒントLv+1は未実装
+        ShuntaisaiTeachingEffect(hintRate = 80, practiceHintPlus = 1),
     ),
 
-    // TODO 助力の支え（3回まで効果アップ）
     JORYOKU(
         "助力", 0,
-        ShuntaisaiTeachingEffect(nonFriendTrainingEffect = 15),
-        "友情が出ていない時のトレ効果アップ",
+        "友情非発生時のトレーニング効果アップ、演目稽古で助力の支え獲得",
+        listOf(20, 22, 24, 26, 28, 30, 32, 34, 37, 40).map {
+            ShuntaisaiTeachingEffect(nonFriendTrainingEffect = it, joryokuSupport = true)
+        },
+        ShuntaisaiTeachingEffect(nonFriendTrainingEffect = 20, joryokuSupport = true),
     ),
 
-    // TODO 体力消費ダウンは未実装（getHpCostDownがトレーニング種別を受け取らないため）
     TAIRYOKU(
         "体力", 0,
-        ShuntaisaiTeachingEffect(practiceHpDown = 20),
-        "演目稽古の体力消費ダウン",
+        "体力消費ダウン",
+        listOf(1, 2, 3, 4, 5, 6, 8, 10, 12, 15).map {
+            ShuntaisaiTeachingEffect(hpCostDown = it)
+        },
+        ShuntaisaiTeachingEffect(practiceHpCostDown = 15),
     ),
 
     TOKKA(
         "特化", 1,
-        ShuntaisaiTeachingEffect(mainStatusUp = 10, statusLimitUp = 20),
-        "主ステ獲得量アップ、獲得上限アップ",
+        "メイン基礎能力の獲得量アップ、基礎能力の獲得上限アップ",
+        listOf(5, 6, 7, 8, 9, 10, 13, 16, 20, 25).map {
+            ShuntaisaiTeachingEffect(mainStatusUp = it, statusLimitUp = it)
+        },
+        ShuntaisaiTeachingEffect.Empty,
     ),
 
     // TODO 追加の稽古（該当ステ+20、演目ゲージ上昇）は未実装
     KENSAN(
         "研鑽", 1,
-        ShuntaisaiTeachingEffect(),
-        "追加の稽古が起きやすくなる",
+        "演目担当が参加するトレーニングで追加の稽古が発生",
+        listOf(20, 22, 24, 27, 30, 35, 40, 50, 65, 80).map {
+            ShuntaisaiTeachingEffect(additionalPracticeRate = it)
+        },
+        ShuntaisaiTeachingEffect.Empty,
     ),
 
     KYORYOKU(
         "協力", 2,
-        ShuntaisaiTeachingEffect(friendBonus = 15, addMember = 1),
-        "友情ボーナス、演目担当のサポカが別の練習にも追加出現",
+        "友情ボーナス、演目担当のサポカが別のトレーニングにも追加出現",
+        listOf(1, 2, 3, 4, 5, 6, 7, 8, 9, 10).map {
+            ShuntaisaiTeachingEffect(friendBonus = it, addMember = 1)
+        },
+        ShuntaisaiTeachingEffect.Empty,
     ),
 
     FUKUTSU(
         "不屈", 2,
-        ShuntaisaiTeachingEffect(failureRateDown = true),
-        "残り体力に応じて失敗率ダウン",
+        "体力が一定以上なら失敗率ダウン",
+        listOf(45, 40, 35, 30, 25, 20, 15, 10, 5, 0).zip(listOf(0, 0, 0, 0, 0, 0, 0, 1, 3, 5)) { hp, effect ->
+            ShuntaisaiTeachingEffect(failureRateDownHp = hp, practiceTrainingEffect = effect)
+        },
+        ShuntaisaiTeachingEffect.Empty,
     ),
 
     RYODO(
         "両道", 2,
-        ShuntaisaiTeachingEffect(subStatusUp = 10, practiceTrainingEffect = 10),
-        "副ステ獲得量アップ、演目稽古のトレ効果アップ",
+        "サブ基礎能力の獲得量アップ、演目稽古のトレーニング効果アップ",
+        listOf(1, 2, 3, 4, 5, 8, 11, 15, 20, 25).zip(listOf(1, 2, 3, 4, 5, 7, 9, 11, 13, 15)) { sub, effect ->
+            ShuntaisaiTeachingEffect(subStatusUp = sub, practiceTrainingEffect = effect)
+        },
+        ShuntaisaiTeachingEffect.Empty,
     ),
     ;
+
+    fun effect(level: Int) = effects[(level - 1).coerceIn(0, effects.lastIndex)]
 
     companion object {
         fun byPeriod(period: Int) = entries.filter { it.period == period }
@@ -167,68 +225,63 @@ const val shuntaisaiAzumaMaxLevel = 10
 val shuntaisaiCampTurns = listOf(13, 14, 15, 16, 37, 38, 39, 40, 61, 62, 63, 64)
 
 /**
- * 演目稽古の基礎能力上昇量（時期、演目Lv1～10）
- *
- * 演目Lv1で全ステ+10以上、Lv8から強化幅が大きくなる
- * TODO 数値は全て仮
+ * 助力の支えの効果（トレーニング効果アップ）と回数
  */
-private val shuntaisaiPracticeStatusData = listOf(
-    // ジュニア
-    listOf(10, 11, 12, 13, 14, 15, 16, 19, 22, 25),
-    // クラシック
-    listOf(12, 13, 14, 15, 16, 17, 18, 21, 24, 27),
-    // シニア以降
-    listOf(14, 15, 16, 17, 18, 19, 20, 23, 26, 30),
+const val shuntaisaiJoryokuSupportEffect = 5
+const val shuntaisaiJoryokuSupportCount = 3
+
+/**
+ * 演目稽古の効果（演目Lvごと）
+ *
+ * allType～で始まる効果は、編成サポカのタイプが5種類以上の場合のみ有効
+ *
+ * @param statusUp 基礎能力の上昇量（全基礎能力）
+ * @param allTypeSkillPtTrainingEffect スキルPtのトレーニング効果アップ
+ * @param allTypeAllHintEffect 選択したトレーニングの全ヒントイベントの効果が発動（Lv1～3はヒントイベントの発生のみ）
+ * @param allTypeStatusLimitUp 基礎能力の獲得上限アップ
+ * @param allTypeSkillPtLimitUp スキルPtの獲得上限アップ
+ */
+data class ShuntaisaiPracticeEffect(
+    val statusUp: Int,
+    val friendBonus: Int,
+    val allTypeSkillPtTrainingEffect: Int,
+    val allTypeAllHintEffect: Boolean,
+    val allTypeStatusLimitUp: Int,
+    val allTypeSkillPtLimitUp: Int,
 )
 
-/**
- * 演目稽古のスキルPt上昇量（時期、演目Lv1～10）
- *
- * TODO 数値は全て仮
- */
-private val shuntaisaiPracticeSkillPtData = listOf(
-    listOf(10, 11, 12, 13, 14, 15, 16, 18, 20, 22),
-    listOf(12, 13, 14, 15, 16, 17, 18, 20, 22, 24),
-    listOf(14, 15, 16, 17, 18, 19, 20, 22, 24, 26),
+private val shuntaisaiPracticeEffectData = listOf(
+    ShuntaisaiPracticeEffect(10, 2, 20, false, 0, 0),
+    ShuntaisaiPracticeEffect(10, 3, 25, false, 0, 0),
+    ShuntaisaiPracticeEffect(10, 4, 30, false, 0, 0),
+    ShuntaisaiPracticeEffect(10, 5, 40, true, 0, 10),
+    ShuntaisaiPracticeEffect(10, 6, 50, true, 0, 20),
+    ShuntaisaiPracticeEffect(10, 7, 60, true, 0, 30),
+    ShuntaisaiPracticeEffect(10, 8, 80, true, 0, 50),
+    ShuntaisaiPracticeEffect(10, 10, 100, true, 0, 100),
+    ShuntaisaiPracticeEffect(10, 12, 135, true, 20, 120),
+    ShuntaisaiPracticeEffect(10, 15, 170, true, 25, 120),
 )
 
-fun shuntaisaiPracticeStatus(period: Int, level: Int): Status {
-    val periodIndex = period.coerceIn(0, 2)
-    val levelIndex = (level - 1).coerceIn(0, 9)
-    val value = shuntaisaiPracticeStatusData[periodIndex][levelIndex]
-    return Status(
-        speed = value, stamina = value, power = value, guts = value, wisdom = value,
-        skillPt = shuntaisaiPracticeSkillPtData[periodIndex][levelIndex],
-    )
-}
+fun shuntaisaiPracticeEffect(level: Int) =
+    shuntaisaiPracticeEffectData[(level - 1).coerceIn(0, shuntaisaiPracticeEffectData.lastIndex)]
 
 /**
- * シニアでサポカのタイプを5種類以上編成している場合の演目稽古トレ効果
+ * 進捗発表会/本番の大成功条件演目Lv（ジュニア、クラシック、本番）
  *
- * TODO 内容、数値ともに不明
+ * 全演目がこのLv以上なら大成功、それ以外は成功
  */
-const val shuntaisaiSeniorAllTypePracticeEffect = 10
-
-/**
- * 進捗発表会/本番の目標演目Lv（ジュニア、クラシック、本番）
- */
-val shuntaisaiTargetLevel = listOf(3, 5, 6)
-
-/**
- * 進捗発表会/本番の大成功条件演目Lv
- *
- * TODO 大成功条件不明
- */
-val shuntaisaiGreatTargetLevel = listOf(4, 6, 8)
+val shuntaisaiGreatTargetLevel = listOf(3, 5, 6)
 
 enum class ShuntaisaiPresentationResult(val displayName: String) {
-    FAILURE("失敗"),
     SUCCESS("成功"),
     GREAT_SUCCESS("大成功"),
 }
 
 /**
- * 進捗発表会ボーナス
+ * 駿大祭ボーナス効果
+ *
+ * TODO レースボーナスは未反映
  */
 data class ShuntaisaiPresentationBonus(
     val friendBonus: Int = 0,
@@ -238,25 +291,28 @@ data class ShuntaisaiPresentationBonus(
 ) {
     companion object {
         val Empty = ShuntaisaiPresentationBonus()
+
+        /**
+         * 第1回進捗発表会前
+         */
+        val Initial = ShuntaisaiPresentationBonus(specialityRate = 20)
     }
 }
 
 /**
- * 進捗発表会ボーナス（時期、結果）
- *
- * TODO 数値は全て仮、レースボーナスは未反映
+ * 駿大祭ボーナス効果（第1回進捗発表会、第2回進捗発表会、午式駿大祭）
  */
 val shuntaisaiPresentationBonus = listOf(
-    // ジュニア12月
     mapOf(
-        ShuntaisaiPresentationResult.FAILURE to ShuntaisaiPresentationBonus.Empty,
-        ShuntaisaiPresentationResult.SUCCESS to ShuntaisaiPresentationBonus(3, 30, 15, 0),
-        ShuntaisaiPresentationResult.GREAT_SUCCESS to ShuntaisaiPresentationBonus(5, 80, 30, 0),
+        ShuntaisaiPresentationResult.SUCCESS to ShuntaisaiPresentationBonus(0, 20, 20),
+        ShuntaisaiPresentationResult.GREAT_SUCCESS to ShuntaisaiPresentationBonus(5, 40, 50),
     ),
-    // クラシック12月
     mapOf(
-        ShuntaisaiPresentationResult.FAILURE to ShuntaisaiPresentationBonus.Empty,
-        ShuntaisaiPresentationResult.SUCCESS to ShuntaisaiPresentationBonus(5, 60, 30, 0),
-        ShuntaisaiPresentationResult.GREAT_SUCCESS to ShuntaisaiPresentationBonus(10, 120, 75, 0),
+        ShuntaisaiPresentationResult.SUCCESS to ShuntaisaiPresentationBonus(5, 40, 50),
+        ShuntaisaiPresentationResult.GREAT_SUCCESS to ShuntaisaiPresentationBonus(10, 60, 100),
+    ),
+    mapOf(
+        ShuntaisaiPresentationResult.SUCCESS to ShuntaisaiPresentationBonus(10, 60, 100, 30),
+        ShuntaisaiPresentationResult.GREAT_SUCCESS to ShuntaisaiPresentationBonus(20, 80, 150, 100),
     ),
 )

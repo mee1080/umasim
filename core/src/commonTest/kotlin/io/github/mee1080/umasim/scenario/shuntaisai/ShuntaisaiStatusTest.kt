@@ -71,7 +71,7 @@ class ShuntaisaiStatusTest {
             .assignTeaching(ShuntaisaiTeaching.TAIRYOKU, StatusType.WISDOM)
         assertEquals(StatusType.POWER, status.teachingTarget(ShuntaisaiTeaching.HINT))
         assertEquals(
-            ShuntaisaiTeaching.TOKUI.effect.specialityRate,
+            ShuntaisaiTeaching.TOKUI.effect(1).specialityRate,
             status.teachingEffect(StatusType.STAMINA).specialityRate,
         )
 
@@ -93,36 +93,35 @@ class ShuntaisaiStatusTest {
 
     @Test
     fun testTeachingEffect() {
-        val slot = ShuntaisaiTeachingSlot(ShuntaisaiTeaching.KYORYOKU, ShuntaisaiTeaching.TOKKA)
-        val effect = slot.effect
-        assertEquals(ShuntaisaiTeaching.KYORYOKU.effect.friendBonus, effect.friendBonus)
-        assertEquals(ShuntaisaiTeaching.TOKKA.effect.mainStatusUp, effect.mainStatusUp)
+        val slot = ShuntaisaiTeachingSlot(ShuntaisaiTeaching.KYORYOKU, ShuntaisaiTeaching.TOKUI)
+        val effect = slot.effect(10)
+        assertEquals(10, effect.friendBonus)
         assertEquals(1, effect.addMember)
+        // 転成効果は演目Lvによらず固定
+        assertEquals(50, effect.specialityRate)
+        assertEquals(10, effect.practiceFriendBonus)
+        assertEquals(50, slot.effect(1).specialityRate)
     }
 
     @Test
     fun testPresentation() {
         val status = ShuntaisaiStatus()
-        assertEquals(ShuntaisaiPresentationResult.FAILURE, status.judgePresentation(0))
+        assertEquals(ShuntaisaiPresentationResult.SUCCESS, status.judgePresentation(0))
 
-        val success = status.copy(levels = status.levels.mapValues { 3 })
-        assertEquals(ShuntaisaiPresentationResult.SUCCESS, success.judgePresentation(0))
-        assertEquals(ShuntaisaiPresentationResult.FAILURE, success.judgePresentation(1))
-
-        val great = status.copy(levels = status.levels.mapValues { 4 })
+        val great = status.copy(levels = status.levels.mapValues { 3 })
         assertEquals(ShuntaisaiPresentationResult.GREAT_SUCCESS, great.judgePresentation(0))
+        assertEquals(ShuntaisaiPresentationResult.SUCCESS, great.judgePresentation(1))
 
-        // 1つでも目標未達なら失敗
-        val partial = great.levelUp(StatusType.SPEED).copy(levels = great.levels + (StatusType.WISDOM to 2))
-        assertEquals(ShuntaisaiPresentationResult.FAILURE, partial.judgePresentation(0))
+        // 1つでも目標未達なら成功
+        val partial = great.copy(levels = great.levels + (StatusType.WISDOM to 2))
+        assertEquals(ShuntaisaiPresentationResult.SUCCESS, partial.judgePresentation(0))
     }
 
     @Test
-    fun testPracticeStatus() {
-        val junior = shuntaisaiPracticeStatus(0, 1)
-        assertTrue(junior.speed >= 10)
-        assertTrue(junior.skillPt > 0)
+    fun testPracticeEffect() {
+        assertEquals(2, shuntaisaiPracticeEffect(1).friendBonus)
+        assertEquals(170, shuntaisaiPracticeEffect(10).allTypeSkillPtTrainingEffect)
         // 範囲外のLvは丸める
-        assertEquals(shuntaisaiPracticeStatus(2, 10), shuntaisaiPracticeStatus(3, 12))
+        assertEquals(shuntaisaiPracticeEffect(10), shuntaisaiPracticeEffect(12))
     }
 }
