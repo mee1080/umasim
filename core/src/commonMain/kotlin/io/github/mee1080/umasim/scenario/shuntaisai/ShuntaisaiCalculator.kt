@@ -271,6 +271,15 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         return newMember
     }
 
+    /**
+     * 演目稽古は専用の基本上昇量を使用
+     */
+    override fun getTraining(state: SimulationState, trainingType: StatusType): TrainingBase? {
+        val shuntaisaiStatus = state.shuntaisaiStatus ?: return null
+        if (!shuntaisaiStatus.isPractice(trainingType)) return null
+        return shuntaisaiStatus.practiceTraining(trainingType, state.getTraining(trainingType).current.level)
+    }
+
     override fun getSpecialityRateUp(state: SimulationState, cardType: StatusType): Int {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
         return shuntaisaiStatus.teachingEffect(cardType).specialityRate +

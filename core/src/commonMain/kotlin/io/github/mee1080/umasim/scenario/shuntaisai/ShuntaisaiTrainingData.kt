@@ -31,3 +31,52 @@ val shuntaisaiTrainingData: List<TrainingBase> = listOf(
     TrainingBase(StatusType.WISDOM, 4, 323, Status(3, 0, 0, 0, 11, 6, 5)),
     TrainingBase(StatusType.WISDOM, 5, 324, Status(3, 0, 0, 0, 12, 8, 5)),
 )
+
+/**
+ * 演目稽古の基本上昇量（通常トレーニングLvごと）
+ *
+ * * トレーニングLv1（ジュニア）は通常トレーニングLv5と同じ
+ * * トレーニングLv2以上（クラシック）は、演目Lv3～5で同じ値を確認
+ *   * スピードはトレーニングLv3の値のみ確認
+ *   * 賢さはトレーニングLv2と3（Lv2は推定）で同じ値
+ * * TODO: トレーニングLvではなく時期（ジュニア/クラシック/シニア）で変化している可能性あり、トレーニングLv3以上とシニアは未確認
+ * * 体力消費は未確認のため通常トレーニングLv5と同じ
+ */
+val shuntaisaiPracticeTrainingData: Map<StatusType, List<TrainingBase>> = listOf(
+    StatusType.SPEED to listOf(
+        Status(16, 0, 3, 0, 0, 9, -25),
+        Status(21, 0, 3, 0, 0, 10, -25),
+    ),
+    StatusType.STAMINA to listOf(
+        Status(0, 14, 0, 6, 0, 10, -25),
+        Status(0, 20, 0, 8, 0, 12, -25),
+    ),
+    StatusType.POWER to listOf(
+        Status(0, 6, 14, 0, 0, 10, -25),
+        Status(0, 8, 20, 0, 0, 12, -25),
+    ),
+    StatusType.GUTS to listOf(
+        Status(3, 0, 2, 15, 0, 10, -25),
+        Status(3, 0, 2, 23, 0, 12, -25),
+    ),
+    StatusType.WISDOM to listOf(
+        Status(3, 0, 0, 0, 12, 8, 5),
+        Status(4, 0, 0, 0, 14, 9, 5),
+    ),
+).associate { (type, statusList) ->
+    val baseLv5 = shuntaisaiTrainingData.first { it.type == type && it.level == 5 }
+    type to statusList.mapIndexed { index, status ->
+        TrainingBase(type, index + 1, baseLv5.failureRate, status)
+    }
+}
+
+/**
+ * 演目稽古の基本上昇量
+ *
+ * @param trainingLevel 通常トレーニングのLv
+ * @param performanceLevel 演目Lv（表示上のトレーニングLv）
+ */
+fun shuntaisaiPracticeTraining(type: StatusType, trainingLevel: Int, performanceLevel: Int): TrainingBase {
+    val list = shuntaisaiPracticeTrainingData.getValue(type)
+    return list[(trainingLevel - 1).coerceIn(0, list.lastIndex)].copy(level = performanceLevel)
+}

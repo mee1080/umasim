@@ -109,12 +109,18 @@ abstract class ShuntaisaiTrainingTestBase(
             val card = Store.guestSupportCardList.first { it.type == guestType }
             MemberState(100 + index, card, type, null, Scenario.SHUNTAISAI.memberState(card, true))
         }
-        val info = baseCalcInfo.copy(
-            training = state.training[type.ordinal].base[level - 1],
-            member = supportMember + guestMember,
-        ).updateShuntaisaiStatus {
-            copy(gauges = gauges + (type to if (practice) shuntaisaiMaxGauge else 0))
+        val shuntaisaiStatus = baseCalcInfo.shuntaisaiStatus!!.let {
+            it.copy(gauges = it.gauges + (type to if (practice) shuntaisaiMaxGauge else 0))
         }
+        val info = baseCalcInfo.copy(
+            training = if (practice) {
+                shuntaisaiStatus.practiceTraining(type, level)
+            } else {
+                state.training[type.ordinal].base[level - 1]
+            },
+            member = supportMember + guestMember,
+            scenarioStatus = shuntaisaiStatus,
+        )
         val bonus = info.scenario.calculator.getScenarioCalcBonus(info)
         val result = Calculator.calcTrainingSuccessStatusSeparated(info, bonus)
         val message = buildString {

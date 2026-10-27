@@ -114,6 +114,14 @@ data class ShuntaisaiStatus(
     fun practiceEffect(type: StatusType) = shuntaisaiPracticeEffect(level(type))
 
     /**
+     * 演目稽古の基本上昇量（表示上のトレーニングLvは演目Lv）
+     *
+     * @param trainingLevel 通常トレーニングのLv
+     */
+    fun practiceTraining(type: StatusType, trainingLevel: Int) =
+        shuntaisaiPracticeTraining(type, trainingLevel, level(type))
+
+    /**
      * サポカのタイプを5種類以上編成している場合の演目稽古効果が有効か
      */
     val allTypeBonus get() = supportTypeCount >= 5
