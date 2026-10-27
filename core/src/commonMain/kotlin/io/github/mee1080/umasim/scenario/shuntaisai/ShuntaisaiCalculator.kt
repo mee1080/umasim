@@ -1,14 +1,17 @@
 package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.RaceEntry
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.TrainingBase
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
+import io.github.mee1080.umasim.scenario.addSupportToTrainings
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.mapIf
 import kotlin.math.min
+import kotlin.random.Random
 
 object ShuntaisaiCalculator : ScenarioCalculator {
 
@@ -92,20 +95,29 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         baseActions: List<Action>,
     ): List<Action> {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return baseActions
-        // お休み、目標外レース等は最低+1（TODO 対象の演目不明、最も低い演目とする）
-        val lowestParam = ShuntaisaiActionParam(
-            gaugeUp = trainingType.minByOrNull { shuntaisaiStatus.gauge(it) }?.let { mapOf(it to 1) } ?: emptyMap(),
-        )
+        // 目標レース+4、お休み、お出かけ、目標外レースは+1（演目Lvとゲージが低い演目から順）
+        val lowestParam = ShuntaisaiActionParam(gaugeUp = shuntaisaiStatus.calcLowestGaugeUp(1))
+        val goalRaceParam = ShuntaisaiActionParam(gaugeUp = shuntaisaiStatus.calcLowestGaugeUp(4))
         return baseActions.map { action ->
             when (action) {
                 is Training -> {
                     val param = calcTrainingParam(shuntaisaiStatus, action)
-                    action.copy(candidates = action.addScenarioActionParam(param))
+                    val candidates = action.addScenarioActionParam(param)
+                    action.copy(
+                        candidates = if (shuntaisaiStatus.isFinals) {
+                            // URAファイナルズ: トレーニングで体力+30、やる気+1
+                            candidates.mapIf({ it.first.success }) {
+                                (it.first as StatusActionResult).copy(
+                                    status = it.first.status + shuntaisaiFinalsTrainingStatus
+                                ) to it.second
+                            }
+                        } else candidates
+                    )
                 }
 
-                is Race -> if (action.goal) action else {
-                    action.copy(result = action.result.addScenarioActionParam(lowestParam))
-                }
+                is Race -> action.copy(
+                    result = action.result.addScenarioActionParam(if (action.goal) goalRaceParam else lowestParam)
+                )
 
                 is Sleep -> action.copy(candidates = action.addScenarioActionParam(lowestParam))
                 is Outing -> action.copy(candidates = action.addScenarioActionParam(lowestParam))
@@ -116,33 +128,57 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     }
 
     /**
-     * 練習に参加した演目担当1人につき+1、友情なら+2
+     * 練習に参加した演目担当1人につき担当演目のゲージ+1、友情なら+2（シナリオリンクキャラは固定の担当演目）
      *
-     * TODO シナリオリンクキャラのゲージ上昇
+     * 合宿中はゲージが上昇しない
      */
     fun calcTrainingParam(shuntaisaiStatus: ShuntaisaiStatus, action: Training): ShuntaisaiActionParam {
         val gaugeUp = mutableMapOf<StatusType, Int>()
-        action.member.forEach { member ->
-            val type = member.card.type
-            if (trainingType.contains(type)) {
-                gaugeUp[type] = (gaugeUp[type] ?: 0) + if (member.isFriendTraining(action.type)) 2 else 1
-            }
+        if (!shuntaisaiStatus.isCamp) action.member.forEach { member ->
+            val type = member.shuntaisaiPerformance ?: return@forEach
+            gaugeUp[type] = (gaugeUp[type] ?: 0) + if (member.isFriendTraining(action.type)) 2 else 1
         }
         val practice = shuntaisaiStatus.isPractice(action.type)
+        val effect = shuntaisaiStatus.memberTeachingEffect(action.member)
         return ShuntaisaiActionParam(
             gaugeUp = gaugeUp,
             practice = if (practice) action.type else null,
             training = true,
-            joryokuSupport = practice && shuntaisaiStatus.memberTeachingEffect(action.member).joryokuSupport,
+            joryokuSupport = practice && effect.joryokuSupport,
+            relationUp = effect.relationBonus,
+            additionalPracticeTarget = action.type,
+            additionalPracticeRate = min(100, effect.additionalPracticeRate),
         )
     }
 
     fun applyScenarioActionParam(state: SimulationState, param: ShuntaisaiActionParam): SimulationState {
-        return state.updateShuntaisaiStatus {
+        var newState = state.updateShuntaisaiStatus {
             (param.practice?.let { executePractice(it) } ?: this)
                 .addGauges(param.gaugeUp)
                 .let { if (param.training) it.updateJoryokuSupport(param.joryokuSupport) else it }
         }
+        // 絆の教え: 全編成サポカの絆ゲージ上昇
+        if (param.relationUp > 0) {
+            newState = newState.addRelation(param.relationUp) { !it.guest }
+        }
+        val additionalPracticeTarget = param.additionalPracticeTarget
+        if (additionalPracticeTarget != null && Random.nextInt(100) < param.additionalPracticeRate) {
+            newState = newState.applyAdditionalPractice(additionalPracticeTarget)
+        }
+        return newState
+    }
+
+    /**
+     * 研鑽の教え: 追加の稽古
+     *
+     * 上の選択肢（体力-5、直前トレ対象+20、SP+20、演目Lvが低い演目のゲージ+1）を選択する
+     * 理事長絆、バッドコンディション解除は無視する
+     */
+    private fun SimulationState.applyAdditionalPractice(target: StatusType): SimulationState {
+        return addStatus(
+            Status(skillPt = shuntaisaiAdditionalPracticeSkillPt, hp = shuntaisaiAdditionalPracticeHp)
+                .add(target to shuntaisaiAdditionalPracticeStatus)
+        ).updateShuntaisaiStatus { addLowestGauge() }
     }
 
     fun applyScenarioAction(state: SimulationState, result: ShuntaisaiActionResult): SimulationState {
@@ -161,9 +197,11 @@ object ShuntaisaiCalculator : ScenarioCalculator {
      * 配置の調整
      *
      * * 演目稽古に各演目担当が現れる
-     * * 吾妻は4人以下の演目稽古に現れる（TODO 現れる条件の詳細不明、ランダムな1箇所とする）
+     * * 吾妻は4人以下の演目稽古のうち、ランダムな1箇所に現れる
      * * 協力の教え: 演目担当の編成サポカが別の練習1箇所にも追加で出現
-     * * TODO 絆の教えの転成効果（合宿中に追加で1人出現）は未実装
+     * * 絆の教えの転成効果: 合宿中に演目担当の編成サポカが別の練習1箇所にも追加で出現
+     * * URAファイナルズ: 全ての演目稽古に編成サポカ+1
+     * * 演目稽古（サポカタイプ5種以上）: 友人とグループを除く全ての編成サポカにヒント発生
      */
     override fun modifyShuffledMember(
         state: SimulationState,
@@ -184,14 +222,14 @@ object ShuntaisaiCalculator : ScenarioCalculator {
 
         val practiceTypes = trainingType.filter { shuntaisaiStatus.isPractice(it) }
         practiceTypes.forEach { type ->
-            newMember = newMember.mapIf({ it.card.type == type }) {
+            newMember = newMember.mapIf({ it.shuntaisaiPerformance == type }) {
                 it.copy(position = type, additionalPosition = it.additionalPosition - type)
             }
         }
         practiceTypes.forEach { type ->
             while (count(type) > 5) {
                 val positioned = newMember.filter { it.positions.contains(type) }
-                removePosition(positioned.firstOrNull { it.card.type != type } ?: positioned.last(), type)
+                removePosition(positioned.firstOrNull { it.shuntaisaiPerformance != type } ?: positioned.last(), type)
             }
         }
 
@@ -205,15 +243,29 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         }
 
         trainingType.forEach { type ->
-            repeat(shuntaisaiStatus.teachingEffect(type).addMember) {
+            val effect = shuntaisaiStatus.teachingEffect(type)
+            val addMember = effect.addMember + if (shuntaisaiStatus.isCamp) effect.campAddMember else 0
+            repeat(addMember) {
                 val target = newMember
-                    .filter { !it.guest && it.card.type == type && it.position != StatusType.NONE && it.additionalPosition.isEmpty() }
+                    .filter { !it.guest && it.shuntaisaiPerformance == type && it.position != StatusType.NONE && it.additionalPosition.isEmpty() }
                     .randomOrNull() ?: return@repeat
                 val additionalType = trainingType.filter { !target.positions.contains(it) && count(it) < 5 }
                     .randomOrNull() ?: return@repeat
                 newMember = newMember.mapIf({ it.index == target.index }) {
                     it.copy(additionalPosition = it.additionalPosition + additionalType)
                 }
+            }
+        }
+
+        if (shuntaisaiStatus.isFinals) {
+            newMember = addSupportToTrainings(newMember, practiceTypes)
+        }
+
+        if (shuntaisaiStatus.allTypeBonus) {
+            newMember = newMember.mapIf({ member ->
+                !member.guest && !member.outingType && member.positions.any { practiceTypes.contains(it) }
+            }) {
+                it.copy(supportState = it.supportState?.copy(hintIcon = true))
             }
         }
         return newMember
@@ -226,29 +278,41 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     }
 
     /**
-     * TODO 本来はヒントの教えを割り当てた演目の担当が対象と思われるが、配置先の演目で判定している
+     * ヒントの教え: 教えを割り当てた演目の担当のヒント発生率アップ
      */
-    override fun getHintFrequencyUp(state: SimulationState, position: StatusType): Int {
+    override fun getHintFrequencyUp(state: SimulationState, member: MemberState): Int {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
-        return shuntaisaiStatus.teachingEffect(position).hintRate +
-                shuntaisaiStatus.presentationBonus.hintRate
+        val teachingHintRate = member.shuntaisaiPerformance?.let { shuntaisaiStatus.teachingEffect(it).hintRate } ?: 0
+        return teachingHintRate + shuntaisaiStatus.presentationBonus.hintRate
     }
 
     /**
-     * 演目稽古（サポカタイプ5種以上）: 全サポカのヒントイベント発生
+     * ヒントの教えの転成効果: 演目稽古のヒントイベントで獲得するヒントLv+1
+     */
+    override fun getHintLevelUp(state: SimulationState, position: StatusType, member: List<MemberState>): Int {
+        val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
+        if (!shuntaisaiStatus.isPractice(position)) return 0
+        return shuntaisaiStatus.memberTeachingEffect(member).practiceHintPlus
+    }
+
+    /**
+     * 演目稽古（サポカタイプ5種以上、演目Lv4以上）: 全ヒントイベントの効果が発動
      *
-     * TODO 演目Lv4以上の「全ヒントイベントの効果が発動」との違いは未反映
+     * 演目Lv3以下はヒントイベントの発生のみ（[modifyShuffledMember]でヒントアイコンを表示）
      */
     override fun isAllSupportHint(state: SimulationState, position: StatusType): Boolean {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return false
-        return shuntaisaiStatus.allTypeBonus && shuntaisaiStatus.isPractice(position)
+        return shuntaisaiStatus.allTypeBonus && shuntaisaiStatus.isPractice(position) &&
+                shuntaisaiStatus.practiceEffect(position).allTypeAllHintEffect
     }
 
     /**
-     * 不屈の教え: 演目担当が参加するトレーニングで、体力が一定以上なら失敗率100%ダウン
+     * * URAファイナルズ: 失敗率100%ダウン
+     * * 不屈の教え: 演目担当が参加するトレーニングで、体力が一定以上なら失敗率100%ダウン
      */
     override fun getFailureRateDown(state: SimulationState, training: TrainingBase, member: List<MemberState>): Int {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
+        if (shuntaisaiStatus.isFinals) return 100
         val hp = shuntaisaiStatus.memberTeachingEffect(member).failureRateDownHp ?: return 0
         return if (state.status.hp >= hp) 100 else 0
     }
@@ -263,12 +327,11 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     }
 
     /**
-     * 絆の教え
-     *
-     * TODO 本来は絆の教えの演目担当が参加するトレーニングで、全編成サポカの絆ゲージ上昇
+     * 駿大祭ボーナス効果のレースボーナス
      */
-    override fun getTrainingRelationBonus(state: SimulationState): Int {
-        val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
-        return trainingType.maxOf { shuntaisaiStatus.teachingEffect(it).relationBonus }
+    override fun calcBaseRaceStatus(state: SimulationState, race: RaceEntry, goal: Boolean): Status? {
+        val raceBonus = state.shuntaisaiStatus?.presentationBonus?.raceBonus ?: 0
+        if (raceBonus == 0) return null
+        return state.defaultBaseRaceStatus(race, goal, state.totalRaceBonus + raceBonus)
     }
 }

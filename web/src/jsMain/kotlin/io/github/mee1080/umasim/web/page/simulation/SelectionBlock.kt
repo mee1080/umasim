@@ -266,7 +266,7 @@ fun SelectionBlock(
                     }
 
                     is ShuntaisaiAssignTeaching -> {
-                        ShuntaisaiTeachingInfo(action.teaching)
+                        ShuntaisaiTeachingInfo(action.teaching, action.transformedFrom)
                     }
 
                     is ShuntaisaiTransformTeaching -> {

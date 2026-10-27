@@ -114,7 +114,7 @@ data class SimulationState(
             "大輪の輝き" to -2,
         ).sumOf { if (condition.contains(it.first)) it.second else 0 }
 
-    val levelUpTurns get() = scenario.levelUpTurns
+    val levelUpTurns get() = shuntaisaiStatus?.campTurns ?: scenario.levelUpTurns
 
     val isLevelUpTurn get() = levelUpTurns.contains(turn)
 
@@ -153,6 +153,14 @@ data class SimulationState(
 
     fun hintFrequencyUp(position: StatusType): Int {
         return scenario.calculator.getHintFrequencyUp(this, position)
+    }
+
+    fun hintFrequencyUp(member: MemberState): Int {
+        return scenario.calculator.getHintFrequencyUp(this, member)
+    }
+
+    fun hintLevelUp(position: StatusType, member: List<MemberState>): Int {
+        return scenario.calculator.getHintLevelUp(this, position, member)
     }
 
     val forceHint = uafStatus?.forceHint ?: false

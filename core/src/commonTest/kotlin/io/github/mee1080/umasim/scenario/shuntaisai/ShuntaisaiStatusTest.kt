@@ -42,7 +42,8 @@ class ShuntaisaiStatusTest {
         val camp = ShuntaisaiStatus(turn = 13)
         assertTrue(camp.isCamp)
         assertEquals(5, StatusType.entries.count { camp.isPractice(it) })
-        assertEquals(2, camp.executePractice(StatusType.GUTS).level(StatusType.GUTS))
+        // 合宿中は演目Lvが上昇しない
+        assertEquals(1, camp.executePractice(StatusType.GUTS).level(StatusType.GUTS))
     }
 
     @Test

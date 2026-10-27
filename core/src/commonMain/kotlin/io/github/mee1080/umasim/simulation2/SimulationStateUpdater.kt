@@ -192,7 +192,7 @@ private fun MemberState.onTurnChange(turn: Int, state: SimulationState): MemberS
     // ヒントアイコン表示、情熱ゾーン減少
     val supportState = supportState?.copy(
         hintIcon = !outingType && (
-                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp(position)))
+                state.forceHint || (!scenarioState.hintBlocked && card.checkHint(state.hintFrequencyUp(this)))
                 ),
         passionTurn = max(0, supportState.passionTurn - 1),
         currentTurnSpecialityUp = supportState.nextTurnSpecialityUp,
@@ -467,13 +467,16 @@ private fun SimulationState.selectTrainingHint(
     support: List<MemberState>,
     position: StatusType,
 ): Pair<Status, List<MemberState>> {
+    val hintLevelUp = hintLevelUp(position, support)
     return if (allSupportHint(position)) {
         // ステータス上昇はCalculatorで計算済み
         val hintSupportList = support.filter { !it.outingType }
         hintSupportList.map { hintSupport ->
             val hintSkill = (hintSupport.card.skills.filter { !status.skillHint.containsKey(it) } + "").random()
             Status(
-                skillHint = if (hintSkill.isEmpty()) emptyMap() else mapOf(hintSkill to 1 + hintSupport.card.hintLevel),
+                skillHint = if (hintSkill.isEmpty()) emptyMap() else {
+                    mapOf(hintSkill to 1 + hintSupport.card.hintLevel + hintLevelUp)
+                },
             )
         }.fold(Status()) { acc, status ->
             acc + status
@@ -485,11 +488,17 @@ private fun SimulationState.selectTrainingHint(
         hintSupport.selectHint(
             status,
             1 + hintCountPlus,
+            hintLevelUp = hintLevelUp,
         ) to listOf(hintSupport)
     }
 }
 
-private fun MemberState.selectHint(currentStatus: Status, count: Int = 1, hintCountUpEnabled: Boolean = true): Status {
+private fun MemberState.selectHint(
+    currentStatus: Status,
+    count: Int = 1,
+    hintCountUpEnabled: Boolean = true,
+    hintLevelUp: Int = 0,
+): Status {
     var result = Status()
     repeat(count + (if (hintCountUpEnabled) card.hintCountUp(relation) else 0)) {
         val hintSkill = (card.skills.filter {
@@ -498,7 +507,7 @@ private fun MemberState.selectHint(currentStatus: Status, count: Int = 1, hintCo
         result += if (hintSkill.isEmpty()) {
             card.hintStatus
         } else {
-            Status(skillHint = mapOf(hintSkill to 1 + card.hintLevel))
+            Status(skillHint = mapOf(hintSkill to 1 + card.hintLevel + hintLevelUp))
         }
     }
     return result

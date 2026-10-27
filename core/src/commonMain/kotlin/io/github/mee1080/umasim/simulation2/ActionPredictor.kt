@@ -191,29 +191,7 @@ fun SimulationState.predictSleep(): Array<Action> {
 
 fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
     var status = scenario.calculator.calcBaseRaceStatus(this, race, goal)
-        ?: if (goal) when (race.grade) {
-            RaceGrade.DEBUT -> raceStatus(3, 3, 30)
-            RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30)
-            RaceGrade.OPEN -> raceStatus(3, 3, 30)
-            RaceGrade.G3 -> raceStatus(4, 3, 35)
-            RaceGrade.G2 -> raceStatus(4, 3, 35)
-            RaceGrade.G1 -> raceStatus(5, 3, 45)
-            RaceGrade.FINALS -> when (race.turn) {
-                74 -> raceStatus(5, 10, 40)
-                76 -> raceStatus(5, 10, 60)
-                78 -> raceStatus(5, 10, 80)
-                else -> Status()
-            }
-
-            RaceGrade.UNKNOWN -> Status()
-        } else when (race.grade) {
-            RaceGrade.PRE_OPEN -> raceStatus(1, 5, 30)
-            RaceGrade.OPEN -> raceStatus(1, 5, 30)
-            RaceGrade.G3 -> raceStatus(1, 8, 35)
-            RaceGrade.G2 -> raceStatus(1, 8, 35)
-            RaceGrade.G1 -> raceStatus(1, 10, 45)
-            else -> Status()
-        }
+        ?: defaultBaseRaceStatus(race, goal)
     status += Status(
         hp = if (goal) 0 else -15,
         // やる気は3連続出走以上で強制低下扱い
@@ -225,10 +203,40 @@ fun SimulationState.predictRace(race: RaceEntry, goal: Boolean = true): Race {
     return Race(goal, race.name, race.grade, StatusActionResult(status, scenarioParam))
 }
 
-fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int): Status {
-    val bonusValue = value * (100 + totalRaceBonus) / 100
+fun SimulationState.defaultBaseRaceStatus(
+    race: RaceEntry,
+    goal: Boolean,
+    raceBonus: Int = totalRaceBonus,
+): Status {
+    return if (goal) when (race.grade) {
+        RaceGrade.DEBUT -> raceStatus(3, 3, 30, raceBonus)
+        RaceGrade.PRE_OPEN -> raceStatus(3, 3, 30, raceBonus)
+        RaceGrade.OPEN -> raceStatus(3, 3, 30, raceBonus)
+        RaceGrade.G3 -> raceStatus(4, 3, 35, raceBonus)
+        RaceGrade.G2 -> raceStatus(4, 3, 35, raceBonus)
+        RaceGrade.G1 -> raceStatus(5, 3, 45, raceBonus)
+        RaceGrade.FINALS -> when (race.turn) {
+            74 -> raceStatus(5, 10, 40, raceBonus)
+            76 -> raceStatus(5, 10, 60, raceBonus)
+            78 -> raceStatus(5, 10, 80, raceBonus)
+            else -> Status()
+        }
+
+        RaceGrade.UNKNOWN -> Status()
+    } else when (race.grade) {
+        RaceGrade.PRE_OPEN -> raceStatus(1, 5, 30, raceBonus)
+        RaceGrade.OPEN -> raceStatus(1, 5, 30, raceBonus)
+        RaceGrade.G3 -> raceStatus(1, 8, 35, raceBonus)
+        RaceGrade.G2 -> raceStatus(1, 8, 35, raceBonus)
+        RaceGrade.G1 -> raceStatus(1, 10, 45, raceBonus)
+        else -> Status()
+    }
+}
+
+fun SimulationState.raceStatus(count: Int, value: Int, skillPt: Int, raceBonus: Int = totalRaceBonus): Status {
+    val bonusValue = value * (100 + raceBonus) / 100
     val targets = randomTrainingType(count).map { it to bonusValue }.toTypedArray()
-    return Status(skillPt = skillPt * (100 + totalRaceBonus) / 100).add(*targets)
+    return Status(skillPt = skillPt * (100 + raceBonus) / 100).add(*targets)
 }
 
 fun SimulationState.raceFanCount(base: Int): Int {

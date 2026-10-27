@@ -1,5 +1,6 @@
 package io.github.mee1080.umasim.scenario.shuntaisai
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 
 /**
@@ -111,7 +112,6 @@ enum class ShuntaisaiTeaching(
         listOf(3, 5, 7, 9, 10, 11, 12, 13, 14, 15).map {
             ShuntaisaiTeachingEffect(relationBonus = 3, practiceMainStatusUp = it)
         },
-        // TODO 合宿中の追加出現は未実装
         ShuntaisaiTeachingEffect(practiceMainStatusUp = 15, campAddMember = 1),
     ),
 
@@ -130,7 +130,6 @@ enum class ShuntaisaiTeaching(
         listOf(30, 33, 36, 40, 45, 50, 55, 60, 70, 80).map {
             ShuntaisaiTeachingEffect(hintRate = it)
         },
-        // TODO ヒントLv+1は未実装
         ShuntaisaiTeachingEffect(hintRate = 80, practiceHintPlus = 1),
     ),
 
@@ -161,7 +160,6 @@ enum class ShuntaisaiTeaching(
         ShuntaisaiTeachingEffect.Empty,
     ),
 
-    // TODO 追加の稽古（該当ステ+20、演目ゲージ上昇）は未実装
     KENSAN(
         "研鑽", 1,
         "演目担当が参加するトレーニングで追加の稽古が発生",
@@ -207,6 +205,18 @@ enum class ShuntaisaiTeaching(
 }
 
 /**
+ * シナリオリンクキャラの担当演目（サポカのタイプによらず固定）
+ */
+val shuntaisaiLinkPerformance = mapOf(
+    "ダイワスカーレット" to StatusType.SPEED,
+    "マヤノトップガン" to StatusType.POWER,
+    "ユキノビジン" to StatusType.GUTS,
+    "ノーリーズン" to StatusType.STAMINA,
+    "ブラストワンピース" to StatusType.WISDOM,
+)
+
+
+/**
  * 演目ゲージ最大値
  */
 const val shuntaisaiMaxGauge = 5
@@ -218,11 +228,51 @@ const val shuntaisaiDefaultMaxLevel = 6
 const val shuntaisaiAzumaMaxLevel = 10
 
 /**
- * 駿大祭合宿（ジュニアにも合宿あり）
- *
- * TODO 夏に目標レースがあるキャラは合宿期間が延長される
+ * 駿大祭合宿（ジュニアにも合宿あり）の開始ターンと期間
  */
-val shuntaisaiCampTurns = listOf(13, 14, 15, 16, 37, 38, 39, 40, 61, 62, 63, 64)
+val shuntaisaiCampStartTurns = listOf(13, 37, 61)
+const val shuntaisaiCampLength = 4
+
+/**
+ * 目標レースが無い場合の駿大祭合宿
+ */
+val shuntaisaiCampTurns = calcShuntaisaiCampTurns(emptySet())
+
+/**
+ * 駿大祭合宿のターン
+ *
+ * 合宿期間中の目標レース数だけ延長される
+ */
+fun calcShuntaisaiCampTurns(goalRaceTurns: Set<Int>): List<Int> {
+    return shuntaisaiCampStartTurns.flatMap { start ->
+        buildList {
+            var turn = start
+            var remaining = shuntaisaiCampLength
+            while (remaining > 0) {
+                add(turn)
+                if (!goalRaceTurns.contains(turn)) remaining--
+                turn++
+            }
+        }
+    }
+}
+
+/**
+ * URAファイナルズ期間の開始ターン
+ */
+const val shuntaisaiFinalsStartTurn = 73
+
+/**
+ * URAファイナルズ期間のトレーニングで追加される体力、やる気
+ */
+val shuntaisaiFinalsTrainingStatus = Status(hp = 30, motivation = 1)
+
+/**
+ * 追加の稽古（上の選択肢）の効果
+ */
+const val shuntaisaiAdditionalPracticeStatus = 20
+const val shuntaisaiAdditionalPracticeSkillPt = 20
+const val shuntaisaiAdditionalPracticeHp = -5
 
 /**
  * 助力の支えの効果（トレーニング効果アップ）と回数
@@ -280,8 +330,6 @@ enum class ShuntaisaiPresentationResult(val displayName: String) {
 
 /**
  * 駿大祭ボーナス効果
- *
- * TODO レースボーナスは未反映
  */
 data class ShuntaisaiPresentationBonus(
     val friendBonus: Int = 0,

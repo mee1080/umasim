@@ -672,12 +672,18 @@ data class RamenTasting(
 /**
  * @param training トレーニングかどうか（助力の支えを消費する）
  * @param joryokuSupport 助力の支えを獲得するか
+ * @param relationUp 全編成サポカの絆ゲージ上昇量（絆の教え）
+ * @param additionalPracticeTarget 追加の稽古の対象ステータス（研鑽の教え）
+ * @param additionalPracticeRate 追加の稽古の発生率
  */
 data class ShuntaisaiActionParam(
     val gaugeUp: Map<StatusType, Int> = emptyMap(),
     val practice: StatusType? = null,
     val training: Boolean = false,
     val joryokuSupport: Boolean = false,
+    val relationUp: Int = 0,
+    val additionalPracticeTarget: StatusType? = null,
+    val additionalPracticeRate: Int = 0,
 ) : ScenarioActionParam {
     override fun toShortString() = buildString {
         if (practice != null) {
@@ -685,6 +691,12 @@ data class ShuntaisaiActionParam(
         }
         if (joryokuSupport) {
             append("助力の支え獲得 ")
+        }
+        if (relationUp > 0) {
+            append("全員絆+$relationUp ")
+        }
+        if (additionalPracticeRate > 0) {
+            append("追加の稽古$additionalPracticeRate% ")
         }
         append(gaugeUp.entries.joinToString(",") { "${ShuntaisaiPerformance.of(it.key)?.displayName}+${it.value}" })
     }
@@ -695,15 +707,27 @@ sealed interface ShuntaisaiActionResult : ActionResult
 data class ShuntaisaiAssignTeachingResult(
     val teaching: ShuntaisaiTeaching,
     val target: StatusType,
+    val transformedFrom: ShuntaisaiTeaching? = null,
 ) : ShuntaisaiActionResult
 
+/**
+ * @param transformedFrom 付け替え時、転成済みの教えの転成元
+ * @param reassign 付け替えかどうか
+ */
 data class ShuntaisaiAssignTeaching(
     val teaching: ShuntaisaiTeaching,
     val target: StatusType,
+    val transformedFrom: ShuntaisaiTeaching? = null,
+    val reassign: Boolean = false,
 ) : SingleAction {
-    override val name = "教え伝受: ${teaching.displayName} → ${ShuntaisaiPerformance.of(target)?.displayName}"
+    override val name = buildString {
+        append(if (reassign) "教え付け替え: " else "教え伝受: ")
+        append(teaching.displayName)
+        if (transformedFrom != null) append("(${transformedFrom.displayName})")
+        append(" → ${ShuntaisaiPerformance.of(target)?.displayName}")
+    }
     override val turnChange = false
-    override val result = ShuntaisaiAssignTeachingResult(teaching, target)
+    override val result = ShuntaisaiAssignTeachingResult(teaching, target, transformedFrom)
 }
 
 data class ShuntaisaiTransformTeachingResult(

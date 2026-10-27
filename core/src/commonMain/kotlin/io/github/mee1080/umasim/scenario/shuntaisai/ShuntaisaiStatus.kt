@@ -8,6 +8,13 @@ import io.github.mee1080.umasim.simulation2.SimulationState
 import kotlin.math.max
 import kotlin.math.min
 
+/**
+ * 担当演目（シナリオリンクキャラは固定、それ以外はサポカのタイプ）
+ */
+val MemberState.shuntaisaiPerformance: StatusType?
+    get() = (if (isScenarioLink) shuntaisaiLinkPerformance[charaName] else null)
+        ?: card.type.takeIf { trainingType.contains(it) }
+
 fun SimulationState.updateShuntaisaiStatus(update: ShuntaisaiStatus.() -> ShuntaisaiStatus): SimulationState {
     val shuntaisaiStatus = this.shuntaisaiStatus ?: return this
     return copy(scenarioStatus = shuntaisaiStatus.update())
@@ -35,9 +42,11 @@ data class ShuntaisaiTeachingSlot(
  * 駿大祭シナリオ固有の状態を保持するクラス。
  *
  * @param joryokuSupportCount 助力の支えの残り回数
+ * @param campTurns 駿大祭合宿のターン（目標レースによる延長を含む）
  */
 data class ShuntaisaiStatus(
     val turn: Int = 1,
+    val campTurns: List<Int> = shuntaisaiCampTurns,
     val maxLevel: Int = shuntaisaiDefaultMaxLevel,
     val gauges: Map<StatusType, Int> = trainingType.associateWith { 0 },
     val levels: Map<StatusType, Int> = trainingType.associateWith { 1 },
@@ -62,7 +71,14 @@ data class ShuntaisaiStatus(
 
     val period = (turn - 1) / 24
 
-    val isCamp get() = shuntaisaiCampTurns.contains(turn)
+    val isCamp get() = campTurns.contains(turn)
+
+    /**
+     * 合宿最終ターンか
+     */
+    fun isCampEnd(turn: Int) = campTurns.contains(turn) && !campTurns.contains(turn + 1)
+
+    val isFinals get() = turn >= shuntaisaiFinalsStartTurn
 
     val minLevel get() = levels.values.minOrNull() ?: 0
 
@@ -75,7 +91,7 @@ data class ShuntaisaiStatus(
     /**
      * 演目稽古になっているか
      */
-    fun isPractice(type: StatusType) = trainingType.contains(type) && (isCamp || isGaugeMax(type))
+    fun isPractice(type: StatusType) = trainingType.contains(type) && (isCamp || isFinals || isGaugeMax(type))
 
     /**
      * 演目に割り当てられた教えの効果（演目Lvに応じた値）
@@ -90,8 +106,8 @@ data class ShuntaisaiStatus(
      */
     fun memberTeachingEffect(member: List<MemberState>): ShuntaisaiTeachingEffect {
         return member.fold(ShuntaisaiTeachingEffect.Empty) { acc, memberState ->
-            val type = memberState.card.type
-            if (trainingType.contains(type)) acc + teachingEffect(type) else acc
+            val type = memberState.shuntaisaiPerformance
+            if (type != null) acc + teachingEffect(type) else acc
         }
     }
 
@@ -106,8 +122,11 @@ data class ShuntaisaiStatus(
 
     fun teachingTarget(teaching: ShuntaisaiTeaching) = teachings.entries.firstOrNull { it.value.teaching == teaching }?.key
 
+    /**
+     * 演目ゲージ上昇（合宿中は上昇しない）
+     */
     fun addGauge(type: StatusType, value: Int): ShuntaisaiStatus {
-        if (value <= 0 || !trainingType.contains(type)) return this
+        if (isCamp || value <= 0 || !trainingType.contains(type)) return this
         return copy(gauges = gauges + (type to min(shuntaisaiMaxGauge, gauge(type) + value)))
     }
 
@@ -116,13 +135,30 @@ data class ShuntaisaiStatus(
     }
 
     /**
-     * 最も低い演目ゲージ+1
-     *
-     * TODO お休み、目標外レース時にどの演目が上昇するか不明
+     * 演目Lvとゲージが最も低い演目（同値の場合は先頭）、ゲージ最大の演目は対象外
      */
-    fun addLowestGauge(): ShuntaisaiStatus {
-        val target = trainingType.minByOrNull { gauge(it) } ?: return this
-        return addGauge(target, 1)
+    fun lowestGaugeTarget(): StatusType? {
+        return trainingType.filter { !isGaugeMax(it) }.minWithOrNull(compareBy({ level(it) }, { gauge(it) }))
+    }
+
+    /**
+     * 演目Lvとゲージが低い演目から順に1ずつゲージ上昇
+     */
+    fun addLowestGauge(count: Int = 1): ShuntaisaiStatus {
+        var status = this
+        repeat(count) {
+            val target = status.lowestGaugeTarget() ?: return status
+            status = status.addGauge(target, 1)
+        }
+        return status
+    }
+
+    /**
+     * [addLowestGauge]によるゲージ上昇量
+     */
+    fun calcLowestGaugeUp(count: Int): Map<StatusType, Int> {
+        val added = addLowestGauge(count)
+        return trainingType.associateWith { added.gauge(it) - gauge(it) }.filterValues { it > 0 }
     }
 
     fun levelUp(type: StatusType, value: Int = 1): ShuntaisaiStatus {
@@ -138,12 +174,19 @@ data class ShuntaisaiStatus(
     }
 
     /**
+     * 全演目Lv+1（合宿終了時）
+     */
+    fun levelUpAll(): ShuntaisaiStatus {
+        return trainingType.fold(this) { status, type -> status.levelUp(type) }
+    }
+
+    /**
      * 演目稽古実行
      *
-     * TODO 合宿中の演目稽古でゲージがリセットされるか不明
+     * 合宿中は演目Lvが上昇せず、ゲージもリセットされない（合宿終了後に全演目Lv+1）
      */
     fun executePractice(type: StatusType): ShuntaisaiStatus {
-        if (!isPractice(type)) return this
+        if (!isPractice(type) || isCamp) return this
         return levelUp(type).copy(gauges = gauges + (type to 0))
     }
 
@@ -156,8 +199,12 @@ data class ShuntaisaiStatus(
         )
     }
 
-    fun assignTeaching(teaching: ShuntaisaiTeaching, target: StatusType): ShuntaisaiStatus {
-        return copy(teachings = teachings + (target to ShuntaisaiTeachingSlot(teaching)))
+    fun assignTeaching(
+        teaching: ShuntaisaiTeaching,
+        target: StatusType,
+        transformedFrom: ShuntaisaiTeaching? = null,
+    ): ShuntaisaiStatus {
+        return copy(teachings = teachings + (target to ShuntaisaiTeachingSlot(teaching, transformedFrom)))
     }
 
     fun transformTeaching(teaching: ShuntaisaiTeaching, target: StatusType): ShuntaisaiStatus {

@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.scenario.ramen
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.ScenarioCalculator
+import io.github.mee1080.umasim.scenario.addSupportToTrainings
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.utility.applyIf
 import io.github.mee1080.utility.mapIf
@@ -152,7 +153,7 @@ object RamenCalculator : ScenarioCalculator {
         member: List<MemberState>
     ): List<MemberState> {
         if (state.turn <= 72) return member
-        return addmember(member, trainingType.toList())
+        return addSupportToTrainings(member, trainingType.toList())
     }
 
     override fun predictScenarioActionParams(
@@ -244,7 +245,7 @@ object RamenCalculator : ScenarioCalculator {
         // addMember: targetTypesのトレーニングに、未参加のサポートカードを1種追加で参加させる
         repeat(region.addMember) {
             newState = newState.copy(
-                member = addmember(
+                member = addSupportToTrainings(
                     newState.member,
                     if (region.targetAll) trainingType.toList() else region.targetTypes,
                 )
@@ -252,45 +253,6 @@ object RamenCalculator : ScenarioCalculator {
         }
 
         return newState
-    }
-
-    private fun addmember(
-        memberList: List<MemberState>,
-        targetTypes: List<StatusType>,
-    ): List<MemberState> {
-        val supportMember = memberList.filter { !it.guest && !it.outingType }
-        val candidates = supportMember.filter { it.positions.isEmpty() }.shuffled().toMutableList()
-        val positionMap = buildMap {
-            memberList.forEach { member ->
-                member.positions.forEach { type ->
-                    getOrPut(type) { mutableListOf() }.add(member)
-                }
-            }
-        }
-        var newMemberList = memberList
-        targetTypes.forEach { targetType ->
-            val positioned = positionMap[targetType] ?: emptyList()
-            val positionedSupport = positioned.filter { !it.guest }.map { it.index }.toSet()
-            if (positionedSupport.size >= 5) return@forEach
-            var targetIndex = candidates.indexOfFirst { !positionedSupport.contains(it.index) }
-            if (targetIndex == -1 && candidates.size < 6) {
-                candidates += supportMember.shuffled()
-                targetIndex = candidates.indexOfFirst { !positionedSupport.contains(it.index) }
-                if (targetIndex == -1) return@forEach
-            }
-            val target = candidates.removeAt(targetIndex)
-            newMemberList = newMemberList.mapIf({ it.index == target.index }) {
-                it.copy(additionalPosition = it.additionalPosition + targetType)
-            }
-            if (positioned.size >= 5) {
-                val removeIndex = positioned.last { it.guest }.index
-                newMemberList = newMemberList.mapIf({ it.index == removeIndex }) {
-                    it.copy(position = StatusType.NONE)
-                }
-            }
-        }
-
-        return newMemberList
     }
 
     fun applyScenarioActionParam(state: SimulationState, param: RamenActionParam): SimulationState {

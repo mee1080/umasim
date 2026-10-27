@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.scenario
 import io.github.mee1080.umasim.data.*
 import io.github.mee1080.umasim.simulation2.*
 import io.github.mee1080.umasim.simulation2.Calculator.CalcInfo
+import io.github.mee1080.utility.mapIf
 
 /**
  * シナリオ固有の計算や動作を制御するためのインターフェース。
@@ -240,6 +241,35 @@ interface ScenarioCalculator {
     ): Int = 0
 
     /**
+     * サポカごとのヒント発生率アップのシナリオ補正値を返します。
+     * [io.github.mee1080.umasim.simulation2.SimulationState.hintFrequencyUp] を通じて、ターン更新時のヒントアイコン表示判定に使用されます。
+     * サポカの担当などによって補正値が変わる場合に使用します。デフォルトは [getHintFrequencyUp] の値。
+     *
+     * @param state 現在のシミュレーション状態
+     * @param member 対象のサポカ
+     * @return ヒント発生率の加算値
+     */
+    fun getHintFrequencyUp(
+        state: SimulationState,
+        member: MemberState,
+    ): Int = getHintFrequencyUp(state, member.position)
+
+    /**
+     * トレーニングのヒントイベントで獲得するヒントLvの加算値を返します。
+     * [io.github.mee1080.umasim.simulation2.SimulationStateUpdater.selectTrainingHint] で使用されます。
+     *
+     * @param state 現在のシミュレーション状態
+     * @param position 対象のトレーニング
+     * @param member トレーニングに参加するメンバー
+     * @return ヒントLvの加算値
+     */
+    fun getHintLevelUp(
+        state: SimulationState,
+        position: StatusType,
+        member: List<MemberState>,
+    ): Int = 0
+
+    /**
      * 全てのサポートカードでヒントが発生する状態かどうかを返します。
      * [io.github.mee1080.umasim.simulation2.SimulationState.allSupportHint] を通じて、[io.github.mee1080.umasim.simulation2.SimulationStateUpdater.selectTrainingHint] で使用されます。
      * trueを返すと、そのトレーニングに配置されている全てのサポカからヒント（スキル等）を獲得できます。
@@ -350,4 +380,49 @@ interface ScenarioCalculator {
         state: SimulationState,
         member: List<MemberState>,
     ): List<MemberState> = member
+}
+
+/**
+ * 指定したトレーニングに編成サポカを1人ずつ追加で配置する
+ *
+ * 配置されていない編成サポカからランダムな順番に選び、足りなければ全編成サポカから選ぶ。
+ * 配置が5人を超える場合はゲストを外す。
+ */
+fun addSupportToTrainings(
+    memberList: List<MemberState>,
+    targetTypes: List<StatusType>,
+): List<MemberState> {
+    val supportMember = memberList.filter { !it.guest && !it.outingType }
+    val candidates = supportMember.filter { it.positions.isEmpty() }.shuffled().toMutableList()
+    val positionMap = buildMap {
+        memberList.forEach { member ->
+            member.positions.forEach { type ->
+                getOrPut(type) { mutableListOf() }.add(member)
+            }
+        }
+    }
+    var newMemberList = memberList
+    targetTypes.forEach { targetType ->
+        val positioned = positionMap[targetType] ?: emptyList()
+        val positionedSupport = positioned.filter { !it.guest }.map { it.index }.toSet()
+        if (positionedSupport.size >= 5) return@forEach
+        var targetIndex = candidates.indexOfFirst { !positionedSupport.contains(it.index) }
+        if (targetIndex == -1 && candidates.size < 6) {
+            candidates += supportMember.shuffled()
+            targetIndex = candidates.indexOfFirst { !positionedSupport.contains(it.index) }
+            if (targetIndex == -1) return@forEach
+        }
+        val target = candidates.removeAt(targetIndex)
+        newMemberList = newMemberList.mapIf({ it.index == target.index }) {
+            it.copy(additionalPosition = it.additionalPosition + targetType)
+        }
+        if (positioned.size >= 5) {
+            val removeIndex = positioned.last { it.guest }.index
+            newMemberList = newMemberList.mapIf({ it.index == removeIndex }) {
+                it.copy(position = StatusType.NONE)
+            }
+        }
+    }
+
+    return newMemberList
 }
