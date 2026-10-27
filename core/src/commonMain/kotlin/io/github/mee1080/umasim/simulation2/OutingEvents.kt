@@ -666,6 +666,16 @@ fun SimulationState.applyOutingFinalEvent(): SimulationState {
                 0, 0,
             )
 
+            "吾妻" -> state.applyFriendEvent(
+                support,
+                // お出かけ5回（outingStep=7）でSP+50、4回以下でSP+40
+                Status(
+                    speed = 15, guts = 15, wisdom = 15,
+                    skillPt = if ((support.supportState?.outingStep ?: 0) >= 7) 50 else 40,
+                ),
+                0, 0,
+            )
+
             else -> this
         }
     }

@@ -255,15 +255,15 @@ interface ScenarioCalculator {
     ): Int = getHintFrequencyUp(state, member.position)
 
     /**
-     * トレーニングのヒントイベントで獲得するヒントLvの加算値を返します。
+     * トレーニングのヒントイベントで獲得するヒント個数の加算値を返します。
      * [io.github.mee1080.umasim.simulation2.SimulationStateUpdater.selectTrainingHint] で使用されます。
      *
      * @param state 現在のシミュレーション状態
      * @param position 対象のトレーニング
      * @param member トレーニングに参加するメンバー
-     * @return ヒントLvの加算値
+     * @return ヒント個数の加算値
      */
-    fun getHintLevelUp(
+    fun getHintCountUp(
         state: SimulationState,
         position: StatusType,
         member: List<MemberState>,

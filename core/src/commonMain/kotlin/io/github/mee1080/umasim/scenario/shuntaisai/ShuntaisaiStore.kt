@@ -29,7 +29,7 @@ enum class ShuntaisaiPerformance(
  *
  * @param relationBonus 全編成サポカの絆ゲージ上昇（重複しない）
  * @param practiceMainStatusUp 演目稽古でメイン基礎能力の獲得量アップ
- * @param practiceHintPlus 演目稽古のヒントイベントで獲得するヒントLv
+ * @param practiceHintCountUp 演目稽古のヒントイベントで獲得するヒント個数
  * @param nonFriendTrainingEffect 友情非発生時のトレーニング効果アップ
  * @param joryokuSupport 演目稽古で「助力の支え」を獲得
  * @param hpCostDown 体力消費ダウン
@@ -49,7 +49,7 @@ data class ShuntaisaiTeachingEffect(
     val practiceMainStatusUp: Int = 0,
     val specialityRate: Int = 0,
     val hintRate: Int = 0,
-    val practiceHintPlus: Int = 0,
+    val practiceHintCountUp: Int = 0,
     val nonFriendTrainingEffect: Int = 0,
     val joryokuSupport: Boolean = false,
     val hpCostDown: Int = 0,
@@ -74,7 +74,7 @@ data class ShuntaisaiTeachingEffect(
         practiceMainStatusUp = practiceMainStatusUp + other.practiceMainStatusUp,
         specialityRate = specialityRate + other.specialityRate,
         hintRate = hintRate + other.hintRate,
-        practiceHintPlus = practiceHintPlus + other.practiceHintPlus,
+        practiceHintCountUp = practiceHintCountUp + other.practiceHintCountUp,
         nonFriendTrainingEffect = nonFriendTrainingEffect + other.nonFriendTrainingEffect,
         joryokuSupport = joryokuSupport || other.joryokuSupport,
         hpCostDown = hpCostDown + other.hpCostDown,
@@ -130,7 +130,7 @@ enum class ShuntaisaiTeaching(
         listOf(30, 33, 36, 40, 45, 50, 55, 60, 70, 80).map {
             ShuntaisaiTeachingEffect(hintRate = it)
         },
-        ShuntaisaiTeachingEffect(hintRate = 80, practiceHintPlus = 1),
+        ShuntaisaiTeachingEffect(hintRate = 80, practiceHintCountUp = 1),
     ),
 
     JORYOKU(
@@ -215,6 +215,16 @@ val shuntaisaiLinkPerformance = mapOf(
     "ブラストワンピース" to StatusType.WISDOM,
 )
 
+
+/**
+ * 1演目に割り当てられる編成サポカの最大数（超えた分は別の演目に割り振られる）
+ */
+const val shuntaisaiMaxSupportPerPerformance = 2
+
+/**
+ * ゲスト（編成外の演目担当）の人数（ジュニア3ターン目）
+ */
+const val shuntaisaiGuestCount = 6
 
 /**
  * 演目ゲージ最大値

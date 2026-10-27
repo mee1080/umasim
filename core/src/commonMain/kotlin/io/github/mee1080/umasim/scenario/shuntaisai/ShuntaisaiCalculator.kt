@@ -18,7 +18,8 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     /**
      * シナリオ上昇量（上段）
      *
-     * 基礎能力: floor(下段 * (1 + 友情ボーナス合計) * (1 + トレ効果合計) * (1 + メイン/サブ獲得量アップ合計)) - 下段
+     * メイン基礎能力: floor(下段 * (1 + 友情ボーナス合計) * (1 + トレ効果合計) * (1 + メイン獲得量アップ合計)) - 下段
+     * サブ基礎能力: floor(下段 * (1 + 友情ボーナス合計) * (1 + トレ効果合計 + サブ獲得量アップ合計)) - 下段
      * スキルPt: floor(下段 * (1 + 友情ボーナス合計) * (1 + トレ効果合計 + スキルPtトレ効果)) - 下段
      * 演目稽古では基礎能力に+10
      */
@@ -69,8 +70,12 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         }
 
         fun calcSingleStatus(target: StatusType): Int {
-            val statusUp = if (target == type) mainStatusUp else effect.subStatusUp
-            val value = calcValue(base.get(target), 100 + trainingEffect, 100 + statusUp)
+            val value = if (target == type) {
+                calcValue(base.get(target), 100 + trainingEffect, 100 + mainStatusUp)
+            } else {
+                // サブ獲得量アップ（両道の教え）はトレーニング効果に加算
+                calcValue(base.get(target), 100 + trainingEffect + effect.subStatusUp, 100)
+            }
             return min(value, statusLimit) + practiceStatusUp
         }
 
@@ -184,7 +189,7 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     fun applyScenarioAction(state: SimulationState, result: ShuntaisaiActionResult): SimulationState {
         return when (result) {
             is ShuntaisaiAssignTeachingResult -> state.updateShuntaisaiStatus {
-                assignTeaching(result.teaching, result.target)
+                assignTeaching(result.teaching, result.target, result.transformedFrom)
             }
 
             is ShuntaisaiTransformTeachingResult -> state.updateShuntaisaiStatus {
@@ -277,7 +282,7 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     override fun getTraining(state: SimulationState, trainingType: StatusType): TrainingBase? {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return null
         if (!shuntaisaiStatus.isPractice(trainingType)) return null
-        return shuntaisaiStatus.practiceTraining(trainingType, state.getTraining(trainingType).current.level)
+        return shuntaisaiStatus.practiceTraining(trainingType)
     }
 
     override fun getSpecialityRateUp(state: SimulationState, cardType: StatusType): Int {
@@ -296,12 +301,12 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     }
 
     /**
-     * ヒントの教えの転成効果: 演目稽古のヒントイベントで獲得するヒントLv+1
+     * ヒントの教えの転成効果: 演目稽古のヒントイベントで獲得するヒント個数+1
      */
-    override fun getHintLevelUp(state: SimulationState, position: StatusType, member: List<MemberState>): Int {
+    override fun getHintCountUp(state: SimulationState, position: StatusType, member: List<MemberState>): Int {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
         if (!shuntaisaiStatus.isPractice(position)) return 0
-        return shuntaisaiStatus.memberTeachingEffect(member).practiceHintPlus
+        return shuntaisaiStatus.memberTeachingEffect(member).practiceHintCountUp
     }
 
     /**

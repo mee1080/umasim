@@ -29,17 +29,14 @@ val shuntaisaiTrainingData: List<TrainingBase> = listOf(
     TrainingBase(StatusType.WISDOM, 2, 321, Status(2, 0, 0, 0, 9, 6, 5)),
     TrainingBase(StatusType.WISDOM, 3, 322, Status(2, 0, 0, 0, 10, 6, 5)),
     TrainingBase(StatusType.WISDOM, 4, 323, Status(3, 0, 0, 0, 11, 6, 5)),
-    TrainingBase(StatusType.WISDOM, 5, 324, Status(3, 0, 0, 0, 12, 8, 5)),
+    TrainingBase(StatusType.WISDOM, 5, 324, Status(3, 0, 0, 0, 12, 6, 5)),
 )
 
 /**
- * 演目稽古の基本上昇量（通常トレーニングLvごと）
+ * 演目稽古の基本上昇量（時期ごと）
  *
- * * トレーニングLv1（ジュニア）は通常トレーニングLv5と同じ
- * * トレーニングLv2以上（クラシック）は、演目Lv3～5で同じ値を確認
- *   * スピードはトレーニングLv3の値のみ確認
- *   * 賢さはトレーニングLv2と3（Lv2は推定）で同じ値
- * * TODO: トレーニングLvではなく時期（ジュニア/クラシック/シニア）で変化している可能性あり、トレーニングLv3以上とシニアは未確認
+ * * ジュニアは通常トレーニングLv5と同じ
+ * * クラシック以降は演目Lv・トレーニングLvによらず同じ値（シニアはクラシックと同じ）
  * * 体力消費は未確認のため通常トレーニングLv5と同じ
  */
 val shuntaisaiPracticeTrainingData: Map<StatusType, List<TrainingBase>> = listOf(
@@ -73,10 +70,10 @@ val shuntaisaiPracticeTrainingData: Map<StatusType, List<TrainingBase>> = listOf
 /**
  * 演目稽古の基本上昇量
  *
- * @param trainingLevel 通常トレーニングのLv
+ * @param period 時期（0:ジュニア、1:クラシック、2:シニア以降）
  * @param performanceLevel 演目Lv（表示上のトレーニングLv）
  */
-fun shuntaisaiPracticeTraining(type: StatusType, trainingLevel: Int, performanceLevel: Int): TrainingBase {
+fun shuntaisaiPracticeTraining(type: StatusType, period: Int, performanceLevel: Int): TrainingBase {
     val list = shuntaisaiPracticeTrainingData.getValue(type)
-    return list[(trainingLevel - 1).coerceIn(0, list.lastIndex)].copy(level = performanceLevel)
+    return list[period.coerceIn(0, list.lastIndex)].copy(level = performanceLevel)
 }

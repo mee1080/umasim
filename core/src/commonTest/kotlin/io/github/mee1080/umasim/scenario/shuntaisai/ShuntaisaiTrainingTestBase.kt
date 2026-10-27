@@ -28,6 +28,20 @@ abstract class ShuntaisaiTrainingTestBase(
     }
 
     /**
+     * ターンを設定（演目稽古の基本値は時期で決まる）
+     */
+    fun Calculator.CalcInfo.setTurn(turn: Int) = updateShuntaisaiStatus {
+        copy(turn = turn)
+    }
+
+    /**
+     * 編成サポカの担当演目を設定
+     */
+    fun Calculator.CalcInfo.setPerformance(index: Int, type: StatusType) = setMemberState(index) {
+        copy(scenarioState = ShuntaisaiMemberState(type))
+    }
+
+    /**
      * 演目Lvを設定（スピード、スタミナ、パワー、根性、賢さの順）
      */
     fun Calculator.CalcInfo.setShuntaisaiLevels(vararg levels: Int) = updateShuntaisaiStatus {
@@ -74,19 +88,18 @@ abstract class ShuntaisaiTrainingTestBase(
     /**
      * 演目稽古（対象演目のゲージを最大にして計算）
      *
-     * @param level トレーニングLv（演目Lvは[setShuntaisaiLevels]で設定する）
+     * 基本値は時期（[setTurn]で設定する）、演目Lvは[setShuntaisaiLevels]で設定する
      */
     fun testEnmokuTraining(
         baseCalcInfo: Calculator.CalcInfo,
         type: StatusType,
-        level: Int,
         guests: List<StatusType>,
         vararg supportIndices: Int,
         friends: List<Int> = emptyList(),
         base: Status? = null,
         scenario: Status? = null,
     ) {
-        testShuntaisaiTraining(baseCalcInfo, type, level, guests, supportIndices.toList(), friends, true, base, scenario)
+        testShuntaisaiTraining(baseCalcInfo, type, 0, guests, supportIndices.toList(), friends, true, base, scenario)
     }
 
     private fun testShuntaisaiTraining(
@@ -114,7 +127,7 @@ abstract class ShuntaisaiTrainingTestBase(
         }
         val info = baseCalcInfo.copy(
             training = if (practice) {
-                shuntaisaiStatus.practiceTraining(type, level)
+                shuntaisaiStatus.practiceTraining(type)
             } else {
                 state.training[type.ordinal].base[level - 1]
             },

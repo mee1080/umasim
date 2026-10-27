@@ -159,8 +159,8 @@ data class SimulationState(
         return scenario.calculator.getHintFrequencyUp(this, member)
     }
 
-    fun hintLevelUp(position: StatusType, member: List<MemberState>): Int {
-        return scenario.calculator.getHintLevelUp(this, position, member)
+    fun hintCountUp(position: StatusType, member: List<MemberState>): Int {
+        return scenario.calculator.getHintCountUp(this, position, member)
     }
 
     val forceHint = uafStatus?.forceHint ?: false

@@ -2,18 +2,83 @@ package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
+import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.simulation2.MemberState
+import io.github.mee1080.umasim.simulation2.ScenarioMemberState
 import io.github.mee1080.umasim.simulation2.ScenarioStatus
 import io.github.mee1080.umasim.simulation2.SimulationState
 import kotlin.math.max
 import kotlin.math.min
 
 /**
- * 担当演目（シナリオリンクキャラは固定、それ以外はサポカのタイプ）
+ * @param performance 担当演目（未割り当ての場合はnull）
+ */
+data class ShuntaisaiMemberState(
+    val performance: StatusType? = null,
+) : ScenarioMemberState(Scenario.SHUNTAISAI) {
+    override fun toShortString() = "ShuntaisaiMemberState(performance=$performance)"
+}
+
+/**
+ * 担当演目
+ *
+ * 割り当て済みならその演目、未割り当てならシナリオリンクキャラは固定の演目、それ以外はサポカのタイプ
  */
 val MemberState.shuntaisaiPerformance: StatusType?
+    get() = (scenarioState as? ShuntaisaiMemberState)?.performance ?: defaultShuntaisaiPerformance
+
+private val MemberState.defaultShuntaisaiPerformance: StatusType?
     get() = (if (isScenarioLink) shuntaisaiLinkPerformance[charaName] else null)
         ?: card.type.takeIf { trainingType.contains(it) }
+
+/**
+ * 編成サポカの担当演目の割り当て
+ *
+ * * シナリオリンクキャラは固定の演目
+ * * それ以外はサポカのタイプの演目、ただし1演目に[shuntaisaiMaxSupportPerPerformance]人まで
+ * * 溢れたサポカは、シナリオリンクキャラがいない演目のうち、空きがある最初の演目に割り振る
+ *   * TODO 割り振り規則は「賢さ5(うち1ダスカ)」の1例からの推定、溢れるサポカの選択はランダム
+ */
+fun assignShuntaisaiPerformances(member: List<MemberState>): Map<Int, StatusType> {
+    val result = mutableMapOf<Int, StatusType>()
+    val linkPerformances = mutableSetOf<StatusType>()
+    member.forEach {
+        if (it.guest || !it.isScenarioLink) return@forEach
+        val performance = shuntaisaiLinkPerformance[it.charaName] ?: return@forEach
+        result[it.index] = performance
+        linkPerformances += performance
+    }
+    fun count(type: StatusType) = result.values.count { it == type }
+    member.filter { !it.guest && !result.containsKey(it.index) && trainingType.contains(it.card.type) }
+        .shuffled()
+        .forEach {
+            val target = if (count(it.card.type) < shuntaisaiMaxSupportPerPerformance) it.card.type else {
+                trainingType.firstOrNull { type ->
+                    !linkPerformances.contains(type) && count(type) < shuntaisaiMaxSupportPerPerformance
+                } ?: it.card.type
+            }
+            result[it.index] = target
+        }
+    return result
+}
+
+/**
+ * ゲスト（編成外の演目担当）の担当演目
+ *
+ * 各演目に1人ずつ割り振り、残りは担当人数が少ない演目（同数の場合は先頭）から順に割り振る
+ */
+fun calcShuntaisaiGuestPerformances(currentCounts: Map<StatusType, Int>, guestCount: Int): List<StatusType> {
+    val counts = trainingType.associateWith { currentCounts[it] ?: 0 }.toMutableMap()
+    val result = mutableListOf<StatusType>()
+    repeat(guestCount) { index ->
+        val target = if (index < trainingType.size) trainingType[index] else {
+            trainingType.minBy { counts.getValue(it) }
+        }
+        counts[target] = counts.getValue(target) + 1
+        result += target
+    }
+    return result
+}
 
 fun SimulationState.updateShuntaisaiStatus(update: ShuntaisaiStatus.() -> ShuntaisaiStatus): SimulationState {
     val shuntaisaiStatus = this.shuntaisaiStatus ?: return this
@@ -114,12 +179,10 @@ data class ShuntaisaiStatus(
     fun practiceEffect(type: StatusType) = shuntaisaiPracticeEffect(level(type))
 
     /**
-     * 演目稽古の基本上昇量（表示上のトレーニングLvは演目Lv）
-     *
-     * @param trainingLevel 通常トレーニングのLv
+     * 演目稽古の基本上昇量（時期で決まる、表示上のトレーニングLvは演目Lv）
      */
-    fun practiceTraining(type: StatusType, trainingLevel: Int) =
-        shuntaisaiPracticeTraining(type, trainingLevel, level(type))
+    fun practiceTraining(type: StatusType) =
+        shuntaisaiPracticeTraining(type, period, level(type))
 
     /**
      * サポカのタイプを5種類以上編成している場合の演目稽古効果が有効か

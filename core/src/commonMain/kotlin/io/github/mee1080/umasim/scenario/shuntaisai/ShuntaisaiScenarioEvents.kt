@@ -1,6 +1,7 @@
 package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.Status
+import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.BaseScenarioEvents
 import io.github.mee1080.umasim.scenario.Scenario
@@ -48,35 +49,42 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
     /**
      * 育成終了イベント
      *
-     * TODO 全て大成功以外の場合の効果不明
+     * 全て大成功以外は全て成功の効果とする
      */
     override fun afterSimulation(state: SimulationState): SimulationState {
         val base = super.afterSimulation(state)
         val shuntaisaiStatus = base.shuntaisaiStatus ?: return base
         val allGreat = shuntaisaiStatus.presentationResults.size == shuntaisaiGreatTargetLevel.size &&
                 shuntaisaiStatus.presentationResults.all { it == ShuntaisaiPresentationResult.GREAT_SUCCESS }
-        if (!allGreat) return base
-        return base.addAllStatus(30, skillPt = 350, skillHint = mapOf("名にし負う夢" to 2))
+        return if (allGreat) {
+            base.addAllStatus(30, skillPt = 350, skillHint = mapOf("名にし負う夢" to 2))
+        } else {
+            base.addAllStatus(15, skillPt = 150, skillHint = mapOf("彼方の呼び声" to 3))
+        }
     }
 
     private fun SimulationState.initShuntaisaiStatus(): SimulationState {
         val azuma = support.firstOrNull { it.charaName == "吾妻" }
         val maxLevel = if (azuma?.card?.rarity == 3) shuntaisaiAzumaMaxLevel else shuntaisaiDefaultMaxLevel
+        val performances = assignShuntaisaiPerformances(member)
         return copy(
+            member = member.map { member ->
+                performances[member.index]?.let { member.copy(scenarioState = ShuntaisaiMemberState(it)) } ?: member
+            },
             scenarioStatus = ShuntaisaiStatus(
                 turn = turn,
                 campTurns = calcShuntaisaiCampTurns(goalRace.map { it.turn }.toSet()),
                 maxLevel = maxLevel,
                 supportTypeCount = supportTypeCount,
             )
-        ).addGuests()
+        ).addGuests(calcShuntaisaiGuestPerformances(performances.values.groupingBy { it }.eachCount(), shuntaisaiGuestCount))
     }
 
     /**
-     * 各演目に編成外の演目担当が1人ずつ加わる
+     * 編成外の演目担当が加わる
      */
-    private fun SimulationState.addGuests(): SimulationState {
-        return trainingType.fold(this) { state, type -> state.addGuest(type, Scenario.SHUNTAISAI) }
+    private fun SimulationState.addGuests(types: List<StatusType>): SimulationState {
+        return types.fold(this) { state, type -> state.addGuest(type, Scenario.SHUNTAISAI) }
     }
 
     private suspend fun SimulationState.assignTeachings(selector: ActionSelector, period: Int): SimulationState {
@@ -135,8 +143,6 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
      * 進捗発表会
      *
      * 理事長絆は無視する
-     *
-     * TODO 成功時の効果は仮
      */
     private fun SimulationState.applyPresentation(index: Int): SimulationState {
         val shuntaisaiStatus = shuntaisaiStatus ?: return this
@@ -162,12 +168,15 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
 
                 ShuntaisaiPresentationResult.SUCCESS -> Status(
                     speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5,
-                    skillPt = 150, fanCount = 10000,
+                    skillPt = 150, fanCount = 2000,
                 )
             }
         }
+        val great = result == ShuntaisaiPresentationResult.GREAT_SUCCESS
         return addStatus(eventStatus)
-            .let { if (result == ShuntaisaiPresentationResult.GREAT_SUCCESS) it.allTrainingLevelUp() else it }
+            .let { if (great) it.allTrainingLevelUp() else it }
+            // 第2回大成功で各演目に演目担当が1人ずつ追加
+            .let { if (great && index == 1) it.addGuests(trainingType.toList()) else it }
             .updateShuntaisaiStatus {
                 copy(
                     presentationResults = presentationResults + result,
@@ -190,8 +199,6 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
      * 午式駿大祭本番
      *
      * 理事長絆は無視する
-     *
-     * TODO 成功時の効果は仮
      */
     private fun SimulationState.applyFinalPerformance(): SimulationState {
         val shuntaisaiStatus = shuntaisaiStatus ?: return this
@@ -205,7 +212,8 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
 
             ShuntaisaiPresentationResult.SUCCESS -> Status(
                 speed = 10, stamina = 10, power = 10, guts = 10, wisdom = 10,
-                skillPt = 200, hp = 30, motivation = 1, fanCount = 30000,
+                skillPt = 200, fanCount = 5000,
+                skillHint = mapOf("序盤巧者" to 1, "彼方の呼び声" to 1),
             )
         }
         return addStatus(eventStatus).updateShuntaisaiStatus {
