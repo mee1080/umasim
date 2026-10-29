@@ -160,7 +160,14 @@ fun SimulationState.predictSleep(): Array<Action> {
                 )
             )
         )
-    } else arrayOf(
+    } else predictNormalSleep()
+}
+
+/**
+ * 夏合宿以外のお休み、お出かけ
+ */
+fun SimulationState.predictNormalSleep(): Array<Action> {
+    return arrayOf(
         Sleep(
             listOf(
                 Status(hp = 70) to 25,

@@ -198,7 +198,7 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
     /**
      * 午式駿大祭本番
      *
-     * 理事長絆は無視する
+     * 理事長絆は無視する、ハヤテ一文字は全て大成功の場合のみ
      */
     private fun SimulationState.applyFinalPerformance(): SimulationState {
         val shuntaisaiStatus = shuntaisaiStatus ?: return this
@@ -207,7 +207,11 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
             ShuntaisaiPresentationResult.GREAT_SUCCESS -> Status(
                 speed = 15, stamina = 15, power = 15, guts = 15, wisdom = 15,
                 skillPt = 400, hp = 30, motivation = 1, fanCount = 45000,
-                skillHint = mapOf("ハヤテ一文字" to 2, "機先の勝負" to 2, "彼方の呼び声" to 3),
+                skillHint = if (shuntaisaiStatus.presentationResults.all { it == ShuntaisaiPresentationResult.GREAT_SUCCESS }) {
+                    mapOf("ハヤテ一文字" to 2, "機先の勝負" to 2, "彼方の呼び声" to 3)
+                } else {
+                    mapOf("機先の勝負" to 2, "彼方の呼び声" to 3)
+                },
             )
 
             ShuntaisaiPresentationResult.SUCCESS -> Status(

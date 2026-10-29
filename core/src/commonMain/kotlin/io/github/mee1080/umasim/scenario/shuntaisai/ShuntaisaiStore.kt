@@ -222,6 +222,17 @@ val shuntaisaiLinkPerformance = mapOf(
 const val shuntaisaiMaxSupportPerPerformance = 2
 
 /**
+ * 担当演目が溢れたサポカの割り振り先（サポカのタイプごと、先頭から順に空きがある演目に割り振る）
+ */
+val shuntaisaiOverflowPerformances = mapOf(
+    StatusType.SPEED to listOf(StatusType.GUTS, StatusType.STAMINA),
+    StatusType.STAMINA to listOf(StatusType.SPEED, StatusType.GUTS),
+    StatusType.POWER to listOf(StatusType.WISDOM, StatusType.SPEED),
+    StatusType.GUTS to listOf(StatusType.POWER, StatusType.WISDOM),
+    StatusType.WISDOM to listOf(StatusType.STAMINA, StatusType.POWER),
+)
+
+/**
  * ゲスト（編成外の演目担当）の人数（ジュニア3ターン目）
  */
 const val shuntaisaiGuestCount = 6
@@ -242,6 +253,11 @@ const val shuntaisaiAzumaMaxLevel = 10
  */
 val shuntaisaiCampStartTurns = listOf(13, 37, 61)
 const val shuntaisaiCampLength = 4
+
+/**
+ * 本来の夏合宿期間（クラシック、シニアの7月8月）
+ */
+val shuntaisaiSummerCampTurns = (37..40) + (61..64)
 
 /**
  * 目標レースが無い場合の駿大祭合宿

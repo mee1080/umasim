@@ -2,6 +2,7 @@ package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.RaceEntry
+import io.github.mee1080.umasim.data.RaceGrade
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.TrainingBase
@@ -135,15 +136,15 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     /**
      * 練習に参加した演目担当1人につき担当演目のゲージ+1、友情なら+2（シナリオリンクキャラは固定の担当演目）
      *
-     * 合宿中はゲージが上昇しない
+     * 合宿中、および演目稽古ではゲージが上昇しない
      */
     fun calcTrainingParam(shuntaisaiStatus: ShuntaisaiStatus, action: Training): ShuntaisaiActionParam {
+        val practice = shuntaisaiStatus.isPractice(action.type)
         val gaugeUp = mutableMapOf<StatusType, Int>()
-        if (!shuntaisaiStatus.isCamp) action.member.forEach { member ->
+        if (!shuntaisaiStatus.isCamp && !practice) action.member.forEach { member ->
             val type = member.shuntaisaiPerformance ?: return@forEach
             gaugeUp[type] = (gaugeUp[type] ?: 0) + if (member.isFriendTraining(action.type)) 2 else 1
         }
-        val practice = shuntaisaiStatus.isPractice(action.type)
         val effect = shuntaisaiStatus.memberTeachingEffect(action.member)
         return ShuntaisaiActionParam(
             gaugeUp = gaugeUp,
@@ -341,11 +342,24 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     }
 
     /**
-     * 駿大祭ボーナス効果のレースボーナス
+     * * 目標レース（URAファイナルズ以外）: 5ステ+5、SP+72
+     * * 駿大祭ボーナス効果のレースボーナス
      */
     override fun calcBaseRaceStatus(state: SimulationState, race: RaceEntry, goal: Boolean): Status? {
-        val raceBonus = state.shuntaisaiStatus?.presentationBonus?.raceBonus ?: 0
-        if (raceBonus == 0) return null
-        return state.defaultBaseRaceStatus(race, goal, state.totalRaceBonus + raceBonus)
+        val raceBonus = state.totalRaceBonus + (state.shuntaisaiStatus?.presentationBonus?.raceBonus ?: 0)
+        return if (goal && race.grade != RaceGrade.FINALS) {
+            state.raceStatus(5, 5, 72, raceBonus)
+        } else {
+            state.defaultBaseRaceStatus(race, goal, raceBonus)
+        }
+    }
+
+    /**
+     * お休みが夏合宿版になるのは本来の夏合宿期間のみ（ジュニアの駿大祭合宿、目標レースによる延長期間は通常のお休み）
+     */
+    override fun predictSleep(state: SimulationState): Array<Action>? {
+        return if (state.isLevelUpTurn && !shuntaisaiSummerCampTurns.contains(state.turn)) {
+            state.predictNormalSleep()
+        } else null
     }
 }

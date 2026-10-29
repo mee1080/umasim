@@ -36,27 +36,24 @@ private val MemberState.defaultShuntaisaiPerformance: StatusType?
  *
  * * シナリオリンクキャラは固定の演目
  * * それ以外はサポカのタイプの演目、ただし1演目に[shuntaisaiMaxSupportPerPerformance]人まで
- * * 溢れたサポカは、シナリオリンクキャラがいない演目のうち、空きがある最初の演目に割り振る
- *   * TODO 割り振り規則は「賢さ5(うち1ダスカ)」の1例からの推定、溢れるサポカの選択はランダム
+ * * 溢れたサポカは、[shuntaisaiOverflowPerformances]の順に空きがある演目に割り振る
+ *   * 溢れるサポカの選択はランダム
  */
 fun assignShuntaisaiPerformances(member: List<MemberState>): Map<Int, StatusType> {
     val result = mutableMapOf<Int, StatusType>()
-    val linkPerformances = mutableSetOf<StatusType>()
     member.forEach {
         if (it.guest || !it.isScenarioLink) return@forEach
         val performance = shuntaisaiLinkPerformance[it.charaName] ?: return@forEach
         result[it.index] = performance
-        linkPerformances += performance
     }
     fun count(type: StatusType) = result.values.count { it == type }
     member.filter { !it.guest && !result.containsKey(it.index) && trainingType.contains(it.card.type) }
         .shuffled()
         .forEach {
-            val target = if (count(it.card.type) < shuntaisaiMaxSupportPerPerformance) it.card.type else {
-                trainingType.firstOrNull { type ->
-                    !linkPerformances.contains(type) && count(type) < shuntaisaiMaxSupportPerPerformance
-                } ?: it.card.type
-            }
+            val candidates = listOf(it.card.type) + shuntaisaiOverflowPerformances.getValue(it.card.type)
+            val target = candidates.firstOrNull { type -> count(type) < shuntaisaiMaxSupportPerPerformance }
+                ?: trainingType.firstOrNull { type -> count(type) < shuntaisaiMaxSupportPerPerformance }
+                ?: it.card.type
             result[it.index] = target
         }
     return result
