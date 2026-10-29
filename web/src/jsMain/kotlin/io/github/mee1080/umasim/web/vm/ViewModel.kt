@@ -384,6 +384,37 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             }.getOrElse { Status() }
         }
 
+        val shuntaisaiPracticeResult = if (state.scenario != Scenario.SHUNTAISAI) null else {
+            val practiceStatus = state.shuntaisaiState.toShuntaisaiStatus(
+                state.supportSelectionList.mapNotNull { it.card?.type }.distinct().size,
+                practice = trainingType,
+            )
+            val practiceInfo = trainingCalcInfo.copy(
+                training = practiceStatus.practiceTraining(trainingType),
+                scenarioStatus = practiceStatus,
+            )
+            val practiceResult = Calculator.calcTrainingSuccessStatusSeparated(
+                practiceInfo,
+                state.scenario.calculator.getScenarioCalcBonus(practiceInfo),
+            )
+            val practiceImpact = joinSupportList.mapIndexed { targetIndex, target ->
+                val notJoinInfo = practiceInfo.copy(
+                    member = joinSupportList.filterIndexed { index, _ -> index != targetIndex },
+                )
+                val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
+                    notJoinInfo,
+                    state.scenario.calculator.getScenarioCalcBonus(notJoinInfo),
+                )
+                target.name to practiceResult.first.first + practiceResult.second - notJoinResult.first.first - notJoinResult.second
+            }
+            ShuntaisaiPracticeResult(
+                trainingResult = practiceResult.first.first,
+                trainingBonus = practiceResult.second,
+                rawTrainingResult = practiceResult.first.second,
+                trainingImpact = practiceImpact,
+            )
+        }
+
         val trainingImpact = joinSupportList.mapIndexed { targetIndex, target ->
             val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
                 Calculator.CalcInfo(
@@ -522,6 +553,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             supportSelectionList = supportSelectionList,
             trainingResult = trainingResult.first.first,
             trainingItemBonus = trainingItemBonus,
+            shuntaisaiPracticeResult = shuntaisaiPracticeResult,
             trainingPerformanceValue = trainingPerformanceValue,
             rawTrainingResult = trainingResult.first.second,
             trainingImpact = trainingImpact,

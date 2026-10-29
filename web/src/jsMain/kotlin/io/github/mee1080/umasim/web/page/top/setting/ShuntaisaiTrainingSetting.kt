@@ -51,7 +51,7 @@ fun ShuntaisaiTrainingSetting(model: ViewModel, state: ShuntaisaiState) {
 
         if (state.period >= 1) {
             MdFilledSelect(
-                selection = ShuntaisaiPresentationResult.entries,
+                selection = ShuntaisaiPresentationResult.entries.reversed(),
                 selectedItem = state.presentationResult,
                 attrs = {
                     label("前回の進捗発表会")
@@ -61,10 +61,6 @@ fun ShuntaisaiTrainingSetting(model: ViewModel, state: ShuntaisaiState) {
                 itemToValue = { it.name },
                 itemToDisplayText = { it.displayName },
             )
-        }
-
-        MdCheckbox("SSR吾妻（演目Lv上限10）", state.azumaSsr) {
-            onChange { model.updateShuntaisai { copy(azumaSsr = it) } }
         }
 
         H4 { Text("演目") }
@@ -84,13 +80,6 @@ fun ShuntaisaiTrainingSetting(model: ViewModel, state: ShuntaisaiState) {
                 }
                 SliderEntry("演目Lv：", state.levels[type] ?: 1, 1, state.maxLevel) {
                     model.updateShuntaisai { copy(levels = levels + (type to it.toInt())) }
-                }
-                MdCheckbox("演目稽古", state.practice.contains(type)) {
-                    onChange { checked ->
-                        model.updateShuntaisai {
-                            copy(practice = if (checked) practice + type else practice - type)
-                        }
-                    }
                 }
                 MdFilledSelect(
                     selection = listOf("none") + teachingSelection.map { it.name },

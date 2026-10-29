@@ -73,6 +73,7 @@ data class State(
     val shopItemWeight: WeightItem = WebConstants.dummyWeightItem,
     val trainingResult: Status = Status(),
     val trainingItemBonus: Status = Status(),
+    val shuntaisaiPracticeResult: ShuntaisaiPracticeResult? = null,
     val trainingPerformanceValue: Int = 0,
     val rawTrainingResult: ExpectedStatus = ExpectedStatus(),
     val trainingImpact: List<Pair<String, Status>> = emptyList(),
@@ -193,6 +194,8 @@ data class State(
             supportSelectionList.mapNotNull { it.card?.type }.distinct().size
         ) else null
 
+    val shuntaisaiPracticeOnly get() = scenario == Scenario.SHUNTAISAI && shuntaisaiState.isFinals
+
     val specialityRateUp
         get() = when (scenario) {
             Scenario.GRAND_LIVE -> trainingLiveState.specialityRateUp
@@ -200,6 +203,13 @@ data class State(
             else -> 0
         }
 }
+
+data class ShuntaisaiPracticeResult(
+    val trainingResult: Status,
+    val trainingBonus: Status,
+    val rawTrainingResult: ExpectedStatus,
+    val trainingImpact: List<Pair<String, Status>>,
+)
 
 data class RamenTastingImpact(
     val name: String,

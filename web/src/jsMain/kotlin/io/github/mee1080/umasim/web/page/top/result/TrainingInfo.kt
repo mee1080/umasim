@@ -19,6 +19,8 @@
 package io.github.mee1080.umasim.web.page.top.result
 
 import androidx.compose.runtime.*
+import io.github.mee1080.umasim.data.ExpectedStatus
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.Scenario
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
@@ -28,6 +30,7 @@ import io.github.mee1080.umasim.web.components.parts.HideBlock
 import io.github.mee1080.umasim.web.components.parts.NestedHideBlock
 import io.github.mee1080.umasim.web.components.parts.SliderEntry
 import io.github.mee1080.umasim.web.state.RamenAllTastingSortKey
+import io.github.mee1080.umasim.web.state.ShuntaisaiPracticeResult
 import io.github.mee1080.umasim.web.state.State
 import io.github.mee1080.umasim.web.state.WebConstants
 import io.github.mee1080.umasim.web.state.WebConstants.trainingTypeList
@@ -208,145 +211,13 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 )
             }
         }
-        Div({ style { marginTop(16.px) } }) {
-            Table({ classes(AppStyle.table) }) {
-                Tr {
-                    if (state.scenario != Scenario.URA) {
-                        Th({ style { property("border", "none") } }) { }
-                    }
-                    Th { Text("スピード") }
-                    Th { Text("スタミナ") }
-                    Th { Text("パワー") }
-                    Th { Text("根性") }
-                    Th { Text("賢さ") }
-                    Th { Text("スキルPt") }
-                    Th { Text("体力") }
-                    Th { Text("5ステ合計") }
-                    Th { Text("5ステ+SP") }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Th({ style { width(120.px) } }) { Text("パフォーマンス") }
-                    }
-                }
-                Tr {
-                    if (state.scenario != Scenario.URA) {
-                        Th { Text("基本") }
-                    }
-                    Td { Text(state.trainingResult.speed.toString()) }
-                    Td { Text(state.trainingResult.stamina.toString()) }
-                    Td { Text(state.trainingResult.power.toString()) }
-                    Td { Text(state.trainingResult.guts.toString()) }
-                    Td { Text(state.trainingResult.wisdom.toString()) }
-                    Td { Text(state.trainingResult.skillPt.toString()) }
-                    Td { Text(state.trainingResult.hp.toString()) }
-                    Td { Text(state.trainingResult.statusTotal.toString()) }
-                    Td { Text(state.trainingResult.totalPlusSkillPt.toString()) }
-                    if (state.scenario == Scenario.GRAND_LIVE) {
-                        Td { Text(state.trainingPerformanceValue.toString()) }
-                    }
-                }
-                if (state.scenario != Scenario.URA) {
-                    Tr {
-                        val label = when (state.scenario) {
-                            Scenario.CLIMAX -> "アイテム"
-                            Scenario.AOHARU -> "アオハル"
-                            else -> "ボーナス"
-                        }
-                        Th { Text(label) }
-                        Td { Text(state.trainingItemBonus.speed.toString()) }
-                        Td { Text(state.trainingItemBonus.stamina.toString()) }
-                        Td { Text(state.trainingItemBonus.power.toString()) }
-                        Td { Text(state.trainingItemBonus.guts.toString()) }
-                        Td { Text(state.trainingItemBonus.wisdom.toString()) }
-                        Td { Text(state.trainingItemBonus.skillPt.toString()) }
-                        Td { Text(state.trainingItemBonus.hp.toString()) }
-                        Td { Text(state.trainingItemBonus.statusTotal.toString()) }
-                        Td { Text(state.trainingItemBonus.totalPlusSkillPt.toString()) }
-                        if (state.scenario == Scenario.GRAND_LIVE) {
-                            Td { Text(if (state.friendTraining) "×2" else "-") }
-                        }
-                    }
-                    Tr {
-                        Th { Text("合計") }
-                        val totalStatus = state.trainingResult + state.trainingItemBonus
-                        Td { Text(totalStatus.speed.toString()) }
-                        Td { Text(totalStatus.stamina.toString()) }
-                        Td { Text(totalStatus.power.toString()) }
-                        Td { Text(totalStatus.guts.toString()) }
-                        Td { Text(totalStatus.wisdom.toString()) }
-                        Td { Text(totalStatus.skillPt.toString()) }
-                        Td { Text(totalStatus.hp.toString()) }
-                        Td { Text(totalStatus.statusTotal.toString()) }
-                        Td { Text(totalStatus.totalPlusSkillPt.toString()) }
-                        if (state.scenario == Scenario.GRAND_LIVE) {
-                            Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
-                        }
-                    }
-                    if (state.scenario == Scenario.MECHA) {
-                        Th { Text("研究Lv") }
-                        Td { Text(state.mechaState.learningLevelGain.speed.toString()) }
-                        Td { Text(state.mechaState.learningLevelGain.stamina.toString()) }
-                        Td { Text(state.mechaState.learningLevelGain.power.toString()) }
-                        Td { Text(state.mechaState.learningLevelGain.guts.toString()) }
-                        Td { Text(state.mechaState.learningLevelGain.wisdom.toString()) }
-                        Td { Text("-") }
-                        Td { Text("-") }
-                        Td { Text(state.mechaState.learningLevelGain.statusTotal.toString()) }
-                        Td { Text("-") }
-                    }
-                }
-            }
-        }
-        Div({ style { marginTop(16.px) } }) {
-            H3 { Text("切り捨て前") }
-            Table({ classes(AppStyle.table) }) {
-                Tr {
-                    Th { Text("スピード") }
-                    Th { Text("スタミナ") }
-                    Th { Text("パワー") }
-                    Th { Text("根性") }
-                    Th { Text("賢さ") }
-                    Th { Text("スキルPt") }
-                }
-                Tr {
-                    Td { Text(state.rawTrainingResult.speed.roundToString(4)) }
-                    Td { Text(state.rawTrainingResult.stamina.roundToString(4)) }
-                    Td { Text(state.rawTrainingResult.power.roundToString(4)) }
-                    Td { Text(state.rawTrainingResult.guts.roundToString(4)) }
-                    Td { Text(state.rawTrainingResult.wisdom.roundToString(4)) }
-                    Td { Text(state.rawTrainingResult.skillPt.roundToString(4)) }
-                }
-            }
-        }
-        if (!state.scenario.guestMember) {
-            H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
-        }
-        if (state.scenario == Scenario.BC) {
-            val bcStatus = state.bcStatusIfEnabled
-            if (bcStatus != null) {
-                NestedHideBlock("BCシナリオボーナス") {
-                    Div { Text("チームランク: ${io.github.mee1080.umasim.scenario.bc.rankToString.getOrElse(bcStatus.teamRank) { "" }}") }
-                    Div { Text("友情ボーナス: +${bcStatus.friendBonus}%") }
-                    Div { Text("トレーニング効果（チームメンバー）: +${bcStatus.trainingEffect(state.selectedTrainingTypeForScenario)}%") }
-                    if (bcStatus.dreamsTrainingActive) {
-                        Div { Text("サブ基礎能力上昇率: ${bcStatus.subParameterRate}%") }
-                        Div { Text("体力消費軽減: ${bcStatus.hpCostDown}%") }
-                        Div { Text("スキルPt上昇量アップ: ${bcStatus.skillPtEffect}%") }
-                        Div { Text("ヒント発生率アップ: ${bcStatus.hintFrequencyUp}%") }
-                    }
-                }
-            }
-        }
-        if (state.ramenTastingImpact.isNotEmpty()) {
-            H3 { Text("試食会でサポカ出現した場合の上昇量") }
-            Div {
+        if (!state.shuntaisaiPracticeOnly) {
+            Div({ style { marginTop(16.px) } }) {
                 Table({ classes(AppStyle.table) }) {
                     Tr {
-                        Th({
-                            style {
-                                property("border", "none")
-                            }
-                            unsetWidth()
-                        }) { }
+                        if (state.scenario != Scenario.URA) {
+                            Th({ style { property("border", "none") } }) { }
+                        }
                         Th { Text("スピード") }
                         Th { Text("スタミナ") }
                         Th { Text("パワー") }
@@ -356,169 +227,101 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Th { Text("体力") }
                         Th { Text("5ステ合計") }
                         Th { Text("5ステ+SP") }
+                        if (state.scenario == Scenario.GRAND_LIVE) {
+                            Th({ style { width(120.px) } }) { Text("パフォーマンス") }
+                        }
                     }
-                    state.ramenTastingImpact.forEach { (name, status, impact) ->
+                    Tr {
+                        if (state.scenario != Scenario.URA) {
+                            Th { Text("基本") }
+                        }
+                        Td { Text(state.trainingResult.speed.toString()) }
+                        Td { Text(state.trainingResult.stamina.toString()) }
+                        Td { Text(state.trainingResult.power.toString()) }
+                        Td { Text(state.trainingResult.guts.toString()) }
+                        Td { Text(state.trainingResult.wisdom.toString()) }
+                        Td { Text(state.trainingResult.skillPt.toString()) }
+                        Td { Text(state.trainingResult.hp.toString()) }
+                        Td { Text(state.trainingResult.statusTotal.toString()) }
+                        Td { Text(state.trainingResult.totalPlusSkillPt.toString()) }
+                        if (state.scenario == Scenario.GRAND_LIVE) {
+                            Td { Text(state.trainingPerformanceValue.toString()) }
+                        }
+                    }
+                    if (state.scenario != Scenario.URA) {
                         Tr {
-                            Td({
-                                unsetWidth()
-                                style { fontWeight("bold") }
-                            }) { Text(name) }
-                            Td { Text(status.speed.toString()) }
-                            Td { Text(status.stamina.toString()) }
-                            Td { Text(status.power.toString()) }
-                            Td { Text(status.guts.toString()) }
-                            Td { Text(status.wisdom.toString()) }
-                            Td { Text(status.skillPt.toString()) }
-                            Td { Text(status.hp.toString()) }
-                            Td { Text(status.statusTotal.toString()) }
-                            Td { Text(status.totalPlusSkillPt.toString()) }
+                            val label = when (state.scenario) {
+                                Scenario.CLIMAX -> "アイテム"
+                                Scenario.AOHARU -> "アオハル"
+                                else -> "ボーナス"
+                            }
+                            Th { Text(label) }
+                            Td { Text(state.trainingItemBonus.speed.toString()) }
+                            Td { Text(state.trainingItemBonus.stamina.toString()) }
+                            Td { Text(state.trainingItemBonus.power.toString()) }
+                            Td { Text(state.trainingItemBonus.guts.toString()) }
+                            Td { Text(state.trainingItemBonus.wisdom.toString()) }
+                            Td { Text(state.trainingItemBonus.skillPt.toString()) }
+                            Td { Text(state.trainingItemBonus.hp.toString()) }
+                            Td { Text(state.trainingItemBonus.statusTotal.toString()) }
+                            Td { Text(state.trainingItemBonus.totalPlusSkillPt.toString()) }
+                            if (state.scenario == Scenario.GRAND_LIVE) {
+                                Td { Text(if (state.friendTraining) "×2" else "-") }
+                            }
                         }
                         Tr {
-                            Td({
-                                unsetWidth()
-                                style { textAlign("right") }
-                            }) { Text("(増分)") }
-                            Td { Text(impact.speed.toString()) }
-                            Td { Text(impact.stamina.toString()) }
-                            Td { Text(impact.power.toString()) }
-                            Td { Text(impact.guts.toString()) }
-                            Td { Text(impact.wisdom.toString()) }
-                            Td { Text(impact.skillPt.toString()) }
-                            Td { Text(impact.hp.toString()) }
-                            Td { Text(impact.statusTotal.toString()) }
-                            Td { Text(impact.totalPlusSkillPt.toString()) }
+                            Th { Text("合計") }
+                            val totalStatus = state.trainingResult + state.trainingItemBonus
+                            Td { Text(totalStatus.speed.toString()) }
+                            Td { Text(totalStatus.stamina.toString()) }
+                            Td { Text(totalStatus.power.toString()) }
+                            Td { Text(totalStatus.guts.toString()) }
+                            Td { Text(totalStatus.wisdom.toString()) }
+                            Td { Text(totalStatus.skillPt.toString()) }
+                            Td { Text(totalStatus.hp.toString()) }
+                            Td { Text(totalStatus.statusTotal.toString()) }
+                            Td { Text(totalStatus.totalPlusSkillPt.toString()) }
+                            if (state.scenario == Scenario.GRAND_LIVE) {
+                                Td { Text(((if (state.friendTraining) 2 else 1) * state.trainingPerformanceValue).toString()) }
+                            }
+                        }
+                        if (state.scenario == Scenario.MECHA) {
+                            Th { Text("研究Lv") }
+                            Td { Text(state.mechaState.learningLevelGain.speed.toString()) }
+                            Td { Text(state.mechaState.learningLevelGain.stamina.toString()) }
+                            Td { Text(state.mechaState.learningLevelGain.power.toString()) }
+                            Td { Text(state.mechaState.learningLevelGain.guts.toString()) }
+                            Td { Text(state.mechaState.learningLevelGain.wisdom.toString()) }
+                            Td { Text("-") }
+                            Td { Text("-") }
+                            Td { Text(state.mechaState.learningLevelGain.statusTotal.toString()) }
+                            Td { Text("-") }
                         }
                     }
                 }
             }
-            Div { Text("※計算式： 参加した場合の上昇量 - 試食会なしの上昇量") }
-
-            MdFilledButton("全パターン計算", attrs = {
-                onClick { model.calculateRamenAllPatterns() }
-                style { marginTop(8.px) }
-            })
-
-            if (state.ramenAllTastingImpact != null) {
-                Div { Text("※項目名クリックでソート") }
-                Div { Text("※見にくければExcelとかにコピペして") }
-                var grouped by remember { mutableStateOf(false) }
-                Div {
-                    MdCheckbox("初期配置ごとの期待値表示", grouped) {
-                        onChange { grouped = it }
-                    }
-                }
-                Div({ style { marginTop(16.px) } }) {
-                    Table({ classes(AppStyle.table) }) {
-                        Tr {
-                            Th({
-                                unsetWidth()
-                                colspan(state.supportSelectionList.count { it.card != null })
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.InitialParticipants) }
-                            }) { Text("初期配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.InitialParticipants)) }
-                        }
-                        Tr {
-                            state.supportSelectionList.forEach { support ->
-                                support.card?.let {
-                                    Th({ unsetWidth() }) { Text(it.chara.first().toString()) }
-                                }
-                            }
-                            if (grouped) {
-                                Th({
-                                    unsetWidth()
-                                }) { Text("理/記") }
-                            } else {
-                                Th({
-                                    unsetWidth()
-                                    style { cursor("pointer") }
-                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.AddedChara) }
-                                }) { Text("追加配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.AddedChara)) }
-                            }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Speed) }
-                            }) { Text("スピード" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Speed)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Stamina) }
-                            }) { Text("スタミナ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Stamina)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Power) }
-                            }) { Text("パワー" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Power)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Guts) }
-                            }) { Text("根性" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Guts)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Wisdom) }
-                            }) { Text("賢さ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Wisdom)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.SkillPt) }
-                            }) { Text("スキルPt" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.SkillPt)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Hp) }
-                            }) { Text("体力" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Hp)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.StatusTotal) }
-                            }) { Text("5ステ合計" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.StatusTotal)) }
-                            Th({
-                                style { cursor("pointer") }
-                                onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.TotalPlusSkillPt) }
-                            }) { Text("5ステ+SP" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.TotalPlusSkillPt)) }
-                        }
-                        val displayData =
-                            if (grouped) state.ramenAllTastingImpact.second else state.ramenAllTastingImpact.first
-                        displayData.forEach { impact ->
-                            Tr {
-                                state.supportSelectionList.forEach { support ->
-                                    support.card?.let {
-                                        Th({ unsetWidth() }) {
-                                            val mark = if (impact.participants.contains(it.chara)) {
-                                                if (it.type == state.selectedTrainingType) "◎" else "◯"
-                                            } else "-"
-                                            Text(mark)
-                                        }
-                                    }
-                                }
-                                if (grouped) {
-                                    Th({
-                                        unsetWidth()
-                                    }) {
-                                        Text(if (impact.participants.contains("理事長/記者")) "◯" else "-")
-                                    }
-                                } else {
-                                    Td({
-                                        unsetWidth()
-                                        style { textAlign("left") }
-                                    }) {
-                                        impact.added?.let {
-                                            val mark = if (it.card.type == state.selectedTrainingType) "◎" else ""
-                                            Text(mark + it.charaName)
-                                        } ?: Text("なし")
-                                    }
-                                }
-                                Td { Text(impact.impact.speed.toString()) }
-                                Td { Text(impact.impact.stamina.toString()) }
-                                Td { Text(impact.impact.power.toString()) }
-                                Td { Text(impact.impact.guts.toString()) }
-                                Td { Text(impact.impact.wisdom.toString()) }
-                                Td { Text(impact.impact.skillPt.toString()) }
-                                Td { Text(impact.impact.hp.toString()) }
-                                Td { Text(impact.impact.statusTotal.toString()) }
-                                Td { Text(impact.impact.totalPlusSkillPt.toString()) }
-                            }
+            RawTrainingResultTable(state.rawTrainingResult)
+            if (!state.scenario.guestMember) {
+                H3 { Text("上振れ度: ${(state.upperRate * 10000.0).roundToInt() / 100.0}% (クライマックスでホイッスルを使って上昇量合計が今より低くなる確率)") }
+            }
+            if (state.scenario == Scenario.BC) {
+                val bcStatus = state.bcStatusIfEnabled
+                if (bcStatus != null) {
+                    NestedHideBlock("BCシナリオボーナス") {
+                        Div { Text("チームランク: ${io.github.mee1080.umasim.scenario.bc.rankToString.getOrElse(bcStatus.teamRank) { "" }}") }
+                        Div { Text("友情ボーナス: +${bcStatus.friendBonus}%") }
+                        Div { Text("トレーニング効果（チームメンバー）: +${bcStatus.trainingEffect(state.selectedTrainingTypeForScenario)}%") }
+                        if (bcStatus.dreamsTrainingActive) {
+                            Div { Text("サブ基礎能力上昇率: ${bcStatus.subParameterRate}%") }
+                            Div { Text("体力消費軽減: ${bcStatus.hpCostDown}%") }
+                            Div { Text("スキルPt上昇量アップ: ${bcStatus.skillPtEffect}%") }
+                            Div { Text("ヒント発生率アップ: ${bcStatus.hintFrequencyUp}%") }
                         }
                     }
                 }
             }
-        }
-        if (state.trainingImpact.isNotEmpty()) {
-            NestedHideBlock("サポカ影響度") {
+            if (state.ramenTastingImpact.isNotEmpty()) {
+                H3 { Text("試食会でサポカ出現した場合の上昇量") }
                 Div {
                     Table({ classes(AppStyle.table) }) {
                         Tr {
@@ -538,10 +341,11 @@ fun TrainingInfo(model: ViewModel, state: State) {
                             Th { Text("5ステ合計") }
                             Th { Text("5ステ+SP") }
                         }
-                        state.trainingImpact.forEach { (name, status) ->
+                        state.ramenTastingImpact.forEach { (name, status, impact) ->
                             Tr {
                                 Td({
                                     unsetWidth()
+                                    style { fontWeight("bold") }
                                 }) { Text(name) }
                                 Td { Text(status.speed.toString()) }
                                 Td { Text(status.stamina.toString()) }
@@ -553,17 +357,224 @@ fun TrainingInfo(model: ViewModel, state: State) {
                                 Td { Text(status.statusTotal.toString()) }
                                 Td { Text(status.totalPlusSkillPt.toString()) }
                             }
+                            Tr {
+                                Td({
+                                    unsetWidth()
+                                    style { textAlign("right") }
+                                }) { Text("(増分)") }
+                                Td { Text(impact.speed.toString()) }
+                                Td { Text(impact.stamina.toString()) }
+                                Td { Text(impact.power.toString()) }
+                                Td { Text(impact.guts.toString()) }
+                                Td { Text(impact.wisdom.toString()) }
+                                Td { Text(impact.skillPt.toString()) }
+                                Td { Text(impact.hp.toString()) }
+                                Td { Text(impact.statusTotal.toString()) }
+                                Td { Text(impact.totalPlusSkillPt.toString()) }
+                            }
                         }
                     }
                 }
-                Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+                Div { Text("※計算式： 参加した場合の上昇量 - 試食会なしの上昇量") }
+
+                MdFilledButton("全パターン計算", attrs = {
+                    onClick { model.calculateRamenAllPatterns() }
+                    style { marginTop(8.px) }
+                })
+
+                if (state.ramenAllTastingImpact != null) {
+                    Div { Text("※項目名クリックでソート") }
+                    Div { Text("※見にくければExcelとかにコピペして") }
+                    var grouped by remember { mutableStateOf(false) }
+                    Div {
+                        MdCheckbox("初期配置ごとの期待値表示", grouped) {
+                            onChange { grouped = it }
+                        }
+                    }
+                    Div({ style { marginTop(16.px) } }) {
+                        Table({ classes(AppStyle.table) }) {
+                            Tr {
+                                Th({
+                                    unsetWidth()
+                                    colspan(state.supportSelectionList.count { it.card != null })
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.InitialParticipants) }
+                                }) { Text("初期配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.InitialParticipants)) }
+                            }
+                            Tr {
+                                state.supportSelectionList.forEach { support ->
+                                    support.card?.let {
+                                        Th({ unsetWidth() }) { Text(it.chara.first().toString()) }
+                                    }
+                                }
+                                if (grouped) {
+                                    Th({
+                                        unsetWidth()
+                                    }) { Text("理/記") }
+                                } else {
+                                    Th({
+                                        unsetWidth()
+                                        style { cursor("pointer") }
+                                        onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.AddedChara) }
+                                    }) { Text("追加配置" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.AddedChara)) }
+                                }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Speed) }
+                                }) { Text("スピード" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Speed)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Stamina) }
+                                }) { Text("スタミナ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Stamina)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Power) }
+                                }) { Text("パワー" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Power)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Guts) }
+                                }) { Text("根性" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Guts)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Wisdom) }
+                                }) { Text("賢さ" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Wisdom)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.SkillPt) }
+                                }) { Text("スキルPt" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.SkillPt)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.Hp) }
+                                }) { Text("体力" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.Hp)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.StatusTotal) }
+                                }) { Text("5ステ合計" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.StatusTotal)) }
+                                Th({
+                                    style { cursor("pointer") }
+                                    onClick { model.updateRamenAllTastingSort(RamenAllTastingSortKey.TotalPlusSkillPt) }
+                                }) { Text("5ステ+SP" + state.getRamenAllTastingSortIndicator(RamenAllTastingSortKey.TotalPlusSkillPt)) }
+                            }
+                            val displayData =
+                                if (grouped) state.ramenAllTastingImpact.second else state.ramenAllTastingImpact.first
+                            displayData.forEach { impact ->
+                                Tr {
+                                    state.supportSelectionList.forEach { support ->
+                                        support.card?.let {
+                                            Th({ unsetWidth() }) {
+                                                val mark = if (impact.participants.contains(it.chara)) {
+                                                    if (it.type == state.selectedTrainingType) "◎" else "◯"
+                                                } else "-"
+                                                Text(mark)
+                                            }
+                                        }
+                                    }
+                                    if (grouped) {
+                                        Th({
+                                            unsetWidth()
+                                        }) {
+                                            Text(if (impact.participants.contains("理事長/記者")) "◯" else "-")
+                                        }
+                                    } else {
+                                        Td({
+                                            unsetWidth()
+                                            style { textAlign("left") }
+                                        }) {
+                                            impact.added?.let {
+                                                val mark = if (it.card.type == state.selectedTrainingType) "◎" else ""
+                                                Text(mark + it.charaName)
+                                            } ?: Text("なし")
+                                        }
+                                    }
+                                    Td { Text(impact.impact.speed.toString()) }
+                                    Td { Text(impact.impact.stamina.toString()) }
+                                    Td { Text(impact.impact.power.toString()) }
+                                    Td { Text(impact.impact.guts.toString()) }
+                                    Td { Text(impact.impact.wisdom.toString()) }
+                                    Td { Text(impact.impact.skillPt.toString()) }
+                                    Td { Text(impact.impact.hp.toString()) }
+                                    Td { Text(impact.impact.statusTotal.toString()) }
+                                    Td { Text(impact.impact.totalPlusSkillPt.toString()) }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            TrainingImpactBlock(state.trainingImpact)
+            H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
+            NestedHideBlock("期待値（練習配置率を考慮）") {
+                Div {
+                    Table({ classes(AppStyle.table) }) {
+                        Tr {
+                            Th { Text("スピード") }
+                            Th { Text("スタミナ") }
+                            Th { Text("パワー") }
+                            Th { Text("根性") }
+                            Th { Text("賢さ") }
+                            Th { Text("スキルPt") }
+                            Th { Text("体力") }
+                            Th { Text("5ステ合計") }
+                            Th { Text("5ステ+SP") }
+                        }
+                        Tr {
+                            Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
+                            Td { Text(((state.expectedResult.totalPlusSkillPt * 100).roundToInt() / 100.0).toString()) }
+                        }
+                    }
+                    Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
+                }
             }
         }
-        H3 { Text("友情トレーニング発生率: ${(state.friendProbability * 10000.0).roundToInt() / 100.0}%") }
-        NestedHideBlock("期待値（練習配置率を考慮）") {
+        state.shuntaisaiPracticeResult?.let { ShuntaisaiPracticeResultBlock(it) }
+    }
+}
+
+@Composable
+private fun RawTrainingResultTable(rawTrainingResult: ExpectedStatus) {
+    Div({ style { marginTop(16.px) } }) {
+        H3 { Text("切り捨て前") }
+        Table({ classes(AppStyle.table) }) {
+            Tr {
+                Th { Text("スピード") }
+                Th { Text("スタミナ") }
+                Th { Text("パワー") }
+                Th { Text("根性") }
+                Th { Text("賢さ") }
+                Th { Text("スキルPt") }
+            }
+            Tr {
+                Td { Text(rawTrainingResult.speed.roundToString(4)) }
+                Td { Text(rawTrainingResult.stamina.roundToString(4)) }
+                Td { Text(rawTrainingResult.power.roundToString(4)) }
+                Td { Text(rawTrainingResult.guts.roundToString(4)) }
+                Td { Text(rawTrainingResult.wisdom.roundToString(4)) }
+                Td { Text(rawTrainingResult.skillPt.roundToString(4)) }
+            }
+        }
+    }
+}
+
+@Composable
+private fun TrainingImpactBlock(trainingImpact: List<Pair<String, Status>>) {
+    if (trainingImpact.isNotEmpty()) {
+        NestedHideBlock("サポカ影響度") {
             Div {
                 Table({ classes(AppStyle.table) }) {
                     Tr {
+                        Th({
+                            style {
+                                property("border", "none")
+                            }
+                            unsetWidth()
+                        }) { }
                         Th { Text("スピード") }
                         Th { Text("スタミナ") }
                         Th { Text("パワー") }
@@ -574,20 +585,66 @@ fun TrainingInfo(model: ViewModel, state: State) {
                         Th { Text("5ステ合計") }
                         Th { Text("5ステ+SP") }
                     }
-                    Tr {
-                        Td { Text(((state.expectedResult.speed * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.stamina * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.power * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.guts * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.wisdom * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.skillPt * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.hp * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.statusTotal * 100).roundToInt() / 100.0).toString()) }
-                        Td { Text(((state.expectedResult.totalPlusSkillPt * 100).roundToInt() / 100.0).toString()) }
+                    trainingImpact.forEach { (name, status) ->
+                        Tr {
+                            Td({
+                                unsetWidth()
+                            }) { Text(name) }
+                            Td { Text(status.speed.toString()) }
+                            Td { Text(status.stamina.toString()) }
+                            Td { Text(status.power.toString()) }
+                            Td { Text(status.guts.toString()) }
+                            Td { Text(status.wisdom.toString()) }
+                            Td { Text(status.skillPt.toString()) }
+                            Td { Text(status.hp.toString()) }
+                            Td { Text(status.statusTotal.toString()) }
+                            Td { Text(status.totalPlusSkillPt.toString()) }
+                        }
                     }
                 }
-                Div { Text("※練習参加チェックボックスを無視して、練習配置率に応じて参加/不参加を決めた場合の期待値") }
+            }
+            Div { Text("※計算式： 上昇量 - 対象カードが練習不参加時の上昇量") }
+        }
+    }
+}
+
+@Composable
+private fun ShuntaisaiPracticeResultBlock(result: ShuntaisaiPracticeResult) {
+    H3 { Text("演目稽古") }
+    Div {
+        Table({ classes(AppStyle.table) }) {
+            Tr {
+                Th({ style { property("border", "none") } }) { }
+                Th { Text("スピード") }
+                Th { Text("スタミナ") }
+                Th { Text("パワー") }
+                Th { Text("根性") }
+                Th { Text("賢さ") }
+                Th { Text("スキルPt") }
+                Th { Text("体力") }
+                Th { Text("5ステ合計") }
+                Th { Text("5ステ+SP") }
+            }
+            listOf(
+                "基本" to result.trainingResult,
+                "ボーナス" to result.trainingBonus,
+                "合計" to result.trainingResult + result.trainingBonus,
+            ).forEach { (label, status) ->
+                Tr {
+                    Th { Text(label) }
+                    Td { Text(status.speed.toString()) }
+                    Td { Text(status.stamina.toString()) }
+                    Td { Text(status.power.toString()) }
+                    Td { Text(status.guts.toString()) }
+                    Td { Text(status.wisdom.toString()) }
+                    Td { Text(status.skillPt.toString()) }
+                    Td { Text(status.hp.toString()) }
+                    Td { Text(status.statusTotal.toString()) }
+                    Td { Text(status.totalPlusSkillPt.toString()) }
+                }
             }
         }
     }
+    RawTrainingResultTable(result.rawTrainingResult)
+    TrainingImpactBlock(result.trainingImpact)
 }
