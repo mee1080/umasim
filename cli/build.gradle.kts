@@ -17,6 +17,10 @@ dependencies {
     implementation(libs.kotlinx.coroutinesCore)
 }
 
+kotlin {
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
+}
+
 val jar = tasks.getByName<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {

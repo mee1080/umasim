@@ -57,7 +57,7 @@ fun ChatScreen() {
     // Re-initialize ChatAgent if currentApiKey or currentModelName changes
     val chatAgent = remember(currentApiKey, currentModelName) {
         if (currentApiKey.isNotBlank()) {
-            ChatAgent(currentApiKey, currentModelName.ifBlank { "gemini-1.5-flash-latest" })
+            ChatAgent(currentApiKey, currentModelName)
         } else {
             null
         }

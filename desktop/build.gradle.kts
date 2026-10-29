@@ -1,6 +1,4 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
-import org.jetbrains.kotlin.gradle.dsl.JvmTarget
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
     alias(libs.plugins.kotlin.jvm)
@@ -20,14 +18,13 @@ dependencies {
     implementation(project(":core"))
     implementation(project(":jvm"))
     implementation(compose.desktop.currentOs)
+    implementation(libs.compose.materialIconsCore)
     implementation(libs.kotlinx.serializationJson)
     implementation(libs.kotlinx.coroutinesCore)
 }
 
-tasks.withType<KotlinCompile> {
-    compilerOptions {
-        jvmTarget.set(JvmTarget.fromTarget(libs.versions.jvmTarget.get()))
-    }
+kotlin {
+    jvmToolchain(libs.versions.jvmTarget.get().toInt())
 }
 
 compose.desktop {
