@@ -3,7 +3,7 @@
 buildkonfig = "0.23.0"
 clikt = "5.1.0"
 compose = "1.12.2"
-compose-material3 = "1.12.0-alpha03"
+compose-material3 = "1.12.0-SNAPSHOT+v-mazunin-enable-lifecycle-and-nav3-for-1-12-0-alpha02"
 compose-material-icons = "1.7.3"
 jvmTarget = "25"
 koalaplot = "0.12.1"
