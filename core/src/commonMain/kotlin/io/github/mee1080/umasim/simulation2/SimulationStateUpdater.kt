@@ -209,6 +209,7 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
     if (state.scenario == Scenario.LARC && turn < 3 && charaName == "佐岳メイ") return this
     if (state.scenario == Scenario.MUJINTO && turn < 3 && charaName == "タッカーブライン") return this
     if (state.scenario == Scenario.ONSEN && turn < 3 && charaName == "保科健子") return this
+    if (state.scenario == Scenario.SHUNTAISAI && turn < 3 && charaName == "吾妻") return this
 
     // 各トレーニングに配置
     var position: StatusType

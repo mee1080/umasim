@@ -19,6 +19,10 @@
 package io.github.mee1080.umasim.web.page.share
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusValues
 import io.github.mee1080.umasim.data.motivationToString
@@ -83,15 +87,22 @@ fun StatusTable(
         }
     }
     if (summary && status is Status && status.skillHint.isNotEmpty()) {
+        var expanded by remember { mutableStateOf(false) }
         Div({
             style {
                 display(DisplayStyle.Flex)
                 flexWrap(FlexWrap.Wrap)
                 border(1.px, LineStyle.Solid, MdSysColor.outlineVariant.value)
+                cursor("pointer")
             }
+            onClick { expanded = !expanded }
         }) {
-            status.skillHint.forEach {
-                Div({ style { marginRight(4.px) } }) { Text("${it.key}Lv${it.value},") }
+            if (expanded) {
+                status.skillHint.forEach {
+                    Div({ style { marginRight(4.px) } }) { Text("${it.key}Lv${it.value},") }
+                }
+            } else {
+                Text("スキルヒント ${status.skillHint.size}個（タップで表示）")
             }
         }
     }

@@ -203,7 +203,7 @@ object ShuntaisaiCalculator : ScenarioCalculator {
      * 配置の調整
      *
      * * 演目稽古に各演目担当が現れる
-     * * 吾妻は4人以下の演目稽古のうち、ランダムな1箇所に現れる
+     * * 吾妻は4人以下の演目稽古のうち、ランダムな1箇所に現れる（元の配置からは移動する）
      * * 協力の教え: 演目担当の編成サポカが別の練習1箇所にも追加で出現
      * * 絆の教えの転成効果: 合宿中に演目担当の編成サポカが別の練習1箇所にも追加で出現
      * * URAファイナルズ: 全ての演目稽古に編成サポカ+1
@@ -241,9 +241,9 @@ object ShuntaisaiCalculator : ScenarioCalculator {
 
         val azuma = newMember.firstOrNull { !it.guest && it.charaName == "吾妻" }
         if (azuma != null) {
-            practiceTypes.filter { !azuma.positions.contains(it) && count(it) <= 4 }.randomOrNull()?.let { type ->
+            practiceTypes.filter { azuma.positions.contains(it) || count(it) <= 4 }.randomOrNull()?.let { type ->
                 newMember = newMember.mapIf({ it.index == azuma.index }) {
-                    it.copy(additionalPosition = it.additionalPosition + type)
+                    it.copy(position = type, additionalPosition = emptySet())
                 }
             }
         }

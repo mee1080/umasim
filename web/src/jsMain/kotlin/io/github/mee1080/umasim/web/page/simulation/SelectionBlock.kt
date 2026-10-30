@@ -154,7 +154,12 @@ fun SelectionBlock(
                         }
                         Div {
                             action.member.forEach {
-                                MemberState(it, it.isFriendTraining(action.type), training = true)
+                                MemberState(
+                                    it,
+                                    it.isFriendTraining(action.type),
+                                    training = true,
+                                    label = state.shuntaisaiStatus?.memberLabel(it),
+                                )
                             }
                         }
                         val totalRate = action.totalRate
@@ -267,6 +272,9 @@ fun SelectionBlock(
 
                     is ShuntaisaiAssignTeaching -> {
                         ShuntaisaiTeachingInfo(action.teaching, action.transformedFrom)
+                        if (action.reassign) {
+                            ShuntaisaiReassignInfo(state, action)
+                        }
                     }
 
                     is ShuntaisaiTransformTeaching -> {

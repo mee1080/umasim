@@ -12,7 +12,7 @@ import org.jetbrains.compose.web.dom.Div
 import org.jetbrains.compose.web.dom.Text
 
 @Composable
-fun MemberState(state: MemberState, friend: Boolean = false, training: Boolean = false) {
+fun MemberState(state: MemberState, friend: Boolean = false, training: Boolean = false, label: String? = null) {
     DivFlexCenter({
         style {
             margin(4.px, 0.px)
@@ -65,6 +65,9 @@ fun MemberState(state: MemberState, friend: Boolean = false, training: Boolean =
                     borderRadius(50.percent)
                 }
             }) { Text("！") }
+        }
+        if (label != null) {
+            Div({ style { marginRight(4.px) } }) { Text(label) }
         }
         if (training) {
             Div { Text(state.charaName) }

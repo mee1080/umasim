@@ -107,7 +107,7 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
     private suspend fun SimulationState.reassignTeachings(selector: ActionSelector): SimulationState {
         val slots = shuntaisaiStatus?.teachings ?: return this
         if (slots.isEmpty()) return this
-        var state = updateShuntaisaiStatus { copy(teachings = emptyMap()) }
+        var state = updateShuntaisaiStatus { copy(teachings = emptyMap(), reassigningTeachings = slots) }
         trainingType.forEach { current ->
             val slot = slots[current] ?: return@forEach
             val shuntaisaiStatus = state.shuntaisaiStatus ?: return state
@@ -119,7 +119,7 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
             })
             state = ShuntaisaiCalculator.applyScenarioAction(state, (action as ShuntaisaiAssignTeaching).result)
         }
-        return state
+        return state.updateShuntaisaiStatus { copy(reassigningTeachings = emptyMap()) }
     }
 
     /**

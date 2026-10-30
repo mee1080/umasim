@@ -45,6 +45,9 @@ fun SimulationStateBlock(state: SimulationState) {
         classes(MdClass.surface, MdClass.onSurfaceText)
         style {
             padding(16.px)
+            maxHeight(40.vh)
+            overflowY("auto")
+            flexShrink(0)
             display(DisplayStyle.Flex)
             flexDirection(FlexDirection.Column)
             rowGap(8.px)
@@ -190,7 +193,7 @@ fun SimulationStateBlock(state: SimulationState) {
         }
         HideBlock("サポートカード") {
             state.support.forEach {
-                MemberState(it)
+                MemberState(it, label = state.shuntaisaiStatus?.memberLabel(it))
             }
         }
     }

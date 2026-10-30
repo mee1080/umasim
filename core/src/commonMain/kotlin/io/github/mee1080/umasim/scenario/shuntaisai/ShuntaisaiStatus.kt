@@ -105,6 +105,7 @@ data class ShuntaisaiTeachingSlot(
  *
  * @param joryokuSupportCount 助力の支えの残り回数
  * @param campTurns 駿大祭合宿のターン（目標レースによる延長を含む）
+ * @param reassigningTeachings 教え付け替え中の、付け替え前の割り当て（付け替え中以外は空）
  */
 data class ShuntaisaiStatus(
     val turn: Int = 1,
@@ -113,6 +114,7 @@ data class ShuntaisaiStatus(
     val gauges: Map<StatusType, Int> = trainingType.associateWith { 0 },
     val levels: Map<StatusType, Int> = trainingType.associateWith { 1 },
     val teachings: Map<StatusType, ShuntaisaiTeachingSlot> = emptyMap(),
+    val reassigningTeachings: Map<StatusType, ShuntaisaiTeachingSlot> = emptyMap(),
     val presentationResults: List<ShuntaisaiPresentationResult> = emptyList(),
     val presentationBonus: ShuntaisaiPresentationBonus = ShuntaisaiPresentationBonus.Initial,
     val supportTypeCount: Int = 0,
