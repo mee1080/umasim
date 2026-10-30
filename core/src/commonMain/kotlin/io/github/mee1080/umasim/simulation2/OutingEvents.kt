@@ -130,9 +130,14 @@ suspend fun SimulationState.applyAfterTrainingEvent(target: MemberState, selecto
         }
 
         "吾妻" -> {
-            // TODO 初回イベント、トレーニング後イベントの内容不明（仮）
             if (isFirst) {
-                applyFriendEvent(target, Status(motivation = 1), 15, 1)
+                applyFriendEvent(
+                    target,
+                    Status(stamina = 5, guts = 5, skillPt = 5, motivation = 1, maxHp = 4),
+                    15, 1,
+                )
+            } else if (Random.nextDouble() < 0.4) {
+                applyFriendEvent(target, Status(guts = 4, skillPt = 4), 5)
             } else this
         }
 
@@ -512,7 +517,6 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
         }
 
         "吾妻" -> {
-            // TODO お出かけ1～4回目の内容不明（仮）
             when (step) {
                 1 -> applyFriendEvent(
                     support,
@@ -525,10 +529,33 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                     5, 2,
                 ) // TODO 疲労回復（体力49以下で一度だけ15回復）
 
-                2, 3, 4, 5 -> applyFriendEvent(
+                // TODO 体力上昇量不明（33以上）
+                2 -> applyFriendEvent(
                     support,
-                    Status(hp = 30, motivation = 1),
-                    5, step + 1,
+                    Status(speed = 10, guts = 10, skillPt = 10, hp = 35, motivation = 1),
+                    5, 3,
+                ).updateShuntaisaiStatus { levelUpLowest() }
+
+                3 -> applyFriendEvent(
+                    support,
+                    Status(wisdom = 10, skillPt = 10, hp = 30, motivation = 1, skillHint = mapOf("快速" to 2)),
+                    5, 4,
+                ).updateShuntaisaiStatus { levelUpLowest() }
+
+                4 -> applyFriendEvent(
+                    support,
+                    if (status.maxHp - status.hp >= 30) {
+                        Status(hp = 50, motivation = 1)
+                    } else {
+                        Status(stamina = 10, guts = 10, wisdom = 10, skillPt = 20, motivation = 1)
+                    },
+                    5, 5,
+                ).updateShuntaisaiStatus { levelUpLowest() }
+
+                5 -> applyFriendEvent(
+                    support,
+                    Status(stamina = 5, power = 5, skillPt = 5, hp = 35, motivation = 1),
+                    5, 6,
                 ).updateShuntaisaiStatus { levelUpLowest() }
 
                 6 -> applyFriendEvent(
@@ -618,6 +645,12 @@ fun SimulationState.applyOutingNewYearEvent(): SimulationState {
                     speed = 5, stamina = 5, power = 5, guts = 5, wisdom = 5, motivation = 1,
                     skillHint = mapOf("中盤巧者" to 3),
                 ),
+                5, 0,
+            )
+
+            "吾妻" -> state.applyFriendEvent(
+                support,
+                Status(speed = 10, wisdom = 10, skillPt = 5, motivation = 1, skillHint = mapOf("末脚" to 3)),
                 5, 0,
             )
 

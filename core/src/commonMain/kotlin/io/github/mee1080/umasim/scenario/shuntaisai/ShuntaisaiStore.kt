@@ -233,9 +233,10 @@ val shuntaisaiOverflowPerformances = mapOf(
 )
 
 /**
- * ゲスト（編成外の演目担当）の人数（ジュニア3ターン目）
+ * ゲスト（編成外の演目担当）の人数（ジュニア3ターン目、友人サポカ編成時は6人、それ以外は5人）
  */
-const val shuntaisaiGuestCount = 6
+const val shuntaisaiGuestCount = 5
+const val shuntaisaiGuestCountWithFriend = 6
 
 /**
  * 演目ゲージ最大値

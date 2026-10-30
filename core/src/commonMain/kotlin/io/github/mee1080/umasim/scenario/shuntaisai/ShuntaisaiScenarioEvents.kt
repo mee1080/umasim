@@ -2,10 +2,9 @@ package io.github.mee1080.umasim.scenario.shuntaisai
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.BaseScenarioEvents
-import io.github.mee1080.umasim.scenario.Scenario
-import io.github.mee1080.umasim.scenario.addGuest
 import io.github.mee1080.umasim.simulation2.*
 
 class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
@@ -50,6 +49,7 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
      * 育成終了イベント
      *
      * 全て大成功以外は全て成功の効果とする
+     * TODO 大成功と成功が混在する場合の効果は未確認
      */
     override fun afterSimulation(state: SimulationState): SimulationState {
         val base = super.afterSimulation(state)
@@ -67,6 +67,9 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
         val azuma = support.firstOrNull { it.charaName == "吾妻" }
         val maxLevel = if (azuma?.card?.rarity == 3) shuntaisaiAzumaMaxLevel else shuntaisaiDefaultMaxLevel
         val performances = assignShuntaisaiPerformances(member)
+        val guestCount = if (support.any { it.card.type == StatusType.FRIEND }) {
+            shuntaisaiGuestCountWithFriend
+        } else shuntaisaiGuestCount
         return copy(
             member = member.map { member ->
                 performances[member.index]?.let { member.copy(scenarioState = ShuntaisaiMemberState(it)) } ?: member
@@ -77,14 +80,30 @@ class ShuntaisaiScenarioEvents : BaseScenarioEvents() {
                 maxLevel = maxLevel,
                 supportTypeCount = supportTypeCount,
             )
-        ).addGuests(calcShuntaisaiGuestPerformances(performances.values.groupingBy { it }.eachCount(), shuntaisaiGuestCount))
+        ).addGuests(calcShuntaisaiGuestPerformances(performances.values.groupingBy { it }.eachCount(), guestCount))
     }
 
     /**
      * 編成外の演目担当が加わる
      */
     private fun SimulationState.addGuests(types: List<StatusType>): SimulationState {
-        return types.fold(this) { state, type -> state.addGuest(type, Scenario.SHUNTAISAI) }
+        return types.fold(this) { state, type -> state.addGuest(type) }
+    }
+
+    /**
+     * 編成外の演目担当を1人追加
+     *
+     * 担当演目のシナリオリンクキャラが未加入ならそのキャラ、それ以外はシナリオリンク以外の同タイプのキャラからランダム
+     */
+    private fun SimulationState.addGuest(type: StatusType): SimulationState {
+        val names = member.map { it.charaName }.toSet()
+        val linkChara = shuntaisaiLinkPerformance.entries.firstOrNull { it.value == type }?.key
+        val card = linkChara?.takeIf { !names.contains(it) }?.let { Store.guestSupportCardMap[it] }
+            ?: Store.guestSupportCardList.filter {
+                it.type == type && !names.contains(it.chara) && !shuntaisaiLinkPerformance.containsKey(it.chara)
+            }.random()
+        val guest = MemberState(member.size, card, StatusType.NONE, null, ShuntaisaiMemberState(type))
+        return copy(member = member + guest)
     }
 
     private suspend fun SimulationState.assignTeachings(selector: ActionSelector, period: Int): SimulationState {

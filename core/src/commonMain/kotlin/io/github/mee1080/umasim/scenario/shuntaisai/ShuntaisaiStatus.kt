@@ -193,10 +193,10 @@ data class ShuntaisaiStatus(
     fun teachingTarget(teaching: ShuntaisaiTeaching) = teachings.entries.firstOrNull { it.value.teaching == teaching }?.key
 
     /**
-     * 演目ゲージ上昇（合宿中は上昇しない）
+     * 演目ゲージ上昇
      */
     fun addGauge(type: StatusType, value: Int): ShuntaisaiStatus {
-        if (isCamp || value <= 0 || !trainingType.contains(type)) return this
+        if (value <= 0 || !trainingType.contains(type)) return this
         return copy(gauges = gauges + (type to min(shuntaisaiMaxGauge, gauge(type) + value)))
     }
 
@@ -237,9 +237,11 @@ data class ShuntaisaiStatus(
 
     /**
      * 最も低い演目Lv+1（吾妻お出かけ）
+     *
+     * 演目Lvが同じ場合はゲージが低い演目、ゲージも同じ場合は先頭
      */
     fun levelUpLowest(): ShuntaisaiStatus {
-        val target = trainingType.minByOrNull { level(it) } ?: return this
+        val target = trainingType.minWithOrNull(compareBy({ level(it) }, { gauge(it) })) ?: return this
         return levelUp(target)
     }
 

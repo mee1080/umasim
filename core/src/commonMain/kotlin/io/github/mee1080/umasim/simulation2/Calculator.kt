@@ -278,7 +278,7 @@ object Calculator {
     fun calcExpectedTrainingStatus(
         info: CalcInfo,
         teamJoinCount: Int,
-        specialityRateUp: (type: StatusType) -> Int,
+        specialityRateUp: (member: MemberState) -> Int,
         positionRateUp: Int,
     ) = calcExpectedTrainingStatus(
         info = info.copy(
@@ -309,7 +309,7 @@ object Calculator {
 
     fun calcExpectedTrainingStatus(
         info: CalcInfo,
-        specialityRateUp: (type: StatusType) -> Int,
+        specialityRateUp: (member: MemberState) -> Int,
         positionRateUp: Int,
         noCache: Boolean = false,
     ): Pair<ExpectedStatus, List<Pair<Double, Status>>> {
@@ -345,7 +345,7 @@ object Calculator {
             val joinRate = info.member.map {
                 calcRate(
                     info.training.type,
-                    *calcCardPositionSelection(info, it, specialityRateUp(it.card.type), positionRateUp)
+                    *calcCardPositionSelection(info, it, specialityRateUp(it), positionRateUp)
                 )
             }
             val allJoinRate = if (info.member.size < 6) 0.0 else joinRate.fold(1.0) { acc, d -> acc * d }

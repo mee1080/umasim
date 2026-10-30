@@ -136,12 +136,12 @@ object ShuntaisaiCalculator : ScenarioCalculator {
     /**
      * 練習に参加した演目担当1人につき担当演目のゲージ+1、友情なら+2（シナリオリンクキャラは固定の担当演目）
      *
-     * 合宿中、および演目稽古ではゲージが上昇しない
+     * 演目稽古ではゲージが上昇しない（合宿中は全て演目稽古）
      */
     fun calcTrainingParam(shuntaisaiStatus: ShuntaisaiStatus, action: Training): ShuntaisaiActionParam {
         val practice = shuntaisaiStatus.isPractice(action.type)
         val gaugeUp = mutableMapOf<StatusType, Int>()
-        if (!shuntaisaiStatus.isCamp && !practice) action.member.forEach { member ->
+        if (!practice) action.member.forEach { member ->
             val type = member.shuntaisaiPerformance ?: return@forEach
             gaugeUp[type] = (gaugeUp[type] ?: 0) + if (member.isFriendTraining(action.type)) 2 else 1
         }
@@ -286,10 +286,13 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         return shuntaisaiStatus.practiceTraining(trainingType)
     }
 
-    override fun getSpecialityRateUp(state: SimulationState, cardType: StatusType): Int {
+    /**
+     * 得意率の教え: 教えを割り当てた演目の担当の得意率アップ
+     */
+    override fun getMemberSpecialityRateUp(state: SimulationState, member: MemberState): Int {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return 0
-        return shuntaisaiStatus.teachingEffect(cardType).specialityRate +
-                shuntaisaiStatus.presentationBonus.specialityRate
+        val teachingSpecialityRate = member.shuntaisaiPerformance?.let { shuntaisaiStatus.teachingEffect(it).specialityRate } ?: 0
+        return teachingSpecialityRate + shuntaisaiStatus.presentationBonus.specialityRate
     }
 
     /**
@@ -319,6 +322,13 @@ object ShuntaisaiCalculator : ScenarioCalculator {
         val shuntaisaiStatus = state.shuntaisaiStatus ?: return false
         return shuntaisaiStatus.allTypeBonus && shuntaisaiStatus.isPractice(position) &&
                 shuntaisaiStatus.practiceEffect(position).allTypeAllHintEffect
+    }
+
+    /**
+     * 演目稽古の全ヒントイベント発動は、友人・グループ・ゲストを除く編成サポカが対象
+     */
+    override fun isAllSupportHintTarget(state: SimulationState, member: MemberState): Boolean {
+        return !member.guest && !member.outingType
     }
 
     /**

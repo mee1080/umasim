@@ -94,8 +94,8 @@ class ShuntaisaiCalculatorTest {
         assertEquals(5, shuntaisaiStatus.teachings.size)
         assertTrue(trainingType.all { shuntaisaiStatus.teachings[it]?.transformedFrom != null })
         assertTrue(shuntaisaiStatus.teachings.values.all { it.teaching.period >= 1 })
-        // ゲスト（6人、第2回進捗発表会大成功で5人追加）
-        val guestCount = if (shuntaisaiStatus.presentationResults[1] == ShuntaisaiPresentationResult.GREAT_SUCCESS) 11 else 6
+        // ゲスト（友人なしのため5人、第2回進捗発表会大成功で5人追加）
+        val guestCount = if (shuntaisaiStatus.presentationResults[1] == ShuntaisaiPresentationResult.GREAT_SUCCESS) 10 else 5
         assertEquals(guestCount, state.member.count { it.guest })
     }
 }

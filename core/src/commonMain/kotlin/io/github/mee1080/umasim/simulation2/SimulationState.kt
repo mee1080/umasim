@@ -176,6 +176,10 @@ data class SimulationState(
         return scenario.calculator.isAllSupportHint(this, position)
     }
 
+    fun isAllSupportHintTarget(member: MemberState): Boolean {
+        return scenario.calculator.isAllSupportHintTarget(this, member)
+    }
+
     val supportEventEffect = gmStatus?.wisdomSupportEventEffect
 
     val baseCalcInfo = Calculator.CalcInfo(
@@ -201,7 +205,7 @@ data class SimulationState(
         scenarioStatus = scenarioStatus,
     )
 
-    fun specialityRateUp(cardType: StatusType) = scenario.calculator.getSpecialityRateUp(this, cardType)
+    fun specialityRateUp(member: MemberState) = scenario.calculator.getMemberSpecialityRateUp(this, member)
 
     val positionRateUp by lazy {
         support.sumOf { it.card.positionRateUp(it.relation) } + scenario.calculator.getPositionRateUp(this)

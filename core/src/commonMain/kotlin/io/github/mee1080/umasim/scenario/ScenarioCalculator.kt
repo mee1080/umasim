@@ -216,6 +216,20 @@ interface ScenarioCalculator {
     ): Int = 0
 
     /**
+     * サポカごとの得意率アップのシナリオ補正値を返します。
+     * [io.github.mee1080.umasim.simulation2.SimulationState.specialityRateUp] を通じて、サポカの配置決定時に使用されます。
+     * デフォルトでは [getSpecialityRateUp] にサポカのタイプを渡した値を返します。
+     *
+     * @param state 現在のシミュレーション状態
+     * @param member 対象のサポカ
+     * @return 得意率の加算値
+     */
+    fun getMemberSpecialityRateUp(
+        state: SimulationState,
+        member: MemberState,
+    ): Int = getSpecialityRateUp(state, member.card.type)
+
+    /**
      * 配置率アップのシナリオ補正値を返します。
      * [io.github.mee1080.umasim.simulation2.SimulationState.positionRateUp] を通じて、[io.github.mee1080.umasim.simulation2.Calculator.calcCardPositionSelection] で使用されます。
      * サポカが「どこにも配置されない（NONE）」確率を減少させ、いずれかのトレーニングに出現しやすくします。
@@ -282,6 +296,19 @@ interface ScenarioCalculator {
         state: SimulationState,
         position: StatusType
     ): Boolean = false
+
+    /**
+     * [isAllSupportHint] が true の場合に、ヒントを獲得できるメンバーかどうかを返します。
+     * デフォルトでは友人・グループ以外の全メンバー（ゲストを含む）が対象です。
+     *
+     * @param state 現在のシミュレーション状態
+     * @param member 対象のメンバー
+     * @return ヒント獲得対象なら true
+     */
+    fun isAllSupportHintTarget(
+        state: SimulationState,
+        member: MemberState,
+    ): Boolean = !member.outingType
 
     /**
      * 失敗率低下のシナリオ補正値を返します。

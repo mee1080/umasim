@@ -219,7 +219,7 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
             *Calculator.calcCardPositionSelection(
                 state.baseCalcInfo,
                 this,
-                if (guest) 0 else state.specialityRateUp(card.type),
+                if (guest) 0 else state.specialityRateUp(this),
                 state.positionRateUp,
                 forceSpecialityEnabled = true,
             )
@@ -230,7 +230,7 @@ private fun MemberState.selectPosition(turn: Int, state: SimulationState): Membe
                     state.baseCalcInfo,
                     this,
                     supportState?.let {
-                        it.currentTurnSpecialityUp + state.specialityRateUp(card.type)
+                        it.currentTurnSpecialityUp + state.specialityRateUp(this)
                     } ?: 0,
                     state.positionRateUp,
                 )
@@ -473,7 +473,7 @@ private fun SimulationState.selectTrainingHint(
     val hintCountUp = hintCountUp(position, support)
     return if (allSupportHint(position)) {
         // ステータス上昇はCalculatorで計算済み
-        val hintSupportList = support.filter { !it.outingType }
+        val hintSupportList = support.filter { isAllSupportHintTarget(it) }
         hintSupportList.map { hintSupport ->
             val hintSkills = hintSupport.card.skills.filter { !status.skillHint.containsKey(it) }
                 .shuffled().take(1 + hintCountUp)
