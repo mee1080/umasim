@@ -573,7 +573,7 @@ fun SimulationState.applyItem(item: ShopItem): SimulationState {
     }.copy(possessionItem = possessionItem - item)
 }
 
-private fun MemberState.addRelation(relation: Int): MemberState {
+fun MemberState.addRelation(relation: Int): MemberState {
     return copy(
         supportState = supportState?.copy(
             relation = min(100, supportState.relation + relation)
@@ -732,7 +732,7 @@ private suspend fun SimulationState.applyScenarioActionParam(
         is OnsenActionParam -> OnsenCalculator.applyScenarioActionParam(this, result, param, selector)
         is BCActionParam -> BCCalculator.applyScenarioActionParam(this, result, param)
         is RamenActionParam -> RamenCalculator.applyScenarioActionParam(this, param)
-        is ShuntaisaiActionParam -> ShuntaisaiCalculator.applyScenarioActionParam(this, param)
+        is ShuntaisaiActionParam -> ShuntaisaiCalculator.applyScenarioActionParam(this, action, param)
     }
 }
 

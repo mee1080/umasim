@@ -153,19 +153,23 @@ object ShuntaisaiCalculator : ScenarioCalculator {
             joryokuSupport = practice && effect.joryokuSupport,
             relationUp = effect.relationBonus,
             additionalPracticeTarget = action.type,
-            additionalPracticeRate = min(100, effect.additionalPracticeRate),
+            additionalPracticeRate = effect.additionalPracticeRate,
         )
     }
 
-    fun applyScenarioActionParam(state: SimulationState, param: ShuntaisaiActionParam): SimulationState {
+    fun applyScenarioActionParam(state: SimulationState, action: Action, param: ShuntaisaiActionParam): SimulationState {
         var newState = state.updateShuntaisaiStatus {
             (param.practice?.let { executePractice(it) } ?: this)
                 .addGauges(param.gaugeUp)
                 .let { if (param.training) it.updateJoryokuSupport(param.joryokuSupport) else it }
         }
         // 絆の教え: 全編成サポカの絆ゲージ上昇
+        // 参加サポカは通常の絆上昇と合算（愛嬌の補正はトレーニングの絆上昇側で適用済み）
         if (param.relationUp > 0) {
-            newState = newState.addRelation(param.relationUp) { !it.guest }
+            val memberIndices = (action as? Training)?.member?.map { it.index } ?: emptyList()
+            newState = newState.copy(member = newState.member.mapIf({ !it.guest }) {
+                it.addRelation(param.relationUp + if (memberIndices.contains(it.index)) 0 else newState.charmBonus)
+            })
         }
         val additionalPracticeTarget = param.additionalPracticeTarget
         if (additionalPracticeTarget != null && Random.nextInt(100) < param.additionalPracticeRate) {

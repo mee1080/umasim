@@ -25,7 +25,7 @@ enum class ShuntaisaiPerformance(
 /**
  * 教えの効果
  *
- * 教えを割り当てた演目の担当がトレーニングに参加している場合に、参加人数分加算される（絆ゲージ上昇を除く）
+ * 教えを割り当てた演目の担当がトレーニングに参加している場合に、参加人数分加算される（絆ゲージ上昇、追加の稽古の発生率を除く）
  *
  * @param relationBonus 全編成サポカの絆ゲージ上昇（重複しない）
  * @param practiceMainStatusUp 演目稽古でメイン基礎能力の獲得量アップ
@@ -36,7 +36,7 @@ enum class ShuntaisaiPerformance(
  * @param practiceHpCostDown 演目稽古の体力消費ダウン
  * @param mainStatusUp メイン基礎能力の獲得量アップ
  * @param statusLimitUp 基礎能力の獲得上限アップ
- * @param additionalPracticeRate 追加の稽古の発生率
+ * @param additionalPracticeRate 追加の稽古の発生率（重複しない）
  * @param practiceFriendBonus 演目稽古の友情ボーナス
  * @param addMember 演目担当の編成サポカが追加で別のトレーニングに現れる
  * @param campAddMember 合宿中に演目担当の編成サポカから追加で1人トレーニングに現れる
@@ -81,7 +81,7 @@ data class ShuntaisaiTeachingEffect(
         practiceHpCostDown = practiceHpCostDown + other.practiceHpCostDown,
         mainStatusUp = mainStatusUp + other.mainStatusUp,
         statusLimitUp = statusLimitUp + other.statusLimitUp,
-        additionalPracticeRate = additionalPracticeRate + other.additionalPracticeRate,
+        additionalPracticeRate = maxOf(additionalPracticeRate, other.additionalPracticeRate),
         friendBonus = friendBonus + other.friendBonus,
         practiceFriendBonus = practiceFriendBonus + other.practiceFriendBonus,
         addMember = addMember + other.addMember,
