@@ -1,8 +1,10 @@
 package io.github.mee1080.umasim.web.state
 
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.Store
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.scenario.shuntaisai.*
+import io.github.mee1080.umasim.simulation2.MemberState
 
 data class ShuntaisaiState(
     val turn: Int = 1,
@@ -10,6 +12,8 @@ data class ShuntaisaiState(
     val teachings: Map<StatusType, ShuntaisaiTeaching> = emptyMap(),
     val transformedFrom: Map<StatusType, ShuntaisaiTeaching> = emptyMap(),
     val presentationResult: ShuntaisaiPresentationResult = ShuntaisaiPresentationResult.GREAT_SUCCESS,
+    val guestCounts: Map<StatusType, Int> = emptyMap(),
+    val displayPractice: Boolean = false,
 ) {
     val period get() = (turn - 1) / 24
 
@@ -32,5 +36,30 @@ data class ShuntaisaiState(
             presentationBonus = presentationBonus,
             supportTypeCount = supportTypeCount,
         )
+    }
+
+    /**
+     * 練習に参加するゲスト（編成外の演目担当）
+     *
+     * 担当演目のシナリオリンクキャラが未編成ならそのキャラを優先し、それ以外は同タイプのキャラから選ぶ
+     */
+    fun createGuests(supportCharaNames: Set<String>, startIndex: Int): List<MemberState> {
+        val guests = mutableListOf<MemberState>()
+        trainingType.forEach { type ->
+            val count = guestCounts[type] ?: 0
+            if (count <= 0) return@forEach
+            val linkChara = shuntaisaiLinkPerformance.entries.firstOrNull { it.value == type }?.key
+            val candidates = listOfNotNull(
+                linkChara?.takeIf { !supportCharaNames.contains(it) }?.let { Store.guestSupportCardMap[it] },
+            ) + Store.guestSupportCardList.filter {
+                it.type == type && !supportCharaNames.contains(it.chara) && !shuntaisaiLinkPerformance.containsKey(it.chara)
+            }
+            candidates.take(count).forEach { card ->
+                guests += MemberState(
+                    startIndex + guests.size, card, StatusType.NONE, null, ShuntaisaiMemberState(type),
+                )
+            }
+        }
+        return guests
     }
 }

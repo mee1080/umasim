@@ -315,6 +315,9 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
         val joinSupportList = state.supportSelectionList.filter { it.join && it.card != null }
             .mapIndexedNotNull { index, support -> support.toMemberState(state.scenario, index) }
+        val shuntaisaiGuestList = if (state.scenario != Scenario.SHUNTAISAI) emptyList() else {
+            state.shuntaisaiState.createGuests(allSupportList.map { it.charaName }.toSet(), allSupportList.size)
+        }
 
         val trainingType = state.selectedTrainingTypeForScenario
         val supportCount =
@@ -337,7 +340,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             state.chara,
             trainingBase,
             state.motivation,
-            joinSupportList,
+            joinSupportList + shuntaisaiGuestList,
             state.scenario,
             supportCount,
             fanCount,
@@ -399,7 +402,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
             )
             val practiceImpact = joinSupportList.mapIndexed { targetIndex, target ->
                 val notJoinInfo = practiceInfo.copy(
-                    member = joinSupportList.filterIndexed { index, _ -> index != targetIndex },
+                    member = joinSupportList.filterIndexed { index, _ -> index != targetIndex } + shuntaisaiGuestList,
                 )
                 val notJoinResult = Calculator.calcTrainingSuccessStatusSeparated(
                     notJoinInfo,
@@ -421,7 +424,7 @@ class ViewModel(val scope: CoroutineScope, initialPage: String?) {
                     state.chara,
                     trainingBase,
                     state.motivation,
-                    joinSupportList.filterIndexed { index, _ -> index != targetIndex },
+                    joinSupportList.filterIndexed { index, _ -> index != targetIndex } + shuntaisaiGuestList,
                     state.scenario,
                     supportCount,
                     fanCount,

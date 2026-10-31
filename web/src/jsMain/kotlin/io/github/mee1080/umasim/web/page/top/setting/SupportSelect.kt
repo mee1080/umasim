@@ -225,11 +225,6 @@ fun SupportCardBlock(item: SupportSelection, index: Int, model: ViewModel, state
                 model.updateSupportTalent(index, it)
             })
         }
-        Div {
-            MdCheckbox("練習参加", item.join) {
-                onChange { model.updateJoin(index, it) }
-            }
-        }
         DivFlexCenter {
             Text("絆：")
             MdRadioGroup(item.relationSelection, item.relation, onSelect = {

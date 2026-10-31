@@ -196,6 +196,9 @@ data class State(
 
     val shuntaisaiPracticeOnly get() = scenario == Scenario.SHUNTAISAI && shuntaisaiState.isFinals
 
+    val shuntaisaiDisplayPractice
+        get() = scenario == Scenario.SHUNTAISAI && (shuntaisaiState.isFinals || shuntaisaiState.displayPractice)
+
     val specialityRateUp
         get() = when (scenario) {
             Scenario.GRAND_LIVE -> trainingLiveState.specialityRateUp

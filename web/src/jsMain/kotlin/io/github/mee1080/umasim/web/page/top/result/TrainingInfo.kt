@@ -23,6 +23,7 @@ import io.github.mee1080.umasim.data.ExpectedStatus
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.scenario.Scenario
+import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiPerformance
 import io.github.mee1080.umasim.scenario.uaf.UafGenre
 import io.github.mee1080.umasim.web.components.atoms.*
 import io.github.mee1080.umasim.web.components.parts.DivFlexCenter
@@ -173,6 +174,17 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 onChange { model.update { copy(isLevelUpTurn = it) } }
             }
         }
+        DivFlexCenter {
+            Text("練習参加：")
+            state.supportSelectionList.forEachIndexed { index, item ->
+                MdCheckbox(item.card?.name ?: "-", item.join && item.card != null, labelAttrs = {
+                    style { marginRight(8.px) }
+                }) {
+                    if (item.card == null) disabled()
+                    onChange { model.updateJoin(index, it) }
+                }
+            }
+        }
         if (state.scenario == Scenario.URA) {
             DivFlexCenter {
                 Text("ハッピーミーク：")
@@ -186,9 +198,35 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 model.updateTeamJoinCount(it.toInt())
             }
         }
+        if (state.scenario == Scenario.SHUNTAISAI) {
+            val shuntaisaiState = state.shuntaisaiState
+            Div { Text("サポカ外参加人数（担当演目別）：") }
+            ShuntaisaiPerformance.entries.forEach { performance ->
+                DivFlexCenter({ style { marginLeft(16.px) } }) {
+                    Text("${performance.displayName}：")
+                    MdRadioGroup(
+                        listOf(0, 1, 2, 3),
+                        shuntaisaiState.guestCounts[performance.type] ?: 0,
+                        onSelect = { count ->
+                            model.updateShuntaisai { copy(guestCounts = guestCounts + (performance.type to count)) }
+                        },
+                    )
+                }
+            }
+        }
         DivFlexCenter {
             MdCheckbox("トレーニング制限イベント（スイープのみ確認済）", state.eventTrainingLimit) {
                 onChange { model.update { copy(eventTrainingLimit = it) } }
+            }
+        }
+        if (state.scenario == Scenario.SHUNTAISAI && !state.shuntaisaiPracticeOnly) {
+            DivFlexCenter {
+                MdRadioGroup(
+                    listOf(false, true),
+                    state.shuntaisaiState.displayPractice,
+                    onSelect = { model.updateShuntaisai { copy(displayPractice = it) } },
+                    itemToLabel = { if (it) "演目稽古" else "通常トレーニング" },
+                )
             }
         }
         if (state.scenario == Scenario.CLIMAX) {
@@ -211,7 +249,7 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 )
             }
         }
-        if (!state.shuntaisaiPracticeOnly) {
+        if (!state.shuntaisaiDisplayPractice) {
             Div({ style { marginTop(16.px) } }) {
                 Table({ classes(AppStyle.table) }) {
                     Tr {
@@ -533,7 +571,9 @@ fun TrainingInfo(model: ViewModel, state: State) {
                 }
             }
         }
-        state.shuntaisaiPracticeResult?.let { ShuntaisaiPracticeResultBlock(it) }
+        if (state.shuntaisaiDisplayPractice) {
+            state.shuntaisaiPracticeResult?.let { ShuntaisaiPracticeResultBlock(it) }
+        }
     }
 }
 
