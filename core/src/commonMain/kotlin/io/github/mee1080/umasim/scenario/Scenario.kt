@@ -267,7 +267,7 @@ enum class Scenario(
 
     SHUNTAISAI(
         scenarioNumber = 15,
-        displayName = "朋、史解き ―午式駿大祭―（実装途中）",
+        displayName = "朋、史解き ―午式駿大祭―",
         trainingData = shuntaisaiTrainingData,
         scenarioEvents = { ShuntaisaiScenarioEvents() },
         turn = 78,
