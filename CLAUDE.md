@@ -15,6 +15,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ./gradlew :core:jvmTest --tests "io.github.mee1080.umasim.scenario.ramen.RamenCalculatorTest"   # 単一テストクラス
 ./gradlew :compose:run                                    # レースエミュレータ（Compose Desktop）
 ./gradlew :desktop:run                                    # 育成シミュレータ（旧デスクトップ）
+./gradlew :jvm:run                                        # CUI（cui.kt の openCui で呼び出す処理を切り替える）
 ./gradlew :compose:createDistributable                    # 配布用デスクトップアプリ（GitHub Actions のリリースで使用）
 ```
 

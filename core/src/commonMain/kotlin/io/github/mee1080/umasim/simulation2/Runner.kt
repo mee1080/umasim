@@ -254,6 +254,15 @@ object Runner {
         ),
     )
 
+    val shuntaisaiSetting = mapOf(
+        StatusType.SPEED to (2.0 to 3200),
+        StatusType.STAMINA to (1.5 to 2500),
+        StatusType.POWER to (1.0 to 2400),
+        StatusType.GUTS to (0.5 to 2200),
+        StatusType.WISDOM to (1.0 to 2600),
+        StatusType.SKILL to (3.0 to 12000),
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,

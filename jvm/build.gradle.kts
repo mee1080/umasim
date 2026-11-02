@@ -22,3 +22,16 @@ kotlin {
         }
     }
 }
+
+// io.github.mee1080.umasim.cui.main を実行（../data/ を読むため作業ディレクトリはモジュール直下）
+tasks.register<JavaExec>("run") {
+    group = "application"
+    val jvmJar = tasks.named<Jar>("jvmJar")
+    dependsOn(jvmJar)
+    classpath = files(jvmJar.flatMap { it.archiveFile }) + configurations.getByName("jvmRuntimeClasspath")
+    mainClass.set("io.github.mee1080.umasim.cui.MainKt")
+    workingDir = projectDir
+    javaLauncher.set(javaToolchains.launcherFor {
+        languageVersion.set(JavaLanguageVersion.of(libs.versions.jvmTarget.get().toInt()))
+    })
+}
