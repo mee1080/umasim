@@ -31,7 +31,9 @@ open class ShuntaisaiActionSelector(
         val defaultOptions = arrayOf(
             // ジュニア
             Option(
+                speed = 2.8,
                 stamina = 1.47,
+                level = 24.01,
                 levelUrgency = 147.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.JORYOKU,
@@ -48,6 +50,8 @@ open class ShuntaisaiActionSelector(
                 skillPt = 1.47,
                 level = 12.005,
                 levelUrgency = 73.5,
+                holdPractice = listOf(StatusType.GUTS),
+                holdPracticePenalty = 700.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.TOKKA,
                     ShuntaisaiTeaching.HINT,
@@ -66,8 +70,6 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.TOKKA to ShuntaisaiTeaching.TOKUI,
                     ShuntaisaiTeaching.KENSAN to ShuntaisaiTeaching.KIZUNA,
                 ),
-                holdPractice = listOf(StatusType.GUTS),
-                holdPracticePenalty = 500.0,
             ),
             // シニア
             Option(
@@ -75,6 +77,8 @@ open class ShuntaisaiActionSelector(
                 stamina = 0.735,
                 hp = 4.2,
                 gauge = 75.295,
+                holdPractice = listOf(StatusType.GUTS),
+                holdPracticePenalty = 350.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.KYORYOKU,
                     ShuntaisaiTeaching.TOKKA,
@@ -87,16 +91,14 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.HINT,
                     ShuntaisaiTeaching.KYORYOKU to ShuntaisaiTeaching.TAIRYOKU,
                 ),
-                holdPractice = listOf(StatusType.GUTS),
-                holdPracticePenalty = 500.0,
             ),
             // URAファイナルズ
             Option(
                 stamina = 1.5,
+                guts = 0.35,
                 wisdom = 1.0,
                 skillPt = 3.0,
-                motivation = 30.0,
-                risk = 1.5,
+                risk = 2.1,
                 relation = 0.0,
                 outingRelation = 0.0,
                 gauge = 0.0,
@@ -147,7 +149,7 @@ open class ShuntaisaiActionSelector(
         val speed: Double = 2.0,
         val stamina: Double = 1.05,
         val power: Double = 1.0,
-        val guts: Double = 0.5,
+        val guts: Double = 0.98,
         val wisdom: Double = 0.98,
         val skillPt: Double = 2.1,
         val speedCap: Int = 3200,
@@ -161,7 +163,7 @@ open class ShuntaisaiActionSelector(
         val hpKeepThreshold: Int = 62,
         val hpKeep: Double = 5.6,
         val motivation: Double = 42.0,
-        val risk: Double = 2.1,
+        val risk: Double = 1.029,
         val relation: Double = 20.0,
         val outingRelation: Double = 30.0,
         val gauge: Double = 53.782,
@@ -169,7 +171,7 @@ open class ShuntaisaiActionSelector(
         val levelUrgency: Double = 105.0,
         val race: Double = -100.0,
         val joryokuSupport: Double = 30.0,
-        val hpDecayTurns: Int = 4,
+        val hpDecayTurns: Int = 5,
         val holdPractice: List<StatusType> = emptyList(),
         val holdPracticePenalty: Double = 0.0,
         val teachings: List<ShuntaisaiTeaching> = emptyList(),
