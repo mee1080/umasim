@@ -25,7 +25,7 @@ val scenario = Scenario.URA
 fun openCui(args: Array<String>) {
 //    simulateRamen()
 //    debugRamenSimulation()
-    debugShuntaisai()
+    debugShuntaisai(args)
 //    simulateBC()
 //    simulateOnsen()
 //    simulateMujinto()
