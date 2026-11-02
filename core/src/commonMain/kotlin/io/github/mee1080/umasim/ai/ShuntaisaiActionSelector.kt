@@ -31,6 +31,8 @@ open class ShuntaisaiActionSelector(
         val defaultOptions = arrayOf(
             // ジュニア
             Option(
+                stamina = 1.47,
+                levelUrgency = 147.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.JORYOKU,
                     ShuntaisaiTeaching.TAIRYOKU,
@@ -41,6 +43,11 @@ open class ShuntaisaiActionSelector(
             ),
             // クラシック
             Option(
+                speed = 1.4,
+                wisdom = 1.372,
+                skillPt = 1.47,
+                level = 12.005,
+                levelUrgency = 73.5,
                 teachings = listOf(
                     ShuntaisaiTeaching.TOKKA,
                     ShuntaisaiTeaching.HINT,
@@ -59,14 +66,20 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.TOKKA to ShuntaisaiTeaching.TOKUI,
                     ShuntaisaiTeaching.KENSAN to ShuntaisaiTeaching.KIZUNA,
                 ),
+                holdPractice = listOf(StatusType.GUTS),
+                holdPracticePenalty = 500.0,
             ),
             // シニア
             Option(
+                speed = 1.4,
+                stamina = 0.735,
+                hp = 4.2,
+                gauge = 75.295,
                 teachings = listOf(
                     ShuntaisaiTeaching.KYORYOKU,
                     ShuntaisaiTeaching.TOKKA,
-                    ShuntaisaiTeaching.FUKUTSU,
                     ShuntaisaiTeaching.RYODO,
+                    ShuntaisaiTeaching.FUKUTSU,
                     ShuntaisaiTeaching.KENSAN,
                 ),
                 transforms = mapOf(
@@ -74,9 +87,16 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.HINT,
                     ShuntaisaiTeaching.KYORYOKU to ShuntaisaiTeaching.TAIRYOKU,
                 ),
+                holdPractice = listOf(StatusType.GUTS),
+                holdPracticePenalty = 500.0,
             ),
-            // URAファイナルズ（演目Lv・絆は以降に影響しない）
+            // URAファイナルズ
             Option(
+                stamina = 1.5,
+                wisdom = 1.0,
+                skillPt = 3.0,
+                motivation = 30.0,
+                risk = 1.5,
                 relation = 0.0,
                 outingRelation = 0.0,
                 gauge = 0.0,
@@ -116,6 +136,8 @@ open class ShuntaisaiActionSelector(
      * @param race 目標外レースの追加評価値
      * @param joryokuSupport 助力の支え獲得の評価値
      * @param hpDecayTurns URAファイナルズ（トレーニングで体力回復、失敗率0）直前のこのターン数で体力の評価を0に近づける
+     * @param holdPractice 演目稽古を実行せずゲージ最大で止めておく演目（目標レース等のゲージ上昇を他の演目に回すため、大成功に演目Lvが足りない場合を除く）
+     * @param holdPracticePenalty holdPracticeの演目稽古を実行する場合の減点
      * @param teachings 教えの割り当て（トレーニングの種類順）
      * @param campTeachings 合宿直前の付け替えでの教えの割り当て（nullならteachingsと同じ）
      * @param transforms 転成の組み合わせ（新しい教え→消費する教え）
@@ -123,11 +145,11 @@ open class ShuntaisaiActionSelector(
     @Serializable
     data class Option(
         val speed: Double = 2.0,
-        val stamina: Double = 1.5,
+        val stamina: Double = 1.05,
         val power: Double = 1.0,
         val guts: Double = 0.5,
-        val wisdom: Double = 1.0,
-        val skillPt: Double = 3.0,
+        val wisdom: Double = 0.98,
+        val skillPt: Double = 2.1,
         val speedCap: Int = 3200,
         val staminaCap: Int = 2500,
         val powerCap: Int = 2400,
@@ -136,18 +158,20 @@ open class ShuntaisaiActionSelector(
         val statusCapMargin: Int = 100,
         val statusCapMarginPerTurn: Double = 0.0,
         val hp: Double = 3.0,
-        val hpKeepThreshold: Int = 50,
-        val hpKeep: Double = 4.0,
-        val motivation: Double = 30.0,
-        val risk: Double = 1.5,
+        val hpKeepThreshold: Int = 62,
+        val hpKeep: Double = 5.6,
+        val motivation: Double = 42.0,
+        val risk: Double = 2.1,
         val relation: Double = 20.0,
         val outingRelation: Double = 30.0,
-        val gauge: Double = 10.0,
-        val level: Double = 50.0,
-        val levelUrgency: Double = 150.0,
+        val gauge: Double = 53.782,
+        val level: Double = 17.15,
+        val levelUrgency: Double = 105.0,
         val race: Double = -100.0,
         val joryokuSupport: Double = 30.0,
         val hpDecayTurns: Int = 4,
+        val holdPractice: List<StatusType> = emptyList(),
+        val holdPracticePenalty: Double = 0.0,
         val teachings: List<ShuntaisaiTeaching> = emptyList(),
         val campTeachings: List<ShuntaisaiTeaching>? = null,
         val transforms: Map<ShuntaisaiTeaching, ShuntaisaiTeaching> = emptyMap(),
@@ -365,6 +389,11 @@ open class ShuntaisaiActionSelector(
             }
         }
         val practice = param.practice
+        if (practice != null && !status.isCamp && !status.isFinals &&
+            option.holdPractice.contains(practice) && (context.levelDeficit[practice] ?: 0) == 0
+        ) {
+            score -= option.holdPracticePenalty
+        }
         if (success && practice != null && !status.isCamp && status.level(practice) < status.maxLevel) {
             score += option.level
             if ((context.levelDeficit[practice] ?: 0) > 0) score += option.levelUrgency
