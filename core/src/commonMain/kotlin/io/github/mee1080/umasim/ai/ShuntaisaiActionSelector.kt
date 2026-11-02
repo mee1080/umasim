@@ -87,8 +87,8 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.KENSAN,
                 ),
                 transforms = mapOf(
-                    ShuntaisaiTeaching.FUKUTSU to ShuntaisaiTeaching.JORYOKU,
-                    ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.HINT,
+                    ShuntaisaiTeaching.FUKUTSU to ShuntaisaiTeaching.HINT,
+                    ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.JORYOKU,
                     ShuntaisaiTeaching.KYORYOKU to ShuntaisaiTeaching.TAIRYOKU,
                 ),
             ),
