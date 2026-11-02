@@ -386,7 +386,8 @@ open class ShuntaisaiActionSelector(
         var score = 0.0
         param.gaugeUp.forEach { (type, value) ->
             val up = min(value, shuntaisaiMaxGauge - status.gauge(type))
-            if (up > 0 && status.level(type) < status.maxLevel) {
+            // 演目Lvが上限でも演目稽古自体が強いため評価する
+            if (up > 0) {
                 score += up * (option.gauge + (context.levelDeficit[type] ?: 0).coerceAtMost(1) * option.levelUrgency / shuntaisaiMaxGauge)
             }
         }
