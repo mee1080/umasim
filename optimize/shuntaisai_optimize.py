@@ -2,43 +2,43 @@ import subprocess
 import sys
 import optuna
 
-index = 2
+index = 3
 sampler = optuna.samplers.CmaEsSampler()
 
-# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions、shuntaisai_1のtrial 548）
+# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions、shuntaisai_2のtrial 1315）
 initial_params = {
-    "speed@0": 0.68,
-    "stamina@0": 1.25,
-    "wisdom@0": 0.54,
-    "hp@0": 3.3,
-    "level@0": 39.0,
-    "levelUrgency@0": 122.0,
+    "speed@0": 0.94,
+    "stamina@0": 1.66,
+    "wisdom@0": 0.5,
+    "hp@0": 2.1,
+    "level@0": 27.5,
+    "levelUrgency@0": 169.0,
 
-    "speed@1": 0.5,
-    "stamina@1": 1.58,
-    "power@1": 1.7,
-    "guts@1": 1.42,
-    "wisdom@1": 2.8,
-    "skillPt@1": 2.47,
-    "hp@1": 5.0,
-    "gauge@1": 106.0,
-    "level@1": 21.0,
-    "levelUrgency@1": 135.0,
+    "speed@1": 0.82,
+    "stamina@1": 1.87,
+    "power@1": 1.9,
+    "guts@1": 1.26,
+    "wisdom@1": 2.4,
+    "skillPt@1": 2.1,
+    "hp@1": 5.7,
+    "gauge@1": 103.0,
+    "level@1": 13.0,
+    "levelUrgency@1": 92.0,
 
-    "speed@2": 0.476,
-    "stamina@2": 0.81,
-    "power@2": 0.7,
-    "guts@2": 0.78,
-    "wisdom@2": 1.0,
-    "skillPt@2": 1.8,
-    "targetBonus@2": 0.4,
-    "hp@2": 5.8,
-    "gauge@2": 81.0,
-    "gaugeDecayTurns@2": 4,
+    "speed@2": 0.378,
+    "stamina@2": 1.22,
+    "power@2": 1.0,
+    "guts@2": 0.84,
+    "wisdom@2": 1.41,
+    "skillPt@2": 2.3,
+    "targetBonus@2": 0.25,
+    "hp@2": 6.8,
+    "gauge@2": 103.0,
+    "gaugeDecayTurns@2": 3,
 
-    "targetBonus@3": 12.5,
+    "targetBonus@3": 5.0,
 
-    "skillHint": 6.0,
+    "skillHint": 7.0,
 }
 
 def objective(trial):
@@ -75,7 +75,7 @@ def objective(trial):
         "gauge@2": trial.suggest_float('gauge@2', 30.0, 150.0, step=1.0),
         "gaugeDecayTurns@2": trial.suggest_int('gaugeDecayTurns@2', 0, 16),
 
-        "targetBonus@3": trial.suggest_float('targetBonus@3', 5.0, 50.0, step=0.5),
+        "targetBonus@3": trial.suggest_float('targetBonus@3', 1.0, 50.0, step=0.5),
 
         "skillHint": trial.suggest_float('skillHint', 0.0, 40.0, step=0.5),
     }
