@@ -15,6 +15,7 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(libs.clikt)
     implementation(libs.kotlinx.coroutinesCore)
+    implementation(libs.kotlinx.serializationJson)
 }
 
 kotlin {
@@ -24,7 +25,7 @@ kotlin {
 val jar = tasks.getByName<Jar>("jar") {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     manifest {
-        attributes["Main-Class"] = "io.github.mee1080.umasim.cli.RamenCliKt"
+        attributes["Main-Class"] = "io.github.mee1080.umasim.cli.ShuntaisaiCliKt"
     }
     configurations["runtimeClasspath"].forEach { file: File ->
         from(zipTree(file.absoluteFile))
