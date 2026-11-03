@@ -529,7 +529,6 @@ suspend fun SimulationState.applyOutingEvent(support: MemberState, selector: Act
                     5, 2,
                 ) // TODO 疲労回復（体力49以下で一度だけ15回復）
 
-                // TODO 体力上昇量不明（33以上）
                 2 -> applyFriendEvent(
                     support,
                     Status(speed = 10, guts = 10, skillPt = 10, hp = 35, motivation = 1),
