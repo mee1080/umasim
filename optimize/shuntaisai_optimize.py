@@ -5,40 +5,40 @@ import optuna
 index = 2
 sampler = optuna.samplers.CmaEsSampler()
 
-# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions、shuntaisai_1のtrial 539）
+# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions、shuntaisai_1のtrial 548）
 initial_params = {
-    "speed@0": 0.76,
-    "stamina@0": 1.0,
-    "wisdom@0": 0.48,
-    "hp@0": 2.9,
-    "level@0": 37.5,
-    "levelUrgency@0": 139.0,
+    "speed@0": 0.68,
+    "stamina@0": 1.25,
+    "wisdom@0": 0.54,
+    "hp@0": 3.3,
+    "level@0": 39.0,
+    "levelUrgency@0": 122.0,
 
-    "speed@1": 0.72,
-    "stamina@1": 1.61,
-    "power@1": 1.6,
-    "guts@1": 1.26,
-    "wisdom@1": 2.6,
-    "skillPt@1": 2.48,
-    "hp@1": 5.3,
-    "gauge@1": 103.0,
+    "speed@1": 0.5,
+    "stamina@1": 1.58,
+    "power@1": 1.7,
+    "guts@1": 1.42,
+    "wisdom@1": 2.8,
+    "skillPt@1": 2.47,
+    "hp@1": 5.0,
+    "gauge@1": 106.0,
     "level@1": 21.0,
-    "levelUrgency@1": 133.5,
+    "levelUrgency@1": 135.0,
 
-    "speed@2": 0.282,
-    "stamina@2": 0.8,
-    "power@2": 0.6,
-    "guts@2": 0.76,
-    "wisdom@2": 1.044,
-    "skillPt@2": 1.6,
+    "speed@2": 0.476,
+    "stamina@2": 0.81,
+    "power@2": 0.7,
+    "guts@2": 0.78,
+    "wisdom@2": 1.0,
+    "skillPt@2": 1.8,
     "targetBonus@2": 0.4,
-    "hp@2": 5.6,
-    "gauge@2": 82.0,
-    "gaugeDecayTurns@2": 3,
+    "hp@2": 5.8,
+    "gauge@2": 81.0,
+    "gaugeDecayTurns@2": 4,
 
-    "targetBonus@3": 13.0,
+    "targetBonus@3": 12.5,
 
-    "skillHint": 7.5,
+    "skillHint": 6.0,
 }
 
 def objective(trial):
