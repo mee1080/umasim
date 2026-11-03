@@ -1,43 +1,44 @@
 import subprocess
+import sys
 import optuna
 
-index = 1
+index = 2
 sampler = optuna.samplers.CmaEsSampler()
 
-# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions）
+# 現在のデフォルト設定（ShuntaisaiActionSelector.defaultOptions、shuntaisai_1のtrial 539）
 initial_params = {
-    "speed@0": 1.96,
-    "stamina@0": 1.47,
-    "wisdom@0": 0.98,
-    "hp@0": 3.0,
-    "level@0": 24.0,
-    "levelUrgency@0": 147.0,
+    "speed@0": 0.76,
+    "stamina@0": 1.0,
+    "wisdom@0": 0.48,
+    "hp@0": 2.9,
+    "level@0": 37.5,
+    "levelUrgency@0": 139.0,
 
-    "speed@1": 0.98,
-    "stamina@1": 1.05,
-    "power@1": 1.0,
-    "guts@1": 0.98,
-    "wisdom@1": 2.2,
-    "skillPt@1": 1.47,
-    "hp@1": 3.0,
-    "gauge@1": 54.0,
-    "level@1": 12.0,
-    "levelUrgency@1": 73.5,
+    "speed@1": 0.72,
+    "stamina@1": 1.61,
+    "power@1": 1.6,
+    "guts@1": 1.26,
+    "wisdom@1": 2.6,
+    "skillPt@1": 2.48,
+    "hp@1": 5.3,
+    "gauge@1": 103.0,
+    "level@1": 21.0,
+    "levelUrgency@1": 133.5,
 
-    "speed@2": 0.686,
-    "stamina@2": 0.735,
-    "power@2": 0.7,
-    "guts@2": 0.98,
-    "wisdom@2": 1.568,
-    "skillPt@2": 2.1,
-    "targetBonus@2": 0.35,
-    "hp@2": 4.2,
-    "gauge@2": 75.0,
-    "gaugeDecayTurns@2": 8,
+    "speed@2": 0.282,
+    "stamina@2": 0.8,
+    "power@2": 0.6,
+    "guts@2": 0.76,
+    "wisdom@2": 1.044,
+    "skillPt@2": 1.6,
+    "targetBonus@2": 0.4,
+    "hp@2": 5.6,
+    "gauge@2": 82.0,
+    "gaugeDecayTurns@2": 3,
 
-    "targetBonus@3": 21.0,
+    "targetBonus@3": 13.0,
 
-    "skillHint": 6.0,
+    "skillHint": 7.5,
 }
 
 def objective(trial):
@@ -45,9 +46,9 @@ def objective(trial):
     count = 20000
 
     params = {
-        "speed@0": trial.suggest_float('speed@0', 0.5, 3.0, step=0.02),
+        "speed@0": trial.suggest_float('speed@0', 0.1, 3.0, step=0.02),
         "stamina@0": trial.suggest_float('stamina@0', 0.5, 3.0, step=0.01),
-        "wisdom@0": trial.suggest_float('wisdom@0', 0.3, 2.5, step=0.02),
+        "wisdom@0": trial.suggest_float('wisdom@0', 0.1, 2.5, step=0.02),
         "hp@0": trial.suggest_float('hp@0', 1.5, 6.0, step=0.1),
         "level@0": trial.suggest_float('level@0', 0.0, 50.0, step=0.5),
         "levelUrgency@0": trial.suggest_float('levelUrgency@0', 50.0, 300.0, step=0.5),
@@ -63,7 +64,7 @@ def objective(trial):
         "level@1": trial.suggest_float('level@1', 0.0, 50.0, step=0.5),
         "levelUrgency@1": trial.suggest_float('levelUrgency@1', 20.0, 300.0, step=0.5),
 
-        "speed@2": trial.suggest_float('speed@2', 0.2, 1.5, step=0.002),
+        "speed@2": trial.suggest_float('speed@2', 0.0, 1.5, step=0.002),
         "stamina@2": trial.suggest_float('stamina@2', 0.2, 1.5, step=0.005),
         "power@2": trial.suggest_float('power@2', 0.2, 1.5, step=0.1),
         "guts@2": trial.suggest_float('guts@2', 0.2, 2.0, step=0.02),
@@ -113,4 +114,6 @@ if len(study.get_trials(deepcopy=False)) == 0:
     print('enque initial trial')
     study.enqueue_trial(initial_params)
 
-study.optimize(objective, n_trials=100000)
+# 引数で実行時間（時間）を指定可能
+timeout = float(sys.argv[1]) * 3600 if len(sys.argv) > 1 else None
+study.optimize(objective, n_trials=100000, timeout=timeout)
