@@ -262,6 +262,8 @@ object Runner {
      * 2. スキルPtをできるだけ上げる（上限なし）
      * 3. スタミナ2500、パワー2400、賢さ2600まで上げる
      * 4. 根性をできるだけ上げる（上限なし）
+     *
+     * 合計スキルヒントLv1につきスキルPt5相当で評価する
      */
     val shuntaisaiSetting = PiecewiseEvaluateSetting(
         StatusType.SPEED to listOf(3200 to 10.0),
@@ -270,6 +272,7 @@ object Runner {
         StatusType.GUTS to listOf(1400 to 10.0, Int.MAX_VALUE to 0.25),
         StatusType.WISDOM to listOf(2000 to 10.0, 2600 to 0.5),
         StatusType.SKILL to listOf(Int.MAX_VALUE to 1.0),
+        skillHint = 5.0,
     )
 
     suspend fun runAndEvaluate(

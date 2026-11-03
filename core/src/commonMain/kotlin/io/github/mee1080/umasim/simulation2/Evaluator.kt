@@ -27,10 +27,17 @@ import io.github.mee1080.umasim.data.trainingTypeOrSkill
  * ステータスごとに区分線形で評価する設定
  *
  * @param segments ステータスごとの区間リスト。(区間の上限値, 区間内の1あたりの評価値)を上限値の昇順で並べる。最後の区間の上限を超えた分は評価しない
+ * @param skillHint 合計スキルヒントLv1あたりの評価値
  */
-class PiecewiseEvaluateSetting(val segments: Map<StatusType, List<Pair<Int, Double>>>) {
+class PiecewiseEvaluateSetting(
+    val segments: Map<StatusType, List<Pair<Int, Double>>>,
+    val skillHint: Double = 0.0,
+) {
 
-    constructor(vararg segments: Pair<StatusType, List<Pair<Int, Double>>>) : this(segments.toMap())
+    constructor(
+        vararg segments: Pair<StatusType, List<Pair<Int, Double>>>,
+        skillHint: Double = 0.0,
+    ) : this(segments.toMap(), skillHint)
 
     fun evaluate(type: StatusType, value: Int): Double {
         var result = 0.0
@@ -43,7 +50,8 @@ class PiecewiseEvaluateSetting(val segments: Map<StatusType, List<Pair<Int, Doub
         return result
     }
 
-    fun evaluate(status: Status) = segments.keys.sumOf { evaluate(it, status.get(it)) }
+    fun evaluate(status: Status) =
+        segments.keys.sumOf { evaluate(it, status.get(it)) } + skillHint * status.skillHint.values.sum()
 }
 
 /**

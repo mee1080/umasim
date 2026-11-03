@@ -36,6 +36,8 @@ initial_params = {
     "gaugeDecayTurns@2": 8,
 
     "targetBonus@3": 21.0,
+
+    "skillHint": 6.0,
 }
 
 def objective(trial):
@@ -73,6 +75,8 @@ def objective(trial):
         "gaugeDecayTurns@2": trial.suggest_int('gaugeDecayTurns@2', 0, 16),
 
         "targetBonus@3": trial.suggest_float('targetBonus@3', 5.0, 50.0, step=0.5),
+
+        "skillHint": trial.suggest_float('skillHint', 0.0, 40.0, step=0.5),
     }
 
     cmd = f'java -Dfile.encoding=UTF-8 -jar ../cli/build/libs/cli.jar --data-dir ../data'\
@@ -84,7 +88,6 @@ def objective(trial):
           f' --support "[Time of Departure]マヤノトップガン" 4'\
           f' --support "[Innovator]フォーエバーヤング" 4'\
           f' --support "[いとどめでたき、まつりかな]吾妻" 4'\
-          f' --without-skills'\
           f' --factor GUTS 3 --factor GUTS 3 --factor GUTS 3'\
           f' --factor WISDOM 3 --factor WISDOM 3 --factor WISDOM 3'\
           + ''.join(f' --param {name}={value}' for name, value in params.items())

@@ -63,7 +63,7 @@ private val shuntaisaiDebugSupport
         "[Time of Departure]マヤノトップガン" to 4,
         "[Innovator]フォーエバーヤング" to 4,
         "[いとどめでたき、まつりかな]吾妻" to 4,
-    ).map { it.copy(skills = emptyList()) }
+    )
 
 private val shuntaisaiDebugFactor = factor(StatusType.GUTS, 3) + factor(StatusType.WISDOM, 3)
 
@@ -115,6 +115,8 @@ fun evaluateShuntaisai(
     println("score: %.1f (all: %.1f)".format(upper.map { it.score }.average(), results.map { it.score }.average()))
     println("status upper: ${upper.statusAverage()}")
     println("status all  : ${results.statusAverage()}")
+    fun List<ShuntaisaiEvalResult>.hintAverage() = "%.1f".format(map { it.summary.status.skillHint.values.sum() }.average())
+    println("skill hint: upper ${upper.hintAverage()} / all ${results.hintAverage()}")
     // 最初の区間の上限を必達ラインとして達成率を出力
     val required = setting.segments.mapNotNull { (type, segments) ->
         segments.first().first.takeIf { it < Int.MAX_VALUE }?.let { type to it }

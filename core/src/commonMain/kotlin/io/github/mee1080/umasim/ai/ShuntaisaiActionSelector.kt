@@ -9,6 +9,7 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import kotlin.math.max
 import kotlin.math.min
+import kotlin.math.roundToInt
 
 /**
  * 駿大祭シナリオのAI
@@ -141,6 +142,7 @@ open class ShuntaisaiActionSelector(
      * @param levelUrgency 次の進捗発表会の大成功に足りない演目Lv1あたりの追加評価値
      * @param race 目標外レースの追加評価値
      * @param joryokuSupport 助力の支え獲得の評価値
+     * @param skillHint スキルヒントLv1あたりの評価値
      * @param hpDecayTurns URAファイナルズ（トレーニングで体力回復、失敗率0）直前のこのターン数で体力の評価を0に近づける
      * @param holdPractice 演目稽古を実行せずゲージ最大で止めておく演目（目標レース等のゲージ上昇を他の演目に回すため、大成功に演目Lvが足りない場合を除く）
      * @param holdPracticePenalty holdPracticeの演目稽古を実行する場合の減点
@@ -183,6 +185,7 @@ open class ShuntaisaiActionSelector(
         val levelUrgency: Double = 105.0,
         val race: Double = -100.0,
         val joryokuSupport: Double = 30.0,
+        val skillHint: Double = 6.0,
         val hpDecayTurns: Int = 5,
         val holdPractice: List<StatusType> = emptyList(),
         val holdPracticePenalty: Double = 0.0,
@@ -336,7 +339,9 @@ open class ShuntaisaiActionSelector(
     private fun calcResultScore(context: Context, action: Action, result: ActionResult): Double {
         val (option, state) = context.option to context.state
         val status = result.status
-        var score = calcStatusScore(context, state.status, status + expectedHintStatus(context, action))
+        val (hintStatus, hintLevel) = expectedHint(context, action)
+        var score = calcStatusScore(context, state.status, status + hintStatus)
+        score += hintLevel * option.skillHint
         score += calcHpScore(option, state.status, status.hp) * context.hpFactor
         score += status.motivation * option.motivation
         if (result.success && action is Training) {
@@ -382,29 +387,73 @@ open class ShuntaisaiActionSelector(
         return score
     }
 
-    private fun expectedHintStatus(context: Context, action: Action): Status {
-        if (action !is Training) return Status()
+    /**
+     * トレーニングのヒントで得られるステータスとスキルヒントLvの期待値
+     */
+    private fun expectedHint(context: Context, action: Action): Pair<Status, Double> {
+        if (action !is Training) return Status() to 0.0
+        val state = context.state
         val target = action.member.filter { it.hint }
-        if (target.isEmpty()) return Status()
-        val status = context.shuntaisaiStatus
-        val allHint = status != null && status.allTypeBonus && status.isPractice(action.type) &&
-                status.practiceEffect(action.type).allTypeAllHintEffect
-        return if (allHint) {
-            target.filter { !it.guest && !it.outingType }.fold(Status()) { acc, member -> acc + member.card.hintStatus }
-        } else {
-            // ランダムに1人分（期待値は切り捨て）
-            target.fold(Status()) { acc, member -> acc + member.card.hintStatus }.let {
-                Status(
-                    speed = it.speed / target.size,
-                    stamina = it.stamina / target.size,
-                    power = it.power / target.size,
-                    guts = it.guts / target.size,
-                    wisdom = it.wisdom / target.size,
-                    skillPt = it.skillPt / target.size,
-                )
+        if (target.isEmpty()) return Status() to 0.0
+        return if (state.allSupportHint(action.type)) {
+            // 全ヒント: 対象サポカごとに未獲得のスキルから(1+ヒント数アップ)個、ステータスはCalculatorで計算済み
+            val count = 1 + state.hintCountUp(action.type, action.member)
+            val members = target.filter { state.isAllSupportHintTarget(it) }
+            val hintLevel = members.sumOf { member ->
+                val skills = member.card.skills.count { !state.status.skillHint.containsKey(it) }
+                min(count, skills) * min(5, 1 + member.card.hintLevel).toDouble()
             }
+            members.fold(Status()) { acc, member -> acc + member.card.hintStatus } to hintLevel
+        } else {
+            // ランダムに1人分
+            val baseCount = 1 + state.hintCountPlus + state.hintCountUp(action.type, action.member)
+            var hintStatus = Status()
+            var hintLevel = 0.0
+            target.forEach { member ->
+                val (skillPicks, statusPicks) = expectedHintPicks(
+                    baseCount + member.card.hintCountUp(member.relation),
+                    member.availableHintSkills(state.status).size,
+                )
+                hintStatus += member.card.hintStatus.scale(statusPicks / target.size)
+                hintLevel += skillPicks * member.averageHintLevelUp(state.status) / target.size
+            }
+            hintStatus to hintLevel
         }
     }
+
+    /**
+     * ヒント1回ごとに「未選択でLv5未満のスキル＋ステータス」から等確率で選ぶ場合の、(スキルの選択回数, ステータスの選択回数)の期待値
+     */
+    private fun expectedHintPicks(count: Int, skills: Int): Pair<Double, Double> {
+        if (count <= 0) return 0.0 to 0.0
+        if (skills <= 0) return 0.0 to count.toDouble()
+        val skillRate = skills / (skills + 1.0)
+        val (skillA, statusA) = expectedHintPicks(count - 1, skills - 1)
+        val (skillB, statusB) = expectedHintPicks(count - 1, skills)
+        return (skillRate * (1 + skillA) + (1 - skillRate) * skillB) to
+                (skillRate * statusA + (1 - skillRate) * (1 + statusB))
+    }
+
+    private fun MemberState.availableHintSkills(status: Status) =
+        card.skills.filter { status.skillHint.getOrElse(it) { 0 } < 5 }
+
+    /**
+     * スキルヒント1回で上がるLvの平均（Lv5を超える分は除く）
+     */
+    private fun MemberState.averageHintLevelUp(status: Status): Double {
+        val skills = availableHintSkills(status)
+        if (skills.isEmpty()) return 0.0
+        return skills.map { min(1 + card.hintLevel, 5 - status.skillHint.getOrElse(it) { 0 }) }.average()
+    }
+
+    private fun Status.scale(rate: Double) = Status(
+        speed = (speed * rate).roundToInt(),
+        stamina = (stamina * rate).roundToInt(),
+        power = (power * rate).roundToInt(),
+        guts = (guts * rate).roundToInt(),
+        wisdom = (wisdom * rate).roundToInt(),
+        skillPt = (skillPt * rate).roundToInt(),
+    )
 
     private fun calcScenarioScore(
         context: Context,
