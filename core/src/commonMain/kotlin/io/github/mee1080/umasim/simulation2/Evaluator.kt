@@ -18,18 +18,49 @@
  */
 package io.github.mee1080.umasim.simulation2
 
+import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
 
+/**
+ * ステータスごとに区分線形で評価する設定
+ *
+ * @param segments ステータスごとの区間リスト。(区間の上限値, 区間内の1あたりの評価値)を上限値の昇順で並べる。最後の区間の上限を超えた分は評価しない
+ */
+class PiecewiseEvaluateSetting(val segments: Map<StatusType, List<Pair<Int, Double>>>) {
+
+    constructor(vararg segments: Pair<StatusType, List<Pair<Int, Double>>>) : this(segments.toMap())
+
+    fun evaluate(type: StatusType, value: Int): Double {
+        var result = 0.0
+        var lower = 0
+        for ((upper, factor) in segments[type] ?: return 0.0) {
+            if (value <= lower) break
+            result += (kotlin.math.min(value, upper) - lower) * factor
+            lower = upper
+        }
+        return result
+    }
+
+    fun evaluate(status: Status) = segments.keys.sumOf { evaluate(it, status.get(it)) }
+}
+
+/**
+ * (1あたりの評価値, 上限値)形式の評価設定を区分線形の評価設定に変換
+ */
+fun Map<StatusType, Pair<Double, Int>>.toPiecewise() =
+    PiecewiseEvaluateSetting(mapValues { listOf(it.value.second to it.value.first) })
+
 class Evaluator(val summaries: List<Summary>) {
 
+    constructor(summaries: List<Summary>, evaluateSetting: PiecewiseEvaluateSetting, rate: Double) : this(
+        summaries.sortedByDescending { evaluateSetting.evaluate(it.status) }
+            .slice(0 until (summaries.size * rate).toInt())
+    )
+
     constructor(summaries: List<Summary>, evaluateSetting: Map<StatusType, Pair<Double, Int>>, rate: Double) : this(
-        summaries.sortedByDescending { summary ->
-            evaluateSetting.entries.sumOf {
-                kotlin.math.min(summary.status.get(it.key), it.value.second) * it.value.first
-            }
-        }.slice(0 until (summaries.size * rate).toInt())
+        summaries, evaluateSetting.toPiecewise(), rate,
     )
 
     companion object {
@@ -78,10 +109,9 @@ class Evaluator(val summaries: List<Summary>) {
             typeToFactor.sumOf { kotlin.math.min(result.get(it.first), limit) * it.second }
         }
 
-    fun getStatusSum(typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
-        results.value.map { result ->
-            typeToFactorLimit.entries.sumOf { kotlin.math.min(result.get(it.key), it.value.second) * it.value.first }
-        }
+    fun getStatusSum(typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) = getStatusSum(typeToFactorLimit.toPiecewise())
+
+    fun getStatusSum(evaluateSetting: PiecewiseEvaluateSetting) = results.value.map { evaluateSetting.evaluate(it) }
 
     fun upperSum(rate: Double, vararg type: StatusType) = getStatusSum(*type).sortedDescending()
         .slice(0 until (summaries.size * rate).toInt()).average()
@@ -91,7 +121,10 @@ class Evaluator(val summaries: List<Summary>) {
             .slice(0 until (summaries.size * rate).toInt()).average()
 
     fun upperSum(rate: Double, typeToFactorLimit: Map<StatusType, Pair<Double, Int>>) =
-        getStatusSum(typeToFactorLimit).sortedDescending()
+        upperSum(rate, typeToFactorLimit.toPiecewise())
+
+    fun upperSum(rate: Double, evaluateSetting: PiecewiseEvaluateSetting) =
+        getStatusSum(evaluateSetting).sortedDescending()
             .slice(0 until (summaries.size * rate).toInt()).average()
 
     fun upperSum(rate: Double, limit: Int = Int.MAX_VALUE) = upperSum(rate, *outputStatus, limit = limit)

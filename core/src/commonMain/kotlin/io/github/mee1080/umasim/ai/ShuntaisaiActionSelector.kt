@@ -13,7 +13,7 @@ import kotlin.math.min
 /**
  * 駿大祭シナリオのAI
  *
- * 行動ごとに、結果候補の期待値を評価値（Runner.shuntaisaiSettingと同じ単位）で算出して最大のものを選択する
+ * 行動ごとに、結果候補の期待値を評価値（スキルPt1=3.0）で算出して最大のものを選択する
  */
 open class ShuntaisaiActionSelector(
     vararg val options: Option = defaultOptions,
@@ -31,7 +31,7 @@ open class ShuntaisaiActionSelector(
         val defaultOptions = arrayOf(
             // ジュニア
             Option(
-                speed = 2.8,
+                speed = 1.96,
                 stamina = 1.47,
                 level = 24.01,
                 levelUrgency = 147.0,
@@ -45,13 +45,11 @@ open class ShuntaisaiActionSelector(
             ),
             // クラシック
             Option(
-                speed = 1.4,
-                wisdom = 1.372,
+                speed = 0.98,
+                wisdom = 2.195,
                 skillPt = 1.47,
                 level = 12.005,
                 levelUrgency = 73.5,
-                holdPractice = listOf(StatusType.GUTS),
-                holdPracticePenalty = 700.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.TOKKA,
                     ShuntaisaiTeaching.HINT,
@@ -73,12 +71,13 @@ open class ShuntaisaiActionSelector(
             ),
             // シニア
             Option(
-                speed = 1.4,
+                speed = 0.686,
                 stamina = 0.735,
+                power = 0.7,
+                wisdom = 1.568,
+                targetBonus = 0.35,
                 hp = 4.2,
                 gauge = 75.295,
-                holdPractice = listOf(StatusType.GUTS),
-                holdPracticePenalty = 350.0,
                 teachings = listOf(
                     ShuntaisaiTeaching.KYORYOKU,
                     ShuntaisaiTeaching.TOKKA,
@@ -95,9 +94,11 @@ open class ShuntaisaiActionSelector(
             // URAファイナルズ
             Option(
                 stamina = 1.5,
-                guts = 0.35,
-                wisdom = 1.0,
+                power = 1.5,
+                guts = 0.75,
+                wisdom = 1.5,
                 skillPt = 3.0,
+                targetBonus = 21.0,
                 risk = 2.1,
                 relation = 0.0,
                 outingRelation = 0.0,
@@ -124,9 +125,11 @@ open class ShuntaisaiActionSelector(
     }
 
     /**
-     * 評価値はRunner.shuntaisaiSettingと同じ単位（スピード1=2.0など）
+     * 評価値の単位はスキルPt1=3.0（Runner.shuntaisaiSettingの3倍）
      *
      * @param statusCapMargin 評価上限からこの値を引いた値を超える分のステータスは評価しない
+     * @param targetMargin 必達ライン（xxxTarget）にこの値を足した値までを必達分として評価する
+     * @param targetBonus 必達分のステータス1あたりの追加評価値
      * @param statusCapMarginPerTurn 残りターン1あたりのstatusCapMarginの追加分（今後の上昇見込み）
      * @param hp 体力1あたりの評価値（最大体力を超える分は評価しない）
      * @param hpKeep 行動後の体力がhpKeepThreshold未満になる場合の、不足1あたりの減点
@@ -155,9 +158,16 @@ open class ShuntaisaiActionSelector(
         val speedCap: Int = 3200,
         val staminaCap: Int = 2500,
         val powerCap: Int = 2400,
-        val gutsCap: Int = 2200,
+        val gutsCap: Int = Int.MAX_VALUE,
         val wisdomCap: Int = 2600,
         val statusCapMargin: Int = 100,
+        val speedTarget: Int = 3200,
+        val staminaTarget: Int = 2200,
+        val powerTarget: Int = 2000,
+        val gutsTarget: Int = 1400,
+        val wisdomTarget: Int = 2000,
+        val targetMargin: Int = 0,
+        val targetBonus: Double = 0.0,
         val statusCapMarginPerTurn: Double = 0.0,
         val hp: Double = 3.0,
         val hpKeepThreshold: Int = 62,
@@ -196,6 +206,15 @@ open class ShuntaisaiActionSelector(
             StatusType.GUTS -> gutsCap
             StatusType.WISDOM -> wisdomCap
             else -> Int.MAX_VALUE
+        }
+
+        fun target(type: StatusType) = when (type) {
+            StatusType.SPEED -> speedTarget
+            StatusType.STAMINA -> staminaTarget
+            StatusType.POWER -> powerTarget
+            StatusType.GUTS -> gutsTarget
+            StatusType.WISDOM -> wisdomTarget
+            else -> 0
         }
 
         override fun generateSelector() = ShuntaisaiActionSelector(this)
@@ -332,11 +351,16 @@ open class ShuntaisaiActionSelector(
         var score = diff.skillPt * option.skillPt
         trainingType.forEach { type ->
             val value = diff.get(type)
+            val currentValue = current.get(type)
+            val target = option.target(type) + option.targetMargin
             if (value <= 0) {
-                score += value * option.weight(type)
+                score += value * (option.weight(type) + if (currentValue <= target) option.targetBonus else 0.0)
             } else {
-                val rest = max(0, option.cap(type) - context.capMargin - current.get(type))
-                score += min(value, rest) * option.weight(type)
+                // 必達分は追加評価、それ以降は評価上限まで通常評価
+                val targetValue = min(value, max(0, target - currentValue))
+                val rest = max(0, option.cap(type) - context.capMargin - currentValue - targetValue)
+                score += targetValue * (option.weight(type) + option.targetBonus)
+                score += min(value - targetValue, rest) * option.weight(type)
             }
         }
         return score

@@ -60,6 +60,27 @@ fun doSimulation2(
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
 ) {
     doSimulation2(
+        scenario, chara, defaultSupport, targetStatus, rarity, talent, factor, testCount, selector,
+        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events,
+    )
+}
+
+fun doSimulation2(
+    scenario: Scenario,
+    chara: Chara,
+    defaultSupport: Array<SupportCard>,
+    targetStatus: StatusType,
+    rarity: IntRange = 2..3,
+    talent: IntRange = 4..4,
+    factor: List<Pair<StatusType, Int>>,
+    testCount: Int,
+    selector: () -> ActionSelector,
+    evaluateSetting: PiecewiseEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
+    events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+) {
+    doSimulation2(
         scenario,
         chara,
         defaultSupport,
@@ -113,6 +134,25 @@ fun doSimulation2(
     testCount: Int,
     selector: () -> ActionSelector,
     evaluateSetting: Map<StatusType, Pair<Double, Int>> = Runner.mileEvaluateSetting,
+    evaluateUpperRate: Double = 0.2,
+    scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
+    events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+) {
+    doSimulation2(
+        scenario, chara, defaultSupport, target, factor, testCount, selector,
+        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events,
+    )
+}
+
+fun doSimulation2(
+    scenario: Scenario,
+    chara: Chara,
+    defaultSupport: Array<SupportCard>,
+    target: List<SupportCard>,
+    factor: List<Pair<StatusType, Int>>,
+    testCount: Int,
+    selector: () -> ActionSelector,
+    evaluateSetting: PiecewiseEvaluateSetting,
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },

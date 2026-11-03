@@ -13,7 +13,6 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.runBlocking
 import java.io.File
-import kotlin.math.min
 import kotlin.time.measureTime
 
 /**
@@ -59,7 +58,7 @@ private val shuntaisaiDebugSupport
         "[いとどめでたき、まつりかな]吾妻" to 4,
     ).map { it.copy(skills = emptyList()) }
 
-private val shuntaisaiDebugFactor = factor(StatusType.SPEED, 6)
+private val shuntaisaiDebugFactor = factor(StatusType.STAMINA, 3) + factor(StatusType.GUTS, 3)
 
 private val shuntaisaiCheckTurns = listOf(24, 48, 60, 72)
 
@@ -86,7 +85,7 @@ fun evaluateShuntaisai(count: Int, options: Array<ShuntaisaiActionSelector.Optio
                     val shuntaisaiStatus = history.last().afterTurnState.shuntaisaiStatus
                     ShuntaisaiEvalResult(
                         summary,
-                        setting.entries.sumOf { min(summary.status.get(it.key), it.value.second) * it.value.first },
+                        setting.evaluate(summary.status),
                         (0..2).map {
                             shuntaisaiStatus?.presentationResults?.getOrNull(it) == ShuntaisaiPresentationResult.GREAT_SUCCESS
                         },
@@ -104,14 +103,38 @@ fun evaluateShuntaisai(count: Int, options: Array<ShuntaisaiActionSelector.Optio
     println("score: %.1f (all: %.1f)".format(upper.map { it.score }.average(), results.map { it.score }.average()))
     println("status upper: ${upper.statusAverage()}")
     println("status all  : ${results.statusAverage()}")
+    // 最初の区間の上限を必達ラインとして達成率を出力
+    val required = setting.segments.mapNotNull { (type, segments) ->
+        segments.first().first.takeIf { it < Int.MAX_VALUE }?.let { type to it }
+    }
+    fun List<ShuntaisaiEvalResult>.requiredRate(check: (Status) -> Boolean) =
+        "%.3f".format(count { check(it.summary.status) } / size.toDouble())
+    listOf("upper" to upper, "all  " to results).forEach { (label, list) ->
+        println("required $label: all=${list.requiredRate { status -> required.all { status.get(it.first) >= it.second } }} " +
+                required.joinToString(" ") { (type, value) ->
+                    "$type=${list.requiredRate { it.get(type) >= value }}"
+                })
+    }
     shuntaisaiCheckTurns.forEachIndexed { index, turn ->
-        println("turn $turn: " + listOf(
-            StatusType.SPEED, StatusType.STAMINA, StatusType.POWER, StatusType.GUTS, StatusType.WISDOM, StatusType.SKILL,
-        ).joinToString("/") { type -> "%.0f".format(upper.map { it.turnStatus[index].get(type) }.average()) })
+        println(
+            "turn $turn: " + listOf(
+                StatusType.SPEED,
+                StatusType.STAMINA,
+                StatusType.POWER,
+                StatusType.GUTS,
+                StatusType.WISDOM,
+                StatusType.SKILL,
+            ).joinToString("/") { type -> "%.0f".format(upper.map { it.turnStatus[index].get(type) }.average()) })
     }
     println("great: ${(0..2).joinToString("/") { i -> "%.3f".format(results.count { it.great[i] } / results.size.toDouble()) }}")
     println("level: ${(0..4).joinToString("/") { i -> "%.2f".format(results.map { it.levels[i] }.average()) }}")
-    println("training: ${trainingType.joinToString("/") { type -> "%.1f".format(results.map { it.summary.trainingCount[type]!! }.average()) }}")
+    println(
+        "training: ${
+            trainingType.joinToString("/") { type ->
+                "%.1f".format(results.map { it.summary.trainingCount[type]!! }.average())
+            }
+        }"
+    )
     println(
         "sleep/outing/race: %.1f/%.1f/%.1f".format(
             results.map { it.summary.sleepCount }.average(),

@@ -254,13 +254,22 @@ object Runner {
         ),
     )
 
-    val shuntaisaiSetting = mapOf(
-        StatusType.SPEED to (2.0 to 3200),
-        StatusType.STAMINA to (1.5 to 2500),
-        StatusType.POWER to (1.0 to 2400),
-        StatusType.GUTS to (0.5 to 2200),
-        StatusType.WISDOM to (1.0 to 2600),
-        StatusType.SKILL to (3.0 to 12000),
+    /**
+     * 駿大祭の評価設定
+     *
+     * 優先順位
+     * 1. スピード3200、スタミナ2200、パワー2000、根性1400、賢さ2000を確実に超える（不足1あたりスキルPt10相当）
+     * 2. スキルPtをできるだけ上げる（上限なし）
+     * 3. スタミナ2500、パワー2400、賢さ2600まで上げる
+     * 4. 根性をできるだけ上げる（上限なし）
+     */
+    val shuntaisaiSetting = PiecewiseEvaluateSetting(
+        StatusType.SPEED to listOf(3200 to 10.0),
+        StatusType.STAMINA to listOf(2200 to 10.0, 2500 to 0.5),
+        StatusType.POWER to listOf(2000 to 10.0, 2400 to 0.5),
+        StatusType.GUTS to listOf(1400 to 10.0, Int.MAX_VALUE to 0.25),
+        StatusType.WISDOM to listOf(2000 to 10.0, 2600 to 0.5),
+        StatusType.SKILL to listOf(Int.MAX_VALUE to 1.0),
     )
 
     suspend fun runAndEvaluate(
@@ -270,6 +279,22 @@ object Runner {
         supportCardList: List<SupportCard>,
         factorList: List<Pair<StatusType, Int>> = emptyList(),
         evaluateSetting: Map<StatusType, Pair<Double, Int>>,
+        evaluateUpperRate: Double = 0.2,
+        scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
+        events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+        selector: () -> ActionSelector,
+    ) = runAndEvaluate(
+        count, scenario, chara, supportCardList, factorList, evaluateSetting.toPiecewise(),
+        evaluateUpperRate, scenarioEvents, events, selector,
+    )
+
+    suspend fun runAndEvaluate(
+        count: Int,
+        scenario: Scenario,
+        chara: Chara,
+        supportCardList: List<SupportCard>,
+        factorList: List<Pair<StatusType, Int>> = emptyList(),
+        evaluateSetting: PiecewiseEvaluateSetting,
         evaluateUpperRate: Double = 0.2,
         scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
         events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
