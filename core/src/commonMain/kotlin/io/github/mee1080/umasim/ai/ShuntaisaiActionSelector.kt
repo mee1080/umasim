@@ -78,6 +78,7 @@ open class ShuntaisaiActionSelector(
                 targetBonus = 0.35,
                 hp = 4.2,
                 gauge = 75.295,
+                gaugeDecayTurns = 8,
                 teachings = listOf(
                     ShuntaisaiTeaching.KYORYOKU,
                     ShuntaisaiTeaching.TOKKA,
@@ -143,6 +144,7 @@ open class ShuntaisaiActionSelector(
      * @param hpDecayTurns URAファイナルズ（トレーニングで体力回復、失敗率0）直前のこのターン数で体力の評価を0に近づける
      * @param holdPractice 演目稽古を実行せずゲージ最大で止めておく演目（目標レース等のゲージ上昇を他の演目に回すため、大成功に演目Lvが足りない場合を除く）
      * @param holdPracticePenalty holdPracticeの演目稽古を実行する場合の減点
+     * @param gaugeDecayTurns URAファイナルズ直前のこのターン数で演目ゲージの評価を0に近づける（0なら減衰なし）
      * @param teachings 教えの割り当て（トレーニングの種類順）
      * @param campTeachings 合宿直前の付け替えでの教えの割り当て（nullならteachingsと同じ）
      * @param transforms 転成の組み合わせ（新しい教え→消費する教え）
@@ -184,6 +186,7 @@ open class ShuntaisaiActionSelector(
         val hpDecayTurns: Int = 5,
         val holdPractice: List<StatusType> = emptyList(),
         val holdPracticePenalty: Double = 0.0,
+        val gaugeDecayTurns: Int = 0,
         val teachings: List<ShuntaisaiTeaching> = emptyList(),
         val campTeachings: List<ShuntaisaiTeaching>? = null,
         val transforms: Map<ShuntaisaiTeaching, ShuntaisaiTeaching> = emptyMap(),
@@ -280,6 +283,10 @@ open class ShuntaisaiActionSelector(
         val capMargin = option.statusCapMargin + (option.statusCapMarginPerTurn * (78 - state.turn)).toInt()
 
         val hpFactor = ((shuntaisaiFinalsStartTurn - 1 - state.turn).toDouble() / option.hpDecayTurns).coerceIn(0.0, 1.0)
+
+        val gaugeDecay = if (option.gaugeDecayTurns <= 0) 1.0 else {
+            ((shuntaisaiFinalsStartTurn - 1 - state.turn).toDouble() / option.gaugeDecayTurns).coerceIn(0.0, 1.0)
+        }
 
         /**
          * 次の進捗発表会の大成功に不足している演目Lv（以降の合宿終了による上昇を考慮）
@@ -412,7 +419,8 @@ open class ShuntaisaiActionSelector(
             val up = min(value, shuntaisaiMaxGauge - status.gauge(type))
             // 演目Lvが上限でも演目稽古自体が強いため評価する
             if (up > 0) {
-                score += up * (option.gauge + (context.levelDeficit[type] ?: 0).coerceAtMost(1) * option.levelUrgency / shuntaisaiMaxGauge)
+                score += up * (option.gauge * context.gaugeDecay +
+                        (context.levelDeficit[type] ?: 0).coerceAtMost(1) * option.levelUrgency / shuntaisaiMaxGauge)
             }
         }
         val practice = param.practice

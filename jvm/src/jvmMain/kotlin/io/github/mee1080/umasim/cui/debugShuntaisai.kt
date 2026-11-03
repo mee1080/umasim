@@ -19,7 +19,8 @@ import kotlin.time.measureTime
  * 駿大祭の動作確認・AI評価
  *
  * * 引数なし: 1回のシミュレーション結果を詳細表示
- * * `eval [回数] [Optionの配列のJSONファイル...]`: Runner.shuntaisaiSettingで評価（上位20%の平均）
+ * * `eval [回数] [factor=スピ,スタ,パワ,根性,賢さ...] [Optionの配列のJSONファイル...]`: Runner.shuntaisaiSettingで評価（上位20%の平均）
+ *   * factorは各ステータスの☆3因子の数（複数指定で全組み合わせを評価）
  * * `dump`: デフォルト設定をJSONで出力
  */
 fun debugShuntaisai(args: Array<String> = emptyArray()) {
@@ -27,12 +28,18 @@ fun debugShuntaisai(args: Array<String> = emptyArray()) {
         when (args.firstOrNull()) {
             "eval" -> {
                 val count = args.getOrNull(1)?.toInt() ?: 10000
-                if (args.size <= 2) {
-                    evaluateShuntaisai(count, ShuntaisaiActionSelector.defaultOptions)
-                } else {
-                    args.drop(2).forEach { file ->
-                        println("[$file]")
-                        evaluateShuntaisai(count, ShuntaisaiActionSelector.decodeOptions(File(file).readText()))
+                val (factorArgs, files) = args.drop(2).partition { it.startsWith("factor=") }
+                val factors = factorArgs.map { arg ->
+                    val counts = arg.removePrefix("factor=").split(",").map { it.toInt() }
+                    arg to trainingType.zip(counts).flatMap { (type, n) -> factor(type, n) }
+                }.ifEmpty { listOf(null to shuntaisaiDebugFactor) }
+                val options = files.map { it to ShuntaisaiActionSelector.decodeOptions(File(it).readText()) }
+                    .ifEmpty { listOf(null to ShuntaisaiActionSelector.defaultOptions) }
+                factors.forEach { (factorLabel, factor) ->
+                    options.forEach { (file, option) ->
+                        val label = listOfNotNull(file, factorLabel).joinToString(" ")
+                        if (label.isNotEmpty()) println("[$label]")
+                        evaluateShuntaisai(count, option, factor)
                     }
                 }
             }
@@ -58,7 +65,7 @@ private val shuntaisaiDebugSupport
         "[いとどめでたき、まつりかな]吾妻" to 4,
     ).map { it.copy(skills = emptyList()) }
 
-private val shuntaisaiDebugFactor = factor(StatusType.STAMINA, 3) + factor(StatusType.GUTS, 3)
+private val shuntaisaiDebugFactor = factor(StatusType.GUTS, 3) + factor(StatusType.WISDOM, 3)
 
 private val shuntaisaiCheckTurns = listOf(24, 48, 60, 72)
 
@@ -70,17 +77,22 @@ private class ShuntaisaiEvalResult(
     val turnStatus: List<Status>,
 )
 
-fun evaluateShuntaisai(count: Int, options: Array<ShuntaisaiActionSelector.Option>) {
+fun evaluateShuntaisai(
+    count: Int,
+    options: Array<ShuntaisaiActionSelector.Option>,
+    factor: List<Pair<StatusType, Int>> = shuntaisaiDebugFactor,
+) {
     val chara = shuntaisaiDebugChara
     val support = shuntaisaiDebugSupport
     val setting = Runner.shuntaisaiSetting
-    val chunk = 16
+    // 並列スレッド数は最大4
+    val chunk = 4
     val results = runBlocking {
         (0 until chunk).map { index ->
             async(Dispatchers.Default) {
                 val n = count / chunk + if (index < count % chunk) 1 else 0
                 List(n) {
-                    val (summary, history) = Simulator(Scenario.SHUNTAISAI, chara, support, shuntaisaiDebugFactor)
+                    val (summary, history) = Simulator(Scenario.SHUNTAISAI, chara, support, factor)
                         .simulateWithHistory(ShuntaisaiActionSelector(*options))
                     val shuntaisaiStatus = history.last().afterTurnState.shuntaisaiStatus
                     ShuntaisaiEvalResult(
