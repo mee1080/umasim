@@ -96,6 +96,13 @@ open class ShuntaisaiActionSelector(
                     ShuntaisaiTeaching.FUKUTSU,
                     ShuntaisaiTeaching.KENSAN,
                 ),
+                campTeachings = listOf(
+                    ShuntaisaiTeaching.KYORYOKU,
+                    ShuntaisaiTeaching.TOKKA,
+                    ShuntaisaiTeaching.KENSAN,
+                    ShuntaisaiTeaching.FUKUTSU,
+                    ShuntaisaiTeaching.RYODO,
+                ),
                 transforms = mapOf(
                     ShuntaisaiTeaching.FUKUTSU to ShuntaisaiTeaching.HINT,
                     ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.JORYOKU,
