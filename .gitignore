@@ -2,6 +2,7 @@
 /settings.json*
 settings.conf
 /.kotlin
+/.claude
 
 .gradle
 .idea
