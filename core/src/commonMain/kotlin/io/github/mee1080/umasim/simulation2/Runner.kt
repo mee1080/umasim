@@ -275,6 +275,46 @@ object Runner {
         skillHint = 5.0,
     )
 
+    /**
+     * 駿大祭の評価設定（ヒント優先）、withHintSkillsでサポートカードを設定して使用する
+     *
+     * 優先順位
+     * 1. 全てのサポートカードのスキルヒントを全て獲得する（スキル1つあたりスキルPt1000相当）
+     * 2. スピード3200、スタミナ2200、パワー2000、根性1400、賢さ2000を超える（不足1あたりスキルPt10相当）
+     * 3. スキルPtと合計スキルヒントLvをできるだけ上げる（上限なし、スキルヒントLv1につきスキルPt5相当）
+     * 4. スタミナ2500、パワー2400、賢さ2400まで上げる
+     * 5. 根性を2200まで上げる
+     */
+    val shuntaisaiHintSetting = PiecewiseEvaluateSetting(
+        StatusType.SPEED to listOf(3200 to 10.0),
+        StatusType.STAMINA to listOf(2200 to 10.0, 2500 to 0.5),
+        StatusType.POWER to listOf(2000 to 10.0, 2400 to 0.5),
+        StatusType.GUTS to listOf(1400 to 10.0, 2200 to 0.25),
+        StatusType.WISDOM to listOf(2000 to 10.0, 2400 to 0.5),
+        StatusType.SKILL to listOf(Int.MAX_VALUE to 1.0),
+        skillHint = 5.0,
+        hintSkill = 1000.0,
+    )
+
+    /**
+     * 駿大祭の評価設定（パラメータカンスト優先）、withHintSkillsでサポートカードを設定して使用する
+     *
+     * 優先順位
+     * 1. 全てのサポートカードのスキルヒントを全て獲得する（スキル1つあたりスキルPt1000相当）
+     * 2. スピード3200、スタミナ2500、パワー2400、根性2200、賢さ2400を超える（不足1あたりスキルPt10相当）
+     * 3. スキルPtと合計スキルヒントLvをできるだけ上げる（上限なし、スキルヒントLv1につきスキルPt5相当）
+     */
+    val shuntaisaiParamSetting = PiecewiseEvaluateSetting(
+        StatusType.SPEED to listOf(3200 to 10.0),
+        StatusType.STAMINA to listOf(2500 to 10.0),
+        StatusType.POWER to listOf(2400 to 10.0),
+        StatusType.GUTS to listOf(2200 to 10.0),
+        StatusType.WISDOM to listOf(2400 to 10.0),
+        StatusType.SKILL to listOf(Int.MAX_VALUE to 1.0),
+        skillHint = 5.0,
+        hintSkill = 1000.0,
+    )
+
     suspend fun runAndEvaluate(
         count: Int,
         scenario: Scenario,

@@ -20,6 +20,7 @@ package io.github.mee1080.umasim.simulation2
 
 import io.github.mee1080.umasim.data.Status
 import io.github.mee1080.umasim.data.StatusType
+import io.github.mee1080.umasim.data.SupportCard
 import io.github.mee1080.umasim.data.trainingType
 import io.github.mee1080.umasim.data.trainingTypeOrSkill
 
@@ -28,16 +29,27 @@ import io.github.mee1080.umasim.data.trainingTypeOrSkill
  *
  * @param segments ステータスごとの区間リスト。(区間の上限値, 区間内の1あたりの評価値)を上限値の昇順で並べる。最後の区間の上限を超えた分は評価しない
  * @param skillHint 合計スキルヒントLv1あたりの評価値
+ * @param hintSkill hintSkillsのうちヒントを獲得したスキル1つあたりの評価値
+ * @param hintSkills hintSkillの評価対象のスキル（withHintSkillsで設定する）
  */
 class PiecewiseEvaluateSetting(
     val segments: Map<StatusType, List<Pair<Int, Double>>>,
     val skillHint: Double = 0.0,
+    val hintSkill: Double = 0.0,
+    val hintSkills: Set<String> = emptySet(),
 ) {
 
     constructor(
         vararg segments: Pair<StatusType, List<Pair<Int, Double>>>,
         skillHint: Double = 0.0,
-    ) : this(segments.toMap(), skillHint)
+        hintSkill: Double = 0.0,
+    ) : this(segments.toMap(), skillHint, hintSkill)
+
+    /**
+     * サポートカードのヒントスキルをhintSkillの評価対象に設定する
+     */
+    fun withHintSkills(support: List<SupportCard>) =
+        PiecewiseEvaluateSetting(segments, skillHint, hintSkill, support.flatMap { it.skills }.toSet())
 
     fun evaluate(type: StatusType, value: Int): Double {
         var result = 0.0
@@ -51,7 +63,8 @@ class PiecewiseEvaluateSetting(
     }
 
     fun evaluate(status: Status) =
-        segments.keys.sumOf { evaluate(it, status.get(it)) } + skillHint * status.skillHint.values.sum()
+        segments.keys.sumOf { evaluate(it, status.get(it)) } + skillHint * status.skillHint.values.sum() +
+                hintSkill * hintSkills.count { it in status.skillHint }
 }
 
 /**

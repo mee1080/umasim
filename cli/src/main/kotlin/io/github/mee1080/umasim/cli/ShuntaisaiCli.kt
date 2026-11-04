@@ -3,6 +3,7 @@ package io.github.mee1080.umasim.cli
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.core.main
 import com.github.ajalt.clikt.parameters.options.*
+import com.github.ajalt.clikt.parameters.types.choice
 import com.github.ajalt.clikt.parameters.types.file
 import com.github.ajalt.clikt.parameters.types.int
 import io.github.mee1080.umasim.ai.ShuntaisaiActionSelector
@@ -21,9 +22,9 @@ import kotlinx.serialization.json.*
 import kotlin.math.roundToInt
 
 /**
- * 駿大祭AIの評価（Runner.shuntaisaiSettingのスコア上位20%の平均を標準出力に出力）
+ * 駿大祭AIの評価（--settingの評価設定のスコア上位20%の平均を標準出力に出力）
  *
- * AIの設定はデフォルト設定（または--option-file）を、--paramで上書きする
+ * AIの設定は評価設定に対応する設定（または--option-file）を、--paramで上書きする
  */
 class ShuntaisaiCli : CliktCommand() {
 
@@ -41,6 +42,10 @@ class ShuntaisaiCli : CliktCommand() {
 
     private val threads by option(help = "並列スレッド数").int().default(4)
 
+    private val setting by option(
+        help = "評価設定（default: Runner.shuntaisaiSetting、hint: shuntaisaiHintSetting、param: shuntaisaiParamSetting）",
+    ).choice("default", "hint", "param").default("default")
+
     private val optionFile by option(help = "AI設定（Optionの配列のJSON）").file(mustExist = true)
 
     private val param by option(
@@ -53,11 +58,16 @@ class ShuntaisaiCli : CliktCommand() {
         val supportList = support.map { Store.getSupportByName(it.first, it.second.toInt()) }
             .map { if (withoutSkills) it.copy(skills = emptyList()) else it }
         val factorList = factor.map { StatusType.valueOf(it.first) to it.second.toInt() }
+        val (baseSetting, defaultOptions) = when (setting) {
+            "hint" -> Runner.shuntaisaiHintSetting to ShuntaisaiActionSelector.hintOptions
+            "param" -> Runner.shuntaisaiParamSetting to ShuntaisaiActionSelector.paramOptions
+            else -> Runner.shuntaisaiSetting to ShuntaisaiActionSelector.defaultOptions
+        }
         val options = applyParams(
-            optionFile?.readText() ?: ShuntaisaiActionSelector.encodeOptions(ShuntaisaiActionSelector.defaultOptions),
+            optionFile?.readText() ?: ShuntaisaiActionSelector.encodeOptions(defaultOptions),
         )
         System.err.println(ShuntaisaiActionSelector.encodeOptions(options))
-        val setting = Runner.shuntaisaiSetting
+        val evaluateSetting = baseSetting.withHintSkills(supportList)
         val summaries = runBlocking {
             (0 until threads).map { index ->
                 async(Dispatchers.Default) {
@@ -69,8 +79,8 @@ class ShuntaisaiCli : CliktCommand() {
                 }
             }.awaitAll().flatten()
         }
-        val evaluator = Evaluator(summaries, setting, 0.2)
-        println((evaluator.upperSum(1.0, setting) * 1000).roundToInt() / 1000.0)
+        val evaluator = Evaluator(summaries, evaluateSetting, 0.2)
+        println((evaluator.upperSum(1.0, evaluateSetting) * 1000).roundToInt() / 1000.0)
     }
 
     private fun applyParams(baseJson: String): Array<ShuntaisaiActionSelector.Option> {

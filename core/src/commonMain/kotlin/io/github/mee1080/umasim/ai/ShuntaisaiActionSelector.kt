@@ -126,6 +126,144 @@ open class ShuntaisaiActionSelector(
             ),
         )
 
+        /**
+         * Runner.shuntaisaiHintSetting（ヒント優先）用の設定（shuntaisai_hint_1の上位20試行の中央値）
+         */
+        val hintOptions = arrayOf(
+            // ジュニア
+            defaultOptions[0].copy(
+                speed = 1.61,
+                stamina = 1.25,
+                power = 2.34,
+                guts = 2.93,
+                wisdom = 1.16,
+                hp = 4.3,
+                level = 14.25,
+                levelUrgency = 208.0,
+                hintSkill = 44.5,
+            ),
+            // クラシック
+            defaultOptions[1].copy(
+                speed = 0.57,
+                stamina = 2.14,
+                power = 0.95,
+                guts = 0.87,
+                wisdom = 1.5,
+                skillPt = 2.23,
+                hp = 5.45,
+                gauge = 103.0,
+                level = 12.75,
+                levelUrgency = 140.75,
+                hintSkill = 60.0,
+            ),
+            // シニア
+            defaultOptions[2].copy(
+                speed = 0.441,
+                stamina = 1.285,
+                power = 1.4,
+                guts = 1.87,
+                wisdom = 1.749,
+                skillPt = 2.15,
+                targetBonus = 0.375,
+                hp = 7.7,
+                gauge = 109.0,
+                gaugeDecayTurns = 4,
+                hintSkill = 29.0,
+            ),
+            // URAファイナルズ
+            defaultOptions[3].copy(
+                guts = 3.325,
+                targetBonus = 4.5,
+                hintSkill = 128.0,
+            ),
+        ).map {
+            it.copy(gutsCap = 2200, wisdomCap = 2400, skillHint = 6.5)
+        }.toTypedArray()
+
+        /**
+         * Runner.shuntaisaiParamSetting（パラメータカンスト優先）用の設定（shuntaisai_param_1の上位20試行の中央値）
+         */
+        val paramOptions = arrayOf(
+            // ジュニア
+            defaultOptions[0].copy(
+                speed = 0.91,
+                stamina = 1.805,
+                power = 1.92,
+                guts = 3.5,
+                wisdom = 1.12,
+                hp = 3.7,
+                level = 11.0,
+                levelUrgency = 92.0,
+                hintSkill = 21.5,
+            ),
+            // クラシック
+            defaultOptions[1].copy(
+                speed = 0.49,
+                stamina = 1.12,
+                power = 1.9,
+                guts = 3.91,
+                wisdom = 1.9,
+                skillPt = 1.75,
+                hp = 5.2,
+                gauge = 95.5,
+                level = 25.5,
+                levelUrgency = 85.5,
+                hintSkill = 61.5,
+                campTeachings = listOf(
+                    ShuntaisaiTeaching.KENSAN,
+                    ShuntaisaiTeaching.TAIRYOKU,
+                    ShuntaisaiTeaching.HINT,
+                    ShuntaisaiTeaching.JORYOKU,
+                    ShuntaisaiTeaching.TOKKA,
+                ),
+            ),
+            // シニア
+            defaultOptions[2].copy(
+                speed = 0.594,
+                stamina = 1.175,
+                power = 1.6,
+                guts = 2.53,
+                wisdom = 1.93,
+                skillPt = 1.15,
+                targetBonus = 0.8,
+                hp = 7.3,
+                gauge = 106.0,
+                gaugeDecayTurns = 6,
+                hintSkill = 32.0,
+                teachings = listOf(
+                    ShuntaisaiTeaching.RYODO,
+                    ShuntaisaiTeaching.TOKKA,
+                    ShuntaisaiTeaching.KYORYOKU,
+                    ShuntaisaiTeaching.FUKUTSU,
+                    ShuntaisaiTeaching.KENSAN,
+                ),
+                campTeachings = null,
+                transforms = mapOf(
+                    ShuntaisaiTeaching.FUKUTSU to ShuntaisaiTeaching.HINT,
+                    ShuntaisaiTeaching.RYODO to ShuntaisaiTeaching.TAIRYOKU,
+                    ShuntaisaiTeaching.KYORYOKU to ShuntaisaiTeaching.JORYOKU,
+                ),
+            ),
+            // URAファイナルズ
+            defaultOptions[3].copy(
+                guts = 1.5,
+                targetBonus = 21.25,
+                hintSkill = 45.5,
+            ),
+        ).map {
+            it.copy(
+                staminaCap = 2500,
+                powerCap = 2400,
+                gutsCap = 2200,
+                wisdomCap = 2400,
+                staminaTarget = 2500,
+                powerTarget = 2400,
+                gutsTarget = 2200,
+                wisdomTarget = 2400,
+                skillHint = 1.75,
+            )
+        }.toTypedArray()
+
         val defaultOption = defaultOptions[0]
 
         private val json = Json {
@@ -159,6 +297,7 @@ open class ShuntaisaiActionSelector(
      * @param race 目標外レースの追加評価値
      * @param joryokuSupport 助力の支え獲得の評価値
      * @param skillHint スキルヒントLv1あたりの評価値
+     * @param hintSkill 未獲得のスキルのヒントを獲得する場合の、スキル1つあたりの評価値
      * @param hpDecayTurns URAファイナルズ（トレーニングで体力回復、失敗率0）直前のこのターン数で体力の評価を0に近づける
      * @param holdPractice 演目稽古を実行せずゲージ最大で止めておく演目（目標レース等のゲージ上昇を他の演目に回すため、大成功に演目Lvが足りない場合を除く）
      * @param holdPracticePenalty holdPracticeの演目稽古を実行する場合の減点
@@ -202,6 +341,7 @@ open class ShuntaisaiActionSelector(
         val race: Double = -100.0,
         val joryokuSupport: Double = 30.0,
         val skillHint: Double = 7.0,
+        val hintSkill: Double = 0.0,
         val hpDecayTurns: Int = 5,
         val holdPractice: List<StatusType> = emptyList(),
         val holdPracticePenalty: Double = 0.0,
@@ -355,9 +495,10 @@ open class ShuntaisaiActionSelector(
     private fun calcResultScore(context: Context, action: Action, result: ActionResult): Double {
         val (option, state) = context.option to context.state
         val status = result.status
-        val (hintStatus, hintLevel) = expectedHint(context, action)
+        val (hintStatus, hintLevel, hintSkills) = expectedHint(context, action)
         var score = calcStatusScore(context, state.status, status + hintStatus)
         score += hintLevel * option.skillHint
+        score += hintSkills * option.hintSkill
         score += calcHpScore(option, state.status, status.hp) * context.hpFactor
         score += status.motivation * option.motivation
         if (result.success && action is Training) {
@@ -404,36 +545,44 @@ open class ShuntaisaiActionSelector(
     }
 
     /**
-     * トレーニングのヒントで得られるステータスとスキルヒントLvの期待値
+     * トレーニングのヒントで得られるステータス、スキルヒントLv、未獲得のスキルのヒント獲得数の期待値
      */
-    private fun expectedHint(context: Context, action: Action): Pair<Status, Double> {
-        if (action !is Training) return Status() to 0.0
+    private fun expectedHint(context: Context, action: Action): Triple<Status, Double, Double> {
+        if (action !is Training) return Triple(Status(), 0.0, 0.0)
         val state = context.state
         val target = action.member.filter { it.hint }
-        if (target.isEmpty()) return Status() to 0.0
+        if (target.isEmpty()) return Triple(Status(), 0.0, 0.0)
         return if (state.allSupportHint(action.type)) {
             // 全ヒント: 対象サポカごとに未獲得のスキルから(1+ヒント数アップ)個、ステータスはCalculatorで計算済み
             val count = 1 + state.hintCountUp(action.type, action.member)
             val members = target.filter { state.isAllSupportHintTarget(it) }
-            val hintLevel = members.sumOf { member ->
-                val skills = member.card.skills.count { !state.status.skillHint.containsKey(it) }
-                min(count, skills) * min(5, 1 + member.card.hintLevel).toDouble()
+            var hintLevel = 0.0
+            var hintSkills = 0.0
+            members.forEach { member ->
+                val skills = min(count, member.unacquiredHintSkills(state.status))
+                hintLevel += skills * min(5, 1 + member.card.hintLevel)
+                hintSkills += skills
             }
-            members.fold(Status()) { acc, member -> acc + member.card.hintStatus } to hintLevel
+            Triple(members.fold(Status()) { acc, member -> acc + member.card.hintStatus }, hintLevel, hintSkills)
         } else {
             // ランダムに1人分
             val baseCount = 1 + state.hintCountPlus + state.hintCountUp(action.type, action.member)
             var hintStatus = Status()
             var hintLevel = 0.0
+            var hintSkills = 0.0
             target.forEach { member ->
+                val available = member.availableHintSkills(state.status).size
                 val (skillPicks, statusPicks) = expectedHintPicks(
                     baseCount + member.card.hintCountUp(member.relation),
-                    member.availableHintSkills(state.status).size,
+                    available,
                 )
                 hintStatus += member.card.hintStatus.scale(statusPicks / target.size)
                 hintLevel += skillPicks * member.averageHintLevelUp(state.status) / target.size
+                if (available > 0) {
+                    hintSkills += skillPicks * member.unacquiredHintSkills(state.status) / available / target.size
+                }
             }
-            hintStatus to hintLevel
+            Triple(hintStatus, hintLevel, hintSkills)
         }
     }
 
@@ -452,6 +601,9 @@ open class ShuntaisaiActionSelector(
 
     private fun MemberState.availableHintSkills(status: Status) =
         card.skills.filter { status.skillHint.getOrElse(it) { 0 } < 5 }
+
+    private fun MemberState.unacquiredHintSkills(status: Status) =
+        card.skills.count { !status.skillHint.containsKey(it) }
 
     /**
      * スキルヒント1回で上がるLvの平均（Lv5を超える分は除く）

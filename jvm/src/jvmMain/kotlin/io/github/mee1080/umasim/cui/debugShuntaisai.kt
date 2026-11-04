@@ -19,37 +19,50 @@ import kotlin.time.measureTime
  * 駿大祭の動作確認・AI評価
  *
  * * 引数なし: 1回のシミュレーション結果を詳細表示
- * * `eval [回数] [factor=スピ,スタ,パワ,根性,賢さ...] [Optionの配列のJSONファイル...]`: Runner.shuntaisaiSettingで評価（上位20%の平均）
+ * * `eval [回数] [setting=default|hint|param] [factor=スピ,スタ,パワ,根性,賢さ...] [Optionの配列のJSONファイル...]`: 評価設定で評価（上位20%の平均）
+ *   * settingは評価設定（default: Runner.shuntaisaiSetting、hint: shuntaisaiHintSetting、param: shuntaisaiParamSetting）、JSONファイル省略時は対応するAI設定を使用
  *   * factorは各ステータスの☆3因子の数（複数指定で全組み合わせを評価）
- * * `dump`: デフォルト設定をJSONで出力
+ * * `dump [default|hint|param]`: AI設定をJSONで出力
  */
 fun debugShuntaisai(args: Array<String> = emptyArray()) {
     val time = measureTime {
         when (args.firstOrNull()) {
             "eval" -> {
                 val count = args.getOrNull(1)?.toInt() ?: 10000
-                val (factorArgs, files) = args.drop(2).partition { it.startsWith("factor=") }
+                val (settingArgs, restArgs) = args.drop(2).partition { it.startsWith("setting=") }
+                val (setting, defaultOptions) = shuntaisaiEvaluation(settingArgs.lastOrNull()?.removePrefix("setting="))
+                val (factorArgs, files) = restArgs.partition { it.startsWith("factor=") }
                 val factors = factorArgs.map { arg ->
                     val counts = arg.removePrefix("factor=").split(",").map { it.toInt() }
                     arg to trainingType.zip(counts).flatMap { (type, n) -> factor(type, n) }
                 }.ifEmpty { listOf(null to shuntaisaiDebugFactor) }
                 val options = files.map { it to ShuntaisaiActionSelector.decodeOptions(File(it).readText()) }
-                    .ifEmpty { listOf(null to ShuntaisaiActionSelector.defaultOptions) }
+                    .ifEmpty { listOf(null to defaultOptions) }
                 factors.forEach { (factorLabel, factor) ->
                     options.forEach { (file, option) ->
                         val label = listOfNotNull(file, factorLabel).joinToString(" ")
                         if (label.isNotEmpty()) println("[$label]")
-                        evaluateShuntaisai(count, option, factor)
+                        evaluateShuntaisai(count, option, factor, setting)
                     }
                 }
             }
 
-            "dump" -> println(ShuntaisaiActionSelector.encodeOptions(ShuntaisaiActionSelector.defaultOptions))
+            "dump" -> println(ShuntaisaiActionSelector.encodeOptions(shuntaisaiEvaluation(args.getOrNull(1)).second))
 
             else -> debugShuntaisaiSingleSimulation()
         }
     }
     println("time: $time")
+}
+
+/**
+ * 評価設定と対応するAI設定
+ */
+private fun shuntaisaiEvaluation(name: String?) = when (name) {
+    null, "default" -> Runner.shuntaisaiSetting to ShuntaisaiActionSelector.defaultOptions
+    "hint" -> Runner.shuntaisaiHintSetting to ShuntaisaiActionSelector.hintOptions
+    "param" -> Runner.shuntaisaiParamSetting to ShuntaisaiActionSelector.paramOptions
+    else -> error("unknown setting: $name")
 }
 
 private val shuntaisaiDebugChara get() = Store.getChara("[初うらら♪さくさくら]ハルウララ", 5, 5)
@@ -81,10 +94,11 @@ fun evaluateShuntaisai(
     count: Int,
     options: Array<ShuntaisaiActionSelector.Option>,
     factor: List<Pair<StatusType, Int>> = shuntaisaiDebugFactor,
+    baseSetting: PiecewiseEvaluateSetting = Runner.shuntaisaiSetting,
 ) {
     val chara = shuntaisaiDebugChara
     val support = shuntaisaiDebugSupport
-    val setting = Runner.shuntaisaiSetting
+    val setting = baseSetting.withHintSkills(support)
     // 並列スレッド数は最大4
     val chunk = 4
     val results = runBlocking {
@@ -117,6 +131,19 @@ fun evaluateShuntaisai(
     println("status all  : ${results.statusAverage()}")
     fun List<ShuntaisaiEvalResult>.hintAverage() = "%.1f".format(map { it.summary.status.skillHint.values.sum() }.average())
     println("skill hint: upper ${upper.hintAverage()} / all ${results.hintAverage()}")
+    val hintSkills = support.flatMap { it.skills }.toSet()
+    fun List<ShuntaisaiEvalResult>.hintSkillRate() = "%.2f/%d (all %.3f)".format(
+        map { result -> hintSkills.count { it in result.summary.status.skillHint } }.average(),
+        hintSkills.size,
+        count { result -> hintSkills.all { it in result.summary.status.skillHint } } / size.toDouble(),
+    )
+    println("hint skills: upper ${upper.hintSkillRate()} / all ${results.hintSkillRate()}")
+    println("hint skills by card: " + support.joinToString("/") { card ->
+        "%.2f/%d".format(
+            results.map { result -> card.skills.count { it in result.summary.status.skillHint } }.average(),
+            card.skills.size,
+        )
+    })
     // 最初の区間の上限を必達ラインとして達成率を出力
     val required = setting.segments.mapNotNull { (type, segments) ->
         segments.first().first.takeIf { it < Int.MAX_VALUE }?.let { type to it }
