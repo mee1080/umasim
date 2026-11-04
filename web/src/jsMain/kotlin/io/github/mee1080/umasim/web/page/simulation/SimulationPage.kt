@@ -56,7 +56,14 @@ fun SimulationPage(state: State) {
             }
         )
     }
-    val aiSelector by derivedStateOf { aiSelectorOption?.generateSelector() }
+    var shuntaisaiAiType by remember { mutableStateOf(shuntaisaiAiTypes.first()) }
+    val aiSelector by derivedStateOf {
+        if (state.scenario == Scenario.SHUNTAISAI) {
+            ShuntaisaiActionSelector(*shuntaisaiAiType.second)
+        } else {
+            aiSelectorOption?.generateSelector()
+        }
+    }
 //    var optionEdit by remember { mutableStateOf(false) }
 //    (aiSelectorOption as? SerializableActionSelectorGenerator)?.let { option ->
 //        OptionEditDialog(optionEdit, option) {
@@ -128,6 +135,18 @@ fun SimulationPage(state: State) {
                         )
                     }
                 }
+                if (state.scenario == Scenario.SHUNTAISAI) {
+                    Div({ style { marginTop(32.px) } }) { Text("AI判定の評価基準：") }
+                    Div {
+                        MdRadioGroup(
+                            shuntaisaiAiTypes,
+                            shuntaisaiAiType,
+                            onSelect = { shuntaisaiAiType = it },
+                            itemToKey = { it.first },
+                            itemToLabel = { it.first },
+                        )
+                    }
+                }
                 if (state.scenario == Scenario.LEGEND) {
                     Div({ style { marginTop(32.px) } }) { Text("心得指定：") }
                     Div({
@@ -155,6 +174,15 @@ fun SimulationPage(state: State) {
         }
     }
 }
+
+/**
+ * 駿大祭のAI判定の評価基準と、対応するShuntaisaiActionSelectorの設定
+ */
+private val shuntaisaiAiTypes = listOf(
+    "標準" to ShuntaisaiActionSelector.defaultOptions,
+    "ヒント優先" to ShuntaisaiActionSelector.hintOptions,
+    "パラメータカンスト優先" to ShuntaisaiActionSelector.paramOptions,
+)
 
 @Composable
 private fun LegendBuffSelect(setting: SimulationSetting, index: Int, onUpdate: (SimulationSetting) -> Unit) {
