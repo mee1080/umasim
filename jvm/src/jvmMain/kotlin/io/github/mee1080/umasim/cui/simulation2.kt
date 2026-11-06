@@ -26,6 +26,7 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
     doSimulation2(
         scenario,
@@ -41,6 +42,7 @@ fun doSimulation2(
         evaluateUpperRate,
         scenarioEvents,
         events,
+        ignoreDefaultSupportHint,
     )
 }
 
@@ -58,10 +60,11 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
     doSimulation2(
         scenario, chara, defaultSupport, targetStatus, rarity, talent, factor, testCount, selector,
-        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events,
+        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events, ignoreDefaultSupportHint,
     )
 }
 
@@ -79,6 +82,7 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
     doSimulation2(
         scenario,
@@ -94,6 +98,7 @@ fun doSimulation2(
         evaluateUpperRate,
         scenarioEvents,
         events,
+        ignoreDefaultSupportHint,
     )
 }
 
@@ -109,6 +114,7 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
     doSimulation2(
         scenario,
@@ -122,6 +128,7 @@ fun doSimulation2(
         evaluateUpperRate,
         scenarioEvents,
         events,
+        ignoreDefaultSupportHint,
     )
 }
 
@@ -137,10 +144,11 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
     doSimulation2(
         scenario, chara, defaultSupport, target, factor, testCount, selector,
-        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events,
+        evaluateSetting.toPiecewise(), evaluateUpperRate, scenarioEvents, events, ignoreDefaultSupportHint,
     )
 }
 
@@ -156,15 +164,20 @@ fun doSimulation2(
     evaluateUpperRate: Double = 0.2,
     scenarioEvents: ((SimulationState) -> ScenarioEvents)? = null,
     events: (SimulationState) -> SimulationEvents = { RandomEvents(it) },
+    ignoreDefaultSupportHint: Boolean = true,
 ) {
+    // ヒントを無視する場合は、スキルを空にしてヒント発生時にステータス上昇のみとする
+    val baseSupport = if (ignoreDefaultSupportHint) {
+        defaultSupport.map { it.copy(skills = emptyList()) }
+    } else defaultSupport.toList()
     println(chara.name)
-    defaultSupport.forEach { println(it.name) }
+    baseSupport.forEach { println(it.name) }
     println(factor.joinToString(",") { "${it.first} ${it.second}" })
     println("start ${LocalDateTime.now()}")
     runBlocking {
         target.map { card ->
             launch(context) {
-                val useSupport = listOf(*defaultSupport, card)
+                val useSupport = (baseSupport + card).sortedBy { it.id }
                 val (score, evaluator) = Runner.runAndEvaluate(
                     testCount,
                     scenario,

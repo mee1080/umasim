@@ -25,3 +25,11 @@ allprojects {
         maven("https://maven.pkg.jetbrains.space/kotlin/p/wasm/experimental")
     }
 }
+
+// JDK 19以降、パイプ出力時の System.out は stdout.encoding（Windowsでは MS932）になり、
+// UTF-8 で読む Gradle / IntelliJ の実行ペインで文字化けするため UTF-8 に固定する
+subprojects {
+    tasks.withType<JavaExec>().configureEach {
+        jvmArgs("-Dstdout.encoding=UTF-8", "-Dstderr.encoding=UTF-8")
+    }
+}
