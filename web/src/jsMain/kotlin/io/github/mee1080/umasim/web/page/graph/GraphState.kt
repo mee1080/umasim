@@ -92,7 +92,8 @@ data class GraphFactorTemplate(
 val graphFactorTemplates = listOf(
     GraphFactorTemplate(0, "手入力", ""),
 
-    GraphFactorTemplate(101, "ラーメン上限", "min(2150,speed) + min(1800,stamina) + min(1700,power) + min(1700,guts) + min(1800,wisdom) + skillPt * 2 + totalHintLevel * 5"),
+    GraphFactorTemplate(101, "駿大祭上限", "min(2200,speed) + min(1850,stamina) + min(1800,power) + min(1700,guts) + min(1800,wisdom) + skillPt * 2 + totalHintLevel * 5"),
+    GraphFactorTemplate(102, "ラーメン上限", "min(2150,speed) + min(1800,stamina) + min(1700,power) + min(1700,guts) + min(1800,wisdom) + skillPt * 2 + totalHintLevel * 5"),
 
     GraphFactorTemplate(1, "スピード", "speed"),
     GraphFactorTemplate(2, "スタミナ", "stamina"),
