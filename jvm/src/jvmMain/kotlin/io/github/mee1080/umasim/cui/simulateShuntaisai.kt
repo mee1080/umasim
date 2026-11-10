@@ -8,8 +8,9 @@ import io.github.mee1080.umasim.scenario.shuntaisai.ShuntaisaiScenarioEvents
 import io.github.mee1080.umasim.simulation2.Runner
 
 fun simulateShuntaisai() {
-    doShuntaisaiSimulationS2(StatusType.POWER, "[Time of Departure]マヤノトップガン")
-    doShuntaisaiSimulationS2(StatusType.FRIEND, "[いとどめでたき、まつりかな]吾妻")
+    doShuntaisaiSimulationS2(StatusType.STAMINA)
+//    doShuntaisaiSimulationS2(StatusType.POWER, "[Time of Departure]マヤノトップガン")
+//    doShuntaisaiSimulationS2(StatusType.FRIEND, "[いとどめでたき、まつりかな]吾妻")
 }
 
 private fun doShuntaisaiSimulationS2(
