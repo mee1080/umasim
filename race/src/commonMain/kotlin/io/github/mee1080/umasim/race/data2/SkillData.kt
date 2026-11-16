@@ -932,6 +932,24 @@ data class SkillEffect(
                 value * 1.2
             }
 
+            40 -> {
+                // 総盛り上がりPtが高いほど効果が増える（極上の感謝を！）
+                value * 1.2
+            }
+
+            41 -> {
+                // 合計演目Lvが30以上なら効果が増える（名にし負う夢）
+                value * 1.2
+            }
+
+            42 -> {
+                // マイルか中距離なら効果が増える（灰雪の冠）
+                when {
+                    state.setting.trackDetail.distanceType == 2 || state.setting.trackDetail.distanceType == 3 -> value + 500.0
+                    else -> value.toDouble()
+                }
+            }
+
             else -> value.toDouble()
         }
         // FIXME 最速発動で近似しているが、本来はスキル効果中に計算が必要

@@ -24,6 +24,7 @@ import io.github.mee1080.umasim.store.operation.selectHistoryEntry
 import io.github.mee1080.utility.roundToString
 import io.github.mee1080.utility.secondToTimeString
 import io.github.mee1080.utility.toPercentString
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 @Composable
@@ -174,14 +175,17 @@ private fun SkillTable(summary: SimulationSummary) {
     Column {
         val summaries = summary.skillSummaries
         if (summaries.isEmpty()) return
+        // 複数回発動の列は最低2回分表示する
+        val maxTriggerCount = max(2, summaries.maxOf { it.second.triggerSummaries.size })
         val tableData = buildList {
             add(
                 listOf(
                     "発動数",
                     "発動率",
                     "平均発動位置1",
-                    "2回発動率",
-                    "平均発動位置2",
+                ) + (2..maxTriggerCount).flatMap { n ->
+                    listOf("${n}回発動率", "平均発動位置$n")
+                } + listOf(
                     "序盤発動率",
                     "中盤接続率",
                     "平均中盤接続時間",
@@ -193,8 +197,10 @@ private fun SkillTable(summary: SimulationSummary) {
                     "速度上昇無効割合",
                 )
             )
-            summaries.forEach { add(toTableData(summary.setting, it.second)) }
+            summaries.forEach { add(toTableData(summary.setting, it.second, maxTriggerCount)) }
         }
+        // 平均発動位置の列（2, 4, 6, ...）は左寄せ
+        val positionColumns = (0 until maxTriggerCount).map { 2 + it * 2 }.toSet()
         var calcSp by remember { mutableStateOf(true) }
         var kire by remember { mutableStateOf(false) }
         val rareHintLvList = remember(summaries) {
@@ -227,14 +233,14 @@ private fun SkillTable(summary: SimulationSummary) {
                 }
             }
             Table(
-                tableData.size, 14, scrollable = true,
+                tableData.size, tableData[0].size, scrollable = true,
                 modifier = Modifier.weight(1f),
             ) { row, col ->
                 Text(
                     tableData[row][col], Modifier.padding(4.dp).align(
                         when {
                             row == 0 -> Alignment.Center
-                            col == 2 || col == 4 -> Alignment.CenterStart
+                            col in positionColumns -> Alignment.CenterStart
                             else -> Alignment.CenterEnd
                         }
                     )
@@ -285,20 +291,26 @@ private fun SkillTable(summary: SimulationSummary) {
     }
 }
 
-private fun toTableData(setting: RaceSetting, entry: SimulationSkillSummary): List<String> {
+private fun toTableData(setting: RaceSetting, entry: SimulationSkillSummary, maxTriggerCount: Int): List<String> {
     return if (entry.count == 0) {
-        listOf("0") + List(13) { "-" }
+        listOf("0") + List(maxTriggerCount * 2 + 9) { "-" }
     } else {
         listOf(
             entry.count.toString(),
             entry.triggerRate.toPercentString(1),
-            (entry.averageStartFrame1 / 15.0).roundToString(2, "s") + "/" +
-                    entry.averageStartPosition1.roundToString(2, "m") +
-                    toPositionString(setting, entry.averageStartPosition1),
-            entry.doubleTriggerRate.toPercentString(1),
-            (entry.averageStartFrame2 / 15.0).roundToString(2, "s") + "/" +
-                    entry.averageStartPosition2.roundToString(2, "m") +
-                    toPositionString(setting, entry.averageStartPosition2),
+        ) + (0 until maxTriggerCount).flatMap { n ->
+            val trigger = entry.triggerSummaries.getOrNull(n)
+            val position = trigger?.let {
+                (it.averageStartFrame / 15.0).roundToString(2, "s") + "/" +
+                        it.averageStartPosition.roundToString(2, "m") +
+                        toPositionString(setting, it.averageStartPosition)
+            } ?: "-"
+            if (n == 0) {
+                listOf(position)
+            } else {
+                listOf((trigger?.rate ?: 0.0).toPercentString(1), position)
+            }
+        } + listOf(
             entry.phase0TriggeredRate.toPercentString(1),
             entry.phase1ConnectionRate.toPercentString(1),
             (entry.averagePhase1ConnectionFrame / 15.0).roundToString(2, "s"),

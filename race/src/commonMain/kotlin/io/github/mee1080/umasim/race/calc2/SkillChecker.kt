@@ -282,8 +282,9 @@ private fun checkCondition(
 
         "change_order_up_finalcorner_after" -> condition.checkSpecialState()
 
-        "is_activate_other_skill_detail" -> condition.withAssert("==", 1) {
-            { simulation.coolDownMap.containsKey(skill.id) }
+        "is_activate_other_skill_detail" -> condition.withAssert("==") {
+            val targetId = skill.invokes.firstOrNull { it.index == condition.value }?.coolDownId ?: skill.id
+            { simulation.coolDownMap.containsKey(targetId) }
         }
 
         "popularity" -> {

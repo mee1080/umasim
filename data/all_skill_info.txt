@@ -724,6 +724,8 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 「中盤後半、芝」、目標速度2500(特殊42)、持続3.0
 ->is_activate_other_skill_detail==1&distance_rate>=50&distance_rate<=51
 「上記効果発動後、距離割合50～51」、目標速度2500(特殊42)、持続3.0
+->is_activate_other_skill_detail==2&phase==3
+「上記効果発動後、終盤後半」、目標速度2500(特殊42)、持続3.0
 
 花開き、世界
 [Saisir le rêve]サクラローレル 固有
@@ -3025,6 +3027,8 @@ is_finalcorner==1&change_order_onetime<0->remain_distance<=300&order_rate<=40
 「中盤後半、芝」、目標速度500、持続1.8
 ->is_activate_other_skill_detail==1&distance_rate>=50&distance_rate<=51
 「上記効果発動後、距離割合50～51」、目標速度500、持続1.8
+->is_activate_other_skill_detail==2&phase==3
+「上記効果発動後、終盤後半」、目標速度500、持続1.8
 
 花開き、世界
 レース中間地点で中団だと速度がちょっと上がる、長距離レースだとちょっと上げ続けさらに持久力を少し回復する
